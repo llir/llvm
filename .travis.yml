@@ -8,9 +8,9 @@ env:
     secure: "YZKB1SLTzPJMOdXp5U3xwEsh4++Xe8EeVK8SZVEQkn/y4xCbzmbdo6BJ4B/eGBG6bK4DLzFD3sb6uaUB2bHlVUXnR8YHbetjps6PUwLYtX9UdcBjB7UN5tdQs1d8k2qg7vPNtKVEY4kJHFURijc4Kk+zlNbq1oGJcEfm6gz+zGg="
 
 install:
+  - go get code.google.com/p/go.tools/cmd/cover
   - go get code.google.com/p/go.tools/cmd/goimports
   - go get code.google.com/p/go.tools/cmd/vet
-  - go get code.google.com/p/go.tools/cmd/cover
   - go get github.com/golang/lint/golint
   - go get github.com/mattn/goveralls
 
