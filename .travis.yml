@@ -6,6 +6,7 @@ notifications:
 env:
   global:
     secure: j44ZcgOUJRrTpNsFME9w5CZCION0Psai6RaVQltqG2IokNb3SFdGrinDG+YTnChfAjL/w4Nv2OBxsb/sQtPIJpPXTpdraJo7gmcgRclbu4ezg0My6uE+T6bt0BG0vWYSTSWm59kFN6GQGTvJKCilgMi8+XP32/JQ12widiyQA/g=
+  global:
     - PATH=$HOME/gopath/bin:$PATH
 
 install:
