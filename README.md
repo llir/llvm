@@ -7,6 +7,8 @@ subject to change. The documentation can be inaccurate.
 llvm
 ====
 
+[![Build Status](https://travis-ci.org/mewlang/llvm.svg?branch=master)](https://travis-ci.org/mewlang/llvm)
+
 The aim of this project is to provide access to the various LLVM IR
 representations; which includes the [LLVM bitcode][] file format, the
 [LLVM assembly][] language, and an in-memory representation similar to that of
