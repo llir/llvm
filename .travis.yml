@@ -5,7 +5,7 @@ notifications:
 
 env:
   global:
-    secure: j44ZcgOUJRrTpNsFME9w5CZCION0Psai6RaVQltqG2IokNb3SFdGrinDG+YTnChfAjL/w4Nv2OBxsb/sQtPIJpPXTpdraJo7gmcgRclbu4ezg0My6uE+T6bt0BG0vWYSTSWm59kFN6GQGTvJKCilgMi8+XP32/JQ12widiyQA/g=
+    secure: "YZKB1SLTzPJMOdXp5U3xwEsh4++Xe8EeVK8SZVEQkn/y4xCbzmbdo6BJ4B/eGBG6bK4DLzFD3sb6uaUB2bHlVUXnR8YHbetjps6PUwLYtX9UdcBjB7UN5tdQs1d8k2qg7vPNtKVEY4kJHFURijc4Kk+zlNbq1oGJcEfm6gz+zGg="
 
 install:
   - go get code.google.com/p/go.tools/cmd/goimports
