@@ -6,6 +6,7 @@ func Bar() int {
 	return 42
 }
 
+// Baz returns the magic baz.
 func Baz() string {
 	return "baz"
 }
