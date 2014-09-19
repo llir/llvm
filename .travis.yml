@@ -9,10 +9,9 @@ env:
 
 install:
   - go get code.google.com/p/go.tools/cmd/cover
-  - go get github.com/modocache/gover
   - go get github.com/mattn/goveralls
 
 script:
-  - go test ./...
-  - $HOME/gopath/bin/gover
-  - $HOME/gopath/bin/goveralls -coverprofile=gover.coverprofile -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - wget https://gist.githubusercontent.com/mewmew/379014c9a2e6885e238d/raw/fb0c7d164113b1428f886dd470a613c74b9a9997/goclean.sh
+  - chmod +x goclean.sh
+  - ./goclean.sh
