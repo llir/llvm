@@ -9,4 +9,6 @@ package ir
 type Function struct {
 	// Basic blocks of the function.
 	Blocks []*BasicBlock
+	// Linkage type.
+	Link Linkage
 }
