@@ -3,7 +3,7 @@ package ir
 // Linkage specifies the linkage type of a global variable or function [1].
 //
 //    [1]: http://llvm.org/docs/LangRef.html#linkage-types
-type Linkage uint16
+type Linkage uint8
 
 // Linkage types.
 const (
@@ -11,7 +11,7 @@ const (
 	// definition is only accessible from within the current module.
 	//
 	// Data but no symbol is emitted to the object file.
-	LinkPrivate Linkage = 1 << iota
+	LinkPrivate Linkage = 1 + iota
 	// LinkInternal is functionally equivalent to private linkage, except that a
 	// local symbol is emitted to the object file.
 	//
