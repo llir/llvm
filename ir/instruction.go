@@ -9,6 +9,8 @@ package ir
 //
 //    [1]: http://llvm.org/docs/LangRef.html#instruction-reference
 type Instruction interface {
+	// isInst ensures that only instructions can be assigned to the Instruction
+	// interface.
 	isInst()
 }
 
@@ -18,7 +20,20 @@ type Instruction interface {
 //    ref: http://llvm.org/docs/LangRef.html#terminators
 // =============================================================================
 
-// InstBranch represents an unconditional branch instruction [1].
+// InstReturn represents a return instruction [1] in one of the following forms:
+//    ret <Type> <Val>
+//    ret void
+//
+//    [1]: http://llvm.org/docs/LangRef.html#i-ret
+type InstReturn struct {
+	// Return type.
+	Type Type
+	// Return value; or nil in case of a void return.
+	Val Value
+}
+
+// InstBranch represents an unconditional branch instruction in the form of [1]:
+//    br label <Target>
 //
 //    [1]: http://llvm.org/docs/LangRef.html#i-br
 type InstBranch struct {
@@ -26,7 +41,9 @@ type InstBranch struct {
 	Target *BasicBlock
 }
 
-// InstCondBranch represents a conditional branch instruction [1].
+// InstCondBranch represents a conditional branch instruction in the form
+// of [1]:
+//    br i1 <Cond>, label <TargetTrue>, label <TargetFalse>
 //
 //    [1]: http://llvm.org/docs/LangRef.html#i-br
 type InstCondBranch struct {
@@ -70,5 +87,7 @@ type InstCondBranch struct {
 
 // TODO(u): Add other operations.
 
+// isInst ensures that only instructions can be assigned to the Instruction
+// interface.
 func (InstBranch) isInst()     {}
 func (InstCondBranch) isInst() {}
