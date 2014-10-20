@@ -9,6 +9,11 @@ package ir
 type Function struct {
 	// Basic blocks of the function.
 	Blocks []*BasicBlock
+
 	// Linkage type.
-	Link Linkage
+	Linkage Linkage
+	// Visibility style.
+	Visibility Visibility
+	// TODO(u): Add DLLStorageClass.
+	CC CallingConv
 }
