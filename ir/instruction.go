@@ -32,15 +32,6 @@ type InstReturn struct {
 	Val Value
 }
 
-// InstBranch represents an unconditional branch instruction in the form of [1]:
-//    br label <Target>
-//
-//    [1]: http://llvm.org/docs/LangRef.html#i-br
-type InstBranch struct {
-	// Target branch.
-	Target *BasicBlock
-}
-
 // InstCondBranch represents a conditional branch instruction in the form
 // of [1]:
 //    br i1 <Cond>, label <TargetTrue>, label <TargetFalse>
@@ -53,6 +44,15 @@ type InstCondBranch struct {
 	TargetTrue *BasicBlock
 	// Target branch when the condition evaluates to false.
 	TargetFalse *BasicBlock
+}
+
+// InstBranch represents an unconditional branch instruction in the form of [1]:
+//    br label <Target>
+//
+//    [1]: http://llvm.org/docs/LangRef.html#i-br
+type InstBranch struct {
+	// Target branch.
+	Target *BasicBlock
 }
 
 // =============================================================================
