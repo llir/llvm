@@ -14,6 +14,6 @@ type Function struct {
 	Linkage Linkage
 	// Visibility style.
 	Visibility Visibility
-	// TODO(u): Add DLLStorageClass.
+	// Calling convention.
 	CC CallingConv
 }

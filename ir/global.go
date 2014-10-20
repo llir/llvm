@@ -6,6 +6,4 @@ type Global struct {
 	Linkage Linkage
 	// Visibility style.
 	Visibility Visibility
-	// TODO(u): Add DLL Storage Class.
-	// TODO(u): Add ThreadLocal.
 }
