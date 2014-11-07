@@ -215,8 +215,8 @@ type UdivInst struct {
 	Op1, Op2 Value
 }
 
-// An SdivInst returns the signed integer quotient of its two operands, which
-// may be integers or vectors of integer values.
+// A SdivInst returns the signed integer quotient of its two operands, which may
+// be integers or vectors of integer values.
 //
 // Syntax:
 //    <Result> = sdiv <Type> <Op1>, <Op2>
@@ -224,6 +224,51 @@ type UdivInst struct {
 // References:
 //    http://llvm.org/docs/LangRef.html#sdiv-instruction
 type SdivInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// A FdivInst returns the quotient of its two operands, which may be floating
+// point values or vectors of floating point values.
+//
+// Syntax:
+//    <Result> = fdiv <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fdiv-instruction
+type FdivInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// An UremInst returns the unsigned integer remainder of a division between its
+// two operands, which may be integers or vectors of integers.
+//
+// Syntax:
+//    <Result> = urem <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#urem-instruction
+type UremInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// A SremInst returns the signed integer remainder of a division between its two
+// operands, which may be integers or vectors of integers.
+//
+// Syntax:
+//    <Result> = srem <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#srem-instruction
+type SremInst struct {
 	// Operand type.
 	Type Type
 	// Operands.
@@ -270,3 +315,6 @@ func (MulInst) isInst()        {}
 func (FmulInst) isInst()       {}
 func (UdivInst) isInst()       {}
 func (SdivInst) isInst()       {}
+func (FdivInst) isInst()       {}
+func (UremInst) isInst()       {}
+func (SremInst) isInst()       {}
