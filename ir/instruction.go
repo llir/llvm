@@ -138,6 +138,21 @@ type FaddInst struct {
 	Op1, Op2 Value
 }
 
+// A SubInst returns the difference of its two operands, which may be integers
+// or vectors of integer values.
+//
+// Syntax:
+//    sub <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#sub-instruction
+type SubInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
 // TODO(u): Add binary operations.
 
 // =============================================================================
@@ -172,3 +187,4 @@ func (BranchInst) isInst()     {}
 func (SwitchInst) isInst()     {}
 func (AddInst) isInst()        {}
 func (FaddInst) isInst()       {}
+func (SubInst) isInst()        {}
