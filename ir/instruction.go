@@ -183,6 +183,21 @@ type MulInst struct {
 	Op1, Op2 Value
 }
 
+// A FmulInst returns the product of its two operands, which may be floating
+// point values or vectors of floating point values.
+//
+// Syntax:
+//    fmul <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fmul-instruction
+type FmulInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
 // TODO(u): Add binary operations.
 
 // =============================================================================
@@ -220,3 +235,4 @@ func (FaddInst) isInst()       {}
 func (SubInst) isInst()        {}
 func (FsubInst) isInst()       {}
 func (MulInst) isInst()        {}
+func (FmulInst) isInst()       {}
