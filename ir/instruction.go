@@ -168,6 +168,21 @@ type FsubInst struct {
 	Op1, Op2 Value
 }
 
+// A MulInst returns the product of its two operands, which may be integers or
+// vectors of integer values.
+//
+// Syntax:
+//    mul <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#mul-instruction
+type MulInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
 // TODO(u): Add binary operations.
 
 // =============================================================================
@@ -204,3 +219,4 @@ func (AddInst) isInst()        {}
 func (FaddInst) isInst()       {}
 func (SubInst) isInst()        {}
 func (FsubInst) isInst()       {}
+func (MulInst) isInst()        {}
