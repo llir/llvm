@@ -275,6 +275,21 @@ type SremInst struct {
 	Op1, Op2 Value
 }
 
+// A FremInst returns the remainder of a division between its two operands,
+// which may be floating point values or vectors of floating point values.
+//
+// Syntax:
+//    <Result> = frem <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#frem-instruction
+type FremInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
 // TODO(u): Add binary operations.
 
 // =============================================================================
@@ -318,3 +333,4 @@ func (SdivInst) isInst()       {}
 func (FdivInst) isInst()       {}
 func (UremInst) isInst()       {}
 func (SremInst) isInst()       {}
+func (FremInst) isInst()       {}
