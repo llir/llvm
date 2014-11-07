@@ -92,13 +92,33 @@ type SwitchInst struct {
 	}
 }
 
-// TODO(u): Add terminator instructions.
+// TODO(u): Add the following terminator instructions:
+//    - indirectbr
+//    - invoke
+//    - resume
+//    - unreachable
 
 // =============================================================================
 // Binary Operations
 //
 //    ref: http://llvm.org/docs/LangRef.html#binaryops
 // =============================================================================
+
+// TODO(u): Read up about the use of nuw and nsw.
+
+// An AddInst returns the sum of its two operands.
+//
+// Syntax:
+//    add <Type> <Op1> <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#i-add
+type AddInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
 
 // TODO(u): Add binary operations.
 
@@ -132,3 +152,4 @@ func (ReturnInst) isInst()     {}
 func (CondBranchInst) isInst() {}
 func (BranchInst) isInst()     {}
 func (SwitchInst) isInst()     {}
+func (AddInst) isInst()        {}
