@@ -110,7 +110,7 @@ type SwitchInst struct {
 // vectors of integer values.
 //
 // Syntax:
-//    add <Type> <Op1>, <Op2>
+//    <Result> = add <Type> <Op1>, <Op2>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-add
@@ -127,7 +127,7 @@ type AddInst struct {
 // values or vectors of floating point values.
 //
 // Syntax:
-//    fadd <Type> <Op1>, <Op2>
+//    <Result> = fadd <Type> <Op1>, <Op2>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-fadd
@@ -142,7 +142,7 @@ type FaddInst struct {
 // or vectors of integer values.
 //
 // Syntax:
-//    sub <Type> <Op1>, <Op2>
+//    <Result> = sub <Type> <Op1>, <Op2>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#sub-instruction
@@ -157,7 +157,7 @@ type SubInst struct {
 // point values or vectors of floating point values.
 //
 // Syntax:
-//    fsub <Type> <Op1>, <Op2>
+//    <Result> = fsub <Type> <Op1>, <Op2>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-fsub
@@ -172,7 +172,7 @@ type FsubInst struct {
 // vectors of integer values.
 //
 // Syntax:
-//    mul <Type> <Op1>, <Op2>
+//    <Result> = mul <Type> <Op1>, <Op2>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#mul-instruction
@@ -187,11 +187,43 @@ type MulInst struct {
 // point values or vectors of floating point values.
 //
 // Syntax:
-//    fmul <Type> <Op1>, <Op2>
+//    <Result> = fmul <Type> <Op1>, <Op2>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#fmul-instruction
 type FmulInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// TODO(u): Read up about the usage of exact.
+
+// An UdivInst returns the unsigned integer quotient of its two operands, which
+// may be integers or vectors of integer values.
+//
+// Syntax:
+//    <Result> = udiv <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#udiv-instruction
+type UdivInst struct {
+	// Operand type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// An SdivInst returns the signed integer quotient of its two operands, which
+// may be integers or vectors of integer values.
+//
+// Syntax:
+//    <Result> = sdiv <Type> <Op1>, <Op2>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#sdiv-instruction
+type SdivInst struct {
 	// Operand type.
 	Type Type
 	// Operands.
@@ -236,3 +268,5 @@ func (SubInst) isInst()        {}
 func (FsubInst) isInst()       {}
 func (MulInst) isInst()        {}
 func (FmulInst) isInst()       {}
+func (UdivInst) isInst()       {}
+func (SdivInst) isInst()       {}
