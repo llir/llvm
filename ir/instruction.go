@@ -1,13 +1,15 @@
 package ir
 
-// An Instruction belongs to one of the following groups [1]:
+// An Instruction belongs to one of the following groups:
+//
 //    * terminator instructions
 //    * binary instructions
 //    * bitwise binary instructions
 //    * memory instructions
 //    * other instructions
 //
-//    [1]: http://llvm.org/docs/LangRef.html#instruction-reference
+// References:
+//    http://llvm.org/docs/LangRef.html#instruction-reference
 type Instruction interface {
 	// isInst ensures that only instructions can be assigned to the Instruction
 	// interface.
@@ -20,40 +22,77 @@ type Instruction interface {
 //    ref: http://llvm.org/docs/LangRef.html#terminators
 // =============================================================================
 
-// InstReturn represents a return instruction [1] in one of the following forms:
+// A ReturnInst returns control flow (and optionally a value) from a function
+// back to the caller.
+//
+// Syntax:
 //    ret <Type> <Val>
 //    ret void
 //
-//    [1]: http://llvm.org/docs/LangRef.html#i-ret
-type InstReturn struct {
+// Reference:
+//    http://llvm.org/docs/LangRef.html#i-ret
+type ReturnInst struct {
 	// Return type.
 	Type Type
 	// Return value; or nil in case of a void return.
 	Val Value
 }
 
-// InstCondBranch represents a conditional branch instruction in the form
-// of [1]:
+// A CondBranchInst transfers control flow to one of two basic blocks in the
+// current function based on a boolean branching condition.
+//
+// Syntax:
 //    br i1 <Cond>, label <TargetTrue>, label <TargetFalse>
 //
-//    [1]: http://llvm.org/docs/LangRef.html#i-br
-type InstCondBranch struct {
+// References:
+//    http://llvm.org/docs/LangRef.html#i-br
+type CondBranchInst struct {
 	// Boolean branching condition.
 	Cond Value
 	// Target branch when the condition evaluates to true.
-	TargetTrue *BasicBlock
+	True *BasicBlock
 	// Target branch when the condition evaluates to false.
-	TargetFalse *BasicBlock
+	False *BasicBlock
 }
 
-// InstBranch represents an unconditional branch instruction in the form of [1]:
+// A BranchInst transfers control flow to a basic block in the current function.
+//
+// Syntax:
 //    br label <Target>
 //
-//    [1]: http://llvm.org/docs/LangRef.html#i-br
-type InstBranch struct {
+// References:
+//    http://llvm.org/docs/LangRef.html#i-br
+type BranchInst struct {
 	// Target branch.
 	Target *BasicBlock
 }
+
+// A SwitchInst transfers control flow to one of several basic blocks in the
+// current function.
+//
+// Syntax:
+//    switch <IntType> <Val>, label <TargetDefault> [ <IntType> <Const>, label <Target> ... ]
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#i-switch
+type SwitchInst struct {
+	// TODO(u): Restrict Type to IntType.
+	// Comparasion type.
+	Type Type
+	// Comparasion value.
+	Val Value
+	// Default target.
+	Default *BasicBlock
+	// Switch cases.
+	Cases []struct {
+		// Case value.
+		Val Constant
+		// Case target.
+		Target *BasicBlock
+	}
+}
+
+// TODO(u): Add terminator instructions.
 
 // =============================================================================
 // Binary Operations
@@ -89,5 +128,7 @@ type InstBranch struct {
 
 // isInst ensures that only instructions can be assigned to the Instruction
 // interface.
-func (InstBranch) isInst()     {}
-func (InstCondBranch) isInst() {}
+func (ReturnInst) isInst()     {}
+func (CondBranchInst) isInst() {}
+func (BranchInst) isInst()     {}
+func (SwitchInst) isInst()     {}
