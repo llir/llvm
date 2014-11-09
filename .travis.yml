@@ -14,6 +14,7 @@ install:
   - go get code.google.com/p/go.tools/cmd/vet
   - go get github.com/golang/lint/golint
   - go get github.com/mattn/goveralls
+  - go get github.com/mewlang/llvm/...
 
 script:
   - wget https://gist.githubusercontent.com/mewmew/379014c9a2e6885e238d/raw/fb0c7d164113b1428f886dd470a613c74b9a9997/goclean.sh
