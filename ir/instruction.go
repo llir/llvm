@@ -6,6 +6,15 @@
 
 // TODO(u): Read up about the usage of exact and update releveant instructions.
 
+// TODO(u): Read up about the usage of inalloca and update releveant
+// instructions.
+
+// TODO(u): Read up about the usage of atomic, volatile, nontemporal,
+// invariant.load, nonnull, singlethread and ordering and update releveant
+// instructions.
+
+// TODO(u): Read up about the use of inbounds and update releveant instructions.
+
 package ir
 
 // An Instruction belongs to one of the following groups:
@@ -397,7 +406,82 @@ type XorInst struct {
 //    ref: http://llvm.org/docs/LangRef.html#memoryops
 // =============================================================================
 
-// TODO(u): Add memory access and addressing operations.
+// The AllocaInst allocates memory on the stack frame of the currently executing
+// function, to be automatically released when this function returns to its
+// caller.
+//
+// Syntax:
+//    <Result> = alloca <Type> [, <Type> <NumElems> ] [, align <Align> ]
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#alloca-instruction
+type AllocaInst struct {
+	// Underlying type of the pointer.
+	Type Type
+	// Number of elements to allocate; defaults to 1.
+	NumElems int
+	// Memory alignment.
+	Align int
+}
+
+// The LoadInst reads from memory.
+//
+// Syntax:
+//    <Result> = load <Type>* <Addr> [, align <Align> ]
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#load-instruction
+type LoadInst struct {
+	// Underlying type of the pointer.
+	Type Type
+	// Memory address to load.
+	Addr Value
+	// Memory alignment.
+	Align int
+}
+
+// The StoreInst writes to memory.
+//
+// Syntax:
+//    <Result> = store <Type> <Val>, <Type>* <Addr> [, align <Align> ]
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#store-instruction
+type StoreInst struct {
+	// Value type.
+	Type Type
+	// Value to store.
+	Val Value
+	// Memory address to store at.
+	Addr Value
+	// Memory alignment.
+	Align int
+}
+
+// TODO(u): Add the following memory access and addressing operations:
+//    - fence
+//    - cmpxchg
+//    - atomicrmw
+
+// TODO(u): Read up about the syntax and semantics of getelementptr when used
+// with vectors of pointers.
+
+// The GetelementptrInst gets the address of a subelement of an aggregate data
+// structure. It performs address calculation only and does not access memory.
+//
+// Syntax:
+//    <Result> = getelementptr <Type>* <Ptr> {, <Type> <Idx>}*
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#getelementptr-instruction
+type GetelementptrInst struct {
+	// Underlying type of the pointer.
+	Type Type
+	// Pointer to the aggregate data structure.
+	Ptr Value
+	// Element indicies.
+	Indicies []int
+}
 
 // =============================================================================
 // Other Operations
