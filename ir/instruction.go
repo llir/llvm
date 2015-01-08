@@ -1,20 +1,3 @@
-// TODO(u): Read up about the use of nuw and nsw and update releveant
-// instructions.
-
-// TODO(u): Read up about the use of fast-math flags and update releveant
-// instructions.
-
-// TODO(u): Read up about the usage of exact and update releveant instructions.
-
-// TODO(u): Read up about the usage of inalloca and update releveant
-// instructions.
-
-// TODO(u): Read up about the usage of atomic, volatile, nontemporal,
-// invariant.load, nonnull, singlethread and ordering and update releveant
-// instructions.
-
-// TODO(u): Read up about the use of inbounds and update releveant instructions.
-
 package ir
 
 // An Instruction belongs to one of the following groups:
@@ -95,6 +78,7 @@ type BranchInst struct {
 //    http://llvm.org/docs/LangRef.html#i-switch
 type SwitchInst struct {
 	// TODO(u): Restrict Type to IntType.
+
 	// Comparasion type.
 	Type Type
 	// Comparasion value.

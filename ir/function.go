@@ -9,11 +9,4 @@ package ir
 type Function struct {
 	// Basic blocks of the function.
 	Blocks []*BasicBlock
-
-	// Linkage type.
-	Linkage Linkage
-	// Visibility style.
-	Visibility Visibility
-	// Calling convention.
-	CC CallingConv
 }
