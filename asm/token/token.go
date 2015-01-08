@@ -2,8 +2,6 @@
 // IR assembly language.
 package token
 
-import "fmt"
-
 // A Token represents a lexical token of the LLVM IR assembly language.
 type Token struct {
 	// The token type.
@@ -17,11 +15,18 @@ type Token struct {
 }
 
 func (tok Token) String() string {
+	if tok.Kind == EOF {
+		return "EOF"
+	}
+	if !tok.IsValid() {
+		return "<invalid> " + tok.Val
+	}
 	return tok.Val
 }
 
-// Kind is the set of lexical token types of the LLVM IR assembly language.
-type Kind uint8
+// Kind is the set of lexical token types of the LLVM IR assembly language. A
+// token is lexically invalid if its least significant bit is set.
+type Kind uint16
 
 // NOTE: The token kinds are based on lib/AsmParser/LLToken.h (rev 224917) and
 // docs/LangRef.rst (rev 223189) of LLVM.
@@ -29,8 +34,9 @@ type Kind uint8
 // Token types.
 const (
 	// Special tokens.
-	EOF     Kind = iota // End of file
-	Comment             // ; line comment
+	EOF     Kind = 0         // End of file
+	Invalid Kind = 1         // invalid token (e.g. unterminated string)
+	Comment Kind = iota << 1 // ; line comment
 
 	// Identifiers.
 	Type        // TODO: Verify usage and add example (e.g. %mytype, TyVal or i32, void, iN, half, float, double, fp128, x86_fp80, ppc_fp128, x86_mmx, etc...) (void, half, float, double, x86_fp80, fp128, ppc_fp128, label, metadata, x86_mmx)
@@ -66,7 +72,7 @@ const (
 
 	// Constants.
 	Int    // 12345
-	Float  // 123.45
+	Float  // 123.45, 1.2345e+2
 	String // "foo"
 
 	keywordStart
@@ -387,15 +393,23 @@ const (
 // names specifies the name of each token type.
 var names = [...]string{
 	// Special.
+	EOF:     "EOF",
 	Comment: "comment",
+
+	// TODO: Add names for the other token types.
 }
 
 func (kind Kind) String() string {
-	s, ok := names[kind]
-	if !ok {
-		return fmt.Sprintf("<unknown token kind: %d>", int(kind))
+	if !kind.IsValid() {
+		kind &^= Invalid
+		return "<invalid> " + names[kind]
 	}
-	return s
+	return names[kind]
+}
+
+// IsValid returns true if the token is lexically valid, and false otherwise.
+func (kind Kind) IsValid() bool {
+	return kind&Invalid == 0
 }
 
 // IsKeyword returns true if kind is a keyword, and false otherwise.
