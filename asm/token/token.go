@@ -18,15 +18,11 @@ func (tok Token) String() string {
 	if tok.Kind == EOF {
 		return "EOF"
 	}
-	if !tok.IsValid() {
-		return "<invalid> " + tok.Val
-	}
 	return tok.Val
 }
 
-// Kind is the set of lexical token types of the LLVM IR assembly language. A
-// token is lexically invalid if its least significant bit is set.
-type Kind uint16
+// Kind is the set of lexical token types of the LLVM IR assembly language.
+type Kind uint8
 
 // NOTE: The token kinds are based on lib/AsmParser/LLToken.h (rev 224917) and
 // docs/LangRef.rst (rev 223189) of LLVM.
@@ -34,9 +30,9 @@ type Kind uint16
 // Token types.
 const (
 	// Special tokens.
-	EOF     Kind = 0         // End of file
-	Invalid Kind = 1         // invalid token (e.g. unterminated string)
-	Comment Kind = iota << 1 // ; line comment
+	Error   Kind = iota // Token value holds error message (e.g. unterminated string)
+	EOF                 // End of file
+	Comment             // ; line comment
 
 	// Identifiers.
 	Type        // TODO: Verify usage and add example (e.g. %mytype, TyVal or i32, void, iN, half, float, double, fp128, x86_fp80, ppc_fp128, x86_mmx, etc...) (void, half, float, double, x86_fp80, fp128, ppc_fp128, label, metadata, x86_mmx)
@@ -393,6 +389,7 @@ const (
 // names specifies the name of each token type.
 var names = [...]string{
 	// Special.
+	Error:   "error",
 	EOF:     "EOF",
 	Comment: "comment",
 
@@ -400,16 +397,10 @@ var names = [...]string{
 }
 
 func (kind Kind) String() string {
-	if !kind.IsValid() {
-		kind &^= Invalid
-		return "<invalid> " + names[kind]
+	if int(kind) < len(names) {
+		return names[kind]
 	}
-	return names[kind]
-}
-
-// IsValid returns true if the token is lexically valid, and false otherwise.
-func (kind Kind) IsValid() bool {
-	return kind&Invalid == 0
+	return "<unknown token type>"
 }
 
 // IsKeyword returns true if kind is a keyword, and false otherwise.
@@ -435,6 +426,6 @@ func (kind Kind) IsInstruction() bool {
 // IsLiteral returns true if kind is an identifier or a basic literal, and false
 // otherwise.
 func (kind Kind) IsLiteral() bool {
-	return Ident < kind && kind < String
+	return literalStart < kind && kind < literalEnd
 }
 */
