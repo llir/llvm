@@ -3,7 +3,8 @@
 //
 // [1]: https://www.youtube.com/watch?v=HxaD_trXwRE
 
-// Package lexer implements lexical tokenization of Go source code.
+// Package lexer implements lexical tokenization of the LLVM IR assembly
+// language.
 package lexer
 
 import (
@@ -11,19 +12,17 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/mewlang/go/token"
+	"github.com/mewlang/llvm/asm/token"
 )
 
 // Parse lexes the input string into a slice of tokens. The underlying type of
 // the returned error is ErrorList, and it contains a list of errors that
-// occurred while lexing. ErrorList implements the error interface by returning
-// the first error of the list from its Error method. Use type assertion to gain
-// access to the entire list of errors.
-func Parse(input string) (tokens []token.Token, err error) {
+// occurred while lexing.
+func Parse(input string) ([]token.Token, error) {
 	l := &lexer{
 		input: input,
-		// The average token size of the Go standard library is approximately 5
-		// bytes.
+		// TODO: Check the average token size of general LLVM IR assembly; using 5
+		// for now.
 		tokens: make([]token.Token, 0, len(input)/5),
 	}
 
@@ -69,10 +68,7 @@ type lexer struct {
 	startCol, col, prevCol int
 	// A slice of scanned tokens.
 	tokens []token.Token
-	// Index to the first token of the current line; used by insertSemicolon.
-	first int
-	// A list of errors that occurred while lexing. It implements the error
-	// interface by returning the first error of the list from its Error method.
+	// A list of errors that occurred while lexing.
 	errs ErrorList
 }
 
@@ -110,14 +106,8 @@ func (l *lexer) emitCustom(kind token.Kind, val string) {
 	l.startLine, l.startCol = l.line, l.col
 }
 
-const (
-	// eof is the rune returned by next when no more input is available.
-	eof = -1
-	// bom is the UTF-8-encoded byte order mark.
-	bom = '\ufeff'
-	// nul is the NUL character.
-	nul = '\x00'
-)
+// eof is the rune returned by next when no more input is available.
+const eof = -1
 
 // next consumes and returns the next rune of the input.
 func (l *lexer) next() (r rune) {
@@ -127,27 +117,7 @@ func (l *lexer) next() (r rune) {
 	}
 	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
 	l.pos += l.width
-	switch r {
-	case bom:
-		// For compatibility with other tools, a compiler may ignore a
-		// UTF-8-encoded byte order mark (U+FEFF) if it is the first Unicode code
-		// point in the source text. A byte order mark may be disallowed anywhere
-		// else in the source.
-		//
-		// ref: http://golang.org/ref/spec#Source_code_representation
-		if l.pos == 3 {
-			// Ignore a UTF-8-encoded byte order mark (U+FEFF) if it is the first
-			// Unicode code point in the source text.
-			l.ignore()
-			return l.next()
-		}
-		// A byte order mark is disallowed anywhere else in the source.
-		l.errorf("illegal byte order mark")
-	case nul:
-		// For compatibility with other tools, a compiler may disallow the NUL
-		// character (U+0000) in the source text.
-		l.errorf("illegal NUL character")
-	case utf8.RuneError:
+	if r == utf8.RuneError {
 		l.errorf("illegal UTF-8 encoding")
 	}
 	// TODO(u): Find a cleaner way to handle line:column tracking. The current
@@ -164,6 +134,11 @@ func (l *lexer) next() (r rune) {
 // backup backs up one rune in the input. It can only be called once per call to
 // next.
 func (l *lexer) backup() {
+	// TODO(u): Remove this safty net after the implementation has been
+	// thoroughly tested.
+	if l.width == 0 {
+		panic("backup called with no matching call to next")
+	}
 	l.pos -= l.width
 	l.width = 0
 	if l.col == 0 {
