@@ -21,6 +21,8 @@ func (tok Token) String() string {
 	return tok.Val
 }
 
+//go:generate stringer -type Kind
+
 // Kind is the set of lexical token types of the LLVM IR assembly language.
 type Kind uint8
 
@@ -385,23 +387,6 @@ const (
 
 	keywordEnd
 )
-
-// names specifies the name of each token type.
-var names = [...]string{
-	// Special.
-	Error:   "error",
-	EOF:     "EOF",
-	Comment: "comment",
-
-	// TODO: Add names for the other token types.
-}
-
-func (kind Kind) String() string {
-	if int(kind) < len(names) {
-		return names[kind]
-	}
-	return "<unknown token type>"
-}
 
 // IsKeyword returns true if kind is a keyword, and false otherwise.
 func (kind Kind) IsKeyword() bool {
