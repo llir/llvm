@@ -1,5 +1,7 @@
 package lexer
 
+import "unicode/utf8"
+
 // TODO: Optimize lexString and lexComment using strings.IndexAny.
 
 const (
@@ -22,5 +24,15 @@ type stateFn func(l *lexer) stateFn
 // lexToken lexes a token of the LLVM IR assembly language. It is the initial
 // state function of the lexer.
 func lexToken(l *lexer) stateFn {
+	r := l.next()
+	switch r {
+	case eof:
+		l.emitEOF()
+		return nil
+	case utf8.RuneError:
+		// Append error but continue lexing.
+		l.errorf("illegal UTF-8 encoding")
+		return lexToken
+	}
 	panic("not yet implemented.")
 }

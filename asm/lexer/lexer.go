@@ -15,10 +15,8 @@ import (
 	"github.com/mewlang/llvm/asm/token"
 )
 
-// Parse lexes the input string into a slice of tokens. The underlying type of
-// the returned error is ErrorList, and it contains a list of errors that
-// occurred while lexing.
-func Parse(input string) ([]token.Token, error) {
+// Parse lexes the input string into a slice of tokens.
+func Parse(input string) []token.Token {
 	l := &lexer{
 		input: input,
 		// TODO: Check the average token size of general LLVM IR assembly; using 5
@@ -29,23 +27,7 @@ func Parse(input string) ([]token.Token, error) {
 	// Tokenize the input.
 	l.lex()
 
-	if len(l.errs) > 0 {
-		return l.tokens, l.errs
-	}
-	return l.tokens, nil
-}
-
-// ErrorList is a list of errors which implements the error interface. It does
-// so by returning the first error of the list from its Error method.
-type ErrorList []error
-
-// Error returns the first error of the list, or an empty string if the list is
-// empty.
-func (errs ErrorList) Error() string {
-	if len(errs) > 0 {
-		return errs[0].Error()
-	}
-	return ""
+	return l.tokens
 }
 
 // A lexer lexes an input string into a slice of tokens. While breaking the
@@ -68,8 +50,6 @@ type lexer struct {
 	startCol, col, prevCol int
 	// A slice of scanned tokens.
 	tokens []token.Token
-	// A list of errors that occurred while lexing.
-	errs ErrorList
 }
 
 // lex lexes the input by repeatedly executing the active state function until
@@ -81,19 +61,39 @@ func (l *lexer) lex() {
 	}
 }
 
-// errorf appends an error to the error list.
+// errorf emits an error token at the current position and advances the token
+// start position.
 func (l *lexer) errorf(format string, args ...interface{}) {
-	err := fmt.Errorf(format, args...)
-	l.errs = append(l.errs, err)
+	err := fmt.Sprintf(format, args...)
+	tok := token.Token{
+		Kind: token.Error,
+		Val:  err,
+		Line: l.line + 1,
+		Col:  l.col + 1,
+	}
+	l.tokens = append(l.tokens, tok)
+	l.start = l.pos
+	l.startLine, l.startCol = l.line, l.col
 }
 
-// emit emits a token of the specified token type and advances the token start
-// position.
+// emit emits a token of the specified token type at the current token start
+// position and advances the token start position.
 func (l *lexer) emit(kind token.Kind) {
 	l.emitCustom(kind, l.input[l.start:l.pos])
 }
 
-// emitCustom emits a custom token and advances the token start position.
+// emitEOF emits an EOF token at the current token start position. It emits an
+// "unexpected EOF" error token if there exists unhandled input.
+func (l *lexer) emitEOF() {
+	if l.start < len(l.input) {
+		l.errorf("unexpected EOF; unhandled input %q", l.input[l.start:l.pos])
+		return
+	}
+	l.emit(token.EOF)
+}
+
+// emitCustom emits a custom token at the current token start position and
+// advances the token start position.
 func (l *lexer) emitCustom(kind token.Kind, val string) {
 	tok := token.Token{
 		Kind: kind,
@@ -117,9 +117,6 @@ func (l *lexer) next() (r rune) {
 	}
 	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
 	l.pos += l.width
-	if r == utf8.RuneError {
-		l.errorf("illegal UTF-8 encoding")
-	}
 	// TODO(u): Find a cleaner way to handle line:column tracking. The current
 	// implementation requires five different struct fields.
 	if r == '\n' {
