@@ -61,8 +61,7 @@ func (l *lexer) lex() {
 	}
 }
 
-// errorf emits an error token at the current position and advances the token
-// start position.
+// errorf appends an error token at the current position.
 func (l *lexer) errorf(format string, args ...interface{}) {
 	err := fmt.Sprintf(format, args...)
 	tok := token.Token{
@@ -72,8 +71,20 @@ func (l *lexer) errorf(format string, args ...interface{}) {
 		Col:  l.col + 1,
 	}
 	l.tokens = append(l.tokens, tok)
-	l.start = l.pos
-	l.startLine, l.startCol = l.line, l.col
+}
+
+// emitErrorf emits an error token at the current position and advances the
+// token start position.
+func (l *lexer) emitErrorf(format string, args ...interface{}) {
+	err := fmt.Sprintf(format, args...)
+	tok := token.Token{
+		Kind: token.Error,
+		Val:  err,
+		Line: l.line + 1,
+		Col:  l.col + 1,
+	}
+	l.tokens = append(l.tokens, tok)
+	l.ignore()
 }
 
 // emit emits a token of the specified token type at the current token start
@@ -102,8 +113,8 @@ func (l *lexer) emitCustom(kind token.Kind, val string) {
 		Col:  l.startCol + 1,
 	}
 	l.tokens = append(l.tokens, tok)
-	l.start = l.pos
-	l.startLine, l.startCol = l.line, l.col
+	// Advance the token start position.
+	l.ignore()
 }
 
 // eof is the rune returned by next when no more input is available.
@@ -170,7 +181,8 @@ func (l *lexer) acceptRun(valid string) bool {
 	return consumed
 }
 
-// ignore ignores any pending input read since the last token.
+// ignore ignores any pending input read since the last token by advancing the
+// token start position to the current position.
 func (l *lexer) ignore() {
 	l.start = l.pos
 	l.startLine, l.startCol = l.line, l.col
