@@ -76,14 +76,7 @@ func (l *lexer) errorf(format string, args ...interface{}) {
 // emitErrorf emits an error token at the current position and advances the
 // token start position.
 func (l *lexer) emitErrorf(format string, args ...interface{}) {
-	err := fmt.Sprintf(format, args...)
-	tok := token.Token{
-		Kind: token.Error,
-		Val:  err,
-		Line: l.line + 1,
-		Col:  l.col + 1,
-	}
-	l.tokens = append(l.tokens, tok)
+	l.errorf(format, args...)
 	l.ignore()
 }
 

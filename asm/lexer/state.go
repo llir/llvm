@@ -7,8 +7,6 @@ import (
 	"github.com/mewlang/llvm/asm/token"
 )
 
-// TODO: Optimize lexString and lexComment using strings.IndexAny.
-
 const (
 	// TODO: Check which whitespace characters are valid in LLVM IR assembly.
 
@@ -43,8 +41,59 @@ func lexToken(l *lexer) stateFn {
 		return lexComment
 
 		// Identifiers.
+		// TODO: Handle identifiers.
+
+	// Operators and delimiters.
+	case '.':
+		// Try to consume two more dots and restore position if unable.
+		pos := l.pos
+		if l.accept(".") && l.accept(".") {
+			l.emit(token.Ellipsis)
+			return lexToken
+		}
+		l.pos = pos
+	case '=':
+		l.emit(token.Equal)
+		return lexToken
+	case ',':
+		l.emit(token.Comma)
+		return lexToken
+	case '*':
+		l.emit(token.Star)
+		return lexToken
+	case '[':
+		l.emit(token.Lbrack)
+		return lexToken
+	case ']':
+		l.emit(token.Rbrack)
+		return lexToken
+	case '{':
+		l.emit(token.Lbrace)
+		return lexToken
+	case '}':
+		l.emit(token.Rbrace)
+		return lexToken
+	case '(':
+		l.emit(token.Lparen)
+		return lexToken
+	case ')':
+		l.emit(token.Rparen)
+		return lexToken
+	case '<':
+		l.emit(token.Less)
+		return lexToken
+	case '>':
+		l.emit(token.Greater)
+		return lexToken
+	case '!':
+		return lexExclaim
+	case '#':
+		return lexAttrID
 	}
-	panic("not yet implemented.")
+
+	// Emit error token but continue lexing next token.
+	l.emitErrorf("invalid token starting with %q", r)
+	return lexToken
 }
 
 // lexComment lexes a line comment which acts like a newline. A semicolon (;)
@@ -66,5 +115,16 @@ func lexComment(l *lexer) stateFn {
 			return lexToken
 		}
 	}
-	return lexToken
+}
+
+// lexExclaim lexes an exclamation mark (!) or a metadata variable (!foo). An
+// exclamation mark (!) has already been consumed.
+func lexExclaim(l *lexer) stateFn {
+	panic("not yet implemented.")
+}
+
+// lexAttrID lexes an attribute ID (#42). A hash character (#) has already been
+// consumed.
+func lexAttrID(l *lexer) stateFn {
+	panic("not yet implemented.")
 }
