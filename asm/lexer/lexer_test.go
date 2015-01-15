@@ -42,6 +42,26 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Line: 1, Col: 25},
 			},
 		},
+		// i=3
+		{
+			input: "...=,*[]{}()<>!",
+			want: []token.Token{
+				{Kind: token.Ellipsis, Val: "...", Line: 1, Col: 1},
+				{Kind: token.Equal, Val: "=", Line: 1, Col: 4},
+				{Kind: token.Comma, Val: ",", Line: 1, Col: 5},
+				{Kind: token.Star, Val: "*", Line: 1, Col: 6},
+				{Kind: token.Lbrack, Val: "[", Line: 1, Col: 7},
+				{Kind: token.Rbrack, Val: "]", Line: 1, Col: 8},
+				{Kind: token.Lbrace, Val: "{", Line: 1, Col: 9},
+				{Kind: token.Rbrace, Val: "}", Line: 1, Col: 10},
+				{Kind: token.Lparen, Val: "(", Line: 1, Col: 11},
+				{Kind: token.Rparen, Val: ")", Line: 1, Col: 12},
+				{Kind: token.Less, Val: "<", Line: 1, Col: 13},
+				{Kind: token.Greater, Val: ">", Line: 1, Col: 14},
+				{Kind: token.Exclaim, Val: "!", Line: 1, Col: 15},
+				{Kind: token.EOF, Line: 1, Col: 16},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
