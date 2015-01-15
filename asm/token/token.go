@@ -40,9 +40,9 @@ const (
 	Type        // iN, void, half, float, double, x86_fp80, fp128, ppc_fp128, x86_mmx, label, metadata
 	Label       // foo:
 	GlobalVar   // @foo, @"foo"
-	ComdatVar   // $foo
 	LocalVar    // %foo, %"foo"
 	MetadataVar // !foo
+	ComdatVar   // $foo
 	GlobalID    // @42
 	LocalID     // %42
 	AttrID      // #42
@@ -67,8 +67,8 @@ const (
 	operatorEnd
 
 	// Constants.
-	Int    // 12345
-	Float  // 123.45, 1.2345e+2
+	Int    // 12345, [us]0x[0-9A-Fa-f]+
+	Float  // 123.45, 1.2345e+2, 0x[0-9A-Fa-f]+
 	String // "foo"
 
 	keywordStart
