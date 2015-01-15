@@ -12,11 +12,20 @@ func TestParse(t *testing.T) {
 		input string
 		want  []token.Token
 	}{
+		// i=0
 		{
 			input: ",",
 			want: []token.Token{
 				{Kind: token.Comma, Val: ",", Line: 1, Col: 1},
 				{Kind: token.EOF, Line: 1, Col: 2},
+			},
+		},
+		// i=1
+		{
+			input: "+0.314e+1",
+			want: []token.Token{
+				{Kind: token.Float, Val: "+0.314e+1", Line: 1, Col: 1},
+				{Kind: token.EOF, Line: 1, Col: 10},
 			},
 		},
 	}

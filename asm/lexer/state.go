@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"log"
 	"strings"
 	"unicode/utf8"
 
@@ -152,7 +153,8 @@ func lexComment(l *lexer) stateFn {
 //    GlobalVar = @"[^"]*"   (may contain hex escapes)
 //    GlobalID  = @[0-9]+
 func lexAt(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexAt: not yet implemented.")
+	return nil
 }
 
 // lexPercent lexes a local variable (%foo, %"foo") or a local ID (%42). A
@@ -162,7 +164,8 @@ func lexAt(l *lexer) stateFn {
 //    LocalVar = %"[^"]*"   (may contain hex escapes)
 //    LocalID  = %[0-9]+
 func lexPercent(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexPercent: not yet implemented.")
+	return nil
 }
 
 // lexExclaim lexes an exclamation mark (!) or a metadata variable (!foo). An
@@ -171,7 +174,8 @@ func lexPercent(l *lexer) stateFn {
 //    Exclaim     = !
 //    MetadataVar = ![-a-zA-Z$._][-a-zA-Z$._0-9]*   (may contain hex escapes)
 func lexExclaim(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexExclaim: not yet implemented.")
+	return nil
 }
 
 // lexDollar lexes an COMDAT variable ($foo) or a label ($foo:). A dollar sign
@@ -181,7 +185,8 @@ func lexExclaim(l *lexer) stateFn {
 //    ComdatVar = $"[^"]*"   (may contain hex escapes)
 //    Label     = [-a-zA-Z$._0-9]+:
 func lexDollar(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexDollar: not yet implemented.")
+	return nil
 }
 
 // lexHash lexes an attribute ID (#42). A hash character (#) has already been
@@ -189,7 +194,8 @@ func lexDollar(l *lexer) stateFn {
 //
 //    AttrID = #[0-9]+
 func lexHash(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexHash: not yet implemented.")
+	return nil
 }
 
 // lexDot lexes an ellipsis (...) or a label (.foo:). A dot (.) has already been
@@ -218,7 +224,8 @@ func lexDot(l *lexer) stateFn {
 //    Label  = "[^"]+":   (may contain hex escapes)
 //    String = "[^"]*"   (may contain hex escapes)
 func lexQuote(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexQuote: not yet implemented.")
+	return nil
 }
 
 // lexLetter lexes a label (foo:, _foo:), a type (i32, float), a keyword (add,
@@ -231,7 +238,8 @@ func lexQuote(l *lexer) stateFn {
 //    Keyword = add, x, …
 //    HexInt  = [us]0x[0-9A-Fa-f]+
 func lexLetter(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexLetter: not yet implemented.")
+	return nil
 }
 
 // lexDigitOrSign lexes a label (42:, -foo:), an integer constant (42, -42), a
@@ -254,7 +262,8 @@ func lexLetter(l *lexer) stateFn {
 //
 //    [1] http://llvm.org/docs/LangRef.html#simple-constants
 func lexDigitOrSign(l *lexer) stateFn {
-	panic("not yet implemented.")
+	log.Println("lexDigitOrSign: not yet implemented.")
+	return nil
 }
 
 // isDigit returns true if r is a digit (0-9), and false otherwise.
