@@ -64,7 +64,6 @@ const (
 	Greater   // >
 	Backslash // \
 	Exclaim   // !
-	Hash      // #
 
 	operatorEnd
 
