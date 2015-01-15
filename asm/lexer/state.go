@@ -109,9 +109,9 @@ func lexToken(l *lexer) stateFn {
 	}
 
 	// Lex label, type, keyword or hexadecimal integer constant.
-	if isAlpha(r) {
+	if r == '_' || isAlpha(r) {
 		l.backup()
-		return lexAlpha // foo:, i32, void, add, u0x10
+		return lexLetter // foo:, _foo:, i32, void, add, u0x10
 	}
 
 	// Emit error token but continue lexing next token.
@@ -149,7 +149,7 @@ func lexComment(l *lexer) stateFn {
 // character (@) has already been consumed.
 //
 //    GlobalVar = @[-a-zA-Z$._][-a-zA-Z$._0-9]*
-//    GlobalVar = @"[^"]*"
+//    GlobalVar = @"[^"]*"   (may contain hex escapes)
 //    GlobalID  = @[0-9]+
 func lexAt(l *lexer) stateFn {
 	panic("not yet implemented.")
@@ -159,7 +159,7 @@ func lexAt(l *lexer) stateFn {
 // percent character (%) has already been consumed.
 //
 //    LocalVar = %[-a-zA-Z$._][-a-zA-Z$._0-9]*
-//    LocalVar = %"[^"]*"
+//    LocalVar = %"[^"]*"   (may contain hex escapes)
 //    LocalID  = %[0-9]+
 func lexPercent(l *lexer) stateFn {
 	panic("not yet implemented.")
@@ -178,7 +178,7 @@ func lexExclaim(l *lexer) stateFn {
 // ($) has already been consumed.
 //
 //    ComdatVar = $[-a-zA-Z$._][-a-zA-Z$._0-9]*
-//    ComdatVar = $"[^"]*"
+//    ComdatVar = $"[^"]*"   (may contain hex escapes)
 //    Label     = [-a-zA-Z$._0-9]+:
 func lexDollar(l *lexer) stateFn {
 	panic("not yet implemented.")
@@ -215,34 +215,44 @@ func lexDot(l *lexer) stateFn {
 // lexQuote lexes a string constant ("foo") or a quoted label ("foo":). A double
 // quote (") has already been consumed.
 //
-//    Label  = "[^"]+":
-//    String = "[^"]*"
+//    Label  = "[^"]+":   (may contain hex escapes)
+//    String = "[^"]*"   (may contain hex escapes)
 func lexQuote(l *lexer) stateFn {
 	panic("not yet implemented.")
 }
 
-// lexAlpha lexes a label (foo:), a type (i32, float), a keyword (add, x) or a
-// hexadecimal integer constant (u0x10). The next character is an alphabetic
-// character (a-z or A-Z).
+// lexLetter lexes a label (foo:, _foo:), a type (i32, float), a keyword (add,
+// x) or a hexadecimal integer constant (u0x10). The next character is either an
+// alphabetic character (a-z or A-Z) or an underscore (_).
 //
 //    Label   = [-a-zA-Z$._0-9]+:
 //    Type    = i[0-9]+
 //    Type    = float, void, …
 //    Keyword = add, x, …
 //    HexInt  = [us]0x[0-9A-Fa-f]+
-func lexAlpha(l *lexer) stateFn {
+func lexLetter(l *lexer) stateFn {
 	panic("not yet implemented.")
 }
 
 // lexDigitOrSign lexes a label (42:, -foo:), an integer constant (42, -42), a
 // floating-point constant (+0.314e+1) or a hexadecimal floating-point constant
-// (0x1e, 0xK1e, 0xL1e, 0xM1e). The next character is either a digit or a sign
-// character (+ or -).
+// (0x1e, 0xK1e, 0xL1e, 0xM1e, 0xH1e). The next character is either a digit or a
+// sign character (+ or -).
 //
 //    Label    = [-a-zA-Z$._0-9]+:
 //    Int      = [-]?[0-9]+
 //    Float    = [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
-//    HexFloat = 0x[KLM]?[0-9A-Fa-f]+
+//    HexFloat = 0x[KLMH]?[0-9A-Fa-f]+
+//
+// The 80-bit format used by x86 is represented as 0xK followed by 20
+// hexadecimal digits. The 128-bit format used by PowerPC (two adjacent doubles)
+// is represented by 0xM followed by 32 hexadecimal digits. The IEEE 128-bit
+// format is represented by 0xL followed by 32 hexadecimal digits. The IEEE
+// 16-bit format (half precision) is represented by 0xH followed by 4
+// hexadecimal digits. All hexadecimal formats are big-endian (sign bit at the
+// left). [1]
+//
+//    [1] http://llvm.org/docs/LangRef.html#simple-constants
 func lexDigitOrSign(l *lexer) stateFn {
 	panic("not yet implemented.")
 }
