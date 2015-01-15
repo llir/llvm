@@ -50,20 +50,19 @@ const (
 	operatorStart
 
 	// Operators and delimiters.
-	Ellipsis  // ...
-	Equal     // =
-	Comma     // ,
-	Star      // *
-	Lbrack    // [
-	Rbrack    // ]
-	Lbrace    // {
-	Rbrace    // }
-	Lparen    // (
-	Rparen    // )
-	Less      // <
-	Greater   // >
-	Backslash // \
-	Exclaim   // !
+	Ellipsis // ...
+	Equal    // =
+	Comma    // ,
+	Star     // *
+	Lbrack   // [
+	Rbrack   // ]
+	Lbrace   // {
+	Rbrace   // }
+	Lparen   // (
+	Rparen   // )
+	Less     // <
+	Greater  // >
+	Exclaim  // !
 
 	operatorEnd
 
