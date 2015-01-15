@@ -107,6 +107,36 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Line: 1, Col: 23},
 			},
 		},
+		// i=8
+		{
+			input: "42:-foo:0x1e",
+			want: []token.Token{
+				{Kind: token.Label, Val: "42", Line: 1, Col: 1},
+				{Kind: token.Label, Val: "-foo", Line: 1, Col: 4},
+				{Kind: token.Float, Val: "0x1e", Line: 1, Col: 9},
+				{Kind: token.EOF, Line: 1, Col: 13},
+			},
+		},
+		// i=9
+		{
+			input: "0xK1e 0xL1e 0xM1e 0xH1e",
+			want: []token.Token{
+				{Kind: token.Float, Val: "0xK1e", Line: 1, Col: 1},
+				{Kind: token.Float, Val: "0xL1e", Line: 1, Col: 7},
+				{Kind: token.Float, Val: "0xM1e", Line: 1, Col: 13},
+				{Kind: token.Float, Val: "0xH1e", Line: 1, Col: 19},
+				{Kind: token.EOF, Line: 1, Col: 24},
+			},
+		},
+		// i=10
+		{
+			input: "37-42",
+			want: []token.Token{
+				{Kind: token.Int, Val: "37", Line: 1, Col: 1},
+				{Kind: token.Int, Val: "-42", Line: 1, Col: 7},
+				{Kind: token.EOF, Line: 1, Col: 24},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
