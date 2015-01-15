@@ -50,13 +50,13 @@ func lexToken(l *lexer) stateFn {
 
 	// Identifiers.
 	case '@':
-		return lexAt // @foo, @"foo", @42
+		return lexAt // @foo, @"fo\6F", @42
 	case '%':
-		return lexPercent // %foo, %"foo", %42
+		return lexPercent // %foo, %"fo\6F", %42
 	case '!':
-		return lexExclaim // !, !foo
+		return lexExclaim // !, !foo, !foo\2A
 	case '$':
-		return lexDollar // $foo, $foo:
+		return lexDollar // $foo, $"fo\6F", $foo:
 	case '#':
 		return lexHash // #42
 
@@ -99,7 +99,7 @@ func lexToken(l *lexer) stateFn {
 
 	// Constants.
 	case '"':
-		return lexQuote // "foo:", "foo"
+		return lexQuote // "fo\6F:", "fo\6F"
 	}
 
 	// Lex label, integer constant, floating-point constant or hexadecimal
@@ -146,7 +146,7 @@ func lexComment(l *lexer) stateFn {
 	}
 }
 
-// lexAt lexes a global variable (@foo, @"foo") or a global ID (@42). An at
+// lexAt lexes a global variable (@foo, @"fo\6F") or a global ID (@42). An at
 // character (@) has already been consumed.
 //
 //    GlobalVar = @[-a-zA-Z$._][-a-zA-Z$._0-9]*
@@ -157,7 +157,7 @@ func lexAt(l *lexer) stateFn {
 	return nil
 }
 
-// lexPercent lexes a local variable (%foo, %"foo") or a local ID (%42). A
+// lexPercent lexes a local variable (%foo, %"fo\6F") or a local ID (%42). A
 // percent character (%) has already been consumed.
 //
 //    LocalVar = %[-a-zA-Z$._][-a-zA-Z$._0-9]*
@@ -168,8 +168,8 @@ func lexPercent(l *lexer) stateFn {
 	return nil
 }
 
-// lexExclaim lexes an exclamation mark (!) or a metadata variable (!foo). An
-// exclamation mark (!) has already been consumed.
+// lexExclaim lexes an exclamation mark (!) or a metadata variable (!foo,
+// !foo\2A). An exclamation mark (!) has already been consumed.
 //
 //    Exclaim     = !
 //    MetadataVar = ![-a-zA-Z$._][-a-zA-Z$._0-9]*   (may contain hex escapes)
@@ -178,8 +178,8 @@ func lexExclaim(l *lexer) stateFn {
 	return nil
 }
 
-// lexDollar lexes an COMDAT variable ($foo) or a label ($foo:). A dollar sign
-// ($) has already been consumed.
+// lexDollar lexes an COMDAT variable ($foo, $"fo\6F") or a label ($foo:). A
+// dollar sign ($) has already been consumed.
 //
 //    ComdatVar = $[-a-zA-Z$._][-a-zA-Z$._0-9]*
 //    ComdatVar = $"[^"]*"   (may contain hex escapes)
@@ -218,8 +218,8 @@ func lexDot(l *lexer) stateFn {
 	return lexToken
 }
 
-// lexQuote lexes a string constant ("foo") or a quoted label ("foo":). A double
-// quote (") has already been consumed.
+// lexQuote lexes a string constant ("fo\6F") or a quoted label ("fo\6F":). A
+// double quote (") has already been consumed.
 //
 //    Label  = "[^"]+":   (may contain hex escapes)
 //    String = "[^"]*"   (may contain hex escapes)

@@ -62,6 +62,19 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Line: 1, Col: 16},
 			},
 		},
+		// i=4
+		{
+			input: `"fo\6F":"fo\6F"@"fo\6F"%"fo\6F"$"fo\6F"!fo\6F`,
+			want: []token.Token{
+				{Kind: token.Label, Val: "foo", Line: 1, Col: 1},
+				{Kind: token.String, Val: "foo", Line: 1, Col: 9},
+				{Kind: token.GlobalVar, Val: "foo", Line: 1, Col: 16},
+				{Kind: token.LocalVar, Val: "foo", Line: 1, Col: 24},
+				{Kind: token.ComdatVar, Val: "foo", Line: 1, Col: 32},
+				{Kind: token.MetadataVar, Val: "foo", Line: 1, Col: 40},
+				{Kind: token.EOF, Line: 1, Col: 46},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)

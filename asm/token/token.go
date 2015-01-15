@@ -38,11 +38,11 @@ const (
 
 	// Identifiers.
 	Type        // iN, void, half, float, double, x86_fp80, fp128, ppc_fp128, x86_mmx, label, metadata
-	Label       // foo:
-	GlobalVar   // @foo, @"foo"
-	LocalVar    // %foo, %"foo"
-	MetadataVar // !foo
-	ComdatVar   // $foo
+	Label       // foo:, "fo\6F":, .42$foo:
+	GlobalVar   // @foo, @"fo\6F"
+	LocalVar    // %foo, %"fo\6F"
+	MetadataVar // !foo, !fo\6F
+	ComdatVar   // $foo, $"fo\6F"
 	GlobalID    // @42
 	LocalID     // %42
 	AttrID      // #42
