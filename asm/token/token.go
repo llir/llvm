@@ -37,7 +37,7 @@ const (
 	Comment             // ; line comment
 
 	// Identifiers.
-	Type        // TODO: Verify usage and add example (e.g. %mytype, TyVal or i32, void, iN, half, float, double, fp128, x86_fp80, ppc_fp128, x86_mmx, etc...) (void, half, float, double, x86_fp80, fp128, ppc_fp128, label, metadata, x86_mmx)
+	Type        // iN, void, half, float, double, x86_fp80, fp128, ppc_fp128, x86_mmx, label, metadata
 	Label       // foo:
 	GlobalVar   // @foo, @"foo"
 	ComdatVar   // $foo
