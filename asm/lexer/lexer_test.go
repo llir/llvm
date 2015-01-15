@@ -32,13 +32,13 @@ func TestParse(t *testing.T) {
 		{
 			input: "@foo%bar$baz!qux@42%37#7",
 			want: []token.Token{
-				{Kind: token.GlobalVar, Val: "@foo", Line: 1, Col: 1},
-				{Kind: token.LocalVar, Val: "%bar", Line: 1, Col: 5},
-				{Kind: token.ComdatVar, Val: "$baz", Line: 1, Col: 9},
-				{Kind: token.MetadataVar, Val: "!qux", Line: 1, Col: 13},
-				{Kind: token.GlobalID, Val: "@42", Line: 1, Col: 17},
-				{Kind: token.LocalID, Val: "%37", Line: 1, Col: 20},
-				{Kind: token.AttrID, Val: "#7", Line: 1, Col: 23},
+				{Kind: token.GlobalVar, Val: "foo", Line: 1, Col: 1},
+				{Kind: token.LocalVar, Val: "bar", Line: 1, Col: 5},
+				{Kind: token.ComdatVar, Val: "baz", Line: 1, Col: 9},
+				{Kind: token.MetadataVar, Val: "qux", Line: 1, Col: 13},
+				{Kind: token.GlobalID, Val: "42", Line: 1, Col: 17},
+				{Kind: token.LocalID, Val: "37", Line: 1, Col: 20},
+				{Kind: token.AttrID, Val: "7", Line: 1, Col: 23},
 				{Kind: token.EOF, Line: 1, Col: 25},
 			},
 		},
@@ -73,6 +73,17 @@ func TestParse(t *testing.T) {
 				{Kind: token.ComdatVar, Val: "foo", Line: 1, Col: 32},
 				{Kind: token.MetadataVar, Val: "foo", Line: 1, Col: 40},
 				{Kind: token.EOF, Line: 1, Col: 46},
+			},
+		},
+		// i=5
+		{
+			input: "!42.0foo:;foo",
+			want: []token.Token{
+				{Kind: token.Exclaim, Val: "!", Line: 1, Col: 1},
+				{Kind: token.Float, Val: "42.0", Line: 1, Col: 2},
+				{Kind: token.Label, Val: "foo", Line: 1, Col: 6},
+				{Kind: token.Comment, Val: "foo", Line: 1, Col: 10},
+				{Kind: token.EOF, Line: 1, Col: 14},
 			},
 		},
 	}
