@@ -36,6 +36,7 @@ func lexToken(l *lexer) stateFn {
 		return lexToken
 	case eof:
 		l.emitEOF()
+		// Terminate the lexer with a nil state function.
 		return nil
 	case ';':
 		return lexComment
@@ -45,13 +46,15 @@ func lexToken(l *lexer) stateFn {
 
 	// Operators and delimiters.
 	case '.':
-		// Try to consume two more dots and restore position if unable.
-		pos := l.pos
-		if l.accept(".") && l.accept(".") {
-			l.emit(token.Ellipsis)
+		if !strings.HasPrefix(l.input[l.pos:], "..") {
+			// Emit error token but continue lexing next token.
+			l.emitErrorf("invalid token starting with %q", r)
 			return lexToken
 		}
-		l.pos = pos
+		l.accept(".")
+		l.accept(".")
+		l.emit(token.Ellipsis)
+		return lexToken
 	case '=':
 		l.emit(token.Equal)
 		return lexToken
@@ -105,7 +108,10 @@ func lexComment(l *lexer) stateFn {
 			// Append error but continue lexing line comment.
 			l.errorf("illegal UTF-8 encoding")
 		case eof:
-			l.emit(token.Comment)
+			// Ignore trailing carriage return characters.
+			s := strings.TrimRight(l.input[l.start:l.pos], "\r")
+			l.emitCustom(token.Comment, s)
+			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		case '\n':
