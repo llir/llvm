@@ -21,8 +21,8 @@ import (
 func Parse(input string) []token.Token {
 	l := &lexer{
 		input: input,
-		// TODO: Check the average token size of general LLVM IR assembly; using 5
-		// for now.
+		// The average token size of LLVM IR is 4.06 (based on the 30000+ tokens
+		// of the c4 compiler project).
 		tokens: make([]token.Token, 0, len(input)/5),
 	}
 
@@ -123,8 +123,6 @@ func (l *lexer) next() (r rune) {
 // backup backs up one rune in the input. It can only be called once per call to
 // next.
 func (l *lexer) backup() {
-	// TODO(u): Remove this safty net after the implementation has been
-	// thoroughly tested.
 	if l.width == 0 {
 		panic("backup called with no matching call to next")
 	}
