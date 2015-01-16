@@ -61,10 +61,11 @@ func (l *lexer) lex() {
 // errorf appends an error token at the current position.
 func (l *lexer) errorf(format string, args ...interface{}) {
 	err := fmt.Sprintf(format, args...)
+	_, width := utf8.DecodeLastRuneInString(l.input[:l.cur])
 	tok := token.Token{
 		Kind: token.Error,
 		Val:  err,
-		Pos:  l.cur, // TODO: Possibly off-by-one. Verify if it should be l.cur-1.
+		Pos:  l.cur - width,
 	}
 	l.tokens = append(l.tokens, tok)
 }
