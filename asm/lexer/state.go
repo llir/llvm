@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"io"
 	"log"
 	"strings"
 	"unicode/utf8"
@@ -21,7 +22,8 @@ const (
 	// identifier.
 	head = alpha + "$-._"
 	// tail is the set of valid characters for the remaining characters of an
-	// identifier (i.e. all characters in the identifier except the first).
+	// identifier (i.e. all characters in the identifier except the first). All
+	// characters of a label may be from the tail set, even the first character.
 	tail = head + decimal
 )
 
@@ -237,7 +239,7 @@ func lexDot(l *lexer) stateFn {
 		l.emitCustom(token.Label, s)
 	default:
 		// Emit error token but continue lexing next token.
-		l.emitErrorf("invalid token starting with '.'")
+		l.emitErrorf("unexpected '.'")
 	}
 
 	return lexToken
@@ -249,8 +251,90 @@ func lexDot(l *lexer) stateFn {
 //    Label  = "[^"]+":   (may contain hex escapes)
 //    String = "[^"]*"   (may contain hex escapes)
 func lexQuote(l *lexer) stateFn {
-	log.Println("lexQuote: not yet implemented.")
-	return nil
+	// Consume a string constant ("foo", "fo\6F").
+	s, err := readString(l)
+	if err != nil {
+		if err == io.ErrUnexpectedEOF {
+			l.emitErrorf("unexpected eof in string constant")
+			// Terminate the lexer with a nil state function.
+			return nil
+		}
+		panic("unreachable")
+	}
+
+	switch {
+	case l.accept(":"):
+		l.emitCustom(token.Label, s)
+	default:
+		l.emitCustom(token.String, s)
+	}
+
+	return lexToken
+}
+
+// readString consumes a string constant ("foo", "fo\6F") and returns its
+// unescaped string value. A double quote (") has already been consumed. The
+// returned error is either nil or io.ErrUnexpectedEOF.
+func readString(l *lexer) (string, error) {
+	// Store start position of the string to skip leading double quote (") and
+	// any token specific characters (e.g. @, %).
+	start := l.cur
+	for {
+		switch l.next() {
+		case eof:
+			return "", io.ErrUnexpectedEOF
+		case utf8.RuneError:
+			// Append error but continue lexing string constant.
+			l.emitErrorf("illegal UTF-8 encoding")
+		case '"':
+			s := l.input[start : l.cur-1] // skip leading and trailing double quotes (")
+			return unescape(s), nil
+		}
+	}
+}
+
+// unescape replaces hexadecimal escape sequences (\xx) in s with their
+// corresponding characters.
+func unescape(s string) string {
+	if !strings.ContainsRune(s, '\\') {
+		return s
+	}
+	j := 0
+	buf := []byte(s)
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		if b == '\\' && i+2 < len(s) {
+			x1, ok := unhex(s[i+1])
+			if ok {
+				x2, ok := unhex(s[i+2])
+				if ok {
+					b = x1<<4 | x2
+					i += 2
+				}
+			}
+		}
+		if i != j {
+			buf[j] = b
+		}
+		j++
+	}
+	return string(buf[:j]) // TODO: Check that the end offset j isn't off-by-one.
+}
+
+// unhex returns the numeric value represented by the hexadecimal digit b. It
+// returns false if b is not a hexadecimal digit.
+func unhex(b byte) (v byte, ok bool) {
+	// This is an adapted copy of the unhex function from the strconv package,
+	// which is goverend by a BSD-style license.
+	switch {
+	case '0' <= b && b <= '9':
+		return b - '0', true
+	case 'a' <= b && b <= 'f':
+		return b - 'a' + 10, true
+	case 'A' <= b && b <= 'F':
+		return b - 'A' + 10, true
+	}
+	return 0, false
 }
 
 // lexLetter lexes a label (foo:, _foo:), a type (i32, float), a keyword (add,
