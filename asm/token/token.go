@@ -8,10 +8,8 @@ type Token struct {
 	Kind
 	// The string value of the token.
 	Val string
-	// Line number, starting at 1.
-	Line int
-	// Column number, starting at 1 (character count).
-	Col int
+	// Start position in the input string.
+	Pos int
 }
 
 func (tok Token) String() string {

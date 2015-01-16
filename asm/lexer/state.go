@@ -132,14 +132,14 @@ func lexComment(l *lexer) stateFn {
 			l.errorf("illegal UTF-8 encoding")
 		case eof:
 			// Ignore trailing carriage return characters.
-			s := strings.TrimRight(l.input[l.start:l.pos], "\r")
+			s := strings.TrimRight(l.input[l.start:l.cur], "\r")
 			l.emitCustom(token.Comment, s)
 			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		case '\n':
 			// Ignore trailing carriage return and newline characters.
-			s := strings.TrimRight(l.input[l.start:l.pos], "\r\n")
+			s := strings.TrimRight(l.input[l.start:l.cur], "\r\n")
 			l.emitCustom(token.Comment, s)
 			return lexToken
 		}
@@ -204,17 +204,42 @@ func lexHash(l *lexer) stateFn {
 //    Ellipsis = ...
 //    Label    = [-a-zA-Z$._0-9]+:
 func lexDot(l *lexer) stateFn {
-	if strings.HasPrefix(l.input[l.pos:], "..") {
-		l.accept(".")
-		l.accept(".")
-		l.emit(token.Ellipsis)
-		return lexToken
+	// Store the current token position.
+	cur := l.cur
+
+	// end and kind tracks the end position and token type of the longest
+	// candidate token respectively.
+	end, kind := l.cur, token.Error
+
+	// Try lexing an ellipsis (...).
+	if l.accept(".") && l.accept(".") {
+		end, kind = l.cur, token.Ellipsis
 	}
 
-	// TODO: Lex label (.foo:).
+	// Restore the current token position.
+	l.cur = cur
 
-	// Emit error token but continue lexing next token.
-	l.emitErrorf("invalid token starting with '.'")
+	// Try lexing a label starting with a dot (.foo:).
+	l.acceptRun(tail)
+	if l.accept(":") && l.cur > end {
+		end, kind = l.cur, token.Label
+	}
+
+	// Set the current position to the end position of the longest candidate
+	// token.
+	l.cur = end
+
+	switch kind {
+	case token.Ellipsis:
+		l.emit(token.Ellipsis)
+	case token.Label:
+		s := l.input[l.start : l.cur-1] // skip trailing colon (:)
+		l.emitCustom(token.Label, s)
+	default:
+		// Emit error token but continue lexing next token.
+		l.emitErrorf("invalid token starting with '.'")
+	}
+
 	return lexToken
 }
 

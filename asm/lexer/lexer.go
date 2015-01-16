@@ -15,7 +15,9 @@ import (
 	"github.com/mewlang/llvm/asm/token"
 )
 
-// Parse lexes the input string into a slice of tokens.
+// Parse lexes the input string into a slice of tokens. While breaking the input
+// into tokens, the next token is the longest sequence of characters that form a
+// valid token.
 func Parse(input string) []token.Token {
 	l := &lexer{
 		input: input,
@@ -30,24 +32,16 @@ func Parse(input string) []token.Token {
 	return l.tokens
 }
 
-// A lexer lexes an input string into a slice of tokens. While breaking the
-// input into tokens, the next token is the longest sequence of characters that
-// form a valid token.
+// A lexer lexes an input string into a slice of tokens.
 type lexer struct {
 	// The input string.
 	input string
 	// Start position of the current token.
 	start int
 	// Current position in the input.
-	pos int
+	cur int
 	// Width in byte of the last rune read with next; used by backup.
 	width int
-	// Start line number of the current token, and current line number in the
-	// input.
-	startLine, line int
-	// Start column number of the current token, and current and previous column
-	// number in the input.
-	startCol, col, prevCol int
 	// A slice of scanned tokens.
 	tokens []token.Token
 }
@@ -61,14 +55,16 @@ func (l *lexer) lex() {
 	}
 }
 
+// TODO: Decide which emit functions should stay (based on usage) after the
+// implementation is mature.
+
 // errorf appends an error token at the current position.
 func (l *lexer) errorf(format string, args ...interface{}) {
 	err := fmt.Sprintf(format, args...)
 	tok := token.Token{
 		Kind: token.Error,
 		Val:  err,
-		Line: l.line + 1,
-		Col:  l.col + 1,
+		Pos:  l.cur, // TODO: Possibly off-by-one. Verify if it should be l.cur-1.
 	}
 	l.tokens = append(l.tokens, tok)
 }
@@ -80,20 +76,20 @@ func (l *lexer) emitErrorf(format string, args ...interface{}) {
 	l.ignore()
 }
 
-// emit emits a token of the specified token type at the current token start
-// position and advances the token start position.
-func (l *lexer) emit(kind token.Kind) {
-	l.emitCustom(kind, l.input[l.start:l.pos])
-}
-
 // emitEOF emits an EOF token at the current token start position. It emits an
 // "unexpected EOF" error token if there exists unhandled input.
 func (l *lexer) emitEOF() {
 	if l.start < len(l.input) {
-		l.errorf("unexpected EOF; unhandled input %q", l.input[l.start:l.pos])
+		l.errorf("unexpected EOF; unhandled input %q", l.input[l.start:l.cur])
 		return
 	}
 	l.emit(token.EOF)
+}
+
+// emit emits a token of the specified token type at the current token start
+// position and advances the token start position.
+func (l *lexer) emit(kind token.Kind) {
+	l.emitCustom(kind, l.input[l.start:l.cur])
 }
 
 // emitCustom emits a custom token at the current token start position and
@@ -102,8 +98,7 @@ func (l *lexer) emitCustom(kind token.Kind, val string) {
 	tok := token.Token{
 		Kind: kind,
 		Val:  val,
-		Line: l.startLine + 1,
-		Col:  l.startCol + 1,
+		Pos:  l.start,
 	}
 	l.tokens = append(l.tokens, tok)
 	// Advance the token start position.
@@ -115,20 +110,12 @@ const eof = -1
 
 // next consumes and returns the next rune of the input.
 func (l *lexer) next() (r rune) {
-	if l.pos >= len(l.input) {
+	if l.cur >= len(l.input) {
 		l.width = 0
 		return eof
 	}
-	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
-	l.pos += l.width
-	// TODO(u): Find a cleaner way to handle line:column tracking. The current
-	// implementation requires five different struct fields.
-	if r == '\n' {
-		l.line++
-		l.col, l.prevCol = 0, l.col
-	} else {
-		l.col++
-	}
+	r, l.width = utf8.DecodeRuneInString(l.input[l.cur:])
+	l.cur += l.width
 	return r
 }
 
@@ -140,14 +127,8 @@ func (l *lexer) backup() {
 	if l.width == 0 {
 		panic("backup called with no matching call to next")
 	}
-	l.pos -= l.width
+	l.cur -= l.width
 	l.width = 0
-	if l.col == 0 {
-		l.line--
-		l.col = l.prevCol
-	} else {
-		l.col--
-	}
 }
 
 // accept consumes the next rune if it's from the valid set. It returns true if
@@ -177,8 +158,7 @@ func (l *lexer) acceptRun(valid string) bool {
 // ignore ignores any pending input read since the last token by advancing the
 // token start position to the current position.
 func (l *lexer) ignore() {
-	l.start = l.pos
-	l.startLine, l.startCol = l.line, l.col
+	l.start = l.cur
 }
 
 // ignoreRun ignores a run of valid runes.
