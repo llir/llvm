@@ -22,7 +22,7 @@ func (tok Token) String() string {
 //go:generate stringer -type Kind
 
 // Kind is the set of lexical token types of the LLVM IR assembly language.
-type Kind uint8
+type Kind uint16
 
 // NOTE: The token kinds are based on lib/AsmParser/LLToken.h (rev 224917) and
 // docs/LangRef.rst (rev 223189) of LLVM.
@@ -95,22 +95,30 @@ const (
 	KwExternal            // external
 
 	// Calling conventions.
-	KwCcc            // ccc
-	KwFastcc         // fastcc
-	KwColdcc         // coldcc
-	KwWebkitJscc     // webkit_jscc
-	KwAnyregcc       // anyregcc
-	KwPreserveMostcc // preserve_mostcc
-	KwPreserveAllcc  // preserve_allcc
-	KwCc             // cc
-
-	// NOTE: The following calling conventions are valid tokens but not described
-	// in the language references as of rev 223189 (to be 3.6.0):
-	//
-	//    intel_ocl_bicc, x86_stdcallcc, x86_fastcallcc, x86_thiscallcc,
-	//    kw_x86_vectorcallcc, arm_apcscc, arm_aapcscc, arm_aapcs_vfpcc,
-	//    msp430_intrcc, ptx_kernel, ptx_device, spir_kernel, spir_func,
-	//    x86_64_sysvcc, x86_64_win64cc, kw_ghccc
+	KwCcc             // ccc
+	KwFastcc          // fastcc
+	KwColdcc          // coldcc
+	KwWebkitJscc      // webkit_jscc
+	KwAnyregcc        // anyregcc
+	KwPreserveMostcc  // preserve_mostcc
+	KwPreserveAllcc   // preserve_allcc
+	KwCc              // cc
+	KwIntelOclBicc    // intel_ocl_bicc
+	KwX86Stdcallcc    // x86_stdcallcc
+	KwX86Fastcallcc   // x86_fastcallcc
+	KwX86Thiscallcc   // x86_thiscallcc
+	KwX86Vectorcallcc // x86_vectorcallcc
+	KwArmApcscc       // arm_apcscc
+	KwArmAapcscc      // arm_aapcscc
+	KwArmAapcsVfpcc   // arm_aapcs_vfpcc
+	KwMsp430Intrcc    // msp430_intrcc
+	KwPtxKernel       // ptx_kernel
+	KwPtxDevice       // ptx_device
+	KwSpirKernel      // spir_kernel
+	KwSpirFunc        // spir_func
+	KwX86_64Sysvcc    // x86_64_sysvcc
+	KwX86_64Win64cc   // x86_64_win64cc
+	KwGhccc           // ghccc
 
 	// Visibility styles.
 	KwDefault   // default
