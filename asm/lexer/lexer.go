@@ -123,9 +123,6 @@ func (l *lexer) next() (r rune) {
 // backup backs up one rune in the input. It can only be called once per call to
 // next.
 func (l *lexer) backup() {
-	if l.width == 0 {
-		panic("backup called with no matching call to next")
-	}
 	l.cur -= l.width
 	l.width = 0
 }
