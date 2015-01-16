@@ -193,8 +193,36 @@ func lexAt(l *lexer) stateFn {
 //    LocalVar = %"[^"]*"   (may contain hex escapes)
 //    LocalID  = %[0-9]+
 func lexPercent(l *lexer) stateFn {
-	log.Println("lexPercent: not yet implemented.")
-	return nil
+	// Store start position to skip the leading percent character (%).
+	start := l.cur
+
+	switch {
+	// %foo
+	case l.accept(head):
+		l.acceptRun(tail)
+		s := l.input[start:l.cur]
+		l.emitCustom(token.LocalVar, s)
+
+	// %"foo", %"fo\6F"
+	case l.accept(`"`):
+		s, ok := readString(l)
+		if !ok {
+			// Terminate the lexer with a nil state function.
+			return nil
+		}
+		l.emitCustom(token.LocalVar, s)
+
+	// %42
+	case l.acceptRun(decimal):
+		s := l.input[start:l.cur]
+		l.emitCustom(token.LocalID, s)
+
+	default:
+		// Emit error token but continue lexing next token.
+		l.emitErrorf("unexpected '%'")
+	}
+
+	return lexToken
 }
 
 // lexExclaim lexes an exclamation mark (!) or a metadata variable (!foo,
