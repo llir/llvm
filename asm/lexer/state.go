@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"log"
 	"strings"
 	"unicode/utf8"
 
@@ -405,7 +404,7 @@ func lexLetter(l *lexer) stateFn {
 	// candidate token respectively.
 	end, kind := l.cur, token.Error
 
-	// Try lexing a label (foo:).
+	// Try lexing a label starting with a letter or an underscore (foo:, _foo:).
 	if l.acceptRun(tail) && l.accept(":") {
 		end, kind = l.cur, token.Label
 	}
@@ -437,7 +436,8 @@ func lexLetter(l *lexer) stateFn {
 	// Restore the current token position.
 	l.cur = l.start
 
-	// Try lexing a hexadecimal integer (u0x1f, s0x2F) of the following form:
+	// Try lexing a hexadecimal integer constant (u0x1f, s0x2F) of the following
+	// form:
 	//
 	//    [us]0x[0-9A-Fa-f]+
 	if l.accept("us") && l.accept("0") && l.accept("x") && l.acceptRun(hex) && l.cur > end {
@@ -482,8 +482,76 @@ func lexLetter(l *lexer) stateFn {
 //
 //    [1] http://llvm.org/docs/LangRef.html#simple-constants
 func lexDigitOrSign(l *lexer) stateFn {
-	log.Println("lexDigitOrSign: not yet implemented.")
-	return nil
+	// end and kind tracks the end position and token type of the longest
+	// candidate token respectively.
+	end, kind := l.cur, token.Error
+
+	// Try lexing a label starting with a digit or a negative sign (4u:, -foo:).
+	if l.acceptRun(tail) && l.accept(":") {
+		end, kind = l.cur, token.Label
+	}
+
+	// Restore the current token position.
+	l.cur = l.start
+
+	// Try lexing an integer constant (40, -42) of the form of:
+	//
+	//    [-]?[0-9]+
+	l.accept("-")
+	if l.acceptRun(decimal) && l.cur > end {
+		end, kind = l.cur, token.Int
+	}
+
+	// Restore the current token position.
+	l.cur = l.start
+
+	// Try lexing a floating-point constant (+0.314e+1) of the form of:
+	//
+	//    [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
+	l.accept("+-")
+	if l.acceptRun(decimal) && l.accept(".") {
+		l.acceptRun(decimal)
+		if l.cur > end {
+			end, kind = l.cur, token.Float
+		}
+		if l.accept("eE") {
+			l.accept("+-")
+			if l.acceptRun(decimal) && l.cur > end {
+				end, kind = l.cur, token.Float
+			}
+		}
+	}
+
+	// Restore the current token position.
+	l.cur = l.start
+
+	// Try lexing a hexadecimal floating-point constant (0x12, 0xK2f) of the
+	// following form:
+	//
+	//    0x[KLMH]?[0-9A-Fa-f]+
+	if l.accept("0") && l.accept("x") {
+		l.accept("KLMH")
+		if l.acceptRun(hex) && l.cur > end {
+			end, kind = l.cur, token.Float
+		}
+	}
+
+	// Set the current position to the end position of the longest candidate
+	// token.
+	l.cur = end
+
+	switch kind {
+	case token.Error:
+		// Emit error token but continue lexing next token.
+		l.emitErrorf("unexpected %q", l.next())
+	case token.Label:
+		s := l.input[l.start : l.cur-1] // skip trailing colon (:)
+		l.emitCustom(token.Label, s)
+	default:
+		l.emit(kind)
+	}
+
+	return lexToken
 }
 
 // readString consumes a string constant ("foo", "fo\6F") and returns its
