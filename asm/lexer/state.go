@@ -101,7 +101,7 @@ func lexToken(l *lexer) stateFn {
 
 	// Constants.
 	case '"':
-		return lexQuote // "fo\6F:", "fo\6F"
+		return lexQuote // "fo\6F":, "fo\6F"
 	}
 
 	// Lex label, integer constant, floating-point constant or hexadecimal
@@ -272,6 +272,44 @@ func lexQuote(l *lexer) stateFn {
 	return lexToken
 }
 
+// lexLetter lexes a label (foo:, _foo:), a type (i32, float), a keyword (add,
+// x) or a hexadecimal integer constant (u0x10). The next character is either an
+// alphabetic character (a-z or A-Z) or an underscore (_).
+//
+//    Label   = [-a-zA-Z$._0-9]+:
+//    Type    = i[0-9]+
+//    Type    = float, void, …
+//    Keyword = add, x, …
+//    HexInt  = [us]0x[0-9A-Fa-f]+
+func lexLetter(l *lexer) stateFn {
+	log.Println("lexLetter: not yet implemented.")
+	return nil
+}
+
+// lexDigitOrSign lexes a label (42:, -foo:), an integer constant (42, -42), a
+// floating-point constant (+0.314e+1) or a hexadecimal floating-point constant
+// (0x1e, 0xK1e, 0xL1e, 0xM1e, 0xH1e). The next character is either a digit or a
+// sign character (+ or -).
+//
+//    Label    = [-a-zA-Z$._0-9]+:
+//    Int      = [-]?[0-9]+
+//    Float    = [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
+//    HexFloat = 0x[KLMH]?[0-9A-Fa-f]+
+//
+// The 80-bit format used by x86 is represented as 0xK followed by 20
+// hexadecimal digits. The 128-bit format used by PowerPC (two adjacent doubles)
+// is represented by 0xM followed by 32 hexadecimal digits. The IEEE 128-bit
+// format is represented by 0xL followed by 32 hexadecimal digits. The IEEE
+// 16-bit format (half precision) is represented by 0xH followed by 4
+// hexadecimal digits. All hexadecimal formats are big-endian (sign bit at the
+// left). [1]
+//
+//    [1] http://llvm.org/docs/LangRef.html#simple-constants
+func lexDigitOrSign(l *lexer) stateFn {
+	log.Println("lexDigitOrSign: not yet implemented.")
+	return nil
+}
+
 // readString consumes a string constant ("foo", "fo\6F") and returns its
 // unescaped string value. A double quote (") has already been consumed. The
 // returned error is either nil or io.ErrUnexpectedEOF.
@@ -335,44 +373,6 @@ func unhex(b byte) (v byte, ok bool) {
 		return b - 'A' + 10, true
 	}
 	return 0, false
-}
-
-// lexLetter lexes a label (foo:, _foo:), a type (i32, float), a keyword (add,
-// x) or a hexadecimal integer constant (u0x10). The next character is either an
-// alphabetic character (a-z or A-Z) or an underscore (_).
-//
-//    Label   = [-a-zA-Z$._0-9]+:
-//    Type    = i[0-9]+
-//    Type    = float, void, …
-//    Keyword = add, x, …
-//    HexInt  = [us]0x[0-9A-Fa-f]+
-func lexLetter(l *lexer) stateFn {
-	log.Println("lexLetter: not yet implemented.")
-	return nil
-}
-
-// lexDigitOrSign lexes a label (42:, -foo:), an integer constant (42, -42), a
-// floating-point constant (+0.314e+1) or a hexadecimal floating-point constant
-// (0x1e, 0xK1e, 0xL1e, 0xM1e, 0xH1e). The next character is either a digit or a
-// sign character (+ or -).
-//
-//    Label    = [-a-zA-Z$._0-9]+:
-//    Int      = [-]?[0-9]+
-//    Float    = [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
-//    HexFloat = 0x[KLMH]?[0-9A-Fa-f]+
-//
-// The 80-bit format used by x86 is represented as 0xK followed by 20
-// hexadecimal digits. The 128-bit format used by PowerPC (two adjacent doubles)
-// is represented by 0xM followed by 32 hexadecimal digits. The IEEE 128-bit
-// format is represented by 0xL followed by 32 hexadecimal digits. The IEEE
-// 16-bit format (half precision) is represented by 0xH followed by 4
-// hexadecimal digits. All hexadecimal formats are big-endian (sign bit at the
-// left). [1]
-//
-//    [1] http://llvm.org/docs/LangRef.html#simple-constants
-func lexDigitOrSign(l *lexer) stateFn {
-	log.Println("lexDigitOrSign: not yet implemented.")
-	return nil
 }
 
 // isDigit returns true if r is a digit (0-9), and false otherwise.
