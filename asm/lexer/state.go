@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"io"
 	"log"
 	"strings"
 	"unicode/utf8"
@@ -155,8 +154,36 @@ func lexComment(l *lexer) stateFn {
 //    GlobalVar = @"[^"]*"   (may contain hex escapes)
 //    GlobalID  = @[0-9]+
 func lexAt(l *lexer) stateFn {
-	log.Println("lexAt: not yet implemented.")
-	return nil
+	// Store start position to skip the leading at character (@).
+	start := l.cur
+
+	switch {
+	// @foo
+	case l.accept(head):
+		l.acceptRun(tail)
+		s := l.input[start:l.cur]
+		l.emitCustom(token.GlobalVar, s)
+
+	// @"foo", @"fo\6F"
+	case l.accept(`"`):
+		s, ok := readString(l)
+		if !ok {
+			// Terminate the lexer with a nil state function.
+			return nil
+		}
+		l.emitCustom(token.GlobalVar, s)
+
+	// @42
+	case l.acceptRun(decimal):
+		s := l.input[start:l.cur]
+		l.emitCustom(token.GlobalID, s)
+
+	default:
+		// Emit error token but continue lexing next token.
+		l.emitErrorf("unexpected '@'")
+	}
+
+	return lexToken
 }
 
 // lexPercent lexes a local variable (%foo, %"fo\6F") or a local ID (%42). A
@@ -252,14 +279,10 @@ func lexDot(l *lexer) stateFn {
 //    String = "[^"]*"   (may contain hex escapes)
 func lexQuote(l *lexer) stateFn {
 	// Consume a string constant ("foo", "fo\6F").
-	s, err := readString(l)
-	if err != nil {
-		if err == io.ErrUnexpectedEOF {
-			l.emitErrorf("unexpected eof in string constant")
-			// Terminate the lexer with a nil state function.
-			return nil
-		}
-		panic("unreachable")
+	s, ok := readString(l)
+	if !ok {
+		// Terminate the lexer with a nil state function.
+		return nil
 	}
 
 	switch {
@@ -311,22 +334,23 @@ func lexDigitOrSign(l *lexer) stateFn {
 }
 
 // readString consumes a string constant ("foo", "fo\6F") and returns its
-// unescaped string value. A double quote (") has already been consumed. The
-// returned error is either nil or io.ErrUnexpectedEOF.
-func readString(l *lexer) (string, error) {
-	// Store start position of the string to skip leading double quote (") and
-	// any token specific characters (e.g. @, %).
+// unescaped string value. The returned boolean is false in the case of an
+// unexpected EOF. A double quote (") has already been consumed.
+func readString(l *lexer) (s string, ok bool) {
+	// Store start position to skip leading double quote (") and any token
+	// specific characters (e.g. @, %).
 	start := l.cur
 	for {
 		switch l.next() {
 		case eof:
-			return "", io.ErrUnexpectedEOF
+			l.emitErrorf("unexpected eof in quoted string")
+			return "", false
 		case utf8.RuneError:
 			// Append error but continue lexing string constant.
-			l.emitErrorf("illegal UTF-8 encoding")
+			l.errorf("illegal UTF-8 encoding")
 		case '"':
 			s := l.input[start : l.cur-1] // skip leading and trailing double quotes (")
-			return unescape(s), nil
+			return unescape(s), true
 		}
 	}
 }
