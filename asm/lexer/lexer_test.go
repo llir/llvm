@@ -78,12 +78,13 @@ func TestParse(t *testing.T) {
 		},
 		// i=5
 		{
-			input: "!42.0foo:;foo",
+			input: "42.0!42.0foo:;foo",
 			want: []token.Token{
-				{Kind: token.Exclaim, Val: "!", Pos: 0},
-				{Kind: token.Label, Val: "42.0foo", Pos: 1},
-				{Kind: token.Comment, Val: "foo", Pos: 9},
-				{Kind: token.EOF, Pos: 13},
+				{Kind: token.Float, Val: "42.0", Pos: 0},
+				{Kind: token.Exclaim, Val: "!", Pos: 4},
+				{Kind: token.Label, Val: "42.0foo", Pos: 5},
+				{Kind: token.Comment, Val: "foo", Pos: 13},
+				{Kind: token.EOF, Pos: 17},
 			},
 		},
 		// i=6
