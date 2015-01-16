@@ -146,6 +146,15 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Pos: 8},
 			},
 		},
+		// i=12
+		{
+			input: `!fo\6F!bar`,
+			want: []token.Token{
+				{Kind: token.MetadataVar, Val: "foo", Pos: 0},
+				{Kind: token.MetadataVar, Val: "bar", Pos: 6},
+				{Kind: token.EOF, Pos: 10},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
