@@ -136,14 +136,16 @@ func lexComment(l *lexer) stateFn {
 			l.errorf("illegal UTF-8 encoding")
 		case eof:
 			// Ignore trailing carriage return characters.
-			s := strings.TrimRight(l.input[l.start:l.cur], "\r")
+			s := l.input[l.start+1 : l.cur] // skip leading semicolon (;)
+			s = strings.TrimRight(s, "\r")
 			l.emitCustom(token.Comment, s)
 			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		case '\n':
 			// Ignore trailing carriage return and newline characters.
-			s := strings.TrimRight(l.input[l.start:l.cur], "\r\n")
+			s := l.input[l.start+1 : l.cur] // skip leading semicolon (;)
+			s = strings.TrimRight(s, "\r\n")
 			l.emitCustom(token.Comment, s)
 			return lexToken
 		}
