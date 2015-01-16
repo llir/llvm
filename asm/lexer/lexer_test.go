@@ -142,8 +142,7 @@ func TestParse(t *testing.T) {
 		{
 			input: "....foo:",
 			want: []token.Token{
-				{Kind: token.Ellipsis, Val: "...", Line: 1, Col: 1},
-				{Kind: token.Label, Val: ".foo", Line: 1, Col: 4},
+				{Kind: token.Label, Val: "....foo", Line: 1, Col: 1},
 				{Kind: token.EOF, Line: 1, Col: 9},
 			},
 		},
