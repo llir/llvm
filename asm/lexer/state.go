@@ -163,6 +163,7 @@ func lexAt(l *lexer) stateFn {
 		l.acceptRun(tail)
 		s := l.input[start:l.cur]
 		l.emitCustom(token.GlobalVar, s)
+		return lexToken
 
 	// @"foo", @"fo\6F"
 	case l.accept(`"`):
@@ -172,17 +173,18 @@ func lexAt(l *lexer) stateFn {
 			return nil
 		}
 		l.emitCustom(token.GlobalVar, s)
+		return lexToken
 
 	// @42
 	case l.acceptRun(decimal):
 		s := l.input[start:l.cur]
 		l.emitCustom(token.GlobalID, s)
-
-	default:
-		// Emit error token but continue lexing next token.
-		l.emitErrorf("unexpected '@'")
+		return lexToken
 	}
 
+	// Emit error token but continue lexing next token.
+	l.cur = start
+	l.emitErrorf("unexpected '@'")
 	return lexToken
 }
 
@@ -202,6 +204,7 @@ func lexPercent(l *lexer) stateFn {
 		l.acceptRun(tail)
 		s := l.input[start:l.cur]
 		l.emitCustom(token.LocalVar, s)
+		return lexToken
 
 	// %"foo", %"fo\6F"
 	case l.accept(`"`):
@@ -211,17 +214,18 @@ func lexPercent(l *lexer) stateFn {
 			return nil
 		}
 		l.emitCustom(token.LocalVar, s)
+		return lexToken
 
 	// %42
 	case l.acceptRun(decimal):
 		s := l.input[start:l.cur]
 		l.emitCustom(token.LocalID, s)
-
-	default:
-		// Emit error token but continue lexing next token.
-		l.emitErrorf("unexpected '%'")
+		return lexToken
 	}
 
+	// Emit error token but continue lexing next token.
+	l.cur = start
+	l.emitErrorf("unexpected '%'")
 	return lexToken
 }
 
@@ -234,18 +238,16 @@ func lexExclaim(l *lexer) stateFn {
 	// Store start position to skip the leading exclamation mark (!).
 	start := l.cur
 
-	switch {
 	// !foo, !fo\6F
-	case l.accept(head + `\`):
+	if l.accept(head + `\`) {
 		l.acceptRun(tail + `\`)
 		s := unescape(l.input[start:l.cur])
 		l.emitCustom(token.MetadataVar, s)
-
-	// !
-	default:
-		l.emit(token.Exclaim)
+		return lexToken
 	}
 
+	// !
+	l.emit(token.Exclaim)
 	return lexToken
 }
 
@@ -256,8 +258,44 @@ func lexExclaim(l *lexer) stateFn {
 //    ComdatVar = $"[^"]*"   (may contain hex escapes)
 //    Label     = [-a-zA-Z$._0-9]+:
 func lexDollar(l *lexer) stateFn {
-	log.Println("lexDollar: not yet implemented.")
-	return nil
+	// Store start position to skip the leading dollar sign ($).
+	start := l.cur
+
+	switch {
+	// $foo, $foo:
+	case l.accept(head):
+		l.acceptRun(tail)
+		s := l.input[start:l.cur]
+		if l.accept(":") {
+			l.emitCustom(token.Label, s) // skip trailing colon (:)
+		} else {
+			l.emitCustom(token.ComdatVar, s)
+		}
+		return lexToken
+
+	// $"foo", $"fo\6F"
+	case l.accept(`"`):
+		s, ok := readString(l)
+		if !ok {
+			// Terminate the lexer with a nil state function.
+			return nil
+		}
+		l.emitCustom(token.ComdatVar, s)
+		return lexToken
+
+	// $42foo:
+	case l.acceptRun(tail):
+		s := l.input[start:l.cur]
+		if l.accept(":") {
+			l.emitCustom(token.Label, s) // skip trailing colon (:)
+			return lexToken
+		}
+	}
+
+	// Emit error token but continue lexing next token.
+	l.cur = start
+	l.emitErrorf("unexpected '$'")
+	return lexToken
 }
 
 // lexHash lexes an attribute ID (#42). A hash character (#) has already been
