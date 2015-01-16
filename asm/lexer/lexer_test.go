@@ -164,6 +164,15 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Pos: 15},
 			},
 		},
+		// i=14
+		{
+			input: `"\foo""\de\ad\be\ef"`,
+			want: []token.Token{
+				{Kind: token.String, Val: `\foo`, Pos: 0},
+				{Kind: token.String, Val: "\xDE\xAD\xBE\xEF", Pos: 6},
+				{Kind: token.EOF, Pos: 20},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
