@@ -155,9 +155,6 @@ const (
 	KwNoduplicates // noduplicates
 	KwSamesize     // samesize
 
-	// Named metadata.
-	KwMetadata // metadata
-
 	// Parameter attributes.
 	KwZeroext         // zeroext
 	KwSignext         // signext
