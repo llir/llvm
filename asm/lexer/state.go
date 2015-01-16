@@ -231,8 +231,22 @@ func lexPercent(l *lexer) stateFn {
 //    Exclaim     = !
 //    MetadataVar = ![-a-zA-Z$._][-a-zA-Z$._0-9]*   (may contain hex escapes)
 func lexExclaim(l *lexer) stateFn {
-	log.Println("lexExclaim: not yet implemented.")
-	return nil
+	// Store start position to skip the leading exclamation mark (!).
+	start := l.cur
+
+	switch {
+	// !foo, !fo\6F
+	case l.accept(head + `\`):
+		l.acceptRun(tail + `\`)
+		s := unescape(l.input[start:l.cur])
+		l.emitCustom(token.MetadataVar, s)
+
+	// !
+	default:
+		l.emit(token.Exclaim)
+	}
+
+	return lexToken
 }
 
 // lexDollar lexes an COMDAT variable ($foo, $"fo\6F") or a label ($foo:). A
