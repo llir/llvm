@@ -31,15 +31,16 @@ func TestParse(t *testing.T) {
 		},
 		// i=2
 		{
-			input: "@foo%bar$baz!qux@42%37#7",
+			input: "$baz@foo%bar$baz!qux@42%37#7",
 			want: []token.Token{
-				{Kind: token.GlobalVar, Val: "foo", Pos: 0},
-				{Kind: token.LocalVar, Val: "bar$baz", Pos: 4},
-				{Kind: token.MetadataVar, Val: "qux", Pos: 12},
-				{Kind: token.GlobalID, Val: "42", Pos: 16},
-				{Kind: token.LocalID, Val: "37", Pos: 19},
-				{Kind: token.AttrID, Val: "7", Pos: 22},
-				{Kind: token.EOF, Pos: 24},
+				{Kind: token.ComdatVar, Val: "baz", Pos: 0},
+				{Kind: token.GlobalVar, Val: "foo", Pos: 4},
+				{Kind: token.LocalVar, Val: "bar$baz", Pos: 8},
+				{Kind: token.MetadataVar, Val: "qux", Pos: 16},
+				{Kind: token.GlobalID, Val: "42", Pos: 20},
+				{Kind: token.LocalID, Val: "37", Pos: 23},
+				{Kind: token.AttrID, Val: "7", Pos: 26},
+				{Kind: token.EOF, Pos: 28},
 			},
 		},
 		// i=3
