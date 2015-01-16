@@ -34,8 +34,7 @@ func TestParse(t *testing.T) {
 			input: "@foo%bar$baz!qux@42%37#7",
 			want: []token.Token{
 				{Kind: token.GlobalVar, Val: "foo", Pos: 0},
-				{Kind: token.LocalVar, Val: "bar", Pos: 4},
-				{Kind: token.ComdatVar, Val: "baz", Pos: 8},
+				{Kind: token.LocalVar, Val: "bar$baz", Pos: 4},
 				{Kind: token.MetadataVar, Val: "qux", Pos: 12},
 				{Kind: token.GlobalID, Val: "42", Pos: 16},
 				{Kind: token.LocalID, Val: "37", Pos: 19},
