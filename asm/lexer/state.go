@@ -15,8 +15,12 @@ const (
 	decimal = "0123456789"
 	// hex specifies the hexadecimal digit characters.
 	hex = "0123456789ABCDEFabcdef"
+	// upper specifies the uppercase letters.
+	upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	// lower specifies the lowercase letters.
+	lower = "abcdefghijklmnopqrstuvwxyz"
 	// alpha specifies the alphabetic characters.
-	alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	alpha = upper + lower
 	// head is the set of valid characters for the first character of an
 	// identifier.
 	head = alpha + "$-._"
@@ -379,7 +383,7 @@ func lexQuote(l *lexer) stateFn {
 
 	switch {
 	case l.accept(":"):
-		l.emitCustom(token.Label, s)
+		l.emitCustom(token.Label, s) // skip trailing colon (:)
 	default:
 		l.emitCustom(token.String, s)
 	}
@@ -397,8 +401,65 @@ func lexQuote(l *lexer) stateFn {
 //    Keyword = add, x, …
 //    HexInt  = [us]0x[0-9A-Fa-f]+
 func lexLetter(l *lexer) stateFn {
-	log.Println("lexLetter: not yet implemented.")
-	return nil
+	// end and kind tracks the end position and token type of the longest
+	// candidate token respectively.
+	end, kind := l.cur, token.Error
+
+	// Try lexing a label (foo:).
+	if l.acceptRun(tail) && l.accept(":") {
+		end, kind = l.cur, token.Label
+	}
+
+	// Restore the current token position.
+	l.cur = l.start
+
+	// Try lexing an integer type (i1, i32).
+	if l.accept("i") && l.acceptRun(decimal) && l.cur > end {
+		end, kind = l.cur, token.Type
+	}
+
+	// Restore the current token position.
+	l.cur = l.start
+
+	// Try lexing a keyword (float, add, x). Keywords may contain [a-z0-9_].
+	if l.acceptRun(lower+decimal+"_") && l.cur > end {
+		s := l.input[l.start:l.cur]
+		for keyword, kwKind := range token.Keywords {
+			if end-l.start > len(keyword) {
+				continue
+			}
+			if strings.HasPrefix(s, keyword) {
+				end, kind = l.start+len(keyword), kwKind // TODO: Verify that end is not off-by-one.
+			}
+		}
+	}
+
+	// Restore the current token position.
+	l.cur = l.start
+
+	// Try lexing a hexadecimal integer (u0x1f, s0x2F) of the following form:
+	//
+	//    [us]0x[0-9A-Fa-f]+
+	if l.accept("us") && l.accept("0") && l.accept("x") && l.acceptRun(hex) && l.cur > end {
+		end, kind = l.cur, token.Int
+	}
+
+	// Set the current position to the end position of the longest candidate
+	// token.
+	l.cur = end
+
+	switch kind {
+	case token.Error:
+		// Emit error token but continue lexing next token.
+		l.emitErrorf("unexpected %q", l.next())
+	case token.Label:
+		s := l.input[l.start : l.cur-1] // skip trailing colon (:)
+		l.emitCustom(token.Label, s)
+	default:
+		l.emit(kind)
+	}
+
+	return lexToken
 }
 
 // lexDigitOrSign lexes a label (42:, -foo:), an integer constant (42, -42), a
