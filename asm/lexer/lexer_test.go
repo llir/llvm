@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -159,10 +158,8 @@ func TestParse(t *testing.T) {
 	for i, g := range golden {
 		got := Parse(g.input)
 		if !reflect.DeepEqual(got, g.want) {
-			fmt.Println("FAIL:", i) // TODO: Remove when all test cases passes.
 			t.Errorf("i=%d: expected %#v, got %#v", i, g.want, got)
 			continue
 		}
-		fmt.Println("PASS:", i) // TODO: Remove when all test cases passes.
 	}
 }
