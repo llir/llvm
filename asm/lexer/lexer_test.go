@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -137,11 +138,22 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Line: 1, Col: 24},
 			},
 		},
+		// i=11
+		{
+			input: "....foo:",
+			want: []token.Token{
+				{Kind: token.Ellipsis, Val: "...", Line: 1, Col: 1},
+				{Kind: token.Label, Val: ".foo", Line: 1, Col: 4},
+				{Kind: token.EOF, Line: 1, Col: 9},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
 		if !reflect.DeepEqual(got, g.want) {
 			t.Errorf("i=%d: expected %#v, got %#v", i, g.want, got)
+			continue
 		}
+		fmt.Println("PASS:", i) // TODO: Remove when all test cases passes.
 	}
 }
