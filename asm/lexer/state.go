@@ -303,8 +303,20 @@ func lexDollar(l *lexer) stateFn {
 //
 //    AttrID = #[0-9]+
 func lexHash(l *lexer) stateFn {
-	log.Println("lexHash: not yet implemented.")
-	return nil
+	// Store start position to skip the leading hash character (#).
+	start := l.cur
+
+	// #42
+	if l.acceptRun(decimal) {
+		s := l.input[start:l.cur]
+		l.emitCustom(token.AttrID, s)
+		return lexToken
+	}
+
+	// Emit error token but continue lexing next token.
+	l.cur = start
+	l.emitErrorf("unexpected '#'")
+	return lexToken
 }
 
 // lexDot lexes an ellipsis (...) or a label (.foo:). A dot (.) has already been
