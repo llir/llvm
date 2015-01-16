@@ -430,7 +430,7 @@ func lexLetter(l *lexer) stateFn {
 				continue
 			}
 			if strings.HasPrefix(s, keyword) {
-				end, kind = l.start+len(keyword), kwKind // TODO: Verify that end is not off-by-one.
+				end, kind = l.start+len(keyword), kwKind
 			}
 		}
 	}
@@ -603,7 +603,7 @@ func unescape(s string) string {
 		}
 		j++
 	}
-	return string(buf[:j]) // TODO: Check that the end offset j isn't off-by-one.
+	return string(buf[:j])
 }
 
 // unhex returns the numeric value represented by the hexadecimal digit b. It
