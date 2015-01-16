@@ -54,7 +54,7 @@ func TestParse(t *testing.T) {
 				{Kind: token.Lbrack, Val: "[", Pos: 6},
 				{Kind: token.Rbrack, Val: "]", Pos: 7},
 				{Kind: token.Lbrace, Val: "{", Pos: 8},
-				{Kind: token.Rbrace, Val: ", Pos: 0}", Pos: 9},
+				{Kind: token.Rbrace, Val: "}", Pos: 9},
 				{Kind: token.Lparen, Val: "(", Pos: 10},
 				{Kind: token.Rparen, Val: ")", Pos: 11},
 				{Kind: token.Less, Val: "<", Pos: 12},
