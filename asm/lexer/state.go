@@ -120,7 +120,7 @@ func lexToken(l *lexer) stateFn {
 	}
 
 	// Emit error token but continue lexing next token.
-	l.emitErrorf("invalid token starting with %q", r)
+	l.emitErrorf("invalid token with a leading %q", r)
 	return lexToken
 }
 
@@ -135,17 +135,15 @@ func lexComment(l *lexer) stateFn {
 			// Append error but continue lexing line comment.
 			l.errorf("illegal UTF-8 encoding")
 		case eof:
-			// Ignore trailing carriage return characters.
 			s := l.input[l.start+1 : l.cur] // skip leading semicolon (;)
-			s = strings.TrimRight(s, "\r")
+			s = strings.TrimRight(s, "\r")  // skip trailing carriage returns.
 			l.emitCustom(token.Comment, s)
 			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		case '\n':
-			// Ignore trailing carriage return and newline characters.
-			s := l.input[l.start+1 : l.cur] // skip leading semicolon (;)
-			s = strings.TrimRight(s, "\r\n")
+			s := l.input[l.start+1 : l.cur]  // skip leading semicolon (;)
+			s = strings.TrimRight(s, "\r\n") // skip trailing carriage returns and newlines.
 			l.emitCustom(token.Comment, s)
 			return lexToken
 		}
@@ -159,14 +157,11 @@ func lexComment(l *lexer) stateFn {
 //    GlobalVar = @"[^"]*"   (may contain hex escapes)
 //    GlobalID  = @[0-9]+
 func lexAt(l *lexer) stateFn {
-	// Store start position to skip the leading at character (@).
-	start := l.cur
-
 	switch {
 	// @foo
 	case l.accept(head):
 		l.acceptRun(tail)
-		s := l.input[start:l.cur]
+		s := l.input[l.start+1 : l.cur] // skip leading at character (@)
 		l.emitCustom(token.GlobalVar, s)
 		return lexToken
 
@@ -182,13 +177,13 @@ func lexAt(l *lexer) stateFn {
 
 	// @42
 	case l.acceptRun(decimal):
-		s := l.input[start:l.cur]
+		s := l.input[l.start+1 : l.cur] // skip leading at character (@)
 		l.emitCustom(token.GlobalID, s)
 		return lexToken
 	}
 
 	// Emit error token but continue lexing next token.
-	l.cur = start
+	l.cur = l.start + 1
 	l.emitErrorf("unexpected '@'")
 	return lexToken
 }
@@ -200,14 +195,11 @@ func lexAt(l *lexer) stateFn {
 //    LocalVar = %"[^"]*"   (may contain hex escapes)
 //    LocalID  = %[0-9]+
 func lexPercent(l *lexer) stateFn {
-	// Store start position to skip the leading percent character (%).
-	start := l.cur
-
 	switch {
 	// %foo
 	case l.accept(head):
 		l.acceptRun(tail)
-		s := l.input[start:l.cur]
+		s := l.input[l.start+1 : l.cur] // skip leading percent character (%)
 		l.emitCustom(token.LocalVar, s)
 		return lexToken
 
@@ -223,13 +215,13 @@ func lexPercent(l *lexer) stateFn {
 
 	// %42
 	case l.acceptRun(decimal):
-		s := l.input[start:l.cur]
+		s := l.input[l.start+1 : l.cur] // skip leading percent character (%)
 		l.emitCustom(token.LocalID, s)
 		return lexToken
 	}
 
 	// Emit error token but continue lexing next token.
-	l.cur = start
+	l.cur = l.start + 1
 	l.emitErrorf("unexpected '%'")
 	return lexToken
 }
@@ -240,14 +232,11 @@ func lexPercent(l *lexer) stateFn {
 //    Exclaim     = !
 //    MetadataVar = ![-a-zA-Z$._][-a-zA-Z$._0-9]*   (may contain hex escapes)
 func lexExclaim(l *lexer) stateFn {
-	// Store start position to skip the leading exclamation mark (!).
-	start := l.cur
-
 	// !foo, !fo\6F
 	if l.accept(head + `\`) {
 		l.acceptRun(tail + `\`)
-		s := unescape(l.input[start:l.cur])
-		l.emitCustom(token.MetadataVar, s)
+		s := l.input[l.start+1 : l.cur] // skip leading exclamation mark (!)
+		l.emitCustom(token.MetadataVar, unescape(s))
 		return lexToken
 	}
 
@@ -306,18 +295,15 @@ func lexDollar(l *lexer) stateFn {
 //
 //    AttrID = #[0-9]+
 func lexHash(l *lexer) stateFn {
-	// Store start position to skip the leading hash character (#).
-	start := l.cur
-
 	// #42
 	if l.acceptRun(decimal) {
-		s := l.input[start:l.cur]
+		s := l.input[l.start+1 : l.cur] // skip leading hash character (#)
 		l.emitCustom(token.AttrID, s)
 		return lexToken
 	}
 
 	// Emit error token but continue lexing next token.
-	l.cur = start
+	l.cur = l.start + 1
 	l.emitErrorf("unexpected '#'")
 	return lexToken
 }
@@ -343,7 +329,7 @@ func lexDot(l *lexer) stateFn {
 	// Restore the current token position.
 	l.cur = cur
 
-	// Try lexing a label starting with a dot (.foo:).
+	// Try lexing a label with a leading dot (.foo:).
 	l.acceptRun(tail)
 	if l.accept(":") && l.cur > end {
 		end, kind = l.cur, token.Label
@@ -354,14 +340,14 @@ func lexDot(l *lexer) stateFn {
 	l.cur = end
 
 	switch kind {
-	case token.Ellipsis:
-		l.emit(token.Ellipsis)
+	case token.Error:
+		// Emit error token but continue lexing next token.
+		l.emitErrorf("unexpected '.'")
 	case token.Label:
 		s := l.input[l.start : l.cur-1] // skip trailing colon (:)
 		l.emitCustom(token.Label, s)
 	default:
-		// Emit error token but continue lexing next token.
-		l.emitErrorf("unexpected '.'")
+		l.emit(kind)
 	}
 
 	return lexToken
@@ -381,8 +367,11 @@ func lexQuote(l *lexer) stateFn {
 	}
 
 	switch {
+	// "foo":
 	case l.accept(":"):
 		l.emitCustom(token.Label, s) // skip trailing colon (:)
+
+	// "foo"
 	default:
 		l.emitCustom(token.String, s)
 	}
@@ -404,7 +393,7 @@ func lexLetter(l *lexer) stateFn {
 	// candidate token respectively.
 	end, kind := l.cur, token.Error
 
-	// Try lexing a label starting with a letter or an underscore (foo:, _foo:).
+	// Try lexing a label with a leading letter or an underscore (foo:, _foo:).
 	if l.acceptRun(tail) && l.accept(":") {
 		end, kind = l.cur, token.Label
 	}
@@ -486,7 +475,7 @@ func lexDigitOrSign(l *lexer) stateFn {
 	// candidate token respectively.
 	end, kind := l.cur, token.Error
 
-	// Try lexing a label starting with a digit or a negative sign (4u:, -foo:).
+	// Try lexing a label with a leading digit or a negative sign (4u:, -foo:).
 	if l.acceptRun(tail) && l.accept(":") {
 		end, kind = l.cur, token.Label
 	}
