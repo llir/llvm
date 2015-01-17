@@ -211,6 +211,18 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Pos: 31},
 			},
 		},
+		// i=18
+		{
+			input: "\uFFFD \"foo\uFFFDbar\" ;foo\uFFFDbar",
+			want: []token.Token{
+				{Kind: token.Error, Val: "illegal UTF-8 encoding", Pos: 0},
+				{Kind: token.Error, Val: "illegal UTF-8 encoding", Pos: 8},
+				{Kind: token.String, Val: "foo\uFFFDbar", Pos: 4},
+				{Kind: token.Error, Val: "illegal UTF-8 encoding", Pos: 20},
+				{Kind: token.Comment, Val: "foo\uFFFDbar", Pos: 16},
+				{Kind: token.EOF, Pos: 26},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
