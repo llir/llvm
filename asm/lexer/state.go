@@ -169,6 +169,7 @@ func lexAt(l *lexer) stateFn {
 	case l.accept(`"`):
 		s, ok := readString(l)
 		if !ok {
+			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		}
@@ -207,6 +208,7 @@ func lexPercent(l *lexer) stateFn {
 	case l.accept(`"`):
 		s, ok := readString(l)
 		if !ok {
+			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		}
@@ -269,6 +271,7 @@ func lexDollar(l *lexer) stateFn {
 	case l.accept(`"`):
 		s, ok := readString(l)
 		if !ok {
+			l.emitEOF()
 			// Terminate the lexer with a nil state function.
 			return nil
 		}
@@ -362,6 +365,7 @@ func lexQuote(l *lexer) stateFn {
 	// Consume a string constant ("foo", "fo\6F").
 	s, ok := readString(l)
 	if !ok {
+		l.emitEOF()
 		// Terminate the lexer with a nil state function.
 		return nil
 	}

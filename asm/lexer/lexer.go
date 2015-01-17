@@ -61,7 +61,11 @@ func (l *lexer) lex() {
 // errorf appends an error token at the current position.
 func (l *lexer) errorf(format string, args ...interface{}) {
 	err := fmt.Sprintf(format, args...)
-	_, width := utf8.DecodeLastRuneInString(l.input[:l.cur])
+	// Backup one rune if not at EOF.
+	width := 0
+	if !(l.cur == len(l.input) && l.width == 0) {
+		_, width = utf8.DecodeLastRuneInString(l.input[:l.cur])
+	}
 	tok := token.Token{
 		Kind: token.Error,
 		Val:  err,
