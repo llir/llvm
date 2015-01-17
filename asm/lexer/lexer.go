@@ -61,11 +61,7 @@ func (l *lexer) lex() {
 // errorf appends an error token at the current position.
 func (l *lexer) errorf(format string, args ...interface{}) {
 	err := fmt.Sprintf(format, args...)
-	// Backup one rune if not at EOF.
-	width := 0
-	if !(l.cur == len(l.input) && l.width == 0) {
-		_, width = utf8.DecodeLastRuneInString(l.input[:l.cur])
-	}
+	_, width := utf8.DecodeLastRuneInString(l.input[:l.cur])
 	tok := token.Token{
 		Kind: token.Error,
 		Val:  err,
@@ -85,8 +81,7 @@ func (l *lexer) emitErrorf(format string, args ...interface{}) {
 // "unexpected EOF" error token if there exists unhandled input.
 func (l *lexer) emitEOF() {
 	if l.start < len(l.input) {
-		l.errorf("unexpected EOF; unhandled input %q", l.input[l.start:l.cur])
-		return
+		l.emitErrorf("unexpected EOF; unhandled input %q", l.input[l.start:l.cur])
 	}
 	l.emit(token.EOF)
 }

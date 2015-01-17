@@ -120,7 +120,7 @@ func lexToken(l *lexer) stateFn {
 	}
 
 	// Emit error token but continue lexing next token.
-	l.emitErrorf("invalid token with a leading %q", r)
+	l.emitErrorf("unexpected %q", r)
 	return lexToken
 }
 
@@ -557,7 +557,16 @@ func readString(l *lexer) (s string, ok bool) {
 	for {
 		switch l.next() {
 		case eof:
-			l.emitErrorf("unexpected eof in quoted string")
+			// TODO: Find a clean solution to remove this hack. emitErrorf
+			// backtracks a rune, which is not the desired behaviour after reaching
+			// EOF.
+			tok := token.Token{
+				Kind: token.Error,
+				Val:  "unexpected eof in quoted string",
+				Pos:  l.cur,
+			}
+			l.tokens = append(l.tokens, tok)
+			l.ignore()
 			return "", false
 		case utf8.RuneError:
 			// Append error but continue lexing string constant.

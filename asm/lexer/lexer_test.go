@@ -193,7 +193,7 @@ func TestParse(t *testing.T) {
 		},
 		// i=17
 		{
-			input: `+br acall .icmp #void $42 % @`,
+			input: `+br acall .icmp #void $42 & % @`,
 			want: []token.Token{
 				{Kind: token.Error, Val: "unexpected '+'", Pos: 0},
 				{Kind: token.KwBr, Val: "br", Pos: 1},
@@ -205,9 +205,10 @@ func TestParse(t *testing.T) {
 				{Kind: token.Type, Val: "void", Pos: 17},
 				{Kind: token.Error, Val: "unexpected '$'", Pos: 22},
 				{Kind: token.Int, Val: "42", Pos: 23},
-				{Kind: token.Error, Val: "unexpected '%'", Pos: 26},
-				{Kind: token.Error, Val: "unexpected '@'", Pos: 28},
-				{Kind: token.EOF, Pos: 29},
+				{Kind: token.Error, Val: "unexpected '&'", Pos: 26},
+				{Kind: token.Error, Val: "unexpected '%'", Pos: 28},
+				{Kind: token.Error, Val: "unexpected '@'", Pos: 30},
+				{Kind: token.EOF, Pos: 31},
 			},
 		},
 	}
