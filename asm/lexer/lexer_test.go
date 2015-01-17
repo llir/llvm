@@ -223,6 +223,30 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Pos: 26},
 			},
 		},
+		// i=19
+		{
+			input: `@"foo`,
+			want: []token.Token{
+				{Kind: token.Error, Val: "unexpected eof in quoted string", Pos: 5},
+				{Kind: token.EOF, Pos: 5},
+			},
+		},
+		// i=20
+		{
+			input: `%"foo`,
+			want: []token.Token{
+				{Kind: token.Error, Val: "unexpected eof in quoted string", Pos: 5},
+				{Kind: token.EOF, Pos: 5},
+			},
+		},
+		// i=21
+		{
+			input: `$"foo`,
+			want: []token.Token{
+				{Kind: token.Error, Val: "unexpected eof in quoted string", Pos: 5},
+				{Kind: token.EOF, Pos: 5},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
