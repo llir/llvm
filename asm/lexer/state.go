@@ -224,7 +224,7 @@ func lexPercent(l *lexer) stateFn {
 
 	// Emit error token but continue lexing next token.
 	l.cur = l.start + 1
-	l.emitErrorf("unexpected '%'")
+	l.emitErrorf("unexpected '%%'")
 	return lexToken
 }
 
