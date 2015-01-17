@@ -263,17 +263,15 @@ func lexExclaim(l *lexer) stateFn {
 //    ComdatVar = $"[^"]*"   (may contain hex escapes)
 //    Label     = [-a-zA-Z$._0-9]+:
 func lexDollar(l *lexer) stateFn {
-	// Store start position to skip the leading dollar sign ($).
-	start := l.cur
-
 	switch {
 	// $foo, $foo:
 	case l.accept(head):
 		l.acceptRun(tail)
-		s := l.input[start:l.cur]
 		if l.accept(":") {
-			l.emitCustom(token.Label, s) // skip trailing colon (:)
+			s := l.input[l.start : l.cur-1] // skip trailing colon (:)
+			l.emitCustom(token.Label, s)
 		} else {
+			s := l.input[l.start+1 : l.cur] // skip leading dollar sign ($)
 			l.emitCustom(token.ComdatVar, s)
 		}
 		return lexToken
@@ -290,15 +288,15 @@ func lexDollar(l *lexer) stateFn {
 
 	// $42foo:
 	case l.acceptRun(tail):
-		s := l.input[start:l.cur]
 		if l.accept(":") {
-			l.emitCustom(token.Label, s) // skip trailing colon (:)
+			s := l.input[l.start : l.cur-1] // skip trailing colon (:)
+			l.emitCustom(token.Label, s)
 			return lexToken
 		}
 	}
 
 	// Emit error token but continue lexing next token.
-	l.cur = start
+	l.cur = l.start + 1
 	l.emitErrorf("unexpected '$'")
 	return lexToken
 }
