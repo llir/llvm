@@ -191,6 +191,25 @@ func TestParse(t *testing.T) {
 				{Kind: token.EOF, Pos: 15},
 			},
 		},
+		// i=17
+		{
+			input: `+br acall .icmp #void $42 % @`,
+			want: []token.Token{
+				{Kind: token.Error, Val: "unexpected '+'", Pos: 0},
+				{Kind: token.KwBr, Val: "br", Pos: 1},
+				{Kind: token.Error, Val: "unexpected 'a'", Pos: 4},
+				{Kind: token.KwCall, Val: "call", Pos: 5},
+				{Kind: token.Error, Val: "unexpected '.'", Pos: 10},
+				{Kind: token.KwIcmp, Val: "icmp", Pos: 11},
+				{Kind: token.Error, Val: "unexpected '#'", Pos: 16},
+				{Kind: token.Type, Val: "void", Pos: 17},
+				{Kind: token.Error, Val: "unexpected '$'", Pos: 22},
+				{Kind: token.Int, Val: "42", Pos: 23},
+				{Kind: token.Error, Val: "unexpected '%'", Pos: 26},
+				{Kind: token.Error, Val: "unexpected '@'", Pos: 28},
+				{Kind: token.EOF, Pos: 29},
+			},
+		},
 	}
 	for i, g := range golden {
 		got := Parse(g.input)
