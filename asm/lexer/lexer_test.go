@@ -7,7 +7,7 @@ import (
 	"github.com/mewlang/llvm/asm/token"
 )
 
-func TestParse(t *testing.T) {
+func TestParseString(t *testing.T) {
 	golden := []struct {
 		input string
 		want  []token.Token
@@ -249,7 +249,7 @@ func TestParse(t *testing.T) {
 		},
 	}
 	for i, g := range golden {
-		got := Parse(g.input)
+		got := ParseString(g.input)
 		if !reflect.DeepEqual(got, g.want) {
 			t.Errorf("i=%d: expected %#v, got %#v", i, g.want, got)
 			continue

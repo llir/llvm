@@ -4,21 +4,48 @@
 // [1]: https://www.youtube.com/watch?v=HxaD_trXwRE
 
 // Package lexer implements lexical tokenization of the LLVM IR assembly
-// language.
+// language. While breaking the input into tokens, the next token is the longest
+// sequence of characters that form a valid token.
 package lexer
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/mewlang/llvm/asm/token"
 )
 
-// Parse lexes the input string into a slice of tokens. While breaking the input
-// into tokens, the next token is the longest sequence of characters that form a
-// valid token.
-func Parse(input string) []token.Token {
+// Parse lexes the input read from r into a slice of tokens. Potential errors
+// related to lexing are recorded as error tokens with relevant position
+// information.
+func Parse(r io.Reader) ([]token.Token, error) {
+	buf, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	input := string(buf)
+	return ParseString(input), nil
+}
+
+// ParseFile lexes the input read from path into a slice of tokens. Potential
+// errors related to lexing are recorded as error tokens with relevant position
+// information.
+func ParseFile(path string) ([]token.Token, error) {
+	buf, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	input := string(buf)
+	return ParseString(input), nil
+}
+
+// ParseString lexes the input string into a slice of tokens. Potential errors
+// related to lexing are recorded as error tokens with relevant position
+// information.
+func ParseString(input string) []token.Token {
 	l := &lexer{
 		input: input,
 		// The average token size of LLVM IR is 4.06 (based on the 30000+ tokens

@@ -2,19 +2,16 @@ package lexer_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 
 	"github.com/mewlang/llvm/asm/lexer"
 )
 
 func ExampleParse() {
-	buf, err := ioutil.ReadFile("../testdata/c4.ll")
+	tokens, err := lexer.ParseFile("../testdata/c4.ll")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	input := string(buf)
-	tokens := lexer.Parse(input)
 	for i, tok := range tokens {
 		if i > 10 {
 			break
