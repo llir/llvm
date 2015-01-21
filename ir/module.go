@@ -1,7 +1,7 @@
 package ir
 
 // A Module contains top-level function definitions, external function
-// declarations, global variables, type definitions, and metadata [1].
+// declarations, global variables, type definitions and metadata [1].
 //
 //    [1]: http://llvm.org/docs/LangRef.html#module-structure
 type Module struct {
@@ -14,14 +14,10 @@ type Module struct {
 	// Function definitions.
 	Funcs []*Function
 
-	// TODO(u): Replace with any of the following?
-	//    Globals []Value
-	//    Globals []*Variable
-
 	// Global variables.
-	Globals []*Global
+	Globals []Value
 	// Type definitions.
-	Types []*Type
+	Types []Type
 	// Metadata.
 	Metadata []*Metadata
 }

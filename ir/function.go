@@ -7,6 +7,8 @@ package ir
 //    [1]: http://llvm.org/docs/LangRef.html#functions
 //    [2]: http://llvm.org/docs/LangRef.html#terminators
 type Function struct {
+	// Function name.
+	Name string
 	// Basic blocks of the function.
 	Blocks []*BasicBlock
 }

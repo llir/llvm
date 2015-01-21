@@ -1,6 +1,7 @@
 package ir
 
-// An Instruction belongs to one of the following groups:
+// An Instruction performs an operation and belongs to one of the following
+// groups:
 //
 //    * terminator instructions
 //    * binary instructions
@@ -29,6 +30,10 @@ type Instruction interface {
 //    ret <Type> <Val>
 //    ret void
 //
+// Semantics:
+//    return Val;
+//    return;
+//
 // Reference:
 //    http://llvm.org/docs/LangRef.html#i-ret
 type ReturnInst struct {
@@ -43,6 +48,9 @@ type ReturnInst struct {
 //
 // Syntax:
 //    br i1 <Cond>, label <TargetTrue>, label <TargetFalse>
+//
+// Semantics:
+//    if (Cond) { goto TargetTrue } else { goto TargetFalse }
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-br
@@ -61,6 +69,9 @@ type CondBranchInst struct {
 // Syntax:
 //    br label <Target>
 //
+// Semantics:
+//    goto Target;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#i-br
 type BranchInst struct {
@@ -72,12 +83,20 @@ type BranchInst struct {
 // current function.
 //
 // Syntax:
-//    switch <IntType> <Val>, label <TargetDefault> [ <IntType> <Const>, label <Target> ... ]
+//    switch <IntType> <Val>, label <TargetDefault> [ <IntType> <Const1>, label <Target1> ... ]
+//
+// Semantics:
+//    switch (Val) {
+//       case Const1:
+//          // Target1
+//       default:
+//          // TargetDefault
+//    }
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-switch
 type SwitchInst struct {
-	// TODO(u): Restrict Type to IntType.
+	// TODO(u): Restrict Type to IntType, Value to IntValue and Constant to IntConstant.
 
 	// Comparasion type.
 	Type Type
@@ -112,6 +131,9 @@ type SwitchInst struct {
 // Syntax:
 //    <Result> = add <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 + Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#i-add
 type AddInst struct {
@@ -126,6 +148,9 @@ type AddInst struct {
 //
 // Syntax:
 //    <Result> = fadd <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 + Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-fadd
@@ -142,6 +167,9 @@ type FaddInst struct {
 // Syntax:
 //    <Result> = sub <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 - Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#sub-instruction
 type SubInst struct {
@@ -156,6 +184,9 @@ type SubInst struct {
 //
 // Syntax:
 //    <Result> = fsub <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 - Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#i-fsub
@@ -172,6 +203,9 @@ type FsubInst struct {
 // Syntax:
 //    <Result> = mul <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 * Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#mul-instruction
 type MulInst struct {
@@ -186,6 +220,9 @@ type MulInst struct {
 //
 // Syntax:
 //    <Result> = fmul <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 * Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#fmul-instruction
@@ -202,6 +239,9 @@ type FmulInst struct {
 // Syntax:
 //    <Result> = udiv <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 / Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#udiv-instruction
 type UdivInst struct {
@@ -216,6 +256,9 @@ type UdivInst struct {
 //
 // Syntax:
 //    <Result> = sdiv <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 / Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#sdiv-instruction
@@ -232,6 +275,9 @@ type SdivInst struct {
 // Syntax:
 //    <Result> = fdiv <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 / Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#fdiv-instruction
 type FdivInst struct {
@@ -246,6 +292,9 @@ type FdivInst struct {
 //
 // Syntax:
 //    <Result> = urem <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 % Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#urem-instruction
@@ -262,6 +311,9 @@ type UremInst struct {
 // Syntax:
 //    <Result> = srem <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 % Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#srem-instruction
 type SremInst struct {
@@ -276,6 +328,9 @@ type SremInst struct {
 //
 // Syntax:
 //    <Result> = frem <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 % Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#frem-instruction
@@ -298,6 +353,9 @@ type FremInst struct {
 // Syntax:
 //    <Result> = shl <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 << Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#shl-instruction
 type ShlInst struct {
@@ -313,6 +371,9 @@ type ShlInst struct {
 //
 // Syntax:
 //    <Result> = lshr <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 >> Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#lshr-instruction
@@ -330,6 +391,9 @@ type LshrInst struct {
 // Syntax:
 //    <Result> = ashr <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 >> Op2; // right shift with sign extension.
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#ashr-instruction
 type AshrInst struct {
@@ -344,6 +408,9 @@ type AshrInst struct {
 //
 // Syntax:
 //    <Result> = and <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 & Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#and-instruction
@@ -360,6 +427,9 @@ type AndInst struct {
 // Syntax:
 //    <Result> = or <Type> <Op1>, <Op2>
 //
+// Semantics:
+//    Result = Op1 | Op2;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#or-instruction
 type OrInst struct {
@@ -374,6 +444,9 @@ type OrInst struct {
 //
 // Syntax:
 //    <Result> = xor <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = Op1 ^ Op2;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#xor-instruction
@@ -397,6 +470,12 @@ type XorInst struct {
 // Syntax:
 //    <Result> = alloca <Type> [, <Type> <NumElems> ] [, align <Align> ]
 //
+// Semantics:
+//    f() {
+//       Type Result;
+//       Type[NumElems] Result;
+//    }
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#alloca-instruction
 type AllocaInst struct {
@@ -413,6 +492,9 @@ type AllocaInst struct {
 // Syntax:
 //    <Result> = load <Type>* <Addr> [, align <Align> ]
 //
+// Semantics:
+//    Result = *(Type *)Addr;
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#load-instruction
 type LoadInst struct {
@@ -427,7 +509,10 @@ type LoadInst struct {
 // The StoreInst writes to memory.
 //
 // Syntax:
-//    <Result> = store <Type> <Val>, <Type>* <Addr> [, align <Align> ]
+//    store <Type> <Val>, <Type>* <Addr> [, align <Align> ]
+//
+// Semantics:
+//    *(Type *)Addr = Val;
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#store-instruction
@@ -455,6 +540,11 @@ type StoreInst struct {
 //
 // Syntax:
 //    <Result> = getelementptr <Type>* <Ptr> {, <Type> <Idx>}*
+//
+// Semantics:
+//    Result = &Ptr[Idx1];
+//    Result = &Ptr.Field1; // Field1 is identified by Idx1.
+//    Result = &Ptr[Idx1].Field2[Idx3];
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#getelementptr-instruction

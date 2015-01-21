@@ -5,8 +5,10 @@ package ir
 //
 //    [1]: http://llvm.org/docs/LangRef.html#terminators
 type BasicBlock struct {
+	// Basic block label name.
+	Name string
 	// Parent function of the basic block.
 	Parent *Function
-	// Instructions.
+	// Instructions of the basic block.
 	Insts []Instruction
 }

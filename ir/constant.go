@@ -1,4 +1,4 @@
 package ir
 
-type Constant interface {
+type Constant struct {
 }

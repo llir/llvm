@@ -1,4 +1,4 @@
 package ir
 
-type Type struct {
+type Type interface {
 }
