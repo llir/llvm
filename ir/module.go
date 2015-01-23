@@ -5,15 +5,8 @@ package ir
 //
 //    [1]: http://llvm.org/docs/LangRef.html#module-structure
 type Module struct {
-
-	// TODO(u): Add external function declarations, or let *Function handle
-	// function definitions without bodies. If *Function handles both, update the
-	// doc comment to:
-	//    Function definitions and external function declarations (Blocks is nil).
-
-	// Function definitions.
+	// Function definitions and external function declarations (Blocks is nil).
 	Funcs []*Function
-
 	// Global variables.
 	Globals []Value
 	// Type definitions.

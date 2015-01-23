@@ -9,6 +9,8 @@ type BasicBlock struct {
 	Name string
 	// Parent function of the basic block.
 	Parent *Function
-	// Instructions of the basic block.
+	// Non-terminator instructions of the basic block.
 	Insts []Instruction
+	// Terminator instruction of the basic block.
+	Term Terminator
 }

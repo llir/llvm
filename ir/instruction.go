@@ -1,123 +1,22 @@
 package ir
 
-// An Instruction performs an operation and belongs to one of the following
-// groups:
+// An Instruction performs a non-branching operation and belongs to one of the
+// following groups:
 //
-//    * terminator instructions
-//    * binary instructions
-//    * bitwise binary instructions
-//    * memory instructions
-//    * other instructions
+//    * binary instructions [1]
+//    * bitwise binary instructions [2]
+//    * memory instructions [3]
+//    * other instructions [4]
 //
-// References:
-//    http://llvm.org/docs/LangRef.html#instruction-reference
+//    [1]: http://llvm.org/docs/LangRef.html#binaryops
+//    [2]: http://llvm.org/docs/LangRef.html#bitwiseops
+//    [3]: http://llvm.org/docs/LangRef.html#memoryops
+//    [4]: http://llvm.org/docs/LangRef.html#otherops
 type Instruction interface {
-	// isInst ensures that only instructions can be assigned to the Instruction
-	// interface.
+	// isInst ensures that only non-terminator instructions can be assigned to
+	// the Instruction interface.
 	isInst()
 }
-
-// =============================================================================
-// Terminator Instructions
-//
-//    ref: http://llvm.org/docs/LangRef.html#terminators
-// =============================================================================
-
-// The ReturnInst returns control flow (and optionally a value) from a function
-// back to the caller.
-//
-// Syntax:
-//    ret <Type> <Val>
-//    ret void
-//
-// Semantics:
-//    return Val;
-//    return;
-//
-// Reference:
-//    http://llvm.org/docs/LangRef.html#i-ret
-type ReturnInst struct {
-	// Return type.
-	Type Type
-	// Return value; or nil in case of a void return.
-	Val Value
-}
-
-// The CondBranchInst transfers control flow to one of two basic blocks in the
-// current function based on a boolean branching condition.
-//
-// Syntax:
-//    br i1 <Cond>, label <TargetTrue>, label <TargetFalse>
-//
-// Semantics:
-//    if (Cond) { goto TargetTrue } else { goto TargetFalse }
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#i-br
-type CondBranchInst struct {
-	// Boolean branching condition.
-	Cond Value
-	// Target branch when the condition evaluates to true.
-	True *BasicBlock
-	// Target branch when the condition evaluates to false.
-	False *BasicBlock
-}
-
-// The BranchInst transfers control flow to a basic block in the current
-// function.
-//
-// Syntax:
-//    br label <Target>
-//
-// Semantics:
-//    goto Target;
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#i-br
-type BranchInst struct {
-	// Target branch.
-	Target *BasicBlock
-}
-
-// The SwitchInst transfers control flow to one of several basic blocks in the
-// current function.
-//
-// Syntax:
-//    switch <IntType> <Val>, label <TargetDefault> [ <IntType> <Const1>, label <Target1> ... ]
-//
-// Semantics:
-//    switch (Val) {
-//       case Const1:
-//          // Target1
-//       default:
-//          // TargetDefault
-//    }
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#i-switch
-type SwitchInst struct {
-	// TODO(u): Restrict Type to IntType, Value to IntValue and Constant to IntConstant.
-
-	// Comparasion type.
-	Type Type
-	// Comparasion value.
-	Val Value
-	// Default target.
-	Default *BasicBlock
-	// Switch cases.
-	Cases []struct {
-		// Case value.
-		Val Constant
-		// Case target.
-		Target *BasicBlock
-	}
-}
-
-// TODO(u): Add the following terminator instructions:
-//    - indirectbr
-//    - invoke
-//    - resume
-//    - unreachable
 
 // =============================================================================
 // Binary Operations
@@ -565,21 +464,17 @@ type GetelementptrInst struct {
 
 // TODO(u): Add other operations.
 
-// isInst ensures that only instructions can be assigned to the Instruction
-// interface.
-func (ReturnInst) isInst()     {}
-func (CondBranchInst) isInst() {}
-func (BranchInst) isInst()     {}
-func (SwitchInst) isInst()     {}
-func (AddInst) isInst()        {}
-func (FaddInst) isInst()       {}
-func (SubInst) isInst()        {}
-func (FsubInst) isInst()       {}
-func (MulInst) isInst()        {}
-func (FmulInst) isInst()       {}
-func (UdivInst) isInst()       {}
-func (SdivInst) isInst()       {}
-func (FdivInst) isInst()       {}
-func (UremInst) isInst()       {}
-func (SremInst) isInst()       {}
-func (FremInst) isInst()       {}
+// isInst ensures that only non-terminator instructions can be assigned to the
+// Instruction interface.
+func (AddInst) isInst()  {}
+func (FaddInst) isInst() {}
+func (SubInst) isInst()  {}
+func (FsubInst) isInst() {}
+func (MulInst) isInst()  {}
+func (FmulInst) isInst() {}
+func (UdivInst) isInst() {}
+func (SdivInst) isInst() {}
+func (FdivInst) isInst() {}
+func (UremInst) isInst() {}
+func (SremInst) isInst() {}
+func (FremInst) isInst() {}
