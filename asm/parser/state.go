@@ -82,11 +82,11 @@ func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
 //                  InsertelementInst | ShufflevectorInst | ExtractvalueInst |
 //                  InsertvalueInst | AllocaInst | LoadInst | StoreInst |
 //                  FenceInst | CmpxchgInst | AtomicrmwInst |
-//                  GetelementptrInst | ToInst | TruncInst | ZextInst |
-//                  SextInst | FptruncInst | FpextInst | FptouiInst |
-//                  FptosiInst | UitofpInst | SitofpInst | PtrtointInst |
-//                  InttoptrInst | BitcastInst | AddrspacecastInst | IcmpInst |
-//                  FcmpInst | PhiInst | SelectInst | CallInst | VaArgInst |
+//                  GetelementptrInst | TruncInst | ZextInst | SextInst |
+//                  FptruncInst | FpextInst | FptouiInst | FptosiInst |
+//                  UitofpInst | SitofpInst | PtrtointInst | InttoptrInst |
+//                  BitcastInst | AddrspacecastInst | IcmpInst | FcmpInst |
+//                  PhiInst | SelectInst | CallInst | VaArgInst |
 //                  LandingpadInst .
 //    Terminator  = RetInst | BrInst | SwitchInst | IndirectbrInst |
 //                  InvokeInst | ResumeInst | UnreachableInst .
@@ -116,6 +116,12 @@ func (p *parser) parseValue() (ir.Value, error) {
 	panic("not yet implemented.")
 }
 
+// =============================================================================
+// Terminator Instructions
+//
+//    ref: http://llvm.org/docs/LangRef.html#terminators
+// =============================================================================
+
 // parseRetInst parses a return instruction. A "ret" token has already been
 // comsumed.
 //
@@ -138,3 +144,78 @@ func (p *parser) parseRetInst() (*ir.ReturnInst, error) {
 func (p *parser) parseBrInst() (*ir.BranchInst, error) {
 	panic("not yet implemented.")
 }
+
+// parseSwitchInst parses a switch instruction. A "switch" token has already
+// been comsumed.
+//
+//    SwitchInst = "switch" IntType Value "," LabelType TargetDefault "[" { IntType Value "," LabelType TargetCase } "]" .
+//
+//    TargetDefault = LocalName .
+//    TargetCase    = LocalName .
+func (p *parser) parseSwitchInst() (*ir.SwitchInst, error) {
+	panic("not yet implemented.")
+}
+
+// TODO: Add parsing of IndirectbrInst, InvokeInst, ResumeInst, UnreachableInst.
+
+// =============================================================================
+// Binary Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#binaryops
+// =============================================================================
+
+// TODO: Add parsing of AddInst, FaddInst, SubInst, FsubInst, MulInst, FmulInst,
+// UdivInst, SdivInst, FdivInst, UremInst, SremInst, FremInst.
+
+// =============================================================================
+// Bitwise Binary Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#bitwiseops
+// =============================================================================
+
+// TODO: Add parsing of ShlInst, LshrInst, AshrInst, AndInst, OrInst, XorInst.
+
+// =============================================================================
+// Vector Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#vector-operations
+// =============================================================================
+
+// TODO: Add parsing of ExtractelementInst, InsertelementInst,
+// ShufflevectorInst.
+
+// =============================================================================
+// Aggregate Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#aggregate-operations
+// =============================================================================
+
+// TODO: Add parsing of ExtractvalueInst, InsertvalueInst.
+
+// =============================================================================
+// Memory Access and Addressing Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#memoryops
+// =============================================================================
+
+// TODO: Add parsing of AllocaInst, LoadInst, StoreInst, FenceInst, CmpxchgInst,
+// AtomicrmwInst, GetelementptrInst.
+
+// =============================================================================
+// Conversion Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#conversion-operations
+// =============================================================================
+
+// TODO: Add parsing of TruncInst, ZextInst, SextInst, FptruncInst, FpextInst,
+// FptouiInst, FptosiInst, UitofpInst, SitofpInst, PtrtointInst, InttoptrInst,
+// BitcastInst, AddrspacecastInst.
+
+// =============================================================================
+// Other Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#other-operations
+// =============================================================================
+
+// TODO: Add parsing of IcmpInst, FcmpInst, PhiInst, SelectInst, CallInst,
+// VaArgInst, LandingpadInst.
