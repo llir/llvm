@@ -164,7 +164,15 @@ func (p *parser) parseSwitchInst() (*ir.SwitchInst, error) {
 	panic("not yet implemented.")
 }
 
-// TODO: Add parsing of IndirectbrInst, InvokeInst, ResumeInst, UnreachableInst.
+// TODO: Add parsing of IndirectbrInst, InvokeInst, ResumeInst.
+
+// parseUnreachableInst parses an unreachable instruction. An "unreachable"
+// token has already been comsumed.
+//
+//    UnreachableInst = "unreachable" .
+func (p *parser) parseUnreachableInst() (*ir.UnreachableInst, error) {
+	panic("not yet implemented.")
+}
 
 // =============================================================================
 // Binary Operations
