@@ -1,6 +1,7 @@
 package parser
 
 // decimal_digit = "0" … "9" .
+// int_lit       =  decimal_digit { decimal_digit } .
 
 import (
 	"errors"
@@ -90,19 +91,26 @@ func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
 //                  LandingpadInst .
 //    Terminator  = RetInst | BrInst | SwitchInst | IndirectbrInst |
 //                  InvokeInst | ResumeInst | UnreachableInst .
-
 func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 	panic("not yet implemented.")
 }
 
 // parseType parses a type.
 //
-//    Type = IntType | VoidType | "half" | "float" | "double" | "x86_fp80" |
-//           "fp128" | "ppc_fp128" | "x86_mmx" | LabelType | "metadata" .
+//    Type = IntType | VoidType | FloatType | "x86_mmx" | LabelType |
+//           "metadata" | VectorType .
 //
-//    IntType   = "i" decimal_digit { decimal_digit } .
-//    VoidType  = "void" .
-//    LabelType = "label" .
+//    IntType         = "i" int_lit .
+//    VoidType        = "void" .
+//    FloatType       = "half" | "float" | "double" | "x86_fp80" | "fp128" |
+//                      "ppc_fp128" .
+//    LabelType       = "label" .
+//    VectorType      = IntVectorType | FloatVectorType |
+//                      "<" int_lit "x" Type ">" .
+//    IntVectorType   = "<" int_lit "x" IntType ">" .
+//    FloatVectorType = "<" int_lit "x" FloatType ">" .
+//    IntsType        = ( IntType | IntVectorType ) .
+//    FloatsType      = ( FloatType | FloatVectorType ) .
 func (p *parser) parseType() (ir.Type, error) {
 	panic("not yet implemented.")
 }
@@ -164,8 +172,149 @@ func (p *parser) parseSwitchInst() (*ir.SwitchInst, error) {
 //    ref: http://llvm.org/docs/LangRef.html#binaryops
 // =============================================================================
 
-// TODO: Add parsing of AddInst, FaddInst, SubInst, FsubInst, MulInst, FmulInst,
-// UdivInst, SdivInst, FdivInst, UremInst, SremInst, FremInst.
+// parseAddInst parses an addition instruction. An "add" token has already been
+// comsumed.
+//
+//    AddInst = Result "=" "add" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseAddInst() (*ir.AddInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseFaddInst parses a floating-point addition instruction. A "fadd" token
+// has already been comsumed.
+//
+//    FaddInst = Result "=" "fadd" FloatsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseFaddInst() (*ir.FaddInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseSubInst parses a subtraction instruction. A "sub" token has already been
+// comsumed.
+//
+//    SubInst = Result "=" "sub" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseSubInst() (*ir.SubInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseFsubInst parses a floating-point subtraction instruction. A "fsub" token
+// has already been comsumed.
+//
+//    FsubInst = Result "=" "fsub" FloatsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseFsubInst() (*ir.FsubInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseMulInst parses a multiplication instruction. A "mul" token has already
+// been comsumed.
+//
+//    MulInst = Result "=" "mul" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseMulInst() (*ir.MulInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseFmulInst parses a floating-point multiplication instruction. A "fmul"
+// token has already been comsumed.
+//
+//    FmulInst = Result "=" "fmul" FloatsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseFmulInst() (*ir.FmulInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseUdivInst parses a unsigned division instruction. An "udiv" token has
+// already been comsumed.
+//
+//    UdivInst = Result "=" "udiv" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseUdivInst() (*ir.UdivInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseSdivInst parses a signed division instruction. A "sdiv" token has
+// already been comsumed.
+//
+//    SdivInst = Result "=" "sdiv" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseSdivInst() (*ir.SdivInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseFdivInst parses a floating-point division instruction. A "fdiv" token
+// has already been comsumed.
+//
+//    FdivInst = Result "=" "fdiv" FloatsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseFdivInst() (*ir.FdivInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseUremInst parses a unsigned modulo instruction. An "urem" token has
+// already been comsumed.
+//
+//    UremInst = Result "=" "urem" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseUremInst() (*ir.UremInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseSremInst parses a signed modulo instruction. An "srem" token has already
+// been comsumed.
+//
+//    SremInst = Result "=" "srem" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseSremInst() (*ir.SremInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseFremInst parses a floating-point modulo instruction. A "frem" token
+// has already been comsumed.
+//
+//    FremInst = Result "=" "frem" FloatsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseFremInst() (*ir.FremInst, error) {
+	panic("not yet implemented.")
+}
 
 // =============================================================================
 // Bitwise Binary Operations
