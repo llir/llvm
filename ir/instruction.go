@@ -357,6 +357,27 @@ type XorInst struct {
 }
 
 // =============================================================================
+// Vector Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#vector-operations
+// =============================================================================
+
+// TODO: Add the following instructions:
+//    - extractelement
+//    - insertelement
+//    - shufflevector
+
+// =============================================================================
+// Aggregate Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#aggregate-operations
+// =============================================================================
+
+// TODO: Add the following instructions:
+//    - extractvalue
+//    - insertvalue
+
+// =============================================================================
 // Memory Access and Addressing Operations
 //
 //    ref: http://llvm.org/docs/LangRef.html#memoryops
@@ -457,12 +478,40 @@ type GetelementptrInst struct {
 }
 
 // =============================================================================
-// Other Operations
+// Conversion Operations
 //
-//    ref: http://llvm.org/docs/LangRef.html#otherops
+//    ref: http://llvm.org/docs/LangRef.html#conversion-operations
 // =============================================================================
 
-// TODO(u): Add other operations.
+// TODO: Add the following instructions:
+//    - trunc
+//    - zext
+//    - sext
+//    - fptrunc
+//    - fpext
+//    - fptoui
+//    - fptosi
+//    - uitofp
+//    - sitofp
+//    - ptrtoint
+//    - inttoptr
+//    - bitcast
+//    - addrspacecast
+
+// =============================================================================
+// Other Operations
+//
+//    ref: http://llvm.org/docs/LangRef.html#other-operations
+// =============================================================================
+
+// TODO: Add the following instructions:
+//    - icmp
+//    - fcmp
+//    - phi
+//    - select
+//    - call
+//    - va_arg
+//    - landingpad
 
 // isInst ensures that only non-terminator instructions can be assigned to the
 // Instruction interface.
