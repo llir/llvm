@@ -504,10 +504,110 @@ type GetelementptrInst struct {
 //    ref: http://llvm.org/docs/LangRef.html#other-operations
 // =============================================================================
 
+// The IcmpInst compares integer values.
+//
+// Syntax:
+//    <Result> = icmp <Pred> <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = (Op1 Pred Op2); // Where Pred is ==, !=, >, >=, < or <=.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#icmp-instruction
+type IcmpInst struct {
+	// Comparison operation.
+	Pred IntPredicate
+	// TODO: Restrict to IntsType and IntsValue?
+
+	// Value type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// IntPredicate specifies a comparison operation to perform between two integer
+// values.
+type IntPredicate int
+
+// Integer comparison operations.
+const (
+	IntEq  IntPredicate = iota // equal
+	IntNe                      // not equal
+	IntUgt                     // unsigned greater than
+	IntUge                     // unsigned greater or equal
+	IntUlt                     // unsigned less than
+	IntUle                     // unsigned less or equal
+	IntSgt                     // signed greater than
+	IntSge                     // signed greater or equal
+	IntSlt                     // signed less than
+	IntSle                     // signed less or equal
+)
+
+// The FcmpInst compares floating point values.
+//
+// Syntax:
+//    <Result> = fcmp <Pred> <Type> <Op1>, <Op2>
+//
+// Semantics:
+//    Result = (Op1 Pred Op2); // Where Pred is ==, !=, >, >=, < or <=.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fcmp-instruction
+type FcmpInst struct {
+	// Comparison operation.
+	Pred FloatPredicate
+	// TODO: Restrict to FloatsType and FloatsValue?
+
+	// Value type.
+	Type Type
+	// Operands.
+	Op1, Op2 Value
+}
+
+// FloatPredicate specifies a comparison operation to perform between two
+// floating point values.
+type FloatPredicate int
+
+// Floating point comparison operations.
+const (
+	FloatFalse FloatPredicate = iota // no comparison, always returns false
+	FloatOeq                         // ordered and equal
+	FloatOgt                         // ordered and greater than
+	FloatOge                         // ordered and greater than or equal
+	FloatOlt                         // ordered and less than
+	FloatOle                         // ordered and less than or equal
+	FloatOne                         // ordered and not equal
+	FloatOrd                         // ordered (no nans)
+	FloatUeq                         // unordered or equal
+	FloatUgt                         // unordered or greater than
+	FloatUge                         // unordered or greater than or equal
+	FloatUlt                         // unordered or less than
+	FloatUle                         // unordered or less than or equal
+	FloatUne                         // unordered or not equal
+	FloatUno                         // unordered (either nans)
+	FloatTrue                        // no comparison, always returns true
+
+)
+
+// The PhiInst is used to implement φ nodes in the SSA graph representation of a
+// function.
+//
+// Syntax:
+//    <Result> = phi <Type> [ <Val0>, <Label0> ], ...
+//
+// Semantics:
+//    Result = Val0 // if the previously executed basic block was Label0, etc.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#phi-instruction
+type PhiInst struct {
+	// Value type.
+	Type Type
+	// Predecessor basic block labels and their corresponding values.
+	Preds map[string]Value
+}
+
 // TODO: Add the following instructions:
-//    - icmp
-//    - fcmp
-//    - phi
 //    - select
 //    - call
 //    - va_arg
