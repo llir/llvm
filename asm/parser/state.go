@@ -425,8 +425,54 @@ func (p *parser) parseXorInst() (*ir.XorInst, error) {
 //    ref: http://llvm.org/docs/LangRef.html#memoryops
 // =============================================================================
 
-// TODO: Add parsing of AllocaInst, LoadInst, StoreInst, FenceInst, CmpxchgInst,
-// AtomicrmwInst, GetelementptrInst.
+// parseAllocaInst parses a stack allocation instruction. An "alloca" token has
+// already been comsumed.
+//
+//    AllocaInst = Result "=" "alloca" Type [ "," IntType NumElems ] [ "," "align" Align ] .
+//
+//    Result   = LocalVar
+//    NumElems = Value
+//    Align    = int_lit
+func (p *parser) parseAllocaInst() (*ir.AllocaInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseLoadInst parses a memory load instruction. A "load" token has already
+// been comsumed.
+//
+//    LoadInst = Result "=" "load" Type "*" Addr [ "," "align" Align ] .
+//
+//    Result = LocalVar
+//    Addr   = GlobalVar | LocalVar
+//    Align  = int_lit
+func (p *parser) parseLoadInst() (*ir.LoadInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseStoreInst parses a memory store instruction. A "store" token has already
+// been comsumed.
+//
+//    StoreInst = "store" Type Value "," Type "*" Addr [ "," "align" Align ] .
+//
+//    Addr   = GlobalVar | LocalVar
+//    Align  = int_lit
+func (p *parser) parseStoreInst() (*ir.StoreInst, error) {
+	panic("not yet implemented.")
+}
+
+// TODO: Add parsing of FenceInst, CmpxchgInst, AtomicrmwInst.
+
+// parseGetelementptrInst parses a memory address calculation instruction. A
+// "getelementptr" token has already been comsumed.
+//
+//    GetelementptrInst = Result "=" "getelementptr" Type "*" Addr { "," IntType Idx } .
+//
+//    Result = LocalVar
+//    Addr   = GlobalVar | LocalVar
+//    Idx    = Value
+func (p *parser) parseGetelementptrInst() (*ir.GetelementptrInst, error) {
+	panic("not yet implemented.")
+}
 
 // =============================================================================
 // Conversion Operations
