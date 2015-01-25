@@ -322,7 +322,77 @@ func (p *parser) parseFremInst() (*ir.FremInst, error) {
 //    ref: http://llvm.org/docs/LangRef.html#bitwiseops
 // =============================================================================
 
-// TODO: Add parsing of ShlInst, LshrInst, AshrInst, AndInst, OrInst, XorInst.
+// parseShlInst parses a shift left instruction. A "shl" token has already been
+// comsumed.
+//
+//    ShlInst = Result "=" "shl" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseShlInst() (*ir.ShlInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseLshrInst parses a logical shift right instruction. A "lshr" token has
+// already been comsumed.
+//
+//    LshrInst = Result "=" "lshr" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseLshrInst() (*ir.LshrInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseAshrInst parses an arithmetic shift right instruction. An "ashr" token
+// has already been comsumed.
+//
+//    AshrInst = Result "=" "ashr" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseAshrInst() (*ir.AshrInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseAndInst parses a bitwise logical AND instruction. An "and" token has
+// already been comsumed.
+//
+//    AndInst = Result "=" "and" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseAndInst() (*ir.AndInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseOrInst parses a bitwise logical OR instruction. A "or" token has already
+// been comsumed.
+//
+//    OrInst = Result "=" "or" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseOrInst() (*ir.OrInst, error) {
+	panic("not yet implemented.")
+}
+
+// parseXorInst parses a bitwise logical XOR instruction. A "xor" token has
+// already been comsumed.
+//
+//    XorInst = Result "=" "xor" IntsType Op1 "," Op2 .
+//
+//    Result = LocalVar
+//    Op1    = Value
+//    Op2    = Value
+func (p *parser) parseXorInst() (*ir.XorInst, error) {
+	panic("not yet implemented.")
+}
 
 // =============================================================================
 // Vector Operations
