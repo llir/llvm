@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 )
 
@@ -12,23 +13,23 @@ import (
 type Func struct {
 	// Function parameter types.
 	params []Type
-	// Return parameter type.
-	ret Type
+	// Result parameter type.
+	result Type
 	// Specifies if the function takes a variadic number of arguments or not.
 	variadic bool
 }
 
 // NewFunc returns a new function type based on the given function parameter
-// types and return parameter type. The function takes a variadic number of
+// types and result parameter type. The function takes a variadic number of
 // arguments if variadic is true.
-func NewFunc(params []Type, ret Type, variadic bool) (*Func, error) {
-	// Validate return parameter type (any type except label, metadata and
+func NewFunc(params []Type, result Type, variadic bool) (*Func, error) {
+	// Validate result parameter type (any type except label, metadata and
 	// function).
-	switch ret.(type) {
+	switch result.(type) {
 	case *Void, *Int, *Float, *MMX, *Pointer, *Vector, *Array, *Struct:
 		// valid type
 	default:
-		return nil, fmt.Errorf("invalid return parameter type %v", ret)
+		return nil, fmt.Errorf("invalid result parameter type %v", result)
 	}
 
 	// Validate function parameter types (any type except void and function).
@@ -36,17 +37,19 @@ func NewFunc(params []Type, ret Type, variadic bool) (*Func, error) {
 		switch param.(type) {
 		case *Int, *Float, *MMX, *Label, *Metadata, *Pointer, *Vector, *Array, *Struct:
 			// valid type
+		case *Void:
+			return nil, errors.New("invalid function parameter type; void type only allowed for function results")
 		default:
 			return nil, fmt.Errorf("invalid function parameter type %v", param)
 		}
 	}
 
-	return &Func{params: params, ret: ret, variadic: variadic}, nil
+	return &Func{params: params, result: result, variadic: variadic}, nil
 }
 
-// Ret returns the function return type.
-func (typ *Func) Ret() Type {
-	return typ.ret
+// Result returns the function result type.
+func (typ *Func) Result() Type {
+	return typ.result
 }
 
 // Params returns the function parameter types.
@@ -57,7 +60,7 @@ func (typ *Func) Params() []Type {
 func (typ *Func) String() string {
 	// i32 (i8*, ...)
 	buf := new(bytes.Buffer)
-	fmt.Fprintf(buf, "%v (", typ.ret)
+	fmt.Fprintf(buf, "%v (", typ.result)
 	for i, param := range typ.params {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -89,6 +92,8 @@ func NewPointer(elem Type) (*Pointer, error) {
 	switch elem.(type) {
 	case *Int, *Float, *MMX, *Func, *Pointer, *Vector, *Array, *Struct:
 		// valid type
+	case *Void:
+		return nil, errors.New("invalid pointer to void; use i8* instead")
 	default:
 		return nil, fmt.Errorf("invalid pointer to %v", elem)
 	}
@@ -118,8 +123,24 @@ type Vector struct {
 
 // NewVector returns a new vector type based on the specified element type and
 // length.
-func NewVector(elem Type, n int) *Vector {
-	return &Vector{elem: elem, n: n}
+func NewVector(elem Type, n int) (*Vector, error) {
+	// Validate element type (any type except void, x86_mmx, label, metadata,
+	// function, vector, array and struct).
+	switch elem.(type) {
+	case *Int, *Float, *Pointer:
+		// valid type
+	case *Void:
+		return nil, errors.New("invalid vector element type; void type only allowed for function results")
+	default:
+		return nil, fmt.Errorf("invalid vector element type %v", elem)
+	}
+
+	// Validate vector length.
+	if n < 1 {
+		return nil, fmt.Errorf("invalid vector length %d", n)
+	}
+
+	return &Vector{elem: elem, n: n}, nil
 }
 
 // Elem returns the element type of the vector.
@@ -149,8 +170,24 @@ type Array struct {
 
 // NewArray returns a new array type based on the specified element type and
 // length.
-func NewArray(elem Type, n int) *Array {
-	return &Array{elem: elem, n: n}
+func NewArray(elem Type, n int) (*Array, error) {
+	// Validate element type (any type except void, label, metadata and
+	// function).
+	switch elem.(type) {
+	case *Int, *Float, *MMX, *Pointer, *Vector, *Array, *Struct:
+		// valid type
+	case *Void:
+		return nil, errors.New("invalid array element type; void type only allowed for function results")
+	default:
+		return nil, fmt.Errorf("invalid array element type %v", elem)
+	}
+
+	// Validate array length.
+	if n < 0 {
+		return nil, fmt.Errorf("invalid array length %d", n)
+	}
+
+	return &Array{elem: elem, n: n}, nil
 }
 
 // Elem returns the element type of the array.
@@ -180,10 +217,20 @@ type Struct struct {
 
 // NewStruct returns a structure type based on the given field types. The
 // structure is 1 byte aligned if packed is true.
-func NewStruct(fields []Type, packed bool) *Struct {
-	// TODO: Report errors for field types with no size or change to type of
-	// fields to enforce it through the API.
-	return &Struct{fields, packed}
+func NewStruct(fields []Type, packed bool) (*Struct, error) {
+	// Validate field types (any type except void, label, metadata and function).
+	for _, field := range fields {
+		switch field.(type) {
+		case *Int, *Float, *MMX, *Pointer, *Vector, *Array, *Struct:
+			// valid type
+		case *Void:
+			return nil, errors.New("invalid structure field type; void type only allowed for function results")
+		default:
+			return nil, fmt.Errorf("invalid structure field type %v", field)
+		}
+	}
+
+	return &Struct{fields, packed}, nil
 }
 
 // Fields returns the field types of the structure.
