@@ -1,5 +1,7 @@
 package ir
 
+import "github.com/mewlang/llvm/types"
+
 // An Instruction performs a non-branching operation and belongs to one of the
 // following groups:
 //
@@ -37,7 +39,7 @@ type Instruction interface {
 //    http://llvm.org/docs/LangRef.html#i-add
 type AddInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -55,7 +57,7 @@ type AddInst struct {
 //    http://llvm.org/docs/LangRef.html#i-fadd
 type FaddInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -73,7 +75,7 @@ type FaddInst struct {
 //    http://llvm.org/docs/LangRef.html#sub-instruction
 type SubInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -91,7 +93,7 @@ type SubInst struct {
 //    http://llvm.org/docs/LangRef.html#i-fsub
 type FsubInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -109,7 +111,7 @@ type FsubInst struct {
 //    http://llvm.org/docs/LangRef.html#mul-instruction
 type MulInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -127,7 +129,7 @@ type MulInst struct {
 //    http://llvm.org/docs/LangRef.html#fmul-instruction
 type FmulInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -145,7 +147,7 @@ type FmulInst struct {
 //    http://llvm.org/docs/LangRef.html#udiv-instruction
 type UdivInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -163,7 +165,7 @@ type UdivInst struct {
 //    http://llvm.org/docs/LangRef.html#sdiv-instruction
 type SdivInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -181,7 +183,7 @@ type SdivInst struct {
 //    http://llvm.org/docs/LangRef.html#fdiv-instruction
 type FdivInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -199,7 +201,7 @@ type FdivInst struct {
 //    http://llvm.org/docs/LangRef.html#urem-instruction
 type UremInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -217,7 +219,7 @@ type UremInst struct {
 //    http://llvm.org/docs/LangRef.html#srem-instruction
 type SremInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -235,7 +237,7 @@ type SremInst struct {
 //    http://llvm.org/docs/LangRef.html#frem-instruction
 type FremInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -259,7 +261,7 @@ type FremInst struct {
 //    http://llvm.org/docs/LangRef.html#shl-instruction
 type ShlInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -278,7 +280,7 @@ type ShlInst struct {
 //    http://llvm.org/docs/LangRef.html#lshr-instruction
 type LshrInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -297,7 +299,7 @@ type LshrInst struct {
 //    http://llvm.org/docs/LangRef.html#ashr-instruction
 type AshrInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -315,7 +317,7 @@ type AshrInst struct {
 //    http://llvm.org/docs/LangRef.html#and-instruction
 type AndInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -333,7 +335,7 @@ type AndInst struct {
 //    http://llvm.org/docs/LangRef.html#or-instruction
 type OrInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -351,7 +353,7 @@ type OrInst struct {
 //    http://llvm.org/docs/LangRef.html#xor-instruction
 type XorInst struct {
 	// Operand type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -400,7 +402,7 @@ type XorInst struct {
 //    http://llvm.org/docs/LangRef.html#alloca-instruction
 type AllocaInst struct {
 	// Underlying type of the pointer.
-	Type Type
+	Type types.Type
 	// Number of elements to allocate; defaults to 1.
 	NumElems int
 	// Memory alignment.
@@ -419,7 +421,7 @@ type AllocaInst struct {
 //    http://llvm.org/docs/LangRef.html#load-instruction
 type LoadInst struct {
 	// Underlying type of the pointer.
-	Type Type
+	Type types.Type
 	// Memory address to load.
 	Addr Value
 	// Memory alignment.
@@ -438,7 +440,7 @@ type LoadInst struct {
 //    http://llvm.org/docs/LangRef.html#store-instruction
 type StoreInst struct {
 	// Value type.
-	Type Type
+	Type types.Type
 	// Value to store.
 	Val Value
 	// Memory address to store at.
@@ -470,7 +472,7 @@ type StoreInst struct {
 //    http://llvm.org/docs/LangRef.html#getelementptr-instruction
 type GetelementptrInst struct {
 	// Underlying type of the pointer.
-	Type Type
+	Type types.Type
 	// Pointer to the aggregate data structure.
 	Ptr Value
 	// Element indicies.
@@ -520,7 +522,7 @@ type IcmpInst struct {
 	// TODO: Restrict to IntsType and IntsValue?
 
 	// Value type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -559,7 +561,7 @@ type FcmpInst struct {
 	// TODO: Restrict to FloatsType and FloatsValue?
 
 	// Value type.
-	Type Type
+	Type types.Type
 	// Operands.
 	Op1, Op2 Value
 }
@@ -602,7 +604,7 @@ const (
 //    http://llvm.org/docs/LangRef.html#phi-instruction
 type PhiInst struct {
 	// Value type.
-	Type Type
+	Type types.Type
 	// Predecessor basic block labels and their corresponding values.
 	Preds map[string]Value
 }

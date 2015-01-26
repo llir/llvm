@@ -3,6 +3,9 @@ package parser
 // decimal_digit = "0" … "9" .
 // int_lit       =  decimal_digit { decimal_digit } .
 
+// Global = GlobalID | GlobalVar .
+// Local = LocalID | LocalVar .
+
 import (
 	"errors"
 	"fmt"
@@ -10,6 +13,7 @@ import (
 
 	"github.com/mewlang/llvm/asm/token"
 	"github.com/mewlang/llvm/ir"
+	"github.com/mewlang/llvm/types"
 )
 
 // TODO: Complete TopLevelEntity EBNF definition.
@@ -46,7 +50,7 @@ func (p *parser) parseTopLevelEntity(module *ir.Module) error {
 //
 //    FuncDecl = "declare" FuncHeader .
 func (p *parser) parseDeclare() (*ir.Function, error) {
-	panic("not yet implemented.")
+	return p.parseFuncHeader()
 }
 
 // parseDefine parses a function definition. A "define" token has already been
@@ -54,7 +58,12 @@ func (p *parser) parseDeclare() (*ir.Function, error) {
 //
 //    FuncDef = "define" FuncHeader FuncBody .
 func (p *parser) parseDefine() (*ir.Function, error) {
-	panic("not yet implemented.")
+	f, err := p.parseFuncHeader()
+	if err != nil {
+		return nil, err
+	}
+	f.Blocks, err = p.parseFuncBody()
+	return f, err
 }
 
 // parseFuncHeader parses a function header consisting of a return argument, a
@@ -63,11 +72,34 @@ func (p *parser) parseDefine() (*ir.Function, error) {
 //    FuncHeader = RetType FuncName "(" ArgList ")" .
 //
 //    RetType  = Type .
-//    FuncName = GlobalName .
+//    FuncName = Global .
 //    ArgList  = [ Arg { "," Arg } ] .
-//    Arg      = Type [ LocalName ] .
+//    Arg      = Type [ Local ] .
 func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
-	panic("not yet implemented.")
+	// Return type.
+	ret, err := p.parseType()
+	if err != nil {
+		return nil, err
+	}
+
+	// Function name.
+	tok := p.next()
+	switch tok.Kind {
+	case token.GlobalID, token.GlobalVar:
+		header.Name = tok.Val
+	default:
+		return nil, errors.New("expected function name")
+	}
+
+	// Argument list.
+	tok = p.next()
+	if tok.Kind != token.Lparen {
+		return nil, errors.New("expected '(' in function argument list")
+	}
+
+	_ = ret
+
+	return header, nil
 }
 
 // parseFuncBody parses a function body consisting of one or more basic blocks.
@@ -111,7 +143,7 @@ func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 //    FloatVectorType = "<" int_lit "x" FloatType ">" .
 //    IntsType        = ( IntType | IntVectorType ) .
 //    FloatsType      = ( FloatType | FloatVectorType ) .
-func (p *parser) parseType() (ir.Type, error) {
+func (p *parser) parseType() (types.Type, error) {
 	panic("not yet implemented.")
 }
 
@@ -145,10 +177,10 @@ func (p *parser) parseRetInst() (*ir.ReturnInst, error) {
 //    BrInst = "br" LabelType Target |
 //             "br" "i1" Cond "," LabelType TargetTrue "," LabelType TargetFalse .
 //
-//    Target      = LocalName .
+//    Target      = Local .
 //    Cond        = Value .
-//    TargetTrue  = LocalName .
-//    TargetFalse = LocalName .
+//    TargetTrue  = Local .
+//    TargetFalse = Local .
 func (p *parser) parseBrInst() (*ir.BranchInst, error) {
 	panic("not yet implemented.")
 }
@@ -158,8 +190,8 @@ func (p *parser) parseBrInst() (*ir.BranchInst, error) {
 //
 //    SwitchInst = "switch" IntType Value "," LabelType TargetDefault "[" { IntType Value "," LabelType TargetCase } "]" .
 //
-//    TargetDefault = LocalName .
-//    TargetCase    = LocalName .
+//    TargetDefault = Local .
+//    TargetCase    = Local .
 func (p *parser) parseSwitchInst() (*ir.SwitchInst, error) {
 	panic("not yet implemented.")
 }
@@ -185,7 +217,7 @@ func (p *parser) parseUnreachableInst() (*ir.UnreachableInst, error) {
 //
 //    AddInst = Result "=" "add" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseAddInst() (*ir.AddInst, error) {
@@ -197,7 +229,7 @@ func (p *parser) parseAddInst() (*ir.AddInst, error) {
 //
 //    FaddInst = Result "=" "fadd" FloatsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFaddInst() (*ir.FaddInst, error) {
@@ -209,7 +241,7 @@ func (p *parser) parseFaddInst() (*ir.FaddInst, error) {
 //
 //    SubInst = Result "=" "sub" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseSubInst() (*ir.SubInst, error) {
@@ -221,7 +253,7 @@ func (p *parser) parseSubInst() (*ir.SubInst, error) {
 //
 //    FsubInst = Result "=" "fsub" FloatsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFsubInst() (*ir.FsubInst, error) {
@@ -233,7 +265,7 @@ func (p *parser) parseFsubInst() (*ir.FsubInst, error) {
 //
 //    MulInst = Result "=" "mul" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseMulInst() (*ir.MulInst, error) {
@@ -245,7 +277,7 @@ func (p *parser) parseMulInst() (*ir.MulInst, error) {
 //
 //    FmulInst = Result "=" "fmul" FloatsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFmulInst() (*ir.FmulInst, error) {
@@ -257,7 +289,7 @@ func (p *parser) parseFmulInst() (*ir.FmulInst, error) {
 //
 //    UdivInst = Result "=" "udiv" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseUdivInst() (*ir.UdivInst, error) {
@@ -269,7 +301,7 @@ func (p *parser) parseUdivInst() (*ir.UdivInst, error) {
 //
 //    SdivInst = Result "=" "sdiv" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseSdivInst() (*ir.SdivInst, error) {
@@ -281,7 +313,7 @@ func (p *parser) parseSdivInst() (*ir.SdivInst, error) {
 //
 //    FdivInst = Result "=" "fdiv" FloatsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFdivInst() (*ir.FdivInst, error) {
@@ -293,7 +325,7 @@ func (p *parser) parseFdivInst() (*ir.FdivInst, error) {
 //
 //    UremInst = Result "=" "urem" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseUremInst() (*ir.UremInst, error) {
@@ -305,7 +337,7 @@ func (p *parser) parseUremInst() (*ir.UremInst, error) {
 //
 //    SremInst = Result "=" "srem" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseSremInst() (*ir.SremInst, error) {
@@ -317,7 +349,7 @@ func (p *parser) parseSremInst() (*ir.SremInst, error) {
 //
 //    FremInst = Result "=" "frem" FloatsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFremInst() (*ir.FremInst, error) {
@@ -335,7 +367,7 @@ func (p *parser) parseFremInst() (*ir.FremInst, error) {
 //
 //    ShlInst = Result "=" "shl" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseShlInst() (*ir.ShlInst, error) {
@@ -347,7 +379,7 @@ func (p *parser) parseShlInst() (*ir.ShlInst, error) {
 //
 //    LshrInst = Result "=" "lshr" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseLshrInst() (*ir.LshrInst, error) {
@@ -359,7 +391,7 @@ func (p *parser) parseLshrInst() (*ir.LshrInst, error) {
 //
 //    AshrInst = Result "=" "ashr" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseAshrInst() (*ir.AshrInst, error) {
@@ -371,7 +403,7 @@ func (p *parser) parseAshrInst() (*ir.AshrInst, error) {
 //
 //    AndInst = Result "=" "and" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseAndInst() (*ir.AndInst, error) {
@@ -383,7 +415,7 @@ func (p *parser) parseAndInst() (*ir.AndInst, error) {
 //
 //    OrInst = Result "=" "or" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseOrInst() (*ir.OrInst, error) {
@@ -395,7 +427,7 @@ func (p *parser) parseOrInst() (*ir.OrInst, error) {
 //
 //    XorInst = Result "=" "xor" IntsType Op1 "," Op2 .
 //
-//    Result = LocalVar
+//    Result = Local
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseXorInst() (*ir.XorInst, error) {
@@ -430,7 +462,7 @@ func (p *parser) parseXorInst() (*ir.XorInst, error) {
 //
 //    AllocaInst = Result "=" "alloca" Type [ "," IntType NumElems ] [ "," "align" Align ] .
 //
-//    Result   = LocalVar
+//    Result   = Local
 //    NumElems = Value
 //    Align    = int_lit
 func (p *parser) parseAllocaInst() (*ir.AllocaInst, error) {
@@ -442,8 +474,8 @@ func (p *parser) parseAllocaInst() (*ir.AllocaInst, error) {
 //
 //    LoadInst = Result "=" "load" Type "*" Addr [ "," "align" Align ] .
 //
-//    Result = LocalVar
-//    Addr   = GlobalVar | LocalVar
+//    Result = Local
+//    Addr   = Global | Local
 //    Align  = int_lit
 func (p *parser) parseLoadInst() (*ir.LoadInst, error) {
 	panic("not yet implemented.")
@@ -454,7 +486,7 @@ func (p *parser) parseLoadInst() (*ir.LoadInst, error) {
 //
 //    StoreInst = "store" Type Value "," Type "*" Addr [ "," "align" Align ] .
 //
-//    Addr   = GlobalVar | LocalVar
+//    Addr   = Global | Local
 //    Align  = int_lit
 func (p *parser) parseStoreInst() (*ir.StoreInst, error) {
 	panic("not yet implemented.")
@@ -467,8 +499,8 @@ func (p *parser) parseStoreInst() (*ir.StoreInst, error) {
 //
 //    GetelementptrInst = Result "=" "getelementptr" Type "*" Addr { "," IntType Idx } .
 //
-//    Result = LocalVar
-//    Addr   = GlobalVar | LocalVar
+//    Result = Local
+//    Addr   = Global | Local
 //    Idx    = Value
 func (p *parser) parseGetelementptrInst() (*ir.GetelementptrInst, error) {
 	panic("not yet implemented.")

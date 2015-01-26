@@ -1,5 +1,7 @@
 package ir
 
+import "github.com/mewlang/llvm/types"
+
 // A Terminator is a control flow instruction (e.g. br, ret, …) which terminates
 // a basic block.
 //
@@ -32,7 +34,7 @@ type Terminator interface {
 //    http://llvm.org/docs/LangRef.html#i-ret
 type ReturnInst struct {
 	// Return type.
-	Type Type
+	Type types.Type
 	// Return value; or nil in case of a void return.
 	Val Value
 }
@@ -93,7 +95,7 @@ type SwitchInst struct {
 	// TODO(u): Restrict Type to IntType, Value to IntValue and Constant to IntConstant.
 
 	// Comparasion type.
-	Type Type
+	Type types.Type
 	// Comparasion value.
 	Val Value
 	// Default target.
