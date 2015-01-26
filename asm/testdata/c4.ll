@@ -1084,6 +1084,8 @@ define void @next() #0 {
 
 declare i32 @printf(i8*, ...) #1
 
+declare i32 @foo(i32)
+
 ; Function Attrs: nounwind readonly
 declare i32 @memcmp(i8*, i8*, i64) #2
 

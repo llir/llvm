@@ -1,7 +1,20 @@
 // Package types declares the data types of LLVM IR.
 package types
 
-// Type represents a type.
+import "fmt"
+
+// Type represents one of the following types:
+//    *types.Void
+//    *types.Int
+//    *types.Float
+//    *types.MMX
+//    *types.Label
+//    *types.Metadata
+//    *types.Func
+//    *types.Pointer
+//    *types.Vector
+//    *types.Array
+//    *types.Struct
 type Type interface {
 	// isType ensures that only types can be assigned to the Type interface.
 	isType()
@@ -21,6 +34,10 @@ func NewVoid() *Void {
 	return &Void{}
 }
 
+func (*Void) String() string {
+	return "void"
+}
+
 // Int represents an integer type of arbitrary size.
 //
 // Example:
@@ -31,8 +48,17 @@ type Int struct {
 }
 
 // NewInt returns a new integer type of the specified bit size.
-func NewInt(n int) *Int {
-	return &Int{n: n}
+func NewInt(n int) (*Int, error) {
+	// Validate bit width (from 1 bit to 2^23-1 bits)
+	if n <= 0 || n >= 1<<23 {
+		return nil, fmt.Errorf("invalid integer bit width %d", n)
+	}
+
+	return &Int{n: n}, nil
+}
+
+func (typ *Int) String() string {
+	return fmt.Sprintf("i%d", typ.n)
 }
 
 // Float represents a floating point type.
@@ -46,6 +72,24 @@ type Float struct {
 // NewFloat returns a floating point type of the given kind.
 func NewFloat(kind FloatKind) *Float {
 	return &Float{kind: kind}
+}
+
+func (typ *Float) String() string {
+	switch typ.kind {
+	case Float16:
+		return "half"
+	case Float32:
+		return "float"
+	case Float64:
+		return "double"
+	case Float128:
+		return "fp128"
+	case X86Float80:
+		return "x86_fp80"
+	case PPCFloat128:
+		return "ppc_fp128"
+	}
+	return "<unknown float type>"
 }
 
 // FloatKind specifies the kind of a floating point type.
@@ -72,7 +116,14 @@ func NewMMX() *MMX {
 	return &MMX{}
 }
 
+func (*MMX) String() string {
+	return "x86_mmx"
+}
+
 // Label represents a label type.
+//
+// Example:
+//    label
 type Label struct{}
 
 // NewLabel returns a label type.
@@ -80,12 +131,23 @@ func NewLabel() *Label {
 	return &Label{}
 }
 
+func (*Label) String() string {
+	return "label"
+}
+
 // Metadata represents a metadata type.
+//
+// Example:
+//    metadata
 type Metadata struct{}
 
 // NewMetadata returns a metadata type.
 func NewMetadata() *Metadata {
 	return &Metadata{}
+}
+
+func (*Metadata) String() string {
+	return "metadata"
 }
 
 // IsInt returns true if typ is an integer type.

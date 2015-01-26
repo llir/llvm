@@ -1,5 +1,10 @@
 package types
 
+import (
+	"bytes"
+	"fmt"
+)
+
 // Func represents a function type.
 //
 // Example:
@@ -7,16 +12,36 @@ package types
 type Func struct {
 	// Function parameter types.
 	params []Type
-	// Return type.
+	// Return parameter type.
 	ret Type
 	// Specifies if the function takes a variadic number of arguments or not.
 	variadic bool
 }
 
-// NewFunc returns a new function type based on the given return type and
-// function parameter types.
-func NewFunc(params []Type, ret Type, variadic bool) *Func {
-	return &Func{params: params, ret: ret, variadic: variadic}
+// NewFunc returns a new function type based on the given function parameter
+// types and return parameter type. The function takes a variadic number of
+// arguments if variadic is true.
+func NewFunc(params []Type, ret Type, variadic bool) (*Func, error) {
+	// Validate return parameter type (any type except label, metadata and
+	// function).
+	switch ret.(type) {
+	case *Void, *Int, *Float, *MMX, *Pointer, *Vector, *Array, *Struct:
+		// valid type
+	default:
+		return nil, fmt.Errorf("invalid return parameter type %v", ret)
+	}
+
+	// Validate function parameter types (any type except void and function).
+	for _, param := range params {
+		switch param.(type) {
+		case *Int, *Float, *MMX, *Label, *Metadata, *Pointer, *Vector, *Array, *Struct:
+			// valid type
+		default:
+			return nil, fmt.Errorf("invalid function parameter type %v", param)
+		}
+	}
+
+	return &Func{params: params, ret: ret, variadic: variadic}, nil
 }
 
 // Ret returns the function return type.
@@ -29,6 +54,26 @@ func (typ *Func) Params() []Type {
 	return typ.params
 }
 
+func (typ *Func) String() string {
+	// i32 (i8*, ...)
+	buf := new(bytes.Buffer)
+	fmt.Fprintf(buf, "%v (", typ.ret)
+	for i, param := range typ.params {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		fmt.Fprint(buf, param)
+	}
+	if typ.variadic {
+		if len(typ.params) > 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString("...")
+	}
+	buf.WriteString(")")
+	return buf.String()
+}
+
 // Pointer represents a pointer type.
 //
 // Example:
@@ -39,15 +84,25 @@ type Pointer struct {
 }
 
 // NewPointer returns a new pointer type for the given element type.
-func NewPointer(elem Type) *Pointer {
-	// TODO: Report error for pointers to void and label or change the type of
-	// elem to disallow it by design.
-	return &Pointer{elem: elem}
+func NewPointer(elem Type) (*Pointer, error) {
+	// Validate element type (any type except void, label and metadata).
+	switch elem.(type) {
+	case *Int, *Float, *MMX, *Func, *Pointer, *Vector, *Array, *Struct:
+		// valid type
+	default:
+		return nil, fmt.Errorf("invalid pointer to %v", elem)
+	}
+
+	return &Pointer{elem: elem}, nil
 }
 
 // Elem returns the element type of the pointer.
 func (typ *Pointer) Elem() Type {
 	return typ.elem
+}
+
+func (typ *Pointer) String() string {
+	return fmt.Sprintf("%v*", typ.elem)
 }
 
 // Vector represents a vector type.
@@ -77,6 +132,10 @@ func (typ Vector) Len() int {
 	return typ.n
 }
 
+func (typ *Vector) String() string {
+	return fmt.Sprintf("<%d x %v>", typ.n, typ.elem)
+}
+
 // Array represents an array type.
 //
 // Example:
@@ -102,6 +161,10 @@ func (typ Array) Elem() Type {
 // Len returns the length of the array in number of elements.
 func (typ Array) Len() int {
 	return typ.n
+}
+
+func (typ *Array) String() string {
+	return fmt.Sprintf("[%d x %v]", typ.n, typ.elem)
 }
 
 // Struct represents a structure type.
@@ -131,6 +194,25 @@ func (typ *Struct) Fields() []Type {
 // IsPacked returns true if the structure is 1 byte aligned.
 func (typ *Struct) IsPacked() bool {
 	return typ.packed
+}
+
+func (typ *Struct) String() string {
+	buf := new(bytes.Buffer)
+	if typ.packed {
+		buf.WriteString("<")
+	}
+	buf.WriteString("{")
+	for i, field := range typ.fields {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		fmt.Fprint(buf, field)
+	}
+	buf.WriteString("}")
+	if typ.packed {
+		buf.WriteString(">")
+	}
+	return buf.String()
 }
 
 // isType ensures that only types can be assigned to the Type interface.
