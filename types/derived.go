@@ -11,25 +11,25 @@ import (
 // Example:
 //     i32 (i8*, ...)
 type Func struct {
-	// Function parameter types.
-	params []Type
 	// Result parameter type.
 	result Type
+	// Function parameter types.
+	params []Type
 	// Specifies if the function takes a variadic number of arguments or not.
 	variadic bool
 }
 
-// NewFunc returns a new function type based on the given function parameter
-// types and result parameter type. The function takes a variadic number of
+// NewFunc returns a new function type based on the given result parameter type
+// and function parameter types. The function takes a variadic number of
 // arguments if variadic is true.
-func NewFunc(params []Type, result Type, variadic bool) (*Func, error) {
+func NewFunc(result Type, params []Type, variadic bool) (*Func, error) {
 	// Validate result parameter type (any type except label, metadata and
 	// function).
 	switch result.(type) {
 	case *Void, *Int, *Float, *MMX, *Pointer, *Vector, *Array, *Struct:
 		// valid type
 	default:
-		return nil, fmt.Errorf("invalid result parameter type %v", result)
+		return nil, fmt.Errorf("invalid result parameter type %q", result)
 	}
 
 	// Validate function parameter types (any type except void and function).
@@ -40,11 +40,11 @@ func NewFunc(params []Type, result Type, variadic bool) (*Func, error) {
 		case *Void:
 			return nil, errors.New("invalid function parameter type; void type only allowed for function results")
 		default:
-			return nil, fmt.Errorf("invalid function parameter type %v", param)
+			return nil, fmt.Errorf("invalid function parameter type %q", param)
 		}
 	}
 
-	return &Func{params: params, result: result, variadic: variadic}, nil
+	return &Func{result: result, params: params, variadic: variadic}, nil
 }
 
 // Result returns the function result type.
@@ -93,9 +93,9 @@ func NewPointer(elem Type) (*Pointer, error) {
 	case *Int, *Float, *MMX, *Func, *Pointer, *Vector, *Array, *Struct:
 		// valid type
 	case *Void:
-		return nil, errors.New("invalid pointer to void; use i8* instead")
+		return nil, errors.New(`invalid pointer to "void"; use i8* instead`)
 	default:
-		return nil, fmt.Errorf("invalid pointer to %v", elem)
+		return nil, fmt.Errorf("invalid pointer to %q", elem)
 	}
 
 	return &Pointer{elem: elem}, nil
@@ -132,12 +132,12 @@ func NewVector(elem Type, n int) (*Vector, error) {
 	case *Void:
 		return nil, errors.New("invalid vector element type; void type only allowed for function results")
 	default:
-		return nil, fmt.Errorf("invalid vector element type %v", elem)
+		return nil, fmt.Errorf("invalid vector element type %q", elem)
 	}
 
 	// Validate vector length.
 	if n < 1 {
-		return nil, fmt.Errorf("invalid vector length %d", n)
+		return nil, fmt.Errorf("invalid vector length (%d)", n)
 	}
 
 	return &Vector{elem: elem, n: n}, nil
@@ -179,12 +179,12 @@ func NewArray(elem Type, n int) (*Array, error) {
 	case *Void:
 		return nil, errors.New("invalid array element type; void type only allowed for function results")
 	default:
-		return nil, fmt.Errorf("invalid array element type %v", elem)
+		return nil, fmt.Errorf("invalid array element type %q", elem)
 	}
 
 	// Validate array length.
 	if n < 0 {
-		return nil, fmt.Errorf("invalid array length %d", n)
+		return nil, fmt.Errorf("invalid array length (%d)", n)
 	}
 
 	return &Array{elem: elem, n: n}, nil
@@ -226,7 +226,7 @@ func NewStruct(fields []Type, packed bool) (*Struct, error) {
 		case *Void:
 			return nil, errors.New("invalid structure field type; void type only allowed for function results")
 		default:
-			return nil, fmt.Errorf("invalid structure field type %v", field)
+			return nil, fmt.Errorf("invalid structure field type %q", field)
 		}
 	}
 

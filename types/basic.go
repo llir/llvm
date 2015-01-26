@@ -30,7 +30,7 @@ type Int struct {
 func NewInt(n int) (*Int, error) {
 	// Validate bit width (from 1 bit to 2^23-1 bits)
 	if n <= 0 || n >= 1<<23 {
-		return nil, fmt.Errorf("invalid integer bit width %d", n)
+		return nil, fmt.Errorf("invalid integer bit width (%d)", n)
 	}
 
 	return &Int{n: n}, nil
