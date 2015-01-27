@@ -129,20 +129,35 @@ func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 
 // parseType parses a type.
 //
-//    Type = IntType | VoidType | FloatType | "x86_mmx" | LabelType |
-//           "metadata" | VectorType .
+//    Type = VoidType | IntType | FloatType | MMXType | LabelType |
+//           MetadataType | FuncType | PointerType | VectorType | ArrayType |
+//           StructType .
 //
-//    IntType         = "i" int_lit .
 //    VoidType        = "void" .
-//    FloatType       = "half" | "float" | "double" | "x86_fp80" | "fp128" |
+//    IntType         = "i" int_lit .
+//    FloatType       = "half" | "float" | "double" | "fp128" | x86_fp80 |
 //                      "ppc_fp128" .
+//    MMXType         = "x86_mmx" .
 //    LabelType       = "label" .
+//    MetadataType    = "metadata" .
+//    FuncType        = FuncResultType "(" ( FuncParamType { "," FuncParamType } ] [ "," "..." ]) | [ "..." ] ")" .
+//    FuncResultType  = VoidType | IntType | FloatType | MMXType | PointerType |
+//                      VectorType | ArrayType | StructType .
+//    FuncParamType   = IntType | FloatType | MMXType | LabelType |
+//                      MetadataType | PointerType | VectorType | ArrayType |
+//                      StructType .
+//    PointerType     = (IntType | FloatType | MMXType | FuncType | PointerType | VectorType | ArrayType | StructType) "*" .
 //    VectorType      = IntVectorType | FloatVectorType |
-//                      "<" int_lit "x" Type ">" .
+//                      "<" int_lit "x" PointerType ">" .
 //    IntVectorType   = "<" int_lit "x" IntType ">" .
 //    FloatVectorType = "<" int_lit "x" FloatType ">" .
-//    IntsType        = ( IntType | IntVectorType ) .
-//    FloatsType      = ( FloatType | FloatVectorType ) .
+//    ArrayType       = "[" int_lit "x" ElemType "]" .
+//    ElemType        = IntType | FloatType | MMXType | PointerType |
+//                      VectorType | ArrayType | StructType .
+//    StructType      = "{" [ ElemType { "," ElemType } ] "}" | "<" "{" [ ElemType { "," ElemType } ] "}" ">" .
+//
+//    IntsType   = ( IntType | IntVectorType ) .
+//    FloatsType = ( FloatType | FloatVectorType ) .
 func (p *parser) parseType() (types.Type, error) {
 	panic("not yet implemented.")
 }
