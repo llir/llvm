@@ -91,7 +91,11 @@ func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
 	if !p.accept(token.Lparen) {
 		return nil, errors.New("expected '(' in function argument list")
 	}
-	header.Sig, err = p.parseFunc(result)
+	// TODO: Don't use parseFuncType as it is specifically for function types
+	// which do not include parameter names. Write a custom implementation for
+	// function declarations and function definitions.
+	_ = result
+	//header.Sig, err = p.parseFunc(result)
 	return header, err
 }
 
@@ -159,14 +163,14 @@ func (p *parser) parseType() (typ types.Type, err error) {
 		if p.accept(token.Lbrace) {
 			// Packed array type
 			//    <{i32, i8}>
-			typ, err = p.parseStruct(true)
+			typ, err = p.parseStructType(true)
 			if err != nil {
 				return nil, err
 			}
 		} else {
 			// Vector type
 			//    <2 x i32>
-			typ, err = p.parseVector()
+			typ, err = p.parseVectorType()
 			if err != nil {
 				return nil, err
 			}
@@ -175,7 +179,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	// Array type
 	//    [2 x float]
 	case token.Lbrack:
-		typ, err = p.parseArray()
+		typ, err = p.parseArrayType()
 		if err != nil {
 			return nil, err
 		}
@@ -183,7 +187,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	// Structure type
 	//    {i32, float}
 	case token.Lbrace:
-		typ, err = p.parseStruct(false)
+		typ, err = p.parseStructType(false)
 		if err != nil {
 			return nil, err
 		}
@@ -211,7 +215,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 		//    i32 (i32)* (i32)
 		if p.accept(token.Lparen) {
 			result := typ
-			typ, err = p.parseFunc(result)
+			typ, err = p.parseFuncType(result)
 			if err != nil {
 				return nil, err
 			}
@@ -226,7 +230,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	return typ, nil
 }
 
-// parseVector parses a vector type. A "<" token has already been consumed.
+// parseVectorType parses a vector type. A "<" token has already been consumed.
 //
 // Syntax:
 //    VectorType      = IntVectorType | FloatVectorType |
@@ -237,7 +241,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 //
 // Example:
 //    <2 x i32>
-func (p *parser) parseVector() (*types.Vector, error) {
+func (p *parser) parseVectorType() (*types.Vector, error) {
 	// Vector length.
 	s, ok := p.try(token.Int)
 	if !ok {
@@ -270,7 +274,7 @@ func (p *parser) parseVector() (*types.Vector, error) {
 	return types.NewVector(elem, n)
 }
 
-// parseArray parses a array type. A "[" token has already been consumed.
+// parseArrayType parses a array type. A "[" token has already been consumed.
 //
 // Syntax:
 //    ArrayType = "[" ArrayLen "x" ElemType "]" .
@@ -280,7 +284,7 @@ func (p *parser) parseVector() (*types.Vector, error) {
 //
 // Example:
 //    [5 x float]
-func (p *parser) parseArray() (*types.Array, error) {
+func (p *parser) parseArrayType() (*types.Array, error) {
 	// Array length.
 	s, ok := p.try(token.Int)
 	if !ok {
@@ -313,7 +317,7 @@ func (p *parser) parseArray() (*types.Array, error) {
 	return types.NewArray(elem, n)
 }
 
-// parseStruct parses a structure type. The structure is 1 byte aligned if
+// parseStructType parses a structure type. The structure is 1 byte aligned if
 // packed is true. A "{" token has already been consumed, unless the structure
 // is packed in which case a "<" and a "{" token have already been consumed.
 //
@@ -325,7 +329,7 @@ func (p *parser) parseArray() (*types.Array, error) {
 // Example:
 //    {i32, float}
 //    <{i32, i8}>
-func (p *parser) parseStruct(packed bool) (*types.Struct, error) {
+func (p *parser) parseStructType(packed bool) (*types.Struct, error) {
 	// Early return for empty structure.
 	if p.accept(token.Rbrace) {
 		if packed && !p.accept(token.Greater) {
@@ -337,7 +341,7 @@ func (p *parser) parseStruct(packed bool) (*types.Struct, error) {
 	// Structure fields
 	var fields []types.Type
 	for i := 0; ; i++ {
-		if i != 0 && !p.accept(token.Comma) {
+		if i > 0 && !p.accept(token.Comma) {
 			break
 		}
 		if field, ok := p.tryType(); ok {
@@ -356,14 +360,14 @@ func (p *parser) parseStruct(packed bool) (*types.Struct, error) {
 	return types.NewStruct(fields, packed)
 }
 
-// parseFunc parses a function type. A result type, an optional function name
-// and a "(" token has already been consumed.
+// parseFuncType parses a function type. A result type, an optional function
+// name and a "(" token has already been consumed.
 //
 //    FuncType   = FuncResult "(" FuncParams ")" .
 //    FuncResult = Type .
 //    FuncParams = [ FuncParam { "," FuncParam } [ "," "..." ] ] | "..." .
-//    FuncParam  = Type [ Local ] .
-func (p *parser) parseFunc(result types.Type) (typ *types.Func, err error) {
+//    FuncParam  = Type .
+func (p *parser) parseFuncType(result types.Type) (typ *types.Func, err error) {
 	// Early return for empty parameter list.
 	if p.accept(token.Rparen) {
 		return types.NewFunc(result, nil, false)
@@ -373,14 +377,14 @@ func (p *parser) parseFunc(result types.Type) (typ *types.Func, err error) {
 	var params []types.Type
 	variadic := false
 	for i := 0; ; i++ {
-		if i != 0 && !p.accept(token.Comma) {
+		if i > 0 && !p.accept(token.Comma) {
 			break
 		}
-		// TODO: Figure out how to handle and where to store store function
-		// parameter names.
-		//    i32 (i32 %foo, i32 %bar)
 		if param, ok := p.tryType(); ok {
 			params = append(params, param)
+			if _, ok := p.tryLocal(); ok {
+				return nil, errutil.New("argument name invalid in function type")
+			}
 		} else if p.accept(token.Ellipsis) {
 			variadic = true
 			break

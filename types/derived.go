@@ -62,7 +62,7 @@ func (typ *Func) String() string {
 	buf := new(bytes.Buffer)
 	fmt.Fprintf(buf, "%v (", typ.result)
 	for i, param := range typ.params {
-		if i != 0 {
+		if i > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(param.String())
@@ -250,7 +250,7 @@ func (typ *Struct) String() string {
 	}
 	buf.WriteString("{")
 	for i, field := range typ.fields {
-		if i != 0 {
+		if i > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(field.String())
