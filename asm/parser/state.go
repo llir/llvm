@@ -8,11 +8,11 @@ package parser
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"strconv"
 	"strings"
 
+	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/asm/token"
 	"github.com/mewlang/llvm/ir"
 	"github.com/mewlang/llvm/types"
@@ -27,7 +27,7 @@ func (p *parser) parseTopLevelEntity(module *ir.Module) error {
 	tok := p.next()
 	switch tok.Kind {
 	case token.Error:
-		return errors.New(tok.Val)
+		return errutil.New(tok.Val)
 	case token.EOF:
 		// Terminate the parser at EOF.
 		return io.EOF
@@ -37,14 +37,16 @@ func (p *parser) parseTopLevelEntity(module *ir.Module) error {
 			return err
 		}
 		module.Funcs = append(module.Funcs, f)
+		return nil
 	case token.KwDefine:
 		f, err := p.parseDefine()
 		if err != nil {
 			return err
 		}
 		module.Funcs = append(module.Funcs, f)
+		return nil
 	}
-	return fmt.Errorf("invalid token type %v; expected top-level entity", tok.Kind)
+	return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
 }
 
 // parseDeclare parses a function declaration. A "declare" token has already
@@ -81,10 +83,13 @@ func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
 	}
 	name, ok := p.tryGlobal()
 	if !ok {
-		return nil, errors.New("expected function name")
+		return nil, errutil.New("expected function name")
 	}
 	header = &ir.Function{
 		Name: name,
+	}
+	if !p.accept(token.Lparen) {
+		return nil, errors.New("expected '(' in function argument list")
 	}
 	header.Sig, err = p.parseFunc(result)
 	return header, err
@@ -176,7 +181,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 		panic("not yet implemented; structure type")
 
 	default:
-		return nil, errors.New("expected type")
+		return nil, errutil.New("expected type")
 	}
 
 	for {
@@ -207,7 +212,10 @@ func (p *parser) parseType() (typ types.Type, err error) {
 		}
 	}
 
-	return nil, errors.New("expected type")
+	if typ == nil {
+		return nil, errutil.New("expected type")
+	}
+	return typ, nil
 }
 
 // parseFunc parses a function type. A result type, an optional function name
@@ -239,11 +247,11 @@ func (p *parser) parseFunc(result types.Type) (typ *types.Func, err error) {
 			variadic = true
 			break
 		} else {
-			return nil, errors.New("expected type")
+			return nil, errutil.New("expected type")
 		}
 	}
 	if !p.accept(token.Rparen) {
-		return nil, errors.New("expected ')' at end of argument list")
+		return nil, errutil.New("expected ')' at end of argument list")
 	}
 
 	return types.NewFunc(result, params, variadic)
@@ -276,11 +284,11 @@ func basicTypeFromString(s string) (types.Type, error) {
 
 	// Integer type (e.g. i32).
 	if !strings.HasPrefix(s, "i") {
-		return nil, fmt.Errorf("unknown basic type %q", s)
+		return nil, errutil.Newf("unknown basic type %q", s)
 	}
 	n, err := strconv.Atoi(s[1:]) // skip leading "i".
 	if err != nil {
-		return nil, fmt.Errorf("unknown basic type %q", s)
+		return nil, errutil.Newf("unknown basic type %q", s)
 	}
 	return types.NewInt(n)
 }

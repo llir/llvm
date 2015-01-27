@@ -2,8 +2,8 @@
 package parser
 
 import (
-	"fmt"
 	"io"
+	"log"
 
 	"github.com/mewlang/llvm/asm/lexer"
 	"github.com/mewlang/llvm/asm/token"
@@ -48,9 +48,9 @@ func ParseTokens(input []token.Token) (*ir.Module, error) {
 				// Terminate the parser at EOF.
 				return module, nil
 			}
-			// TODO: Revert to returing the unaltered error.
-			//    return module, err
-			return module, fmt.Errorf("error at pos=%d (%q): %v", p.cur, p.input[p.cur:], err)
+			// TODO: Remove debug output.
+			log.Printf("error at pos=%d (%q)\n", p.cur, p.input[p.cur:])
+			return module, err
 		}
 	}
 }
