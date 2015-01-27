@@ -71,14 +71,23 @@ func (p *parser) parseDefine() (*ir.Function, error) {
 // parseFuncHeader parses a function header consisting of a return argument, a
 // function name and zero or more function arguments.
 //
-//    FuncHeader = RetType FuncName "(" ArgList ")" .
+//    FuncHeader = FuncResult FuncName "(" FuncParams ")" .
 //
-//    RetType  = Type .
 //    FuncName = Global .
-//    ArgList  = [ Arg { "," Arg } [ "," "..." ] ] | "..." .
-//    Arg      = Type [ Local ] .
 func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
-	panic("not yet implemented.")
+	result, err := p.parseType()
+	if err != nil {
+		return nil, err
+	}
+	name, ok := p.tryGlobal()
+	if !ok {
+		return nil, errors.New("expected function name")
+	}
+	header = &ir.Function{
+		Name: name,
+	}
+	header.Sig, err = p.parseFunc(result)
+	return header, err
 }
 
 // parseFuncBody parses a function body consisting of one or more basic blocks.
@@ -207,7 +216,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 //    FuncType   = FuncResult "(" FuncParams ")" .
 //    FuncResult = Type .
 //    FuncParams = [ FuncParam { "," FuncParam } [ "," "..." ] ] | "..." .
-//    FuncParam  = Type Local .
+//    FuncParam  = Type [ Local ] .
 func (p *parser) parseFunc(result types.Type) (typ *types.Func, err error) {
 	// Early return for empty parameter list.
 	if p.accept(token.Rparen) {

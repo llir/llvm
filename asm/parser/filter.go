@@ -25,6 +25,35 @@ var valid = map[token.Kind]bool{
 	// Special tokens.
 	token.EOF: true,
 
+	// Identifiers.
+	token.Type:        true, // i8, float, label
+	token.Label:       true, // foo:
+	token.GlobalVar:   true, // @foo
+	token.LocalVar:    true, // %foo
+	token.MetadataVar: true, // !foo
+	token.ComdatVar:   true, // $foo
+	token.GlobalID:    true, // @42
+	token.LocalID:     true, // %42
+	token.AttrID:      true, // #42
+
+	// Operators and delimiters.
+	token.Ellipsis: true, // ...
+	token.Equal:    true, // =
+	token.Comma:    true, // ,
+	token.Star:     true, // *
+	token.Lbrack:   true, // [
+	token.Rbrack:   true, // ]
+	token.Lbrace:   true, // {
+	token.Rbrace:   true, // }
+	token.Lparen:   true, // (
+	token.Rparen:   true, // )
+	token.Less:     true, // <
+	token.Greater:  true, // >
+	token.Exclaim:  true, // !
+
+	// Types.
+	token.KwX: true, // x
+
 	// Top-level entities.
 	token.KwDeclare: true, // declare
 	token.KwDefine:  true, // define
