@@ -37,16 +37,16 @@ func (p *parser) parseTopLevelEntity(module *ir.Module) error {
 			return err
 		}
 		module.Funcs = append(module.Funcs, f)
-		return nil
 	case token.KwDefine:
 		f, err := p.parseDefine()
 		if err != nil {
 			return err
 		}
 		module.Funcs = append(module.Funcs, f)
-		return nil
+	default:
+		return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
 	}
-	return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
+	return nil
 }
 
 // parseDeclare parses a function declaration. A "declare" token has already
@@ -141,20 +141,10 @@ func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 //                      StructType .
 //    PointerType     = (IntType | FloatType | MMXType | FuncType |
 //                      PointerType | VectorType | ArrayType | StructType) "*" .
-//    VectorType      = IntVectorType | FloatVectorType |
-//                      "<" int_lit "x" PointerType ">" .
-//    IntVectorType   = "<" int_lit "x" IntType ">" .
-//    FloatVectorType = "<" int_lit "x" FloatType ">" .
-//    ArrayType       = "[" int_lit "x" ElemType "]" .
-//    ElemType        = IntType | FloatType | MMXType | PointerType |
-//                      VectorType | ArrayType | StructType .
-//    StructType      = "{" [ ElemType { "," ElemType } ] "}" | "<" "{" [ ElemType { "," ElemType } ] "}" ">" .
 //
 //    IntsType   = ( IntType | IntVectorType ) .
 //    FloatsType = ( FloatType | FloatVectorType ) .
 func (p *parser) parseType() (typ types.Type, err error) {
-	// TODO: Implement support for aggregate types.
-
 	switch tok := p.next(); tok.Kind {
 	// Basic type
 	//    i32
@@ -165,20 +155,38 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			return nil, err
 		}
 
-	// Vector type
-	//    <2 x i32>
 	case token.Less:
-		panic("not yet implemented; vector type")
+		if p.accept(token.Lbrace) {
+			// Packed array type
+			//    <{i32, i8}>
+			typ, err = p.parseStruct(true)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			// Vector type
+			//    <2 x i32>
+			typ, err = p.parseVector()
+			if err != nil {
+				return nil, err
+			}
+		}
 
 	// Array type
 	//    [2 x float]
 	case token.Lbrack:
-		panic("not yet implemented; array type")
+		typ, err = p.parseArray()
+		if err != nil {
+			return nil, err
+		}
 
 	// Structure type
 	//    {i32, float}
 	case token.Lbrace:
-		panic("not yet implemented; structure type")
+		typ, err = p.parseStruct(false)
+		if err != nil {
+			return nil, err
+		}
 
 	default:
 		return nil, errutil.New("expected type")
@@ -216,6 +224,92 @@ func (p *parser) parseType() (typ types.Type, err error) {
 		return nil, errutil.New("expected type")
 	}
 	return typ, nil
+}
+
+// parseVector parses a vector type. A "<" token has already been consumed.
+//
+// Syntax:
+//    VectorType      = IntVectorType | FloatVectorType |
+//                      "<" VectorLen "x" PointerType ">" .
+//    IntVectorType   = "<" VectorLen "x" IntType ">" .
+//    FloatVectorType = "<" VectorLen "x" FloatType ">" .
+//    VectorLen       = int_lit .
+//
+// Example:
+//    <2 x i32>
+func (p *parser) parseVector() (*types.Vector, error) {
+	// Vector length.
+	s, ok := p.try(token.Int)
+	if !ok {
+		return nil, errutil.New("expected vector length")
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		return nil, errutil.Newf("invalid vector length (%v); %v", s, err)
+	}
+	if n < 1 {
+		return nil, errutil.Newf("invalid vector length (%d); expected >= 1", n)
+	}
+
+	// x
+	if !p.accept(token.KwX) {
+		return nil, errutil.New("expected 'x' after vector length")
+	}
+
+	// Element type.
+	elem, err := p.parseType()
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewVector(elem, n)
+}
+
+// parseArray parses a array type. A "[" token has already been consumed.
+//
+// Syntax:
+//    ArrayType = "[" ArrayLen "x" ElemType "]" .
+//    ElemType  = IntType | FloatType | MMXType | PointerType | VectorType |
+//                ArrayType | StructType .
+//    ArrayLen  = int_lit .
+//
+// Example:
+//    [5 x float]
+func (p *parser) parseArray() (*types.Array, error) {
+	// Array length.
+	s, ok := p.try(token.Int)
+	if !ok {
+		return nil, errutil.New("expected array length")
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		return nil, errutil.Newf("invalid array length (%v); %v", s, err)
+	}
+	if n < 0 {
+		return nil, errutil.Newf("invalid array length (%d); expected >= 0", n)
+	}
+
+	// x
+	if !p.accept(token.KwX) {
+		return nil, errutil.New("expected 'x' after array length")
+	}
+
+	// Element type.
+	elem, err := p.parseType()
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewArray(elem, n)
+}
+
+// parseStruct parses a structure type. The structure is 1 byte aligned if
+// packed is true. A "{" token has already been consumed, unless the structure
+// is packed in which case a "<" and a "{" token have already been consumed.
+//
+//    StructType = "{" [ ElemType { "," ElemType } ] "}" | "<" "{" [ ElemType { "," ElemType } ] "}" ">" .
+func (p *parser) parseStruct(packed bool) (*types.Struct, error) {
+	panic("not yet implemented.")
 }
 
 // parseFunc parses a function type. A result type, an optional function name
