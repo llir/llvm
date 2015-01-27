@@ -262,6 +262,11 @@ func (p *parser) parseVector() (*types.Vector, error) {
 		return nil, err
 	}
 
+	// End of vector.
+	if !p.accept(token.Greater) {
+		return nil, errutil.New("expected '>' at end of vector")
+	}
+
 	return types.NewVector(elem, n)
 }
 
@@ -300,6 +305,11 @@ func (p *parser) parseArray() (*types.Array, error) {
 		return nil, err
 	}
 
+	// End of array.
+	if !p.accept(token.Rbrack) {
+		return nil, errutil.New("expected ']' at end of array")
+	}
+
 	return types.NewArray(elem, n)
 }
 
@@ -307,9 +317,43 @@ func (p *parser) parseArray() (*types.Array, error) {
 // packed is true. A "{" token has already been consumed, unless the structure
 // is packed in which case a "<" and a "{" token have already been consumed.
 //
-//    StructType = "{" [ ElemType { "," ElemType } ] "}" | "<" "{" [ ElemType { "," ElemType } ] "}" ">" .
+// Syntax:
+//    StructType = "{" [ FieldType { "," FieldType } ] "}" | "<" "{" [ FieldType { "," FieldType } ] "}" ">" .
+//    FieldType  = IntType | FloatType | MMXType | PointerType | VectorType |
+//                 ArrayType | StructType .
+//
+// Example:
+//    {i32, float}
+//    <{i32, i8}>
 func (p *parser) parseStruct(packed bool) (*types.Struct, error) {
-	panic("not yet implemented.")
+	// Early return for empty structure.
+	if p.accept(token.Rbrace) {
+		if packed && !p.accept(token.Greater) {
+			return nil, errutil.New("expected '>' at end of packed structure")
+		}
+		return types.NewStruct(nil, packed)
+	}
+
+	// Structure fields
+	var fields []types.Type
+	for i := 0; ; i++ {
+		if i != 0 && !p.accept(token.Comma) {
+			break
+		}
+		if field, ok := p.tryType(); ok {
+			fields = append(fields, field)
+		}
+	}
+
+	// End of structure.
+	if !p.accept(token.Rbrace) {
+		return nil, errutil.New("expected '}' at end of structure")
+	}
+	if packed && !p.accept(token.Greater) {
+		return nil, errutil.New("expected '>' at end of packed structure")
+	}
+
+	return types.NewStruct(fields, packed)
 }
 
 // parseFunc parses a function type. A result type, an optional function name
