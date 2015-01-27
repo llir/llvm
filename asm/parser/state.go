@@ -75,33 +75,10 @@ func (p *parser) parseDefine() (*ir.Function, error) {
 //
 //    RetType  = Type .
 //    FuncName = Global .
-//    ArgList  = [ Arg { "," Arg } ] .
+//    ArgList  = [ Arg { "," Arg } [ "," "..." ] ] | "..." .
 //    Arg      = Type [ Local ] .
 func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
-	// Return type.
-	ret, err := p.parseType()
-	if err != nil {
-		return nil, err
-	}
-
-	// Function name.
-	tok := p.next()
-	switch tok.Kind {
-	case token.GlobalID, token.GlobalVar:
-		header.Name = tok.Val
-	default:
-		return nil, errors.New("expected function name")
-	}
-
-	// Argument list.
-	tok = p.next()
-	if tok.Kind != token.Lparen {
-		return nil, errors.New("expected '(' in function argument list")
-	}
-
-	_ = ret
-
-	return header, nil
+	panic("not yet implemented.")
 }
 
 // parseFuncBody parses a function body consisting of one or more basic blocks.
@@ -148,7 +125,8 @@ func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 //    FuncParamType   = IntType | FloatType | MMXType | LabelType |
 //                      MetadataType | PointerType | VectorType | ArrayType |
 //                      StructType .
-//    PointerType     = (IntType | FloatType | MMXType | FuncType | PointerType | VectorType | ArrayType | StructType) "*" .
+//    PointerType     = (IntType | FloatType | MMXType | FuncType |
+//                      PointerType | VectorType | ArrayType | StructType) "*" .
 //    VectorType      = IntVectorType | FloatVectorType |
 //                      "<" int_lit "x" PointerType ">" .
 //    IntVectorType   = "<" int_lit "x" IntType ">" .
@@ -160,13 +138,106 @@ func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 //
 //    IntsType   = ( IntType | IntVectorType ) .
 //    FloatsType = ( FloatType | FloatVectorType ) .
-func (p *parser) parseType() (types.Type, error) {
+func (p *parser) parseType() (typ types.Type, err error) {
 	// TODO: Implement support for aggregate types.
-	tok := p.next()
-	if tok.Kind == token.Type {
-		return basicTypeFromString(tok.Val)
+
+	switch tok := p.next(); tok.Kind {
+	// Basic type
+	//    i32
+	//    float
+	case token.Type:
+		typ, err = basicTypeFromString(tok.Val)
+		if err != nil {
+			return nil, err
+		}
+
+	// Vector type
+	//    <2 x i32>
+	case token.Less:
+		panic("not yet implemented; vector type")
+
+	// Array type
+	//    [2 x float]
+	case token.Lbrack:
+		panic("not yet implemented; array type")
+
+	// Structure type
+	//    {i32, float}
+	case token.Lbrace:
+		panic("not yet implemented; structure type")
+
+	default:
+		return nil, errors.New("expected type")
 	}
-	panic("not yet implemented.")
+
+	for {
+		// Pointer type
+		//    i32*
+		//    [2 x float]*
+		//    i8****
+		for p.accept(token.Star) {
+			elem := typ
+			typ, err = types.NewPointer(elem)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// Function type
+		//    i32 (i8*, ...)
+		//    [2 x float]* (i32)
+		//    i32 (i32)* (i32)
+		if p.accept(token.Lparen) {
+			result := typ
+			typ, err = p.parseFunc(result)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			break
+		}
+	}
+
+	return nil, errors.New("expected type")
+}
+
+// parseFunc parses a function type. A result type, an optional function name
+// and a "(" token has already been consumed.
+//
+//    FuncType   = FuncResult "(" FuncParams ")" .
+//    FuncResult = Type .
+//    FuncParams = [ FuncParam { "," FuncParam } [ "," "..." ] ] | "..." .
+//    FuncParam  = Type Local .
+func (p *parser) parseFunc(result types.Type) (typ *types.Func, err error) {
+	// Early return for empty parameter list.
+	if p.accept(token.Rparen) {
+		return types.NewFunc(result, nil, false)
+	}
+
+	// Function parameters.
+	var params []types.Type
+	variadic := false
+	for i := 0; ; i++ {
+		if i != 0 && !p.accept(token.Comma) {
+			break
+		}
+		// TODO: Figure out how to handle and where to store store function
+		// parameter names.
+		//    i32 (i32 %foo, i32 %bar)
+		if param, ok := p.tryType(); ok {
+			params = append(params, param)
+		} else if p.accept(token.Ellipsis) {
+			variadic = true
+			break
+		} else {
+			return nil, errors.New("expected type")
+		}
+	}
+	if !p.accept(token.Rparen) {
+		return nil, errors.New("expected ')' at end of argument list")
+	}
+
+	return types.NewFunc(result, params, variadic)
 }
 
 // basicTypeFromString returns the basic type corresponding to s.

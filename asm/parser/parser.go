@@ -7,6 +7,7 @@ import (
 	"github.com/mewlang/llvm/asm/lexer"
 	"github.com/mewlang/llvm/asm/token"
 	"github.com/mewlang/llvm/ir"
+	"github.com/mewlang/llvm/types"
 )
 
 // Parse parses the input read from r into an in-memory representation of LLVM
@@ -74,4 +75,54 @@ func (p *parser) next() token.Token {
 // to next.
 func (p *parser) backup() {
 	p.cur--
+}
+
+// accept consumes the next token if it is of the given kind. It returns true if
+// a token was consumed and false otherwise.
+func (p *parser) accept(kind token.Kind) bool {
+	tok := p.next()
+	if kind == tok.Kind {
+		return true
+	}
+	p.backup()
+	return false
+}
+
+// try tries to consume a token from the valid set and return its value. The
+// value of ok is true if a token was consumed this way, and false otherwise.
+func (p *parser) try(valid ...token.Kind) (val string, ok bool) {
+	tok := p.next()
+	for _, kind := range valid {
+		if kind == tok.Kind {
+			return tok.Val, true
+		}
+	}
+	p.backup()
+	return "", false
+}
+
+// tryGlobal tries to consume a global (GlobalVar or GlobalID) and return its
+// name. The value of ok is true if a token was consumed this way, and false
+// otherwise.
+func (p *parser) tryGlobal() (name string, ok bool) {
+	return p.try(token.GlobalVar, token.GlobalID)
+}
+
+// tryLocal tries to consume a local (LocalVar or LocalID) and return its name.
+// The value of ok is true if a token was consumed this way, and false
+// otherwise.
+func (p *parser) tryLocal() (name string, ok bool) {
+	return p.try(token.LocalVar, token.LocalID)
+}
+
+// tryType tries to consume a type. The value of ok is true if one or more
+// tokens were consumed this way, and false otherwise.
+func (p *parser) tryType() (typ types.Type, ok bool) {
+	cur := p.cur
+	typ, err := p.parseType()
+	if err != nil {
+		p.cur = cur
+		return nil, false
+	}
+	return typ, true
 }
