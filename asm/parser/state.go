@@ -10,6 +10,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strconv"
+	"strings"
 
 	"github.com/mewlang/llvm/asm/token"
 	"github.com/mewlang/llvm/ir"
@@ -159,7 +161,48 @@ func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
 //    IntsType   = ( IntType | IntVectorType ) .
 //    FloatsType = ( FloatType | FloatVectorType ) .
 func (p *parser) parseType() (types.Type, error) {
+	// TODO: Implement support for aggregate types.
+	tok := p.next()
+	if tok.Kind == token.Type {
+		return basicTypeFromString(tok.Val)
+	}
 	panic("not yet implemented.")
+}
+
+// basicTypeFromString returns the basic type corresponding to s.
+func basicTypeFromString(s string) (types.Type, error) {
+	switch s {
+	case "void":
+		return types.NewVoid(), nil
+	case "half":
+		return types.NewFloat(types.Float16), nil
+	case "float":
+		return types.NewFloat(types.Float32), nil
+	case "double":
+		return types.NewFloat(types.Float64), nil
+	case "fp128":
+		return types.NewFloat(types.Float128), nil
+	case "x86_fp80":
+		return types.NewFloat(types.X86Float80), nil
+	case "ppc_fp128":
+		return types.NewFloat(types.PPCFloat128), nil
+	case "x86_mmx":
+		return types.NewMMX(), nil
+	case "label":
+		return types.NewLabel(), nil
+	case "metadata":
+		return types.NewMetadata(), nil
+	}
+
+	// Integer type (e.g. i32).
+	if !strings.HasPrefix(s, "i") {
+		return nil, fmt.Errorf("unknown basic type %q", s)
+	}
+	n, err := strconv.Atoi(s[1:]) // skip leading "i".
+	if err != nil {
+		return nil, fmt.Errorf("unknown basic type %q", s)
+	}
+	return types.NewInt(n)
 }
 
 // TODO: Complete Value EBNF definition.
