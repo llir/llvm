@@ -31,6 +31,13 @@ func ParseFile(path string) (*ir.Module, error) {
 	return ParseTokens(input)
 }
 
+// ParseString parses the input string into an in-memory representation of LLVM
+// IR.
+func ParseString(input string) (*ir.Module, error) {
+	tokens := lexer.ParseString(input)
+	return ParseTokens(tokens)
+}
+
 // ParseTokens parses the tokenized input into an in-memory representation of
 // LLVM IR.
 func ParseTokens(input []token.Token) (*ir.Module, error) {
