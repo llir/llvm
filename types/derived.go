@@ -65,7 +65,7 @@ func (typ *Func) String() string {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		fmt.Fprint(buf, param)
+		buf.WriteString(param.String())
 	}
 	if typ.variadic {
 		if len(typ.params) > 0 {
@@ -253,7 +253,7 @@ func (typ *Struct) String() string {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		fmt.Fprint(buf, field)
+		buf.WriteString(field.String())
 	}
 	buf.WriteString("}")
 	if typ.packed {

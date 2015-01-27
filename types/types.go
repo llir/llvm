@@ -1,6 +1,8 @@
 // Package types declares the data types of LLVM IR.
 package types
 
+import "fmt"
+
 // Type represents one of the following types:
 //    *types.Void
 //    *types.Int
@@ -14,6 +16,7 @@ package types
 //    *types.Array
 //    *types.Struct
 type Type interface {
+	fmt.Stringer
 	// isType ensures that only types can be assigned to the Type interface.
 	isType()
 }
