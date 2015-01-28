@@ -1,9 +1,14 @@
+// TODO: Add support for named types. Implement type equality checks and make
+// sure to consider the impact of named types.
+
 // Package types declares the data types of LLVM IR.
 package types
 
 import "fmt"
 
-// Type represents one of the following types:
+// A Type represents an LLVM IR type which is described by one of the following
+// concrete types:
+//
 //    *types.Void
 //    *types.Int
 //    *types.Float
