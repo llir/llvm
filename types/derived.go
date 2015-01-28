@@ -238,6 +238,47 @@ type Struct struct {
 	packed bool
 }
 
+// TODO: Implement support for named structures with recursive references.
+//
+// Notes from http://blog.llvm.org/2011/11/llvm-30-type-system-rewrite.html:
+//
+//    Basically, instead of creating an opaque type and replacing it later, you
+//    now create an StructType with no body, then specify the body later.
+//
+//    In the new type system, only IR structure types can have their body
+//    missing, so it is impossible to create a recursive type that doesn't
+//    involve a struct.
+//
+//    Because identified types are potentially recursive, the asmprinter always
+//    prints them by their name (or a number like %42 if the identified struct
+//    has no name).
+//
+//    The identified structure is not uniqued with other structure types, which
+//    is why they are produced with StructType::create(...).
+//
+//    Literal structure types never have names and are uniqued by structural
+//    identity: this means that they must have their body elements available at
+//    construction time,
+//
+//    Literal structure types are created by the StructType::get(...) methods,
+//    reflecting that they are uniqued (the call may or may not actually
+//    allocate a new StructType).
+//
+//    the only types that can be named are identified structs.
+//
+//    When stripping type names from a module, the identified structs just
+//    become anonymous: they are still 'identified', but they have no name. As
+//    with other anonymous entities in LLVM IR, they are asmprinted in a numeric
+//    form.
+//
+//    Struct names are uniqued at the LLVMContext level.
+//
+// Based on these notes:
+//
+//    * Rename NewXxx functions GetXxx? This may require a module context to be
+//      introduced.
+//    * Use NewStruct for named structure types? In that case a name parameter.
+
 // NewStruct returns a structure type based on the given field types. The
 // structure is 1 byte aligned if packed is true.
 func NewStruct(fields []Type, packed bool) (*Struct, error) {
