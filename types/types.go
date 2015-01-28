@@ -8,7 +8,6 @@ import "fmt"
 
 // A Type represents an LLVM IR type which is described by one of the following
 // concrete types:
-//
 //    *types.Void
 //    *types.Int
 //    *types.Float
@@ -20,6 +19,9 @@ import "fmt"
 //    *types.Vector
 //    *types.Array
 //    *types.Struct
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#typesystem
 type Type interface {
 	fmt.Stringer
 	// isType ensures that only types can be assigned to the Type interface.

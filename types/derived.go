@@ -8,8 +8,11 @@ import (
 
 // Func represents a function type.
 //
-// Example:
+// Examples:
 //     i32 (i8*, ...)
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#function-type
 type Func struct {
 	// Result parameter type.
 	result Type
@@ -85,8 +88,11 @@ func (typ *Func) String() string {
 
 // Pointer represents a pointer type.
 //
-// Example:
+// Examples:
 //    int32*
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#pointer-type
 type Pointer struct {
 	// Element type.
 	elem Type
@@ -118,8 +124,11 @@ func (typ *Pointer) String() string {
 
 // Vector represents a vector type.
 //
-// Example:
+// Examples:
 //    <10 x i32>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#vector-type
 type Vector struct {
 	// Element type.
 	elem Type
@@ -165,8 +174,11 @@ func (typ *Vector) String() string {
 
 // Array represents an array type.
 //
-// Example:
+// Examples:
 //    [10 x i32]
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#array-type
 type Array struct {
 	// Element type.
 	elem Type
@@ -212,8 +224,12 @@ func (typ *Array) String() string {
 
 // Struct represents a structure type.
 //
-// Example:
+// Examples:
 //    {float, i32, i32}
+//    <{i32 i8}>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#structure-type
 type Struct struct {
 	// Structure fields.
 	fields []Type

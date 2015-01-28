@@ -4,8 +4,11 @@ import "fmt"
 
 // The Void type does not represent any value and has no size.
 //
-// Example:
+// Examples:
 //    void
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#void-type
 type Void struct{}
 
 // NewVoid returns a new void type.
@@ -19,8 +22,11 @@ func (*Void) String() string {
 
 // Int represents an integer type of arbitrary size.
 //
-// Example:
-//    i32
+// Examples:
+//    i1, i8, i32
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#integer-type
 type Int struct {
 	// Size in number of bits.
 	size int
@@ -47,8 +53,11 @@ func (typ *Int) String() string {
 
 // Float represents a floating point type.
 //
-// Example:
-//    double
+// Examples:
+//    float, double, fp128
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#floating-point-types
 type Float struct {
 	// Specifies the kind of the floating point type.
 	kind FloatKind
@@ -97,8 +106,11 @@ const (
 
 // MMX represents an MMX vector type (64 bits, x86 specific).
 //
-// Example:
+// Examples:
 //    x86_mmx
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#x86-mmx-type
 type MMX struct{}
 
 // NewMMX returns an MMX vector type (64 bits, x86 specific).
@@ -112,8 +124,11 @@ func (*MMX) String() string {
 
 // Label represents a label type.
 //
-// Example:
+// Examples:
 //    label
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#label-type
 type Label struct{}
 
 // NewLabel returns a label type.
@@ -127,8 +142,11 @@ func (*Label) String() string {
 
 // Metadata represents a metadata type.
 //
-// Example:
+// Examples:
 //    metadata
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#metadata-type
 type Metadata struct{}
 
 // NewMetadata returns a metadata type.
