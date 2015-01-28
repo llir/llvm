@@ -6,8 +6,9 @@ package types
 
 import "fmt"
 
-// A Type represents an LLVM IR type which is described by one of the following
-// concrete types:
+// A Type represents an LLVM IR type.
+//
+// Type is one of the following concrete types:
 //    *types.Void
 //    *types.Int
 //    *types.Float
@@ -28,13 +29,14 @@ type Type interface {
 	isType()
 }
 
-// IsInt returns true if typ is an integer type.
+// IsInt returns true if typ is an integer type, and false otherwise.
 func IsInt(typ Type) bool {
 	_, ok := typ.(*Int)
 	return ok
 }
 
-// IsInts returns true if typ is an integer type or a vector of integers type.
+// IsInts returns true if typ is an integer type or a vector of integers type,
+// and false otherwise.
 func IsInts(typ Type) bool {
 	if t, ok := typ.(*Vector); ok {
 		return IsInts(t.Elem())
@@ -42,14 +44,14 @@ func IsInts(typ Type) bool {
 	return IsInt(typ)
 }
 
-// IsFloat returns true if typ is a floating point type.
+// IsFloat returns true if typ is a floating point type, and false otherwise.
 func IsFloat(typ Type) bool {
 	_, ok := typ.(*Float)
 	return ok
 }
 
 // IsFloats returns true if typ is a floating point type or a vector of floating
-// points type.
+// points type, and false otherwise.
 func IsFloats(typ Type) bool {
 	if t, ok := typ.(*Vector); ok {
 		return IsFloats(t.Elem())

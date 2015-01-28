@@ -11,7 +11,7 @@ import "fmt"
 //    http://llvm.org/docs/LangRef.html#void-type
 type Void struct{}
 
-// NewVoid returns a new void type.
+// NewVoid returns a void type.
 func NewVoid() *Void {
 	return &Void{}
 }
@@ -23,7 +23,7 @@ func (*Void) String() string {
 // Int represents an integer type of arbitrary size.
 //
 // Examples:
-//    i1, i8, i32
+//    i1, i8, i32   ; iN, where 0 < N < 2^23
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#integer-type
@@ -32,7 +32,7 @@ type Int struct {
 	size int
 }
 
-// NewInt returns a new integer type of the specified size in number of bits.
+// NewInt returns an integer type with the specified number of bits.
 func NewInt(size int) (*Int, error) {
 	// Validate size (from 1 bit to 2^23-1 bits)
 	if size <= 0 || size >= 1<<23 {
@@ -54,7 +54,7 @@ func (typ *Int) String() string {
 // Float represents a floating point type.
 //
 // Examples:
-//    float, double, fp128
+//    half, float, double, fp128, x86_fp80, ppc_fp128
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#floating-point-types
@@ -94,7 +94,7 @@ func (typ *Float) String() string {
 // FloatKind specifies the kind of a floating point type.
 type FloatKind int
 
-// Floating point types.
+// Floating point kinds.
 const (
 	Float16     FloatKind = iota // half:      16-bit floating point type
 	Float32                      // float:     32-bit floating point type

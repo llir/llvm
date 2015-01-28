@@ -9,7 +9,8 @@ import (
 // Func represents a function type.
 //
 // Examples:
-//     i32 (i8*, ...)
+//     i32 (i8*, ...)   ; Function signature of printf.
+//     void ()
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#function-type
@@ -18,13 +19,13 @@ type Func struct {
 	result Type
 	// Function parameter types.
 	params []Type
-	// Specifies if the function takes a variadic number of arguments or not.
+	// Specifies if the function takes a variable number of arguments or not.
 	variadic bool
 }
 
-// NewFunc returns a new function type based on the given result parameter type
-// and function parameter types. The function takes a variadic number of
-// arguments if variadic is true.
+// NewFunc returns a function type based on the given result parameter type and
+// function parameter types. The function takes a variable number of arguments
+// if variadic is true.
 func NewFunc(result Type, params []Type, variadic bool) (*Func, error) {
 	// Validate result parameter type (any type except label, metadata and
 	// function).
@@ -98,7 +99,7 @@ type Pointer struct {
 	elem Type
 }
 
-// NewPointer returns a new pointer type for the given element type.
+// NewPointer returns a pointer type for the given element type.
 func NewPointer(elem Type) (*Pointer, error) {
 	// Validate element type (any type except void, label and metadata).
 	switch elem.(type) {
@@ -125,7 +126,7 @@ func (typ *Pointer) String() string {
 // Vector represents a vector type.
 //
 // Examples:
-//    <10 x i32>
+//    <10 x i32>   ; A vector of 10 32-bit integers.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#vector-type
@@ -136,7 +137,7 @@ type Vector struct {
 	n int
 }
 
-// NewVector returns a new vector type based on the specified element type and
+// NewVector returns a vector type based on the specified element type and
 // length.
 func NewVector(elem Type, n int) (*Vector, error) {
 	// Validate element type (any type except void, x86_mmx, label, metadata,
@@ -175,7 +176,7 @@ func (typ *Vector) String() string {
 // Array represents an array type.
 //
 // Examples:
-//    [10 x i32]
+//    [10 x i32]   ; An array of 10 32-bit integers.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#array-type
@@ -186,7 +187,7 @@ type Array struct {
 	n int
 }
 
-// NewArray returns a new array type based on the specified element type and
+// NewArray returns an array type based on the specified element type and
 // length.
 func NewArray(elem Type, n int) (*Array, error) {
 	// Validate element type (any type except void, label, metadata and
@@ -225,8 +226,8 @@ func (typ *Array) String() string {
 // Struct represents a structure type.
 //
 // Examples:
-//    {float, i32, i32}
-//    <{i32 i8}>
+//    {float, i32, i32}   ; Normal structure (padding depends on datalayout).
+//    <{i32 i8}>          ; Packed structure (5 bytes in size).
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#structure-type
