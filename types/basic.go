@@ -22,22 +22,27 @@ func (*Void) String() string {
 // Example:
 //    i32
 type Int struct {
-	// Number of bits.
-	n int
+	// Size in number of bits.
+	size int
 }
 
-// NewInt returns a new integer type of the specified bit size.
-func NewInt(n int) (*Int, error) {
-	// Validate bit width (from 1 bit to 2^23-1 bits)
-	if n <= 0 || n >= 1<<23 {
-		return nil, fmt.Errorf("invalid integer bit width (%d)", n)
+// NewInt returns a new integer type of the specified size in number of bits.
+func NewInt(size int) (*Int, error) {
+	// Validate size (from 1 bit to 2^23-1 bits)
+	if size <= 0 || size >= 1<<23 {
+		return nil, fmt.Errorf("invalid integer size (%d)", size)
 	}
 
-	return &Int{n: n}, nil
+	return &Int{size: size}, nil
+}
+
+// Size returns the size of typ in number of bits.
+func (typ *Int) Size() int {
+	return typ.size
 }
 
 func (typ *Int) String() string {
-	return fmt.Sprintf("i%d", typ.n)
+	return fmt.Sprintf("i%d", typ.size)
 }
 
 // Float represents a floating point type.
@@ -45,12 +50,18 @@ func (typ *Int) String() string {
 // Example:
 //    double
 type Float struct {
+	// Specifies the kind of the floating point type.
 	kind FloatKind
 }
 
 // NewFloat returns a floating point type of the given kind.
 func NewFloat(kind FloatKind) *Float {
 	return &Float{kind: kind}
+}
+
+// Kind returns the kind of the floating point type.
+func (typ *Float) Kind() FloatKind {
+	return typ.kind
 }
 
 func (typ *Float) String() string {

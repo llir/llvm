@@ -57,6 +57,12 @@ func (typ *Func) Params() []Type {
 	return typ.params
 }
 
+// IsVariadic returns true if the function takes a variable number of arguments,
+// and false otherwise.
+func (typ *Func) IsVariadic() bool {
+	return typ.variadic
+}
+
 func (typ *Func) String() string {
 	// i32 (i8*, ...)
 	buf := new(bytes.Buffer)

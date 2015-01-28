@@ -279,9 +279,9 @@ func TestIntString(t *testing.T) {
 	}{
 		{want: "i1", n: 1},
 		{want: "i32", n: 32},
-		{want: "", n: -1, err: "invalid integer bit width (-1)"},
-		{want: "", n: 0, err: "invalid integer bit width (0)"},
-		{want: "", n: 1 << 23, err: "invalid integer bit width (8388608)"},
+		{want: "", n: -1, err: "invalid integer size (-1)"},
+		{want: "", n: 0, err: "invalid integer size (0)"},
+		{want: "", n: 1 << 23, err: "invalid integer size (8388608)"},
 		{want: "i8388607", n: 1<<23 - 1},
 	}
 
