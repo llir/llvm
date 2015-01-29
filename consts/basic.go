@@ -6,6 +6,7 @@ import (
 
 	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
+	"github.com/mewlang/llvm/values"
 )
 
 // Int represents an integer constant.
@@ -45,46 +46,19 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 	return v, nil
 }
 
-// Trunc truncates the integer to a smaller or equally sized integer type.
-func (v *Int) Trunc(to types.Type) (*Trunc, error) {
-	expr := &Trunc{v: v}
-	var ok bool
-	expr.to, ok = to.(*types.Int)
-	if !ok {
-		return nil, errutil.Newf("invalid type %q; expected integer type", to)
-	}
-	if v.typ.Size() < expr.to.Size() {
-		return nil, errutil.Newf("integer truncation from %q to %q; target type must be smaller or equally sized", v.typ, to)
-	}
-	return expr, nil
+// Type returns the type of the value.
+func (v *Int) Type() types.Type {
+	return v.typ
 }
 
-// ZExt zero extends the integer to a larger or equally sized integer type.
-func (v *Int) ZExt(to types.Type) (*ZExt, error) {
-	expr := &ZExt{v: v}
-	var ok bool
-	expr.to, ok = to.(*types.Int)
-	if !ok {
-		return nil, errutil.Newf("invalid type %q; expected integer type", to)
-	}
-	if v.typ.Size() > expr.to.Size() {
-		return nil, errutil.Newf("zero extension from %q to %q; target type must be larger or equally sized", v.typ, to)
-	}
-	return expr, nil
+// UseList returns a list of all values which uses the value.
+func (v *Int) UseList() []values.Value {
+	panic("not yet implemented.")
 }
 
-// SExt sign extends the integer to a larger or equally sized integer type.
-func (v *Int) SExt(to types.Type) (*SExt, error) {
-	expr := &SExt{v: v}
-	var ok bool
-	expr.to, ok = to.(*types.Int)
-	if !ok {
-		return nil, errutil.Newf("invalid type %q; expected integer type", to)
-	}
-	if v.typ.Size() > expr.to.Size() {
-		return nil, errutil.Newf("sign extension from %q to %q; target type must be larger or equally sized", v.typ, to)
-	}
-	return expr, nil
+// ReplaceAll replaces all uses of the value with new.
+func (v *Int) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }
 
 func (v *Int) String() string {
@@ -135,6 +109,21 @@ func NewFloat(typ types.Type, s string) (*Float, error) {
 	return v, nil
 }
 
+// Type returns the type of the value.
+func (v *Float) Type() types.Type {
+	return v.typ
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *Float) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *Float) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // TODO: Check if global names are used for anything except functions and global
 // variables. If so, be more specific about @foo in the example below by
 // providing a comment.
@@ -147,7 +136,23 @@ func NewFloat(typ types.Type, s string) (*Float, error) {
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
 type Pointer struct {
+	typ *types.Pointer
 }
 
-// TODO: Figure out how to represent pointer constants, and implement NewPointer
-// afterwards.
+// TODO: Figure out how to represent pointer constants. Add the necessary values
+// to the Pointer struct and implement the NewPointer constructor afterwards.
+
+// Type returns the type of the value.
+func (v *Pointer) Type() types.Type {
+	return v.typ
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *Pointer) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *Pointer) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}

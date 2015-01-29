@@ -14,10 +14,10 @@ import "github.com/mewlang/llvm/types"
 //    ir.Instruction
 //    ir.Terminator
 type Value interface {
-	// UseList returns a list of all values which uses the value.
-	UseList() []Value
 	// Type returns the type of the value.
 	Type() types.Type
+	// UseList returns a list of all values which uses the value.
+	UseList() []Value
 	// ReplaceAll replaces all uses of the value with new.
 	ReplaceAll(new Value) error
 }

@@ -3,6 +3,7 @@ package consts
 import (
 	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
+	"github.com/mewlang/llvm/values"
 )
 
 // Vector represents a vector constant which is a vetor containing only
@@ -39,6 +40,21 @@ func NewVector(typ types.Type, elems []Constant) (*Vector, error) {
 	return v, nil
 }
 
+// Type returns the type of the value.
+func (v *Vector) Type() types.Type {
+	return v.typ
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *Vector) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *Vector) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // Array represents an array constant which is an array containing only
 // constants.
 //
@@ -72,6 +88,21 @@ func NewArray(typ types.Type, elems []Constant) (*Array, error) {
 	v.elems = elems
 
 	return v, nil
+}
+
+// Type returns the type of the value.
+func (v *Array) Type() types.Type {
+	return v.typ
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *Array) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *Array) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }
 
 // Struct represents a structure constant which is a structure containing only
@@ -111,4 +142,19 @@ func NewStruct(typ types.Type, fields []Constant) (*Struct, error) {
 	v.fields = fields
 
 	return v, nil
+}
+
+// Type returns the type of the value.
+func (v *Struct) Type() types.Type {
+	return v.typ
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *Struct) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *Struct) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }

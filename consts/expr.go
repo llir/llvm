@@ -13,12 +13,15 @@ import (
 // An Expr represents a constant expression.
 //
 // Expr is one of the following concrete types:
-//    *consts.Trunc
-//    *consts.ZExt
-//    *consts.SExt
-//    *consts.FPTrunc
-//    *consts.FPExt
-//    *consts.FPToUint
+//    *consts.IntTrunc
+//    *consts.IntZeroExt
+//    *consts.IntSignExt
+//    *consts.FloatTrunc
+//    *consts.FloatExt
+//    *consts.FloatToUint
+//    *consts.FloatToInt
+//    *consts.UintToFloat
+//    *consts.IntToFloat
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -29,7 +32,7 @@ type Expr interface {
 	isExpr()
 }
 
-// Trunc is a constant expression which truncates an integer constant to a
+// IntTrunc is a constant expression which truncates an integer constant to a
 // smaller or equally sized integer type.
 //
 // Examples:
@@ -37,84 +40,154 @@ type Expr interface {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type Trunc struct {
+type IntTrunc struct {
 	// Original constant.
 	v *Int
 	// New type.
 	to *types.Int
 }
 
-// ZExt is a constant expression which zero extends an integer constant to a
-// larger integer type.
+// IntZeroExt is a constant expression which zero extends an integer constant to
+// a larger integer type.
 //
 // Examples:
 //    zext(i1 1 to i5)   ; yields i5:1
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type ZExt struct {
-	// Original constant.
+type IntZeroExt struct {
+	// Original integer constant.
 	v *Int
-	// New type.
+	// New integer type.
 	to *types.Int
 }
 
-// SExt is a constant expression which sign extends an integer constant to a
-// larger or equally sized integer type.
+// IntSignExt is a constant expression which sign extends an integer constant to
+// a larger or equally sized integer type.
 //
 // Examples:
 //    sext(i1 1 to i5)   ; yields i5:31
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type SExt struct {
-	// Original constant.
+type IntSignExt struct {
+	// Original integer constant.
 	v *Int
-	// New type.
+	// New integer type.
 	to *types.Int
 }
 
-// FPTrunc is a constant expression which truncates a floating point constant to
-// a smaller or equally sized floating point type.
+// FloatTrunc is a constant expression which truncates a floating point constant
+// to a smaller or equally sized floating point type.
 //
 // Examples:
 //    fptrunc(double 4.0 to float)   ; yields float:4.0
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FPTrunc struct {
-	// Original constant.
+type FloatTrunc struct {
+	// Original floating point constant.
 	v *Float
-	// New type.
+	// New floating point type.
 	to *types.Float
 }
 
-// FPExt is a constant expression which extends a floating point constant to a
-// larger or equally sized floating point type.
+// FloatExt is a constant expression which extends a floating point constant to
+// a larger or equally sized floating point type.
 //
 // Examples:
 //    fpext(float 4.0 to double)   ; yields double:4.0
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FPExt struct {
-	// Original constant.
+type FloatExt struct {
+	// Original floating point constant.
 	v *Float
-	// New type.
+	// New floating point type.
 	to *types.Float
 }
 
-// FPToUint is a constant expression which converts a floating point constant to
-// the corresponding unsigned integer constant.
+// FloatToUint is a constant expression which converts a floating point constant
+// (or constant vector) to the corresponding unsigned integer constant (or
+// constant vector).
 //
 // Examples:
-//    fptoui(float 4.0 to i32)   ; yields i32:4
+//    fptoui(float 4.0 to i32)                        ; yields i32:4
+//    fptoui(<1 x float> <float 3.0> to <1 x i32>))   ; yields <1 x i32>:<i32 3>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FPToUint struct {
-	// Original floating point value or vector of floating point values.
+type FloatToUint struct {
+	// Original floating point value (or vector).
+	v values.Value
+	// New integer type.
+	to *types.Int
+}
+
+// FloatToInt is a constant expression which converts a floating point constant
+// (or constant vector) to the corresponding signed integer constant (or
+// constant vector).
+//
+// Examples:
+//    fptosi(float -4.0 to i32)                        ; yields i32:-4
+//    fptosi(<1 x float> <float -3.0> to <1 x i32>))   ; yields <1 x i32>:<i32 -3>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#constant-expressions
+type FloatToInt struct {
+	// Original floating point value (or vector).
 	v values.Value
 	// New type.
 	to *types.Int
 }
+
+// UintToFloat is a constant expression which converts an unsigned integer
+// constant (or constant vector) to the corresponding floating point constant
+// (or constant vector).
+//
+// Examples:
+//    uitofp(i32 4 to float)                      ; yields float:4.0
+//    uitofp(<1 x i32> <i32 3> to <1 x float>))   ; yields <1 x float>:<float 3.0>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#constant-expressions
+type UintToFloat struct {
+	// Original unsigned integer value (or vector).
+	v values.Value
+	// New floating point type.
+	to *types.Float
+}
+
+// IntToFloat is a constant expression which converts a signed integer constant
+// (or constant vector) to the corresponding floating point constant (or
+// constant vector).
+//
+// Examples:
+//    sitofp(i32 -4 to float)                      ; yields float:-4.0
+//    sitofp(<1 x i32> <i32 -3> to <1 x float>))   ; yields <1 x float>:<float -3.0>
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#constant-expressions
+type IntToFloat struct {
+	// Original signed integer value (or vector).
+	v values.Value
+	// New floating point type.
+	to *types.Float
+}
+
+// TODO: Add support for the following constant expressions:
+//    - ptrtoint
+//    - inttoptr
+//    - bitcast
+//    - addrspacecast
+//    - getelementptr
+//    - select
+//    - icmp
+//    - fcmp
+//    - extractelement
+//    - insertelement
+//    - shufflevector
+//    - extractvalue
+//    - insertvalue
+//    - OPCODE (LHS, RHS)
+//         * OPCODE may be any of the binary or bitwise binary operations.
