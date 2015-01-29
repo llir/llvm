@@ -16,6 +16,7 @@ import (
 	"github.com/mewlang/llvm/asm/token"
 	"github.com/mewlang/llvm/ir"
 	"github.com/mewlang/llvm/types"
+	"github.com/mewlang/llvm/values"
 )
 
 // TODO: Complete TopLevelEntity EBNF definition.
@@ -440,7 +441,7 @@ func basicTypeFromString(s string) (types.Type, error) {
 // parseValue parses a value.
 //
 //    Value = TODO .
-func (p *parser) parseValue() (ir.Value, error) {
+func (p *parser) parseValue() (values.Value, error) {
 	panic("not yet implemented.")
 }
 

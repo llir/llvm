@@ -1,6 +1,9 @@
 package ir
 
-import "github.com/mewlang/llvm/types"
+import (
+	"github.com/mewlang/llvm/types"
+	"github.com/mewlang/llvm/values"
+)
 
 // TODO: Use map from Global/Local to *Function, Value, types.Type and *Metadata
 // instead of slice.
@@ -13,7 +16,7 @@ type Module struct {
 	// Function definitions and external function declarations (Blocks is nil).
 	Funcs []*Function
 	// Global variables.
-	Globals []Value
+	Globals []values.Value
 	// Type definitions.
 	Types []types.Type
 	// Metadata.

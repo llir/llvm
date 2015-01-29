@@ -66,7 +66,7 @@ const (
 
 	// Constants.
 	Int    // 12345, [us]0x[0-9A-Fa-f]+
-	Float  // 123.45, 1.2345e+2, 0x[0-9A-Fa-f]+
+	Float  // 123.45, 1.2345e+2, 0x[KLMH]?[0-9A-Fa-f]+
 	String // "foo"
 
 	keywordStart

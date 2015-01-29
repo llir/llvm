@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/mewlang/llvm/types"
+import (
+	"github.com/mewlang/llvm/consts"
+	"github.com/mewlang/llvm/types"
+	"github.com/mewlang/llvm/values"
+)
 
 // A Terminator is a control flow instruction (e.g. br, ret, …) which terminates
 // a basic block.
@@ -36,7 +40,7 @@ type ReturnInst struct {
 	// Return type.
 	Type types.Type
 	// Return value; or nil in case of a void return.
-	Val Value
+	Val values.Value
 }
 
 // The CondBranchInst transfers control flow to one of two basic blocks in the
@@ -52,7 +56,7 @@ type ReturnInst struct {
 //    http://llvm.org/docs/LangRef.html#i-br
 type CondBranchInst struct {
 	// Boolean branching condition.
-	Cond Value
+	Cond values.Value
 	// Target branch when the condition evaluates to true.
 	True *BasicBlock
 	// Target branch when the condition evaluates to false.
@@ -97,13 +101,13 @@ type SwitchInst struct {
 	// Comparasion type.
 	Type types.Type
 	// Comparasion value.
-	Val Value
+	Val values.Value
 	// Default target.
 	Default *BasicBlock
 	// Switch cases.
 	Cases []struct {
 		// Case value.
-		Val Constant
+		Val consts.Constant
 		// Case target.
 		Target *BasicBlock
 	}

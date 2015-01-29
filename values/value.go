@@ -1,4 +1,5 @@
-package ir
+// Package values provides a definition of LLVM IR values.
+package values
 
 import "github.com/mewlang/llvm/types"
 
@@ -13,8 +14,8 @@ import "github.com/mewlang/llvm/types"
 //    ir.Instruction
 //    ir.Terminator
 type Value interface {
-	// Uses returns a list of all values which uses the value.
-	Uses() []Value
+	// UseList returns a list of all values which uses the value.
+	UseList() []Value
 	// Type returns the type of the value.
 	Type() types.Type
 	// ReplaceAll replaces all uses of the value with new.
