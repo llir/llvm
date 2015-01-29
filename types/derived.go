@@ -52,33 +52,53 @@ func NewFunc(result Type, params []Type, variadic bool) (*Func, error) {
 }
 
 // Result returns the function result type.
-func (typ *Func) Result() Type {
-	return typ.result
+func (t *Func) Result() Type {
+	return t.result
 }
 
 // Params returns the function parameter types.
-func (typ *Func) Params() []Type {
-	return typ.params
+func (t *Func) Params() []Type {
+	return t.params
 }
 
 // IsVariadic returns true if the function takes a variable number of arguments,
 // and false otherwise.
-func (typ *Func) IsVariadic() bool {
-	return typ.variadic
+func (t *Func) IsVariadic() bool {
+	return t.variadic
 }
 
-func (typ *Func) String() string {
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Func) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Func:
+		if !t.result.Equal(u.result) {
+			return false
+		}
+		if len(t.params) != len(u.params) {
+			return false
+		}
+		for i := range t.params {
+			if !t.params[i].Equal(u.params[i]) {
+				return false
+			}
+		}
+		return t.variadic == u.variadic
+	}
+	return false
+}
+
+func (t *Func) String() string {
 	// i32 (i8*, ...)
 	buf := new(bytes.Buffer)
-	fmt.Fprintf(buf, "%v (", typ.result)
-	for i, param := range typ.params {
+	fmt.Fprintf(buf, "%v (", t.result)
+	for i, param := range t.params {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(param.String())
 	}
-	if typ.variadic {
-		if len(typ.params) > 0 {
+	if t.variadic {
+		if len(t.params) > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString("...")
@@ -115,12 +135,21 @@ func NewPointer(elem Type) (*Pointer, error) {
 }
 
 // Elem returns the element type of the pointer.
-func (typ *Pointer) Elem() Type {
-	return typ.elem
+func (t *Pointer) Elem() Type {
+	return t.elem
 }
 
-func (typ *Pointer) String() string {
-	return fmt.Sprintf("%v*", typ.elem)
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Pointer) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Pointer:
+		return t.elem.Equal(u.elem)
+	}
+	return false
+}
+
+func (t *Pointer) String() string {
+	return fmt.Sprintf("%v*", t.elem)
 }
 
 // Vector represents a vector type.
@@ -160,17 +189,26 @@ func NewVector(elem Type, n int) (*Vector, error) {
 }
 
 // Elem returns the element type of the vector.
-func (typ Vector) Elem() Type {
-	return typ.elem
+func (t *Vector) Elem() Type {
+	return t.elem
 }
 
 // Len returns the length of the vector in number of elements.
-func (typ Vector) Len() int {
-	return typ.n
+func (t *Vector) Len() int {
+	return t.n
 }
 
-func (typ *Vector) String() string {
-	return fmt.Sprintf("<%d x %v>", typ.n, typ.elem)
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Vector) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Vector:
+		return t.elem.Equal(u.elem) && t.n == u.n
+	}
+	return false
+}
+
+func (t *Vector) String() string {
+	return fmt.Sprintf("<%d x %v>", t.n, t.elem)
 }
 
 // Array represents an array type.
@@ -210,17 +248,26 @@ func NewArray(elem Type, n int) (*Array, error) {
 }
 
 // Elem returns the element type of the array.
-func (typ Array) Elem() Type {
-	return typ.elem
+func (t *Array) Elem() Type {
+	return t.elem
 }
 
 // Len returns the length of the array in number of elements.
-func (typ Array) Len() int {
-	return typ.n
+func (t *Array) Len() int {
+	return t.n
 }
 
-func (typ *Array) String() string {
-	return fmt.Sprintf("[%d x %v]", typ.n, typ.elem)
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Array) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Array:
+		return t.elem.Equal(u.elem) && t.n == u.n
+	}
+	return false
+}
+
+func (t *Array) String() string {
+	return fmt.Sprintf("[%d x %v]", t.n, t.elem)
 }
 
 // Struct represents a structure type.
@@ -298,37 +345,47 @@ func NewStruct(fields []Type, packed bool) (*Struct, error) {
 }
 
 // Fields returns the field types of the structure.
-func (typ *Struct) Fields() []Type {
-	return typ.fields
+func (t *Struct) Fields() []Type {
+	return t.fields
 }
 
 // IsPacked returns true if the structure is 1 byte aligned.
-func (typ *Struct) IsPacked() bool {
-	return typ.packed
+func (t *Struct) IsPacked() bool {
+	return t.packed
 }
 
-func (typ *Struct) String() string {
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Struct) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Struct:
+		if len(t.fields) != len(u.fields) {
+			return false
+		}
+		for i := range t.fields {
+			if !t.fields[i].Equal(u.fields[i]) {
+				return false
+			}
+		}
+		return t.packed == u.packed
+	}
+	return false
+}
+
+func (t *Struct) String() string {
 	buf := new(bytes.Buffer)
-	if typ.packed {
+	if t.packed {
 		buf.WriteString("<")
 	}
 	buf.WriteString("{")
-	for i, field := range typ.fields {
+	for i, field := range t.fields {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(field.String())
 	}
 	buf.WriteString("}")
-	if typ.packed {
+	if t.packed {
 		buf.WriteString(">")
 	}
 	return buf.String()
 }
-
-// isType ensures that only types can be assigned to the Type interface.
-func (*Func) isType()    {}
-func (*Pointer) isType() {}
-func (*Vector) isType()  {}
-func (*Array) isType()   {}
-func (*Struct) isType()  {}

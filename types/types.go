@@ -25,36 +25,42 @@ import "fmt"
 //    http://llvm.org/docs/LangRef.html#typesystem
 type Type interface {
 	fmt.Stringer
-	// isType ensures that only types can be assigned to the Type interface.
-	isType()
+	// Equal returns true if the given types are equal, and false otherwise.
+	Equal(b Type) bool
 }
 
-// IsInt returns true if typ is an integer type, and false otherwise.
-func IsInt(typ Type) bool {
-	_, ok := typ.(*Int)
+// Equal returns true if the given types are equal, and false otherwise.
+func Equal(t, u Type) bool {
+	// TODO: Implement type equality checks for named types.
+	return t.Equal(u)
+}
+
+// IsInt returns true if t is an integer type, and false otherwise.
+func IsInt(t Type) bool {
+	_, ok := t.(*Int)
 	return ok
 }
 
-// IsInts returns true if typ is an integer type or a vector of integers type,
-// and false otherwise.
-func IsInts(typ Type) bool {
-	if t, ok := typ.(*Vector); ok {
+// IsInts returns true if t is an integer type or a vector of integers type, and
+// false otherwise.
+func IsInts(t Type) bool {
+	if t, ok := t.(*Vector); ok {
 		return IsInts(t.Elem())
 	}
-	return IsInt(typ)
+	return IsInt(t)
 }
 
-// IsFloat returns true if typ is a floating point type, and false otherwise.
-func IsFloat(typ Type) bool {
-	_, ok := typ.(*Float)
+// IsFloat returns true if t is a floating point type, and false otherwise.
+func IsFloat(t Type) bool {
+	_, ok := t.(*Float)
 	return ok
 }
 
-// IsFloats returns true if typ is a floating point type or a vector of floating
+// IsFloats returns true if t is a floating point type or a vector of floating
 // points type, and false otherwise.
-func IsFloats(typ Type) bool {
-	if t, ok := typ.(*Vector); ok {
+func IsFloats(t Type) bool {
+	if t, ok := t.(*Vector); ok {
 		return IsFloats(t.Elem())
 	}
-	return IsFloat(typ)
+	return IsFloat(t)
 }

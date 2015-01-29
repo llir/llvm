@@ -16,6 +16,12 @@ func NewVoid() *Void {
 	return &Void{}
 }
 
+// Equal returns true if the given types are equal, and false otherwise.
+func (*Void) Equal(u Type) bool {
+	_, ok := u.(*Void)
+	return ok
+}
+
 func (*Void) String() string {
 	return "void"
 }
@@ -42,13 +48,22 @@ func NewInt(size int) (*Int, error) {
 	return &Int{size: size}, nil
 }
 
-// Size returns the size of typ in number of bits.
-func (typ *Int) Size() int {
-	return typ.size
+// Size returns the size of t in number of bits.
+func (t *Int) Size() int {
+	return t.size
 }
 
-func (typ *Int) String() string {
-	return fmt.Sprintf("i%d", typ.size)
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Int) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Int:
+		return t.size == u.size
+	}
+	return false
+}
+
+func (t *Int) String() string {
+	return fmt.Sprintf("i%d", t.size)
 }
 
 // Float represents a floating point type.
@@ -69,12 +84,21 @@ func NewFloat(kind FloatKind) *Float {
 }
 
 // Kind returns the kind of the floating point type.
-func (typ *Float) Kind() FloatKind {
-	return typ.kind
+func (t *Float) Kind() FloatKind {
+	return t.kind
 }
 
-func (typ *Float) String() string {
-	switch typ.kind {
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Float) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Float:
+		return t.kind == u.kind
+	}
+	return false
+}
+
+func (t *Float) String() string {
+	switch t.kind {
 	case Float16:
 		return "half"
 	case Float32:
@@ -118,6 +142,12 @@ func NewMMX() *MMX {
 	return &MMX{}
 }
 
+// Equal returns true if the given types are equal, and false otherwise.
+func (*MMX) Equal(u Type) bool {
+	_, ok := u.(*MMX)
+	return ok
+}
+
 func (*MMX) String() string {
 	return "x86_mmx"
 }
@@ -134,6 +164,12 @@ type Label struct{}
 // NewLabel returns a label type.
 func NewLabel() *Label {
 	return &Label{}
+}
+
+// Equal returns true if the given types are equal, and false otherwise.
+func (*Label) Equal(u Type) bool {
+	_, ok := u.(*Label)
+	return ok
 }
 
 func (*Label) String() string {
@@ -154,14 +190,12 @@ func NewMetadata() *Metadata {
 	return &Metadata{}
 }
 
+// Equal returns true if the given types are equal, and false otherwise.
+func (*Metadata) Equal(u Type) bool {
+	_, ok := u.(*Metadata)
+	return ok
+}
+
 func (*Metadata) String() string {
 	return "metadata"
 }
-
-// isType ensures that only types can be assigned to the Type interface.
-func (*Void) isType()     {}
-func (*Int) isType()      {}
-func (*Float) isType()    {}
-func (*MMX) isType()      {}
-func (*Label) isType()    {}
-func (*Metadata) isType() {}
