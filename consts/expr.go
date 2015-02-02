@@ -48,7 +48,7 @@ type IntTrunc struct {
 }
 
 // IntZeroExt is a constant expression which zero extends an integer constant to
-// a larger integer type.
+// a larger or equally sized integer type.
 //
 // Examples:
 //    zext(i1 1 to i5)   ; yields i5:1

@@ -22,17 +22,18 @@ type Vector struct {
 // NewVector returns a vector constant based on the given vector type and vector
 // elements.
 func NewVector(typ types.Type, elems []Constant) (*Vector, error) {
+	// Verify vector type.
 	v := new(Vector)
 	var ok bool
 	v.typ, ok = typ.(*types.Vector)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q; expected vector type", typ)
+		return nil, errutil.Newf("invalid type %q for vector constant", typ)
 	}
 
 	// Verify vector element types.
 	for _, elem := range elems {
 		if !elem.Type().Equal(v.typ.Elem()) {
-			return nil, errutil.Newf("invalid vector element type %q; expected %q", elem.Type(), v.typ.Elem())
+			return nil, errutil.Newf("invalid vector element type; expected %q, got %q", v.typ.Elem(), elem.Type())
 		}
 	}
 	v.elems = elems
@@ -58,31 +59,39 @@ func (v *Vector) ReplaceAll(new values.Value) error {
 // Array represents an array constant which is an array containing only
 // constants.
 //
+// As a special case, character array constants may be represented as a double-
+// quoted string using the c prefix.
+//
 // Examples:
 //    [double 3.14, double 1.5]      ; type: [2 x double]
 //    [<2 x i32> <i32 15, i32 20>]   ; type: [1 x <2 x i32>]
+//    c"hello world\0a\00"           ; type: [13 x i8]
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
 type Array struct {
-	typ   *types.Array
+	typ *types.Array
+	// TODO: Be clever about data layout later (e.g. use []byte instead of
+	// []Constant when applicable). Strive for correctness and simplicity first,
+	// optimize later. The same goes for Vector and maybe Struct.
 	elems []Constant
 }
 
 // NewArray returns an array constant based on the given array type and array
 // elements.
 func NewArray(typ types.Type, elems []Constant) (*Array, error) {
+	// Verify array type.
 	v := new(Array)
 	var ok bool
 	v.typ, ok = typ.(*types.Array)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q; expected array type", typ)
+		return nil, errutil.Newf("invalid type %q for array constant", typ)
 	}
 
 	// Verify array element types.
 	for _, elem := range elems {
 		if !elem.Type().Equal(v.typ.Elem()) {
-			return nil, errutil.Newf("invalid array element type %q; expected %q", elem.Type(), v.typ.Elem())
+			return nil, errutil.Newf("invalid array element type; expected %q, got %q", v.typ.Elem(), elem.Type())
 		}
 	}
 	v.elems = elems
@@ -122,11 +131,12 @@ type Struct struct {
 // NewStruct returns a structure constant based on the given structure type and
 // structure fields.
 func NewStruct(typ types.Type, fields []Constant) (*Struct, error) {
+	// Verify structure type.
 	v := new(Struct)
 	var ok bool
 	v.typ, ok = typ.(*types.Struct)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q; expected structure type", typ)
+		return nil, errutil.Newf("invalid type %q for structure constant", typ)
 	}
 
 	// Verify structure field types.
@@ -136,7 +146,7 @@ func NewStruct(typ types.Type, fields []Constant) (*Struct, error) {
 	}
 	for i := range fields {
 		if !fieldTypes[i].Equal(fields[i].Type()) {
-			return nil, errutil.Newf("invalid field type %q in structure constant; expected %q", fields[i].Type(), fieldTypes[i])
+			return nil, errutil.Newf("invalid structure field type; expected %q, got %q", fieldTypes[i], fields[i].Type())
 		}
 	}
 	v.fields = fields
@@ -158,3 +168,9 @@ func (v *Struct) UseList() []values.Value {
 func (v *Struct) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
+
+// isConst ensures that only constant values can be assigned to the Constant
+// interface.
+func (*Vector) isConst() {}
+func (*Array) isConst()  {}
+func (*Struct) isConst() {}

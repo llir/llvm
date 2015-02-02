@@ -1,5 +1,3 @@
-// TODO: Add support for constant expressions.
-
 // TODO: Figure out where metadata belongs. Is it a Constant? It feels like
 // metadata belongs elsewhere, even if it is immutable. One reason being that
 // derived constants cannot be created using metadata (verify!).
