@@ -102,6 +102,30 @@ type IntZeroExt struct {
 	to *types.Int
 }
 
+// NewIntZeroExt returns a constant expression which zero extends the integer
+// constant to a larger or equally sized integer type.
+func NewIntZeroExt(orig Constant, to types.Type) (*IntZeroExt, error) {
+	// Verify type of original integer constant.
+	exp := new(IntZeroExt)
+	var ok bool
+	exp.orig, ok = orig.(*Int)
+	if !ok {
+		return nil, errutil.Newf("invalid integer zero extension; expected integer constant for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	exp.to, ok = to.(*types.Int)
+	if !ok {
+		return nil, errutil.Newf("invalid integer zero extension; expected integer target type, got %q", to)
+	}
+	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	if newSize < origSize {
+		return nil, errutil.Newf("invalid integer zero extension; target size (%d) smaller than original size (%d)", newSize, origSize)
+	}
+
+	return exp, nil
+}
+
 // Type returns the type of the value.
 func (exp *IntZeroExt) Type() types.Type {
 	return exp.to
@@ -130,6 +154,30 @@ type IntSignExt struct {
 	orig *Int
 	// New integer type.
 	to *types.Int
+}
+
+// NewIntSignExt returns a constant expression which sign extends the integer
+// constant to a larger or equally sized integer type.
+func NewIntSignExt(orig Constant, to types.Type) (*IntSignExt, error) {
+	// Verify type of original integer constant.
+	exp := new(IntSignExt)
+	var ok bool
+	exp.orig, ok = orig.(*Int)
+	if !ok {
+		return nil, errutil.Newf("invalid integer sign extension; expected integer constant for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	exp.to, ok = to.(*types.Int)
+	if !ok {
+		return nil, errutil.Newf("invalid integer sign extension; expected integer target type, got %q", to)
+	}
+	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	if newSize < origSize {
+		return nil, errutil.Newf("invalid integer sign extension; target size (%d) smaller than original size (%d)", newSize, origSize)
+	}
+
+	return exp, nil
 }
 
 // Type returns the type of the value.
