@@ -315,6 +315,32 @@ func TestIntString(t *testing.T) {
 	}
 }
 
+func TestFloatSize(t *testing.T) {
+	golden := []struct {
+		want int
+		kind types.FloatKind
+	}{
+		{want: 16, kind: types.Float16},
+		{want: 32, kind: types.Float32},
+		{want: 64, kind: types.Float64},
+		{want: 128, kind: types.Float128},
+		{want: 80, kind: types.Float80_x86},
+		{want: 128, kind: types.Float128_PPC},
+	}
+
+	for i, g := range golden {
+		typ, err := types.NewFloat(g.kind)
+		if err != nil {
+			t.Errorf("i=%d; %v", i, err)
+			continue
+		}
+		got := typ.Size()
+		if got != g.want {
+			t.Errorf("i=%d: size mismatch; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
 func TestFloatString(t *testing.T) {
 	golden := []struct {
 		want string

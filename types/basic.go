@@ -94,6 +94,25 @@ func (t *Float) Kind() FloatKind {
 	return t.kind
 }
 
+// Size returns the size of t in number of bits.
+func (t *Float) Size() int {
+	switch t.kind {
+	case Float16:
+		return 16
+	case Float32:
+		return 32
+	case Float64:
+		return 64
+	case Float128:
+		return 128
+	case Float80_x86:
+		return 80
+	case Float128_PPC:
+		return 128
+	}
+	panic("unreachable")
+}
+
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Float) Equal(u Type) bool {
 	switch u := u.(type) {
