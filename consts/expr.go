@@ -253,7 +253,7 @@ func (exp *FloatTrunc) ReplaceAll(new values.Value) error {
 }
 
 // FloatExt is a constant expression which extends a floating point constant to
-// a larger or equally sized floating point type.
+// a larger floating point type or one of the same kind.
 //
 // Examples:
 //    fpext(float 4.0 to double)   ; yields double:4.0
@@ -265,6 +265,33 @@ type FloatExt struct {
 	orig *Float
 	// New floating point type.
 	to *types.Float
+}
+
+// NewFloatExt returns a constant expression which extends the floating point
+// constant to a larger floating point type or one of the same kind.
+func NewFloatExt(orig Constant, to types.Type) (*FloatExt, error) {
+	// Verify type of original floating point constant.
+	exp := new(FloatExt)
+	var ok bool
+	exp.orig, ok = orig.(*Float)
+	if !ok {
+		return nil, errutil.Newf("invalid floating point extension; expected floating point constant for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	exp.to, ok = to.(*types.Float)
+	if !ok {
+		return nil, errutil.Newf("invalid floating point extension; expected floating point target type, got %q", to)
+	}
+	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	newKind, origKind := exp.to.Kind(), exp.orig.typ.Kind()
+	if newSize < origSize {
+		return nil, errutil.Newf("invalid floating point extension; target size (%d) smaller than original size (%d)", newSize, origSize)
+	} else if newSize == origSize && newKind != origKind {
+		return nil, errutil.Newf("invalid floating point extension; cannot convert from %q to %q", exp.orig.typ, exp.to)
+	}
+
+	return exp, nil
 }
 
 // Type returns the type of the value.
