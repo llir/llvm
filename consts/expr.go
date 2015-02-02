@@ -4,6 +4,7 @@
 package consts
 
 import (
+	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
 )
@@ -42,23 +43,47 @@ type Expr interface {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type IntTrunc struct {
 	// Original constant.
-	v *Int
+	orig *Int
 	// New type.
 	to *types.Int
 }
 
+// NewIntTrunc returns a constant expression which truncates the integer
+// constant to a smaller or equally sized integer type.
+func NewIntTrunc(orig Constant, to types.Type) (*IntTrunc, error) {
+	// Verify type of original integer constant.
+	exp := new(IntTrunc)
+	var ok bool
+	exp.orig, ok = orig.(*Int)
+	if !ok {
+		return nil, errutil.Newf("invalid integer truncation; expected integer constant for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	exp.to, ok = to.(*types.Int)
+	if !ok {
+		return nil, errutil.Newf("invalid integer truncation; expected integer target type, got %q", to)
+	}
+	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	if newSize > origSize {
+		return nil, errutil.Newf("invalid integer truncation; target size (%d) larger than original size (%d)", newSize, origSize)
+	}
+
+	return exp, nil
+}
+
 // Type returns the type of the value.
-func (v *IntTrunc) Type() types.Type {
-	return v.to
+func (exp *IntTrunc) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *IntTrunc) UseList() []values.Value {
+func (exp *IntTrunc) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *IntTrunc) ReplaceAll(new values.Value) error {
+func (exp *IntTrunc) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -72,23 +97,23 @@ func (v *IntTrunc) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type IntZeroExt struct {
 	// Original integer constant.
-	v *Int
+	orig *Int
 	// New integer type.
 	to *types.Int
 }
 
 // Type returns the type of the value.
-func (v *IntZeroExt) Type() types.Type {
-	return v.to
+func (exp *IntZeroExt) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *IntZeroExt) UseList() []values.Value {
+func (exp *IntZeroExt) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *IntZeroExt) ReplaceAll(new values.Value) error {
+func (exp *IntZeroExt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -102,23 +127,23 @@ func (v *IntZeroExt) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type IntSignExt struct {
 	// Original integer constant.
-	v *Int
+	orig *Int
 	// New integer type.
 	to *types.Int
 }
 
 // Type returns the type of the value.
-func (v *IntSignExt) Type() types.Type {
-	return v.to
+func (exp *IntSignExt) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *IntSignExt) UseList() []values.Value {
+func (exp *IntSignExt) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *IntSignExt) ReplaceAll(new values.Value) error {
+func (exp *IntSignExt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -132,23 +157,23 @@ func (v *IntSignExt) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type FloatTrunc struct {
 	// Original floating point constant.
-	v *Float
+	orig *Float
 	// New floating point type.
 	to *types.Float
 }
 
 // Type returns the type of the value.
-func (v *FloatTrunc) Type() types.Type {
-	return v.to
+func (exp *FloatTrunc) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *FloatTrunc) UseList() []values.Value {
+func (exp *FloatTrunc) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *FloatTrunc) ReplaceAll(new values.Value) error {
+func (exp *FloatTrunc) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -162,23 +187,23 @@ func (v *FloatTrunc) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type FloatExt struct {
 	// Original floating point constant.
-	v *Float
+	orig *Float
 	// New floating point type.
 	to *types.Float
 }
 
 // Type returns the type of the value.
-func (v *FloatExt) Type() types.Type {
-	return v.to
+func (exp *FloatExt) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *FloatExt) UseList() []values.Value {
+func (exp *FloatExt) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *FloatExt) ReplaceAll(new values.Value) error {
+func (exp *FloatExt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -194,23 +219,23 @@ func (v *FloatExt) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type FloatToUint struct {
 	// Original floating point value (or vector).
-	v values.Value
+	orig values.Value
 	// New integer type.
 	to *types.Int
 }
 
 // Type returns the type of the value.
-func (v *FloatToUint) Type() types.Type {
-	return v.to
+func (exp *FloatToUint) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *FloatToUint) UseList() []values.Value {
+func (exp *FloatToUint) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *FloatToUint) ReplaceAll(new values.Value) error {
+func (exp *FloatToUint) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -226,23 +251,23 @@ func (v *FloatToUint) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type FloatToInt struct {
 	// Original floating point value (or vector).
-	v values.Value
+	orig values.Value
 	// New type.
 	to *types.Int
 }
 
 // Type returns the type of the value.
-func (v *FloatToInt) Type() types.Type {
-	return v.to
+func (exp *FloatToInt) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *FloatToInt) UseList() []values.Value {
+func (exp *FloatToInt) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *FloatToInt) ReplaceAll(new values.Value) error {
+func (exp *FloatToInt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -258,23 +283,23 @@ func (v *FloatToInt) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type UintToFloat struct {
 	// Original unsigned integer value (or vector).
-	v values.Value
+	orig values.Value
 	// New floating point type.
 	to *types.Float
 }
 
 // Type returns the type of the value.
-func (v *UintToFloat) Type() types.Type {
-	return v.to
+func (exp *UintToFloat) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *UintToFloat) UseList() []values.Value {
+func (exp *UintToFloat) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *UintToFloat) ReplaceAll(new values.Value) error {
+func (exp *UintToFloat) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
@@ -290,23 +315,23 @@ func (v *UintToFloat) ReplaceAll(new values.Value) error {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type IntToFloat struct {
 	// Original signed integer value (or vector).
-	v values.Value
+	orig values.Value
 	// New floating point type.
 	to *types.Float
 }
 
 // Type returns the type of the value.
-func (v *IntToFloat) Type() types.Type {
-	return v.to
+func (exp *IntToFloat) Type() types.Type {
+	return exp.to
 }
 
 // UseList returns a list of all values which uses the value.
-func (v *IntToFloat) UseList() []values.Value {
+func (exp *IntToFloat) UseList() []values.Value {
 	panic("not yet implemented.")
 }
 
 // ReplaceAll replaces all uses of the value with new.
-func (v *IntToFloat) ReplaceAll(new values.Value) error {
+func (exp *IntToFloat) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
