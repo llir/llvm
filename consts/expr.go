@@ -47,6 +47,21 @@ type IntTrunc struct {
 	to *types.Int
 }
 
+// Type returns the type of the value.
+func (v *IntTrunc) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *IntTrunc) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *IntTrunc) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // IntZeroExt is a constant expression which zero extends an integer constant to
 // a larger or equally sized integer type.
 //
@@ -60,6 +75,21 @@ type IntZeroExt struct {
 	v *Int
 	// New integer type.
 	to *types.Int
+}
+
+// Type returns the type of the value.
+func (v *IntZeroExt) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *IntZeroExt) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *IntZeroExt) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }
 
 // IntSignExt is a constant expression which sign extends an integer constant to
@@ -77,6 +107,21 @@ type IntSignExt struct {
 	to *types.Int
 }
 
+// Type returns the type of the value.
+func (v *IntSignExt) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *IntSignExt) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *IntSignExt) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // FloatTrunc is a constant expression which truncates a floating point constant
 // to a smaller or equally sized floating point type.
 //
@@ -92,6 +137,21 @@ type FloatTrunc struct {
 	to *types.Float
 }
 
+// Type returns the type of the value.
+func (v *FloatTrunc) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *FloatTrunc) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *FloatTrunc) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // FloatExt is a constant expression which extends a floating point constant to
 // a larger or equally sized floating point type.
 //
@@ -105,6 +165,21 @@ type FloatExt struct {
 	v *Float
 	// New floating point type.
 	to *types.Float
+}
+
+// Type returns the type of the value.
+func (v *FloatExt) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *FloatExt) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *FloatExt) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }
 
 // FloatToUint is a constant expression which converts a floating point constant
@@ -124,6 +199,21 @@ type FloatToUint struct {
 	to *types.Int
 }
 
+// Type returns the type of the value.
+func (v *FloatToUint) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *FloatToUint) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *FloatToUint) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // FloatToInt is a constant expression which converts a floating point constant
 // (or constant vector) to the corresponding signed integer constant (or
 // constant vector).
@@ -139,6 +229,21 @@ type FloatToInt struct {
 	v values.Value
 	// New type.
 	to *types.Int
+}
+
+// Type returns the type of the value.
+func (v *FloatToInt) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *FloatToInt) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *FloatToInt) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }
 
 // UintToFloat is a constant expression which converts an unsigned integer
@@ -158,6 +263,21 @@ type UintToFloat struct {
 	to *types.Float
 }
 
+// Type returns the type of the value.
+func (v *UintToFloat) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *UintToFloat) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *UintToFloat) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
 // IntToFloat is a constant expression which converts a signed integer constant
 // (or constant vector) to the corresponding floating point constant (or
 // constant vector).
@@ -173,6 +293,21 @@ type IntToFloat struct {
 	v values.Value
 	// New floating point type.
 	to *types.Float
+}
+
+// Type returns the type of the value.
+func (v *IntToFloat) Type() types.Type {
+	return v.to
+}
+
+// UseList returns a list of all values which uses the value.
+func (v *IntToFloat) UseList() []values.Value {
+	panic("not yet implemented.")
+}
+
+// ReplaceAll replaces all uses of the value with new.
+func (v *IntToFloat) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
 }
 
 // TODO: Add support for the following constant expressions:
@@ -191,3 +326,15 @@ type IntToFloat struct {
 //    - insertvalue
 //    - OPCODE (LHS, RHS)
 //         * OPCODE may be any of the binary or bitwise binary operations.
+
+// isConst ensures that only constant values can be assigned to the Constant
+// interface.
+func (*IntTrunc) isConst()    {}
+func (*IntZeroExt) isConst()  {}
+func (*IntSignExt) isConst()  {}
+func (*FloatTrunc) isConst()  {}
+func (*FloatExt) isConst()    {}
+func (*FloatToUint) isConst() {}
+func (*FloatToInt) isConst()  {}
+func (*UintToFloat) isConst() {}
+func (*IntToFloat) isConst()  {}
