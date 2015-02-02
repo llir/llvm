@@ -332,17 +332,17 @@ type FloatToUint struct {
 func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
 	// Verify type of original floating point constant (or constant vector).
 	if !types.IsFloats(orig.Type()) {
-		return nil, errutil.Newf("invalid floating point conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
+		return nil, errutil.Newf("invalid floating point to unsigned integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	if !types.IsInts(to) {
-		return nil, errutil.Newf("invalid floating point conversion; expected integer (or integer vector) target type, got %q", to)
+		return nil, errutil.Newf("invalid floating point to unsigned integer conversion; expected integer (or integer vector) target type, got %q", to)
 	}
 
 	// Verify that both are either basic types or vectors.
 	if types.IsFloat(orig.Type()) != types.IsInt(to) {
-		return nil, errutil.Newf("invalid floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+		return nil, errutil.Newf("invalid floating point to unsigned integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
 	return &FloatToUint{orig: orig, to: to}, nil
@@ -386,17 +386,17 @@ type FloatToInt struct {
 func NewFloatToInt(orig Constant, to types.Type) (*FloatToInt, error) {
 	// Verify type of original floating point constant (or constant vector).
 	if !types.IsFloats(orig.Type()) {
-		return nil, errutil.Newf("invalid floating point conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
+		return nil, errutil.Newf("invalid floating point to signed integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	if !types.IsInts(to) {
-		return nil, errutil.Newf("invalid floating point conversion; expected integer (or integer vector) target type, got %q", to)
+		return nil, errutil.Newf("invalid floating point to signed integer conversion; expected integer (or integer vector) target type, got %q", to)
 	}
 
 	// Verify that both are either basic types or vectors.
 	if types.IsFloat(orig.Type()) != types.IsInt(to) {
-		return nil, errutil.Newf("invalid floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+		return nil, errutil.Newf("invalid floating point to signed integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
 	return &FloatToInt{orig: orig, to: to}, nil
@@ -432,6 +432,28 @@ type UintToFloat struct {
 	orig values.Value
 	// New floating point type (or vector).
 	to types.Type
+}
+
+// NewUintToFloat returns a constant expression which converts the unsigned
+// integer constant (or constant vector) orig to the corresponding floating
+// point constant (or constant vector).
+func NewUintToFloat(orig Constant, to types.Type) (*UintToFloat, error) {
+	// Verify type of original integer constant (or constant vector).
+	if !types.IsInts(orig.Type()) {
+		return nil, errutil.Newf("invalid unsigned integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	if !types.IsFloats(to) {
+		return nil, errutil.Newf("invalid unsigned integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
+	}
+
+	// Verify that both are either basic types or vectors.
+	if types.IsInt(orig.Type()) != types.IsFloat(to) {
+		return nil, errutil.Newf("invalid unsigned integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+	}
+
+	return &UintToFloat{orig: orig, to: to}, nil
 }
 
 // Type returns the type of the value.
