@@ -45,7 +45,7 @@ func IsInt(t Type) bool {
 // false otherwise.
 func IsInts(t Type) bool {
 	if t, ok := t.(*Vector); ok {
-		return IsInts(t.Elem())
+		return IsInt(t.Elem())
 	}
 	return IsInt(t)
 }
@@ -60,7 +60,7 @@ func IsFloat(t Type) bool {
 // points type, and false otherwise.
 func IsFloats(t Type) bool {
 	if t, ok := t.(*Vector); ok {
-		return IsFloats(t.Elem())
+		return IsFloat(t.Elem())
 	}
 	return IsFloat(t)
 }
