@@ -107,12 +107,12 @@ func (t *Float) String() string {
 		return "double"
 	case Float128:
 		return "fp128"
-	case X86Float80:
+	case Float80_x86:
 		return "x86_fp80"
-	case PPCFloat128:
+	case Float128_PPC:
 		return "ppc_fp128"
 	}
-	return "<unknown float type>"
+	return "<unknown floating point kind>"
 }
 
 // FloatKind specifies the kind of a floating point type.
@@ -120,12 +120,12 @@ type FloatKind int
 
 // Floating point kinds.
 const (
-	Float16     FloatKind = iota // half:      16-bit floating point type
-	Float32                      // float:     32-bit floating point type
-	Float64                      // double:    64-bit floating point type
-	Float128                     // fp128:     128-bit floating point type (112-bit mantissa)
-	X86Float80                   // x86_fp80:  80-bit floating point type (x87)
-	PPCFloat128                  // ppc_fp128: 128-bit floating point type (two 64-bits, PowerPC)
+	Float16      FloatKind = iota // half:      16-bit floating point type
+	Float32                       // float:     32-bit floating point type
+	Float64                       // double:    64-bit floating point type
+	Float128                      // fp128:     128-bit floating point type (112-bit mantissa)
+	Float80_x86                   // x86_fp80:  80-bit floating point type (x87)
+	Float128_PPC                  // ppc_fp128: 128-bit floating point type (two 64-bits, PowerPC)
 )
 
 // MMX represents an MMX vector type (64 bits, x86 specific).

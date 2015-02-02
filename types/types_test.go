@@ -18,12 +18,12 @@ var (
 	i32Typ *types.Int // i32
 
 	// Floating point types.
-	f16Typ     *types.Float // half
-	f32Typ     *types.Float // float
-	f64Typ     *types.Float // double
-	f128Typ    *types.Float // fp128
-	x86f80Typ  *types.Float // x86_fp80
-	ppcf128Typ *types.Float // ppc_fp128
+	f16Typ      *types.Float // half
+	f32Typ      *types.Float // float
+	f64Typ      *types.Float // double
+	f128Typ     *types.Float // fp128
+	f80_x86Typ  *types.Float // x86_fp80
+	f128_ppcTyp *types.Float // ppc_fp128
 
 	// MMX type.
 	mmxTyp *types.MMX // x86_mmx
@@ -44,28 +44,28 @@ var (
 	funcPtrTyp *types.Pointer // i32 (i32)*
 
 	// Vector types.
-	i8VecTyp      *types.Vector // [1 x i8]
-	i32VecTyp     *types.Vector // [2 x i32]
-	f16VecTyp     *types.Vector // [3 x half]
-	f32VecTyp     *types.Vector // [4 x float]
-	f64VecTyp     *types.Vector // [5 x double]
-	f128VecTyp    *types.Vector // [6 x fp128]
-	x86f80VecTyp  *types.Vector // [7 x x86_fp80]
-	ppcf128VecTyp *types.Vector // [8 x ppc_fp128]
-	i8PtrVecTyp   *types.Vector // [9 x i8*]
-	f16PtrVecTyp  *types.Vector // [10 x half*]
+	i8VecTyp       *types.Vector // [1 x i8]
+	i32VecTyp      *types.Vector // [2 x i32]
+	f16VecTyp      *types.Vector // [3 x half]
+	f32VecTyp      *types.Vector // [4 x float]
+	f64VecTyp      *types.Vector // [5 x double]
+	f128VecTyp     *types.Vector // [6 x fp128]
+	f80_x86VecTyp  *types.Vector // [7 x x86_fp80]
+	f128_ppcVecTyp *types.Vector // [8 x ppc_fp128]
+	i8PtrVecTyp    *types.Vector // [9 x i8*]
+	f16PtrVecTyp   *types.Vector // [10 x half*]
 
 	// Array types.
-	i8ArrTyp      *types.Array // <1 x i8>
-	i32ArrTyp     *types.Array // <2 x i32>
-	f16ArrTyp     *types.Array // <3 x half>
-	f32ArrTyp     *types.Array // <4 x float>
-	f64ArrTyp     *types.Array // <5 x double>
-	f128ArrTyp    *types.Array // <6 x fp128>
-	x86f80ArrTyp  *types.Array // <7 x x86_fp80>
-	ppcf128ArrTyp *types.Array // <8 x ppc_fp128>
-	i8PtrArrTyp   *types.Array // <9 x i8*>
-	f16PtrArrTyp  *types.Array // <10 x half*>
+	i8ArrTyp       *types.Array // <1 x i8>
+	i32ArrTyp      *types.Array // <2 x i32>
+	f16ArrTyp      *types.Array // <3 x half>
+	f32ArrTyp      *types.Array // <4 x float>
+	f64ArrTyp      *types.Array // <5 x double>
+	f128ArrTyp     *types.Array // <6 x fp128>
+	f80_x86ArrTyp  *types.Array // <7 x x86_fp80>
+	f128_ppcArrTyp *types.Array // <8 x ppc_fp128>
+	i8PtrArrTyp    *types.Array // <9 x i8*>
+	f16PtrArrTyp   *types.Array // <10 x half*>
 
 	// Struct types.
 	structTyp *types.Struct // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
@@ -104,9 +104,9 @@ func init() {
 	// fp128
 	f128Typ = types.NewFloat(types.Float128)
 	// x86_fp80
-	x86f80Typ = types.NewFloat(types.X86Float80)
+	f80_x86Typ = types.NewFloat(types.Float80_x86)
 	// ppc_fp128
-	ppcf128Typ = types.NewFloat(types.PPCFloat128)
+	f128_ppcTyp = types.NewFloat(types.Float128_PPC)
 
 	// MMX type.
 	// x86_mmx
@@ -181,12 +181,12 @@ func init() {
 		log.Fatalln(err)
 	}
 	// <7 x x86_fp80>
-	x86f80VecTyp, err = types.NewVector(x86f80Typ, 7)
+	f80_x86VecTyp, err = types.NewVector(f80_x86Typ, 7)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <8 x ppc_fp128>
-	ppcf128VecTyp, err = types.NewVector(ppcf128Typ, 8)
+	f128_ppcVecTyp, err = types.NewVector(f128_ppcTyp, 8)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -233,12 +233,12 @@ func init() {
 		log.Fatalln(err)
 	}
 	// [7 x x86_fp80]
-	x86f80ArrTyp, err = types.NewArray(x86f80Typ, 7)
+	f80_x86ArrTyp, err = types.NewArray(f80_x86Typ, 7)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// [8 x ppc_fp128]
-	ppcf128ArrTyp, err = types.NewArray(ppcf128Typ, 8)
+	f128_ppcArrTyp, err = types.NewArray(f128_ppcTyp, 8)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -309,9 +309,9 @@ func TestFloatString(t *testing.T) {
 		{want: "float", kind: types.Float32},
 		{want: "double", kind: types.Float64},
 		{want: "fp128", kind: types.Float128},
-		{want: "x86_fp80", kind: types.X86Float80},
-		{want: "ppc_fp128", kind: types.PPCFloat128},
-		{want: "<unknown float type>", kind: -1},
+		{want: "x86_fp80", kind: types.Float80_x86},
+		{want: "ppc_fp128", kind: types.Float128_PPC},
+		{want: "<unknown floating point kind>", kind: -1},
 	}
 
 	for i, g := range golden {
@@ -541,45 +541,45 @@ func TestIsInt(t *testing.T) {
 		want bool
 		typ  types.Type
 	}{
-		{want: false, typ: voidTyp},       // void
-		{want: true, typ: i1Typ},          // i1
-		{want: true, typ: i8Typ},          // i8
-		{want: true, typ: i32Typ},         // i32
-		{want: false, typ: f16Typ},        // half
-		{want: false, typ: f32Typ},        // float
-		{want: false, typ: f64Typ},        // double
-		{want: false, typ: f128Typ},       // fp128
-		{want: false, typ: x86f80Typ},     // x86_fp80
-		{want: false, typ: ppcf128Typ},    // ppc_fp128
-		{want: false, typ: mmxTyp},        // x86_mmx
-		{want: false, typ: labelTyp},      // label
-		{want: false, typ: metadataTyp},   // metadata
-		{want: false, typ: funcTyp},       // i32 (i32)
-		{want: false, typ: i8PtrTyp},      // i8*
-		{want: false, typ: f16PtrTyp},     // half*
-		{want: false, typ: mmxPtrTyp},     // x86_mmx*
-		{want: false, typ: funcPtrTyp},    // i32 (i32)*
-		{want: false, typ: i8VecTyp},      // [1 x i8]
-		{want: false, typ: i32VecTyp},     // [2 x i32]
-		{want: false, typ: f16VecTyp},     // [3 x half]
-		{want: false, typ: f32VecTyp},     // [4 x float]
-		{want: false, typ: f64VecTyp},     // [5 x double]
-		{want: false, typ: f128VecTyp},    // [6 x fp128]
-		{want: false, typ: x86f80VecTyp},  // [7 x x86_fp80]
-		{want: false, typ: ppcf128VecTyp}, // [8 x ppc_fp128]
-		{want: false, typ: i8PtrVecTyp},   // [9 x i8*]
-		{want: false, typ: f16PtrVecTyp},  // [10 x half*]
-		{want: false, typ: i8ArrTyp},      // <1 x i8>
-		{want: false, typ: i32ArrTyp},     // <2 x i32>
-		{want: false, typ: f16ArrTyp},     // <3 x half>
-		{want: false, typ: f32ArrTyp},     // <4 x float>
-		{want: false, typ: f64ArrTyp},     // <5 x double>
-		{want: false, typ: f128ArrTyp},    // <6 x fp128>
-		{want: false, typ: x86f80ArrTyp},  // <7 x x86_fp80>
-		{want: false, typ: ppcf128ArrTyp}, // <8 x ppc_fp128>
-		{want: false, typ: i8PtrArrTyp},   // <9 x i8*>
-		{want: false, typ: f16PtrArrTyp},  // <10 x half*>
-		{want: false, typ: structTyp},     // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
+		{want: false, typ: voidTyp},        // void
+		{want: true, typ: i1Typ},           // i1
+		{want: true, typ: i8Typ},           // i8
+		{want: true, typ: i32Typ},          // i32
+		{want: false, typ: f16Typ},         // half
+		{want: false, typ: f32Typ},         // float
+		{want: false, typ: f64Typ},         // double
+		{want: false, typ: f128Typ},        // fp128
+		{want: false, typ: f80_x86Typ},     // x86_fp80
+		{want: false, typ: f128_ppcTyp},    // ppc_fp128
+		{want: false, typ: mmxTyp},         // x86_mmx
+		{want: false, typ: labelTyp},       // label
+		{want: false, typ: metadataTyp},    // metadata
+		{want: false, typ: funcTyp},        // i32 (i32)
+		{want: false, typ: i8PtrTyp},       // i8*
+		{want: false, typ: f16PtrTyp},      // half*
+		{want: false, typ: mmxPtrTyp},      // x86_mmx*
+		{want: false, typ: funcPtrTyp},     // i32 (i32)*
+		{want: false, typ: i8VecTyp},       // [1 x i8]
+		{want: false, typ: i32VecTyp},      // [2 x i32]
+		{want: false, typ: f16VecTyp},      // [3 x half]
+		{want: false, typ: f32VecTyp},      // [4 x float]
+		{want: false, typ: f64VecTyp},      // [5 x double]
+		{want: false, typ: f128VecTyp},     // [6 x fp128]
+		{want: false, typ: f80_x86VecTyp},  // [7 x x86_fp80]
+		{want: false, typ: f128_ppcVecTyp}, // [8 x ppc_fp128]
+		{want: false, typ: i8PtrVecTyp},    // [9 x i8*]
+		{want: false, typ: f16PtrVecTyp},   // [10 x half*]
+		{want: false, typ: i8ArrTyp},       // <1 x i8>
+		{want: false, typ: i32ArrTyp},      // <2 x i32>
+		{want: false, typ: f16ArrTyp},      // <3 x half>
+		{want: false, typ: f32ArrTyp},      // <4 x float>
+		{want: false, typ: f64ArrTyp},      // <5 x double>
+		{want: false, typ: f128ArrTyp},     // <6 x fp128>
+		{want: false, typ: f80_x86ArrTyp},  // <7 x x86_fp80>
+		{want: false, typ: f128_ppcArrTyp}, // <8 x ppc_fp128>
+		{want: false, typ: i8PtrArrTyp},    // <9 x i8*>
+		{want: false, typ: f16PtrArrTyp},   // <10 x half*>
+		{want: false, typ: structTyp},      // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
 	}
 
 	for i, g := range golden {
@@ -595,45 +595,45 @@ func TestIsInts(t *testing.T) {
 		want bool
 		typ  types.Type
 	}{
-		{want: false, typ: voidTyp},       // void
-		{want: true, typ: i1Typ},          // i1
-		{want: true, typ: i8Typ},          // i8
-		{want: true, typ: i32Typ},         // i32
-		{want: false, typ: f16Typ},        // half
-		{want: false, typ: f32Typ},        // float
-		{want: false, typ: f64Typ},        // double
-		{want: false, typ: f128Typ},       // fp128
-		{want: false, typ: x86f80Typ},     // x86_fp80
-		{want: false, typ: ppcf128Typ},    // ppc_fp128
-		{want: false, typ: mmxTyp},        // x86_mmx
-		{want: false, typ: labelTyp},      // label
-		{want: false, typ: metadataTyp},   // metadata
-		{want: false, typ: funcTyp},       // i32 (i32)
-		{want: false, typ: i8PtrTyp},      // i8*
-		{want: false, typ: f16PtrTyp},     // half*
-		{want: false, typ: mmxPtrTyp},     // x86_mmx*
-		{want: false, typ: funcPtrTyp},    // i32 (i32)*
-		{want: true, typ: i8VecTyp},       // [1 x i8]
-		{want: true, typ: i32VecTyp},      // [2 x i32]
-		{want: false, typ: f16VecTyp},     // [3 x half]
-		{want: false, typ: f32VecTyp},     // [4 x float]
-		{want: false, typ: f64VecTyp},     // [5 x double]
-		{want: false, typ: f128VecTyp},    // [6 x fp128]
-		{want: false, typ: x86f80VecTyp},  // [7 x x86_fp80]
-		{want: false, typ: ppcf128VecTyp}, // [8 x ppc_fp128]
-		{want: false, typ: i8PtrVecTyp},   // [9 x i8*]
-		{want: false, typ: f16PtrVecTyp},  // [10 x half*]
-		{want: false, typ: i8ArrTyp},      // <1 x i8>
-		{want: false, typ: i32ArrTyp},     // <2 x i32>
-		{want: false, typ: f16ArrTyp},     // <3 x half>
-		{want: false, typ: f32ArrTyp},     // <4 x float>
-		{want: false, typ: f64ArrTyp},     // <5 x double>
-		{want: false, typ: f128ArrTyp},    // <6 x fp128>
-		{want: false, typ: x86f80ArrTyp},  // <7 x x86_fp80>
-		{want: false, typ: ppcf128ArrTyp}, // <8 x ppc_fp128>
-		{want: false, typ: i8PtrArrTyp},   // <9 x i8*>
-		{want: false, typ: f16PtrArrTyp},  // <10 x half*>
-		{want: false, typ: structTyp},     // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
+		{want: false, typ: voidTyp},        // void
+		{want: true, typ: i1Typ},           // i1
+		{want: true, typ: i8Typ},           // i8
+		{want: true, typ: i32Typ},          // i32
+		{want: false, typ: f16Typ},         // half
+		{want: false, typ: f32Typ},         // float
+		{want: false, typ: f64Typ},         // double
+		{want: false, typ: f128Typ},        // fp128
+		{want: false, typ: f80_x86Typ},     // x86_fp80
+		{want: false, typ: f128_ppcTyp},    // ppc_fp128
+		{want: false, typ: mmxTyp},         // x86_mmx
+		{want: false, typ: labelTyp},       // label
+		{want: false, typ: metadataTyp},    // metadata
+		{want: false, typ: funcTyp},        // i32 (i32)
+		{want: false, typ: i8PtrTyp},       // i8*
+		{want: false, typ: f16PtrTyp},      // half*
+		{want: false, typ: mmxPtrTyp},      // x86_mmx*
+		{want: false, typ: funcPtrTyp},     // i32 (i32)*
+		{want: true, typ: i8VecTyp},        // [1 x i8]
+		{want: true, typ: i32VecTyp},       // [2 x i32]
+		{want: false, typ: f16VecTyp},      // [3 x half]
+		{want: false, typ: f32VecTyp},      // [4 x float]
+		{want: false, typ: f64VecTyp},      // [5 x double]
+		{want: false, typ: f128VecTyp},     // [6 x fp128]
+		{want: false, typ: f80_x86VecTyp},  // [7 x x86_fp80]
+		{want: false, typ: f128_ppcVecTyp}, // [8 x ppc_fp128]
+		{want: false, typ: i8PtrVecTyp},    // [9 x i8*]
+		{want: false, typ: f16PtrVecTyp},   // [10 x half*]
+		{want: false, typ: i8ArrTyp},       // <1 x i8>
+		{want: false, typ: i32ArrTyp},      // <2 x i32>
+		{want: false, typ: f16ArrTyp},      // <3 x half>
+		{want: false, typ: f32ArrTyp},      // <4 x float>
+		{want: false, typ: f64ArrTyp},      // <5 x double>
+		{want: false, typ: f128ArrTyp},     // <6 x fp128>
+		{want: false, typ: f80_x86ArrTyp},  // <7 x x86_fp80>
+		{want: false, typ: f128_ppcArrTyp}, // <8 x ppc_fp128>
+		{want: false, typ: i8PtrArrTyp},    // <9 x i8*>
+		{want: false, typ: f16PtrArrTyp},   // <10 x half*>
+		{want: false, typ: structTyp},      // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
 	}
 
 	for i, g := range golden {
@@ -649,45 +649,45 @@ func TestIsFloat(t *testing.T) {
 		want bool
 		typ  types.Type
 	}{
-		{want: false, typ: voidTyp},       // void
-		{want: false, typ: i1Typ},         // i1
-		{want: false, typ: i8Typ},         // i8
-		{want: false, typ: i32Typ},        // i32
-		{want: true, typ: f16Typ},         // half
-		{want: true, typ: f32Typ},         // float
-		{want: true, typ: f64Typ},         // double
-		{want: true, typ: f128Typ},        // fp128
-		{want: true, typ: x86f80Typ},      // x86_fp80
-		{want: true, typ: ppcf128Typ},     // ppc_fp128
-		{want: false, typ: mmxTyp},        // x86_mmx
-		{want: false, typ: labelTyp},      // label
-		{want: false, typ: metadataTyp},   // metadata
-		{want: false, typ: funcTyp},       // i32 (i32)
-		{want: false, typ: i8PtrTyp},      // i8*
-		{want: false, typ: f16PtrTyp},     // half*
-		{want: false, typ: mmxPtrTyp},     // x86_mmx*
-		{want: false, typ: funcPtrTyp},    // i32 (i32)*
-		{want: false, typ: i8VecTyp},      // [1 x i8]
-		{want: false, typ: i32VecTyp},     // [2 x i32]
-		{want: false, typ: f16VecTyp},     // [3 x half]
-		{want: false, typ: f32VecTyp},     // [4 x float]
-		{want: false, typ: f64VecTyp},     // [5 x double]
-		{want: false, typ: f128VecTyp},    // [6 x fp128]
-		{want: false, typ: x86f80VecTyp},  // [7 x x86_fp80]
-		{want: false, typ: ppcf128VecTyp}, // [8 x ppc_fp128]
-		{want: false, typ: i8PtrVecTyp},   // [9 x i8*]
-		{want: false, typ: f16PtrVecTyp},  // [10 x half*]
-		{want: false, typ: i8ArrTyp},      // <1 x i8>
-		{want: false, typ: i32ArrTyp},     // <2 x i32>
-		{want: false, typ: f16ArrTyp},     // <3 x half>
-		{want: false, typ: f32ArrTyp},     // <4 x float>
-		{want: false, typ: f64ArrTyp},     // <5 x double>
-		{want: false, typ: f128ArrTyp},    // <6 x fp128>
-		{want: false, typ: x86f80ArrTyp},  // <7 x x86_fp80>
-		{want: false, typ: ppcf128ArrTyp}, // <8 x ppc_fp128>
-		{want: false, typ: i8PtrArrTyp},   // <9 x i8*>
-		{want: false, typ: f16PtrArrTyp},  // <10 x half*>
-		{want: false, typ: structTyp},     // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
+		{want: false, typ: voidTyp},        // void
+		{want: false, typ: i1Typ},          // i1
+		{want: false, typ: i8Typ},          // i8
+		{want: false, typ: i32Typ},         // i32
+		{want: true, typ: f16Typ},          // half
+		{want: true, typ: f32Typ},          // float
+		{want: true, typ: f64Typ},          // double
+		{want: true, typ: f128Typ},         // fp128
+		{want: true, typ: f80_x86Typ},      // x86_fp80
+		{want: true, typ: f128_ppcTyp},     // ppc_fp128
+		{want: false, typ: mmxTyp},         // x86_mmx
+		{want: false, typ: labelTyp},       // label
+		{want: false, typ: metadataTyp},    // metadata
+		{want: false, typ: funcTyp},        // i32 (i32)
+		{want: false, typ: i8PtrTyp},       // i8*
+		{want: false, typ: f16PtrTyp},      // half*
+		{want: false, typ: mmxPtrTyp},      // x86_mmx*
+		{want: false, typ: funcPtrTyp},     // i32 (i32)*
+		{want: false, typ: i8VecTyp},       // [1 x i8]
+		{want: false, typ: i32VecTyp},      // [2 x i32]
+		{want: false, typ: f16VecTyp},      // [3 x half]
+		{want: false, typ: f32VecTyp},      // [4 x float]
+		{want: false, typ: f64VecTyp},      // [5 x double]
+		{want: false, typ: f128VecTyp},     // [6 x fp128]
+		{want: false, typ: f80_x86VecTyp},  // [7 x x86_fp80]
+		{want: false, typ: f128_ppcVecTyp}, // [8 x ppc_fp128]
+		{want: false, typ: i8PtrVecTyp},    // [9 x i8*]
+		{want: false, typ: f16PtrVecTyp},   // [10 x half*]
+		{want: false, typ: i8ArrTyp},       // <1 x i8>
+		{want: false, typ: i32ArrTyp},      // <2 x i32>
+		{want: false, typ: f16ArrTyp},      // <3 x half>
+		{want: false, typ: f32ArrTyp},      // <4 x float>
+		{want: false, typ: f64ArrTyp},      // <5 x double>
+		{want: false, typ: f128ArrTyp},     // <6 x fp128>
+		{want: false, typ: f80_x86ArrTyp},  // <7 x x86_fp80>
+		{want: false, typ: f128_ppcArrTyp}, // <8 x ppc_fp128>
+		{want: false, typ: i8PtrArrTyp},    // <9 x i8*>
+		{want: false, typ: f16PtrArrTyp},   // <10 x half*>
+		{want: false, typ: structTyp},      // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
 	}
 
 	for i, g := range golden {
@@ -703,45 +703,45 @@ func TestIsFloats(t *testing.T) {
 		want bool
 		typ  types.Type
 	}{
-		{want: false, typ: voidTyp},       // void
-		{want: false, typ: i1Typ},         // i1
-		{want: false, typ: i8Typ},         // i8
-		{want: false, typ: i32Typ},        // i32
-		{want: true, typ: f16Typ},         // half
-		{want: true, typ: f32Typ},         // float
-		{want: true, typ: f64Typ},         // double
-		{want: true, typ: f128Typ},        // fp128
-		{want: true, typ: x86f80Typ},      // x86_fp80
-		{want: true, typ: ppcf128Typ},     // ppc_fp128
-		{want: false, typ: mmxTyp},        // x86_mmx
-		{want: false, typ: labelTyp},      // label
-		{want: false, typ: metadataTyp},   // metadata
-		{want: false, typ: funcTyp},       // i32 (i32)
-		{want: false, typ: i8PtrTyp},      // i8*
-		{want: false, typ: f16PtrTyp},     // half*
-		{want: false, typ: mmxPtrTyp},     // x86_mmx*
-		{want: false, typ: funcPtrTyp},    // i32 (i32)*
-		{want: false, typ: i8VecTyp},      // [1 x i8]
-		{want: false, typ: i32VecTyp},     // [2 x i32]
-		{want: true, typ: f16VecTyp},      // [3 x half]
-		{want: true, typ: f32VecTyp},      // [4 x float]
-		{want: true, typ: f64VecTyp},      // [5 x double]
-		{want: true, typ: f128VecTyp},     // [6 x fp128]
-		{want: true, typ: x86f80VecTyp},   // [7 x x86_fp80]
-		{want: true, typ: ppcf128VecTyp},  // [8 x ppc_fp128]
-		{want: false, typ: i8PtrVecTyp},   // [9 x i8*]
-		{want: false, typ: f16PtrVecTyp},  // [10 x half*]
-		{want: false, typ: i8ArrTyp},      // <1 x i8>
-		{want: false, typ: i32ArrTyp},     // <2 x i32>
-		{want: false, typ: f16ArrTyp},     // <3 x half>
-		{want: false, typ: f32ArrTyp},     // <4 x float>
-		{want: false, typ: f64ArrTyp},     // <5 x double>
-		{want: false, typ: f128ArrTyp},    // <6 x fp128>
-		{want: false, typ: x86f80ArrTyp},  // <7 x x86_fp80>
-		{want: false, typ: ppcf128ArrTyp}, // <8 x ppc_fp128>
-		{want: false, typ: i8PtrArrTyp},   // <9 x i8*>
-		{want: false, typ: f16PtrArrTyp},  // <10 x half*>
-		{want: false, typ: structTyp},     // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
+		{want: false, typ: voidTyp},        // void
+		{want: false, typ: i1Typ},          // i1
+		{want: false, typ: i8Typ},          // i8
+		{want: false, typ: i32Typ},         // i32
+		{want: true, typ: f16Typ},          // half
+		{want: true, typ: f32Typ},          // float
+		{want: true, typ: f64Typ},          // double
+		{want: true, typ: f128Typ},         // fp128
+		{want: true, typ: f80_x86Typ},      // x86_fp80
+		{want: true, typ: f128_ppcTyp},     // ppc_fp128
+		{want: false, typ: mmxTyp},         // x86_mmx
+		{want: false, typ: labelTyp},       // label
+		{want: false, typ: metadataTyp},    // metadata
+		{want: false, typ: funcTyp},        // i32 (i32)
+		{want: false, typ: i8PtrTyp},       // i8*
+		{want: false, typ: f16PtrTyp},      // half*
+		{want: false, typ: mmxPtrTyp},      // x86_mmx*
+		{want: false, typ: funcPtrTyp},     // i32 (i32)*
+		{want: false, typ: i8VecTyp},       // [1 x i8]
+		{want: false, typ: i32VecTyp},      // [2 x i32]
+		{want: true, typ: f16VecTyp},       // [3 x half]
+		{want: true, typ: f32VecTyp},       // [4 x float]
+		{want: true, typ: f64VecTyp},       // [5 x double]
+		{want: true, typ: f128VecTyp},      // [6 x fp128]
+		{want: true, typ: f80_x86VecTyp},   // [7 x x86_fp80]
+		{want: true, typ: f128_ppcVecTyp},  // [8 x ppc_fp128]
+		{want: false, typ: i8PtrVecTyp},    // [9 x i8*]
+		{want: false, typ: f16PtrVecTyp},   // [10 x half*]
+		{want: false, typ: i8ArrTyp},       // <1 x i8>
+		{want: false, typ: i32ArrTyp},      // <2 x i32>
+		{want: false, typ: f16ArrTyp},      // <3 x half>
+		{want: false, typ: f32ArrTyp},      // <4 x float>
+		{want: false, typ: f64ArrTyp},      // <5 x double>
+		{want: false, typ: f128ArrTyp},     // <6 x fp128>
+		{want: false, typ: f80_x86ArrTyp},  // <7 x x86_fp80>
+		{want: false, typ: f128_ppcArrTyp}, // <8 x ppc_fp128>
+		{want: false, typ: i8PtrArrTyp},    // <9 x i8*>
+		{want: false, typ: f16PtrArrTyp},   // <10 x half*>
+		{want: false, typ: structTyp},      // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
 	}
 
 	for i, g := range golden {
