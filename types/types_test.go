@@ -96,17 +96,32 @@ func init() {
 
 	// Floating point types.
 	// half
-	f16Typ = types.NewFloat(types.Float16)
+	f16Typ, err = types.NewFloat(types.Float16)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// float
-	f32Typ = types.NewFloat(types.Float32)
+	f32Typ, err = types.NewFloat(types.Float32)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// double
-	f64Typ = types.NewFloat(types.Float64)
+	f64Typ, err = types.NewFloat(types.Float64)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// fp128
-	f128Typ = types.NewFloat(types.Float128)
+	f128Typ, err = types.NewFloat(types.Float128)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// x86_fp80
-	f80_x86Typ = types.NewFloat(types.Float80_x86)
+	f80_x86Typ, err = types.NewFloat(types.Float80_x86)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// ppc_fp128
-	f128_ppcTyp = types.NewFloat(types.Float128_PPC)
+	f128_ppcTyp, err = types.NewFloat(types.Float128_PPC)
 
 	// MMX type.
 	// x86_mmx
@@ -311,11 +326,14 @@ func TestFloatString(t *testing.T) {
 		{want: "fp128", kind: types.Float128},
 		{want: "x86_fp80", kind: types.Float80_x86},
 		{want: "ppc_fp128", kind: types.Float128_PPC},
-		{want: "<unknown floating point kind>", kind: -1},
 	}
 
 	for i, g := range golden {
-		typ := types.NewFloat(g.kind)
+		typ, err := types.NewFloat(g.kind)
+		if err != nil {
+			t.Errorf("i=%d; %v", i, err)
+			continue
+		}
 		got := typ.String()
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)

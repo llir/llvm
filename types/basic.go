@@ -79,8 +79,14 @@ type Float struct {
 }
 
 // NewFloat returns a floating point type of the given kind.
-func NewFloat(kind FloatKind) *Float {
-	return &Float{kind: kind}
+func NewFloat(kind FloatKind) (*Float, error) {
+	switch kind {
+	case Float16, Float32, Float64, Float128, Float80_x86, Float128_PPC:
+		// valid kind
+	default:
+		return nil, fmt.Errorf("invalid floating point kind (%d)", int(kind))
+	}
+	return &Float{kind: kind}, nil
 }
 
 // Kind returns the kind of the floating point type.
@@ -112,7 +118,7 @@ func (t *Float) String() string {
 	case Float128_PPC:
 		return "ppc_fp128"
 	}
-	return "<unknown floating point kind>"
+	panic("unreachable")
 }
 
 // FloatKind specifies the kind of a floating point type.
