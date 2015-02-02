@@ -406,17 +406,17 @@ func basicTypeFromString(s string) (types.Type, error) {
 	case "void":
 		return types.NewVoid(), nil
 	case "half":
-		return types.NewFloat(types.Float16), nil
+		return types.NewFloat(types.Float16)
 	case "float":
-		return types.NewFloat(types.Float32), nil
+		return types.NewFloat(types.Float32)
 	case "double":
-		return types.NewFloat(types.Float64), nil
+		return types.NewFloat(types.Float64)
 	case "fp128":
-		return types.NewFloat(types.Float128), nil
+		return types.NewFloat(types.Float128)
 	case "x86_fp80":
-		return types.NewFloat(types.X86Float80), nil
+		return types.NewFloat(types.Float80_x86)
 	case "ppc_fp128":
-		return types.NewFloat(types.PPCFloat128), nil
+		return types.NewFloat(types.Float128_PPC)
 	case "x86_mmx":
 		return types.NewMMX(), nil
 	case "label":

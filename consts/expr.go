@@ -196,7 +196,7 @@ func (exp *IntSignExt) ReplaceAll(new values.Value) error {
 }
 
 // FloatTrunc is a constant expression which truncates a floating point constant
-// to a smaller or equally sized floating point type.
+// to a smaller floating point type or one of the same kind.
 //
 // Examples:
 //    fptrunc(double 4.0 to float)   ; yields float:4.0
@@ -208,6 +208,33 @@ type FloatTrunc struct {
 	orig *Float
 	// New floating point type.
 	to *types.Float
+}
+
+// NewFloatTrunc returns a constant expression which truncates the floating
+// point constant to a smaller floating point type or one of the same kind.
+func NewFloatTrunc(orig Constant, to types.Type) (*FloatTrunc, error) {
+	// Verify type of original floating point constant.
+	exp := new(FloatTrunc)
+	var ok bool
+	exp.orig, ok = orig.(*Float)
+	if !ok {
+		return nil, errutil.Newf("invalid floating point truncation; expected floating point constant for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	exp.to, ok = to.(*types.Float)
+	if !ok {
+		return nil, errutil.Newf("invalid floating point truncation; expected floating point target type, got %q", to)
+	}
+	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	newKind, origKind := exp.to.Kind(), exp.orig.typ.Kind()
+	if newSize > origSize {
+		return nil, errutil.Newf("invalid floating point truncation; target size (%d) larger than original size (%d)", newSize, origSize)
+	} else if newSize == origSize && newKind != origKind {
+		return nil, errutil.Newf("invalid floating point truncation; cannot convert from %q to %q", exp.orig.typ, exp.to)
+	}
+
+	return exp, nil
 }
 
 // Type returns the type of the value.
