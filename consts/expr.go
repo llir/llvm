@@ -1,6 +1,3 @@
-// TODO: Add isConst, isExpr methods to each constant type. Implement the Value
-// interface for each constant type.
-
 package consts
 
 import (
@@ -488,6 +485,28 @@ type IntToFloat struct {
 	to types.Type
 }
 
+// NewIntToFloat returns a constant expression which converts the signed integer
+// constant (or constant vector) orig to the corresponding floating point
+// constant (or constant vector).
+func NewIntToFloat(orig Constant, to types.Type) (*IntToFloat, error) {
+	// Verify type of original integer constant (or constant vector).
+	if !types.IsInts(orig.Type()) {
+		return nil, errutil.Newf("invalid signed integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	if !types.IsFloats(to) {
+		return nil, errutil.Newf("invalid signed integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
+	}
+
+	// Verify that both are either basic types or vectors.
+	if types.IsInt(orig.Type()) != types.IsFloat(to) {
+		return nil, errutil.Newf("invalid signed integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+	}
+
+	return &IntToFloat{orig: orig, to: to}, nil
+}
+
 // Type returns the type of the value.
 func (exp *IntToFloat) Type() types.Type {
 	return exp.to
@@ -531,3 +550,15 @@ func (*FloatToUint) isConst() {}
 func (*FloatToInt) isConst()  {}
 func (*UintToFloat) isConst() {}
 func (*IntToFloat) isConst()  {}
+
+// isExpr ensures that only constant expressions can be assigned to the Expr
+// interface.
+func (*IntTrunc) isExpr()    {}
+func (*IntZeroExt) isExpr()  {}
+func (*IntSignExt) isExpr()  {}
+func (*FloatTrunc) isExpr()  {}
+func (*FloatExt) isExpr()    {}
+func (*FloatToUint) isExpr() {}
+func (*FloatToInt) isExpr()  {}
+func (*UintToFloat) isExpr() {}
+func (*IntToFloat) isExpr()  {}
