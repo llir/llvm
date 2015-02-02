@@ -49,7 +49,7 @@ type IntTrunc struct {
 }
 
 // NewIntTrunc returns a constant expression which truncates the integer
-// constant to a smaller or equally sized integer type.
+// constant orig to a smaller or equally sized integer type.
 func NewIntTrunc(orig Constant, to types.Type) (*IntTrunc, error) {
 	// Verify type of original integer constant.
 	exp := new(IntTrunc)
@@ -103,7 +103,7 @@ type IntZeroExt struct {
 }
 
 // NewIntZeroExt returns a constant expression which zero extends the integer
-// constant to a larger or equally sized integer type.
+// constant orig to a larger or equally sized integer type.
 func NewIntZeroExt(orig Constant, to types.Type) (*IntZeroExt, error) {
 	// Verify type of original integer constant.
 	exp := new(IntZeroExt)
@@ -157,7 +157,7 @@ type IntSignExt struct {
 }
 
 // NewIntSignExt returns a constant expression which sign extends the integer
-// constant to a larger or equally sized integer type.
+// constant orig to a larger or equally sized integer type.
 func NewIntSignExt(orig Constant, to types.Type) (*IntSignExt, error) {
 	// Verify type of original integer constant.
 	exp := new(IntSignExt)
@@ -211,7 +211,7 @@ type FloatTrunc struct {
 }
 
 // NewFloatTrunc returns a constant expression which truncates the floating
-// point constant to a smaller floating point type or one of the same kind.
+// point constant orig to a smaller floating point type or one of the same kind.
 func NewFloatTrunc(orig Constant, to types.Type) (*FloatTrunc, error) {
 	// Verify type of original floating point constant.
 	exp := new(FloatTrunc)
@@ -268,7 +268,7 @@ type FloatExt struct {
 }
 
 // NewFloatExt returns a constant expression which extends the floating point
-// constant to a larger floating point type or one of the same kind.
+// constant orig to a larger floating point type or one of the same kind.
 func NewFloatExt(orig Constant, to types.Type) (*FloatExt, error) {
 	// Verify type of original floating point constant.
 	exp := new(FloatExt)
@@ -322,8 +322,30 @@ func (exp *FloatExt) ReplaceAll(new values.Value) error {
 type FloatToUint struct {
 	// Original floating point value (or vector).
 	orig values.Value
-	// New integer type.
-	to *types.Int
+	// New integer type (or vector).
+	to types.Type
+}
+
+// NewFloatToUint returns a constant expression which converts the floating
+// point constant (or constant vector) orig to the corresponding unsigned
+// integer constant (or constant vector).
+func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
+	// Verify type of original floating point constant (or constant vector).
+	if !types.IsFloats(orig.Type()) {
+		return nil, errutil.Newf("invalid floating point conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
+	}
+
+	// Verify target type.
+	if !types.IsInts(to) {
+		return nil, errutil.Newf("invalid floating point conversion; expected integer (or integer vector) target type, got %q", to)
+	}
+
+	// Verify that both are either basic types or vectors.
+	if types.IsInt(orig.Type()) != types.IsFloat(to) {
+		return nil, errutil.Newf("invalid floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+	}
+
+	return &FloatToUint{orig: orig, to: to}, nil
 }
 
 // Type returns the type of the value.
@@ -354,8 +376,8 @@ func (exp *FloatToUint) ReplaceAll(new values.Value) error {
 type FloatToInt struct {
 	// Original floating point value (or vector).
 	orig values.Value
-	// New type.
-	to *types.Int
+	// New type (or vector).
+	to types.Type
 }
 
 // Type returns the type of the value.
@@ -386,8 +408,8 @@ func (exp *FloatToInt) ReplaceAll(new values.Value) error {
 type UintToFloat struct {
 	// Original unsigned integer value (or vector).
 	orig values.Value
-	// New floating point type.
-	to *types.Float
+	// New floating point type (or vector).
+	to types.Type
 }
 
 // Type returns the type of the value.
@@ -418,8 +440,8 @@ func (exp *UintToFloat) ReplaceAll(new values.Value) error {
 type IntToFloat struct {
 	// Original signed integer value (or vector).
 	orig values.Value
-	// New floating point type.
-	to *types.Float
+	// New floating point type (or vector).
+	to types.Type
 }
 
 // Type returns the type of the value.
