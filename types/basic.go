@@ -96,7 +96,38 @@ func (t *Float) Kind() FloatKind {
 
 // Size returns the size of t in number of bits.
 func (t *Float) Size() int {
-	switch t.kind {
+	return t.kind.Size()
+}
+
+// Equal returns true if the given types are equal, and false otherwise.
+func (t *Float) Equal(u Type) bool {
+	switch u := u.(type) {
+	case *Float:
+		return t.kind == u.kind
+	}
+	return false
+}
+
+func (t *Float) String() string {
+	return t.kind.String()
+}
+
+// FloatKind specifies the kind of a floating point type.
+type FloatKind int
+
+// Floating point kinds.
+const (
+	Float16      FloatKind = iota // half:      16-bit floating point type
+	Float32                       // float:     32-bit floating point type
+	Float64                       // double:    64-bit floating point type
+	Float128                      // fp128:     128-bit floating point type (112-bit mantissa)
+	Float80_x86                   // x86_fp80:  80-bit floating point type (x87)
+	Float128_PPC                  // ppc_fp128: 128-bit floating point type (two 64-bits, PowerPC)
+)
+
+// Size returns the size of kind in number of bits.
+func (kind FloatKind) Size() int {
+	switch kind {
 	case Float16:
 		return 16
 	case Float32:
@@ -113,17 +144,8 @@ func (t *Float) Size() int {
 	panic("unreachable")
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
-func (t *Float) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Float:
-		return t.kind == u.kind
-	}
-	return false
-}
-
-func (t *Float) String() string {
-	switch t.kind {
+func (kind FloatKind) String() string {
+	switch kind {
 	case Float16:
 		return "half"
 	case Float32:
@@ -139,19 +161,6 @@ func (t *Float) String() string {
 	}
 	panic("unreachable")
 }
-
-// FloatKind specifies the kind of a floating point type.
-type FloatKind int
-
-// Floating point kinds.
-const (
-	Float16      FloatKind = iota // half:      16-bit floating point type
-	Float32                       // float:     32-bit floating point type
-	Float64                       // double:    64-bit floating point type
-	Float128                      // fp128:     128-bit floating point type (112-bit mantissa)
-	Float80_x86                   // x86_fp80:  80-bit floating point type (x87)
-	Float128_PPC                  // ppc_fp128: 128-bit floating point type (two 64-bits, PowerPC)
-)
 
 // MMX represents an MMX vector type (64 bits, x86 specific).
 //
