@@ -16,7 +16,7 @@ before_install:
   - go get github.com/mattn/goveralls
 
 install:
-  - go get github.com/mewlang/llvm/...
+  - go get ./...
 
 before_script:
   - wget https://gist.github.com/mewmew/379014c9a2e6885e238d/raw/goclean.sh
