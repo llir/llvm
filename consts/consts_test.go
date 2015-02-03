@@ -38,40 +38,52 @@ func init() {
 
 func TestIntString(t *testing.T) {
 	golden := []struct {
-		want  string
 		input string
 		typ   *types.Int
+		want  string
+		err   string
 	}{
 		{
-			want:  "true",
 			input: "true", typ: i1Typ,
+			want: "true",
 		},
 		{
-			want:  "true",
 			input: "1", typ: i1Typ,
+			want: "true",
 		},
 		{
-			want:  "false",
 			input: "false", typ: i1Typ,
+			want: "false",
 		},
 		{
-			want:  "false",
 			input: "0", typ: i1Typ,
+			want: "false",
 		},
 		{
-			want:  "42",
+			input: "true", typ: i32Typ,
+			want: "", err: `integer constant "true" type mismatch; expected i1, got i32`,
+		},
+		{
+			input: "false", typ: i32Typ,
+			want: "", err: `integer constant "false" type mismatch; expected i1, got i32`,
+		},
+		{
 			input: "42", typ: i32Typ,
+			want: "42",
 		},
 		{
-			want:  "-137438953472",
 			input: "-137438953472", typ: i64Typ,
+			want: "-137438953472",
 		},
 	}
 
 	for i, g := range golden {
 		v, err := NewInt(g.typ, g.input)
-		if err != nil {
-			t.Errorf("i=%d: %v", i, err)
+		if !errEqual(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := v.String()

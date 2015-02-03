@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
 )
@@ -32,7 +31,7 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 	var ok bool
 	v.typ, ok = typ.(*types.Int)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q for integer constant", typ)
+		return nil, fmt.Errorf("invalid type %q for integer constant", typ)
 	}
 	size := v.typ.Size()
 	if size > 64 {
@@ -51,7 +50,7 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 		}
 		return v, nil
 	} else if s == "true" || s == "false" {
-		return nil, errutil.Newf("integer constant %q type mismatch; expected i1, got %v", s, typ)
+		return nil, fmt.Errorf("integer constant %q type mismatch; expected i1, got %v", s, typ)
 	}
 
 	// TODO: Implement support for the HexIntConstant representation:
@@ -61,7 +60,7 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 	var err error
 	v.x, err = strconv.ParseInt(s, 10, size)
 	if err != nil {
-		return nil, errutil.Newf("invalid integer constant %q; %v", s, err)
+		return nil, fmt.Errorf("unable to parse integer constant %q; %v", s, err)
 	}
 
 	return v, nil
@@ -133,7 +132,7 @@ func NewFloat(typ types.Type, s string) (*Float, error) {
 	var err error
 	v.x, err = strconv.ParseFloat(s, size)
 	if err != nil {
-		return nil, fmt.Errorf("invalid floating point constant %q; %v", s, err)
+		return nil, fmt.Errorf("unable to parse floating point constant %q; %v", s, err)
 	}
 
 	// Verify that there was no precision loss.
