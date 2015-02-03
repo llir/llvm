@@ -114,34 +114,31 @@ func NewFloat(typ types.Type, s string) (*Float, error) {
 	var ok bool
 	v.typ, ok = typ.(*types.Float)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q for floating point constant", typ)
+		return nil, fmt.Errorf("invalid type %q for floating point constant", typ)
 	}
-	var size int
-	switch v.typ.Kind() {
-	case types.Float32:
-		size = 32
-	case types.Float64:
-		size = 64
+	size := v.typ.Size()
+	switch size {
+	case 32, 64:
+		// supported size
 	default:
 		// TODO: Add support for half, fp128, x86_fp80 and ppc_fp128.
-		err := fmt.Sprintf("not yet implemented; support for %q floating point constants", typ)
+		err := fmt.Sprintf("not yet implemented; support for %q floating point constants", v.typ)
 		panic(err)
 	}
 
 	// TODO: Implement support for the following representation:
 	//    0x[KLMH]?[0-9A-Fa-f]+
 
-	// TODO: Verify that the input string can be precisely represented by the
-	// floating point value. For instance, a precise representation of Pi, e.g.
-	// 3.14159265358979323846264338327950288419716939937510 should not be
-	// truncated to 3.141592653589793 (as is the case for float64) without
-	// generating an error.
-
 	// Parse floating point constant.
 	var err error
 	v.x, err = strconv.ParseFloat(s, size)
 	if err != nil {
-		return nil, errutil.Newf("invalid floating point constant %q; %v", s, err)
+		return nil, fmt.Errorf("invalid floating point constant %q; %v", s, err)
+	}
+
+	// Verify that there was no precision loss.
+	if size != 64 && strconv.FormatFloat(v.x, 'g', -1, size) != strconv.FormatFloat(v.x, 'g', -1, 64) {
+		return nil, fmt.Errorf("invalid floating point constant %q for type %q; precision loss", s, v.typ)
 	}
 
 	return v, nil
@@ -166,12 +163,10 @@ func (v *Float) ReplaceAll(new values.Value) error {
 // -2.5e+10) for large exponents and regular floating point representation
 // otherwise (e.g. 3.14).
 func (v *Float) String() string {
-	var size int
-	switch v.typ.Kind() {
-	case types.Float32:
-		size = 32
-	case types.Float64:
-		size = 64
+	size := v.typ.Size()
+	switch size {
+	case 32, 64:
+		// supported size
 	default:
 		// TODO: Add support for half, fp128, x86_fp80 and ppc_fp128.
 		err := fmt.Sprintf("not yet implemented; support for %q floating point constants", v.typ)
