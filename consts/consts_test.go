@@ -60,6 +60,10 @@ func TestIntString(t *testing.T) {
 			want: "false",
 		},
 		{
+			input: "2", typ: i1Typ,
+			want: "", err: `invalid integer constant "2" for boolean type`,
+		},
+		{
 			input: "true", typ: i32Typ,
 			want: "", err: `integer constant "true" type mismatch; expected i1, got i32`,
 		},
@@ -103,7 +107,7 @@ func TestFloatString(t *testing.T) {
 		// i=0
 		{
 			input: "3.14", typ: f32Typ,
-			want: "3.14", err: `invalid floating point constant "3.14" for type "float"; precision loss`,
+			want: "", err: `invalid floating point constant "3.14" for type "float"; precision loss`,
 		},
 		// i=0
 		{

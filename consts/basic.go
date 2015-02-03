@@ -47,6 +47,8 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 			v.x = 1
 		case "0", "false":
 			v.x = 0
+		default:
+			return nil, fmt.Errorf("invalid integer constant %q for boolean type", s)
 		}
 		return v, nil
 	} else if s == "true" || s == "false" {
@@ -81,8 +83,9 @@ func (v *Int) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
-// String returns the string representation of v, either as a signed integer
-// (e.g. 42, -13) or as a boolean (e.g. true, false) depending on the type.
+// String returns a string representation of the integer, either as a signed
+// integer (e.g. 42, -13) or as a boolean (e.g. true, false) depending on the
+// type.
 func (v *Int) String() string {
 	if v.typ.Size() == 1 {
 		if v.x == 1 {
@@ -158,9 +161,9 @@ func (v *Float) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
-// String returns the string representation of v using scientific notation (e.g.
-// -2.5e+10) for large exponents and regular floating point representation
-// otherwise (e.g. 3.14).
+// String returns a string representation of the floating point constant using
+// scientific notation (e.g. -2.5e+10) for large exponents and regular floating
+// point representation otherwise (e.g. 3.14).
 func (v *Float) String() string {
 	size := v.typ.Size()
 	switch size {
