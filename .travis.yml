@@ -8,15 +8,19 @@ env:
     - secure: "YZKB1SLTzPJMOdXp5U3xwEsh4++Xe8EeVK8SZVEQkn/y4xCbzmbdo6BJ4B/eGBG6bK4DLzFD3sb6uaUB2bHlVUXnR8YHbetjps6PUwLYtX9UdcBjB7UN5tdQs1d8k2qg7vPNtKVEY4kJHFURijc4Kk+zlNbq1oGJcEfm6gz+zGg="
     - PATH=$HOME/gopath/bin:$PATH
 
-install:
+before_install:
   - go get golang.org/x/tools/cmd/cover
   - go get golang.org/x/tools/cmd/goimports
   - go get golang.org/x/tools/cmd/vet
   - go get github.com/golang/lint/golint
   - go get github.com/mattn/goveralls
+
+install:
   - go get github.com/mewlang/llvm/...
 
-script:
+before_script:
   - wget https://gist.github.com/mewmew/379014c9a2e6885e238d/raw/goclean.sh
   - chmod +x goclean.sh
+
+script:
   - ./goclean.sh
