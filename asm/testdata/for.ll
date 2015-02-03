@@ -1,6 +1,4 @@
-; ModuleID = 'for.ll'
-
-define i32 @main(i32 %argc, i8** %argv) #0 {
+define i32 @main(i32 %argc, i8** %argv) {
   br label %1
 
 ; <label>:1                                       ; preds = %5, %0
