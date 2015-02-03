@@ -132,6 +132,12 @@ func NewFloat(typ types.Type, s string) (*Float, error) {
 	// TODO: Implement support for the following representation:
 	//    0x[KLMH]?[0-9A-Fa-f]+
 
+	// TODO: Verify that the input string can be precisely represented by the
+	// floating point value. For instance, a precise representation of Pi, e.g.
+	// 3.14159265358979323846264338327950288419716939937510 should not be
+	// truncated to 3.141592653589793 (as is the case for float64) without
+	// generating an error.
+
 	// Parse floating point constant.
 	var err error
 	v.x, err = strconv.ParseFloat(s, size)
@@ -157,6 +163,9 @@ func (v *Float) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// String returns the string representation of v using scientific notation (e.g.
+// -2.5e+10) for large exponents and regular floating point representation
+// otherwise (e.g. 3.14).
 func (v *Float) String() string {
 	var size int
 	switch v.typ.Kind() {
