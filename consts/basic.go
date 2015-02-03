@@ -42,17 +42,16 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 	}
 
 	// Parse boolean constant.
-	switch s {
-	case "true", "false":
-		if size != 1 {
-			return nil, errutil.Newf("integer constant %q type mismatch; expected i1, got %v", s, typ)
-		}
-		if s == "true" {
+	if size == 1 {
+		switch s {
+		case "1", "true":
 			v.x = 1
-		} else {
+		case "0", "false":
 			v.x = 0
 		}
 		return v, nil
+	} else if s == "true" || s == "false" {
+		return nil, errutil.Newf("integer constant %q type mismatch; expected i1, got %v", s, typ)
 	}
 
 	// TODO: Implement support for the HexIntConstant representation:
