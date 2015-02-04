@@ -8,19 +8,31 @@ import (
 )
 
 var (
-	i1Typ, i32Typ, i64Typ *types.Int
-	f32Typ, f64Typ        *types.Float
+	// i1, i8, i32, i64
+	i1Typ, i8Typ, i32Typ, i64Typ *types.Int
+	// float, double
+	f32Typ, f64Typ *types.Float
 	// <2 x i32>
-	i32VectorTyp *types.Vector
+	i32x2VectorTyp *types.Vector
 	// [2 x i32]
-	i32ArrayTyp *types.Array
-	// i32 -13, i32 42
-	i32Elems []Constant
+	i32x2ArrayTyp *types.Array
+	// {i32, i8}
+	i32i8StructTyp *types.Struct
+	// i8 3
+	i8Three Constant
+	// i32 -13
+	i32MinusThirteen Constant
+	// i32 42
+	i32FortyTwo Constant
 )
 
 func init() {
 	var err error
 	i1Typ, err = types.NewInt(1)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	i8Typ, err = types.NewInt(8)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -40,26 +52,34 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	i32VectorTyp, err = types.NewVector(i32Typ, 2)
+	i32x2VectorTyp, err = types.NewVector(i32Typ, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	i32ArrayTyp, err = types.NewArray(i32Typ, 2)
+	i32x2ArrayTyp, err = types.NewArray(i32Typ, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	i32i8StructTyp, err = types.NewStruct([]types.Type{i32Typ, i8Typ}, false)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// i32 -13, i32 42
-	elem, err := NewInt(i32Typ, "-13")
+	// i8 3
+	i8Three, err = NewInt(i8Typ, "3")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	i32Elems = append(i32Elems, elem)
-	elem, err = NewInt(i32Typ, "42")
+	// i32 -13
+	i32MinusThirteen, err = NewInt(i32Typ, "-13")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	i32Elems = append(i32Elems, elem)
+	// i32 42
+	i32FortyTwo, err = NewInt(i32Typ, "42")
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func TestIntString(t *testing.T) {
@@ -183,8 +203,8 @@ func TestVectorString(t *testing.T) {
 	}{
 		// i=0
 		{
-			elems: i32Elems, typ: i32VectorTyp,
-			want: "<2 x i32> <i32 -13, i32 42>",
+			elems: []Constant{i32FortyTwo, i32MinusThirteen}, typ: i32x2VectorTyp,
+			want: "<2 x i32> <i32 42, i32 -13>",
 		},
 	}
 
@@ -213,13 +233,43 @@ func TestArrayString(t *testing.T) {
 	}{
 		// i=0
 		{
-			elems: i32Elems, typ: i32ArrayTyp,
+			elems: []Constant{i32MinusThirteen, i32FortyTwo}, typ: i32x2ArrayTyp,
 			want: "[2 x i32] [i32 -13, i32 42]",
 		},
 	}
 
 	for i, g := range golden {
 		v, err := NewArray(g.typ, g.elems)
+		if !errEqual(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
+			continue
+		}
+		got := v.String()
+		if got != g.want {
+			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestStructString(t *testing.T) {
+	golden := []struct {
+		fields []Constant
+		typ    *types.Struct
+		want   string
+		err    string
+	}{
+		// i=0
+		{
+			fields: []Constant{i32MinusThirteen, i8Three}, typ: i32i8StructTyp,
+			want: "{i32, i8} {i32 -13, i8 3}",
+		},
+	}
+
+	for i, g := range golden {
+		v, err := NewStruct(g.typ, g.fields)
 		if !errEqual(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue

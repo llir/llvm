@@ -207,6 +207,22 @@ func (v *Struct) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the structure. The structure string
+// representation is preceded by the type of the constant, e.g.
+//
+//    {i32, i8} {i32 -13, i8 3}
+func (v *Struct) String() string {
+	buf := new(bytes.Buffer)
+	for i, field := range v.fields {
+		if i > 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(field.String())
+	}
+
+	return fmt.Sprintf("%s {%s}", v.typ, buf)
+}
+
 // isConst ensures that only constant values can be assigned to the Constant
 // interface.
 func (*Vector) isConst() {}
