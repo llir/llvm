@@ -45,19 +45,19 @@ func TestIntString(t *testing.T) {
 	}{
 		{
 			input: "true", typ: i1Typ,
-			want: "true",
+			want: "i1 true",
 		},
 		{
 			input: "1", typ: i1Typ,
-			want: "true",
+			want: "i1 true",
 		},
 		{
 			input: "false", typ: i1Typ,
-			want: "false",
+			want: "i1 false",
 		},
 		{
 			input: "0", typ: i1Typ,
-			want: "false",
+			want: "i1 false",
 		},
 		{
 			input: "2", typ: i1Typ,
@@ -73,11 +73,11 @@ func TestIntString(t *testing.T) {
 		},
 		{
 			input: "42", typ: i32Typ,
-			want: "42",
+			want: "i32 42",
 		},
 		{
 			input: "-137438953472", typ: i64Typ,
-			want: "-137438953472",
+			want: "i64 -137438953472",
 		},
 	}
 
@@ -109,15 +109,25 @@ func TestFloatString(t *testing.T) {
 			input: "3.14", typ: f32Typ,
 			want: "", err: `invalid floating point constant "3.14" for type "float"; precision loss`,
 		},
-		// i=0
-		{
-			input: "3.14", typ: f64Typ,
-			want: "3.14",
-		},
 		// i=1
 		{
+			input: "2.0", typ: f32Typ,
+			want: "float 2.0",
+		},
+		// i=2
+		{
+			input: "3.14", typ: f64Typ,
+			want: "double 3.14",
+		},
+		// i=3
+		{
 			input: "-25000000000.0", typ: f64Typ,
-			want: "-2.5e+10",
+			want: "double -2.5e10",
+		},
+		// i=4
+		{
+			input: "3e14", typ: f64Typ,
+			want: "double 3.0e14",
 		},
 		//{want: "3.14159265358979323846264338327950288419716939937510", input: "3.14159265358979323846264338327950288419716939937510"},
 	}

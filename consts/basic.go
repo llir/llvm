@@ -3,6 +3,7 @@ package consts
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
@@ -85,15 +86,26 @@ func (v *Int) ReplaceAll(new values.Value) error {
 
 // String returns a string representation of the integer, either as a signed
 // integer (e.g. 42, -13) or as a boolean (e.g. true, false) depending on the
-// type.
+// type. The integer string representation is preceded by the type of the
+// constant, e.g.
+//
+//    i1 true
+//    i32 -13
+//    i64 42
 func (v *Int) String() string {
+	s := ""
 	if v.typ.Size() == 1 {
-		if v.x == 1 {
-			return "true"
+		switch v.x {
+		case 1:
+			s = "true"
+		default:
+			s = "false"
 		}
-		return "false"
+	} else {
+		s = strconv.FormatInt(v.x, 10)
 	}
-	return strconv.FormatInt(v.x, 10)
+
+	return fmt.Sprintf("%s %s", v.typ, s)
 }
 
 // Float represents a floating point constant.
@@ -163,7 +175,12 @@ func (v *Float) ReplaceAll(new values.Value) error {
 
 // String returns a string representation of the floating point constant using
 // scientific notation (e.g. -2.5e+10) for large exponents and regular floating
-// point representation otherwise (e.g. 3.14).
+// point representation otherwise (e.g. 3.14). The floating point string
+// representation is preceded by the type of the constant, e.g.
+//
+//    float 2.0
+//    double 3.14
+//    double -2.5e10
 func (v *Float) String() string {
 	size := v.typ.Size()
 	switch size {
@@ -174,7 +191,25 @@ func (v *Float) String() string {
 		err := fmt.Sprintf("not yet implemented; support for %q floating point constants", v.typ)
 		panic(err)
 	}
-	return strconv.FormatFloat(v.x, 'g', -1, size)
+
+	// Insert decimal point if not present.
+	//    3e4 -> 3.0e4
+	//    42  -> 42.0
+	s := strconv.FormatFloat(v.x, 'g', -1, size)
+	if !strings.ContainsRune(s, '.') {
+		pos := strings.IndexByte(s, 'e')
+		if pos != -1 {
+			s = s[:pos] + ".0" + s[pos:]
+		} else {
+			s = s + ".0"
+		}
+	}
+
+	// Drop explicit plus sign in exponents.
+	//    3.0e+4 -> 3.0e4
+	s = strings.Replace(s, "e+", "e", -1)
+
+	return fmt.Sprintf("%s %s", v.typ, s)
 }
 
 // TODO: Check if global names are used for anything except functions and global
