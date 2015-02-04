@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
 )
@@ -30,14 +29,14 @@ func NewVector(typ types.Type, elems []Constant) (*Vector, error) {
 	var ok bool
 	v.typ, ok = typ.(*types.Vector)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q for vector constant", typ)
+		return nil, fmt.Errorf("invalid type %q for vector constant", typ)
 	}
 
 	// Verify vector element types.
 	for _, elem := range elems {
 		got, want := elem.Type(), v.typ.Elem()
 		if !got.Equal(want) {
-			return nil, errutil.Newf("invalid vector element type; expected %q, got %q", want, got)
+			return nil, fmt.Errorf("invalid vector element type; expected %q, got %q", want, got)
 		}
 	}
 	v.elems = elems
@@ -73,7 +72,7 @@ func (v *Vector) String() string {
 		buf.WriteString(elem.String())
 	}
 
-	return fmt.Sprintf("%s <%s>", v.typ, buf)
+	return fmt.Sprintf("%s <%s>", v.Type(), buf)
 }
 
 // Array represents an array constant which is an array containing only
@@ -105,14 +104,14 @@ func NewArray(typ types.Type, elems []Constant) (*Array, error) {
 	var ok bool
 	v.typ, ok = typ.(*types.Array)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q for array constant", typ)
+		return nil, fmt.Errorf("invalid type %q for array constant", typ)
 	}
 
 	// Verify array element types.
 	for _, elem := range elems {
 		got, want := elem.Type(), v.typ.Elem()
 		if !got.Equal(want) {
-			return nil, errutil.Newf("invalid array element type; expected %q, got %q", want, got)
+			return nil, fmt.Errorf("invalid array element type; expected %q, got %q", want, got)
 		}
 	}
 	v.elems = elems
@@ -148,7 +147,7 @@ func (v *Array) String() string {
 		buf.WriteString(elem.String())
 	}
 
-	return fmt.Sprintf("%s [%s]", v.typ, buf)
+	return fmt.Sprintf("%s [%s]", v.Type(), buf)
 }
 
 // Struct represents a structure constant which is a structure containing only
@@ -173,18 +172,18 @@ func NewStruct(typ types.Type, fields []Constant) (*Struct, error) {
 	var ok bool
 	v.typ, ok = typ.(*types.Struct)
 	if !ok {
-		return nil, errutil.Newf("invalid type %q for structure constant", typ)
+		return nil, fmt.Errorf("invalid type %q for structure constant", typ)
 	}
 
 	// Verify structure field types.
 	fieldTypes := v.typ.Fields()
 	if len(fields) != len(fieldTypes) {
-		return nil, errutil.Newf("incorrect number of fields in structure constant; expected %d, got %d", len(fieldTypes), len(fields))
+		return nil, fmt.Errorf("incorrect number of fields in structure constant; expected %d, got %d", len(fieldTypes), len(fields))
 	}
 	for i := range fields {
 		got, want := fields[i].Type(), fieldTypes[i]
 		if !got.Equal(want) {
-			return nil, errutil.Newf("invalid structure field type; expected %q, got %q", want, got)
+			return nil, fmt.Errorf("invalid structure field (%d) type; expected %q, got %q", i, want, got)
 		}
 	}
 	v.fields = fields
@@ -220,7 +219,7 @@ func (v *Struct) String() string {
 		buf.WriteString(field.String())
 	}
 
-	return fmt.Sprintf("%s {%s}", v.typ, buf)
+	return fmt.Sprintf("%s {%s}", v.Type(), buf)
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

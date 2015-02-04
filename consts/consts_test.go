@@ -21,10 +21,14 @@ var (
 	i32x2ArrayTyp *types.Array
 	// {i32, i8}
 	i32i8StructTyp *types.Struct
+	// [2 x {i32, i8}]
+	i32i8x2ArrayType *types.Array
 	// i1 1
 	i1One Constant
 	// i8 3
 	i8Three Constant
+	// i8 4
+	i8Four Constant
 	// i32 -13
 	i32MinusThirteen Constant
 	// i32 -4
@@ -57,55 +61,76 @@ var (
 	i32x2VectorThreeFortyTwo Constant
 	// <2 x i32> <i32 -3, i32 15>
 	i32x2VectorMinusThreeFifteen Constant
+	// {i32, i8} {i32 4, i8 3}
+	i32i8FourThree Constant
+	// {i32, i8} {i32 3, i8 4}
+	i32i8ThreeFour Constant
 )
 
 func init() {
+	// i1
 	var err error
 	i1Typ, err = types.NewInt(1)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// i3
 	i3Typ, err = types.NewInt(3)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// i5
 	i5Typ, err = types.NewInt(5)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// i8
 	i8Typ, err = types.NewInt(8)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// i32
 	i32Typ, err = types.NewInt(32)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// i64
 	i64Typ, err = types.NewInt(64)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// float
 	f32Typ, err = types.NewFloat(types.Float32)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// double
 	f64Typ, err = types.NewFloat(types.Float64)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// <2 x i32>
 	i32x2VectorTyp, err = types.NewVector(i32Typ, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// <2 x float>
 	f32x2VectorTyp, err = types.NewVector(f32Typ, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// [2 x i32]
 	i32x2ArrayTyp, err = types.NewArray(i32Typ, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// {i32, i8}
 	i32i8StructTyp, err = types.NewStruct([]types.Type{i32Typ, i8Typ}, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// [2 x {i32, i8}]
+	i32i8x2ArrayType, err = types.NewArray(i32i8StructTyp, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -117,6 +142,11 @@ func init() {
 	}
 	// i8 3
 	i8Three, err = NewInt(i8Typ, "3")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// i8 4
+	i8Four, err = NewInt(i8Typ, "4")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -197,6 +227,16 @@ func init() {
 	}
 	// <2 x i32> <i32 -3, i32 15>
 	i32x2VectorMinusThreeFifteen, err = NewVector(i32x2VectorTyp, []Constant{i32MinusThree, i32Fifteen})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// {i32, i8} {i32 4, i8 3}
+	i32i8FourThree, err = NewStruct(i32i8StructTyp, []Constant{i32Four, i8Three})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// {i32, i8} {i32 3, i8 4}
+	i32i8ThreeFour, err = NewStruct(i32i8StructTyp, []Constant{i32Three, i8Four})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -346,7 +386,7 @@ func TestFloatString(t *testing.T) {
 func TestVectorString(t *testing.T) {
 	golden := []struct {
 		elems []Constant
-		typ   *types.Vector
+		typ   types.Type
 		want  string
 		err   string
 	}{
@@ -354,6 +394,21 @@ func TestVectorString(t *testing.T) {
 		{
 			elems: []Constant{i32FortyTwo, i32MinusThirteen}, typ: i32x2VectorTyp,
 			want: "<2 x i32> <i32 42, i32 -13>",
+		},
+		// i=1
+		{
+			elems: nil, typ: f64Typ,
+			want: "", err: `invalid type "double" for vector constant`,
+		},
+		// i=2
+		{
+			elems: []Constant{f32Three, f32Four}, typ: f32x2VectorTyp,
+			want: "<2 x float> <float 3.0, float 4.0>",
+		},
+		// i=3
+		{
+			elems: []Constant{f32Three, i32Four}, typ: f32x2VectorTyp,
+			want: "", err: `invalid vector element type; expected "float", got "i32"`,
 		},
 	}
 
@@ -376,7 +431,7 @@ func TestVectorString(t *testing.T) {
 func TestArrayString(t *testing.T) {
 	golden := []struct {
 		elems []Constant
-		typ   *types.Array
+		typ   types.Type
 		want  string
 		err   string
 	}{
@@ -384,6 +439,21 @@ func TestArrayString(t *testing.T) {
 		{
 			elems: []Constant{i32MinusThirteen, i32FortyTwo}, typ: i32x2ArrayTyp,
 			want: "[2 x i32] [i32 -13, i32 42]",
+		},
+		// i=1
+		{
+			elems: nil, typ: i32x2VectorTyp,
+			want: "", err: `invalid type "<2 x i32>" for array constant`,
+		},
+		// i=2
+		{
+			elems: []Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrayType,
+			want: "[2 x {i32, i8}] [{i32, i8} {i32 4, i8 3}, {i32, i8} {i32 3, i8 4}]",
+		},
+		// i=3
+		{
+			elems: []Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrayType,
+			want: "", err: `invalid array element type; expected "{i32, i8}", got "i32"`,
 		},
 	}
 
@@ -406,7 +476,7 @@ func TestArrayString(t *testing.T) {
 func TestStructString(t *testing.T) {
 	golden := []struct {
 		fields []Constant
-		typ    *types.Struct
+		typ    types.Type
 		want   string
 		err    string
 	}{
@@ -414,6 +484,21 @@ func TestStructString(t *testing.T) {
 		{
 			fields: []Constant{i32MinusThirteen, i8Three}, typ: i32i8StructTyp,
 			want: "{i32, i8} {i32 -13, i8 3}",
+		},
+		// i=1
+		{
+			fields: nil, typ: i32x2VectorTyp,
+			want: "", err: `invalid type "<2 x i32>" for structure constant`,
+		},
+		// i=2
+		{
+			fields: []Constant{i32Three, i32Fifteen, i8Three}, typ: i32i8StructTyp,
+			want: "", err: "incorrect number of fields in structure constant; expected 2, got 3",
+		},
+		// i=2
+		{
+			fields: []Constant{i32Four, i32Three}, typ: i32i8StructTyp,
+			want: "", err: `invalid structure field (1) type; expected "i8", got "i32"`,
 		},
 	}
 

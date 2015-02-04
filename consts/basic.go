@@ -105,7 +105,7 @@ func (v *Int) String() string {
 		s = strconv.FormatInt(v.x, 10)
 	}
 
-	return fmt.Sprintf("%s %s", v.typ, s)
+	return fmt.Sprintf("%s %s", v.Type(), s)
 }
 
 // Float represents a floating point constant.
@@ -209,7 +209,7 @@ func (v *Float) String() string {
 	//    3.0e+4 -> 3.0e4
 	s = strings.Replace(s, "e+", "e", -1)
 
-	return fmt.Sprintf("%s %s", v.typ, s)
+	return fmt.Sprintf("%s %s", v.Type(), s)
 }
 
 // TODO: Check if global names are used for anything except functions and global
