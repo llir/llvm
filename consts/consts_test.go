@@ -204,6 +204,36 @@ func TestVectorString(t *testing.T) {
 	}
 }
 
+func TestArrayString(t *testing.T) {
+	golden := []struct {
+		elems []Constant
+		typ   *types.Array
+		want  string
+		err   string
+	}{
+		// i=0
+		{
+			elems: i32Elems, typ: i32ArrayTyp,
+			want: "[2 x i32] [i32 -13, i32 42]",
+		},
+	}
+
+	for i, g := range golden {
+		v, err := NewArray(g.typ, g.elems)
+		if !errEqual(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
+			continue
+		}
+		got := v.String()
+		if got != g.want {
+			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
 // errEqual returns true if err is represented by the string s, and false
 // otherwise.
 func errEqual(err error, s string) bool {

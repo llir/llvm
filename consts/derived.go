@@ -135,6 +135,22 @@ func (v *Array) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the array. The array string
+// representation is preceded by the type of the constant, e.g.
+//
+//    [2 x i32] [i32 42, i32 -13]
+func (v *Array) String() string {
+	buf := new(bytes.Buffer)
+	for i, elem := range v.elems {
+		if i > 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(elem.String())
+	}
+
+	return fmt.Sprintf("%s [%s]", v.typ, buf)
+}
+
 // Struct represents a structure constant which is a structure containing only
 // constants.
 //
