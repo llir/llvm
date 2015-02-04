@@ -11,8 +11,8 @@ import (
 var (
 	// i1, i3, i5, i8, i32, i64
 	i1Typ, i3Typ, i5Typ, i8Typ, i32Typ, i64Typ *types.Int
-	// float, double
-	f32Typ, f64Typ *types.Float
+	// float, double, f128, ppc_f128
+	f32Typ, f64Typ, f128Typ, f128_ppcTyp *types.Float
 	// <2 x i32>
 	i32x2VectorTyp *types.Vector
 	// <2 x float>
@@ -22,7 +22,7 @@ var (
 	// {i32, i8}
 	i32i8StructTyp *types.Struct
 	// [2 x {i32, i8}]
-	i32i8x2ArrayType *types.Array
+	i32i8x2ArrayTyp *types.Array
 	// i1 1
 	i1One Constant
 	// i8 3
@@ -65,6 +65,13 @@ var (
 	i32i8FourThree Constant
 	// {i32, i8} {i32 3, i8 4}
 	i32i8ThreeFour Constant
+	// TODO: Uncomment when fp128 and ppc_fp128 are supported.
+	/*
+		// fp128 3.0
+		f128Three Constant
+		// ppc_fp128 4.0
+		f128_ppcFour Constant
+	*/
 )
 
 func init() {
@@ -109,6 +116,16 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// fp128
+	f128Typ, err = types.NewFloat(types.Float128)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// ppc_fp128
+	f128_ppcTyp, err = types.NewFloat(types.Float128_PPC)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// <2 x i32>
 	i32x2VectorTyp, err = types.NewVector(i32Typ, 2)
 	if err != nil {
@@ -130,7 +147,7 @@ func init() {
 		log.Fatalln(err)
 	}
 	// [2 x {i32, i8}]
-	i32i8x2ArrayType, err = types.NewArray(i32i8StructTyp, 2)
+	i32i8x2ArrayTyp, err = types.NewArray(i32i8StructTyp, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -210,6 +227,19 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// TODO: Uncomment when fp128 and ppc_fp128 are supported.
+	/*
+		// fp128 3.0
+		f128Three, err = NewFloat(f128Typ, "3.0")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		// ppc_fp128 4.0
+		f128_ppcFour, err = NewFloat(f128_ppcTyp, "4.0")
+		if err != nil {
+			log.Fatalln(err)
+		}
+	*/
 	// <2 x float> <float 3.0, float 4.0>
 	f32x2VectorThreeFour, err = NewVector(f32x2VectorTyp, []Constant{f32Three, f32Four})
 	if err != nil {
@@ -447,12 +477,12 @@ func TestArrayString(t *testing.T) {
 		},
 		// i=2
 		{
-			elems: []Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrayType,
+			elems: []Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrayTyp,
 			want: "[2 x {i32, i8}] [{i32, i8} {i32 4, i8 3}, {i32, i8} {i32 3, i8 4}]",
 		},
 		// i=3
 		{
-			elems: []Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrayType,
+			elems: []Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrayTyp,
 			want: "", err: `invalid array element type; expected "{i32, i8}", got "i32"`,
 		},
 	}
@@ -521,7 +551,7 @@ func TestStructString(t *testing.T) {
 func TestIntTruncString(t *testing.T) {
 	golden := []struct {
 		orig Constant
-		to   *types.Int
+		to   types.Type
 		want string
 		err  string
 	}{
@@ -529,6 +559,21 @@ func TestIntTruncString(t *testing.T) {
 		{
 			orig: i32Fifteen, to: i3Typ,
 			want: "i3 trunc(i32 15 to i3)",
+		},
+		// i=1
+		{
+			orig: f32Four, to: i3Typ,
+			want: "", err: `invalid integer truncation; expected integer constant for orig, got "float"`,
+		},
+		// i=2
+		{
+			orig: i32Four, to: f64Typ,
+			want: "", err: `invalid integer truncation; expected integer target type, got "double"`,
+		},
+		// i=3
+		{
+			orig: i32Four, to: i64Typ,
+			want: "", err: `invalid integer truncation; target size (64) larger than original size (32)`,
 		},
 	}
 
@@ -551,7 +596,7 @@ func TestIntTruncString(t *testing.T) {
 func TestIntZeroExtString(t *testing.T) {
 	golden := []struct {
 		orig Constant
-		to   *types.Int
+		to   types.Type
 		want string
 		err  string
 	}{
@@ -559,6 +604,21 @@ func TestIntZeroExtString(t *testing.T) {
 		{
 			orig: i1One, to: i5Typ,
 			want: "i5 zext(i1 true to i5)",
+		},
+		// i=1
+		{
+			orig: f64Four, to: i3Typ,
+			want: "", err: `invalid integer zero extension; expected integer constant for orig, got "double"`,
+		},
+		// i=2
+		{
+			orig: i32Four, to: i32x2VectorTyp,
+			want: "", err: `invalid integer zero extension; expected integer target type, got "<2 x i32>"`,
+		},
+		// i=3
+		{
+			orig: i32Four, to: i8Typ,
+			want: "", err: `invalid integer zero extension; target size (8) smaller than original size (32)`,
 		},
 	}
 
@@ -581,7 +641,7 @@ func TestIntZeroExtString(t *testing.T) {
 func TestIntSignExtString(t *testing.T) {
 	golden := []struct {
 		orig Constant
-		to   *types.Int
+		to   types.Type
 		want string
 		err  string
 	}{
@@ -589,6 +649,21 @@ func TestIntSignExtString(t *testing.T) {
 		{
 			orig: i1One, to: i5Typ,
 			want: "i5 sext(i1 true to i5)",
+		},
+		// i=1
+		{
+			orig: i32i8FourThree, to: i32Typ,
+			want: "", err: `invalid integer sign extension; expected integer constant for orig, got "{i32, i8}"`,
+		},
+		// i=2
+		{
+			orig: i32Four, to: i32i8x2ArrayTyp,
+			want: "", err: `invalid integer sign extension; expected integer target type, got "[2 x {i32, i8}]"`,
+		},
+		// i=3
+		{
+			orig: i32Four, to: i3Typ,
+			want: "", err: `invalid integer sign extension; target size (3) smaller than original size (32)`,
 		},
 	}
 
@@ -611,7 +686,7 @@ func TestIntSignExtString(t *testing.T) {
 func TestFloatTruncString(t *testing.T) {
 	golden := []struct {
 		orig Constant
-		to   *types.Float
+		to   types.Type
 		want string
 		err  string
 	}{
@@ -620,6 +695,34 @@ func TestFloatTruncString(t *testing.T) {
 			orig: f64Four, to: f32Typ,
 			want: "float fptrunc(double 4.0 to float)",
 		},
+		// i=1
+		{
+			orig: i32Four, to: f32Typ,
+			want: "", err: `invalid floating point truncation; expected floating point constant for orig, got "i32"`,
+		},
+		// i=2
+		{
+			orig: f32Three, to: i32Typ,
+			want: "", err: `invalid floating point truncation; expected floating point target type, got "i32"`,
+		},
+		// i=3
+		{
+			orig: f32Three, to: f64Typ,
+			want: "", err: `invalid floating point truncation; target size (64) larger than original size (32)`,
+		},
+		// TODO: Uncomment when fp128 and ppc_fp128 are supported.
+		/*
+			// i=4
+			{
+				orig: f128Three, to: f128_ppcTyp,
+				want: "", err: `invalid floating point truncation; cannot convert from "fp128" to "ppc_fp128"`,
+			},
+			// i=5
+			{
+				orig: f128_ppcFour, to: f128Typ,
+				want: "", err: `invalid floating point truncation; cannot convert from "ppc_fp128" to "fp128"`,
+			},
+		*/
 	}
 
 	for i, g := range golden {
@@ -641,7 +744,7 @@ func TestFloatTruncString(t *testing.T) {
 func TestFloatExtString(t *testing.T) {
 	golden := []struct {
 		orig Constant
-		to   *types.Float
+		to   types.Type
 		want string
 		err  string
 	}{
@@ -650,6 +753,34 @@ func TestFloatExtString(t *testing.T) {
 			orig: f32Four, to: f64Typ,
 			want: "double fpext(float 4.0 to double)",
 		},
+		// i=1
+		{
+			orig: i8Three, to: f32Typ,
+			want: "", err: `invalid floating point extension; expected floating point constant for orig, got "i8"`,
+		},
+		// i=2
+		{
+			orig: f32Three, to: i64Typ,
+			want: "", err: `invalid floating point extension; expected floating point target type, got "i64"`,
+		},
+		// i=3
+		{
+			orig: f64Four, to: f32Typ,
+			want: "", err: `invalid floating point extension; target size (32) smaller than original size (64)`,
+		},
+		// TODO: Uncomment when fp128 and ppc_fp128 are supported.
+		/*
+			// i=4
+			{
+				orig: f128Three, to: f128_ppcTyp,
+				want: "", err: `invalid floating point extension; cannot convert from "fp128" to "ppc_fp128"`,
+			},
+			// i=5
+			{
+				orig: f128_ppcFour, to: f128Typ,
+				want: "", err: `invalid floating point extension; cannot convert from "ppc_fp128" to "fp128"`,
+			},
+		*/
 	}
 
 	for i, g := range golden {
@@ -684,6 +815,26 @@ func TestFloatToUintString(t *testing.T) {
 		{
 			orig: f32x2VectorThreeFour, to: i32x2VectorTyp,
 			want: "<2 x i32> fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)",
+		},
+		// i=2
+		{
+			orig: i32x2VectorMinusThreeFifteen, to: i32x2VectorTyp,
+			want: "", err: `invalid floating point to unsigned integer conversion; expected floating point constant (or constant vector) for orig, got "<2 x i32>"`,
+		},
+		// i=3
+		{
+			orig: f32x2VectorThreeFour, to: f32x2VectorTyp,
+			want: "", err: `invalid floating point to unsigned integer conversion; expected integer (or integer vector) target type, got "<2 x float>"`,
+		},
+		// i=4
+		{
+			orig: f32x2VectorThreeFour, to: i32Typ,
+			want: "", err: `invalid floating point to unsigned integer conversion; cannot convert from "<2 x float>" to "i32"`,
+		},
+		// i=5
+		{
+			orig: f64Four, to: i32x2VectorTyp,
+			want: "", err: `invalid floating point to unsigned integer conversion; cannot convert from "double" to "<2 x i32>"`,
 		},
 	}
 
@@ -720,6 +871,26 @@ func TestFloatToIntString(t *testing.T) {
 			orig: f32x2VectorMinusThreeFour, to: i32x2VectorTyp,
 			want: "<2 x i32> fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)",
 		},
+		// i=2
+		{
+			orig: i32Four, to: i32Typ,
+			want: "", err: `invalid floating point to signed integer conversion; expected floating point constant (or constant vector) for orig, got "i32"`,
+		},
+		// i=3
+		{
+			orig: f32Four, to: f32Typ,
+			want: "", err: `invalid floating point to signed integer conversion; expected integer (or integer vector) target type, got "float"`,
+		},
+		// i=4
+		{
+			orig: f32x2VectorThreeFour, to: i64Typ,
+			want: "", err: `invalid floating point to signed integer conversion; cannot convert from "<2 x float>" to "i64"`,
+		},
+		// i=5
+		{
+			orig: f32Three, to: i32x2VectorTyp,
+			want: "", err: `invalid floating point to signed integer conversion; cannot convert from "float" to "<2 x i32>"`,
+		},
 	}
 
 	for i, g := range golden {
@@ -755,6 +926,26 @@ func TestUintToFloatString(t *testing.T) {
 			orig: i32x2VectorThreeFortyTwo, to: f32x2VectorTyp,
 			want: "<2 x float> uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)",
 		},
+		// i=2
+		{
+			orig: i32i8FourThree, to: f32Typ,
+			want: "", err: `invalid unsigned integer to floating point conversion; expected integer constant (or constant vector) for orig, got "{i32, i8}"`,
+		},
+		// i=3
+		{
+			orig: i32x2VectorMinusThreeFifteen, to: i32x2VectorTyp,
+			want: "", err: `invalid unsigned integer to floating point conversion; expected floating point (or floating point vector) target type, got "<2 x i32>"`,
+		},
+		// i=4
+		{
+			orig: i32x2VectorThreeFortyTwo, to: f32Typ,
+			want: "", err: `invalid unsigned integer to floating point conversion; cannot convert from "<2 x i32>" to "float"`,
+		},
+		// i=5
+		{
+			orig: i32Fifteen, to: f32x2VectorTyp,
+			want: "", err: `invalid unsigned integer to floating point conversion; cannot convert from "i32" to "<2 x float>"`,
+		},
 	}
 
 	for i, g := range golden {
@@ -789,6 +980,26 @@ func TestIntToFloatString(t *testing.T) {
 		{
 			orig: i32x2VectorMinusThreeFifteen, to: f32x2VectorTyp,
 			want: "<2 x float> sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)",
+		},
+		// i=2
+		{
+			orig: f64Four, to: f32Typ,
+			want: "", err: `invalid signed integer to floating point conversion; expected integer constant (or constant vector) for orig, got "double"`,
+		},
+		// i=3
+		{
+			orig: i32Four, to: i32Typ,
+			want: "", err: `invalid signed integer to floating point conversion; expected floating point (or floating point vector) target type, got "i32"`,
+		},
+		// i=4
+		{
+			orig: i32x2VectorMinusThreeFifteen, to: f32Typ,
+			want: "", err: `invalid signed integer to floating point conversion; cannot convert from "<2 x i32>" to "float"`,
+		},
+		// i=5
+		{
+			orig: i32Three, to: f32x2VectorTyp,
+			want: "", err: `invalid signed integer to floating point conversion; cannot convert from "i32" to "<2 x float>"`,
 		},
 	}
 

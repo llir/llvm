@@ -3,7 +3,6 @@ package consts
 import (
 	"fmt"
 
-	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
 )
@@ -55,17 +54,17 @@ func NewIntTrunc(orig Constant, to types.Type) (*IntTrunc, error) {
 	var ok bool
 	exp.orig, ok = orig.(*Int)
 	if !ok {
-		return nil, errutil.Newf("invalid integer truncation; expected integer constant for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid integer truncation; expected integer constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	exp.to, ok = to.(*types.Int)
 	if !ok {
-		return nil, errutil.Newf("invalid integer truncation; expected integer target type, got %q", to)
+		return nil, fmt.Errorf("invalid integer truncation; expected integer target type, got %q", to)
 	}
 	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
 	if newSize > origSize {
-		return nil, errutil.Newf("invalid integer truncation; target size (%d) larger than original size (%d)", newSize, origSize)
+		return nil, fmt.Errorf("invalid integer truncation; target size (%d) larger than original size (%d)", newSize, origSize)
 	}
 
 	return exp, nil
@@ -124,17 +123,17 @@ func NewIntZeroExt(orig Constant, to types.Type) (*IntZeroExt, error) {
 	var ok bool
 	exp.orig, ok = orig.(*Int)
 	if !ok {
-		return nil, errutil.Newf("invalid integer zero extension; expected integer constant for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid integer zero extension; expected integer constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	exp.to, ok = to.(*types.Int)
 	if !ok {
-		return nil, errutil.Newf("invalid integer zero extension; expected integer target type, got %q", to)
+		return nil, fmt.Errorf("invalid integer zero extension; expected integer target type, got %q", to)
 	}
 	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
 	if newSize < origSize {
-		return nil, errutil.Newf("invalid integer zero extension; target size (%d) smaller than original size (%d)", newSize, origSize)
+		return nil, fmt.Errorf("invalid integer zero extension; target size (%d) smaller than original size (%d)", newSize, origSize)
 	}
 
 	return exp, nil
@@ -193,17 +192,17 @@ func NewIntSignExt(orig Constant, to types.Type) (*IntSignExt, error) {
 	var ok bool
 	exp.orig, ok = orig.(*Int)
 	if !ok {
-		return nil, errutil.Newf("invalid integer sign extension; expected integer constant for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid integer sign extension; expected integer constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	exp.to, ok = to.(*types.Int)
 	if !ok {
-		return nil, errutil.Newf("invalid integer sign extension; expected integer target type, got %q", to)
+		return nil, fmt.Errorf("invalid integer sign extension; expected integer target type, got %q", to)
 	}
 	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
 	if newSize < origSize {
-		return nil, errutil.Newf("invalid integer sign extension; target size (%d) smaller than original size (%d)", newSize, origSize)
+		return nil, fmt.Errorf("invalid integer sign extension; target size (%d) smaller than original size (%d)", newSize, origSize)
 	}
 
 	return exp, nil
@@ -262,20 +261,20 @@ func NewFloatTrunc(orig Constant, to types.Type) (*FloatTrunc, error) {
 	var ok bool
 	exp.orig, ok = orig.(*Float)
 	if !ok {
-		return nil, errutil.Newf("invalid floating point truncation; expected floating point constant for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid floating point truncation; expected floating point constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	exp.to, ok = to.(*types.Float)
 	if !ok {
-		return nil, errutil.Newf("invalid floating point truncation; expected floating point target type, got %q", to)
+		return nil, fmt.Errorf("invalid floating point truncation; expected floating point target type, got %q", to)
 	}
 	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
 	newKind, origKind := exp.to.Kind(), exp.orig.typ.Kind()
 	if newSize > origSize {
-		return nil, errutil.Newf("invalid floating point truncation; target size (%d) larger than original size (%d)", newSize, origSize)
+		return nil, fmt.Errorf("invalid floating point truncation; target size (%d) larger than original size (%d)", newSize, origSize)
 	} else if newSize == origSize && newKind != origKind {
-		return nil, errutil.Newf("invalid floating point truncation; cannot convert from %q to %q", exp.orig.typ, exp.to)
+		return nil, fmt.Errorf("invalid floating point truncation; cannot convert from %q to %q", exp.orig.typ, exp.to)
 	}
 
 	return exp, nil
@@ -334,20 +333,20 @@ func NewFloatExt(orig Constant, to types.Type) (*FloatExt, error) {
 	var ok bool
 	exp.orig, ok = orig.(*Float)
 	if !ok {
-		return nil, errutil.Newf("invalid floating point extension; expected floating point constant for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid floating point extension; expected floating point constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	exp.to, ok = to.(*types.Float)
 	if !ok {
-		return nil, errutil.Newf("invalid floating point extension; expected floating point target type, got %q", to)
+		return nil, fmt.Errorf("invalid floating point extension; expected floating point target type, got %q", to)
 	}
 	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
 	newKind, origKind := exp.to.Kind(), exp.orig.typ.Kind()
 	if newSize < origSize {
-		return nil, errutil.Newf("invalid floating point extension; target size (%d) smaller than original size (%d)", newSize, origSize)
+		return nil, fmt.Errorf("invalid floating point extension; target size (%d) smaller than original size (%d)", newSize, origSize)
 	} else if newSize == origSize && newKind != origKind {
-		return nil, errutil.Newf("invalid floating point extension; cannot convert from %q to %q", exp.orig.typ, exp.to)
+		return nil, fmt.Errorf("invalid floating point extension; cannot convert from %q to %q", exp.orig.typ, exp.to)
 	}
 
 	return exp, nil
@@ -406,18 +405,20 @@ type FloatToUint struct {
 func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
 	// Verify type of original floating point constant (or constant vector).
 	if !types.IsFloats(orig.Type()) {
-		return nil, errutil.Newf("invalid floating point to unsigned integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	if !types.IsInts(to) {
-		return nil, errutil.Newf("invalid floating point to unsigned integer conversion; expected integer (or integer vector) target type, got %q", to)
+		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; expected integer (or integer vector) target type, got %q", to)
 	}
 
 	// Verify that both are either basic types or vectors.
 	if types.IsFloat(orig.Type()) != types.IsInt(to) {
-		return nil, errutil.Newf("invalid floating point to unsigned integer conversion; cannot convert from %q to %q", orig.Type(), to)
+		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
+
+	// TODO: Verify length (do the same for all vector expressions).
 
 	return &FloatToUint{orig: orig, to: to}, nil
 }
@@ -477,17 +478,17 @@ type FloatToInt struct {
 func NewFloatToInt(orig Constant, to types.Type) (*FloatToInt, error) {
 	// Verify type of original floating point constant (or constant vector).
 	if !types.IsFloats(orig.Type()) {
-		return nil, errutil.Newf("invalid floating point to signed integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid floating point to signed integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	if !types.IsInts(to) {
-		return nil, errutil.Newf("invalid floating point to signed integer conversion; expected integer (or integer vector) target type, got %q", to)
+		return nil, fmt.Errorf("invalid floating point to signed integer conversion; expected integer (or integer vector) target type, got %q", to)
 	}
 
 	// Verify that both are either basic types or vectors.
 	if types.IsFloat(orig.Type()) != types.IsInt(to) {
-		return nil, errutil.Newf("invalid floating point to signed integer conversion; cannot convert from %q to %q", orig.Type(), to)
+		return nil, fmt.Errorf("invalid floating point to signed integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
 	return &FloatToInt{orig: orig, to: to}, nil
@@ -548,17 +549,17 @@ type UintToFloat struct {
 func NewUintToFloat(orig Constant, to types.Type) (*UintToFloat, error) {
 	// Verify type of original integer constant (or constant vector).
 	if !types.IsInts(orig.Type()) {
-		return nil, errutil.Newf("invalid unsigned integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	if !types.IsFloats(to) {
-		return nil, errutil.Newf("invalid unsigned integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
+		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
 	}
 
 	// Verify that both are either basic types or vectors.
 	if types.IsInt(orig.Type()) != types.IsFloat(to) {
-		return nil, errutil.Newf("invalid unsigned integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
 	return &UintToFloat{orig: orig, to: to}, nil
@@ -619,17 +620,17 @@ type IntToFloat struct {
 func NewIntToFloat(orig Constant, to types.Type) (*IntToFloat, error) {
 	// Verify type of original integer constant (or constant vector).
 	if !types.IsInts(orig.Type()) {
-		return nil, errutil.Newf("invalid signed integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
+		return nil, fmt.Errorf("invalid signed integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
 	if !types.IsFloats(to) {
-		return nil, errutil.Newf("invalid signed integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
+		return nil, fmt.Errorf("invalid signed integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
 	}
 
 	// Verify that both are either basic types or vectors.
 	if types.IsInt(orig.Type()) != types.IsFloat(to) {
-		return nil, errutil.Newf("invalid signed integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
+		return nil, fmt.Errorf("invalid signed integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
 	return &IntToFloat{orig: orig, to: to}, nil
