@@ -1,7 +1,11 @@
 // Package values provides a definition of LLVM IR values.
 package values
 
-import "github.com/mewlang/llvm/types"
+import (
+	"fmt"
+
+	"github.com/mewlang/llvm/types"
+)
 
 // TODO: Complete the list of value implementations.
 
@@ -14,6 +18,7 @@ import "github.com/mewlang/llvm/types"
 //    ir.Instruction
 //    ir.Terminator
 type Value interface {
+	fmt.Stringer
 	// Type returns the type of the value.
 	Type() types.Type
 	// UseList returns a list of all values which uses the value.
