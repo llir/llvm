@@ -2,6 +2,7 @@ package consts
 
 import (
 	"log"
+	"strings"
 	"testing"
 
 	"github.com/mewlang/llvm/types"
@@ -204,7 +205,7 @@ func init() {
 func TestIntString(t *testing.T) {
 	golden := []struct {
 		input string
-		typ   *types.Int
+		typ   types.Type
 		want  string
 		err   string
 	}{
@@ -244,11 +245,19 @@ func TestIntString(t *testing.T) {
 			input: "-137438953472", typ: i64Typ,
 			want: "i64 -137438953472",
 		},
+		{
+			input: "3.0", typ: f32Typ,
+			want: "", err: `invalid type "float" for integer constant`,
+		},
+		{
+			input: "foo", typ: i64Typ,
+			want: "", err: `unable to parse integer constant "foo"`,
+		},
 	}
 
 	for i, g := range golden {
 		v, err := NewInt(g.typ, g.input)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -299,7 +308,7 @@ func TestFloatString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewFloat(g.typ, g.input)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -329,7 +338,7 @@ func TestVectorString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewVector(g.typ, g.elems)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -359,7 +368,7 @@ func TestArrayString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewArray(g.typ, g.elems)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -389,7 +398,7 @@ func TestStructString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewStruct(g.typ, g.fields)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -419,7 +428,7 @@ func TestIntTruncString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewIntTrunc(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -449,7 +458,7 @@ func TestIntZeroExtString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewIntZeroExt(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -479,7 +488,7 @@ func TestIntSignExtString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewIntSignExt(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -509,7 +518,7 @@ func TestFloatTruncString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewFloatTrunc(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -539,7 +548,7 @@ func TestFloatExtString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewFloatExt(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -574,7 +583,7 @@ func TestFloatToUintString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewFloatToUint(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -609,7 +618,7 @@ func TestFloatToIntString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewFloatToInt(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -644,7 +653,7 @@ func TestUintToFloatString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewUintToFloat(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -679,7 +688,7 @@ func TestIntToFloatString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewIntToFloat(g.orig, g.to)
-		if !errEqual(err, g.err) {
+		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
 		} else if err != nil {
@@ -693,12 +702,21 @@ func TestIntToFloatString(t *testing.T) {
 	}
 }
 
-// errEqual returns true if err is represented by the string s, and false
-// otherwise.
-func errEqual(err error, s string) bool {
+// sameError returns true if err is represented by the string s, and false
+// otherwise. Some error messages constants suffixes from external functions,
+// e.g. the strconv error in:
+//
+//    unable to parse integer constant "foo"; strconv.ParseInt: parsing "foo": invalid syntax`
+//
+// To avoid depending on the error of external functions, s matches the error if
+// it is a non-empty prefix of err.
+func sameError(err error, s string) bool {
 	t := ""
 	if err != nil {
+		if len(s) == 0 {
+			return false
+		}
 		t = err.Error()
 	}
-	return s == t
+	return strings.HasPrefix(t, s)
 }
