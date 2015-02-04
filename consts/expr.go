@@ -25,9 +25,9 @@ import (
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type Expr interface {
 	Constant
-	// isExpr ensures that only constant expressions can be assigned to the Expr
-	// interface.
-	isExpr()
+	// Calc calculates and returns a constant which is equivalent to the constant
+	// expression.
+	Calc() Constant
 }
 
 // IntTrunc is a constant expression which truncates an integer constant to a
@@ -39,9 +39,9 @@ type Expr interface {
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type IntTrunc struct {
-	// Original constant.
+	// Original integer constant.
 	orig *Int
-	// New type.
+	// New integer type.
 	to *types.Int
 }
 
@@ -81,6 +81,12 @@ func (exp *IntTrunc) UseList() []values.Value {
 
 // ReplaceAll replaces all uses of the value with new.
 func (exp *IntTrunc) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *IntTrunc) Calc() Constant {
 	panic("not yet implemented.")
 }
 
@@ -138,6 +144,12 @@ func (exp *IntZeroExt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *IntZeroExt) Calc() Constant {
+	panic("not yet implemented.")
+}
+
 // IntSignExt is a constant expression which sign extends an integer constant to
 // a larger or equally sized integer type.
 //
@@ -189,6 +201,12 @@ func (exp *IntSignExt) UseList() []values.Value {
 
 // ReplaceAll replaces all uses of the value with new.
 func (exp *IntSignExt) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *IntSignExt) Calc() Constant {
 	panic("not yet implemented.")
 }
 
@@ -249,6 +267,12 @@ func (exp *FloatTrunc) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *FloatTrunc) Calc() Constant {
+	panic("not yet implemented.")
+}
+
 // FloatExt is a constant expression which extends a floating point constant to
 // a larger floating point type or one of the same kind.
 //
@@ -306,6 +330,12 @@ func (exp *FloatExt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *FloatExt) Calc() Constant {
+	panic("not yet implemented.")
+}
+
 // FloatToUint is a constant expression which converts a floating point constant
 // (or constant vector) to the corresponding unsigned integer constant (or
 // constant vector).
@@ -357,6 +387,12 @@ func (exp *FloatToUint) UseList() []values.Value {
 
 // ReplaceAll replaces all uses of the value with new.
 func (exp *FloatToUint) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *FloatToUint) Calc() Constant {
 	panic("not yet implemented.")
 }
 
@@ -414,6 +450,12 @@ func (exp *FloatToInt) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *FloatToInt) Calc() Constant {
+	panic("not yet implemented.")
+}
+
 // UintToFloat is a constant expression which converts an unsigned integer
 // constant (or constant vector) to the corresponding floating point constant
 // (or constant vector).
@@ -465,6 +507,12 @@ func (exp *UintToFloat) UseList() []values.Value {
 
 // ReplaceAll replaces all uses of the value with new.
 func (exp *UintToFloat) ReplaceAll(new values.Value) error {
+	panic("not yet implemented.")
+}
+
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *UintToFloat) Calc() Constant {
 	panic("not yet implemented.")
 }
 
@@ -522,6 +570,12 @@ func (exp *IntToFloat) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
 }
 
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *IntToFloat) Calc() Constant {
+	panic("not yet implemented.")
+}
+
 // TODO: Add support for the following constant expressions:
 //    - ptrtoint
 //    - inttoptr
@@ -550,15 +604,3 @@ func (*FloatToUint) isConst() {}
 func (*FloatToInt) isConst()  {}
 func (*UintToFloat) isConst() {}
 func (*IntToFloat) isConst()  {}
-
-// isExpr ensures that only constant expressions can be assigned to the Expr
-// interface.
-func (*IntTrunc) isExpr()    {}
-func (*IntZeroExt) isExpr()  {}
-func (*IntSignExt) isExpr()  {}
-func (*FloatTrunc) isExpr()  {}
-func (*FloatExt) isExpr()    {}
-func (*FloatToUint) isExpr() {}
-func (*FloatToInt) isExpr()  {}
-func (*UintToFloat) isExpr() {}
-func (*IntToFloat) isExpr()  {}

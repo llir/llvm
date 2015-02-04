@@ -32,8 +32,9 @@ func NewVector(typ types.Type, elems []Constant) (*Vector, error) {
 
 	// Verify vector element types.
 	for _, elem := range elems {
-		if !elem.Type().Equal(v.typ.Elem()) {
-			return nil, errutil.Newf("invalid vector element type; expected %q, got %q", v.typ.Elem(), elem.Type())
+		got, want := elem.Type(), v.typ.Elem()
+		if !got.Equal(want) {
+			return nil, errutil.Newf("invalid vector element type; expected %q, got %q", want, got)
 		}
 	}
 	v.elems = elems
@@ -90,8 +91,9 @@ func NewArray(typ types.Type, elems []Constant) (*Array, error) {
 
 	// Verify array element types.
 	for _, elem := range elems {
-		if !elem.Type().Equal(v.typ.Elem()) {
-			return nil, errutil.Newf("invalid array element type; expected %q, got %q", v.typ.Elem(), elem.Type())
+		got, want := elem.Type(), v.typ.Elem()
+		if !got.Equal(want) {
+			return nil, errutil.Newf("invalid array element type; expected %q, got %q", want, got)
 		}
 	}
 	v.elems = elems
@@ -145,8 +147,9 @@ func NewStruct(typ types.Type, fields []Constant) (*Struct, error) {
 		return nil, errutil.Newf("incorrect number of fields in structure constant; expected %d, got %d", len(fieldTypes), len(fields))
 	}
 	for i := range fields {
-		if !fieldTypes[i].Equal(fields[i].Type()) {
-			return nil, errutil.Newf("invalid structure field type; expected %q, got %q", fieldTypes[i], fields[i].Type())
+		got, want := fields[i].Type(), fieldTypes[i]
+		if !got.Equal(want) {
+			return nil, errutil.Newf("invalid structure field type; expected %q, got %q", want, got)
 		}
 	}
 	v.fields = fields
