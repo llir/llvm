@@ -209,46 +209,57 @@ func TestIntString(t *testing.T) {
 		want  string
 		err   string
 	}{
+		// i=0
 		{
 			input: "true", typ: i1Typ,
 			want: "i1 true",
 		},
+		// i=1
 		{
 			input: "1", typ: i1Typ,
 			want: "i1 true",
 		},
+		// i=2
 		{
 			input: "false", typ: i1Typ,
 			want: "i1 false",
 		},
+		// i=3
 		{
 			input: "0", typ: i1Typ,
 			want: "i1 false",
 		},
+		// i=4
 		{
 			input: "2", typ: i1Typ,
 			want: "", err: `invalid integer constant "2" for boolean type`,
 		},
+		// i=5
 		{
 			input: "true", typ: i32Typ,
 			want: "", err: `integer constant "true" type mismatch; expected i1, got i32`,
 		},
+		// i=6
 		{
 			input: "false", typ: i32Typ,
 			want: "", err: `integer constant "false" type mismatch; expected i1, got i32`,
 		},
+		// i=7
 		{
 			input: "42", typ: i32Typ,
 			want: "i32 42",
 		},
+		// i=8
 		{
 			input: "-137438953472", typ: i64Typ,
 			want: "i64 -137438953472",
 		},
+		// i=9
 		{
 			input: "3.0", typ: f32Typ,
 			want: "", err: `invalid type "float" for integer constant`,
 		},
+		// i=10
 		{
 			input: "foo", typ: i64Typ,
 			want: "", err: `unable to parse integer constant "foo"`,
@@ -274,7 +285,7 @@ func TestIntString(t *testing.T) {
 func TestFloatString(t *testing.T) {
 	golden := []struct {
 		input string
-		typ   *types.Float
+		typ   types.Type
 		want  string
 		err   string
 	}{
@@ -302,6 +313,16 @@ func TestFloatString(t *testing.T) {
 		{
 			input: "3e14", typ: f64Typ,
 			want: "double 3.0e14",
+		},
+		// i=5
+		{
+			input: "12", typ: i32Typ,
+			want: "", err: `invalid type "i32" for floating point constant`,
+		},
+		// i=6
+		{
+			input: "foo", typ: f32Typ,
+			want: "", err: `unable to parse floating point constant "foo"`,
 		},
 		//{want: "3.14159265358979323846264338327950288419716939937510", input: "3.14159265358979323846264338327950288419716939937510"},
 	}
