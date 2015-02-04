@@ -1,6 +1,8 @@
 package consts
 
 import (
+	"fmt"
+
 	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
@@ -90,11 +92,20 @@ func (exp *IntTrunc) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the integer truncation expression.
+// The expression string representation is preceded by the type of the constant,
+// e.g.
+//
+//    i3 trunc(i32 15 to i3)
+func (exp *IntTrunc) String() string {
+	return fmt.Sprintf("%s trunc(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // IntZeroExt is a constant expression which zero extends an integer constant to
 // a larger or equally sized integer type.
 //
 // Examples:
-//    zext(i1 1 to i5)   ; yields i5:1
+//    zext(i1 true to i5)   ; yields i5:1
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -150,11 +161,20 @@ func (exp *IntZeroExt) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the integer zero extension
+// expression. The expression string representation is preceded by the type of
+// the constant, e.g.
+//
+//    i5 zext(i1 true to i5)
+func (exp *IntZeroExt) String() string {
+	return fmt.Sprintf("%s zext(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // IntSignExt is a constant expression which sign extends an integer constant to
 // a larger or equally sized integer type.
 //
 // Examples:
-//    sext(i1 1 to i5)   ; yields i5:31
+//    sext(i1 true to i5)   ; yields i5:31
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -208,6 +228,15 @@ func (exp *IntSignExt) ReplaceAll(new values.Value) error {
 // expression.
 func (exp *IntSignExt) Calc() Constant {
 	panic("not yet implemented.")
+}
+
+// String returns a string representation of the integer sign extension
+// expression. The expression string representation is preceded by the type of
+// the constant, e.g.
+//
+//    i5 sext(i1 true to i5)
+func (exp *IntSignExt) String() string {
+	return fmt.Sprintf("%s sext(%s to %s)", exp.to, exp.orig, exp.to)
 }
 
 // FloatTrunc is a constant expression which truncates a floating point constant
@@ -273,6 +302,15 @@ func (exp *FloatTrunc) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the floating point truncation
+// expression. The expression string representation is preceded by the type of
+// the constant, e.g.
+//
+//    float fptrunc(double 4.0 to float)
+func (exp *FloatTrunc) String() string {
+	return fmt.Sprintf("%s fptrunc(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // FloatExt is a constant expression which extends a floating point constant to
 // a larger floating point type or one of the same kind.
 //
@@ -336,13 +374,22 @@ func (exp *FloatExt) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the floating point extension
+// expression. The expression string representation is preceded by the type of
+// the constant, e.g.
+//
+//    double fpext(float 4.0 to double)
+func (exp *FloatExt) String() string {
+	return fmt.Sprintf("%s fpext(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // FloatToUint is a constant expression which converts a floating point constant
 // (or constant vector) to the corresponding unsigned integer constant (or
 // constant vector).
 //
 // Examples:
-//    fptoui(float 4.0 to i32)                        ; yields i32:4
-//    fptoui(<1 x float> <float 3.0> to <1 x i32>))   ; yields <1 x i32>:<i32 3>
+//    fptoui(float 4.0 to i32)                       ; yields i32:4
+//    fptoui(<1 x float> <float 3.0> to <1 x i32>)   ; yields <1 x i32>:<i32 3>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -396,13 +443,24 @@ func (exp *FloatToUint) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the constant expression which
+// converts a floating point constant (or constant vector) to the corresponding
+// unsigned integer constant (or constant vector). The expression string
+// representation is preceded by the type of the constant, e.g.
+//
+//    i32 fptoui(float 4.0 to i32)
+//    <2 x i32> fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
+func (exp *FloatToUint) String() string {
+	return fmt.Sprintf("%s fptoui(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // FloatToInt is a constant expression which converts a floating point constant
 // (or constant vector) to the corresponding signed integer constant (or
 // constant vector).
 //
 // Examples:
-//    fptosi(float -4.0 to i32)                        ; yields i32:-4
-//    fptosi(<1 x float> <float -3.0> to <1 x i32>))   ; yields <1 x i32>:<i32 -3>
+//    fptosi(float -4.0 to i32)                       ; yields i32:-4
+//    fptosi(<1 x float> <float -3.0> to <1 x i32>)   ; yields <1 x i32>:<i32 -3>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -456,13 +514,24 @@ func (exp *FloatToInt) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the constant expression which
+// converts a floating point constant (or constant vector) to the corresponding
+// signed integer constant (or constant vector). The expression string
+// representation is preceded by the type of the constant, e.g.
+//
+//    i32 fptosi(float -4.0 to i32)
+//    <2 x i32> fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
+func (exp *FloatToInt) String() string {
+	return fmt.Sprintf("%s fptosi(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // UintToFloat is a constant expression which converts an unsigned integer
 // constant (or constant vector) to the corresponding floating point constant
 // (or constant vector).
 //
 // Examples:
-//    uitofp(i32 4 to float)                      ; yields float:4.0
-//    uitofp(<1 x i32> <i32 3> to <1 x float>))   ; yields <1 x float>:<float 3.0>
+//    uitofp(i32 4 to float)                     ; yields float:4.0
+//    uitofp(<1 x i32> <i32 3> to <1 x float>)   ; yields <1 x float>:<float 3.0>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -516,13 +585,24 @@ func (exp *UintToFloat) Calc() Constant {
 	panic("not yet implemented.")
 }
 
+// String returns a string representation of the constant expression which
+// converts an unsigned integer constant (or constant vector) to the
+// corresponding floating point constant (or constant vector). The expression
+// string representation is preceded by the type of the constant, e.g.
+//
+//    float uitofp(i32 4 to float)
+//    <2 x float> uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
+func (exp *UintToFloat) String() string {
+	return fmt.Sprintf("%s uitofp(%s to %s)", exp.to, exp.orig, exp.to)
+}
+
 // IntToFloat is a constant expression which converts a signed integer constant
 // (or constant vector) to the corresponding floating point constant (or
 // constant vector).
 //
 // Examples:
-//    sitofp(i32 -4 to float)                      ; yields float:-4.0
-//    sitofp(<1 x i32> <i32 -3> to <1 x float>))   ; yields <1 x float>:<float -3.0>
+//    sitofp(i32 -4 to float)                     ; yields float:-4.0
+//    sitofp(<1 x i32> <i32 -3> to <1 x float>)   ; yields <1 x float>:<float -3.0>
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -574,6 +654,17 @@ func (exp *IntToFloat) ReplaceAll(new values.Value) error {
 // expression.
 func (exp *IntToFloat) Calc() Constant {
 	panic("not yet implemented.")
+}
+
+// String returns a string representation of the constant expression which
+// converts a signed integer constant (or constant vector) to the corresponding
+// floating point constant (or constant vector). The expression string
+// representation is preceded by the type of the constant, e.g.
+//
+//    float sitofp(i32 -4 to float)
+//    <2 x float> sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
+func (exp *IntToFloat) String() string {
+	return fmt.Sprintf("%s sitofp(%s to %s)", exp.to, exp.orig, exp.to)
 }
 
 // TODO: Add support for the following constant expressions:
