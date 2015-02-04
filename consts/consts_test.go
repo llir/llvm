@@ -10,6 +10,12 @@ import (
 var (
 	i1Typ, i32Typ, i64Typ *types.Int
 	f32Typ, f64Typ        *types.Float
+	// <2 x i32>
+	i32VectorTyp *types.Vector
+	// [2 x i32]
+	i32ArrayTyp *types.Array
+	// i32 -13, i32 42
+	i32Elems []Constant
 )
 
 func init() {
@@ -34,6 +40,26 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	i32VectorTyp, err = types.NewVector(i32Typ, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	i32ArrayTyp, err = types.NewArray(i32Typ, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// i32 -13, i32 42
+	elem, err := NewInt(i32Typ, "-13")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	i32Elems = append(i32Elems, elem)
+	elem, err = NewInt(i32Typ, "42")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	i32Elems = append(i32Elems, elem)
 }
 
 func TestIntString(t *testing.T) {
@@ -134,6 +160,36 @@ func TestFloatString(t *testing.T) {
 
 	for i, g := range golden {
 		v, err := NewFloat(g.typ, g.input)
+		if !errEqual(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
+			continue
+		}
+		got := v.String()
+		if got != g.want {
+			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestVectorString(t *testing.T) {
+	golden := []struct {
+		elems []Constant
+		typ   *types.Vector
+		want  string
+		err   string
+	}{
+		// i=0
+		{
+			elems: i32Elems, typ: i32VectorTyp,
+			want: "<2 x i32> <i32 -13, i32 42>",
+		},
+	}
+
+	for i, g := range golden {
+		v, err := NewVector(g.typ, g.elems)
 		if !errEqual(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue

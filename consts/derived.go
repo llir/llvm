@@ -1,6 +1,9 @@
 package consts
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/mewkiz/pkg/errutil"
 	"github.com/mewlang/llvm/types"
 	"github.com/mewlang/llvm/values"
@@ -55,6 +58,22 @@ func (v *Vector) UseList() []values.Value {
 // ReplaceAll replaces all uses of the value with new.
 func (v *Vector) ReplaceAll(new values.Value) error {
 	panic("not yet implemented.")
+}
+
+// String returns a string representation of the vector. The vector string
+// representation is preceded by the type of the constant, e.g.
+//
+//    <2 x i32> <i32 42, i32 -13>
+func (v *Vector) String() string {
+	buf := new(bytes.Buffer)
+	for i, elem := range v.elems {
+		if i > 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(elem.String())
+	}
+
+	return fmt.Sprintf("%s <%s>", v.typ, buf)
 }
 
 // Array represents an array constant which is an array containing only
