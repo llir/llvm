@@ -98,7 +98,7 @@ func (exp *IntTrunc) Calc() Constant {
 //
 //    i3 trunc(i32 15 to i3)
 func (exp *IntTrunc) String() string {
-	return fmt.Sprintf("%s trunc(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s trunc(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // IntZeroExt is a constant expression which zero extends an integer constant to
@@ -167,7 +167,7 @@ func (exp *IntZeroExt) Calc() Constant {
 //
 //    i5 zext(i1 true to i5)
 func (exp *IntZeroExt) String() string {
-	return fmt.Sprintf("%s zext(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s zext(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // IntSignExt is a constant expression which sign extends an integer constant to
@@ -236,7 +236,7 @@ func (exp *IntSignExt) Calc() Constant {
 //
 //    i5 sext(i1 true to i5)
 func (exp *IntSignExt) String() string {
-	return fmt.Sprintf("%s sext(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s sext(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // FloatTrunc is a constant expression which truncates a floating point constant
@@ -308,7 +308,7 @@ func (exp *FloatTrunc) Calc() Constant {
 //
 //    float fptrunc(double 4.0 to float)
 func (exp *FloatTrunc) String() string {
-	return fmt.Sprintf("%s fptrunc(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s fptrunc(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // FloatExt is a constant expression which extends a floating point constant to
@@ -380,7 +380,7 @@ func (exp *FloatExt) Calc() Constant {
 //
 //    double fpext(float 4.0 to double)
 func (exp *FloatExt) String() string {
-	return fmt.Sprintf("%s fpext(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s fpext(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // FloatToUint is a constant expression which converts a floating point constant
@@ -451,7 +451,7 @@ func (exp *FloatToUint) Calc() Constant {
 //    i32 fptoui(float 4.0 to i32)
 //    <2 x i32> fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
 func (exp *FloatToUint) String() string {
-	return fmt.Sprintf("%s fptoui(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s fptoui(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // FloatToInt is a constant expression which converts a floating point constant
@@ -522,7 +522,7 @@ func (exp *FloatToInt) Calc() Constant {
 //    i32 fptosi(float -4.0 to i32)
 //    <2 x i32> fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
 func (exp *FloatToInt) String() string {
-	return fmt.Sprintf("%s fptosi(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s fptosi(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // UintToFloat is a constant expression which converts an unsigned integer
@@ -593,7 +593,7 @@ func (exp *UintToFloat) Calc() Constant {
 //    float uitofp(i32 4 to float)
 //    <2 x float> uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
 func (exp *UintToFloat) String() string {
-	return fmt.Sprintf("%s uitofp(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s uitofp(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // IntToFloat is a constant expression which converts a signed integer constant
@@ -664,7 +664,7 @@ func (exp *IntToFloat) Calc() Constant {
 //    float sitofp(i32 -4 to float)
 //    <2 x float> sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
 func (exp *IntToFloat) String() string {
-	return fmt.Sprintf("%s sitofp(%s to %s)", exp.to, exp.orig, exp.to)
+	return fmt.Sprintf("%s sitofp(%s to %s)", exp.Type(), exp.orig, exp.to)
 }
 
 // TODO: Add support for the following constant expressions:
