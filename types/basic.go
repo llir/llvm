@@ -66,7 +66,7 @@ func (t *Int) Equal(u Type) bool {
 // String returns a string representation of the integer type.
 func (t *Int) String() string {
 	// i32
-	return fmt.Sprintf("i%d", t.size)
+	return fmt.Sprintf("i%d", t.Size())
 }
 
 // Float represents a floating point type.
@@ -114,7 +114,7 @@ func (t *Float) Equal(u Type) bool {
 // String returns a string representation of the floating point type.
 func (t *Float) String() string {
 	// double
-	return t.kind.String()
+	return t.Kind().String()
 }
 
 // FloatKind specifies the kind of a floating point type.

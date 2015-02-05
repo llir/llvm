@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"log"
+	"strings"
 	"testing"
 
 	"github.com/mewlang/llvm/types"
@@ -306,24 +307,49 @@ func TestVoidString(t *testing.T) {
 
 func TestIntString(t *testing.T) {
 	golden := []struct {
-		want string
 		n    int
+		want string
 		err  string
 	}{
-		{want: "i1", n: 1},
-		{want: "i32", n: 32},
-		{want: "", n: -1, err: "invalid integer size (-1)"},
-		{want: "", n: 0, err: "invalid integer size (0)"},
-		{want: "", n: 1 << 23, err: "invalid integer size (8388608)"},
-		{want: "i8388607", n: 1<<23 - 1},
+		// i=0
+		{
+			n:    1,
+			want: "i1",
+		},
+		// i=1
+		{
+			n:    32,
+			want: "i32",
+		},
+		// i=2
+		{
+			n:    1<<23 - 1,
+			want: "i8388607",
+		},
+		// i=3
+		{
+			n:    -1,
+			want: "", err: "invalid integer size (-1)",
+		},
+		// i=4
+		{
+			n:    0,
+			want: "", err: "invalid integer size (0)",
+		},
+		// i=5
+		{
+			n:    1 << 23,
+			want: "", err: "invalid integer size (8388608)",
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewInt(g.n)
-		if err != nil {
-			if err.Error() != g.err {
-				t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
-			}
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -335,21 +361,45 @@ func TestIntString(t *testing.T) {
 
 func TestFloatSize(t *testing.T) {
 	golden := []struct {
-		want int
 		kind types.FloatKind
+		want int
 	}{
-		{want: 16, kind: types.Float16},
-		{want: 32, kind: types.Float32},
-		{want: 64, kind: types.Float64},
-		{want: 128, kind: types.Float128},
-		{want: 80, kind: types.Float80_x86},
-		{want: 128, kind: types.Float128_PPC},
+		// i=0
+		{
+			kind: types.Float16,
+			want: 16,
+		},
+		// i=1
+		{
+			kind: types.Float32,
+			want: 32,
+		},
+		// i=2
+		{
+			kind: types.Float64,
+			want: 64,
+		},
+		// i=3
+		{
+			kind: types.Float128,
+			want: 128,
+		},
+		// i=4
+		{
+			kind: types.Float80_x86,
+			want: 80,
+		},
+		// i=5
+		{
+			kind: types.Float128_PPC,
+			want: 128,
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewFloat(g.kind)
 		if err != nil {
-			t.Errorf("i=%d; %v", i, err)
+			t.Errorf("i=%d: %v", err)
 			continue
 		}
 		got := typ.Size()
@@ -361,21 +411,54 @@ func TestFloatSize(t *testing.T) {
 
 func TestFloatString(t *testing.T) {
 	golden := []struct {
-		want string
 		kind types.FloatKind
+		want string
+		err  string
 	}{
-		{want: "half", kind: types.Float16},
-		{want: "float", kind: types.Float32},
-		{want: "double", kind: types.Float64},
-		{want: "fp128", kind: types.Float128},
-		{want: "x86_fp80", kind: types.Float80_x86},
-		{want: "ppc_fp128", kind: types.Float128_PPC},
+		// i=0
+		{
+			kind: types.Float16,
+			want: "half",
+		},
+		// i=1
+		{
+			kind: types.Float32,
+			want: "float",
+		},
+		// i=2
+		{
+			kind: types.Float64,
+			want: "double",
+		},
+		// i=3
+		{
+			kind: types.Float128,
+			want: "fp128",
+		},
+		// i=4
+		{
+			kind: types.Float80_x86,
+			want: "x86_fp80",
+		},
+		// i=5
+		{
+			kind: types.Float128_PPC,
+			want: "ppc_fp128",
+		},
+		// i=6
+		{
+			kind: -1,
+			want: "", err: "invalid floating point kind (-1)",
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewFloat(g.kind)
-		if err != nil {
-			t.Errorf("i=%d; %v", i, err)
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -414,37 +497,56 @@ func TestMetadataString(t *testing.T) {
 
 func TestFuncString(t *testing.T) {
 	golden := []struct {
-		want     string
 		result   types.Type
 		params   []types.Type
 		variadic bool
+		want     string
 		err      string
 	}{
-		// i: 0
-		{want: "void ()", result: voidTyp, params: nil},
-		// i: 1
-		{want: "i32 (i32)", result: i32Typ, params: []types.Type{i32Typ}},
-		// i: 2
-		{want: "void (i32, i8)", result: voidTyp, params: []types.Type{i32Typ, i8Typ}},
-		// i: 3
-		{want: "i32 (i8*, ...)", result: i32Typ, params: []types.Type{i8PtrTyp}, variadic: true},
-		// i: 4
-		// i32 (void)
-		{want: "", result: i32Typ, params: []types.Type{voidTyp}, err: "invalid function parameter type; void type only allowed for function results"},
-		// i: 5
-		// i32 (i32 (i32))
-		{want: "", result: i32Typ, params: []types.Type{funcTyp}, err: `invalid function parameter type "i32 (i32)"`},
-		// i: 6
-		// label ()
-		{want: "", result: labelTyp, params: nil, err: `invalid result parameter type "label"`},
+		// i=0
+		{
+			result: voidTyp, params: nil,
+			want: "void ()",
+		},
+		// i=1
+		{
+			result: i32Typ, params: []types.Type{i32Typ},
+			want: "i32 (i32)",
+		},
+		// i=2
+		{
+			result: voidTyp, params: []types.Type{i32Typ, i8Typ},
+			want: "void (i32, i8)",
+		},
+		// i=3
+		{
+			result: i32Typ, params: []types.Type{i8PtrTyp}, variadic: true,
+			want: "i32 (i8*, ...)",
+		},
+		// i=4
+		{
+			result: i32Typ, params: []types.Type{voidTyp}, // i32 (void)
+			want: "", err: "invalid function parameter type; void type only allowed for function results",
+		},
+		// i=5
+		{
+			result: i32Typ, params: []types.Type{funcTyp}, // i32 (i32 (i32))
+			want: "", err: `invalid function parameter type "i32 (i32)"`,
+		},
+		// i=6
+		{
+			result: labelTyp, params: nil, // label ()
+			want: "", err: `invalid result parameter type "label"`,
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewFunc(g.result, g.params, g.variadic)
-		if err != nil {
-			if err.Error() != g.err {
-				t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
-			}
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -456,25 +558,49 @@ func TestFuncString(t *testing.T) {
 
 func TestPointerString(t *testing.T) {
 	golden := []struct {
-		want string
 		elem types.Type
+		want string
 		err  string
 	}{
-		{want: "i32*", elem: i32Typ},
-		{want: "half*", elem: f16Typ},
-		{want: "i32 (i32)*", elem: funcTyp},
-		{want: "i8**", elem: i8PtrTyp},
-		// void*
-		{want: "", elem: voidTyp, err: `invalid pointer to "void"; use i8* instead`},
-		{want: "", elem: labelTyp, err: `invalid pointer to "label"`},
+		// i=0
+		{
+			elem: i32Typ,
+			want: "i32*",
+		},
+		// i=1
+		{
+			elem: f16Typ,
+			want: "half*",
+		},
+		// i=2
+		{
+			elem: funcTyp,
+			want: "i32 (i32)*",
+		},
+		// i=3
+		{
+			elem: i8PtrTyp,
+			want: "i8**",
+		},
+		// i=4
+		{
+			elem: voidTyp, // void*
+			want: "", err: `invalid pointer to "void"; use i8* instead`,
+		},
+		// i=5
+		{
+			elem: labelTyp, // label*
+			want: "", err: `invalid pointer to "label"`,
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewPointer(g.elem)
-		if err != nil {
-			if err.Error() != g.err {
-				t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
-			}
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -486,33 +612,65 @@ func TestPointerString(t *testing.T) {
 
 func TestVectorString(t *testing.T) {
 	golden := []struct {
-		want string
 		elem types.Type
 		n    int
+		want string
 		err  string
 	}{
-		{want: "<1 x i32>", elem: i32Typ, n: 1},
-		{want: "<5 x i8*>", elem: i8PtrTyp, n: 5},
-		{want: "<10 x i8>", elem: i8Typ, n: 10},
-		{want: "<6 x double>", elem: f64Typ, n: 6},
-		// <-1 x i8>
-		{want: "", elem: i8Typ, n: -1, err: "invalid vector length (-1)"},
-		// <5 x void>
-		{want: "", elem: voidTyp, n: 5, err: "invalid vector element type; void type only allowed for function results"},
-		// <3 x label>
-		{want: "", elem: labelTyp, n: 3, err: `invalid vector element type "label"`},
-		// <7 x label>
-		{want: "", elem: mmxTyp, n: 7, err: `invalid vector element type "x86_mmx"`},
-		// <2 x i32 (i32)>
-		{want: "", elem: funcTyp, n: 2, err: `invalid vector element type "i32 (i32)"`},
+		// i=0
+		{
+			elem: i32Typ, n: 1,
+			want: "<1 x i32>",
+		},
+		// i=1
+		{
+			elem: i8PtrTyp, n: 5,
+			want: "<5 x i8*>",
+		},
+		// i=2
+		{
+			elem: i8Typ, n: 10,
+			want: "<10 x i8>",
+		},
+		// i=3
+		{
+			elem: f64Typ, n: 6,
+			want: "<6 x double>",
+		},
+		// i=4
+		{
+			elem: i8Typ, n: -1, // <-1 x i8>
+			want: "", err: "invalid vector length (-1)",
+		},
+		// i=5
+		{
+			elem: voidTyp, n: 5, // <5 x void>
+			want: "", err: "invalid vector element type; void type only allowed for function results",
+		},
+		// i=6
+		{
+			elem: labelTyp, n: 3, // <3 x label>
+			want: "", err: `invalid vector element type "label"`,
+		},
+		// i=7
+		{
+			elem: mmxTyp, n: 7, // <7 x label>
+			want: "", err: `invalid vector element type "x86_mmx"`,
+		},
+		// i=8
+		{
+			elem: funcTyp, n: 2, // <2 x i32 (i32)>
+			want: "", err: `invalid vector element type "i32 (i32)"`,
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewVector(g.elem, g.n)
-		if err != nil {
-			if err.Error() != g.err {
-				t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
-			}
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -524,32 +682,65 @@ func TestVectorString(t *testing.T) {
 
 func TestArrayString(t *testing.T) {
 	golden := []struct {
-		want string
 		elem types.Type
 		n    int
+		want string
 		err  string
 	}{
-		{want: "[1 x i32]", elem: i32Typ, n: 1},
-		{want: "[5 x i8*]", elem: i8PtrTyp, n: 5},
-		{want: "[10 x i8]", elem: i8Typ, n: 10},
-		{want: "[6 x double]", elem: f64Typ, n: 6},
-		// [-1 x i8]
-		{want: "", elem: i8Typ, n: -1, err: "invalid array length (-1)"},
-		// [5 x void]
-		{want: "", elem: voidTyp, n: 5, err: "invalid array element type; void type only allowed for function results"},
-		// [3 x label]
-		{want: "", elem: labelTyp, n: 3, err: `invalid array element type "label"`},
-		{want: "[7 x x86_mmx]", elem: mmxTyp, n: 7},
-		// [2 x i32 (i32)]
-		{want: "", elem: funcTyp, n: 2, err: `invalid array element type "i32 (i32)"`},
+		// i=0
+		{
+			elem: i32Typ, n: 1,
+			want: "[1 x i32]",
+		},
+		// i=1
+		{
+			elem: i8PtrTyp, n: 5,
+			want: "[5 x i8*]",
+		},
+		// i=2
+		{
+			elem: i8Typ, n: 10,
+			want: "[10 x i8]",
+		},
+		// i=3
+		{
+			elem: f64Typ, n: 6,
+			want: "[6 x double]",
+		},
+		// i=4
+		{
+			elem: mmxTyp, n: 7,
+			want: "[7 x x86_mmx]",
+		},
+		// i=5
+		{
+			elem: i8Typ, n: -1, // [-1 x i8]
+			want: "", err: "invalid array length (-1)",
+		},
+		// i=6
+		{
+			elem: voidTyp, n: 5, // [5 x void]
+			want: "", err: "invalid array element type; void type only allowed for function results",
+		},
+		// i=7
+		{
+			elem: labelTyp, n: 3, // [3 x label]
+			want: "", err: `invalid array element type "label"`,
+		},
+		// i=8
+		{
+			elem: funcTyp, n: 2, // [2 x i32 (i32)]
+			want: "", err: `invalid array element type "i32 (i32)"`,
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewArray(g.elem, g.n)
-		if err != nil {
-			if err.Error() != g.err {
-				t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
-			}
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -561,28 +752,55 @@ func TestArrayString(t *testing.T) {
 
 func TestStructString(t *testing.T) {
 	golden := []struct {
-		want   string
 		fields []types.Type
 		packed bool
+		want   string
 		err    string
 	}{
-		{want: "{i32}", fields: []types.Type{i32Typ}},
-		{want: "{i8, i8}", fields: []types.Type{i8Typ, i8Typ}},
-		// {void}
-		{want: "", fields: []types.Type{voidTyp}, err: "invalid structure field type; void type only allowed for function results"},
-		{want: "", fields: []types.Type{funcTyp}, err: `invalid structure field type "i32 (i32)"`},
-		{want: "<{i8*}>", fields: []types.Type{i8PtrTyp}, packed: true},
-		// {label}
-		{want: "", fields: []types.Type{labelTyp}, err: `invalid structure field type "label"`},
-		{want: "{x86_mmx}", fields: []types.Type{mmxTyp}},
+		// i=0
+		{
+			fields: []types.Type{i32Typ},
+			want:   "{i32}",
+		},
+		// i=1
+		{
+			fields: []types.Type{i8Typ, i8Typ},
+			want:   "{i8, i8}",
+		},
+		// i=2
+		{
+			fields: []types.Type{i8PtrTyp}, packed: true,
+			want: "<{i8*}>",
+		},
+		// i=3
+		{
+			fields: []types.Type{mmxTyp},
+			want:   "{x86_mmx}",
+		},
+		// i=4
+		{
+			fields: []types.Type{voidTyp}, // {void}
+			want:   "", err: "invalid structure field type; void type only allowed for function results",
+		},
+		// i=5
+		{
+			fields: []types.Type{funcTyp}, // {i32 (i32)}
+			want:   "", err: `invalid structure field type "i32 (i32)"`,
+		},
+		// i=6
+		{
+			fields: []types.Type{labelTyp}, // {label}
+			want:   "", err: `invalid structure field type "label"`,
+		},
 	}
 
 	for i, g := range golden {
 		typ, err := types.NewStruct(g.fields, g.packed)
-		if err != nil {
-			if err.Error() != g.err {
-				t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
-			}
+		if !sameError(err, g.err) {
+			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
+			continue
+		} else if err != nil {
+			// Expected error match, check next test case.
 			continue
 		}
 		got := typ.String()
@@ -933,4 +1151,23 @@ func TestSameLength(t *testing.T) {
 			t.Errorf("i=%d: expected %v, got %v", i, g.want, got)
 		}
 	}
+}
+
+// sameError returns true if err is represented by the string s, and false
+// otherwise. Some error messages constants suffixes from external functions,
+// e.g. the strconv error in:
+//
+//    unable to parse integer constant "foo"; strconv.ParseInt: parsing "foo": invalid syntax`
+//
+// To avoid depending on the error of external functions, s matches the error if
+// it is a non-empty prefix of err.
+func sameError(err error, s string) bool {
+	t := ""
+	if err != nil {
+		if len(s) == 0 {
+			return false
+		}
+		t = err.Error()
+	}
+	return strings.HasPrefix(t, s)
 }
