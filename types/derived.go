@@ -87,10 +87,11 @@ func (t *Func) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the function type.
 func (t *Func) String() string {
+	// void ()
 	// i32 (i8*, ...)
 	buf := new(bytes.Buffer)
-	fmt.Fprintf(buf, "%v (", t.result)
 	for i, param := range t.params {
 		if i > 0 {
 			buf.WriteString(", ")
@@ -103,8 +104,7 @@ func (t *Func) String() string {
 		}
 		buf.WriteString("...")
 	}
-	buf.WriteString(")")
-	return buf.String()
+	return fmt.Sprintf("%s (%s)", t.result, buf)
 }
 
 // Pointer represents a pointer type.
@@ -148,7 +148,9 @@ func (t *Pointer) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the pointer type.
 func (t *Pointer) String() string {
+	// i32*
 	return fmt.Sprintf("%v*", t.elem)
 }
 
@@ -207,7 +209,9 @@ func (t *Vector) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the vector type.
 func (t *Vector) String() string {
+	// <2 x i32>
 	return fmt.Sprintf("<%d x %v>", t.n, t.elem)
 }
 
@@ -266,7 +270,9 @@ func (t *Array) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the array type.
 func (t *Array) String() string {
+	// [2 x float]
 	return fmt.Sprintf("[%d x %v]", t.n, t.elem)
 }
 
@@ -371,21 +377,19 @@ func (t *Struct) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the structure type.
 func (t *Struct) String() string {
+	// {float, i32, i32}
+	// <{i32, i8}>
 	buf := new(bytes.Buffer)
-	if t.packed {
-		buf.WriteString("<")
-	}
-	buf.WriteString("{")
 	for i, field := range t.fields {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(field.String())
 	}
-	buf.WriteString("}")
 	if t.packed {
-		buf.WriteString(">")
+		return fmt.Sprintf("<{%s}>", buf)
 	}
-	return buf.String()
+	return fmt.Sprintf("{%s}", buf)
 }

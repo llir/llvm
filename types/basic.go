@@ -22,6 +22,7 @@ func (*Void) Equal(u Type) bool {
 	return ok
 }
 
+// String returns a string representation of the void type.
 func (*Void) String() string {
 	return "void"
 }
@@ -62,7 +63,9 @@ func (t *Int) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the integer type.
 func (t *Int) String() string {
+	// i32
 	return fmt.Sprintf("i%d", t.size)
 }
 
@@ -108,7 +111,9 @@ func (t *Float) Equal(u Type) bool {
 	return false
 }
 
+// String returns a string representation of the floating point type.
 func (t *Float) String() string {
+	// double
 	return t.kind.String()
 }
 
@@ -144,6 +149,7 @@ func (kind FloatKind) Size() int {
 	panic("unreachable")
 }
 
+// String returns a string representation of the floating point kind.
 func (kind FloatKind) String() string {
 	switch kind {
 	case Float16:
@@ -182,6 +188,7 @@ func (*MMX) Equal(u Type) bool {
 	return ok
 }
 
+// String returns a string representation of the MMX vector type.
 func (*MMX) String() string {
 	return "x86_mmx"
 }
@@ -206,6 +213,7 @@ func (*Label) Equal(u Type) bool {
 	return ok
 }
 
+// String returns a string representation of the label type.
 func (*Label) String() string {
 	return "label"
 }
@@ -230,6 +238,7 @@ func (*Metadata) Equal(u Type) bool {
 	return ok
 }
 
+// String returns a string representation of the metadata type.
 func (*Metadata) String() string {
 	return "metadata"
 }
