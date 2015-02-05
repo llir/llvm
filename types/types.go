@@ -64,3 +64,19 @@ func IsFloats(t Type) bool {
 	}
 	return IsFloat(t)
 }
+
+// SameLength returns true if both types are vectors or arrays of the same
+// length and false otherwise.
+func SameLength(a, b Type) bool {
+	type Lener interface {
+		Len() int
+	}
+	switch a := a.(type) {
+	case Lener:
+		switch b := b.(type) {
+		case Lener:
+			return a.Len() == b.Len()
+		}
+	}
+	return false
+}
