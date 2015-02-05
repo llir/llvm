@@ -1,10 +1,11 @@
-package consts
+package consts_test
 
 import (
 	"log"
 	"strings"
 	"testing"
 
+	"github.com/mewlang/llvm/consts"
 	"github.com/mewlang/llvm/types"
 )
 
@@ -28,65 +29,65 @@ var (
 	// [2 x {i32, i8}]
 	i32i8x2ArrTyp *types.Array
 	// i1 1
-	i1One Constant
+	i1One consts.Constant
 	// i8 3
-	i8Three Constant
+	i8Three consts.Constant
 	// i8 4
-	i8Four Constant
+	i8Four consts.Constant
 	// i32 -13
-	i32MinusThirteen Constant
+	i32MinusThirteen consts.Constant
 	// i32 -4
-	i32MinusFour Constant
+	i32MinusFour consts.Constant
 	// i32 -3
-	i32MinusThree Constant
+	i32MinusThree consts.Constant
 	// i32 1
-	i32One Constant
+	i32One consts.Constant
 	// i32 2
-	i32Two Constant
+	i32Two consts.Constant
 	// i32 3
-	i32Three Constant
+	i32Three consts.Constant
 	// i32 4
-	i32Four Constant
+	i32Four consts.Constant
 	// i32 15
-	i32Fifteen Constant
+	i32Fifteen consts.Constant
 	// i32 42
-	i32FortyTwo Constant
+	i32FortyTwo consts.Constant
 	// float -3.0
-	f32MinusThree Constant
+	f32MinusThree consts.Constant
 	// float -4.0
-	f32MinusFour Constant
+	f32MinusFour consts.Constant
 	// float 1.0
-	f32One Constant
+	f32One consts.Constant
 	// float 2.0
-	f32Two Constant
+	f32Two consts.Constant
 	// float 3.0
-	f32Three Constant
+	f32Three consts.Constant
 	// float 4.0
-	f32Four Constant
+	f32Four consts.Constant
 	// double 4.0
-	f64Four Constant
+	f64Four consts.Constant
 	// <3 x i32> <i32 1, i32 2, i32 3>
-	i32x3OneTwoThree Constant
+	i32x3OneTwoThree consts.Constant
 	// <2 x i32> <i32 3, i32 42>
-	i32x2VecThreeFortyTwo Constant
+	i32x2VecThreeFortyTwo consts.Constant
 	// <2 x i32> <i32 -3, i32 15>
-	i32x2VecMinusThreeFifteen Constant
+	i32x2VecMinusThreeFifteen consts.Constant
 	// <2 x float> <float 3.0, float 4.0>
-	f32x2VecThreeFour Constant
+	f32x2VecThreeFour consts.Constant
 	// <2 x float> <float -3.0, float 4.0>
-	f32x2VecMinusThreeFour Constant
+	f32x2VecMinusThreeFour consts.Constant
 	// <3 x float> <float 3.0, float 2.0, float 1.0>
-	f32x3VecThreeFourFifteen Constant
+	f32x3VecThreeFourFifteen consts.Constant
 	// {i32, i8} {i32 4, i8 3}
-	i32i8FourThree Constant
+	i32i8FourThree consts.Constant
 	// {i32, i8} {i32 3, i8 4}
-	i32i8ThreeFour Constant
+	i32i8ThreeFour consts.Constant
 	// TODO: Uncomment when fp128 and ppc_fp128 are supported.
 	/*
 		// fp128 3.0
-		f128Three Constant
+		f128Three consts.Constant
 		// ppc_fp128 4.0
-		f128_ppcFour Constant
+		f128_ppcFour consts.Constant
 	*/
 )
 
@@ -179,150 +180,150 @@ func init() {
 	}
 
 	// i1 1
-	i1One, err = NewInt(i1Typ, "1")
+	i1One, err = consts.NewInt(i1Typ, "1")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i8 3
-	i8Three, err = NewInt(i8Typ, "3")
+	i8Three, err = consts.NewInt(i8Typ, "3")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i8 4
-	i8Four, err = NewInt(i8Typ, "4")
+	i8Four, err = consts.NewInt(i8Typ, "4")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 -13
-	i32MinusThirteen, err = NewInt(i32Typ, "-13")
+	i32MinusThirteen, err = consts.NewInt(i32Typ, "-13")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 -4
-	i32MinusFour, err = NewInt(i32Typ, "-4")
+	i32MinusFour, err = consts.NewInt(i32Typ, "-4")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 -3
-	i32MinusThree, err = NewInt(i32Typ, "-3")
+	i32MinusThree, err = consts.NewInt(i32Typ, "-3")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 1
-	i32One, err = NewInt(i32Typ, "1")
+	i32One, err = consts.NewInt(i32Typ, "1")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 2
-	i32Two, err = NewInt(i32Typ, "2")
+	i32Two, err = consts.NewInt(i32Typ, "2")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 3
-	i32Three, err = NewInt(i32Typ, "3")
+	i32Three, err = consts.NewInt(i32Typ, "3")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 4
-	i32Four, err = NewInt(i32Typ, "4")
+	i32Four, err = consts.NewInt(i32Typ, "4")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 15
-	i32Fifteen, err = NewInt(i32Typ, "15")
+	i32Fifteen, err = consts.NewInt(i32Typ, "15")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 42
-	i32FortyTwo, err = NewInt(i32Typ, "42")
+	i32FortyTwo, err = consts.NewInt(i32Typ, "42")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// float -3.0
-	f32MinusThree, err = NewFloat(f32Typ, "-3.0")
+	f32MinusThree, err = consts.NewFloat(f32Typ, "-3.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// float -4.0
-	f32MinusFour, err = NewFloat(f32Typ, "-4.0")
+	f32MinusFour, err = consts.NewFloat(f32Typ, "-4.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// float 1.0
-	f32One, err = NewFloat(f32Typ, "1.0")
+	f32One, err = consts.NewFloat(f32Typ, "1.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// float 2.0
-	f32Two, err = NewFloat(f32Typ, "2.0")
+	f32Two, err = consts.NewFloat(f32Typ, "2.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// float 3.0
-	f32Three, err = NewFloat(f32Typ, "3.0")
+	f32Three, err = consts.NewFloat(f32Typ, "3.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// float 4.0
-	f32Four, err = NewFloat(f32Typ, "4.0")
+	f32Four, err = consts.NewFloat(f32Typ, "4.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// double 4.0
-	f64Four, err = NewFloat(f64Typ, "4.0")
+	f64Four, err = consts.NewFloat(f64Typ, "4.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// TODO: Uncomment when fp128 and ppc_fp128 are supported.
 	/*
 		// fp128 3.0
-		f128Three, err = NewFloat(f128Typ, "3.0")
+		f128Three, err = consts.NewFloat(f128Typ, "3.0")
 		if err != nil {
 			log.Fatalln(err)
 		}
 		// ppc_fp128 4.0
-		f128_ppcFour, err = NewFloat(f128_ppcTyp, "4.0")
+		f128_ppcFour, err = consts.NewFloat(f128_ppcTyp, "4.0")
 		if err != nil {
 			log.Fatalln(err)
 		}
 	*/
 	// <3 x i32> <i32 1, i32 2, i32 3>
-	i32x3OneTwoThree, err = NewVector(i32x3VecTyp, []Constant{i32One, i32Two, i32Three})
+	i32x3OneTwoThree, err = consts.NewVector(i32x3VecTyp, []consts.Constant{i32One, i32Two, i32Three})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x i32> <i32 3, i32 42>
-	i32x2VecThreeFortyTwo, err = NewVector(i32x2VecTyp, []Constant{i32Three, i32FortyTwo})
+	i32x2VecThreeFortyTwo, err = consts.NewVector(i32x2VecTyp, []consts.Constant{i32Three, i32FortyTwo})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x i32> <i32 -3, i32 15>
-	i32x2VecMinusThreeFifteen, err = NewVector(i32x2VecTyp, []Constant{i32MinusThree, i32Fifteen})
+	i32x2VecMinusThreeFifteen, err = consts.NewVector(i32x2VecTyp, []consts.Constant{i32MinusThree, i32Fifteen})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x float> <float 3.0, float 4.0>
-	f32x2VecThreeFour, err = NewVector(f32x2VecTyp, []Constant{f32Three, f32Four})
+	f32x2VecThreeFour, err = consts.NewVector(f32x2VecTyp, []consts.Constant{f32Three, f32Four})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x float> <float -3.0, float 4.0>
-	f32x2VecMinusThreeFour, err = NewVector(f32x2VecTyp, []Constant{f32MinusThree, f32Four})
+	f32x2VecMinusThreeFour, err = consts.NewVector(f32x2VecTyp, []consts.Constant{f32MinusThree, f32Four})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <3 x float> <float 3.0, float 2.0, float 1.0>
-	f32x3VecThreeFourFifteen, err = NewVector(f32x3VecTyp, []Constant{f32Three, f32Two, f32One})
+	f32x3VecThreeFourFifteen, err = consts.NewVector(f32x3VecTyp, []consts.Constant{f32Three, f32Two, f32One})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// {i32, i8} {i32 4, i8 3}
-	i32i8FourThree, err = NewStruct(i32i8StructTyp, []Constant{i32Four, i8Three})
+	i32i8FourThree, err = consts.NewStruct(i32i8StructTyp, []consts.Constant{i32Four, i8Three})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// {i32, i8} {i32 3, i8 4}
-	i32i8ThreeFour, err = NewStruct(i32i8StructTyp, []Constant{i32Three, i8Four})
+	i32i8ThreeFour, err = consts.NewStruct(i32i8StructTyp, []consts.Constant{i32Three, i8Four})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -393,7 +394,7 @@ func TestIntString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewInt(g.typ, g.input)
+		v, err := consts.NewInt(g.typ, g.input)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -454,7 +455,7 @@ func TestFloatString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewFloat(g.typ, g.input)
+		v, err := consts.NewFloat(g.typ, g.input)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -471,14 +472,14 @@ func TestFloatString(t *testing.T) {
 
 func TestVectorString(t *testing.T) {
 	golden := []struct {
-		elems []Constant
+		elems []consts.Constant
 		typ   types.Type
 		want  string
 		err   string
 	}{
 		// i=0
 		{
-			elems: []Constant{i32FortyTwo, i32MinusThirteen}, typ: i32x2VecTyp,
+			elems: []consts.Constant{i32FortyTwo, i32MinusThirteen}, typ: i32x2VecTyp,
 			want: "<2 x i32> <i32 42, i32 -13>",
 		},
 		// i=1
@@ -488,18 +489,18 @@ func TestVectorString(t *testing.T) {
 		},
 		// i=2
 		{
-			elems: []Constant{f32Three, f32Four}, typ: f32x2VecTyp,
+			elems: []consts.Constant{f32Three, f32Four}, typ: f32x2VecTyp,
 			want: "<2 x float> <float 3.0, float 4.0>",
 		},
 		// i=3
 		{
-			elems: []Constant{f32Three, i32Four}, typ: f32x2VecTyp,
+			elems: []consts.Constant{f32Three, i32Four}, typ: f32x2VecTyp,
 			want: "", err: `invalid vector element type; expected "float", got "i32"`,
 		},
 	}
 
 	for i, g := range golden {
-		v, err := NewVector(g.typ, g.elems)
+		v, err := consts.NewVector(g.typ, g.elems)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -516,14 +517,14 @@ func TestVectorString(t *testing.T) {
 
 func TestArrayString(t *testing.T) {
 	golden := []struct {
-		elems []Constant
+		elems []consts.Constant
 		typ   types.Type
 		want  string
 		err   string
 	}{
 		// i=0
 		{
-			elems: []Constant{i32MinusThirteen, i32FortyTwo}, typ: i32x2ArrTyp,
+			elems: []consts.Constant{i32MinusThirteen, i32FortyTwo}, typ: i32x2ArrTyp,
 			want: "[2 x i32] [i32 -13, i32 42]",
 		},
 		// i=1
@@ -533,18 +534,18 @@ func TestArrayString(t *testing.T) {
 		},
 		// i=2
 		{
-			elems: []Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrTyp,
+			elems: []consts.Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrTyp,
 			want: "[2 x {i32, i8}] [{i32, i8} {i32 4, i8 3}, {i32, i8} {i32 3, i8 4}]",
 		},
 		// i=3
 		{
-			elems: []Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrTyp,
+			elems: []consts.Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrTyp,
 			want: "", err: `invalid array element type; expected "{i32, i8}", got "i32"`,
 		},
 	}
 
 	for i, g := range golden {
-		v, err := NewArray(g.typ, g.elems)
+		v, err := consts.NewArray(g.typ, g.elems)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -561,14 +562,14 @@ func TestArrayString(t *testing.T) {
 
 func TestStructString(t *testing.T) {
 	golden := []struct {
-		fields []Constant
+		fields []consts.Constant
 		typ    types.Type
 		want   string
 		err    string
 	}{
 		// i=0
 		{
-			fields: []Constant{i32MinusThirteen, i8Three}, typ: i32i8StructTyp,
+			fields: []consts.Constant{i32MinusThirteen, i8Three}, typ: i32i8StructTyp,
 			want: "{i32, i8} {i32 -13, i8 3}",
 		},
 		// i=1
@@ -578,18 +579,18 @@ func TestStructString(t *testing.T) {
 		},
 		// i=2
 		{
-			fields: []Constant{i32Three, i32Fifteen, i8Three}, typ: i32i8StructTyp,
+			fields: []consts.Constant{i32Three, i32Fifteen, i8Three}, typ: i32i8StructTyp,
 			want: "", err: "incorrect number of fields in structure constant; expected 2, got 3",
 		},
 		// i=2
 		{
-			fields: []Constant{i32Four, i32Three}, typ: i32i8StructTyp,
+			fields: []consts.Constant{i32Four, i32Three}, typ: i32i8StructTyp,
 			want: "", err: `invalid structure field (1) type; expected "i8", got "i32"`,
 		},
 	}
 
 	for i, g := range golden {
-		v, err := NewStruct(g.typ, g.fields)
+		v, err := consts.NewStruct(g.typ, g.fields)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -606,7 +607,7 @@ func TestStructString(t *testing.T) {
 
 func TestIntTruncString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -634,7 +635,7 @@ func TestIntTruncString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewIntTrunc(g.orig, g.to)
+		v, err := consts.NewIntTrunc(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -651,7 +652,7 @@ func TestIntTruncString(t *testing.T) {
 
 func TestIntZeroExtString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -679,7 +680,7 @@ func TestIntZeroExtString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewIntZeroExt(g.orig, g.to)
+		v, err := consts.NewIntZeroExt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -696,7 +697,7 @@ func TestIntZeroExtString(t *testing.T) {
 
 func TestIntSignExtString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -724,7 +725,7 @@ func TestIntSignExtString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewIntSignExt(g.orig, g.to)
+		v, err := consts.NewIntSignExt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -741,7 +742,7 @@ func TestIntSignExtString(t *testing.T) {
 
 func TestFloatTruncString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -782,7 +783,7 @@ func TestFloatTruncString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewFloatTrunc(g.orig, g.to)
+		v, err := consts.NewFloatTrunc(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -799,7 +800,7 @@ func TestFloatTruncString(t *testing.T) {
 
 func TestFloatExtString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -840,7 +841,7 @@ func TestFloatExtString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewFloatExt(g.orig, g.to)
+		v, err := consts.NewFloatExt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -857,7 +858,7 @@ func TestFloatExtString(t *testing.T) {
 
 func TestFloatToUintString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -900,7 +901,7 @@ func TestFloatToUintString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewFloatToUint(g.orig, g.to)
+		v, err := consts.NewFloatToUint(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -917,7 +918,7 @@ func TestFloatToUintString(t *testing.T) {
 
 func TestFloatToIntString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -960,7 +961,7 @@ func TestFloatToIntString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewFloatToInt(g.orig, g.to)
+		v, err := consts.NewFloatToInt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -977,7 +978,7 @@ func TestFloatToIntString(t *testing.T) {
 
 func TestUintToFloatString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -1020,7 +1021,7 @@ func TestUintToFloatString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewUintToFloat(g.orig, g.to)
+		v, err := consts.NewUintToFloat(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -1037,7 +1038,7 @@ func TestUintToFloatString(t *testing.T) {
 
 func TestIntToFloatString(t *testing.T) {
 	golden := []struct {
-		orig Constant
+		orig consts.Constant
 		to   types.Type
 		want string
 		err  string
@@ -1080,7 +1081,7 @@ func TestIntToFloatString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := NewIntToFloat(g.orig, g.to)
+		v, err := consts.NewIntToFloat(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
