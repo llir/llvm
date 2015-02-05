@@ -46,6 +46,7 @@ var (
 	// Vector types.
 	i8x1VecTyp       *types.Vector // <1 x i8>
 	i32x2VecTyp      *types.Vector // <2 x i32>
+	i32x3VecTyp      *types.Vector // <3 x i32>
 	f16x3VecTyp      *types.Vector // <3 x half>
 	f32x4VecTyp      *types.Vector // <4 x float>
 	f64x5VecTyp      *types.Vector // <5 x double>
@@ -58,6 +59,7 @@ var (
 	// Array types.
 	i8x1ArrTyp       *types.Array // [1 x i8]
 	i32x2ArrTyp      *types.Array // [2 x i32]
+	i32x3ArrTyp      *types.Array // [3 x i32]
 	f16x3ArrTyp      *types.Array // [3 x half]
 	f32x4ArrTyp      *types.Array // [4 x float]
 	f64x5ArrTyp      *types.Array // [5 x double]
@@ -175,6 +177,11 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// <3 x i32>
+	i32x3VecTyp, err = types.NewVector(i32Typ, 3)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// <3 x half>
 	f16x3VecTyp, err = types.NewVector(f16Typ, 3)
 	if err != nil {
@@ -224,6 +231,11 @@ func init() {
 	}
 	// [2 x i32]
 	i32x2ArrTyp, err = types.NewArray(i32Typ, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// [3 x i32]
+	i32x3ArrTyp, err = types.NewArray(i32Typ, 3)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -801,9 +813,9 @@ func TestSameLength(t *testing.T) {
 		a, b types.Type
 		want bool
 	}{
-		{want: false, a: i32x2VecTyp, b: i8x1VecTyp},
+		{want: false, a: i32x2VecTyp, b: i32x3VecTyp},
 		{want: true, a: i32x2VecTyp, b: i32x2VecTyp},
-		{want: false, a: i32x2ArrTyp, b: i8x1ArrTyp},
+		{want: false, a: i32x2ArrTyp, b: i32x3ArrTyp},
 		{want: true, a: i32x2ArrTyp, b: i32x2ArrTyp},
 	}
 
