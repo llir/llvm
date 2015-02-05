@@ -37,7 +37,12 @@ var (
 	metadataTyp *types.Metadata // metadata
 
 	// Function types.
-	funcTyp *types.Func // i32 (i32)
+	voidFuncTyp            *types.Func // void ()
+	i32FuncTyp             *types.Func // i32 ()
+	voidFunci32Typ         *types.Func // void (i32)
+	voidFuncf32Typ         *types.Func // void (float)
+	voidFunci32EllipsisTyp *types.Func // void (i32, ...)
+	funcTyp                *types.Func // i32 (i32)
 
 	// Pointer types.
 	i8PtrTyp   *types.Pointer // i8*
@@ -71,8 +76,11 @@ var (
 	i8Ptrx9ArrTyp    *types.Array // [9 x i8*]
 	f16Ptrx10ArrTyp  *types.Array // [10 x half*]
 
-	// Struct types.
-	structTyp *types.Struct // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
+	// Structure types.
+	i32i8structTyp   *types.Struct // {i32, i8}
+	i32i32structTyp  *types.Struct // {i32, i32}
+	i32i8i8structTyp *types.Struct // {i32, i8, i8}
+	structTyp        *types.Struct // {i1, float, x86_mmx, i32 (i32)*, [1 x i8], <3 x half>}
 )
 
 func init() {
@@ -145,6 +153,31 @@ func init() {
 	metadataTyp = types.NewMetadata()
 
 	// Function types.
+	// void ()
+	voidFuncTyp, err = types.NewFunc(voidTyp, nil, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// i32 ()
+	i32FuncTyp, err = types.NewFunc(i32Typ, nil, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// void (i32)
+	voidFunci32Typ, err = types.NewFunc(voidTyp, []types.Type{i32Typ}, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// void (float)
+	voidFuncf32Typ, err = types.NewFunc(voidTyp, []types.Type{f32Typ}, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// void (i32, ...)
+	voidFunci32EllipsisTyp, err = types.NewFunc(voidTyp, []types.Type{i32Typ}, true)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// i32 (i32)
 	funcTyp, err = types.NewFunc(i32Typ, []types.Type{i32Typ}, false)
 	if err != nil {
@@ -288,8 +321,26 @@ func init() {
 	}
 
 	// Structure types.
+	// {i32, i8}
+	fields := []types.Type{i32Typ, i8Typ}
+	i32i8structTyp, err = types.NewStruct(fields, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// {i32, i32}
+	fields = []types.Type{i32Typ, i32Typ}
+	i32i32structTyp, err = types.NewStruct(fields, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// {i32, i8, i8}
+	fields = []types.Type{i32Typ, i8Typ, i8Typ}
+	i32i8i8structTyp, err = types.NewStruct(fields, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// {i1, float, x86_mmx, i32 (i32)*, <1 x i8>, [3 x half]}
-	fields := []types.Type{i1Typ, f32Typ, mmxTyp, funcPtrTyp, i8x1VecTyp, f16x3ArrTyp}
+	fields = []types.Type{i1Typ, f32Typ, mmxTyp, funcPtrTyp, i8x1VecTyp, f16x3ArrTyp}
 	structTyp, err = types.NewStruct(fields, false)
 	if err != nil {
 		log.Fatalln(err)
@@ -816,7 +867,7 @@ func TestStructString(t *testing.T) {
 	}
 }
 
-func TestIsEqual(t *testing.T) {
+func TestEqual(t *testing.T) {
 	golden := []struct {
 		want bool
 		a, b types.Type
@@ -834,6 +885,11 @@ func TestIsEqual(t *testing.T) {
 		{want: true, a: mmxTyp, b: mmxTyp},
 		{want: true, a: labelTyp, b: labelTyp},
 		{want: true, a: metadataTyp, b: metadataTyp},
+		{want: true, a: voidFuncTyp, b: voidFuncTyp},
+		{want: true, a: i32FuncTyp, b: i32FuncTyp},
+		{want: true, a: voidFunci32Typ, b: voidFunci32Typ},
+		{want: true, a: voidFuncf32Typ, b: voidFuncf32Typ},
+		{want: true, a: voidFunci32EllipsisTyp, b: voidFunci32EllipsisTyp},
 		{want: true, a: funcTyp, b: funcTyp},
 		{want: true, a: i8PtrTyp, b: i8PtrTyp},
 		{want: true, a: f16PtrTyp, b: f16PtrTyp},
@@ -859,6 +915,9 @@ func TestIsEqual(t *testing.T) {
 		{want: true, a: f128_ppcx8ArrTyp, b: f128_ppcx8ArrTyp},
 		{want: true, a: i8Ptrx9ArrTyp, b: i8Ptrx9ArrTyp},
 		{want: true, a: f16Ptrx10ArrTyp, b: f16Ptrx10ArrTyp},
+		{want: true, a: i32i8structTyp, b: i32i8structTyp},
+		{want: true, a: i32i32structTyp, b: i32i32structTyp},
+		{want: true, a: i32i8i8structTyp, b: i32i8i8structTyp},
 		{want: true, a: structTyp, b: structTyp},
 		{want: false, a: voidTyp, b: structTyp},
 		{want: false, a: i1Typ, b: voidTyp},
@@ -873,6 +932,10 @@ func TestIsEqual(t *testing.T) {
 		{want: false, a: mmxTyp, b: f128_ppcTyp},
 		{want: false, a: labelTyp, b: mmxTyp},
 		{want: false, a: metadataTyp, b: labelTyp},
+		{want: false, a: voidFuncTyp, b: i32FuncTyp},
+		{want: false, a: voidFuncTyp, b: voidFunci32Typ},
+		{want: false, a: voidFunci32Typ, b: voidFuncf32Typ},
+		{want: false, a: voidFunci32Typ, b: voidFunci32EllipsisTyp},
 		{want: false, a: funcTyp, b: metadataTyp},
 		{want: false, a: i8PtrTyp, b: funcTyp},
 		{want: false, a: f16PtrTyp, b: i8PtrTyp},
@@ -898,6 +961,8 @@ func TestIsEqual(t *testing.T) {
 		{want: false, a: f128_ppcx8ArrTyp, b: f80_x86x7ArrTyp},
 		{want: false, a: i8Ptrx9ArrTyp, b: f128_ppcx8ArrTyp},
 		{want: false, a: f16Ptrx10ArrTyp, b: i8Ptrx9ArrTyp},
+		{want: false, a: i32i8structTyp, b: i32i8i8structTyp},
+		{want: false, a: i32i8structTyp, b: i32i32structTyp},
 		{want: false, a: structTyp, b: f16Ptrx10ArrTyp},
 	}
 
