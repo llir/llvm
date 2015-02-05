@@ -413,12 +413,10 @@ func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
 		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; expected integer (or integer vector) target type, got %q", to)
 	}
 
-	// Verify that both are either basic types or vectors.
-	if types.IsFloat(orig.Type()) != types.IsInt(to) {
+	// Verify that both are either basic types or vectors of the same length.
+	if !types.SameLength(orig.Type(), to) {
 		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
-
-	// TODO: Verify length (do the same for all vector expressions).
 
 	return &FloatToUint{orig: orig, to: to}, nil
 }
@@ -486,8 +484,8 @@ func NewFloatToInt(orig Constant, to types.Type) (*FloatToInt, error) {
 		return nil, fmt.Errorf("invalid floating point to signed integer conversion; expected integer (or integer vector) target type, got %q", to)
 	}
 
-	// Verify that both are either basic types or vectors.
-	if types.IsFloat(orig.Type()) != types.IsInt(to) {
+	// Verify that both are either basic types or vectors of the same length.
+	if !types.SameLength(orig.Type(), to) {
 		return nil, fmt.Errorf("invalid floating point to signed integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
@@ -557,8 +555,8 @@ func NewUintToFloat(orig Constant, to types.Type) (*UintToFloat, error) {
 		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
 	}
 
-	// Verify that both are either basic types or vectors.
-	if types.IsInt(orig.Type()) != types.IsFloat(to) {
+	// Verify that both are either basic types or vectors of the same length.
+	if !types.SameLength(orig.Type(), to) {
 		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
@@ -628,8 +626,8 @@ func NewIntToFloat(orig Constant, to types.Type) (*IntToFloat, error) {
 		return nil, fmt.Errorf("invalid signed integer to floating point conversion; expected floating point (or floating point vector) target type, got %q", to)
 	}
 
-	// Verify that both are either basic types or vectors.
-	if types.IsInt(orig.Type()) != types.IsFloat(to) {
+	// Verify that both are either basic types or vectors of the same length.
+	if !types.SameLength(orig.Type(), to) {
 		return nil, fmt.Errorf("invalid signed integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 

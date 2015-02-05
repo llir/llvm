@@ -33,6 +33,9 @@ func NewVector(typ types.Type, elems []Constant) (*Vector, error) {
 	}
 
 	// Verify vector element types.
+	if len(elems) != v.typ.Len() {
+		return nil, fmt.Errorf("incorrect number of elements in vector constant; expected %d, got %d", v.typ.Len(), len(elems))
+	}
 	for _, elem := range elems {
 		got, want := elem.Type(), v.typ.Elem()
 		if !got.Equal(want) {
@@ -108,6 +111,9 @@ func NewArray(typ types.Type, elems []Constant) (*Array, error) {
 	}
 
 	// Verify array element types.
+	if len(elems) != v.typ.Len() {
+		return nil, fmt.Errorf("incorrect number of elements in array constant; expected %d, got %d", v.typ.Len(), len(elems))
+	}
 	for _, elem := range elems {
 		got, want := elem.Type(), v.typ.Elem()
 		if !got.Equal(want) {

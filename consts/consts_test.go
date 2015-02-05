@@ -14,15 +14,19 @@ var (
 	// float, double, f128, ppc_f128
 	f32Typ, f64Typ, f128Typ, f128_ppcTyp *types.Float
 	// <2 x i32>
-	i32x2VectorTyp *types.Vector
+	i32x2VecTyp *types.Vector
+	// <3 x i32>
+	i32x3VecTyp *types.Vector
 	// <2 x float>
-	f32x2VectorTyp *types.Vector
+	f32x2VecTyp *types.Vector
+	// <3 x float>
+	f32x3VecTyp *types.Vector
 	// [2 x i32]
-	i32x2ArrayTyp *types.Array
+	i32x2ArrTyp *types.Array
 	// {i32, i8}
 	i32i8StructTyp *types.Struct
 	// [2 x {i32, i8}]
-	i32i8x2ArrayTyp *types.Array
+	i32i8x2ArrTyp *types.Array
 	// i1 1
 	i1One Constant
 	// i8 3
@@ -35,6 +39,10 @@ var (
 	i32MinusFour Constant
 	// i32 -3
 	i32MinusThree Constant
+	// i32 1
+	i32One Constant
+	// i32 2
+	i32Two Constant
 	// i32 3
 	i32Three Constant
 	// i32 4
@@ -47,20 +55,28 @@ var (
 	f32MinusThree Constant
 	// float -4.0
 	f32MinusFour Constant
+	// float 1.0
+	f32One Constant
+	// float 2.0
+	f32Two Constant
 	// float 3.0
 	f32Three Constant
 	// float 4.0
 	f32Four Constant
 	// double 4.0
 	f64Four Constant
-	// <2 x float> <float 3.0, float 4.0>
-	f32x2VectorThreeFour Constant
-	// <2 x float> <float -3.0, float 4.0>
-	f32x2VectorMinusThreeFour Constant
+	// <3 x i32> <i32 1, i32 2, i32 3>
+	i32x3OneTwoThree Constant
 	// <2 x i32> <i32 3, i32 42>
-	i32x2VectorThreeFortyTwo Constant
+	i32x2VecThreeFortyTwo Constant
 	// <2 x i32> <i32 -3, i32 15>
-	i32x2VectorMinusThreeFifteen Constant
+	i32x2VecMinusThreeFifteen Constant
+	// <2 x float> <float 3.0, float 4.0>
+	f32x2VecThreeFour Constant
+	// <2 x float> <float -3.0, float 4.0>
+	f32x2VecMinusThreeFour Constant
+	// <3 x float> <float 3.0, float 2.0, float 1.0>
+	f32x3VecThreeFourFifteen Constant
 	// {i32, i8} {i32 4, i8 3}
 	i32i8FourThree Constant
 	// {i32, i8} {i32 3, i8 4}
@@ -127,17 +143,27 @@ func init() {
 		log.Fatalln(err)
 	}
 	// <2 x i32>
-	i32x2VectorTyp, err = types.NewVector(i32Typ, 2)
+	i32x2VecTyp, err = types.NewVector(i32Typ, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// <3 x i32>
+	i32x3VecTyp, err = types.NewVector(i32Typ, 3)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x float>
-	f32x2VectorTyp, err = types.NewVector(f32Typ, 2)
+	f32x2VecTyp, err = types.NewVector(f32Typ, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// <3 x float>
+	f32x3VecTyp, err = types.NewVector(f32Typ, 3)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// [2 x i32]
-	i32x2ArrayTyp, err = types.NewArray(i32Typ, 2)
+	i32x2ArrTyp, err = types.NewArray(i32Typ, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -147,7 +173,7 @@ func init() {
 		log.Fatalln(err)
 	}
 	// [2 x {i32, i8}]
-	i32i8x2ArrayTyp, err = types.NewArray(i32i8StructTyp, 2)
+	i32i8x2ArrTyp, err = types.NewArray(i32i8StructTyp, 2)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -182,6 +208,16 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	// i32 1
+	i32One, err = NewInt(i32Typ, "1")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// i32 2
+	i32Two, err = NewInt(i32Typ, "2")
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// i32 3
 	i32Three, err = NewInt(i32Typ, "3")
 	if err != nil {
@@ -209,6 +245,16 @@ func init() {
 	}
 	// float -4.0
 	f32MinusFour, err = NewFloat(f32Typ, "-4.0")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// float 1.0
+	f32One, err = NewFloat(f32Typ, "1.0")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// float 2.0
+	f32Two, err = NewFloat(f32Typ, "2.0")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -240,23 +286,33 @@ func init() {
 			log.Fatalln(err)
 		}
 	*/
-	// <2 x float> <float 3.0, float 4.0>
-	f32x2VectorThreeFour, err = NewVector(f32x2VectorTyp, []Constant{f32Three, f32Four})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// <2 x float> <float -3.0, float 4.0>
-	f32x2VectorMinusThreeFour, err = NewVector(f32x2VectorTyp, []Constant{f32MinusThree, f32Four})
+	// <3 x i32> <i32 1, i32 2, i32 3>
+	i32x3OneTwoThree, err = NewVector(i32x3VecTyp, []Constant{i32One, i32Two, i32Three})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x i32> <i32 3, i32 42>
-	i32x2VectorThreeFortyTwo, err = NewVector(i32x2VectorTyp, []Constant{i32Three, i32FortyTwo})
+	i32x2VecThreeFortyTwo, err = NewVector(i32x2VecTyp, []Constant{i32Three, i32FortyTwo})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// <2 x i32> <i32 -3, i32 15>
-	i32x2VectorMinusThreeFifteen, err = NewVector(i32x2VectorTyp, []Constant{i32MinusThree, i32Fifteen})
+	i32x2VecMinusThreeFifteen, err = NewVector(i32x2VecTyp, []Constant{i32MinusThree, i32Fifteen})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// <2 x float> <float 3.0, float 4.0>
+	f32x2VecThreeFour, err = NewVector(f32x2VecTyp, []Constant{f32Three, f32Four})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// <2 x float> <float -3.0, float 4.0>
+	f32x2VecMinusThreeFour, err = NewVector(f32x2VecTyp, []Constant{f32MinusThree, f32Four})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// <3 x float> <float 3.0, float 2.0, float 1.0>
+	f32x3VecThreeFourFifteen, err = NewVector(f32x3VecTyp, []Constant{f32Three, f32Two, f32One})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -422,7 +478,7 @@ func TestVectorString(t *testing.T) {
 	}{
 		// i=0
 		{
-			elems: []Constant{i32FortyTwo, i32MinusThirteen}, typ: i32x2VectorTyp,
+			elems: []Constant{i32FortyTwo, i32MinusThirteen}, typ: i32x2VecTyp,
 			want: "<2 x i32> <i32 42, i32 -13>",
 		},
 		// i=1
@@ -432,12 +488,12 @@ func TestVectorString(t *testing.T) {
 		},
 		// i=2
 		{
-			elems: []Constant{f32Three, f32Four}, typ: f32x2VectorTyp,
+			elems: []Constant{f32Three, f32Four}, typ: f32x2VecTyp,
 			want: "<2 x float> <float 3.0, float 4.0>",
 		},
 		// i=3
 		{
-			elems: []Constant{f32Three, i32Four}, typ: f32x2VectorTyp,
+			elems: []Constant{f32Three, i32Four}, typ: f32x2VecTyp,
 			want: "", err: `invalid vector element type; expected "float", got "i32"`,
 		},
 	}
@@ -467,22 +523,22 @@ func TestArrayString(t *testing.T) {
 	}{
 		// i=0
 		{
-			elems: []Constant{i32MinusThirteen, i32FortyTwo}, typ: i32x2ArrayTyp,
+			elems: []Constant{i32MinusThirteen, i32FortyTwo}, typ: i32x2ArrTyp,
 			want: "[2 x i32] [i32 -13, i32 42]",
 		},
 		// i=1
 		{
-			elems: nil, typ: i32x2VectorTyp,
+			elems: nil, typ: i32x2VecTyp,
 			want: "", err: `invalid type "<2 x i32>" for array constant`,
 		},
 		// i=2
 		{
-			elems: []Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrayTyp,
+			elems: []Constant{i32i8FourThree, i32i8ThreeFour}, typ: i32i8x2ArrTyp,
 			want: "[2 x {i32, i8}] [{i32, i8} {i32 4, i8 3}, {i32, i8} {i32 3, i8 4}]",
 		},
 		// i=3
 		{
-			elems: []Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrayTyp,
+			elems: []Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrTyp,
 			want: "", err: `invalid array element type; expected "{i32, i8}", got "i32"`,
 		},
 	}
@@ -517,7 +573,7 @@ func TestStructString(t *testing.T) {
 		},
 		// i=1
 		{
-			fields: nil, typ: i32x2VectorTyp,
+			fields: nil, typ: i32x2VecTyp,
 			want: "", err: `invalid type "<2 x i32>" for structure constant`,
 		},
 		// i=2
@@ -612,7 +668,7 @@ func TestIntZeroExtString(t *testing.T) {
 		},
 		// i=2
 		{
-			orig: i32Four, to: i32x2VectorTyp,
+			orig: i32Four, to: i32x2VecTyp,
 			want: "", err: `invalid integer zero extension; expected integer target type, got "<2 x i32>"`,
 		},
 		// i=3
@@ -657,7 +713,7 @@ func TestIntSignExtString(t *testing.T) {
 		},
 		// i=2
 		{
-			orig: i32Four, to: i32i8x2ArrayTyp,
+			orig: i32Four, to: i32i8x2ArrTyp,
 			want: "", err: `invalid integer sign extension; expected integer target type, got "[2 x {i32, i8}]"`,
 		},
 		// i=3
@@ -813,28 +869,33 @@ func TestFloatToUintString(t *testing.T) {
 		},
 		// i=1
 		{
-			orig: f32x2VectorThreeFour, to: i32x2VectorTyp,
+			orig: f32x2VecThreeFour, to: i32x2VecTyp,
 			want: "<2 x i32> fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)",
 		},
 		// i=2
 		{
-			orig: i32x2VectorMinusThreeFifteen, to: i32x2VectorTyp,
+			orig: i32x2VecMinusThreeFifteen, to: i32x2VecTyp,
 			want: "", err: `invalid floating point to unsigned integer conversion; expected floating point constant (or constant vector) for orig, got "<2 x i32>"`,
 		},
 		// i=3
 		{
-			orig: f32x2VectorThreeFour, to: f32x2VectorTyp,
+			orig: f32x2VecThreeFour, to: f32x2VecTyp,
 			want: "", err: `invalid floating point to unsigned integer conversion; expected integer (or integer vector) target type, got "<2 x float>"`,
 		},
 		// i=4
 		{
-			orig: f32x2VectorThreeFour, to: i32Typ,
+			orig: f32x2VecThreeFour, to: i32Typ,
 			want: "", err: `invalid floating point to unsigned integer conversion; cannot convert from "<2 x float>" to "i32"`,
 		},
 		// i=5
 		{
-			orig: f64Four, to: i32x2VectorTyp,
+			orig: f64Four, to: i32x2VecTyp,
 			want: "", err: `invalid floating point to unsigned integer conversion; cannot convert from "double" to "<2 x i32>"`,
+		},
+		// i=6
+		{
+			orig: f32x2VecThreeFour, to: i32x3VecTyp,
+			want: "", err: `invalid floating point to unsigned integer conversion; cannot convert from "<2 x float>" to "<3 x i32>"`,
 		},
 	}
 
@@ -868,7 +929,7 @@ func TestFloatToIntString(t *testing.T) {
 		},
 		// i=1
 		{
-			orig: f32x2VectorMinusThreeFour, to: i32x2VectorTyp,
+			orig: f32x2VecMinusThreeFour, to: i32x2VecTyp,
 			want: "<2 x i32> fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)",
 		},
 		// i=2
@@ -883,13 +944,18 @@ func TestFloatToIntString(t *testing.T) {
 		},
 		// i=4
 		{
-			orig: f32x2VectorThreeFour, to: i64Typ,
+			orig: f32x2VecThreeFour, to: i64Typ,
 			want: "", err: `invalid floating point to signed integer conversion; cannot convert from "<2 x float>" to "i64"`,
 		},
 		// i=5
 		{
-			orig: f32Three, to: i32x2VectorTyp,
+			orig: f32Three, to: i32x2VecTyp,
 			want: "", err: `invalid floating point to signed integer conversion; cannot convert from "float" to "<2 x i32>"`,
+		},
+		// i=6
+		{
+			orig: f32x3VecThreeFourFifteen, to: i32x2VecTyp,
+			want: "", err: `invalid floating point to signed integer conversion; cannot convert from "<3 x float>" to "<2 x i32>"`,
 		},
 	}
 
@@ -923,7 +989,7 @@ func TestUintToFloatString(t *testing.T) {
 		},
 		// i=1
 		{
-			orig: i32x2VectorThreeFortyTwo, to: f32x2VectorTyp,
+			orig: i32x2VecThreeFortyTwo, to: f32x2VecTyp,
 			want: "<2 x float> uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)",
 		},
 		// i=2
@@ -933,18 +999,23 @@ func TestUintToFloatString(t *testing.T) {
 		},
 		// i=3
 		{
-			orig: i32x2VectorMinusThreeFifteen, to: i32x2VectorTyp,
+			orig: i32x2VecMinusThreeFifteen, to: i32x2VecTyp,
 			want: "", err: `invalid unsigned integer to floating point conversion; expected floating point (or floating point vector) target type, got "<2 x i32>"`,
 		},
 		// i=4
 		{
-			orig: i32x2VectorThreeFortyTwo, to: f32Typ,
+			orig: i32x2VecThreeFortyTwo, to: f32Typ,
 			want: "", err: `invalid unsigned integer to floating point conversion; cannot convert from "<2 x i32>" to "float"`,
 		},
 		// i=5
 		{
-			orig: i32Fifteen, to: f32x2VectorTyp,
+			orig: i32Fifteen, to: f32x2VecTyp,
 			want: "", err: `invalid unsigned integer to floating point conversion; cannot convert from "i32" to "<2 x float>"`,
+		},
+		// i=6
+		{
+			orig: i32x2VecMinusThreeFifteen, to: f32x3VecTyp,
+			want: "", err: `invalid unsigned integer to floating point conversion; cannot convert from "<2 x i32>" to "<3 x float>"`,
 		},
 	}
 
@@ -978,7 +1049,7 @@ func TestIntToFloatString(t *testing.T) {
 		},
 		// i=1
 		{
-			orig: i32x2VectorMinusThreeFifteen, to: f32x2VectorTyp,
+			orig: i32x2VecMinusThreeFifteen, to: f32x2VecTyp,
 			want: "<2 x float> sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)",
 		},
 		// i=2
@@ -993,13 +1064,18 @@ func TestIntToFloatString(t *testing.T) {
 		},
 		// i=4
 		{
-			orig: i32x2VectorMinusThreeFifteen, to: f32Typ,
+			orig: i32x2VecMinusThreeFifteen, to: f32Typ,
 			want: "", err: `invalid signed integer to floating point conversion; cannot convert from "<2 x i32>" to "float"`,
 		},
 		// i=5
 		{
-			orig: i32Three, to: f32x2VectorTyp,
+			orig: i32Three, to: f32x2VecTyp,
 			want: "", err: `invalid signed integer to floating point conversion; cannot convert from "i32" to "<2 x float>"`,
+		},
+		// i=6
+		{
+			orig: i32x3OneTwoThree, to: f32x2VecTyp,
+			want: "", err: `invalid signed integer to floating point conversion; cannot convert from "<3 x i32>" to "<2 x float>"`,
 		},
 	}
 
