@@ -111,7 +111,7 @@ func (v *Int) String() string {
 // Float represents a floating point constant.
 //
 // Examples:
-//    123.45, 1.2345e+2, 0x[KLMH]?[0-9A-Fa-f]+
+//    123.45, 1.2345e2, 0x[KLMH]?[0-9A-Fa-f]+
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
@@ -174,7 +174,7 @@ func (v *Float) ReplaceAll(new values.Value) error {
 }
 
 // String returns a string representation of the floating point constant using
-// scientific notation (e.g. -2.5e+10) for large exponents and regular floating
+// scientific notation (e.g. -2.5e10) for large exponents and regular floating
 // point representation otherwise (e.g. 3.14). The floating point string
 // representation is preceded by the type of the constant, e.g.
 //

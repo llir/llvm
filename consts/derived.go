@@ -1,3 +1,8 @@
+// TODO: Consider redefining the API of NewVector, NewArray and NewStruct by
+// removing the typ input parameter since the type can be inferred from the
+// elements and fields. Don't take a decision before implementing the parser
+// using the current API to get a good feel for it in practise.
+
 package consts
 
 import (
