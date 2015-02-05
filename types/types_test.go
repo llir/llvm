@@ -598,6 +598,99 @@ func TestStructString(t *testing.T) {
 	}
 }
 
+func TestIsEqual(t *testing.T) {
+	golden := []struct {
+		want bool
+		a, b types.Type
+	}{
+		{want: true, a: voidTyp, b: voidTyp},
+		{want: true, a: i1Typ, b: i1Typ},
+		{want: true, a: i8Typ, b: i8Typ},
+		{want: true, a: i32Typ, b: i32Typ},
+		{want: true, a: f16Typ, b: f16Typ},
+		{want: true, a: f32Typ, b: f32Typ},
+		{want: true, a: f64Typ, b: f64Typ},
+		{want: true, a: f128Typ, b: f128Typ},
+		{want: true, a: f80_x86Typ, b: f80_x86Typ},
+		{want: true, a: f128_ppcTyp, b: f128_ppcTyp},
+		{want: true, a: mmxTyp, b: mmxTyp},
+		{want: true, a: labelTyp, b: labelTyp},
+		{want: true, a: metadataTyp, b: metadataTyp},
+		{want: true, a: funcTyp, b: funcTyp},
+		{want: true, a: i8PtrTyp, b: i8PtrTyp},
+		{want: true, a: f16PtrTyp, b: f16PtrTyp},
+		{want: true, a: mmxPtrTyp, b: mmxPtrTyp},
+		{want: true, a: funcPtrTyp, b: funcPtrTyp},
+		{want: true, a: i8x1VecTyp, b: i8x1VecTyp},
+		{want: true, a: i32x2VecTyp, b: i32x2VecTyp},
+		{want: true, a: f16x3VecTyp, b: f16x3VecTyp},
+		{want: true, a: f32x4VecTyp, b: f32x4VecTyp},
+		{want: true, a: f64x5VecTyp, b: f64x5VecTyp},
+		{want: true, a: f128x6VecTyp, b: f128x6VecTyp},
+		{want: true, a: f80_x86x7VecTyp, b: f80_x86x7VecTyp},
+		{want: true, a: f128_ppcx8VecTyp, b: f128_ppcx8VecTyp},
+		{want: true, a: i8Ptrx9VecTyp, b: i8Ptrx9VecTyp},
+		{want: true, a: f16Ptrx10VecTyp, b: f16Ptrx10VecTyp},
+		{want: true, a: i8x1ArrTyp, b: i8x1ArrTyp},
+		{want: true, a: i32x2ArrTyp, b: i32x2ArrTyp},
+		{want: true, a: f16x3ArrTyp, b: f16x3ArrTyp},
+		{want: true, a: f32x4ArrTyp, b: f32x4ArrTyp},
+		{want: true, a: f64x5ArrTyp, b: f64x5ArrTyp},
+		{want: true, a: f128x6ArrTyp, b: f128x6ArrTyp},
+		{want: true, a: f80_x86x7ArrTyp, b: f80_x86x7ArrTyp},
+		{want: true, a: f128_ppcx8ArrTyp, b: f128_ppcx8ArrTyp},
+		{want: true, a: i8Ptrx9ArrTyp, b: i8Ptrx9ArrTyp},
+		{want: true, a: f16Ptrx10ArrTyp, b: f16Ptrx10ArrTyp},
+		{want: true, a: structTyp, b: structTyp},
+		{want: false, a: voidTyp, b: structTyp},
+		{want: false, a: i1Typ, b: voidTyp},
+		{want: false, a: i8Typ, b: i1Typ},
+		{want: false, a: i32Typ, b: i8Typ},
+		{want: false, a: f16Typ, b: i32Typ},
+		{want: false, a: f32Typ, b: f16Typ},
+		{want: false, a: f64Typ, b: f32Typ},
+		{want: false, a: f128Typ, b: f64Typ},
+		{want: false, a: f80_x86Typ, b: f128Typ},
+		{want: false, a: f128_ppcTyp, b: f80_x86Typ},
+		{want: false, a: mmxTyp, b: f128_ppcTyp},
+		{want: false, a: labelTyp, b: mmxTyp},
+		{want: false, a: metadataTyp, b: labelTyp},
+		{want: false, a: funcTyp, b: metadataTyp},
+		{want: false, a: i8PtrTyp, b: funcTyp},
+		{want: false, a: f16PtrTyp, b: i8PtrTyp},
+		{want: false, a: mmxPtrTyp, b: f16PtrTyp},
+		{want: false, a: funcPtrTyp, b: mmxPtrTyp},
+		{want: false, a: i8x1VecTyp, b: funcPtrTyp},
+		{want: false, a: i32x2VecTyp, b: i8x1VecTyp},
+		{want: false, a: f16x3VecTyp, b: i32x2VecTyp},
+		{want: false, a: f32x4VecTyp, b: f16x3VecTyp},
+		{want: false, a: f64x5VecTyp, b: f32x4VecTyp},
+		{want: false, a: f128x6VecTyp, b: f64x5VecTyp},
+		{want: false, a: f80_x86x7VecTyp, b: f128x6VecTyp},
+		{want: false, a: f128_ppcx8VecTyp, b: f80_x86x7VecTyp},
+		{want: false, a: i8Ptrx9VecTyp, b: f128_ppcx8VecTyp},
+		{want: false, a: f16Ptrx10VecTyp, b: i8Ptrx9VecTyp},
+		{want: false, a: i8x1ArrTyp, b: f16Ptrx10VecTyp},
+		{want: false, a: i32x2ArrTyp, b: i8x1ArrTyp},
+		{want: false, a: f16x3ArrTyp, b: i32x2ArrTyp},
+		{want: false, a: f32x4ArrTyp, b: f16x3ArrTyp},
+		{want: false, a: f64x5ArrTyp, b: f32x4ArrTyp},
+		{want: false, a: f128x6ArrTyp, b: f64x5ArrTyp},
+		{want: false, a: f80_x86x7ArrTyp, b: f128x6ArrTyp},
+		{want: false, a: f128_ppcx8ArrTyp, b: f80_x86x7ArrTyp},
+		{want: false, a: i8Ptrx9ArrTyp, b: f128_ppcx8ArrTyp},
+		{want: false, a: f16Ptrx10ArrTyp, b: i8Ptrx9ArrTyp},
+		{want: false, a: structTyp, b: f16Ptrx10ArrTyp},
+	}
+
+	for i, g := range golden {
+		got := types.Equal(g.a, g.b)
+		if got != g.want {
+			t.Errorf("i=%d: expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
 func TestIsInt(t *testing.T) {
 	golden := []struct {
 		want bool
