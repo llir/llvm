@@ -104,6 +104,7 @@ func (t *Func) String() string {
 		}
 		buf.WriteString("...")
 	}
+
 	return fmt.Sprintf("%s (%s)", t.result, buf)
 }
 
@@ -388,6 +389,7 @@ func (t *Struct) String() string {
 		}
 		buf.WriteString(field.String())
 	}
+
 	if t.packed {
 		return fmt.Sprintf("<{%s}>", buf)
 	}

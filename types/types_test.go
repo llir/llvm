@@ -814,9 +814,18 @@ func TestSameLength(t *testing.T) {
 		want bool
 	}{
 		{want: false, a: i32x2VecTyp, b: i32x3VecTyp},
+		{want: false, a: i32x3VecTyp, b: i32x2VecTyp},
 		{want: true, a: i32x2VecTyp, b: i32x2VecTyp},
 		{want: false, a: i32x2ArrTyp, b: i32x3ArrTyp},
+		{want: false, a: i32x3ArrTyp, b: i32x2ArrTyp},
 		{want: true, a: i32x2ArrTyp, b: i32x2ArrTyp},
+		{want: true, a: i32Typ, b: i64Typ},
+		{want: true, a: i64Typ, b: i32Typ},
+		{want: false, a: f32Typ, b: i32x2VecTyp},
+		{want: false, a: i32x2VecTyp, b: f32Typ},
+		{want: false, a: f32Typ, b: i32x2ArrTyp},
+		{want: false, a: i32x2ArrTyp, b: f32Typ},
+		{want: true, a: structTyp, b: f32Typ},
 	}
 
 	for i, g := range golden {
