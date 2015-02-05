@@ -16,6 +16,7 @@ var (
 	i1Typ  *types.Int // i1
 	i8Typ  *types.Int // i8
 	i32Typ *types.Int // i32
+	i64Typ *types.Int // i64
 
 	// Floating point types.
 	f16Typ      *types.Float // half
@@ -92,6 +93,11 @@ func init() {
 	}
 	// i32
 	i32Typ, err = types.NewInt(32)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// i64
+	i64Typ, err = types.NewInt(64)
 	if err != nil {
 		log.Fatalln(err)
 	}
