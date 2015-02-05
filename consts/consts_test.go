@@ -494,6 +494,11 @@ func TestVectorString(t *testing.T) {
 		},
 		// i=3
 		{
+			elems: []consts.Constant{f32One, f32Two, f32Three, f32Four}, typ: f32x3VecTyp,
+			want: "", err: "incorrect number of elements in vector constant; expected 3, got 4",
+		},
+		// i=4
+		{
 			elems: []consts.Constant{f32Three, i32Four}, typ: f32x2VecTyp,
 			want: "", err: `invalid vector element type; expected "float", got "i32"`,
 		},
@@ -538,6 +543,11 @@ func TestArrayString(t *testing.T) {
 			want: "[2 x {i32, i8}] [{i32, i8} {i32 4, i8 3}, {i32, i8} {i32 3, i8 4}]",
 		},
 		// i=3
+		{
+			elems: []consts.Constant{i32One, i32Two, i32Three}, typ: i32x2ArrTyp,
+			want: "", err: "incorrect number of elements in array constant; expected 2, got 3",
+		},
+		// i=4
 		{
 			elems: []consts.Constant{i32i8FourThree, i32Four}, typ: i32i8x2ArrTyp,
 			want: "", err: `invalid array element type; expected "{i32, i8}", got "i32"`,
