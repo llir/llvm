@@ -37,13 +37,15 @@ func (p *parser) parseTopLevelEntity(module *ir.Module) error {
 		if err != nil {
 			return err
 		}
-		module.Funcs = append(module.Funcs, f)
+		_ = f
+		panic("not yet implemented.")
 	case token.KwDefine:
 		f, err := p.parseDefine()
 		if err != nil {
 			return err
 		}
-		module.Funcs = append(module.Funcs, f)
+		_ = f
+		panic("not yet implemented.")
 	default:
 		return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
 	}
