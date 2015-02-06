@@ -41,12 +41,12 @@ type Module struct {
 	// References:
 	//    http://llvm.org/docs/LangRef.html#target-triple
 	target string
-	// Function definitions and external function declarations (Blocks is nil).
-	funcs []*Function
-	// Global variables.
-	globals []values.Value
 	// Type definitions.
 	types []types.Type
+	// Global variables.
+	globals []values.Value
+	// Function definitions and external function declarations (Blocks is nil).
+	funcs []*Function
 	// Metadata.
 	metadata []*Metadata
 }
@@ -63,5 +63,10 @@ func (module *Module) String() string {
 		// target triple = "x86_64-unknown-linux-gnu"
 		fmt.Fprintf(buf, "target triple = %q\n", module.target)
 	}
+	// TODO: Print types.
+	// TODO: Print global variables.
+	// TODO: Print functions.
+	// TODO: Print named metadata.
+	// TODO: Print metadata.
 	panic("not yet implemented.")
 }
