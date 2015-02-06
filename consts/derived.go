@@ -57,13 +57,8 @@ func (v *Vector) Type() types.Type {
 	return v.typ
 }
 
-// UseList returns a list of all values which uses the value.
-func (v *Vector) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (v *Vector) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (v *Vector) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -135,13 +130,8 @@ func (v *Array) Type() types.Type {
 	return v.typ
 }
 
-// UseList returns a list of all values which uses the value.
-func (v *Array) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (v *Array) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (v *Array) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -207,13 +197,8 @@ func (v *Struct) Type() types.Type {
 	return v.typ
 }
 
-// UseList returns a list of all values which uses the value.
-func (v *Struct) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (v *Struct) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (v *Struct) Users() []values.Value {
 	panic("not yet implemented.")
 }
 

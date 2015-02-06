@@ -74,13 +74,8 @@ func (v *Int) Type() types.Type {
 	return v.typ
 }
 
-// UseList returns a list of all values which uses the value.
-func (v *Int) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (v *Int) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (v *Int) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -163,13 +158,8 @@ func (v *Float) Type() types.Type {
 	return v.typ
 }
 
-// UseList returns a list of all values which uses the value.
-func (v *Float) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (v *Float) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (v *Float) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -235,13 +225,8 @@ func (v *Pointer) Type() types.Type {
 	return v.typ
 }
 
-// UseList returns a list of all values which uses the value.
-func (v *Pointer) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (v *Pointer) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (v *Pointer) Users() []values.Value {
 	panic("not yet implemented.")
 }
 

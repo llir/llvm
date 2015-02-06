@@ -75,13 +75,8 @@ func (exp *IntTrunc) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *IntTrunc) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *IntTrunc) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *IntTrunc) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -144,13 +139,8 @@ func (exp *IntZeroExt) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *IntZeroExt) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *IntZeroExt) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *IntZeroExt) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -213,13 +203,8 @@ func (exp *IntSignExt) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *IntSignExt) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *IntSignExt) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *IntSignExt) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -285,13 +270,8 @@ func (exp *FloatTrunc) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *FloatTrunc) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *FloatTrunc) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *FloatTrunc) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -357,13 +337,8 @@ func (exp *FloatExt) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *FloatExt) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *FloatExt) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *FloatExt) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -426,13 +401,8 @@ func (exp *FloatToUint) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *FloatToUint) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *FloatToUint) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *FloatToUint) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -497,13 +467,8 @@ func (exp *FloatToInt) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *FloatToInt) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *FloatToInt) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *FloatToInt) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -568,13 +533,8 @@ func (exp *UintToFloat) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *UintToFloat) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *UintToFloat) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *UintToFloat) Users() []values.Value {
 	panic("not yet implemented.")
 }
 
@@ -639,13 +599,8 @@ func (exp *IntToFloat) Type() types.Type {
 	return exp.to
 }
 
-// UseList returns a list of all values which uses the value.
-func (exp *IntToFloat) UseList() []values.Value {
-	panic("not yet implemented.")
-}
-
-// ReplaceAll replaces all uses of the value with new.
-func (exp *IntToFloat) ReplaceAll(new values.Value) error {
+// Users returns a list of all values which uses the value.
+func (exp *IntToFloat) Users() []values.Value {
 	panic("not yet implemented.")
 }
 

@@ -10,7 +10,8 @@ import (
 // TODO: Complete the list of value implementations.
 
 // A Value represents a computed value that may be used as an operand of other
-// values. Some values can have a name and they belong to a module.
+// values. Some values can have a name and they belong to a function or a
+// module.
 //
 // Value is one of the following types:
 //
@@ -21,8 +22,6 @@ type Value interface {
 	fmt.Stringer
 	// Type returns the type of the value.
 	Type() types.Type
-	// UseList returns a list of all values which uses the value.
-	UseList() []Value
-	// ReplaceAll replaces all uses of the value with new.
-	ReplaceAll(new Value) error
+	// Users returns a list of all values which uses the value.
+	Users() []Value
 }
