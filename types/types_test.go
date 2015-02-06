@@ -450,7 +450,7 @@ func TestFloatSize(t *testing.T) {
 	for i, g := range golden {
 		typ, err := types.NewFloat(g.kind)
 		if err != nil {
-			t.Errorf("i=%d: %v", err)
+			t.Errorf("i=%d: %v", i, err)
 			continue
 		}
 		got := typ.Size()
