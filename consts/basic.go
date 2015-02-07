@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
 )
 
 // TODO: Track the upstream removal of HexIntConstant (ref: discussion with
@@ -72,11 +71,6 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 // Type returns the type of the value.
 func (v *Int) Type() types.Type {
 	return v.typ
-}
-
-// Users returns a list of all values which uses the value.
-func (v *Int) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // String returns a string representation of the integer, either as a signed
@@ -158,11 +152,6 @@ func (v *Float) Type() types.Type {
 	return v.typ
 }
 
-// Users returns a list of all values which uses the value.
-func (v *Float) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // String returns a string representation of the floating point constant using
 // scientific notation (e.g. -2.5e10) for large exponents and regular floating
 // point representation otherwise (e.g. 3.14). The floating point string
@@ -223,11 +212,6 @@ type Pointer struct {
 // Type returns the type of the value.
 func (v *Pointer) Type() types.Type {
 	return v.typ
-}
-
-// Users returns a list of all values which uses the value.
-func (v *Pointer) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

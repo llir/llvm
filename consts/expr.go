@@ -75,11 +75,6 @@ func (exp *IntTrunc) Type() types.Type {
 	return exp.to
 }
 
-// Users returns a list of all values which uses the value.
-func (exp *IntTrunc) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *IntTrunc) Calc() Constant {
@@ -139,11 +134,6 @@ func (exp *IntZeroExt) Type() types.Type {
 	return exp.to
 }
 
-// Users returns a list of all values which uses the value.
-func (exp *IntZeroExt) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *IntZeroExt) Calc() Constant {
@@ -201,11 +191,6 @@ func NewIntSignExt(orig Constant, to types.Type) (*IntSignExt, error) {
 // Type returns the type of the value.
 func (exp *IntSignExt) Type() types.Type {
 	return exp.to
-}
-
-// Users returns a list of all values which uses the value.
-func (exp *IntSignExt) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
@@ -270,11 +255,6 @@ func (exp *FloatTrunc) Type() types.Type {
 	return exp.to
 }
 
-// Users returns a list of all values which uses the value.
-func (exp *FloatTrunc) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatTrunc) Calc() Constant {
@@ -337,11 +317,6 @@ func (exp *FloatExt) Type() types.Type {
 	return exp.to
 }
 
-// Users returns a list of all values which uses the value.
-func (exp *FloatExt) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatExt) Calc() Constant {
@@ -399,11 +374,6 @@ func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
 // Type returns the type of the value.
 func (exp *FloatToUint) Type() types.Type {
 	return exp.to
-}
-
-// Users returns a list of all values which uses the value.
-func (exp *FloatToUint) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
@@ -467,11 +437,6 @@ func (exp *FloatToInt) Type() types.Type {
 	return exp.to
 }
 
-// Users returns a list of all values which uses the value.
-func (exp *FloatToInt) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatToInt) Calc() Constant {
@@ -533,11 +498,6 @@ func (exp *UintToFloat) Type() types.Type {
 	return exp.to
 }
 
-// Users returns a list of all values which uses the value.
-func (exp *UintToFloat) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *UintToFloat) Calc() Constant {
@@ -597,11 +557,6 @@ func NewIntToFloat(orig Constant, to types.Type) (*IntToFloat, error) {
 // Type returns the type of the value.
 func (exp *IntToFloat) Type() types.Type {
 	return exp.to
-}
-
-// Users returns a list of all values which uses the value.
-func (exp *IntToFloat) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant

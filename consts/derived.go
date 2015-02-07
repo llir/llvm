@@ -10,7 +10,6 @@ import (
 	"fmt"
 
 	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
 )
 
 // Vector represents a vector constant which is a vetor containing only
@@ -55,11 +54,6 @@ func NewVector(typ types.Type, elems []Constant) (*Vector, error) {
 // Type returns the type of the value.
 func (v *Vector) Type() types.Type {
 	return v.typ
-}
-
-// Users returns a list of all values which uses the value.
-func (v *Vector) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // String returns a string representation of the vector. The vector string
@@ -130,11 +124,6 @@ func (v *Array) Type() types.Type {
 	return v.typ
 }
 
-// Users returns a list of all values which uses the value.
-func (v *Array) Users() []values.Value {
-	panic("not yet implemented.")
-}
-
 // String returns a string representation of the array. The array string
 // representation is preceded by the type of the constant, e.g.
 //
@@ -195,11 +184,6 @@ func NewStruct(typ types.Type, fields []Constant) (*Struct, error) {
 // Type returns the type of the value.
 func (v *Struct) Type() types.Type {
 	return v.typ
-}
-
-// Users returns a list of all values which uses the value.
-func (v *Struct) Users() []values.Value {
-	panic("not yet implemented.")
 }
 
 // String returns a string representation of the structure. The structure string

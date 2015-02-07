@@ -22,6 +22,4 @@ type Value interface {
 	fmt.Stringer
 	// Type returns the type of the value.
 	Type() types.Type
-	// Users returns a list of all values which uses the value.
-	Users() []Value
 }
