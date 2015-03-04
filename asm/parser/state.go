@@ -49,7 +49,6 @@ func (p *parser) parseTopLevelEntity(module *ir.Module) error {
 	default:
 		return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
 	}
-	return nil
 }
 
 // parseDeclare parses a function declaration. A "declare" token has already
