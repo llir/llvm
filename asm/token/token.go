@@ -35,7 +35,7 @@ const (
 	Comment             // ; line comment
 
 	// Identifiers.
-	Type        // iN, void, half, float, double, x86_fp80, fp128, ppc_fp128, x86_mmx, label, metadata
+	Type        // iN, void, half, float, double, fp128, x86_fp80, ppc_fp128, x86_mmx, label, metadata
 	Label       // foo:, "fo\6F":, .42$foo:
 	GlobalVar   // @foo, @"fo\6F"
 	LocalVar    // %foo, %"fo\6F"
@@ -66,7 +66,7 @@ const (
 
 	// Constants.
 	Int    // 12345, [us]0x[0-9A-Fa-f]+
-	Float  // 123.45, 1.2345e+2, 0x[0-9A-Fa-f]+
+	Float  // 123.45, 1.2345e+2, 0x[KLMH]?[0-9A-Fa-f]+
 	String // "foo"
 
 	keywordStart
@@ -423,8 +423,8 @@ var Keywords = map[string]Kind{
 	"half":      Type,
 	"float":     Type,
 	"double":    Type,
-	"x86_fp80":  Type,
 	"fp128":     Type,
+	"x86_fp80":  Type,
 	"ppc_fp128": Type,
 	"x86_mmx":   Type,
 	"label":     Type,

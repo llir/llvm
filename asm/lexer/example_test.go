@@ -19,7 +19,7 @@ func ExampleParse() {
 		fmt.Printf("%-12v %q\n", tok.Kind, tok.Val)
 	}
 	// Output:
-	// Comment      " ModuleID = 'c4.c'"
+	// Comment      " ModuleID = 'c4.ll'"
 	// KwTarget     "target"
 	// KwDatalayout "datalayout"
 	// Equal        "="

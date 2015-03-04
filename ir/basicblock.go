@@ -1,12 +1,20 @@
 package ir
 
 // A BasicBlock is a sequence of non-branching instructions, terminated by a
-// control flow instruction (such as br or ret) [1].
+// control flow instruction (such as br or ret).
 //
-//    [1]: http://llvm.org/docs/LangRef.html#terminators
+// Basic blocks are values since they can be referenced from instructions (such
+// as br and switch). The type of a basic block is label.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#terminators
 type BasicBlock struct {
+	// Basic block label name.
+	Name string
 	// Parent function of the basic block.
 	Parent *Function
-	// Instructions.
+	// Non-terminator instructions of the basic block.
 	Insts []Instruction
+	// Terminator instruction of the basic block.
+	Term Terminator
 }
