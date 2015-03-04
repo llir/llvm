@@ -1107,7 +1107,7 @@ func TestIntToFloatString(t *testing.T) {
 }
 
 // sameError returns true if err is represented by the string s, and false
-// otherwise. Some error messages constants suffixes from external functions,
+// otherwise. Some error messages contains suffixes from external functions,
 // e.g. the strconv error in:
 //
 //    unable to parse integer constant "foo"; strconv.ParseInt: parsing "foo": invalid syntax`
