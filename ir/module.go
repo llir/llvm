@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
+	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/values"
 )
 
 // TODO: Use map from Global/Local to *Function, Value, types.Type and *Metadata

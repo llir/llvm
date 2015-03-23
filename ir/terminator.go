@@ -1,9 +1,9 @@
 package ir
 
 import (
-	"github.com/mewlang/llvm/consts"
-	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
+	"github.com/llir/llvm/consts"
+	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/values"
 )
 
 // A Terminator is a control flow instruction (e.g. br, ret, …) which terminates

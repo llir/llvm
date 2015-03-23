@@ -1,8 +1,8 @@
 package ir
 
 import (
-	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
+	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/values"
 )
 
 // An Instruction performs a non-branching operation and belongs to one of the

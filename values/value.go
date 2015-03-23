@@ -4,7 +4,7 @@ package values
 import (
 	"fmt"
 
-	"github.com/mewlang/llvm/types"
+	"github.com/llir/llvm/types"
 )
 
 // TODO: Complete the list of value implementations.

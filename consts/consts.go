@@ -5,7 +5,7 @@
 // Package consts implements values representing immutable LLVM IR constants.
 package consts
 
-import "github.com/mewlang/llvm/values"
+import "github.com/llir/llvm/values"
 
 // A Constant represents a value that is immutable at runtime, such as an
 // integer or a floating point literal. Pointers known to be immutable at

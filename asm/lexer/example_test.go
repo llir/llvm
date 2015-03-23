@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mewlang/llvm/asm/lexer"
+	"github.com/llir/llvm/asm/lexer"
 )
 
 func ExampleParse() {

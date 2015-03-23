@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mewlang/llvm/consts"
-	"github.com/mewlang/llvm/types"
+	"github.com/llir/llvm/consts"
+	"github.com/llir/llvm/types"
 )
 
 var (

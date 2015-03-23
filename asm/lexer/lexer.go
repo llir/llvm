@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/mewlang/llvm/asm/token"
+	"github.com/llir/llvm/asm/token"
 )
 
 // Parse lexes the input read from r into a slice of tokens. Potential errors

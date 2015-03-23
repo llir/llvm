@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/mewlang/llvm/types"
+	"github.com/llir/llvm/types"
 )
 
 // Vector represents a vector constant which is a vetor containing only

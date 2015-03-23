@@ -5,10 +5,10 @@ import (
 	"io"
 	"log"
 
-	"github.com/mewlang/llvm/asm/lexer"
-	"github.com/mewlang/llvm/asm/token"
-	"github.com/mewlang/llvm/ir"
-	"github.com/mewlang/llvm/types"
+	"github.com/llir/llvm/asm/lexer"
+	"github.com/llir/llvm/asm/token"
+	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/types"
 )
 
 // Parse parses the input read from r into an in-memory representation of LLVM

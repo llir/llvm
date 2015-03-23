@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/mewlang/llvm/asm/token"
+	"github.com/llir/llvm/asm/token"
 )
 
 const (

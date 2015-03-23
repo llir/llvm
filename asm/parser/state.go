@@ -13,10 +13,10 @@ import (
 	"strings"
 
 	"github.com/mewkiz/pkg/errutil"
-	"github.com/mewlang/llvm/asm/token"
-	"github.com/mewlang/llvm/ir"
-	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
+	"github.com/llir/llvm/asm/token"
+	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/values"
 )
 
 // TODO: Complete TopLevelEntity EBNF definition.

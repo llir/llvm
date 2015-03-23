@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mewlang/llvm/asm/token"
+	"github.com/llir/llvm/asm/token"
 )
 
 func TestParseString(t *testing.T) {

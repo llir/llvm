@@ -3,8 +3,8 @@ package consts
 import (
 	"fmt"
 
-	"github.com/mewlang/llvm/types"
-	"github.com/mewlang/llvm/values"
+	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/values"
 )
 
 // TODO: Complete the list of expression implementations.

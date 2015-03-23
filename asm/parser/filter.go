@@ -3,7 +3,7 @@ package parser
 import (
 	"log"
 
-	"github.com/mewlang/llvm/asm/token"
+	"github.com/llir/llvm/asm/token"
 )
 
 // filter filters out token types which are not yet handled by the parser.

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mewlang/llvm/types"
+	"github.com/llir/llvm/types"
 )
 
 // TODO: Track the upstream removal of HexIntConstant (ref: discussion with

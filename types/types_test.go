@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mewlang/llvm/types"
+	"github.com/llir/llvm/types"
 )
 
 // Types used by test cases.
