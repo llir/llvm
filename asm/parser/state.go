@@ -12,11 +12,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mewkiz/pkg/errutil"
 	"github.com/llir/llvm/asm/token"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/types"
 	"github.com/llir/llvm/values"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // TODO: Complete TopLevelEntity EBNF definition.
