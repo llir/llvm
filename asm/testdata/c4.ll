@@ -4377,4 +4377,4 @@ attributes #7 = { noreturn nounwind }
 
 !llvm.ident = !{!0}
 
-!0 = metadata !{metadata !"clang version 3.5.1 (tags/RELEASE_351/final)"}
+!0 = !{!"clang version 3.6.0 (tags/RELEASE_360/final)"}
