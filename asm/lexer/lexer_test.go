@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"io/ioutil"
 	"reflect"
 	"testing"
 
@@ -254,5 +255,17 @@ func TestParseString(t *testing.T) {
 			t.Errorf("i=%d: expected %#v, got %#v", i, g.want, got)
 			continue
 		}
+	}
+}
+
+func BenchmarkParseString(b *testing.B) {
+	buf, err := ioutil.ReadFile("../testdata/for.ll")
+	if err != nil {
+		b.Fatal(err)
+	}
+	input := string(buf)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ParseString(input)
 	}
 }
