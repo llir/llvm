@@ -416,14 +416,12 @@ func lexLetter(l *lexer) stateFn {
 	// Try lexing a keyword (float, add, x). Keywords may contain [a-z0-9_].
 	if l.acceptRun(lower+decimal+"_") && l.cur > end {
 		s := l.input[l.start:l.cur]
-		// TODO: Fix this bottleneck; runtime.mapiternext currently takes 55% of
-		// the total runtime for a real world test case.
-		for keyword, kwKind := range token.Keywords {
-			if end-l.start > len(keyword) {
-				continue
-			}
-			if strings.HasPrefix(s, keyword) {
-				end, kind = l.start+len(keyword), kwKind
+		max := end - l.start
+		for i := max + 1; i < len(keywords) && i <= len(s); i++ {
+			for _, keyword := range keywords[i] {
+				if strings.HasPrefix(s, keyword) {
+					end, kind = l.start+len(keyword), token.Keywords[keyword]
+				}
 			}
 		}
 	}
