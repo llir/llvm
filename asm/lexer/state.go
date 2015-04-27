@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"sort"
 	"strings"
 	"unicode/utf8"
 
@@ -416,12 +417,31 @@ func lexLetter(l *lexer) stateFn {
 	// Try lexing a keyword (float, add, x). Keywords may contain [a-z0-9_].
 	if l.acceptRun(lower+decimal+"_") && l.cur > end {
 		s := l.input[l.start:l.cur]
-		max := end - l.start
-		for i := max + 1; i < len(keywords) && i <= len(s); i++ {
-			for _, keyword := range keywords[i] {
-				if strings.HasPrefix(s, keyword) {
-					end, kind = l.start+len(keyword), token.Keywords[keyword]
-				}
+		// Try to match the full string first as this will return the index
+		// where the full string would be inserted into the keywords list if
+		// it wasn't in there already.
+		//
+		// In other words, this initial index will either match the keyword
+		// exactly, or provide the upper index bounds in the sorted keywords
+		// list.
+		//
+		// If it's not an exact match on first try, we just naively walk the
+		// list backwards until we either find a keyword that fits or we run
+		// out of possible keywords.
+		for index := sort.SearchStrings(keywords, s); index >= 0; index-- {
+			keyword := keywords[index]
+
+			if keyword[0] < s[0] {
+				// Exhausted all possible keywords, so all remaining
+				// keywords are guaranteed not to match. In other words
+				// our keyword begins with an 'y', but we are now at keywords
+				// beginning with an 'x'.
+				break
+			}
+
+			if strings.HasPrefix(s, keyword) {
+				end, kind = l.start+len(keyword), token.Keywords[keyword]
+				break
 			}
 		}
 	}
