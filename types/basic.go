@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // The Void type does not represent any value and has no size.
 //
@@ -56,8 +59,7 @@ func (t *Int) Size() int {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Int) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Int:
+	if u, ok := u.(*Int); ok {
 		return t.size == u.size
 	}
 	return false
@@ -65,8 +67,8 @@ func (t *Int) Equal(u Type) bool {
 
 // String returns a string representation of the integer type.
 func (t *Int) String() string {
-	// i32
-	return fmt.Sprintf("i%d", t.Size())
+	// e.g. "i32"
+	return "i" + strconv.Itoa(t.Size())
 }
 
 // Float represents a floating point type.
@@ -104,8 +106,7 @@ func (t *Float) Size() int {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Float) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Float:
+	if u, ok := u.(*Float); ok {
 		return t.kind == u.kind
 	}
 	return false
@@ -113,7 +114,7 @@ func (t *Float) Equal(u Type) bool {
 
 // String returns a string representation of the floating point type.
 func (t *Float) String() string {
-	// double
+	// e.g. "double"
 	return t.Kind().String()
 }
 

@@ -75,11 +75,11 @@ func SameLength(a, b Type) bool {
 	l1, ok1 := a.(Lener)
 	l2, ok2 := b.(Lener)
 
-	// Both types are vectors or arrays; verify length.
+	// Verify if both types are vectors or arrays of the same length.
 	if ok1 && ok2 {
 		return l1.Len() == l2.Len()
 	}
 
-	// Verify that both types are distinct from vectors and arrays.
+	// Verify if both types are distinct from vectors and arrays.
 	return !ok1 && !ok2
 }

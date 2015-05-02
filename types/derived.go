@@ -69,8 +69,7 @@ func (t *Func) IsVariadic() bool {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Func) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Func:
+	if u, ok := u.(*Func); ok {
 		if !t.result.Equal(u.result) {
 			return false
 		}
@@ -89,17 +88,18 @@ func (t *Func) Equal(u Type) bool {
 
 // String returns a string representation of the function type.
 func (t *Func) String() string {
-	// void ()
-	// i32 (i8*, ...)
+	// e.g. "void ()"
+	// e.g. "i32 (i8*, ...)"
+	params := t.Params()
 	buf := new(bytes.Buffer)
-	for i, param := range t.Params() {
+	for i, param := range params {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(param.String())
 	}
 	if t.IsVariadic() {
-		if len(t.Params()) > 0 {
+		if len(params) > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString("...")
@@ -142,8 +142,7 @@ func (t *Pointer) Elem() Type {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Pointer) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Pointer:
+	if u, ok := u.(*Pointer); ok {
 		return t.elem.Equal(u.elem)
 	}
 	return false
@@ -151,8 +150,8 @@ func (t *Pointer) Equal(u Type) bool {
 
 // String returns a string representation of the pointer type.
 func (t *Pointer) String() string {
-	// i32*
-	return fmt.Sprintf("%v*", t.Elem())
+	// e.g. "i32*"
+	return t.Elem().String() + "*"
 }
 
 // Vector represents a vector type.
@@ -203,8 +202,7 @@ func (t *Vector) Len() int {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Vector) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Vector:
+	if u, ok := u.(*Vector); ok {
 		return t.elem.Equal(u.elem) && t.n == u.n
 	}
 	return false
@@ -212,7 +210,7 @@ func (t *Vector) Equal(u Type) bool {
 
 // String returns a string representation of the vector type.
 func (t *Vector) String() string {
-	// <2 x i32>
+	// e.g. "<2 x i32>"
 	return fmt.Sprintf("<%d x %v>", t.Len(), t.Elem())
 }
 
@@ -264,8 +262,7 @@ func (t *Array) Len() int {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Array) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Array:
+	if u, ok := u.(*Array); ok {
 		return t.elem.Equal(u.elem) && t.n == u.n
 	}
 	return false
@@ -273,7 +270,7 @@ func (t *Array) Equal(u Type) bool {
 
 // String returns a string representation of the array type.
 func (t *Array) String() string {
-	// [2 x float]
+	// e.g. "[2 x float]"
 	return fmt.Sprintf("[%d x %v]", t.Len(), t.Elem())
 }
 
@@ -363,8 +360,7 @@ func (t *Struct) IsPacked() bool {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func (t *Struct) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *Struct:
+	if u, ok := u.(*Struct); ok {
 		if len(t.fields) != len(u.fields) {
 			return false
 		}
@@ -380,8 +376,8 @@ func (t *Struct) Equal(u Type) bool {
 
 // String returns a string representation of the structure type.
 func (t *Struct) String() string {
-	// {float, i32, i32}
-	// <{i32, i8}>
+	// e.g. "{float, i32, i32}"
+	// e.g. "<{i32, i8}>"
 	buf := new(bytes.Buffer)
 	for i, field := range t.Fields() {
 		if i > 0 {
