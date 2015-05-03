@@ -31,8 +31,8 @@ func (ctx *Context) Get(name string) *NamedStruct {
 	return t
 }
 
-// Validate verifies that all identified structures of the type context have
-// been assigned bodies.
+// Validate validates the type context by verifying that all identified
+// structures have been assigned bodies.
 func (ctx *Context) Validate() error {
 	for _, t := range ctx.structs {
 		if t.Struct == nil {
