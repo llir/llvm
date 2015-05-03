@@ -1,6 +1,3 @@
-// TODO: Add support for named types. Implement type equality checks and make
-// sure to consider the impact of named types.
-
 // Package types declares the data types of LLVM IR.
 package types
 
@@ -31,7 +28,6 @@ type Type interface {
 
 // Equal returns true if the given types are equal, and false otherwise.
 func Equal(t, u Type) bool {
-	// TODO: Implement type equality checks for named types.
 	return t.Equal(u)
 }
 
