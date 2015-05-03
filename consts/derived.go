@@ -1,8 +1,3 @@
-// TODO: Consider redefining the API of NewVector, NewArray and NewStruct by
-// removing the typ input parameter since the type can be inferred from the
-// elements and fields. Don't take a decision before implementing the parser
-// using the current API to get a good feel for it in practise.
-
 package consts
 
 import (
@@ -21,7 +16,9 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
 type Vector struct {
-	typ   *types.Vector
+	// Vector type.
+	typ *types.Vector
+	// Vector elements.
 	elems []Constant
 }
 
@@ -86,10 +83,13 @@ func (v *Vector) String() string {
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
 type Array struct {
+	// Array type.
 	typ *types.Array
 	// TODO: Be clever about data layout later (e.g. use []byte instead of
 	// []Constant when applicable). Strive for correctness and simplicity first,
 	// optimize later. The same goes for Vector and maybe Struct.
+
+	// Array elements.
 	elems []Constant
 }
 
@@ -129,6 +129,8 @@ func (v *Array) Type() types.Type {
 //
 //    [2 x i32] [i32 42, i32 -13]
 func (v *Array) String() string {
+	// TODO: Implement pretty printing of character array constants; e.g.
+	//    c"hello world\0a\00".
 	buf := new(bytes.Buffer)
 	for i, elem := range v.elems {
 		if i > 0 {
@@ -150,7 +152,9 @@ func (v *Array) String() string {
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
 type Struct struct {
-	typ    *types.Struct
+	// Struct type.
+	typ *types.Struct
+	// Struct fields.
 	fields []Constant
 }
 

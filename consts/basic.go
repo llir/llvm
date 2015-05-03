@@ -2,14 +2,12 @@ package consts
 
 import (
 	"fmt"
+	"math/big"
 	"strconv"
 	"strings"
 
 	"github.com/llir/llvm/types"
 )
-
-// TODO: Track the upstream removal of HexIntConstant (ref: discussion with
-// Sean on llvm-dev).
 
 // Int represents an integer constant.
 //
@@ -19,34 +17,32 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
 type Int struct {
+	// Integer type.
 	typ *types.Int
-	x   int64
+	// Integer value.
+	x *big.Int
 }
 
 // NewInt returns an integer constant based on the given integer type and string
 // representation.
 func NewInt(typ types.Type, s string) (*Int, error) {
 	// Verify integer type.
-	v := new(Int)
+	v := &Int{
+		x: new(big.Int),
+	}
 	var ok bool
 	v.typ, ok = typ.(*types.Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid type %q for integer constant", typ)
 	}
-	size := v.typ.Size()
-	if size > 64 {
-		// TODO: Add support for large integer constants (e.g. above 64-bits).
-		err := fmt.Sprintf("not yet implemented; support for %q integer constants (e.g. above 64-bits)", typ)
-		panic(err)
-	}
 
 	// Parse boolean constant.
-	if size == 1 {
+	if v.typ.Size() == 1 {
 		switch s {
 		case "1", "true":
-			v.x = 1
+			v.x.SetInt64(1)
 		case "0", "false":
-			v.x = 0
+			v.x.SetInt64(0)
 		default:
 			return nil, fmt.Errorf("invalid integer constant %q for boolean type", s)
 		}
@@ -57,12 +53,12 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 
 	// TODO: Implement support for the HexIntConstant representation:
 	//    [us]0x[0-9A-Fa-f]+
+	// TODO: Track the upstream removal of HexIntConstant
+	//    ref: http://lists.cs.uiuc.edu/pipermail/llvmdev/2015-February/081621.html
 
 	// Parse integer constant.
-	var err error
-	v.x, err = strconv.ParseInt(s, 10, size)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse integer constant %q; %v", s, err)
+	if _, ok = v.x.SetString(s, 10); !ok {
+		return nil, fmt.Errorf("unable to parse integer constant %q", s)
 	}
 
 	return v, nil
@@ -82,16 +78,16 @@ func (v *Int) Type() types.Type {
 //    i32 -13
 //    i64 42
 func (v *Int) String() string {
-	s := ""
+	var s string
 	if v.typ.Size() == 1 {
-		switch v.x {
+		switch v.x.Int64() {
 		case 1:
 			s = "true"
 		default:
 			s = "false"
 		}
 	} else {
-		s = strconv.FormatInt(v.x, 10)
+		s = v.x.String()
 	}
 
 	return fmt.Sprintf("%s %s", v.Type(), s)
@@ -105,43 +101,44 @@ func (v *Int) String() string {
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
 type Float struct {
+	// Floating point type.
 	typ *types.Float
-	x   float64
+	// Floating point value.
+	x *big.Float
 }
 
 // NewFloat returns a floating point constant based on the given floating point
 // type and string representation.
 func NewFloat(typ types.Type, s string) (*Float, error) {
 	// Verify floating point type.
-	v := new(Float)
+	v := &Float{
+		x: new(big.Float),
+	}
 	var ok bool
 	v.typ, ok = typ.(*types.Float)
 	if !ok {
 		return nil, fmt.Errorf("invalid type %q for floating point constant", typ)
-	}
-	size := v.typ.Size()
-	switch size {
-	case 32, 64:
-		// supported size
-	default:
-		// TODO: Add support for half, fp128, x86_fp80 and ppc_fp128.
-		err := fmt.Sprintf("not yet implemented; support for %q floating point constants", v.typ)
-		panic(err)
 	}
 
 	// TODO: Implement support for the following representation:
 	//    0x[KLMH]?[0-9A-Fa-f]+
 
 	// Parse floating point constant.
-	var err error
-	v.x, err = strconv.ParseFloat(s, size)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse floating point constant %q; %v", s, err)
+	if _, ok := v.x.SetString(s); !ok {
+		return nil, fmt.Errorf("unable to parse floating point constant %q", s)
 	}
 
 	// Verify that there was no precision loss.
-	if size != 64 && strconv.FormatFloat(v.x, 'g', -1, size) != strconv.FormatFloat(v.x, 'g', -1, 64) {
-		return nil, fmt.Errorf("invalid floating point constant %q for type %q; precision loss", s, v.typ)
+	size := v.typ.Size()
+	switch size {
+	case 32:
+		if x, acc := v.x.Float32(); acc != big.Exact {
+			return nil, fmt.Errorf(`invalid floating point constant %q for type %q; precision loss ("%g")`, s, v.typ, x)
+		}
+	case 64:
+		if x, acc := v.x.Float64(); acc != big.Exact {
+			return nil, fmt.Errorf(`invalid floating point constant %q for type %q; precision loss ("%g")`, s, v.typ, x)
+		}
 	}
 
 	return v, nil
@@ -161,20 +158,34 @@ func (v *Float) Type() types.Type {
 //    double 3.14
 //    double -2.5e10
 func (v *Float) String() string {
+	// TODO: Replace the code between the "START" and "END" comments with
+	//
+	//     s := v.x.Format('g', -1)
+	//
+	// when big.Float.bigFtoa has been implemented. Right now bigFtoa contains
+	// the following comment "TODO(gri): complete this". Or better yet, replace
+	// the code with
+	//
+	//     s := v.x.String()
+	//
+	// when big.Float.String() is precise as tracked by the following comment
+	// "BUG(gri): Float.String uses x.Format('g', 10) rather than x.Format('g', -1).".
+
+	// START
+	var s string
 	size := v.typ.Size()
-	switch size {
-	case 32, 64:
-		// supported size
+	switch {
+	case size <= 64:
+		x, _ := v.x.Float64()
+		s = strconv.FormatFloat(x, 'g', -1, size)
 	default:
-		// TODO: Add support for half, fp128, x86_fp80 and ppc_fp128.
-		err := fmt.Sprintf("not yet implemented; support for %q floating point constants", v.typ)
-		panic(err)
+		s = v.x.String()
 	}
+	// END
 
 	// Insert decimal point if not present.
 	//    3e4 -> 3.0e4
 	//    42  -> 42.0
-	s := strconv.FormatFloat(v.x, 'g', -1, size)
 	if !strings.ContainsRune(s, '.') {
 		pos := strings.IndexByte(s, 'e')
 		if pos != -1 {
@@ -191,10 +202,6 @@ func (v *Float) String() string {
 	return fmt.Sprintf("%s %s", v.Type(), s)
 }
 
-// TODO: Check if global names are used for anything except functions and global
-// variables. If so, be more specific about @foo in the example below by
-// providing a comment.
-
 // Pointer represents a pointer constant.
 //
 // Examples:
@@ -203,6 +210,7 @@ func (v *Float) String() string {
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
 type Pointer struct {
+	// Pointer type.
 	typ *types.Pointer
 }
 

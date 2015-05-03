@@ -419,17 +419,23 @@ func TestFloatString(t *testing.T) {
 		// i=0
 		{
 			input: "3.14", typ: f32Typ,
-			want: "", err: `invalid floating point constant "3.14" for type "float"; precision loss`,
+			want: "", err: `invalid floating point constant "3.14" for type "float"; precision loss ("3.14")`,
 		},
 		// i=1
 		{
 			input: "2.0", typ: f32Typ,
 			want: "float 2.0",
 		},
-		// i=2
+		// TODO: Enable test case after investigating why big.Float.Float32 reports the value as big.Exact when it is really not.
+		// // i=2
+		// {
+		// 	input: "2.0001220703125", typ: f32Typ,
+		// 	want: "", err: `invalid floating point constant "2.0001220703125" for type "float"; precision loss (2.000122)`,
+		// },
+		// i=3
 		{
-			input: "3.14", typ: f64Typ,
-			want: "double 3.14",
+			input: "2.0001220703125", typ: f64Typ,
+			want: "double 2.0001220703125",
 		},
 		// i=3
 		{

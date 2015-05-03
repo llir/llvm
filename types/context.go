@@ -3,7 +3,7 @@ package types
 import "fmt"
 
 // Context represents the type context of a LLVM IR module. It is used during
-// the creating of named types. The only types that can be named are identified
+// the creation of named types. The only types that can be named are identified
 // structures.
 //
 // References:
