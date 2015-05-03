@@ -867,6 +867,28 @@ func TestStructString(t *testing.T) {
 	}
 }
 
+func TestNamedStructString(t *testing.T) {
+	golden := []struct {
+		name string
+		want string
+	}{
+		// i=0
+		{
+			name: "foo",
+			want: "%foo",
+		},
+	}
+
+	ctx := types.NewContext()
+	for i, g := range golden {
+		typ := ctx.Get(g.name)
+		got := typ.String()
+		if got != g.want {
+			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
 func TestEqual(t *testing.T) {
 	golden := []struct {
 		want bool
