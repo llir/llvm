@@ -1,26 +1,30 @@
 // Package asm provides support for reading and writing the assembly language
 // representation of LLVM IR.
-//
-// ref: http://llvm.org/docs/LangRef.html
 package asm
 
 import "strings"
 
-// EncGlobalName encodes a global name to its LLVM IR assembly representation.
+// EncGlobal encodes a global name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "@foo"
 //    "a b" -> `@"a\20b"`
-func EncGlobalName(name string) string {
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func EncGlobal(name string) string {
 	return "@" + escape(name)
 }
 
-// EncLocalName encodes a local name to its LLVM IR assembly representation.
+// EncLocal encodes a local name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "%foo"
 //    "a b" -> `%"a\20b"`
-func EncLocalName(name string) string {
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func EncLocal(name string) string {
 	return "%" + escape(name)
 }
 
