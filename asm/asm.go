@@ -4,12 +4,7 @@
 // ref: http://llvm.org/docs/LangRef.html
 package asm
 
-import (
-	"bytes"
-	"encoding/hex"
-	"strings"
-	"unicode/utf8"
-)
+import "strings"
 
 // EncGlobalName encodes a global name to its LLVM IR assembly representation.
 //
@@ -51,30 +46,34 @@ const (
 // hexadecimal escape sequence (\XX).
 func escape(s string) string {
 	// Check if a replacement is required.
-	replace := false
-	for _, r := range s {
-		if !strings.ContainsRune(tail, r) {
-			replace = true
-			break
+	extra := 0
+	for i := 0; i < len(s); i++ {
+		if strings.IndexByte(tail, s[i]) == -1 {
+			// Two extra bytes are required for each invalid byte; e.g.
+			//    "#" -> `\23`
+			//    "世" -> `\E4\B8\96`
+			extra += 2
 		}
 	}
-	if !replace {
+	if extra == 0 {
 		return s
 	}
 
 	// Replace invalid characters.
-	buf := new(bytes.Buffer)
-	var src [utf8.MaxRune]byte
-	var dst [2 * utf8.MaxRune]byte
-	for _, r := range s {
-		if strings.ContainsRune(tail, r) {
-			buf.WriteRune(r)
+	const hextable = "0123456789ABCDEF"
+	buf := make([]byte, len(s)+extra)
+	j := 0
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		if strings.IndexByte(tail, b) != -1 {
+			buf[j] = b
+			j++
 			continue
 		}
-		n := utf8.EncodeRune(src[:], r)
-		m := hex.Encode(dst[:], src[:n])
-		buf.WriteByte('\\')
-		buf.Write(dst[:m])
+		buf[j] = '\\'
+		buf[j+1] = hextable[b>>4]
+		buf[j+2] = hextable[b&0x0F]
+		j += 3
 	}
-	return buf.String()
+	return string(buf)
 }
