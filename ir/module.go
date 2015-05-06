@@ -4,67 +4,81 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/values"
 )
 
-// TODO: Use map from Global/Local to *Function, Value, types.Type and *Metadata
-// instead of slice.
-
-// A Module contains top-level function definitions, external function
-// declarations, global variables, type definitions and metadata.
+// A Module contains top-level type definitions, global variables, function
+// definitions, external function declarations, and metadata.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#module-structure
 type Module struct {
-	// layout specifies how data is laid out in memory as a list of
-	// specifications separated by the minus sign character (-). When
-	// constructing the data layout for a given target, LLVM starts with a
-	// default set of specifications which are then overridden by the
-	// specifications of layout.
-	//
-	// Examples:
-	//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
-	//
-	// References:
-	//    http://llvm.org/docs/LangRef.html#data-layout
+	// Data layout.
 	layout string
-	// target describes the target host as a series of identifiers delimited by
-	// the minus sign character (-). The canonical forms for target triple
-	// strings are:
-	//    ARCHITECTURE-VENDOR-OPERATING_SYSTEM
-	//    ARCHITECTURE-VENDOR-OPERATING_SYSTEM-ENVIRONMENT
-	//
-	// Examples:
-	//    x86_64-unknown-linux-gnu
-	//
-	// References:
-	//    http://llvm.org/docs/LangRef.html#target-triple
+	// Target host.
 	target string
 	// Type definitions.
-	types []types.Type
+	typeDecls []types.NamedStruct
 	// Global variables.
-	globals []values.Value
+	globalDecls []*GlobalDecl
 	// Function definitions and external function declarations (Blocks is nil).
-	funcs []*Function
-	// Metadata.
-	metadata []*Metadata
+	funcDecls []*Function
+	// Metadata nodes.
+	metaDecls []*Metadata
 }
 
-func (module *Module) String() string {
+// Layout returns the data layout of the module.
+//
+// Examples:
+//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#data-layout
+func (m *Module) Layout() string {
+	return m.layout
+}
+
+// Target returns the target host of the module.
+//
+// Examples:
+//    x86_64-unknown-linux-gnu
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#target-triple
+func (m *Module) Target() string {
+	return m.target
+}
+
+// String returns a string representation of the module and its top-level
+// declarations and definitions of types, global variables, functions and
+// metadata notes.
+func (m *Module) String() string {
+	// Data layout; e.g.
+	//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
 	buf := new(bytes.Buffer)
-	// Data layout.
-	if len(module.layout) > 0 {
-		// target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
-		fmt.Fprintf(buf, "target datalayout = %q\n", module.layout)
+	if len(m.layout) > 0 {
+		fmt.Fprintf(buf, "target datalayout = %q\n", m.layout)
 	}
-	// Target triple.
-	if len(module.target) > 0 {
-		// target triple = "x86_64-unknown-linux-gnu"
-		fmt.Fprintf(buf, "target triple = %q\n", module.target)
+
+	// Target triple; e.g.
+	//    target triple = "x86_64-unknown-linux-gnu"
+	if len(m.target) > 0 {
+		fmt.Fprintf(buf, "target triple = %q\n", m.target)
 	}
-	// TODO: Print types.
-	// TODO: Print global variables.
+
+	// Type definitions; e.g.
+	//    %foo = type {i32}
+	for _, typeDecl := range m.typeDecls {
+		fmt.Fprintln(buf, "%s = type %v\n", asm.EncLocal(typeDecl.Name()), typeDecl.Struct)
+	}
+
+	// Global variables; e.g.
+	//    @x = global i32 42
+	for _, globalDecl := range m.globalDecls {
+		fmt.Fprintln(buf, globalDecl)
+	}
+
 	// TODO: Print functions.
 	// TODO: Print named metadata.
 	// TODO: Print metadata.

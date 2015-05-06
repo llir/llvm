@@ -17,7 +17,7 @@ The aim of this project is to provide access to the various LLVM IR representati
 
 ## Dependencies
 
-* [Go version 1.5](https://golang.org/doc/go1.5) which added support for arbitrary precision Floats in `math/big`.
+* [Go version 1.5](https://golang.org/doc/go1.5) which added support for arbitrary precision floats in `math/big`.
 
 ## Public domain
 

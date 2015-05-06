@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/llir/llvm/asm"
+)
 
 // Context represents the type context of a LLVM IR module. It is used during
 // the creation of named types. The only types that can be named are identified
@@ -36,7 +40,7 @@ func (ctx *Context) Get(name string) *NamedStruct {
 func (ctx *Context) Validate() error {
 	for _, t := range ctx.structs {
 		if t.Struct == nil {
-			return fmt.Errorf("empty body of identified structure %q", t.Name())
+			return fmt.Errorf("empty body of identified structure %q", asm.EncLocal(t.Name()))
 		}
 	}
 	return nil
@@ -62,7 +66,7 @@ func (t *NamedStruct) Name() string {
 // identity.
 func (t *NamedStruct) Equal(u Type) bool {
 	if u, ok := u.(*NamedStruct); ok {
-		return t.name == u.name
+		return t.Name() == u.Name()
 	}
 	return false
 }
@@ -73,5 +77,5 @@ func (t *NamedStruct) Equal(u Type) bool {
 // always printed by their type names.
 func (t *NamedStruct) String() string {
 	// e.g. "%regset"
-	return "%" + t.name
+	return asm.EncLocal(t.Name())
 }

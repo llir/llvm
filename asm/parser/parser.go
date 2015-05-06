@@ -11,6 +11,14 @@ import (
 	"github.com/llir/llvm/types"
 )
 
+// TODO: Implement support for type aliases; e.g.
+//    %x = type i32
+//    %y = type {%x i32}
+// %x is a type alias for i32 while %y is a named type of the identified
+// structure {i32 i32}. Type aliases will only be relevant during parsing, and
+// the final in-memory representation of the IR will have translated them into
+// their actual types.
+
 // Parse parses the input read from r into an in-memory representation of LLVM
 // IR.
 func Parse(r io.Reader) (*ir.Module, error) {

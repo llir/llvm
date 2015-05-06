@@ -9,6 +9,7 @@ import "strings"
 // Examples:
 //    "foo" -> "@foo"
 //    "a b" -> `@"a\20b"`
+//    "世" -> `@"\E4\B8\96"`
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
@@ -21,6 +22,7 @@ func EncGlobal(name string) string {
 // Examples:
 //    "foo" -> "%foo"
 //    "a b" -> `%"a\20b"`
+//    "世" -> `%"\E4\B8\96"`
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
