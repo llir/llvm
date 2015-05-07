@@ -31,7 +31,7 @@ type Module struct {
 	//    http://llvm.org/docs/LangRef.html#target-triple
 	Target string
 	// Type definitions.
-	TypeDecls []types.NamedStruct
+	TypeDecls []*types.NamedStruct
 	// Global variables.
 	GlobalDecls []*GlobalDecl
 	// Function definitions and external function declarations.

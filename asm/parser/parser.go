@@ -12,14 +12,6 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// TODO: Implement support for type aliases; e.g.
-//    %x = type i32
-//    %y = type {%x i32}
-// %x is a type alias for i32 while %y is a named type of the identified
-// structure {i32 i32}. Type aliases will only be relevant during parsing, and
-// the final in-memory representation of the IR will have translated them into
-// their actual types.
-
 // Parse parses the input read from r into an in-memory representation of LLVM
 // IR.
 func Parse(r io.Reader) (*ir.Module, error) {
@@ -54,19 +46,24 @@ func ParseTokens(input []token.Token) (*ir.Module, error) {
 	p := &parser{
 		input: filter(input),
 		m:     new(ir.Module),
+		tctx:  types.NewContext(),
 	}
 	for {
 		err := p.parseTopLevelEntity()
 		if err != nil {
 			if err == io.EOF {
-				// Terminate the parser at EOF.
-				return p.m, nil
+				break
 			}
 			// TODO: Remove debug output.
 			log.Printf("error at pos=%d (%q)", p.cur, p.input[p.cur:])
-			return p.m, err
+			return p.m, errutil.Err(err)
 		}
 	}
+	// Validate that the identified structure types have defined type bodies.
+	if err := p.tctx.Validate(); err != nil {
+		return p.m, errutil.Err(err)
+	}
+	return p.m, nil
 }
 
 // A parser parses the tokenized input into an in-memory representation of LLVM
@@ -80,6 +77,8 @@ type parser struct {
 	cur int
 	// An in-memory representation of the parsed LLVM IR module.
 	m *ir.Module
+	// Type context.
+	tctx *types.Context
 }
 
 // next consumes and returns the next token of the input.
@@ -149,6 +148,13 @@ func (p *parser) tryType() (typ types.Type, ok bool) {
 	}
 	return typ, true
 }
+
+// TODO: Check which support methods are actually required and remove the rest.
+//    * try?
+//    * tryLocal?
+//    * tryGlobal?
+//    * tryType?
+//    * expected?
 
 // expect consumes the next token and returns its value after validating the
 // expected token kind.
