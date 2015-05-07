@@ -45,12 +45,12 @@ func ParseFile(path string) ([]token.Token, error) {
 // ParseString lexes the input string into a slice of tokens. Potential errors
 // related to lexing are recorded as error tokens with relevant position
 // information.
-func ParseString(input string) []token.Token {
+func ParseString(s string) []token.Token {
 	l := &lexer{
-		input: input,
+		input: s,
 		// The average token size of LLVM IR is 4.06 (based on the 30000+ tokens
 		// of the c4 compiler project).
-		tokens: make([]token.Token, 0, len(input)/5),
+		tokens: make([]token.Token, 0, len(s)/5),
 	}
 
 	// Tokenize the input.

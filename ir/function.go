@@ -14,6 +14,6 @@ type Function struct {
 	Name string
 	// Function signature.
 	Sig *types.Func
-	// Basic blocks of the function (or nil if function declaration).
+	// Basic blocks of the function, or nil if function declaration.
 	Blocks []*BasicBlock
 }

@@ -14,40 +14,30 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#module-structure
 type Module struct {
-	// Data layout.
-	layout string
-	// Target host.
-	target string
+	// Data layout of the module.
+	//
+	// Examples:
+	//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+	//
+	// References:
+	//    http://llvm.org/docs/LangRef.html#data-layout
+	Layout string
+	// Target host of the module.
+	//
+	// Examples:
+	//    x86_64-unknown-linux-gnu
+	//
+	// References:
+	//    http://llvm.org/docs/LangRef.html#target-triple
+	Target string
 	// Type definitions.
-	typeDecls []types.NamedStruct
+	TypeDecls []types.NamedStruct
 	// Global variables.
-	globalDecls []*GlobalDecl
-	// Function definitions and external function declarations (Blocks is nil).
-	funcDecls []*Function
+	GlobalDecls []*GlobalDecl
+	// Function definitions and external function declarations.
+	FuncDecls []*Function
 	// Metadata nodes.
-	metaDecls []*Metadata
-}
-
-// Layout returns the data layout of the module.
-//
-// Examples:
-//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#data-layout
-func (m *Module) Layout() string {
-	return m.layout
-}
-
-// Target returns the target host of the module.
-//
-// Examples:
-//    x86_64-unknown-linux-gnu
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#target-triple
-func (m *Module) Target() string {
-	return m.target
+	MetaDecls []*Metadata
 }
 
 // String returns a string representation of the module and its top-level
@@ -57,25 +47,25 @@ func (m *Module) String() string {
 	// Data layout; e.g.
 	//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
 	buf := new(bytes.Buffer)
-	if len(m.layout) > 0 {
-		fmt.Fprintf(buf, "target datalayout = %q\n", m.layout)
+	if len(m.Layout) > 0 {
+		fmt.Fprintf(buf, "target datalayout = %q\n", m.Layout)
 	}
 
 	// Target triple; e.g.
 	//    target triple = "x86_64-unknown-linux-gnu"
-	if len(m.target) > 0 {
-		fmt.Fprintf(buf, "target triple = %q\n", m.target)
+	if len(m.Target) > 0 {
+		fmt.Fprintf(buf, "target triple = %q\n", m.Target)
 	}
 
 	// Type definitions; e.g.
 	//    %foo = type {i32}
-	for _, typeDecl := range m.typeDecls {
+	for _, typeDecl := range m.TypeDecls {
 		fmt.Fprintln(buf, "%s = type %v\n", asm.EncLocal(typeDecl.Name()), typeDecl.Struct)
 	}
 
 	// Global variables; e.g.
 	//    @x = global i32 42
-	for _, globalDecl := range m.globalDecls {
+	for _, globalDecl := range m.GlobalDecls {
 		fmt.Fprintln(buf, globalDecl)
 	}
 

@@ -48,8 +48,8 @@ const (
 	tail = head + decimal
 )
 
-// escape replaces any characters which are not valid in identifiers with their
-// hexadecimal escape sequence (\XX).
+// escape replaces any characters which are not valid in identifiers with
+// corresponding hexadecimal escape sequence (\XX).
 func escape(s string) string {
 	// Check if a replacement is required.
 	extra := 0

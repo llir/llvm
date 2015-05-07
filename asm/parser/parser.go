@@ -9,6 +9,7 @@ import (
 	"github.com/llir/llvm/asm/token"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/types"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // TODO: Implement support for type aliases; e.g.
@@ -41,31 +42,29 @@ func ParseFile(path string) (*ir.Module, error) {
 
 // ParseString parses the input string into an in-memory representation of LLVM
 // IR.
-func ParseString(input string) (*ir.Module, error) {
-	tokens := lexer.ParseString(input)
-	return ParseTokens(tokens)
+func ParseString(s string) (*ir.Module, error) {
+	input := lexer.ParseString(s)
+	return ParseTokens(input)
 }
 
 // ParseTokens parses the tokenized input into an in-memory representation of
 // LLVM IR.
 func ParseTokens(input []token.Token) (*ir.Module, error) {
-	p := &parser{
-		// filter input to a supported subset of the LLVM IR tokens.
-		input: filter(input),
-	}
-
 	// Parse the tokenized input by repeatedly parsing top-level entities.
-	module := new(ir.Module)
+	p := &parser{
+		input: filter(input),
+		m:     new(ir.Module),
+	}
 	for {
-		err := p.parseTopLevelEntity(module)
+		err := p.parseTopLevelEntity()
 		if err != nil {
 			if err == io.EOF {
 				// Terminate the parser at EOF.
-				return module, nil
+				return p.m, nil
 			}
 			// TODO: Remove debug output.
-			log.Printf("error at pos=%d (%q)\n", p.cur, p.input[p.cur:])
-			return module, err
+			log.Printf("error at pos=%d (%q)", p.cur, p.input[p.cur:])
+			return p.m, err
 		}
 	}
 }
@@ -75,8 +74,12 @@ func ParseTokens(input []token.Token) (*ir.Module, error) {
 type parser struct {
 	// Tokenized input.
 	input []token.Token
+	// Start position of the current entity.
+	start int
 	// Current position in the input.
 	cur int
+	// An in-memory representation of the parsed LLVM IR module.
+	m *ir.Module
 }
 
 // next consumes and returns the next token of the input.
@@ -95,12 +98,14 @@ func (p *parser) backup() {
 	p.cur--
 }
 
-// accept consumes the next token if it is of the given kind. It returns true if
-// a token was consumed and false otherwise.
-func (p *parser) accept(kind token.Kind) bool {
+// accept consumes the next token if it is from the valid set. It returns true
+// if a token was consumed and false otherwise.
+func (p *parser) accept(valid ...token.Kind) bool {
 	tok := p.next()
-	if kind == tok.Kind {
-		return true
+	for _, kind := range valid {
+		if kind == tok.Kind {
+			return true
+		}
 	}
 	p.backup()
 	return false
@@ -143,4 +148,29 @@ func (p *parser) tryType() (typ types.Type, ok bool) {
 		return nil, false
 	}
 	return typ, true
+}
+
+// expect consumes the next token and returns its value after validating the
+// expected token kind.
+func (p *parser) expect(kind token.Kind) (s string, err error) {
+	tok := p.next()
+	if tok.Kind != kind {
+		return "", errutil.Newf("expected %v, got %v (%q)", pretty(kind), pretty(tok.Kind), tok)
+	}
+	return tok.Val, nil
+}
+
+// pretty returns a pretty-printed version of the given token kind.
+func pretty(kind token.Kind) string {
+	var m = map[token.Kind]string{
+		token.Equal:  `"="`,
+		token.Int:    "integer literal",
+		token.Float:  "floating point literal",
+		token.String: "string literal",
+	}
+	if s, ok := m[kind]; ok {
+		return s
+	}
+	log.Printf("not yet implemented; pretty-printing of token kind %v", kind)
+	return kind.String()
 }
