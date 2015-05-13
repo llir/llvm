@@ -11,8 +11,8 @@ import (
 // variable declaration. The next token is either a GlobalID or a GlobalVar.
 //
 // Syntax:
-//    GlobalDecl = GlobalName "=" DeclLinkage [ Visibility ] [ DLLStorage ] [ ThreadLocal ] ( "global" | "constant" ) Type .
-//    GlobalDef  = GlobalName "=" [ DefLinkage ] [ Visibility ] [ DLLStorage ] [ ThreadLocal ] ( "global" | "constant" ) Type InitValue .
+//    GlobalDecl = GlobalName "=" DeclLinkage [ Visibility ] [ DLLStorage ] [ ThreadLocal ] [ "unnamed_addr" ] [ AddrSpace ] ( "global" | "constant" ) Type .
+//    GlobalDef  = GlobalName "=" [ DefLinkage ] [ Visibility ] [ DLLStorage ] [ ThreadLocal ] [ "unnamed_addr" ] [ AddrSpace ] ( "global" | "constant" ) Type InitValue .
 //    GlobalName = Global .
 //    InitValue  = Const .
 //
@@ -41,8 +41,16 @@ func (p *parser) parseGlobalDecl() error {
 	// Consume optional DLL storage class.
 	p.tryDLLStorage()
 
-	// Consume optional thread local storage model.
+	// Consume optional TLS model.
 	if err := p.tryThreadLocal(); err != nil {
+		return errutil.Err(err)
+	}
+
+	// Consume optional "unnamed_addr" token.
+	p.accept(token.KwUnnamedAddr)
+
+	// Consume optional address space.
+	if _, err := p.tryAddrSpace(); err != nil {
 		return errutil.Err(err)
 	}
 
@@ -187,4 +195,39 @@ func (p *parser) tryThreadLocal() error {
 	}
 
 	return nil
+}
+
+// tryAddrSpace tries to consume the optional address space of a global
+// variable.
+//
+// Syntax:
+//    AddrSpace = "addrspace" "(" int_lit ")" .
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#global-variables
+func (p *parser) tryAddrSpace() (addrspace int, err error) {
+	// NOTE: Currently, no information is retained about the address space.
+
+	// Consume "addrspace" token.
+	if !p.accept(token.KwAddrspace) {
+		return 0, nil
+	}
+
+	// Consume "(" token.
+	if !p.accept(token.Lparen) {
+		return 0, errutil.Newf(`expected "(" in address space, got %q token`, p.next())
+	}
+
+	// Consume integer literal.
+	addrspace, err = p.parseInt()
+	if err != nil {
+		return 0, errutil.Err(err)
+	}
+
+	// Consume ")" token.
+	if !p.accept(token.Rparen) {
+		return 0, errutil.Newf(`expected ")" in address space, got %q token`, p.next())
+	}
+
+	return addrspace, nil
 }

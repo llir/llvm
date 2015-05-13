@@ -182,13 +182,9 @@ func (p *parser) parseType() (typ types.Type, err error) {
 //    <2 x i32>
 func (p *parser) parseVectorType() (*types.Vector, error) {
 	// Vector length.
-	s, ok := p.try(token.Int)
-	if !ok {
-		return nil, errutil.New("expected vector length")
-	}
-	n, err := strconv.Atoi(s)
+	n, err := p.parseInt()
 	if err != nil {
-		return nil, errutil.Newf("invalid vector length (%v); %v", s, err)
+		return nil, errutil.Err(err)
 	}
 	if n < 1 {
 		return nil, errutil.Newf("invalid vector length (%d); expected >= 1", n)
@@ -225,13 +221,9 @@ func (p *parser) parseVectorType() (*types.Vector, error) {
 //    [5 x float]
 func (p *parser) parseArrayType() (*types.Array, error) {
 	// Array length.
-	s, ok := p.try(token.Int)
-	if !ok {
-		return nil, errutil.New("expected array length")
-	}
-	n, err := strconv.Atoi(s)
+	n, err := p.parseInt()
 	if err != nil {
-		return nil, errutil.Newf("invalid array length (%v); %v", s, err)
+		return nil, errutil.Err(err)
 	}
 	if n < 0 {
 		return nil, errutil.Newf("invalid array length (%d); expected >= 0", n)

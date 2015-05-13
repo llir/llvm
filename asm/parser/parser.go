@@ -4,6 +4,7 @@ package parser
 import (
 	"io"
 	"log"
+	"strconv"
 
 	"github.com/llir/llvm/asm/lexer"
 	"github.com/llir/llvm/asm/token"
@@ -147,6 +148,19 @@ func (p *parser) tryType() (typ types.Type, ok bool) {
 		return nil, false
 	}
 	return typ, true
+}
+
+// parseInt parses and returns an integer.
+func (p *parser) parseInt() (int, error) {
+	s, err := p.expect(token.Int)
+	if err != nil {
+		return 0, errutil.Err(err)
+	}
+	x, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, errutil.Err(err)
+	}
+	return x, nil
 }
 
 // TODO: Check which support methods are actually required and remove the rest.
