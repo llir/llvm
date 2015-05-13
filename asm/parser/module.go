@@ -14,8 +14,8 @@ package parser
 //    Local     = LocalID | LocalVar .
 //    GlobalID  = "@" ID .
 //    GlobalVar = "@" Var .
-//    LocalVar  = "%" Var .
 //    LocalID   = "%" ID .
+//    LocalVar  = "%" Var .
 //    ID        = int_lit .
 //    Var       = letter { letter | decimal_digit } | string_lit .
 //
@@ -23,9 +23,9 @@ package parser
 //    int_lit =  decimal_digit { decimal_digit } .
 //
 // String literals
+//    string_lit     =  `"` { unicode_value | newline } `"` .
 //    unicode_value  = unicode_char | hex_byte_value .
 //    hex_byte_value = `\` hex_digit hex_digit .
-//    string_lit     =  `"` { unicode_value | newline } `"` .
 
 import (
 	"io"
@@ -39,48 +39,61 @@ import (
 // parseTopLevelEntity parses a top-level entity and stores it in the module.
 //
 // Syntax:
-//    TopLevelEntity = TargetProperty | TypeDecl | FuncDecl | FuncDef .
+//    TopLevelEntity = TargetSpec | TypeDef | FuncDecl | FuncDef .
 func (p *parser) parseTopLevelEntity() error {
-	tok := p.next()
-	switch tok.Kind {
+	switch tok := p.next(); tok.Kind {
 	case token.Error:
 		return errutil.New(tok.Val)
+
 	case token.EOF:
 		// Terminate the parser at EOF.
 		return io.EOF
+
+	// Target specification; e.g.
+	//    target datalayout = "foo"
+	//    target triple = "foo"
 	case token.KwTarget:
-		// Target specifications (target data layout, target host).
-		return p.parseTarget()
+		return p.parseTargetSpec()
+
+	// Type definition (named types and type aliases); e.g.
+	//    %x     = type i32
+	//    %y     = type i32
+	//    %point = type {%x, %y}
 	case token.LocalID, token.LocalVar:
-		// Type definitions.
 		p.backup()
-		return p.parseTypeDecl()
+		return p.parseTypeDef()
+
+	// Global variable definition or external global variable declaration; e.g.
+	//    @x = global i32 42
+	//    @y = external global i32
+	case token.GlobalID, token.GlobalVar:
+		p.backup()
+		return p.parseGlobalDecl()
+
+	// External function declaration; e.g.
+	//    declare i32 @printf(i8*, ...)
 	case token.KwDeclare:
-		f, err := p.parseDeclare()
-		if err != nil {
-			return err
-		}
-		_ = f
-		panic("not yet implemented.")
+		return p.parseFuncDecl()
+
+	// Function definition; e.g.
+	//    define i32 @main() {
+	//       ret i32 42
+	//    }
 	case token.KwDefine:
-		f, err := p.parseDefine()
-		if err != nil {
-			return err
-		}
-		_ = f
-		panic("not yet implemented.")
+		return p.parseFuncDef()
+
 	default:
 		return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
 	}
 }
 
-// parseTarget parses a target specification and stores it in the module. A
+// parseTargetSpec parses a target specification and stores it in the module. A
 // "target" token has already been consumed.
 //
 // Syntax:
-//    TargetProperty = "target" ( DataLayout | TargetTriple ) .
-//    DataLayout     = "datalayout" "=" string_lit .
-//    TargetTriple   = "triple" "=" string_lit .
+//    TargetSpec   = "target" ( DataLayout | TargetTriple ) .
+//    DataLayout   = "datalayout" "=" string_lit .
+//    TargetTriple = "triple" "=" string_lit .
 //
 // Examples:
 //    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
@@ -89,7 +102,7 @@ func (p *parser) parseTopLevelEntity() error {
 // References:
 //    http://llvm.org/docs/LangRef.html#data-layout
 //    http://llvm.org/docs/LangRef.html#target-triple
-func (p *parser) parseTarget() error {
+func (p *parser) parseTargetSpec() error {
 	property := p.next()
 	switch property.Kind {
 	case token.KwDatalayout, token.KwTriple:

@@ -31,13 +31,13 @@ type Module struct {
 	//    http://llvm.org/docs/LangRef.html#target-triple
 	Target string
 	// Type definitions.
-	TypeDecls []*types.NamedStruct
+	Types []*types.NamedStruct
 	// Global variables.
-	GlobalDecls []*GlobalDecl
+	Globals []*GlobalDecl
 	// Function definitions and external function declarations.
-	FuncDecls []*Function
+	Funcs []*Function
 	// Metadata nodes.
-	MetaDecls []*Metadata
+	MetaNodes []*Metadata
 }
 
 // String returns a string representation of the module and its top-level
@@ -59,14 +59,14 @@ func (m *Module) String() string {
 
 	// Type definitions; e.g.
 	//    %foo = type {i32}
-	for _, typeDecl := range m.TypeDecls {
-		fmt.Fprintln(buf, "%s = type %v\n", asm.EncLocal(typeDecl.Name()), typeDecl.Struct)
+	for _, typ := range m.Types {
+		fmt.Fprintln(buf, "%s = type %v\n", asm.EncLocal(typ.Name()), typ.Struct)
 	}
 
 	// Global variables; e.g.
 	//    @x = global i32 42
-	for _, globalDecl := range m.GlobalDecls {
-		fmt.Fprintln(buf, globalDecl)
+	for _, global := range m.Globals {
+		fmt.Fprintln(buf, global)
 	}
 
 	// TODO: Print functions.

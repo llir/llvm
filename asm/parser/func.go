@@ -8,25 +8,34 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// parseDeclare parses a function declaration. A "declare" token has already
+// parseFuncDecl parses a function declaration. A "declare" token has already
 // been consumed.
 //
 //    FuncDecl = "declare" FuncHeader .
-func (p *parser) parseDeclare() (*ir.Function, error) {
-	return p.parseFuncHeader()
+func (p *parser) parseFuncDecl() error {
+	f, err := p.parseFuncHeader()
+	if err != nil {
+		return errutil.Err(err)
+	}
+	p.m.Funcs = append(p.m.Funcs, f)
+	return nil
 }
 
-// parseDefine parses a function definition. A "define" token has already been
+// parseFuncDef parses a function definition. A "define" token has already been
 // consumed.
 //
 //    FuncDef = "define" FuncHeader FuncBody .
-func (p *parser) parseDefine() (*ir.Function, error) {
+func (p *parser) parseFuncDef() error {
 	f, err := p.parseFuncHeader()
 	if err != nil {
-		return nil, err
+		return errutil.Err(err)
 	}
 	f.Blocks, err = p.parseFuncBody()
-	return f, err
+	if err != nil {
+		return errutil.Err(err)
+	}
+	p.m.Funcs = append(p.m.Funcs, f)
+	return nil
 }
 
 // parseFuncHeader parses a function header consisting of a return argument, a

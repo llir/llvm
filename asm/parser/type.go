@@ -10,12 +10,12 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// parseTypeDecl parses a type definition or a type alias. The next token is
+// parseTypeDef parses a type definition or a type alias. The next token is
 // either a LocalID or a LocalVar.
 //
-//    TypeDecl = TypeName "=" "type" ( StructType | AliasType ) .
+//    TypeDef  = TypeName "=" "type" ( StructType | AliasType ) .
 //    TypeName = Local .
-func (p *parser) parseTypeDecl() error {
+func (p *parser) parseTypeDef() error {
 	name := p.next()
 	if !p.accept(token.Equal) {
 		return errutil.Newf(`expected "=" after type name %q, got %q token`, asm.EncLocal(name.Val), p.next())
@@ -35,7 +35,7 @@ func (p *parser) parseTypeDecl() error {
 			return errutil.Err(err)
 		}
 		t.Struct = typ
-		p.m.TypeDecls = append(p.m.TypeDecls, t)
+		p.m.Types = append(p.m.Types, t)
 	default:
 		// Type alias.
 		if err := p.tctx.SetAlias(name.Val, typ); err != nil {
@@ -47,11 +47,12 @@ func (p *parser) parseTypeDecl() error {
 
 // parseType parses a type.
 //
-//    Type = VoidType | IntType | FloatType | MMXType | LabelType |
-//           MetadataType | FuncType | PointerType | VectorType | ArrayType |
-//           StructType .
-//    AliasType = IntType | FloatType | MMXType | LabelType | MetadataType |
-//                FuncType | PointerType | VectorType | ArrayType  .
+//    Type      = VoidType | IntType | FloatType | MMXType | LabelType |
+//                MetadataType | FuncType | PointerType | VectorType |
+//                ArrayType | StructType .
+//    AliasType = VoidType | IntType | FloatType | MMXType | LabelType |
+//                MetadataType | FuncType | PointerType | VectorType |
+//                ArrayType .
 //
 //    VoidType        = "void" .
 //    IntType         = "i" int_lit .
@@ -73,7 +74,7 @@ func (p *parser) parseTypeDecl() error {
 //    FloatsType = ( FloatType | FloatVectorType ) .
 func (p *parser) parseType() (typ types.Type, err error) {
 	switch tok := p.next(); tok.Kind {
-	// Basic type
+	// Basic type; e.g.
 	//    i32
 	//    float
 	case token.Type:
@@ -84,14 +85,14 @@ func (p *parser) parseType() (typ types.Type, err error) {
 
 	case token.Less:
 		if p.accept(token.Lbrace) {
-			// Packed array type
+			// Packed array type; e.g.
 			//    <{i32, i8}>
 			typ, err = p.parseStructType(true)
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			// Vector type
+			// Vector type; e.g.
 			//    <2 x i32>
 			typ, err = p.parseVectorType()
 			if err != nil {
@@ -99,7 +100,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			}
 		}
 
-	// Array type
+	// Array type; e.g.
 	//    [2 x float]
 	case token.Lbrack:
 		typ, err = p.parseArrayType()
@@ -107,7 +108,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			return nil, err
 		}
 
-	// Structure type
+	// Structure type; e.g.
 	//    {i32, float}
 	case token.Lbrace:
 		typ, err = p.parseStructType(false)
@@ -115,7 +116,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			return nil, err
 		}
 
-	// Identified structure or type alias
+	// Identified structure or type alias; e.g.
 	//    %42
 	//    %foo
 	case token.LocalID, token.LocalVar:
@@ -130,7 +131,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	}
 
 	for {
-		// Pointer type
+		// Pointer type; e.g.
 		//    i32*
 		//    [2 x float]*
 		//    i8****
@@ -142,7 +143,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			}
 		}
 
-		// Function type
+		// Function type; e.g.
 		//    i32 (i8*, ...)
 		//    [2 x float]* (i32)
 		//    i32 (i32)* (i32)

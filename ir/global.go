@@ -29,15 +29,16 @@ type GlobalDecl struct {
 	immutable bool
 }
 
-// NewGlobalDecl returns a new global variable definition of the given name,
-// type and initial value. The global variable is defined externally if val is
-// nil. By default, global variables are mutable. Invoke SetImmutable to create
-// read-only variables.
-func NewGlobalDecl(name string, typ types.Type, val values.Value) (*GlobalDecl, error) {
-	if val != nil && !typ.Equal(val.Type()) {
-		return nil, fmt.Errorf("invalid global variable definition; type mismatch between variable declaration (%q) and initial value (%q)", typ, val.Type())
-	}
-	return &GlobalDecl{name: name, typ: typ, val: val}, nil
+// NewGlobalDef returns a new global variable definition of the given name and
+// initial value. The variable is read-only if immutable is true.
+func NewGlobalDef(name string, val values.Value, immutable bool) *GlobalDecl {
+	return &GlobalDecl{name: name, typ: val.Type(), val: val, immutable: immutable}
+}
+
+// NewGlobalDecl returns a new external global variable declaration of the given
+// name and type. The variable is read-only if immutable is true.
+func NewGlobalDecl(name string, typ types.Type, immutable bool) *GlobalDecl {
+	return &GlobalDecl{name: name, typ: typ, immutable: immutable}
 }
 
 // Name returns the name of the value.
@@ -59,11 +60,6 @@ func (d *GlobalDecl) Value() values.Value {
 // Immutable reports whether the global variable is immutable.
 func (d *GlobalDecl) Immutable() bool {
 	return d.immutable
-}
-
-// SetImmutable controls whether the global variable is immutable.
-func (d *GlobalDecl) SetImmutable(immutable bool) {
-	d.immutable = immutable
 }
 
 // String returns the string representation of the global variable declaration.
