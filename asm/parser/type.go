@@ -13,6 +13,7 @@ import (
 // parseTypeDef parses a type definition or a type alias. The next token is
 // either a LocalID or a LocalVar.
 //
+// Syntax:
 //    TypeDef  = TypeName "=" "type" ( StructType | AliasType ) .
 //    TypeName = Local .
 func (p *parser) parseTypeDef() error {
@@ -47,6 +48,7 @@ func (p *parser) parseTypeDef() error {
 
 // parseType parses a type.
 //
+// Syntax:
 //    Type      = VoidType | IntType | FloatType | MMXType | LabelType |
 //                MetadataType | FuncType | PointerType | VectorType |
 //                ArrayType | StructType .
@@ -300,6 +302,7 @@ func (p *parser) parseStructType(packed bool) (*types.Struct, error) {
 // parseFuncType parses a function type. A result type, an optional function
 // name and a "(" token has already been consumed.
 //
+// Syntax:
 //    FuncType   = FuncResult "(" FuncParams ")" .
 //    FuncResult = Type .
 //    FuncParams = [ FuncParam { "," FuncParam } [ "," "..." ] ] | "..." .

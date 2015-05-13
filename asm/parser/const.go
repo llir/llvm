@@ -13,6 +13,7 @@ import (
 
 // parseConst parses a constant value.
 //
+// Syntax:
 //    Const = IntConst | FloatConst | PointerConst | VectorConst | ArrayConst |
 //            StructConst | ConstExpr .
 //
