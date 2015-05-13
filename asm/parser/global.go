@@ -32,16 +32,19 @@ func (p *parser) parseGlobalDecl() error {
 		}
 		return errutil.Newf(`invalid global variable %s for %q; expected "global" or "constant", got %q`, decl, asm.EncGlobal(name.Val), tok)
 	}
-	typ, err := p.parseType()
-	if err != nil {
-		return errutil.Err(err)
-	}
 	var global *ir.GlobalDecl
 	if extern {
+		typ, err := p.parseType()
+		if err != nil {
+			return errutil.Err(err)
+		}
 		global = ir.NewGlobalDecl(name.Val, typ, immutable)
 	} else {
-		// TODO: Parse initial value constant.
-		panic("not yet implemented")
+		val, err := p.parseConst()
+		if err != nil {
+			return errutil.Err(err)
+		}
+		global = ir.NewGlobalDef(name.Val, val, immutable)
 	}
 	p.m.Globals = append(p.m.Globals, global)
 	return nil

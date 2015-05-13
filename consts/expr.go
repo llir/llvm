@@ -31,6 +31,19 @@ type Expr interface {
 	Calc() Constant
 }
 
+// Make sure that each constant expression implements the Expr interface.
+var (
+	_ Expr = &IntTrunc{}
+	_ Expr = &IntZeroExt{}
+	_ Expr = &IntSignExt{}
+	_ Expr = &FloatTrunc{}
+	_ Expr = &FloatExt{}
+	_ Expr = &FloatToUint{}
+	_ Expr = &FloatToInt{}
+	_ Expr = &UintToFloat{}
+	_ Expr = &IntToFloat{}
+)
+
 // IntTrunc is a constant expression which truncates an integer constant to a
 // smaller or equally sized integer type.
 //

@@ -209,6 +209,7 @@ func (v *Float) String() string {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
+//    http://llvm.org/docs/LangRef.html#global-variable-and-function-addresses
 type Pointer struct {
 	// Pointer type.
 	typ *types.Pointer
@@ -220,6 +221,16 @@ type Pointer struct {
 // Type returns the type of the value.
 func (v *Pointer) Type() types.Type {
 	return v.typ
+}
+
+// String returns a string representation of the pointer constant. The pointer
+// string representation is preceded by the type of the constant, e.g.
+//
+//    i32(i8*, ...)* @printf
+func (v *Pointer) String() string {
+	// TODO: Implement the String method once the fields of the Pointer structure
+	// are known.
+	panic("not yet implemented")
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

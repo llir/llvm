@@ -26,6 +26,21 @@ type Type interface {
 	Equal(b Type) bool
 }
 
+// Make sure that each type implements the Type interface.
+var (
+	_ Type = &Void{}
+	_ Type = &Int{}
+	_ Type = &Float{}
+	_ Type = &MMX{}
+	_ Type = &Label{}
+	_ Type = &Metadata{}
+	_ Type = &Func{}
+	_ Type = &Pointer{}
+	_ Type = &Vector{}
+	_ Type = &Array{}
+	_ Type = &Struct{}
+)
+
 // Equal returns true if the given types are equal, and false otherwise.
 func Equal(t, u Type) bool {
 	return t.Equal(u)

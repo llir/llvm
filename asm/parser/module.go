@@ -20,7 +20,12 @@ package parser
 //    Var       = letter { letter | decimal_digit } | string_lit .
 //
 // Integer literals
-//    int_lit =  decimal_digit { decimal_digit } .
+//    int_lit = decimal_digit { decimal_digit } .
+//
+// Floating-point literals
+//    float_lit = [ "+" | "-" ] decimals "." [ decimals ] [ exponent ] .
+//    decimals  = decimal_digit { decimal_digit } .
+//    exponent  = ( "e" | "E" ) [ "+" | "-" ] decimals .
 //
 // String literals
 //    string_lit     =  `"` { unicode_value | newline } `"` .
