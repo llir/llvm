@@ -60,7 +60,7 @@ func (m *Module) String() string {
 	// Type definitions; e.g.
 	//    %foo = type {i32}
 	for _, typ := range m.Types {
-		fmt.Fprintln(buf, "%s = type %v\n", asm.EncLocal(typ.Name()), typ.Struct)
+		fmt.Fprintf(buf, "%s = type %v\n", asm.EncLocal(typ.Name()), typ.Struct)
 	}
 
 	// Global variables; e.g.
