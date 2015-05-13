@@ -7,32 +7,63 @@ import (
 )
 
 // Context represents the type context of a LLVM IR module. It is used during
-// the creation of named types. The only types that can be named are identified
-// structures.
+// the creation of named types (i.e. identified structures) and type aliases.
+// The type aliases are translated to concrete types during parsing.
 //
 // References:
 //    http://blog.llvm.org/2011/11/llvm-30-type-system-rewrite.html
 type Context struct {
-	// structs tracks the identified structures of the LLVM IR module.
+	// structs tracks the identified structures of the LLVM IR module; e.g.
+	//    %x = type { %y, i16, i32 }
 	structs map[string]*NamedStruct
+	// alias tracks the type aliases of the LLVM IR module; e.g.
+	//    %y = type i8
+	alias map[string]Type
 }
 
 // NewContext returns a new type context for a LLVM IR module.
 func NewContext() *Context {
-	return &Context{structs: make(map[string]*NamedStruct)}
+	ctx := &Context{
+		structs: make(map[string]*NamedStruct),
+		alias:   make(map[string]Type),
+	}
+	return ctx
 }
 
-// Get returns the identified structure of the given name. To enable recursive
+// Struct returns the identified structure of the given name. If no such
+// structure exists, a new identified structure is created. To enable recursive
 // and forward references, identified structures are initially created without
 // bodies. It is the caller's responsibility to populate the body of the
 // identified structure.
-func (ctx *Context) Get(name string) *NamedStruct {
+func (ctx *Context) Struct(name string) (*NamedStruct, error) {
+	if old, ok := ctx.alias[name]; ok {
+		return nil, fmt.Errorf("redefinition of type alias %q (%q) as identified structure", asm.EncLocal(name), old)
+	}
 	t, ok := ctx.structs[name]
 	if !ok {
 		t = &NamedStruct{name: name}
 		ctx.structs[name] = t
 	}
-	return t
+	return t, nil
+}
+
+// Alias returns the underlying type of the provided type alias. The boolean
+// return value reports whether such a type alias exists.
+func (ctx *Context) Alias(name string) (Type, bool) {
+	typ, ok := ctx.alias[name]
+	return typ, ok
+}
+
+// SetAlias creates a type alias between the given name and type.
+func (ctx *Context) SetAlias(name string, typ Type) error {
+	if _, ok := ctx.structs[name]; ok {
+		return fmt.Errorf("redefinition of identified structure %q as type alias (%q)", asm.EncLocal(name), typ)
+	}
+	if old, ok := ctx.alias[name]; ok {
+		return fmt.Errorf("redefinition of type alias %q; old mapping %q, new mapping %q", asm.EncLocal(name), old, typ)
+	}
+	ctx.alias[name] = typ
+	return nil
 }
 
 // Validate validates the type context by verifying that all identified

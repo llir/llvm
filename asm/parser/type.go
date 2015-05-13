@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"log"
 	"strconv"
 	"strings"
 
@@ -19,10 +18,10 @@ import (
 // the final in-memory representation of the IR will have translated them into
 // their actual types.
 
-// parseType parses a type definition or a type alias. The next token is either
-// a LocalID or a LocalVar.
+// parseTypeDecl parses a type definition or a type alias. The next token is
+// either a LocalID or a LocalVar.
 //
-//    TypeDecl = TypeName "=" "type" TypeSpec( StructType | AliasType ) .
+//    TypeDecl = TypeName "=" "type" ( StructType | AliasType ) .
 //    TypeName = Local .
 func (p *parser) parseTypeDecl() error {
 	name := p.next()
@@ -36,15 +35,20 @@ func (p *parser) parseTypeDecl() error {
 	if err != nil {
 		return errutil.Err(err)
 	}
-	m := p.m
 	switch typ := typ.(type) {
 	case *types.Struct:
 		// Identified structure.
-		t := p.tctx.Get(name.Val)
+		t, err := p.tctx.Struct(name.Val)
+		if err != nil {
+			return errutil.Err(err)
+		}
 		t.Struct = typ
-		m.TypeDecls = append(m.TypeDecls, t)
+		p.m.TypeDecls = append(p.m.TypeDecls, t)
 	default:
-		log.Fatalf("support for type aliases of %T not yet implemented", typ)
+		// Type alias.
+		if err := p.tctx.SetAlias(name.Val, typ); err != nil {
+			return errutil.Err(err)
+		}
 	}
 	return nil
 }
@@ -119,6 +123,16 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			return nil, err
 		}
 
+	// Identified structure or type alias
+	//    %42
+	//    %foo
+	case token.LocalID, token.LocalVar:
+		name := tok.Val
+		if alias, ok := p.tctx.Alias(name); ok {
+			return alias, nil
+		}
+		return p.tctx.Struct(name)
+
 	default:
 		return nil, errutil.New("expected type")
 	}
@@ -182,7 +196,7 @@ func (p *parser) parseVectorType() (*types.Vector, error) {
 		return nil, errutil.Newf("invalid vector length (%d); expected >= 1", n)
 	}
 
-	// x
+	// "x" token.
 	if !p.accept(token.KwX) {
 		return nil, errutil.New("expected 'x' after vector length")
 	}
@@ -225,7 +239,7 @@ func (p *parser) parseArrayType() (*types.Array, error) {
 		return nil, errutil.Newf("invalid array length (%d); expected >= 0", n)
 	}
 
-	// x
+	// "x" token.
 	if !p.accept(token.KwX) {
 		return nil, errutil.New("expected 'x' after array length")
 	}

@@ -4,20 +4,28 @@ package parser
 //    newline      = /* the Unicode code point U+000A */ .
 //    unicode_char = /* an arbitrary Unicode code point except newline */ .
 //
-// Digits
+// Letters and digits
+//    letter        = ( "-" | "a" … "z" | "A" … "Z" | "$" | "." | "_" ) .
 //    decimal_digit = "0" … "9" .
 //    hex_digit     = "0" … "9" | "A" … "F" | "a" … "f" .
 //
+// Identifiers
+//    Global    = GlobalID | GlobalVar .
+//    Local     = LocalID | LocalVar .
+//    GlobalID  = "@" ID .
+//    GlobalVar = "@" Var .
+//    LocalVar  = "%" Var .
+//    LocalID   = "%" ID .
+//    ID        = int_lit .
+//    Var       = letter { letter | decimal_digit } | string_lit .
+//
 // Integer literals
-//    int_lit        =  decimal_digit { decimal_digit } .
+//    int_lit =  decimal_digit { decimal_digit } .
 //
 // String literals
 //    unicode_value  = unicode_char | hex_byte_value .
-//    hex_byte_value = `\` "x" hex_digit hex_digit .
+//    hex_byte_value = `\` hex_digit hex_digit .
 //    string_lit     =  `"` { unicode_value | newline } `"` .
-
-// Global = GlobalID | GlobalVar .
-// Local = LocalID | LocalVar .
 
 import (
 	"io"
@@ -70,13 +78,17 @@ func (p *parser) parseTopLevelEntity() error {
 // "target" token has already been consumed.
 //
 // Syntax:
-//    TargetProperty   = TargetDatalayout | TargetTriple .
-//    TargetDatalayout = "target" "datalayout" "=" string_lit .
-//    TargetTriple     = "target" "triple" "=" string_lit .
+//    TargetProperty = "target" ( DataLayout | TargetTriple ) .
+//    DataLayout     = "datalayout" "=" string_lit .
+//    TargetTriple   = "triple" "=" string_lit .
 //
 // Examples:
 //    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
 //    target triple = "x86_64-unknown-linux-gnu"
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#data-layout
+//    http://llvm.org/docs/LangRef.html#target-triple
 func (p *parser) parseTarget() error {
 	property := p.next()
 	switch property.Kind {
@@ -92,12 +104,11 @@ func (p *parser) parseTarget() error {
 	if err != nil {
 		return errutil.Err(err)
 	}
-	m := p.m
 	switch property.Kind {
 	case token.KwDatalayout:
-		m.Layout = s
+		p.m.Layout = s
 	case token.KwTriple:
-		m.Target = s
+		p.m.Target = s
 	}
 	return nil
 }
