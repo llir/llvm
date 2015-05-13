@@ -10,14 +10,6 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// TODO: Implement support for type aliases; e.g.
-//    %x = type i32
-//    %y = type {%x i32}
-// %x is a type alias for i32 while %y is a named type of the identified
-// structure {i32 i32}. Type aliases will only be relevant during parsing, and
-// the final in-memory representation of the IR will have translated them into
-// their actual types.
-
 // parseTypeDecl parses a type definition or a type alias. The next token is
 // either a LocalID or a LocalVar.
 //
