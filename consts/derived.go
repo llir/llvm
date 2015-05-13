@@ -3,6 +3,8 @@ package consts
 import (
 	"bytes"
 	"fmt"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/llir/llvm/types"
 )
@@ -129,8 +131,18 @@ func (v *Array) Type() types.Type {
 //
 //    [2 x i32] [i32 42, i32 -13]
 func (v *Array) String() string {
-	// TODO: Implement pretty printing of character array constants; e.g.
-	//    c"hello world\0a\00".
+	// Pretty print character arrays; e.g.
+	//    c"hello world\0A\00"
+	if v.typ.Elem().Equal(types.I8) {
+		// TODO: Cleanup once the array data structure has been refined.
+		buf := new(bytes.Buffer)
+		for _, elem := range v.elems {
+			x := elem.(*Int).x.Int64()
+			buf.WriteByte(byte(x))
+		}
+		return `c"` + escape(buf.String()) + `"`
+	}
+
 	buf := new(bytes.Buffer)
 	for i, elem := range v.elems {
 		if i > 0 {
@@ -140,6 +152,51 @@ func (v *Array) String() string {
 	}
 
 	return fmt.Sprintf("%s [%s]", v.Type(), buf)
+}
+
+// escape replaces any characters which are not printable with corresponding
+// hexadecimal escape sequence (\XX).
+func escape(s string) string {
+	// Check if a replacement is required.
+	extra := 0
+	for i := 0; i < len(s); {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		if utf8.ValidRune(r) && unicode.IsPrint(r) {
+			i += size
+			continue
+		}
+		// Two extra bytes are required for each non-printable byte; e.g.
+		//    "\n" -> `\0A`
+		//    "\x00" -> `\00`
+		extra += 2
+		i++
+	}
+	if extra == 0 {
+		return s
+	}
+
+	// Replace non-printable bytes.
+	const hextable = "0123456789ABCDEF"
+	buf := make([]byte, len(s)+extra)
+	j := 0
+	for i := 0; i < len(s); {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		if utf8.ValidRune(r) && unicode.IsPrint(r) {
+			for k := 0; k < size; k++ {
+				buf[j+k] = s[i+k]
+			}
+			i += size
+			j += size
+			continue
+		}
+		b := s[i]
+		buf[j] = '\\'
+		buf[j+1] = hextable[b>>4]
+		buf[j+2] = hextable[b&0x0F]
+		i++
+		j += 3
+	}
+	return string(buf)
 }
 
 // Struct represents a structure constant which is a structure containing only

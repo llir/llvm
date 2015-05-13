@@ -91,7 +91,7 @@ func (exp *IntTrunc) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *IntTrunc) Calc() Constant {
-	panic("not yet implemented.")
+	panic("IntTrunc.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the integer truncation expression.
@@ -150,7 +150,7 @@ func (exp *IntZeroExt) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *IntZeroExt) Calc() Constant {
-	panic("not yet implemented.")
+	panic("IntZeroExt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the integer zero extension
@@ -209,7 +209,7 @@ func (exp *IntSignExt) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *IntSignExt) Calc() Constant {
-	panic("not yet implemented.")
+	panic("IntSignExt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the integer sign extension
@@ -271,7 +271,7 @@ func (exp *FloatTrunc) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatTrunc) Calc() Constant {
-	panic("not yet implemented.")
+	panic("FloatTrunc.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the floating point truncation
@@ -333,7 +333,7 @@ func (exp *FloatExt) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatExt) Calc() Constant {
-	panic("not yet implemented.")
+	panic("FloatExt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the floating point extension
@@ -392,7 +392,7 @@ func (exp *FloatToUint) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatToUint) Calc() Constant {
-	panic("not yet implemented.")
+	panic("FloatToUint.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -453,7 +453,7 @@ func (exp *FloatToInt) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *FloatToInt) Calc() Constant {
-	panic("not yet implemented.")
+	panic("FloatToInt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -514,7 +514,7 @@ func (exp *UintToFloat) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *UintToFloat) Calc() Constant {
-	panic("not yet implemented.")
+	panic("UintToFloat.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -575,7 +575,7 @@ func (exp *IntToFloat) Type() types.Type {
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
 func (exp *IntToFloat) Calc() Constant {
-	panic("not yet implemented.")
+	panic("IntToFloat.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which

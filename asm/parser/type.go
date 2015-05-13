@@ -80,7 +80,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	case token.Type:
 		typ, err = basicTypeFromString(tok.Val)
 		if err != nil {
-			return nil, err
+			return nil, errutil.Err(err)
 		}
 
 	case token.Less:
@@ -89,14 +89,14 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			//    <{i32, i8}>
 			typ, err = p.parseStructType(true)
 			if err != nil {
-				return nil, err
+				return nil, errutil.Err(err)
 			}
 		} else {
 			// Vector type; e.g.
 			//    <2 x i32>
 			typ, err = p.parseVectorType()
 			if err != nil {
-				return nil, err
+				return nil, errutil.Err(err)
 			}
 		}
 
@@ -105,7 +105,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	case token.Lbrack:
 		typ, err = p.parseArrayType()
 		if err != nil {
-			return nil, err
+			return nil, errutil.Err(err)
 		}
 
 	// Structure type; e.g.
@@ -113,7 +113,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 	case token.Lbrace:
 		typ, err = p.parseStructType(false)
 		if err != nil {
-			return nil, err
+			return nil, errutil.Err(err)
 		}
 
 	// Identified structure or type alias; e.g.
@@ -124,10 +124,13 @@ func (p *parser) parseType() (typ types.Type, err error) {
 		if alias, ok := p.tctx.Alias(name); ok {
 			return alias, nil
 		}
-		return p.tctx.Struct(name)
+		typ, err = p.tctx.Struct(name)
+		if err != nil {
+			return nil, errutil.Err(err)
+		}
 
 	default:
-		return nil, errutil.New("expected type")
+		return nil, errutil.Newf("expected type; got %q token", tok)
 	}
 
 	for {
@@ -139,7 +142,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			elem := typ
 			typ, err = types.NewPointer(elem)
 			if err != nil {
-				return nil, err
+				return nil, errutil.Err(err)
 			}
 		}
 
@@ -151,7 +154,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			result := typ
 			typ, err = p.parseFuncType(result)
 			if err != nil {
-				return nil, err
+				return nil, errutil.Err(err)
 			}
 		} else {
 			break
@@ -197,7 +200,7 @@ func (p *parser) parseVectorType() (*types.Vector, error) {
 	// Element type.
 	elem, err := p.parseType()
 	if err != nil {
-		return nil, err
+		return nil, errutil.Err(err)
 	}
 
 	// End of vector.
@@ -240,7 +243,7 @@ func (p *parser) parseArrayType() (*types.Array, error) {
 	// Element type.
 	elem, err := p.parseType()
 	if err != nil {
-		return nil, err
+		return nil, errutil.Err(err)
 	}
 
 	// End of array.

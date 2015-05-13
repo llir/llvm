@@ -230,7 +230,7 @@ func (v *Pointer) Type() types.Type {
 func (v *Pointer) String() string {
 	// TODO: Implement the String method once the fields of the Pointer structure
 	// are known.
-	panic("not yet implemented")
+	panic("Pointer.String: not yet implemented")
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

@@ -89,5 +89,5 @@ func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
 //    Terminator  = RetInst | BrInst | SwitchInst | IndirectbrInst |
 //                  InvokeInst | ResumeInst | UnreachableInst .
 func (p *parser) parseFuncBody() (body []*ir.BasicBlock, err error) {
-	panic("not yet implemented.")
+	panic("parser.parseFuncBody: not yet implemented.")
 }

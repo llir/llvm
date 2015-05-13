@@ -169,7 +169,21 @@ func (p *parser) expect(kind token.Kind) (s string, err error) {
 // pretty returns a pretty-printed version of the given token kind.
 func pretty(kind token.Kind) string {
 	var m = map[token.Kind]string{
-		token.Equal:  `"="`,
+		// Operators and delimiters.
+		token.Ellipsis: "...",
+		token.Equal:    "=",
+		token.Comma:    ",",
+		token.Star:     "*",
+		token.Lbrack:   "[",
+		token.Rbrack:   "]",
+		token.Lbrace:   "{",
+		token.Rbrace:   "}",
+		token.Lparen:   "(",
+		token.Rparen:   ")",
+		token.Less:     "<",
+		token.Greater:  ">",
+		token.Exclaim:  "!",
+		// Constants.
 		token.Int:    "integer literal",
 		token.Float:  "floating point literal",
 		token.String: "string literal",

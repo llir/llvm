@@ -88,7 +88,7 @@ func (p *parser) parseTopLevelEntity() error {
 		return p.parseFuncDef()
 
 	default:
-		return errutil.Newf("invalid token type %v; expected top-level entity", tok.Kind)
+		return errutil.Newf("invalid token kind %q (%q); expected top-level entity", tok.Kind, tok.Val)
 	}
 }
 

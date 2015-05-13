@@ -94,3 +94,13 @@ func SameLength(a, b Type) bool {
 	// Verify if both types are distinct from vectors and arrays.
 	return !ok1 && !ok2
 }
+
+// Convenience types.
+var (
+	// I8 represents the i8 type.
+	I8 *Int
+)
+
+func init() {
+	I8, _ = NewInt(8)
+}

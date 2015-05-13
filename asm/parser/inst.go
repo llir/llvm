@@ -14,7 +14,7 @@ import "github.com/llir/llvm/ir"
 //    RetInst = "ret" VoidType |
 //              "ret" Type Value .
 func (p *parser) parseRetInst() (*ir.ReturnInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseRetInst: not yet implemented.")
 }
 
 // parseBrInst parses a branch instruction. A "br" token has already been
@@ -28,7 +28,7 @@ func (p *parser) parseRetInst() (*ir.ReturnInst, error) {
 //    TargetTrue  = Local .
 //    TargetFalse = Local .
 func (p *parser) parseBrInst() (*ir.BranchInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseBrInst: not yet implemented.")
 }
 
 // parseSwitchInst parses a switch instruction. A "switch" token has already
@@ -39,7 +39,7 @@ func (p *parser) parseBrInst() (*ir.BranchInst, error) {
 //    TargetDefault = Local .
 //    TargetCase    = Local .
 func (p *parser) parseSwitchInst() (*ir.SwitchInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseSwitchInst: not yet implemented.")
 }
 
 // TODO: Add parsing of IndirectbrInst, InvokeInst, ResumeInst.
@@ -49,7 +49,7 @@ func (p *parser) parseSwitchInst() (*ir.SwitchInst, error) {
 //
 //    UnreachableInst = "unreachable" .
 func (p *parser) parseUnreachableInst() (*ir.UnreachableInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseUnreachableInst: not yet implemented.")
 }
 
 // =============================================================================
@@ -67,7 +67,7 @@ func (p *parser) parseUnreachableInst() (*ir.UnreachableInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseAddInst() (*ir.AddInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseAddInst: not yet implemented.")
 }
 
 // parseFaddInst parses a floating-point addition instruction. A "fadd" token
@@ -79,7 +79,7 @@ func (p *parser) parseAddInst() (*ir.AddInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFaddInst() (*ir.FaddInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseFaddInst: not yet implemented.")
 }
 
 // parseSubInst parses a subtraction instruction. A "sub" token has already been
@@ -91,7 +91,7 @@ func (p *parser) parseFaddInst() (*ir.FaddInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseSubInst() (*ir.SubInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseSubInst: not yet implemented.")
 }
 
 // parseFsubInst parses a floating-point subtraction instruction. A "fsub" token
@@ -103,7 +103,7 @@ func (p *parser) parseSubInst() (*ir.SubInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFsubInst() (*ir.FsubInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseFsubInst: not yet implemented.")
 }
 
 // parseMulInst parses a multiplication instruction. A "mul" token has already
@@ -115,7 +115,7 @@ func (p *parser) parseFsubInst() (*ir.FsubInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseMulInst() (*ir.MulInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseMulInst: not yet implemented.")
 }
 
 // parseFmulInst parses a floating-point multiplication instruction. A "fmul"
@@ -127,7 +127,7 @@ func (p *parser) parseMulInst() (*ir.MulInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFmulInst() (*ir.FmulInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseFmulInst: not yet implemented.")
 }
 
 // parseUdivInst parses a unsigned division instruction. An "udiv" token has
@@ -139,7 +139,7 @@ func (p *parser) parseFmulInst() (*ir.FmulInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseUdivInst() (*ir.UdivInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseUdivInst: not yet implemented.")
 }
 
 // parseSdivInst parses a signed division instruction. A "sdiv" token has
@@ -151,7 +151,7 @@ func (p *parser) parseUdivInst() (*ir.UdivInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseSdivInst() (*ir.SdivInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseSdivInst: not yet implemented.")
 }
 
 // parseFdivInst parses a floating-point division instruction. A "fdiv" token
@@ -163,7 +163,7 @@ func (p *parser) parseSdivInst() (*ir.SdivInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFdivInst() (*ir.FdivInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseFdivInst: not yet implemented.")
 }
 
 // parseUremInst parses a unsigned modulo instruction. An "urem" token has
@@ -175,7 +175,7 @@ func (p *parser) parseFdivInst() (*ir.FdivInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseUremInst() (*ir.UremInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseUremInst: not yet implemented.")
 }
 
 // parseSremInst parses a signed modulo instruction. An "srem" token has already
@@ -187,7 +187,7 @@ func (p *parser) parseUremInst() (*ir.UremInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseSremInst() (*ir.SremInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseSremInst: not yet implemented.")
 }
 
 // parseFremInst parses a floating-point modulo instruction. A "frem" token
@@ -199,7 +199,7 @@ func (p *parser) parseSremInst() (*ir.SremInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseFremInst() (*ir.FremInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseFremInst: not yet implemented.")
 }
 
 // =============================================================================
@@ -217,7 +217,7 @@ func (p *parser) parseFremInst() (*ir.FremInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseShlInst() (*ir.ShlInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseShlInst: not yet implemented.")
 }
 
 // parseLshrInst parses a logical shift right instruction. A "lshr" token has
@@ -229,7 +229,7 @@ func (p *parser) parseShlInst() (*ir.ShlInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseLshrInst() (*ir.LshrInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseLshrInst: not yet implemented.")
 }
 
 // parseAshrInst parses an arithmetic shift right instruction. An "ashr" token
@@ -241,7 +241,7 @@ func (p *parser) parseLshrInst() (*ir.LshrInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseAshrInst() (*ir.AshrInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseAshrInst: not yet implemented.")
 }
 
 // parseAndInst parses a bitwise logical AND instruction. An "and" token has
@@ -253,7 +253,7 @@ func (p *parser) parseAshrInst() (*ir.AshrInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseAndInst() (*ir.AndInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseAndInst: not yet implemented.")
 }
 
 // parseOrInst parses a bitwise logical OR instruction. A "or" token has already
@@ -265,7 +265,7 @@ func (p *parser) parseAndInst() (*ir.AndInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseOrInst() (*ir.OrInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseOrInst: not yet implemented.")
 }
 
 // parseXorInst parses a bitwise logical XOR instruction. A "xor" token has
@@ -277,7 +277,7 @@ func (p *parser) parseOrInst() (*ir.OrInst, error) {
 //    Op1    = Value
 //    Op2    = Value
 func (p *parser) parseXorInst() (*ir.XorInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseXorInst: not yet implemented.")
 }
 
 // =============================================================================
@@ -312,7 +312,7 @@ func (p *parser) parseXorInst() (*ir.XorInst, error) {
 //    NumElems = Value
 //    Align    = int_lit
 func (p *parser) parseAllocaInst() (*ir.AllocaInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseAllocaInst: not yet implemented.")
 }
 
 // parseLoadInst parses a memory load instruction. A "load" token has already
@@ -324,7 +324,7 @@ func (p *parser) parseAllocaInst() (*ir.AllocaInst, error) {
 //    Addr   = Global | Local
 //    Align  = int_lit
 func (p *parser) parseLoadInst() (*ir.LoadInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseLoadInst: not yet implemented.")
 }
 
 // parseStoreInst parses a memory store instruction. A "store" token has already
@@ -335,7 +335,7 @@ func (p *parser) parseLoadInst() (*ir.LoadInst, error) {
 //    Addr   = Global | Local
 //    Align  = int_lit
 func (p *parser) parseStoreInst() (*ir.StoreInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseStoreInst: not yet implemented.")
 }
 
 // TODO: Add parsing of FenceInst, CmpxchgInst, AtomicrmwInst.
@@ -349,7 +349,7 @@ func (p *parser) parseStoreInst() (*ir.StoreInst, error) {
 //    Addr   = Global | Local
 //    Idx    = Value
 func (p *parser) parseGetelementptrInst() (*ir.GetelementptrInst, error) {
-	panic("not yet implemented.")
+	panic("parser.parseGetelementptrInst: not yet implemented.")
 }
 
 // =============================================================================
