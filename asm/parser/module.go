@@ -16,6 +16,7 @@ package parser
 //    GlobalVar = "@" Var .
 //    LocalID   = "%" ID .
 //    LocalVar  = "%" Var .
+//    ComdatVar = "$" Var .
 //    ID        = int_lit .
 //    Var       = letter { letter | decimal_digit } | string_lit .
 //

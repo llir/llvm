@@ -72,5 +72,6 @@ func (m *Module) String() string {
 	// TODO: Print functions.
 	// TODO: Print named metadata.
 	// TODO: Print metadata.
-	return buf.String()
+	//return buf.String()
+	panic("Modlue.String: not yet implemented")
 }

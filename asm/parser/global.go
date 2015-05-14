@@ -11,10 +11,18 @@ import (
 // variable declaration. The next token is either a GlobalID or a GlobalVar.
 //
 // Syntax:
-//    GlobalDecl = GlobalName "=" DeclLinkage [ Visibility ] [ DLLStorage ] [ ThreadLocal ] [ "unnamed_addr" ] [ AddrSpace ] ( "global" | "constant" ) Type .
-//    GlobalDef  = GlobalName "=" [ DefLinkage ] [ Visibility ] [ DLLStorage ] [ ThreadLocal ] [ "unnamed_addr" ] [ AddrSpace ] ( "global" | "constant" ) Type InitValue .
+//    GlobalDecl = GlobalName "=" DeclLinkage GlobalProperties Type GlobalAttrList .
+//    GlobalDef  = GlobalName "=" [ DefLinkage ] GlobalProperties InitConst GlobalAttrList .
 //    GlobalName = Global .
-//    InitValue  = Const .
+//    InitConst  = Const .
+//
+//    GlobalProperties = [ Visibility ] [ DLLStorage ] [ ThreadLocal ]
+//                       [ "unnamed_addr" ] [ AddrSpace ]
+//                       [ "externally_initialized" ]
+//                       ( "constant" | "global" ) .
+//
+//    GlobalAttrList = { "," GlobalAttr } .
+//    GlobalAttr     = AlignAttr | ComdatAttr | SectionAttr .
 //
 // Examples:
 //    @x = global i32 7
@@ -22,7 +30,7 @@ import (
 //    @hello = constant [13 x i8] c"hello world\0A\00"
 //
 // References:
-//   http://llvm.org/docs/LangRef.html#global-variables
+//    http://llvm.org/docs/LangRef.html#global-variables
 func (p *parser) parseGlobalDecl() error {
 	// Consume global name.
 	name := p.next()
@@ -54,11 +62,15 @@ func (p *parser) parseGlobalDecl() error {
 		return errutil.Err(err)
 	}
 
+	// Consume optional "externally_initialized" token.
+	p.accept(token.KwExternallyInitialized)
+
+	// Consume "constant" or "global" token.
 	immutable := false
 	switch tok := p.next(); tok.Kind {
-	case token.KwGlobal:
 	case token.KwConstant:
 		immutable = true
+	case token.KwGlobal:
 	default:
 		decl := "definition"
 		if extern {
@@ -66,14 +78,17 @@ func (p *parser) parseGlobalDecl() error {
 		}
 		return errutil.Newf(`invalid global variable %s for %q; expected "global" or "constant", got %q`, decl, asm.EncGlobal(name.Val), tok)
 	}
+
 	var global *ir.GlobalDecl
 	if extern {
+		// Consume type.
 		typ, err := p.parseType()
 		if err != nil {
 			return errutil.Err(err)
 		}
 		global = ir.NewGlobalDecl(name.Val, typ, immutable)
 	} else {
+		// Consume type and initial value.
 		val, err := p.parseConst()
 		if err != nil {
 			return errutil.Err(err)
@@ -81,6 +96,30 @@ func (p *parser) parseGlobalDecl() error {
 		global = ir.NewGlobalDef(name.Val, val, immutable)
 	}
 	p.m.Globals = append(p.m.Globals, global)
+
+	// Consume optional global attributes; e.g.
+	//    align 8
+	//    comdat($foo)
+	//    section "foo"
+	for p.accept(token.Comma) {
+		switch tok := p.next(); tok.Kind {
+		case token.KwAlign:
+			if _, err := p.parseAlignAttr(); err != nil {
+				return errutil.Err(err)
+			}
+		case token.KwComdat:
+			if _, err := p.parseComdatAttr(); err != nil {
+				return errutil.Err(err)
+			}
+		case token.KwSection:
+			if _, err := p.parseSectionAttr(); err != nil {
+				return errutil.Err(err)
+			}
+		default:
+			return errutil.Newf(`expected "align", "comdat" or "section", got %q token`, p.next())
+		}
+	}
+
 	return nil
 }
 
@@ -230,4 +269,73 @@ func (p *parser) tryAddrSpace() (addrspace int, err error) {
 	}
 
 	return addrspace, nil
+}
+
+// parseAlignAttr parses an alignment attribute of a global variable or
+// function. An "align" token has already been consumed.
+//
+// Syntax:
+//    AlignAttr = "align" int_lit .
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#global-variables
+func (p *parser) parseAlignAttr() (n int, err error) {
+	n, err = p.parseInt()
+	if err != nil {
+		return 0, errutil.Err(err)
+	}
+
+	// Verify that n is a power of 2.
+	if !isPow2(n) {
+		return 0, errutil.Newf("invalid alignment; expected power of 2, got %d", n)
+	}
+	return n, nil
+}
+
+// isPow2 returns true if x is a power of 2.
+func isPow2(x int) bool {
+	return x > 0 && (x&(x-1)) == 0
+}
+
+// parseComdatAttr parses a COMDAT attribute of a global variable or function. A
+// "comdat" token has already been consumed.
+//
+// Syntax:
+//    ComdatAttr = "comdat" [ "(" ComdatName ")" ] .
+//    ComdatName = ComdatVar .
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#comdats
+func (p *parser) parseComdatAttr() (name string, err error) {
+	if !p.accept(token.Lparen) {
+		return "", nil
+	}
+	name, err = p.expect(token.ComdatVar)
+	if err != nil {
+		return "", errutil.Err(err)
+	}
+	if len(name) < 1 {
+		return "", errutil.New("empty COMDAT variable name")
+	}
+	if !p.accept(token.Rparen) {
+		return "", errutil.Newf(`expected ")" after COMDAT variable, got %q token`, p.next())
+	}
+	return name, nil
+}
+
+// parseSectionAttr parses a section attribute of a global variable or function.
+// A "section" token has already been consumed.
+//
+// Syntax:
+//    SectionAttr = "section" SectionName .
+//    SectionName = string_lit .
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#global-variables
+func (p *parser) parseSectionAttr() (name string, err error) {
+	name, ok := p.try(token.String)
+	if !ok {
+		return "", errutil.Newf("expected section name, got %q token", p.next())
+	}
+	return name, nil
 }
