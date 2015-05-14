@@ -40,12 +40,13 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// TODO: Complete TopLevelEntity EBNF definition.
+// TODO: Complete TopLevelEntity EBNF definition; add metadata.
 
 // parseTopLevelEntity parses a top-level entity and stores it in the module.
 //
 // Syntax:
-//    TopLevelEntity = TargetSpec | TypeDef | FuncDecl | FuncDef .
+//    TopLevelEntity = TargetSpec | TypeDef | GlobalDecl | GlobalDef |
+//                     FuncDecl | FuncDef .
 func (p *parser) parseTopLevelEntity() error {
 	switch tok := p.next(); tok.Kind {
 	case token.Error:
@@ -109,25 +110,27 @@ func (p *parser) parseTopLevelEntity() error {
 //    http://llvm.org/docs/LangRef.html#data-layout
 //    http://llvm.org/docs/LangRef.html#target-triple
 func (p *parser) parseTargetSpec() error {
-	property := p.next()
-	switch property.Kind {
-	case token.KwDatalayout, token.KwTriple:
-		// valid.
-	default:
-		return errutil.Newf("unknown target property %q", property)
-	}
-	if !p.accept(token.Equal) {
-		return errutil.Newf(`expected "=" after target %s, got %q token`, property, p.next())
-	}
-	s, err := p.expect(token.String)
-	if err != nil {
-		return errutil.Err(err)
-	}
-	switch property.Kind {
+	switch tok := p.next(); tok.Kind {
 	case token.KwDatalayout:
+		if !p.accept(token.Equal) {
+			return errutil.Newf(`expected "=" after target datalayout, got %q token`, p.next())
+		}
+		s, err := p.expect(token.String)
+		if err != nil {
+			return errutil.Err(err)
+		}
 		p.m.Layout = s
 	case token.KwTriple:
+		if !p.accept(token.Equal) {
+			return errutil.Newf(`expected "=" after target triple, got %q token`, p.next())
+		}
+		s, err := p.expect(token.String)
+		if err != nil {
+			return errutil.Err(err)
+		}
 		p.m.Target = s
+	default:
+		return errutil.Newf("unknown target property %q", tok)
 	}
 	return nil
 }
