@@ -881,7 +881,11 @@ func TestNamedStructString(t *testing.T) {
 
 	ctx := types.NewContext()
 	for i, g := range golden {
-		typ := ctx.Get(g.name)
+		typ, err := ctx.Struct(g.name)
+		if err != nil {
+			t.Errorf("i=%d: unexpected error; %v", err)
+			continue
+		}
 		got := typ.String()
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)

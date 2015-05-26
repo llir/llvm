@@ -8,10 +8,17 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// parseFuncDecl parses a function declaration. A "declare" token has already
-// been consumed.
+// parseFuncDecl parses an external function declaration. A "declare" token has
+// already been consumed.
 //
+// Syntax:
 //    FuncDecl = "declare" FuncHeader .
+//
+// Examples:
+//    declare i32 @printf(i8*, ...)
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#functions
 func (p *parser) parseFuncDecl() error {
 	f, err := p.parseFuncHeader()
 	if err != nil {
