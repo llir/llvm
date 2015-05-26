@@ -2,10 +2,10 @@ package consts
 
 import (
 	"fmt"
-	"math/big"
 	"strconv"
 	"strings"
 
+	"github.com/llir/llvm/internal/math/big"
 	"github.com/llir/llvm/types"
 )
 

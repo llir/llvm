@@ -15,10 +15,6 @@ The aim of this project is to provide access to the various LLVM IR representati
 [go/ssa]: https://godoc.org/code.google.com/p/go.tools/go/ssa
 [encoding]: http://golang.org/pkg/encoding/
 
-## Dependencies
-
-* [Go version 1.5](https://golang.org/doc/go1.5) which added support for arbitrary precision floats in `math/big`.
-
 ## Public domain
 
 The source code and any original content of this repository is hereby released into the [public domain].
