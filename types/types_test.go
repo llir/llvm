@@ -883,7 +883,7 @@ func TestNamedStructString(t *testing.T) {
 	for i, g := range golden {
 		typ, err := ctx.Struct(g.name)
 		if err != nil {
-			t.Errorf("i=%d: unexpected error; %v", err)
+			t.Errorf("i=%d: unexpected error; %v", i, err)
 			continue
 		}
 		got := typ.String()
