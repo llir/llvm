@@ -5,7 +5,7 @@ import (
 
 	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/values"
+	"github.com/llir/llvm/value"
 )
 
 // A GlobalDecl represents a global variable definition or an external global
@@ -24,14 +24,14 @@ type GlobalDecl struct {
 	// Variable type.
 	typ types.Type
 	// Initial value, or nil if defined externally.
-	val values.Value
+	val value.Value
 	// Specifies whether the global variable is immutable.
 	immutable bool
 }
 
 // NewGlobalDef returns a new global variable definition of the given name and
 // initial value. The variable is read-only if immutable is true.
-func NewGlobalDef(name string, val values.Value, immutable bool) *GlobalDecl {
+func NewGlobalDef(name string, val value.Value, immutable bool) *GlobalDecl {
 	return &GlobalDecl{name: name, typ: val.Type(), val: val, immutable: immutable}
 }
 
@@ -53,7 +53,7 @@ func (d *GlobalDecl) Type() types.Type {
 
 // Value returns the initial value of the variable definition, or nil if defined
 // externally.
-func (d *GlobalDecl) Value() values.Value {
+func (d *GlobalDecl) Value() value.Value {
 	return d.val
 }
 

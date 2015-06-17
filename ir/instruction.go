@@ -2,7 +2,7 @@ package ir
 
 import (
 	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/values"
+	"github.com/llir/llvm/value"
 )
 
 // An Instruction performs a non-branching operation and belongs to one of the
@@ -44,7 +44,7 @@ type AddInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The FaddInst returns the sum of its two operands, which may be floating point
@@ -62,7 +62,7 @@ type FaddInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The SubInst returns the difference of its two operands, which may be integers
@@ -80,7 +80,7 @@ type SubInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The FsubInst returns the difference of its two operands, which may be
@@ -98,7 +98,7 @@ type FsubInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The MulInst returns the product of its two operands, which may be integers or
@@ -116,7 +116,7 @@ type MulInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The FmulInst returns the product of its two operands, which may be floating
@@ -134,7 +134,7 @@ type FmulInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The UdivInst returns the unsigned integer quotient of its two operands, which
@@ -152,7 +152,7 @@ type UdivInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The SdivInst returns the signed integer quotient of its two operands, which
@@ -170,7 +170,7 @@ type SdivInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The FdivInst returns the quotient of its two operands, which may be floating
@@ -188,7 +188,7 @@ type FdivInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The UremInst returns the unsigned integer remainder of a division between its
@@ -206,7 +206,7 @@ type UremInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The SremInst returns the signed integer remainder of a division between its
@@ -224,7 +224,7 @@ type SremInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The FremInst returns the remainder of a division between its two operands,
@@ -242,7 +242,7 @@ type FremInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // =============================================================================
@@ -266,7 +266,7 @@ type ShlInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The LshrInst (logical shift right) returns the first operand shifted to the
@@ -285,7 +285,7 @@ type LshrInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The AshrInst (arithmetic shift right) returns the first operand shifted to
@@ -304,7 +304,7 @@ type AshrInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The AndInst returns the bitwise logical and of its two operands, which may be
@@ -322,7 +322,7 @@ type AndInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The OrInst returns the bitwise logical inclusive or of its two operands,
@@ -340,7 +340,7 @@ type OrInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // The XorInst returns the bitwise logical exclusive or of its two operands,
@@ -358,7 +358,7 @@ type XorInst struct {
 	// Operand type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // =============================================================================
@@ -426,7 +426,7 @@ type LoadInst struct {
 	// Underlying type of the pointer.
 	Type types.Type
 	// Memory address to load.
-	Addr values.Value
+	Addr value.Value
 	// Memory alignment.
 	Align int
 }
@@ -445,9 +445,9 @@ type StoreInst struct {
 	// Value type.
 	Type types.Type
 	// Value to store.
-	Val values.Value
+	Val value.Value
 	// Memory address to store at.
-	Addr values.Value
+	Addr value.Value
 	// Memory alignment.
 	Align int
 }
@@ -477,7 +477,7 @@ type GetelementptrInst struct {
 	// Underlying type of the pointer.
 	Type types.Type
 	// Pointer to the aggregate data structure.
-	Ptr values.Value
+	Ptr value.Value
 	// Element indicies.
 	Indicies []int
 }
@@ -527,7 +527,7 @@ type IcmpInst struct {
 	// Value type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // IntPredicate specifies a comparison operation to perform between two integer
@@ -566,7 +566,7 @@ type FcmpInst struct {
 	// Value type.
 	Type types.Type
 	// Operands.
-	Op1, Op2 values.Value
+	Op1, Op2 value.Value
 }
 
 // FloatPredicate specifies a comparison operation to perform between two
@@ -609,7 +609,7 @@ type PhiInst struct {
 	// Value type.
 	Type types.Type
 	// Predecessor basic block labels and their corresponding values.
-	Preds map[string]values.Value
+	Preds map[string]value.Value
 }
 
 // TODO: Add the following instructions:

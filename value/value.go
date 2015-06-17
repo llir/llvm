@@ -1,5 +1,5 @@
 // Package values provides a definition of LLVM IR values.
-package values
+package value
 
 import (
 	"fmt"

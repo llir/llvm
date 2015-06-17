@@ -3,7 +3,7 @@ package ir
 import (
 	"github.com/llir/llvm/consts"
 	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/values"
+	"github.com/llir/llvm/value"
 )
 
 // A Terminator is a control flow instruction (e.g. br, ret, …) which terminates
@@ -40,7 +40,7 @@ type ReturnInst struct {
 	// Return type.
 	Type types.Type
 	// Return value; or nil in case of a void return.
-	Val values.Value
+	Val value.Value
 }
 
 // The CondBranchInst transfers control flow to one of two basic blocks in the
@@ -56,7 +56,7 @@ type ReturnInst struct {
 //    http://llvm.org/docs/LangRef.html#i-br
 type CondBranchInst struct {
 	// Boolean branching condition.
-	Cond values.Value
+	Cond value.Value
 	// Target branch when the condition evaluates to true.
 	True *BasicBlock
 	// Target branch when the condition evaluates to false.
@@ -101,7 +101,7 @@ type SwitchInst struct {
 	// Comparasion type.
 	Type types.Type
 	// Comparasion value.
-	Val values.Value
+	Val value.Value
 	// Default target.
 	Default *BasicBlock
 	// Switch cases.

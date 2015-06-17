@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/values"
+	"github.com/llir/llvm/value"
 )
 
 // TODO: Complete the list of expression implementations.
@@ -357,7 +357,7 @@ func (exp *FloatExt) String() string {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type FloatToUint struct {
 	// Original floating point value (or vector).
-	orig values.Value
+	orig value.Value
 	// New integer type (or vector).
 	to types.Type
 }
@@ -418,7 +418,7 @@ func (exp *FloatToUint) String() string {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type FloatToInt struct {
 	// Original floating point value (or vector).
-	orig values.Value
+	orig value.Value
 	// New type (or vector).
 	to types.Type
 }
@@ -479,7 +479,7 @@ func (exp *FloatToInt) String() string {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type UintToFloat struct {
 	// Original unsigned integer value (or vector).
-	orig values.Value
+	orig value.Value
 	// New floating point type (or vector).
 	to types.Type
 }
@@ -540,7 +540,7 @@ func (exp *UintToFloat) String() string {
 //    http://llvm.org/docs/LangRef.html#constant-expressions
 type IntToFloat struct {
 	// Original signed integer value (or vector).
-	orig values.Value
+	orig value.Value
 	// New floating point type (or vector).
 	to types.Type
 }

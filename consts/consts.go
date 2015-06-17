@@ -5,7 +5,7 @@
 // Package consts implements values representing immutable LLVM IR constants.
 package consts
 
-import "github.com/llir/llvm/values"
+import "github.com/llir/llvm/value"
 
 // A Constant represents a value that is immutable at runtime, such as an
 // integer or a floating point literal. Pointers known to be immutable at
@@ -28,7 +28,7 @@ import "github.com/llir/llvm/values"
 // References:
 //    http://llvm.org/docs/LangRef.html#constants
 type Constant interface {
-	values.Value
+	value.Value
 	// isConst ensures that only constant values can be assigned to the Constant
 	// interface.
 	isConst()
