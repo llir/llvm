@@ -1,7 +1,7 @@
 package ir
 
 import (
-	"github.com/llir/llvm/consts"
+	"github.com/llir/llvm/constant"
 	"github.com/llir/llvm/types"
 	"github.com/llir/llvm/value"
 )
@@ -107,7 +107,7 @@ type SwitchInst struct {
 	// Switch cases.
 	Cases []struct {
 		// Case value.
-		Val consts.Constant
+		Val constant.Constant
 		// Case target.
 		Target *BasicBlock
 	}

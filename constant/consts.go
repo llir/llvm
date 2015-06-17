@@ -2,8 +2,8 @@
 // metadata belongs elsewhere, even if it is immutable. One reason being that
 // derived constants cannot be created using metadata (verify!).
 
-// Package consts implements values representing immutable LLVM IR constants.
-package consts
+// Package constant implements values representing immutable LLVM IR constants.
+package constant
 
 import "github.com/llir/llvm/value"
 
@@ -17,13 +17,13 @@ import "github.com/llir/llvm/value"
 // expressions to create new constants.
 //
 // Constant is one of the following types:
-//    *consts.Int
-//    *consts.Float
-//    *consts.Pointer
-//    *consts.Vector
-//    *consts.Array
-//    *consts.Struct
-//    consts.Expr
+//    *constant.Int
+//    *constant.Float
+//    *constant.Pointer
+//    *constant.Vector
+//    *constant.Array
+//    *constant.Struct
+//    constant.Expr
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constants

@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/llir/llvm/asm/token"
-	"github.com/llir/llvm/consts"
+	"github.com/llir/llvm/constant"
 	"github.com/llir/llvm/types"
 	"github.com/mewkiz/pkg/errutil"
 )
@@ -19,7 +19,7 @@ import (
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constants
-func (p *parser) parseConst() (consts.Constant, error) {
+func (p *parser) parseConst() (constant.Constant, error) {
 	typ, err := p.parseType()
 	if err != nil {
 		return nil, errutil.Err(err)
@@ -54,12 +54,12 @@ func (p *parser) parseConst() (consts.Constant, error) {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
-func (p *parser) parseIntConst(typ *types.Int) (*consts.Int, error) {
+func (p *parser) parseIntConst(typ *types.Int) (*constant.Int, error) {
 	s, err := p.expect(token.Int)
 	if err != nil {
 		return nil, errutil.Err(err)
 	}
-	return consts.NewInt(typ, s)
+	return constant.NewInt(typ, s)
 }
 
 // parseFloatConst parses a floating-point constant. A floating-point type as
@@ -74,12 +74,12 @@ func (p *parser) parseIntConst(typ *types.Int) (*consts.Int, error) {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
-func (p *parser) parseFloatConst(typ *types.Float) (*consts.Float, error) {
+func (p *parser) parseFloatConst(typ *types.Float) (*constant.Float, error) {
 	s, err := p.expect(token.Float)
 	if err != nil {
 		return nil, errutil.Err(err)
 	}
-	return consts.NewFloat(typ, s)
+	return constant.NewFloat(typ, s)
 }
 
 // parsePointerConst parses a pointer constant. A pointer type as already been
@@ -96,7 +96,7 @@ func (p *parser) parseFloatConst(typ *types.Float) (*consts.Float, error) {
 // References:
 //    http://llvm.org/docs/LangRef.html#simple-constants
 //    http://llvm.org/docs/LangRef.html#global-variable-and-function-addresses
-func (p *parser) parsePointerConst(typ *types.Pointer) (*consts.Pointer, error) {
+func (p *parser) parsePointerConst(typ *types.Pointer) (*constant.Pointer, error) {
 	panic("parser.parsePointerConst: not yet implemented")
 }
 
@@ -114,7 +114,7 @@ func (p *parser) parsePointerConst(typ *types.Pointer) (*consts.Pointer, error) 
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
-func (p *parser) parseVectorConst(typ *types.Vector) (*consts.Vector, error) {
+func (p *parser) parseVectorConst(typ *types.Vector) (*constant.Vector, error) {
 	// Vector constant; e.g.
 	//    <2 x i32> <i32 10, i32 20>
 	if _, err := p.expect(token.Less); err != nil {
@@ -127,7 +127,7 @@ func (p *parser) parseVectorConst(typ *types.Vector) (*consts.Vector, error) {
 	if _, err := p.expect(token.Greater); err != nil {
 		return nil, errutil.Err(err)
 	}
-	return consts.NewVector(typ, elems)
+	return constant.NewVector(typ, elems)
 }
 
 // parseArrayConst parses an array constant. An array type as already been
@@ -145,7 +145,7 @@ func (p *parser) parseVectorConst(typ *types.Vector) (*consts.Vector, error) {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
-func (p *parser) parseArrayConst(typ *types.Array) (*consts.Array, error) {
+func (p *parser) parseArrayConst(typ *types.Array) (*constant.Array, error) {
 	// Character array constant; e.g.
 	//    c"hello world\0A\00"
 	if p.accept(token.KwC) {
@@ -160,22 +160,22 @@ func (p *parser) parseArrayConst(typ *types.Array) (*consts.Array, error) {
 		if len(s) != typ.Len() {
 			return nil, errutil.Newf("constant array length mismatch; expected %d, got %d", typ.Len(), len(s))
 		}
-		var elems []consts.Constant
+		var elems []constant.Constant
 		for i := 0; i < len(s); i++ {
 			b := s[i]
 			// TODO: Find a clean way of representing constant vectors, arrays and
 			// structures which requires less memory.
 
-			// HACK: Using itoa as the consts API requires strings. This will be
+			// HACK: Using itoa as the constant API requires strings. This will be
 			// fixed at the same time as the above TODO which locates a more
 			// compact representation of constant vectors, arrays and structures.
-			elem, err := consts.NewInt(elemTyp, strconv.Itoa(int(b)))
+			elem, err := constant.NewInt(elemTyp, strconv.Itoa(int(b)))
 			if err != nil {
 				return nil, errutil.Err(err)
 			}
 			elems = append(elems, elem)
 		}
-		return consts.NewArray(typ, elems)
+		return constant.NewArray(typ, elems)
 	}
 
 	// Array constant; e.g.
@@ -190,12 +190,12 @@ func (p *parser) parseArrayConst(typ *types.Array) (*consts.Array, error) {
 	if _, err := p.expect(token.Rbrack); err != nil {
 		return nil, errutil.Err(err)
 	}
-	return consts.NewArray(typ, elems)
+	return constant.NewArray(typ, elems)
 }
 
 // parseElems parses a comma separated list containing n constants of the given
 // type.
-func (p *parser) parseElems(n int, elemTyp types.Type) (elems []consts.Constant, err error) {
+func (p *parser) parseElems(n int, elemTyp types.Type) (elems []constant.Constant, err error) {
 	for i := 0; i < n; i++ {
 		if i > 0 {
 			if _, err := p.expect(token.Comma); err != nil {
@@ -230,13 +230,13 @@ func (p *parser) parseElems(n int, elemTyp types.Type) (elems []consts.Constant,
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#complex-constants
-func (p *parser) parseStructConst(typ *types.Struct) (*consts.Struct, error) {
+func (p *parser) parseStructConst(typ *types.Struct) (*constant.Struct, error) {
 	// Array constant; e.g.
 	//    {i8, i32} {i8 10, i32 20}
 	if _, err := p.expect(token.Lbrace); err != nil {
 		return nil, errutil.Err(err)
 	}
-	var fields []consts.Constant
+	var fields []constant.Constant
 	for i, fieldTyp := range typ.Fields() {
 		if i > 0 {
 			if _, err := p.expect(token.Comma); err != nil {
@@ -255,5 +255,5 @@ func (p *parser) parseStructConst(typ *types.Struct) (*consts.Struct, error) {
 	if _, err := p.expect(token.Rbrace); err != nil {
 		return nil, errutil.Err(err)
 	}
-	return consts.NewStruct(typ, fields)
+	return constant.NewStruct(typ, fields)
 }

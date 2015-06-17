@@ -1,4 +1,4 @@
-package consts
+package constant
 
 import (
 	"fmt"
@@ -12,15 +12,15 @@ import (
 // An Expr represents a constant expression.
 //
 // Expr is one of the following concrete types:
-//    *consts.IntTrunc
-//    *consts.IntZeroExt
-//    *consts.IntSignExt
-//    *consts.FloatTrunc
-//    *consts.FloatExt
-//    *consts.FloatToUint
-//    *consts.FloatToInt
-//    *consts.UintToFloat
-//    *consts.IntToFloat
+//    *constant.IntTrunc
+//    *constant.IntZeroExt
+//    *constant.IntSignExt
+//    *constant.FloatTrunc
+//    *constant.FloatExt
+//    *constant.FloatToUint
+//    *constant.FloatToInt
+//    *constant.UintToFloat
+//    *constant.IntToFloat
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
