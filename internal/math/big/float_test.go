@@ -18,7 +18,7 @@ var _ error = ErrNaN{}
 func (x *Float) uint64() uint64 {
 	u, acc := x.Uint64()
 	if acc != Exact {
-		panic(fmt.Sprintf("%s is not a uint64", x.Format('g', 10)))
+		panic(fmt.Sprintf("%s is not a uint64", x.Text('g', 10)))
 	}
 	return u
 }
@@ -26,7 +26,7 @@ func (x *Float) uint64() uint64 {
 func (x *Float) int64() int64 {
 	i, acc := x.Int64()
 	if acc != Exact {
-		panic(fmt.Sprintf("%s is not an int64", x.Format('g', 10)))
+		panic(fmt.Sprintf("%s is not an int64", x.Text('g', 10)))
 	}
 	return i
 }
@@ -34,7 +34,7 @@ func (x *Float) int64() int64 {
 func TestFloatZeroValue(t *testing.T) {
 	// zero (uninitialized) value is a ready-to-use 0.0
 	var x Float
-	if s := x.Format('f', 1); s != "0.0" {
+	if s := x.Text('f', 1); s != "0.0" {
 		t.Errorf("zero value = %s; want 0.0", s)
 	}
 
@@ -92,24 +92,11 @@ func TestFloatZeroValue(t *testing.T) {
 }
 
 func makeFloat(s string) *Float {
-	var x Float
-
-	switch s {
-	case "0":
-		return &x
-	case "-0":
-		return x.Neg(&x)
-	case "Inf", "+Inf":
-		return x.SetInf(false)
-	case "-Inf":
-		return x.SetInf(true)
+	x, _, err := ParseFloat(s, 0, 1000, ToNearestEven)
+	if err != nil {
+		panic(err)
 	}
-
-	x.SetPrec(1000)
-	if _, ok := x.SetString(s); !ok {
-		panic(fmt.Sprintf("%q is not a valid float", s))
-	}
-	return &x
+	return x
 }
 
 func TestFloatSetPrec(t *testing.T) {
@@ -203,6 +190,18 @@ func alike(x, y *Float) bool {
 	return x.Cmp(y) == 0 && x.Signbit() == y.Signbit()
 }
 
+func alike32(x, y float32) bool {
+	// we can ignore NaNs
+	return x == y && math.Signbit(float64(x)) == math.Signbit(float64(y))
+
+}
+
+func alike64(x, y float64) bool {
+	// we can ignore NaNs
+	return x == y && math.Signbit(x) == math.Signbit(y)
+
+}
+
 func TestFloatMantExp(t *testing.T) {
 	for _, test := range []struct {
 		x    string
@@ -224,7 +223,7 @@ func TestFloatMantExp(t *testing.T) {
 		m := new(Float)
 		e := x.MantExp(m)
 		if !alike(m, mant) || e != test.exp {
-			t.Errorf("%s.MantExp() = %s, %d; want %s, %d", test.x, m.Format('g', 10), e, test.mant, test.exp)
+			t.Errorf("%s.MantExp() = %s, %d; want %s, %d", test.x, m.Text('g', 10), e, test.mant, test.exp)
 		}
 	}
 }
@@ -235,7 +234,7 @@ func TestFloatMantExpAliasing(t *testing.T) {
 		t.Fatalf("Float.MantExp aliasing error: got %d; want 10", e)
 	}
 	if want := makeFloat("0.5"); !alike(x, want) {
-		t.Fatalf("Float.MantExp aliasing error: got %s; want %s", x.Format('g', 10), want.Format('g', 10))
+		t.Fatalf("Float.MantExp aliasing error: got %s; want %s", x.Text('g', 10), want.Text('g', 10))
 	}
 }
 
@@ -267,12 +266,12 @@ func TestFloatSetMantExp(t *testing.T) {
 		var z Float
 		z.SetMantExp(frac, test.exp)
 		if !alike(&z, want) {
-			t.Errorf("SetMantExp(%s, %d) = %s; want %s", test.frac, test.exp, z.Format('g', 10), test.z)
+			t.Errorf("SetMantExp(%s, %d) = %s; want %s", test.frac, test.exp, z.Text('g', 10), test.z)
 		}
 		// test inverse property
 		mant := new(Float)
 		if z.SetMantExp(mant, want.MantExp(mant)).Cmp(want) != 0 {
-			t.Errorf("Inverse property not satisfied: got %s; want %s", z.Format('g', 10), test.z)
+			t.Errorf("Inverse property not satisfied: got %s; want %s", z.Text('g', 10), test.z)
 		}
 	}
 }
@@ -550,7 +549,7 @@ func TestFloatSetUint64(t *testing.T) {
 		var f Float
 		f.SetUint64(want)
 		if got := f.uint64(); got != want {
-			t.Errorf("got %#x (%s); want %#x", got, f.Format('p', 0), want)
+			t.Errorf("got %#x (%s); want %#x", got, f.Text('p', 0), want)
 		}
 	}
 
@@ -561,7 +560,7 @@ func TestFloatSetUint64(t *testing.T) {
 		got := f.uint64()
 		want := x &^ (1<<(64-prec) - 1) // cut off (round to zero) low 64-prec bits
 		if got != want {
-			t.Errorf("got %#x (%s); want %#x", got, f.Format('p', 0), want)
+			t.Errorf("got %#x (%s); want %#x", got, f.Text('p', 0), want)
 		}
 	}
 }
@@ -584,7 +583,7 @@ func TestFloatSetInt64(t *testing.T) {
 			var f Float
 			f.SetInt64(want)
 			if got := f.int64(); got != want {
-				t.Errorf("got %#x (%s); want %#x", got, f.Format('p', 0), want)
+				t.Errorf("got %#x (%s); want %#x", got, f.Text('p', 0), want)
 			}
 		}
 	}
@@ -596,7 +595,7 @@ func TestFloatSetInt64(t *testing.T) {
 		got := f.int64()
 		want := x &^ (1<<(63-prec) - 1) // cut off (round to zero) low 63-prec bits
 		if got != want {
-			t.Errorf("got %#x (%s); want %#x", got, f.Format('p', 0), want)
+			t.Errorf("got %#x (%s); want %#x", got, f.Text('p', 0), want)
 		}
 	}
 }
@@ -627,7 +626,7 @@ func TestFloatSetFloat64(t *testing.T) {
 			var f Float
 			f.SetFloat64(want)
 			if got, acc := f.Float64(); got != want || acc != Exact {
-				t.Errorf("got %g (%s, %s); want %g (Exact)", got, f.Format('p', 0), acc, want)
+				t.Errorf("got %g (%s, %s); want %g (Exact)", got, f.Text('p', 0), acc, want)
 			}
 		}
 	}
@@ -639,7 +638,7 @@ func TestFloatSetFloat64(t *testing.T) {
 		got, _ := f.Float64()
 		want := float64(x &^ (1<<(52-prec) - 1)) // cut off (round to zero) low 53-prec bits
 		if got != want {
-			t.Errorf("got %g (%s); want %g", got, f.Format('p', 0), want)
+			t.Errorf("got %g (%s); want %g", got, f.Text('p', 0), want)
 		}
 	}
 
@@ -652,7 +651,7 @@ func TestFloatSetFloat64(t *testing.T) {
 	var f Float
 	f.SetFloat64(math.NaN())
 	// should not reach here
-	t.Errorf("got %s; want ErrNaN panic", f.Format('p', 0))
+	t.Errorf("got %s; want ErrNaN panic", f.Text('p', 0))
 }
 
 func TestFloatSetInt(t *testing.T) {
@@ -684,9 +683,9 @@ func TestFloatSetInt(t *testing.T) {
 		}
 
 		// check value
-		got := f.Format('g', 100)
+		got := f.Text('g', 100)
 		if got != want {
-			t.Errorf("got %s (%s); want %s", got, f.Format('p', 0), want)
+			t.Errorf("got %s (%s); want %s", got, f.Text('p', 0), want)
 		}
 	}
 
@@ -726,9 +725,9 @@ func TestFloatSetRat(t *testing.T) {
 			t.Errorf("got prec = %d; want %d", prec, n)
 		}
 
-		got := f2.Format('g', 100)
+		got := f2.Text('g', 100)
 		if got != want {
-			t.Errorf("got %s (%s); want %s", got, f2.Format('p', 0), want)
+			t.Errorf("got %s (%s); want %s", got, f2.Text('p', 0), want)
 		}
 	}
 }
@@ -828,52 +827,69 @@ func TestFloatFloat32(t *testing.T) {
 		out float32
 		acc Accuracy
 	}{
-		{"-Inf", float32(math.Inf(-1)), Exact},
-		{"-0x1.ffffff0p2147483646", float32(-math.Inf(+1)), Below}, // overflow in rounding
-		{"-1e10000", float32(math.Inf(-1)), Below},                 // overflow
-		{"-0x1p128", float32(math.Inf(-1)), Below},                 // overflow
-		{"-0x1.ffffff0p127", float32(-math.Inf(+1)), Below},        // overflow
-		{"-0x1.fffffe8p127", -math.MaxFloat32, Above},
-		{"-0x1.fffffe0p127", -math.MaxFloat32, Exact},
-		{"-12345.000000000000000000001", -12345, Above},
-		{"-12345.0", -12345, Exact},
-		{"-1.000000000000000000001", -1, Above},
-		{"-1", -1, Exact},
-		{"-0x0.000002p-126", -math.SmallestNonzeroFloat32, Exact},
-		{"-0x0.000002p-127", -0, Above}, // underflow
-		{"-1e-1000", -0, Above},         // underflow
 		{"0", 0, Exact},
-		{"1e-1000", 0, Below},         // underflow
-		{"0x0.000002p-127", 0, Below}, // underflow
-		{"0x0.000002p-126", math.SmallestNonzeroFloat32, Exact},
+
+		// underflow
+		{"1e-1000", 0, Below},
+		{"0x0.000002p-127", 0, Below},
+		{"0x.0000010p-126", 0, Below},
+
+		// denormals
+		{"1.401298464e-45", math.SmallestNonzeroFloat32, Above}, // rounded up to smallest denormal
+		{"0x.ffffff8p-149", math.SmallestNonzeroFloat32, Above}, // rounded up to smallest denormal
+		{"0x.0000018p-126", math.SmallestNonzeroFloat32, Above}, // rounded up to smallest denormal
+		{"0x.0000020p-126", math.SmallestNonzeroFloat32, Exact},
+		{"0x.8p-148", math.SmallestNonzeroFloat32, Exact},
+		{"1p-149", math.SmallestNonzeroFloat32, Exact},
+		{"0x.fffffep-126", math.Float32frombits(0x7fffff), Exact}, // largest denormal
+
+		// normals
+		{"0x.ffffffp-126", math.Float32frombits(0x00800000), Above}, // rounded up to smallest normal
+		{"1p-126", math.Float32frombits(0x00800000), Exact},         // smallest normal
+		{"0x1.fffffep-126", math.Float32frombits(0x00ffffff), Exact},
+		{"0x1.ffffffp-126", math.Float32frombits(0x01000000), Above}, // rounded up
 		{"1", 1, Exact},
 		{"1.000000000000000000001", 1, Below},
 		{"12345.0", 12345, Exact},
 		{"12345.000000000000000000001", 12345, Below},
 		{"0x1.fffffe0p127", math.MaxFloat32, Exact},
 		{"0x1.fffffe8p127", math.MaxFloat32, Below},
-		{"0x1.ffffff0p127", float32(math.Inf(+1)), Above},        // overflow
-		{"0x1p128", float32(math.Inf(+1)), Above},                // overflow
-		{"1e10000", float32(math.Inf(+1)), Above},                // overflow
+
+		// overflow
+		{"0x1.ffffff0p127", float32(math.Inf(+1)), Above},
+		{"0x1p128", float32(math.Inf(+1)), Above},
+		{"1e10000", float32(math.Inf(+1)), Above},
 		{"0x1.ffffff0p2147483646", float32(math.Inf(+1)), Above}, // overflow in rounding
-		{"+Inf", float32(math.Inf(+1)), Exact},
+
+		// inf
+		{"Inf", float32(math.Inf(+1)), Exact},
 	} {
-		// conversion should match strconv where syntax is agreeable
-		if f, err := strconv.ParseFloat(test.x, 32); err == nil && float32(f) != test.out {
-			t.Errorf("%s: got %g; want %g (incorrect test data)", test.x, f, test.out)
-		}
+		for i := 0; i < 2; i++ {
+			// test both signs
+			tx, tout, tacc := test.x, test.out, test.acc
+			if i != 0 {
+				tx = "-" + tx
+				tout = -tout
+				tacc = -tacc
+			}
 
-		x := makeFloat(test.x)
-		out, acc := x.Float32()
-		if out != test.out || acc != test.acc {
-			t.Errorf("%s: got %g (%#x, %s); want %g (%#x, %s)", test.x, out, math.Float32bits(out), acc, test.out, math.Float32bits(test.out), test.acc)
-		}
+			// conversion should match strconv where syntax is agreeable
+			if f, err := strconv.ParseFloat(tx, 32); err == nil && !alike32(float32(f), tout) {
+				t.Errorf("%s: got %g; want %g (incorrect test data)", tx, f, tout)
+			}
 
-		// test that x.SetFloat64(float64(f)).Float32() == f
-		var x2 Float
-		out2, acc2 := x2.SetFloat64(float64(out)).Float32()
-		if out2 != out || acc2 != Exact {
-			t.Errorf("idempotency test: got %g (%s); want %g (Exact)", out2, acc2, out)
+			x := makeFloat(tx)
+			out, acc := x.Float32()
+			if !alike32(out, tout) || acc != tacc {
+				t.Errorf("%s: got %g (%#x, %s); want %g (%#x, %s)", tx, out, math.Float32bits(out), acc, test.out, math.Float32bits(test.out), tacc)
+			}
+
+			// test that x.SetFloat64(float64(f)).Float32() == f
+			var x2 Float
+			out2, acc2 := x2.SetFloat64(float64(out)).Float32()
+			if !alike32(out2, out) || acc2 != Exact {
+				t.Errorf("idempotency test: got %g (%s); want %g (Exact)", out2, acc2, out)
+			}
 		}
 	}
 }
@@ -885,35 +901,36 @@ func TestFloatFloat64(t *testing.T) {
 		out float64
 		acc Accuracy
 	}{
-		{"-Inf", math.Inf(-1), Exact},
-		{"-0x1.fffffffffffff8p2147483646", -math.Inf(+1), Below}, // overflow in rounding
-		{"-1e10000", math.Inf(-1), Below},                        // overflow
-		{"-0x1p1024", math.Inf(-1), Below},                       // overflow
-		{"-0x1.fffffffffffff8p1023", -math.Inf(+1), Below},       // overflow
-		{"-0x1.fffffffffffff4p1023", -math.MaxFloat64, Above},
-		{"-0x1.fffffffffffff0p1023", -math.MaxFloat64, Exact},
-		{"-12345.000000000000000000001", -12345, Above},
-		{"-12345.0", -12345, Exact},
-		{"-1.000000000000000000001", -1, Above},
-		{"-1", -1, Exact},
-		{"-0x0.0000000000001p-1022", -math.SmallestNonzeroFloat64, Exact},
-		{"-0x0.0000000000001p-1023", -0, Above}, // underflow
-		{"-1e-1000", -0, Above},                 // underflow
 		{"0", 0, Exact},
-		{"1e-1000", 0, Below},                 // underflow
-		{"0x0.0000000000001p-1023", 0, Below}, // underflow
-		{"0x0.0000000000001p-1022", math.SmallestNonzeroFloat64, Exact},
+
+		// underflow
+		{"1e-1000", 0, Below},
+		{"0x0.0000000000001p-1023", 0, Below},
+		{"0x0.00000000000008p-1022", 0, Below},
+
+		// denormals
+		{"0x0.0000000000000cp-1022", math.SmallestNonzeroFloat64, Above}, // rounded up to smallest denormal
+		{"0x0.0000000000001p-1022", math.SmallestNonzeroFloat64, Exact},  // smallest denormal
+		{"0x.8p-1073", math.SmallestNonzeroFloat64, Exact},
+		{"1p-1074", math.SmallestNonzeroFloat64, Exact},
+		{"0x.fffffffffffffp-1022", math.Float64frombits(0x000fffffffffffff), Exact}, // largest denormal
+
+		// normals
+		{"0x.fffffffffffff8p-1022", math.Float64frombits(0x0010000000000000), Above}, // rounded up to smallest normal
+		{"1p-1022", math.Float64frombits(0x0010000000000000), Exact},                 // smallest normal
 		{"1", 1, Exact},
 		{"1.000000000000000000001", 1, Below},
 		{"12345.0", 12345, Exact},
 		{"12345.000000000000000000001", 12345, Below},
 		{"0x1.fffffffffffff0p1023", math.MaxFloat64, Exact},
 		{"0x1.fffffffffffff4p1023", math.MaxFloat64, Below},
-		{"0x1.fffffffffffff8p1023", math.Inf(+1), Above},       // overflow
-		{"0x1p1024", math.Inf(+1), Above},                      // overflow
-		{"1e10000", math.Inf(+1), Above},                       // overflow
+
+		// overflow
+		{"0x1.fffffffffffff8p1023", math.Inf(+1), Above},
+		{"0x1p1024", math.Inf(+1), Above},
+		{"1e10000", math.Inf(+1), Above},
 		{"0x1.fffffffffffff8p2147483646", math.Inf(+1), Above}, // overflow in rounding
-		{"+Inf", math.Inf(+1), Exact},
+		{"Inf", math.Inf(+1), Exact},
 
 		// selected denormalized values that were handled incorrectly in the past
 		{"0x.fffffffffffffp-1022", smallestNormalFloat64 - math.SmallestNonzeroFloat64, Exact},
@@ -924,22 +941,32 @@ func TestFloatFloat64(t *testing.T) {
 		// http://www.exploringbinary.com/java-hangs-when-converting-2-2250738585072012e-308/
 		{"2.2250738585072012e-308", 2.2250738585072014e-308, Above},
 	} {
-		// conversion should match strconv where syntax is agreeable
-		if f, err := strconv.ParseFloat(test.x, 64); err == nil && f != test.out {
-			t.Errorf("%s: got %g; want %g (incorrect test data)", test.x, f, test.out)
-		}
+		for i := 0; i < 2; i++ {
+			// test both signs
+			tx, tout, tacc := test.x, test.out, test.acc
+			if i != 0 {
+				tx = "-" + tx
+				tout = -tout
+				tacc = -tacc
+			}
 
-		x := makeFloat(test.x)
-		out, acc := x.Float64()
-		if out != test.out || acc != test.acc {
-			t.Errorf("%s: got %g (%#x, %s); want %g (%#x, %s)", test.x, out, math.Float64bits(out), acc, test.out, math.Float64bits(test.out), test.acc)
-		}
+			// conversion should match strconv where syntax is agreeable
+			if f, err := strconv.ParseFloat(tx, 64); err == nil && !alike64(f, tout) {
+				t.Errorf("%s: got %g; want %g (incorrect test data)", tx, f, tout)
+			}
 
-		// test that x.SetFloat64(f).Float64() == f
-		var x2 Float
-		out2, acc2 := x2.SetFloat64(out).Float64()
-		if out2 != out || acc2 != Exact {
-			t.Errorf("idempotency test: got %g (%s); want %g (Exact)", out2, acc2, out)
+			x := makeFloat(tx)
+			out, acc := x.Float64()
+			if !alike64(out, tout) || acc != tacc {
+				t.Errorf("%s: got %g (%#x, %s); want %g (%#x, %s)", tx, out, math.Float64bits(out), acc, test.out, math.Float64bits(test.out), tacc)
+			}
+
+			// test that x.SetFloat64(f).Float64() == f
+			var x2 Float
+			out2, acc2 := x2.SetFloat64(out).Float64()
+			if !alike64(out2, out) || acc2 != Exact {
+				t.Errorf("idempotency test: got %g (%s); want %g (Exact)", out2, acc2, out)
+			}
 		}
 	}
 }
@@ -1056,13 +1083,13 @@ func TestFloatAbs(t *testing.T) {
 		p := makeFloat(test)
 		a := new(Float).Abs(p)
 		if !alike(a, p) {
-			t.Errorf("%s: got %s; want %s", test, a.Format('g', 10), test)
+			t.Errorf("%s: got %s; want %s", test, a.Text('g', 10), test)
 		}
 
 		n := makeFloat("-" + test)
 		a.Abs(n)
 		if !alike(a, p) {
-			t.Errorf("-%s: got %s; want %s", test, a.Format('g', 10), test)
+			t.Errorf("-%s: got %s; want %s", test, a.Text('g', 10), test)
 		}
 	}
 }
@@ -1082,10 +1109,10 @@ func TestFloatNeg(t *testing.T) {
 		n2 := new(Float).Neg(p1)
 		p2 := new(Float).Neg(n2)
 		if !alike(n2, n1) {
-			t.Errorf("%s: got %s; want %s", test, n2.Format('g', 10), n1.Format('g', 10))
+			t.Errorf("%s: got %s; want %s", test, n2.Text('g', 10), n1.Text('g', 10))
 		}
 		if !alike(p2, p1) {
-			t.Errorf("%s: got %s; want %s", test, p2.Format('g', 10), p1.Format('g', 10))
+			t.Errorf("%s: got %s; want %s", test, p2.Text('g', 10), p1.Text('g', 10))
 		}
 	}
 }
@@ -1427,7 +1454,7 @@ func TestFloatQuoSmoke(t *testing.T) {
 
 					cc, acc := C.Float64()
 					if cc != c {
-						t.Errorf("%g/%g = %s; want %.5g\n", a, b, C.Format('g', 5), c)
+						t.Errorf("%g/%g = %s; want %.5g\n", a, b, C.Text('g', 5), c)
 						continue
 					}
 					if acc != Exact {
@@ -1523,32 +1550,32 @@ func TestFloatArithmeticOverflow(t *testing.T) {
 		x, y, want string
 		acc        Accuracy
 	}{
-		{4, ToNearestEven, '+', "0", "0", "0", Exact},                // smoke test
-		{4, ToNearestEven, '+', "0x.8p0", "0x.8p0", "0x.8p1", Exact}, // smoke test
+		{4, ToNearestEven, '+', "0", "0", "0", Exact},                   // smoke test
+		{4, ToNearestEven, '+', "0x.8p+0", "0x.8p+0", "0x.8p+1", Exact}, // smoke test
 
-		{4, ToNearestEven, '+', "0", "0x.8p2147483647", "0x.8p2147483647", Exact},
-		{4, ToNearestEven, '+', "0x.8p2147483500", "0x.8p2147483647", "0x.8p2147483647", Below}, // rounded to zero
-		{4, ToNearestEven, '+', "0x.8p2147483647", "0x.8p2147483647", "+Inf", Above},            // exponent overflow in +
-		{4, ToNearestEven, '+', "-0x.8p2147483647", "-0x.8p2147483647", "-Inf", Below},          // exponent overflow in +
-		{4, ToNearestEven, '-', "-0x.8p2147483647", "0x.8p2147483647", "-Inf", Below},           // exponent overflow in -
+		{4, ToNearestEven, '+', "0", "0x.8p2147483647", "0x.8p+2147483647", Exact},
+		{4, ToNearestEven, '+', "0x.8p2147483500", "0x.8p2147483647", "0x.8p+2147483647", Below}, // rounded to zero
+		{4, ToNearestEven, '+', "0x.8p2147483647", "0x.8p2147483647", "+Inf", Above},             // exponent overflow in +
+		{4, ToNearestEven, '+', "-0x.8p2147483647", "-0x.8p2147483647", "-Inf", Below},           // exponent overflow in +
+		{4, ToNearestEven, '-', "-0x.8p2147483647", "0x.8p2147483647", "-Inf", Below},            // exponent overflow in -
 
-		{4, ToZero, '+', "0x.fp2147483647", "0x.8p2147483643", "0x.fp2147483647", Below}, // rounded to zero
-		{4, ToNearestEven, '+', "0x.fp2147483647", "0x.8p2147483643", "+Inf", Above},     // exponent overflow in rounding
-		{4, AwayFromZero, '+', "0x.fp2147483647", "0x.8p2147483643", "+Inf", Above},      // exponent overflow in rounding
+		{4, ToZero, '+', "0x.fp2147483647", "0x.8p2147483643", "0x.fp+2147483647", Below}, // rounded to zero
+		{4, ToNearestEven, '+', "0x.fp2147483647", "0x.8p2147483643", "+Inf", Above},      // exponent overflow in rounding
+		{4, AwayFromZero, '+', "0x.fp2147483647", "0x.8p2147483643", "+Inf", Above},       // exponent overflow in rounding
 
-		{4, AwayFromZero, '-', "-0x.fp2147483647", "0x.8p2147483644", "-Inf", Below},       // exponent overflow in rounding
-		{4, ToNearestEven, '-', "-0x.fp2147483647", "0x.8p2147483643", "-Inf", Below},      // exponent overflow in rounding
-		{4, ToZero, '-', "-0x.fp2147483647", "0x.8p2147483643", "-0x.fp2147483647", Above}, // rounded to zero
+		{4, AwayFromZero, '-', "-0x.fp2147483647", "0x.8p2147483644", "-Inf", Below},        // exponent overflow in rounding
+		{4, ToNearestEven, '-', "-0x.fp2147483647", "0x.8p2147483643", "-Inf", Below},       // exponent overflow in rounding
+		{4, ToZero, '-', "-0x.fp2147483647", "0x.8p2147483643", "-0x.fp+2147483647", Above}, // rounded to zero
 
 		{4, ToNearestEven, '+', "0", "0x.8p-2147483648", "0x.8p-2147483648", Exact},
 		{4, ToNearestEven, '+', "0x.8p-2147483648", "0x.8p-2147483648", "0x.8p-2147483647", Exact},
 
-		{4, ToNearestEven, '*', "1", "0x.8p2147483647", "0x.8p2147483647", Exact},
+		{4, ToNearestEven, '*', "1", "0x.8p2147483647", "0x.8p+2147483647", Exact},
 		{4, ToNearestEven, '*', "2", "0x.8p2147483647", "+Inf", Above},  // exponent overflow in *
 		{4, ToNearestEven, '*', "-2", "0x.8p2147483647", "-Inf", Below}, // exponent overflow in *
 
 		{4, ToNearestEven, '/', "0.5", "0x.8p2147483647", "0x.8p-2147483646", Exact},
-		{4, ToNearestEven, '/', "0x.8p0", "0x.8p2147483647", "0x.8p-2147483646", Exact},
+		{4, ToNearestEven, '/', "0x.8p+0", "0x.8p2147483647", "0x.8p-2147483646", Exact},
 		{4, ToNearestEven, '/', "0x.8p-1", "0x.8p2147483647", "0x.8p-2147483647", Exact},
 		{4, ToNearestEven, '/', "0x.8p-2", "0x.8p2147483647", "0x.8p-2147483648", Exact},
 		{4, ToNearestEven, '/', "0x.8p-3", "0x.8p2147483647", "0", Below}, // exponent underflow in /
@@ -1568,10 +1595,10 @@ func TestFloatArithmeticOverflow(t *testing.T) {
 		default:
 			panic("unreachable")
 		}
-		if got := z.Format('p', 0); got != test.want || z.Acc() != test.acc {
+		if got := z.Text('p', 0); got != test.want || z.Acc() != test.acc {
 			t.Errorf(
 				"prec = %d (%s): %s %c %s = %s (%s); want %s (%s)",
-				test.prec, test.mode, x.Format('p', 0), test.op, y.Format('p', 0), got, z.Acc(), test.want, test.acc,
+				test.prec, test.mode, x.Text('p', 0), test.op, y.Text('p', 0), got, z.Acc(), test.want, test.acc,
 			)
 		}
 	}
