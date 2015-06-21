@@ -291,8 +291,8 @@ func (p *parser) parseStructType(packed bool) (*types.Struct, error) {
 	return types.NewStruct(fields, packed)
 }
 
-// parseFuncType parses a function type. A result type, an optional function
-// name and a "(" token has already been consumed.
+// parseFuncType parses a function type. A result type and a "(" token has
+// already been consumed.
 //
 // Syntax:
 //    FuncType   = FuncResult "(" FuncParams ")" .

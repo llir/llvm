@@ -14,6 +14,8 @@ type Function struct {
 	Name string
 	// Function signature.
 	Sig *types.Func
+	// Function argument names; len(Args) == len(Sig.Params).
+	Args []string
 	// Basic blocks of the function, or nil if function declaration.
 	Blocks []*BasicBlock
 }

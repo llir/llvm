@@ -5,6 +5,7 @@ import (
 
 	"github.com/llir/llvm/asm/token"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
 
@@ -48,14 +49,19 @@ func (p *parser) parseFuncDef() error {
 // parseFuncHeader parses a function header consisting of a return argument, a
 // function name and zero or more function arguments.
 //
-//    FuncHeader = FuncResult FuncName "(" FuncParams ")" .
+//    FuncHeader = FuncResult FuncName "(" FuncArgs ")" .
 //
 //    FuncName = Global .
+//    FuncArgs = [ FuncArg { "," FuncArg } [ "," "..." ] ] | "..." .
+//    FuncArg  = [ Local ] Type .
 func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
+	// Parse return type.
 	result, err := p.parseType()
 	if err != nil {
 		return nil, err
 	}
+
+	// Parse function name.
 	name, ok := p.tryGlobal()
 	if !ok {
 		return nil, errutil.New("expected function name")
@@ -63,14 +69,42 @@ func (p *parser) parseFuncHeader() (header *ir.Function, err error) {
 	header = &ir.Function{
 		Name: name,
 	}
+
+	// Parse function argument list.
 	if !p.accept(token.Lparen) {
 		return nil, errors.New("expected '(' in function argument list")
 	}
-	// TODO: Don't use parseFuncType as it is specifically for function types
-	// which do not include parameter names. Write a custom implementation for
-	// function declarations and function definitions.
-	_ = result
-	//header.Sig, err = p.parseFunc(result)
+	var params []types.Type
+	variadic := false
+	for i := 0; ; i++ {
+		if i > 0 && !p.accept(token.Comma) {
+			break
+		}
+		if param, ok := p.tryType(); ok {
+			params = append(params, param)
+			// Argument name.
+			if arg, ok := p.tryLocal(); ok {
+				header.Args = append(header.Args, arg)
+			} else {
+				// Unnamed function argument.
+				header.Args = append(header.Args, "")
+			}
+		} else if p.accept(token.Ellipsis) {
+			variadic = true
+			break
+		} else {
+			return nil, errutil.New("expected type")
+		}
+	}
+	if !p.accept(token.Rparen) {
+		return nil, errutil.New("expected ')' at end of argument list")
+	}
+
+	// Create function signature.
+	header.Sig, err = types.NewFunc(result, params, variadic)
+	if err != nil {
+		return nil, errutil.Err(err)
+	}
 	return header, err
 }
 
