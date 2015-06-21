@@ -1,6 +1,42 @@
 package parser
 
-import "github.com/llir/llvm/ir/instruction"
+import (
+	"github.com/llir/llvm/ir/instruction"
+	"github.com/llir/llvm/ir/types"
+	"github.com/mewkiz/pkg/errutil"
+)
+
+// parseInst parses and returns an instruction.
+//
+//    Instruction = AddInst | FAddInst | SubInst | FSubInst | MulInst |
+//                  FMulInst | UDivInst | SDivInst | FDivInst | URemInst |
+//                  SRemInst | FRemInst | ShlInst | LShrInst | AShrInst |
+//                  AndInst | OrInst | XorInst | ExtractElementInst |
+//                  InsertElementInst | ShuffleVectorInst | ExtractValueInst |
+//                  InsertValueInst | AllocaInst | LoadInst | StoreInst |
+//                  FenceInst | CmpXchgInst | AtomicRMWInst |
+//                  GetElementPtrInst | TruncInst | ZExtInst | SExtInst |
+//                  FPTruncInst | FPExtInst | FPToUIInst | FPToSIInst |
+//                  UIToFPInst | SIToFPInst | PtrToIntInst | IntToPtrInst |
+//                  BitCastInst | AddrSpaceCastInst | ICmpInst | FCmpInst |
+//                  PHIInst | SelectInst | CallInst | VAArgInst |
+//                  LandingPadInst .
+//    Terminator  = RetInst | BrInst | SwitchInst | IndirectBrInst |
+//                  InvokeInst | ResumeInst | UnreachableInst .
+func (p *parser) parseInst() (instruction.Instruction, error) {
+	return nil, errutil.New("parser.parseInst: not yet implemented.")
+}
+
+func (p *parser) parseTerm() (instruction.Terminator, error) {
+	// TODO: Add support for variable declarations; e.g.
+	//    %x = invoke ...
+	switch tok := p.next(); tok.Val {
+	case "ret":
+		return p.parseRetInst()
+	default:
+		return nil, errutil.Newf("parser.parseTerm: support for terminator %q not yet implemented.", tok)
+	}
+}
 
 // =============================================================================
 // Terminator Instructions
@@ -14,7 +50,31 @@ import "github.com/llir/llvm/ir/instruction"
 //    RetInst = "ret" VoidType |
 //              "ret" Type Value .
 func (p *parser) parseRetInst() (*instruction.Ret, error) {
-	panic("parser.parseRetInst: not yet implemented.")
+	// Try to parse a constant return value.
+	if val, ok := p.tryConst(); ok {
+		return instruction.NewRet(val.Type(), val)
+	}
+
+	// Early return for "void" return type.
+	typ, err := p.parseType()
+	if err != nil {
+		return nil, errutil.Err(err)
+	}
+	if typ.Equal(types.NewVoid()) {
+		return instruction.NewRet(typ, nil)
+	}
+
+	// Try to parse a local return value.
+	if name, ok := p.tryLocal(); ok {
+		// TODO: Implment support for local values.
+		// TODO: Figure out how to handle the creation/lookup of local values.
+		//val := localValue(name)
+		//val := ctx.Lookup(name)
+		//...
+		//return instruction.NewRet(typ, val)
+		_ = name
+	}
+	panic("parser.parseRetInst: not yet supported")
 }
 
 // parseBrInst parses a branch instruction. A "br" token has already been

@@ -3,6 +3,7 @@ package instruction
 import (
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // A Terminator is a control flow instruction (e.g. br, ret, …) which terminates
@@ -47,6 +48,29 @@ type Ret struct {
 	typ types.Type
 	// Return value; or nil in case of a void return.
 	val value.Value
+}
+
+// NewRet returns a new ret instruction based on the given return type and
+// value. A nil value indicates a "void" return instruction.
+func NewRet(typ types.Type, val value.Value) (*Ret, error) {
+	// Sanity check.
+	switch {
+	case typ.Equal(types.NewVoid()):
+		// Void return.
+		if val != nil {
+			return nil, errutil.Newf(`expected no return value for return type "void"; got %q`, val)
+		}
+	default:
+		// Value return.
+		if val == nil {
+			return nil, errutil.Newf(`expected return value for return type %q; got nil`, typ)
+		}
+		if valTyp := val.Type(); !typ.Equal(valTyp) {
+			return nil, errutil.Newf("type mismatch between return type %q and return value %q", typ, valTyp)
+		}
+	}
+
+	return &Ret{typ: typ, val: val}, nil
 }
 
 func (*Ret) Type() types.Type { panic("Ret.Type: not yet implemented") }

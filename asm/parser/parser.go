@@ -9,6 +9,7 @@ import (
 	"github.com/llir/llvm/asm/lexer"
 	"github.com/llir/llvm/asm/token"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
@@ -163,12 +164,25 @@ func (p *parser) parseInt() (int, error) {
 	return x, nil
 }
 
+// tryConst tries to consume a constant. The value of ok is true if one or more
+// tokens were consumed this way, and false otherwise.
+func (p *parser) tryConst() (val constant.Constant, ok bool) {
+	cur := p.cur
+	val, err := p.parseConst()
+	if err != nil {
+		p.cur = cur
+		return nil, false
+	}
+	return val, true
+}
+
 // TODO: Check which support methods are actually required and remove the rest.
 //    * try?
 //    * tryLocal?
 //    * tryGlobal?
 //    * tryType?
 //    * expected?
+//    * tryConst?
 
 // expect consumes the next token and returns its value after validating the
 // expected token kind.

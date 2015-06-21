@@ -85,6 +85,7 @@ func (p *parser) parseType() (typ types.Type, err error) {
 			return nil, errutil.Err(err)
 		}
 
+	// Packed array or vector type.
 	case token.Less:
 		if p.accept(token.Lbrace) {
 			// Packed array type; e.g.
