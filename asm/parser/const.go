@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/llir/llvm/asm/token"
-	"github.com/llir/llvm/constant"
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
 

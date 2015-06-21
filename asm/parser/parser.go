@@ -9,7 +9,7 @@ import (
 	"github.com/llir/llvm/asm/lexer"
 	"github.com/llir/llvm/asm/token"
 	"github.com/llir/llvm/ir"
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
 

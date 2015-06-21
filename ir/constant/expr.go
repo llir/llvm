@@ -3,8 +3,8 @@ package constant
 import (
 	"fmt"
 
-	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/value"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // TODO: Complete the list of expression implementations.

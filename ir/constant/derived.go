@@ -6,7 +6,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 )
 
 // Vector represents a vector constant which is a vetor containing only

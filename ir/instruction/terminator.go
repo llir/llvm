@@ -1,8 +1,8 @@
 package instruction
 
 import (
-	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/value"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // A Terminator is a control flow instruction (e.g. br, ret, …) which terminates

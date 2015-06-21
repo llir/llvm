@@ -4,7 +4,7 @@ package value
 import (
 	"fmt"
 
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 )
 
 // TODO: Complete the list of value implementations.

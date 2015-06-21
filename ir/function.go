@@ -1,6 +1,6 @@
 package ir
 
-import "github.com/llir/llvm/types"
+import "github.com/llir/llvm/ir/types"
 
 // A Function declaration specifies the name and type of a function. A function
 // definition contains a set of basic blocks, interconnected by control flow

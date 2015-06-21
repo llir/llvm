@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 )
 
 // Types used by test cases.

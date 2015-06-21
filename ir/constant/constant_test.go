@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/llir/llvm/constant"
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
 )
 
 var (

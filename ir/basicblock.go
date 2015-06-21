@@ -1,6 +1,6 @@
 package ir
 
-import "github.com/llir/llvm/instruction"
+import "github.com/llir/llvm/ir/instruction"
 
 // A BasicBlock is a sequence of non-branching instructions, terminated by a
 // control flow instruction (such as br or ret).

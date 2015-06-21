@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/asm"
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 )
 
 // A Module contains top-level type definitions, global variables, function

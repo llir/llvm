@@ -1,9 +1,9 @@
 package ir
 
 import (
-	"github.com/llir/llvm/constant"
-	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/value"
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // =============================================================================

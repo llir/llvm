@@ -1,6 +1,6 @@
 package instruction
 
-import "github.com/llir/llvm/types"
+import "github.com/llir/llvm/ir/types"
 
 // References:
 //    http://llvm.org/docs/LangRef.html#vector-operations

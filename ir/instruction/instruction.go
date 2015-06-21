@@ -1,7 +1,7 @@
 // Package instruction declares the instructions of LLVM IR.
 package instruction
 
-import "github.com/llir/llvm/value"
+import "github.com/llir/llvm/ir/value"
 
 // An Instruction performs a non-branching operation and belongs to one of the
 // following groups:

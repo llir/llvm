@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/asm"
-	"github.com/llir/llvm/types"
-	"github.com/llir/llvm/value"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // A GlobalDecl represents a global variable definition or an external global

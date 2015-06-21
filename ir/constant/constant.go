@@ -5,7 +5,7 @@
 // Package constant implements values representing immutable LLVM IR constants.
 package constant
 
-import "github.com/llir/llvm/value"
+import "github.com/llir/llvm/ir/value"
 
 // A Constant represents a value that is immutable at runtime, such as an
 // integer or a floating point literal. Pointers known to be immutable at

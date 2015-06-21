@@ -6,7 +6,7 @@ import (
 
 	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/asm/token"
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
 

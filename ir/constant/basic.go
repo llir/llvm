@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/math/big"
-	"github.com/llir/llvm/types"
+	"github.com/llir/llvm/ir/types"
 )
 
 // Int represents an integer constant.

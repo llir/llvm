@@ -1,6 +1,6 @@
 package parser
 
-import "github.com/llir/llvm/instruction"
+import "github.com/llir/llvm/ir/instruction"
 
 // =============================================================================
 // Terminator Instructions
