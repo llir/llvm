@@ -6,42 +6,11 @@ import (
 	"github.com/llir/llvm/value"
 )
 
-// A Terminator is a control flow instruction (e.g. br, ret, …) which terminates
-// a basic block.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#terminator-instructions
-type Terminator interface {
-	// isTerm ensures that only terminator instructions can be assigned to the
-	// Terminator interface.
-	isTerm()
-}
-
 // =============================================================================
 // Terminator Instructions
 //
-//    ref: http://llvm.org/docs/LangRef.html#terminators
+//    ref: http://llvm.org/docs/LangRef.html#terminator-instructions
 // =============================================================================
-
-// The ReturnInst returns control flow (and optionally a value) from a function
-// back to the caller.
-//
-// Syntax:
-//    ret <Type> <Val>
-//    ret void
-//
-// Semantics:
-//    return Val;
-//    return;
-//
-// Reference:
-//    http://llvm.org/docs/LangRef.html#i-ret
-type ReturnInst struct {
-	// Return type.
-	Type types.Type
-	// Return value; or nil in case of a void return.
-	Val value.Value
-}
 
 // The CondBranchInst transfers control flow to one of two basic blocks in the
 // current function based on a boolean branching condition.
@@ -135,7 +104,6 @@ type UnreachableInst struct {
 
 // isTerm ensures that only terminator instructions can be assigned to the
 // Terminator interface.
-func (ReturnInst) isTerm()     {}
 func (CondBranchInst) isTerm() {}
 func (BranchInst) isTerm()     {}
 func (SwitchInst) isTerm()     {}

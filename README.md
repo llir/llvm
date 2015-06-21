@@ -12,7 +12,7 @@ The aim of this project is to provide access to the various LLVM IR representati
 
 [LLVM bitcode]: http://llvm.org/docs/BitCodeFormat.html
 [LLVM assembly]: http://llvm.org/docs/LangRef.html
-[go/ssa]: https://godoc.org/code.google.com/p/go.tools/go/ssa
+[go/ssa]: https://godoc.org/golang.org/x/tools/go/ssa
 [encoding]: http://golang.org/pkg/encoding/
 
 ## Public domain

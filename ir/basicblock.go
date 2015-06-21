@@ -1,5 +1,7 @@
 package ir
 
+import "github.com/llir/llvm/instruction"
+
 // A BasicBlock is a sequence of non-branching instructions, terminated by a
 // control flow instruction (such as br or ret).
 //
@@ -14,7 +16,7 @@ type BasicBlock struct {
 	// Parent function of the basic block.
 	Parent *Function
 	// Non-terminator instructions of the basic block.
-	Insts []Instruction
+	Insts []instruction.Instruction
 	// Terminator instruction of the basic block.
-	Term Terminator
+	Term instruction.Terminator
 }
