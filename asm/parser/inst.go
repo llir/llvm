@@ -30,8 +30,8 @@ func (p *parser) parseInst() (instruction.Instruction, error) {
 func (p *parser) parseTerm() (instruction.Terminator, error) {
 	// TODO: Add support for variable declarations; e.g.
 	//    %x = invoke ...
-	switch tok := p.next(); tok.Val {
-	case "ret":
+	switch tok := p.next(); tok.Kind {
+	case token.KwRet:
 		return p.parseRetInst()
 	default:
 		return nil, errutil.Newf("parser.parseTerm: support for terminator %q not yet implemented.", tok)
