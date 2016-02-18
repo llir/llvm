@@ -48,8 +48,8 @@ func ParseFile(path string) ([]token.Token, error) {
 func ParseString(s string) []token.Token {
 	l := &lexer{
 		input: s,
-		// The average token size of LLVM IR is 4.06 (based on the 30000+ tokens
-		// of the c4 compiler project).
+		// The average token size in bytes of LLVM IR is 4.06 (based on the 30000+
+		// tokens of the c4 compiler project).
 		tokens: make([]token.Token, 0, len(s)/4),
 	}
 
