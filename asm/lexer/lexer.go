@@ -50,7 +50,7 @@ func ParseString(s string) []token.Token {
 		input: s,
 		// The average token size of LLVM IR is 4.06 (based on the 30000+ tokens
 		// of the c4 compiler project).
-		tokens: make([]token.Token, 0, len(s)/5),
+		tokens: make([]token.Token, 0, len(s)/4),
 	}
 
 	// Tokenize the input.
