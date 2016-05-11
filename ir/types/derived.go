@@ -18,7 +18,7 @@ type Func struct {
 	// Result parameter type.
 	result Type
 	// Function parameter types.
-	params []Type
+	params []*Param
 	// Specifies if the function takes a variable number of arguments or not.
 	variadic bool
 }
@@ -26,7 +26,7 @@ type Func struct {
 // NewFunc returns a function type based on the given result parameter type and
 // function parameter types. The function takes a variable number of arguments
 // if variadic is true.
-func NewFunc(result Type, params []Type, variadic bool) (*Func, error) {
+func NewFunc(result Type, params []*Param, variadic bool) (*Func, error) {
 	// Validate result parameter type (any type except label, metadata and
 	// function).
 	switch result.(type) {
@@ -38,13 +38,13 @@ func NewFunc(result Type, params []Type, variadic bool) (*Func, error) {
 
 	// Validate function parameter types (any type except void and function).
 	for _, param := range params {
-		switch param.(type) {
+		switch param.Type.(type) {
 		case *Int, *Float, *MMX, *Label, *Metadata, *Pointer, *Vector, *Array, *Struct:
 			// valid type
 		case *Void:
 			return nil, errors.New("invalid function parameter type; void type only allowed for function results")
 		default:
-			return nil, fmt.Errorf("invalid function parameter type %q", param)
+			return nil, fmt.Errorf("invalid function parameter type %q", param.Type)
 		}
 	}
 
@@ -57,7 +57,7 @@ func (t *Func) Result() Type {
 }
 
 // Params returns the function parameter types.
-func (t *Func) Params() []Type {
+func (t *Func) Params() []*Param {
 	return t.params
 }
 
@@ -67,7 +67,7 @@ func (t *Func) IsVariadic() bool {
 	return t.variadic
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (t *Func) Equal(u Type) bool {
 	if u, ok := u.(*Func); ok {
 		if !t.result.Equal(u.result) {
@@ -108,6 +108,33 @@ func (t *Func) String() string {
 	return fmt.Sprintf("%s (%s)", t.Result(), buf)
 }
 
+// A Param represents a function parameter.
+type Param struct {
+	// Parameter name.
+	Name string
+	// Parameter type.
+	Type Type
+}
+
+// NewParam returns a function parameter type based on the given parameter type
+// and name.
+func NewParam(name string, typ Type) *Param {
+	return &Param{Name: name, Type: typ}
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *Param) Equal(u Type) bool {
+	return t.Type.Equal(u)
+}
+
+// String returns a string representation of the function parameter type.
+func (t *Param) String() string {
+	if len(t.Name) > 0 {
+		return fmt.Sprintf("%v %v", t.Type, t.Name)
+	}
+	return t.Type.String()
+}
+
 // Pointer represents a pointer type.
 //
 // Examples:
@@ -140,7 +167,7 @@ func (t *Pointer) Elem() Type {
 	return t.elem
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (t *Pointer) Equal(u Type) bool {
 	if u, ok := u.(*Pointer); ok {
 		return t.elem.Equal(u.elem)
@@ -200,7 +227,7 @@ func (t *Vector) Len() int {
 	return t.n
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (t *Vector) Equal(u Type) bool {
 	if u, ok := u.(*Vector); ok {
 		return t.elem.Equal(u.elem) && t.n == u.n
@@ -260,7 +287,7 @@ func (t *Array) Len() int {
 	return t.n
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (t *Array) Equal(u Type) bool {
 	if u, ok := u.(*Array); ok {
 		return t.elem.Equal(u.elem) && t.n == u.n
@@ -317,7 +344,7 @@ func (t *Struct) IsPacked() bool {
 	return t.packed
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 //
 // Literal structure types are uniqued by structural identity.
 func (t *Struct) Equal(u Type) bool {
