@@ -22,8 +22,8 @@ import "fmt"
 //    http://llvm.org/docs/LangRef.html#typesystem
 type Type interface {
 	fmt.Stringer
-	// Equal returns true if the given types are equal, and false otherwise.
-	Equal(b Type) bool
+	// Equal reports whether t and u are of equal type.
+	Equal(u Type) bool
 }
 
 // Make sure that each type implements the Type interface.
@@ -41,7 +41,7 @@ var (
 	_ Type = &Struct{}
 )
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func Equal(t, u Type) bool {
 	return t.Equal(u)
 }

@@ -19,7 +19,7 @@ func NewVoid() *Void {
 	return &Void{}
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (*Void) Equal(u Type) bool {
 	_, ok := u.(*Void)
 	return ok
@@ -57,7 +57,7 @@ func (t *Int) Size() int {
 	return t.size
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (t *Int) Equal(u Type) bool {
 	if u, ok := u.(*Int); ok {
 		return t.size == u.size
@@ -104,7 +104,7 @@ func (t *Float) Size() int {
 	return t.kind.Size()
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (t *Float) Equal(u Type) bool {
 	if u, ok := u.(*Float); ok {
 		return t.kind == u.kind
@@ -183,7 +183,7 @@ func NewMMX() *MMX {
 	return &MMX{}
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (*MMX) Equal(u Type) bool {
 	_, ok := u.(*MMX)
 	return ok
@@ -208,7 +208,7 @@ func NewLabel() *Label {
 	return &Label{}
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (*Label) Equal(u Type) bool {
 	_, ok := u.(*Label)
 	return ok
@@ -233,7 +233,7 @@ func NewMetadata() *Metadata {
 	return &Metadata{}
 }
 
-// Equal returns true if the given types are equal, and false otherwise.
+// Equal reports whether t and u are of equal type.
 func (*Metadata) Equal(u Type) bool {
 	_, ok := u.(*Metadata)
 	return ok
