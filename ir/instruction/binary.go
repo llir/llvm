@@ -1,6 +1,11 @@
 package instruction
 
-import "github.com/llir/llvm/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
+)
 
 // References:
 //    http://llvm.org/docs/LangRef.html#binary-operations
@@ -19,10 +24,15 @@ import "github.com/llir/llvm/ir/types"
 //    http://llvm.org/docs/LangRef.html#srem-instruction
 //    http://llvm.org/docs/LangRef.html#frem-instruction
 
-type Add struct{}
+type Add struct {
+	x, y value.Value
+	typ  types.Type
+}
 
-func (*Add) Type() types.Type { panic("Add.Type: not yet implemented") }
-func (*Add) String() string   { panic("Add.String: not yet implemented") }
+func (inst *Add) Type() types.Type { return inst.typ }
+func (inst *Add) String() string {
+	return fmt.Sprintf("add %v %v,%v", inst.typ, inst.x, inst.y)
+}
 
 type FAdd struct{}
 
