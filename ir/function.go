@@ -41,13 +41,16 @@ func (f *Function) Type() *types.Func {
 }
 
 // TODO: Try to figure out a better API for accessing the function body.
-//
-// Add a SetBlocks method?
-//    SetBlocks(blocks []*BasicBlock)
 
 // Blocks returns the basic blocks of the function.
 func (f *Function) Blocks() []*BasicBlock {
 	return f.blocks
+}
+
+// SetBlocks sets the basic blocks of the function body to the given basic
+// blocks.
+func (f *Function) SetBlocks(blocks []*BasicBlock) {
+	f.blocks = blocks
 }
 
 // AppendBlock appends the given block to the basic blocks of the function body.
