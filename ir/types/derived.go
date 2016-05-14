@@ -90,36 +90,34 @@ func (t *Func) Equal(u Type) bool {
 func (t *Func) String() string {
 	// e.g. "void ()"
 	// e.g. "i32 (i8*, ...)"
-	params := t.Params()
-	buf := new(bytes.Buffer)
-	for i, param := range params {
+	paramsBuf := new(bytes.Buffer)
+	for i, param := range t.Params() {
 		if i > 0 {
-			buf.WriteString(", ")
+			paramsBuf.WriteString(", ")
 		}
-		buf.WriteString(param.String())
+		paramsBuf.WriteString(param.String())
 	}
 	if t.IsVariadic() {
-		if len(params) > 0 {
-			buf.WriteString(", ")
+		if len(t.Params()) > 0 {
+			paramsBuf.WriteString(", ")
 		}
-		buf.WriteString("...")
+		paramsBuf.WriteString("...")
 	}
-
-	return fmt.Sprintf("%s (%s)", t.Result(), buf)
+	return fmt.Sprintf("%s (%s)", t.Result(), paramsBuf)
 }
 
 // A Param represents a function parameter.
 type Param struct {
-	// Parameter name.
-	Name string
 	// Parameter type.
 	Type Type
+	// Parameter name; or empty.
+	Name string
 }
 
 // NewParam returns a function parameter type based on the given parameter type
 // and name.
-func NewParam(name string, typ Type) *Param {
-	return &Param{Name: name, Type: typ}
+func NewParam(typ Type, name string) *Param {
+	return &Param{Type: typ, Name: name}
 }
 
 // Equal reports whether t and u are of equal type.

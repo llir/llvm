@@ -68,13 +68,15 @@ func (d *GlobalDecl) String() string {
 	if d.Immutable() {
 		decl = "constant"
 	}
-	if d.val != nil {
-		// Global variable definition; e.g.
-		//     @x = global i32 42
-		//     @s = constant [13 x i8] c"hello world\0A\00"
-		return fmt.Sprintf("%s = %s %s", asm.EncGlobal(d.Name()), decl, d.Value())
-	}
+
 	// External global variable declaration; e.g.
 	//    @y = external global i32
-	return fmt.Sprintf("%s = external %s %s", asm.EncGlobal(d.Name()), decl, d.Type())
+	if d.val == nil {
+		return fmt.Sprintf("%s = external %s %s", asm.EncGlobal(d.Name()), decl, d.Type())
+	}
+
+	// Global variable definition; e.g.
+	//     @x = global i32 42
+	//     @s = constant [13 x i8] c"hello world\0A\00"
+	return fmt.Sprintf("%s = %s %s", asm.EncGlobal(d.Name()), decl, d.Value())
 }
