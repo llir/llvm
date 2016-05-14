@@ -52,7 +52,7 @@ func (f *Function) Blocks() []*BasicBlock {
 
 // AppendBlock appends the given block to the basic blocks of the function body.
 func (f *Function) AppendBlock(block *BasicBlock) {
-	append(f.blocks, block)
+	f.blocks = append(f.blocks, block)
 }
 
 // String returns the string representation of the function declaration.
