@@ -71,30 +71,21 @@ func (v *Int) Type() types.Type {
 
 // String returns a string representation of the integer, either as a signed
 // integer (e.g. 42, -13) or as a boolean (e.g. true, false) depending on the
-// type. The integer string representation is preceded by the type of the
-// constant, e.g.
+// type; e.g.
 //
-//    i1 true
-//    i32 -13
-//    i64 42
+//    true
+//    -13
+//    42
 func (v *Int) String() string {
-	var s string
 	if v.typ.Size() == 1 {
 		switch v.x.Int64() {
 		case 1:
-			s = "true"
+			return "true"
 		default:
-			s = "false"
+			return "false"
 		}
-	} else {
-		s = v.x.String()
 	}
-
-	// TODO: Remove type from string representation. It breaks printing of add
-	// instructions; e.g.
-	//
-	//    add i32 i32 13, i32 42
-	return fmt.Sprintf("%s %s", v.Type(), s)
+	return v.x.String()
 }
 
 // Float represents a floating point constant.
@@ -155,12 +146,11 @@ func (v *Float) Type() types.Type {
 
 // String returns a string representation of the floating point constant using
 // scientific notation (e.g. -2.5e10) for large exponents and regular floating
-// point representation otherwise (e.g. 3.14). The floating point string
-// representation is preceded by the type of the constant, e.g.
+// point representation otherwise (e.g. 3.14); e.g.
 //
-//    float 2.0
-//    double 3.14
-//    double -2.5e10
+//    2.0
+//    3.14
+//    -2.5e10
 func (v *Float) String() string {
 	// TODO: Replace the code between the "START" and "END" comments with
 	//
@@ -201,9 +191,7 @@ func (v *Float) String() string {
 
 	// Drop explicit plus sign in exponents.
 	//    3.0e+4 -> 3.0e4
-	s = strings.Replace(s, "e+", "e", -1)
-
-	return fmt.Sprintf("%s %s", v.Type(), s)
+	return strings.Replace(s, "e+", "e", -1)
 }
 
 // Pointer represents a pointer constant.
@@ -227,8 +215,7 @@ func (v *Pointer) Type() types.Type {
 	return v.typ
 }
 
-// String returns a string representation of the pointer constant. The pointer
-// string representation is preceded by the type of the constant, e.g.
+// String returns a string representation of the pointer constant; e.g.
 //
 //    i32(i8*, ...)* @printf
 func (v *Pointer) String() string {

@@ -1,6 +1,10 @@
+// TODO: Update tests. String representation of constants are no longer prefixed
+// with the type of the constant.
+
 package constant_test
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"testing"
@@ -402,7 +406,7 @@ func TestIntString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -469,7 +473,7 @@ func TestFloatString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -519,7 +523,7 @@ func TestVectorString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -569,7 +573,7 @@ func TestArrayString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -614,7 +618,7 @@ func TestStructString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -659,7 +663,7 @@ func TestIntTruncString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -704,7 +708,7 @@ func TestIntZeroExtString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -749,7 +753,7 @@ func TestIntSignExtString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -807,7 +811,7 @@ func TestFloatTruncString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -865,7 +869,7 @@ func TestFloatExtString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -925,7 +929,7 @@ func TestFloatToUintString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -985,7 +989,7 @@ func TestFloatToIntString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -1045,7 +1049,7 @@ func TestUintToFloatString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}
@@ -1105,7 +1109,7 @@ func TestIntToFloatString(t *testing.T) {
 			// Expected error match, check next test case.
 			continue
 		}
-		got := v.String()
+		got := fmt.Sprintf("%s %s", v.Type(), v)
 		if got != g.want {
 			t.Errorf("i=%d: string mismatch; expected %v, got %v", i, g.want, got)
 		}

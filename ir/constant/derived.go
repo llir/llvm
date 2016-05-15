@@ -55,20 +55,18 @@ func (v *Vector) Type() types.Type {
 	return v.typ
 }
 
-// String returns a string representation of the vector. The vector string
-// representation is preceded by the type of the constant, e.g.
+// String returns a string representation of the vector; e.g.
 //
-//    <2 x i32> <i32 42, i32 -13>
+//    <i32 42, i32 -13>
 func (v *Vector) String() string {
 	buf := new(bytes.Buffer)
 	for i, elem := range v.elems {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(elem.String())
+		fmt.Fprintf(buf, "%s %s", elem.Type(), elem.String())
 	}
-
-	return fmt.Sprintf("%s <%s>", v.Type(), buf)
+	return fmt.Sprintf("<%s>", buf)
 }
 
 // Array represents an array constant which is an array containing only
@@ -126,10 +124,9 @@ func (v *Array) Type() types.Type {
 	return v.typ
 }
 
-// String returns a string representation of the array. The array string
-// representation is preceded by the type of the constant, e.g.
+// String returns a string representation of the array; e.g.
 //
-//    [2 x i32] [i32 42, i32 -13]
+//    [i32 42, i32 -13]
 func (v *Array) String() string {
 	// Pretty print character arrays; e.g.
 	//    c"hello world\0A\00"
@@ -148,10 +145,10 @@ func (v *Array) String() string {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(elem.String())
+		fmt.Fprintf(buf, "%s %s", elem.Type(), elem)
 	}
 
-	return fmt.Sprintf("%s [%s]", v.Type(), buf)
+	return fmt.Sprintf("[%s]", buf)
 }
 
 // escape replaces any characters which are not printable with corresponding
@@ -247,20 +244,19 @@ func (v *Struct) Type() types.Type {
 	return v.typ
 }
 
-// String returns a string representation of the structure. The structure string
-// representation is preceded by the type of the constant, e.g.
+// String returns a string representation of the structure; e.g.
 //
-//    {i32, i8} {i32 -13, i8 3}
+//    {i32 -13, i8 3}
 func (v *Struct) String() string {
 	buf := new(bytes.Buffer)
 	for i, field := range v.fields {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(field.String())
+		fmt.Fprintf(buf, "%s %s", field.Type(), field)
 	}
 
-	return fmt.Sprintf("%s {%s}", v.Type(), buf)
+	return fmt.Sprintf("{%s}", buf)
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

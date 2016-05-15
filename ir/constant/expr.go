@@ -94,13 +94,12 @@ func (exp *IntTrunc) Calc() Constant {
 	panic("IntTrunc.Calc: not yet implemented.")
 }
 
-// String returns a string representation of the integer truncation expression.
-// The expression string representation is preceded by the type of the constant,
+// String returns a string representation of the integer truncation expression;
 // e.g.
 //
-//    i3 trunc(i32 15 to i3)
+//    trunc(i32 15 to i3)
 func (exp *IntTrunc) String() string {
-	return fmt.Sprintf("%s trunc(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("trunc(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // IntZeroExt is a constant expression which zero extends an integer constant to
@@ -154,12 +153,11 @@ func (exp *IntZeroExt) Calc() Constant {
 }
 
 // String returns a string representation of the integer zero extension
-// expression. The expression string representation is preceded by the type of
-// the constant, e.g.
+// expression; e.g.
 //
-//    i5 zext(i1 true to i5)
+//    zext(i1 true to i5)
 func (exp *IntZeroExt) String() string {
-	return fmt.Sprintf("%s zext(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("zext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // IntSignExt is a constant expression which sign extends an integer constant to
@@ -213,12 +211,11 @@ func (exp *IntSignExt) Calc() Constant {
 }
 
 // String returns a string representation of the integer sign extension
-// expression. The expression string representation is preceded by the type of
-// the constant, e.g.
+// expression; e.g.
 //
-//    i5 sext(i1 true to i5)
+//    sext(i1 true to i5)
 func (exp *IntSignExt) String() string {
-	return fmt.Sprintf("%s sext(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("sext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FloatTrunc is a constant expression which truncates a floating point constant
@@ -275,12 +272,11 @@ func (exp *FloatTrunc) Calc() Constant {
 }
 
 // String returns a string representation of the floating point truncation
-// expression. The expression string representation is preceded by the type of
-// the constant, e.g.
+// expression; e.g.
 //
 //    float fptrunc(double 4.0 to float)
 func (exp *FloatTrunc) String() string {
-	return fmt.Sprintf("%s fptrunc(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fptrunc(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FloatExt is a constant expression which extends a floating point constant to
@@ -337,12 +333,11 @@ func (exp *FloatExt) Calc() Constant {
 }
 
 // String returns a string representation of the floating point extension
-// expression. The expression string representation is preceded by the type of
-// the constant, e.g.
+// expression; e.g.
 //
-//    double fpext(float 4.0 to double)
+//    fpext(float 4.0 to double)
 func (exp *FloatExt) String() string {
-	return fmt.Sprintf("%s fpext(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fpext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FloatToUint is a constant expression which converts a floating point constant
@@ -397,13 +392,12 @@ func (exp *FloatToUint) Calc() Constant {
 
 // String returns a string representation of the constant expression which
 // converts a floating point constant (or constant vector) to the corresponding
-// unsigned integer constant (or constant vector). The expression string
-// representation is preceded by the type of the constant, e.g.
+// unsigned integer constant (or constant vector); e.g.
 //
-//    i32 fptoui(float 4.0 to i32)
-//    <2 x i32> fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
+//    fptoui(float 4.0 to i32)
+//    fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
 func (exp *FloatToUint) String() string {
-	return fmt.Sprintf("%s fptoui(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fptoui(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FloatToInt is a constant expression which converts a floating point constant
@@ -458,13 +452,12 @@ func (exp *FloatToInt) Calc() Constant {
 
 // String returns a string representation of the constant expression which
 // converts a floating point constant (or constant vector) to the corresponding
-// signed integer constant (or constant vector). The expression string
-// representation is preceded by the type of the constant, e.g.
+// signed integer constant (or constant vector); e.g.
 //
-//    i32 fptosi(float -4.0 to i32)
-//    <2 x i32> fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
+//    fptosi(float -4.0 to i32)
+//    fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
 func (exp *FloatToInt) String() string {
-	return fmt.Sprintf("%s fptosi(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fptosi(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // UintToFloat is a constant expression which converts an unsigned integer
@@ -519,13 +512,12 @@ func (exp *UintToFloat) Calc() Constant {
 
 // String returns a string representation of the constant expression which
 // converts an unsigned integer constant (or constant vector) to the
-// corresponding floating point constant (or constant vector). The expression
-// string representation is preceded by the type of the constant, e.g.
+// corresponding floating point constant (or constant vector); e.g.
 //
-//    float uitofp(i32 4 to float)
-//    <2 x float> uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
+//    uitofp(i32 4 to float)
+//    uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
 func (exp *UintToFloat) String() string {
-	return fmt.Sprintf("%s uitofp(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("uitofp(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // IntToFloat is a constant expression which converts a signed integer constant
@@ -580,13 +572,12 @@ func (exp *IntToFloat) Calc() Constant {
 
 // String returns a string representation of the constant expression which
 // converts a signed integer constant (or constant vector) to the corresponding
-// floating point constant (or constant vector). The expression string
-// representation is preceded by the type of the constant, e.g.
+// floating point constant (or constant vector); e.g.
 //
-//    float sitofp(i32 -4 to float)
-//    <2 x float> sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
+//    sitofp(i32 -4 to float)
+//    sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
 func (exp *IntToFloat) String() string {
-	return fmt.Sprintf("%s sitofp(%s to %s)", exp.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("sitofp(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // TODO: Add support for the following constant expressions:
