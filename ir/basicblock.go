@@ -1,6 +1,11 @@
 package ir
 
-import "github.com/llir/llvm/ir/instruction"
+import (
+	"bytes"
+	"fmt"
+
+	"github.com/llir/llvm/ir/instruction"
+)
 
 // A BasicBlock is a sequence of non-branching instructions, terminated by a
 // control flow instruction (such as br or ret).
@@ -50,4 +55,17 @@ func (block *BasicBlock) Insts() []instruction.Instruction {
 // Term returns the terminator of the basic block.
 func (block *BasicBlock) Term() instruction.Terminator {
 	return block.term
+}
+
+// String returns the string representation of the basic block.
+func (block *BasicBlock) String() string {
+	buf := new(bytes.Buffer)
+	if len(block.Name()) > 0 {
+		fmt.Fprintf(buf, "%s:\n", block.Name())
+	}
+	for _, inst := range block.Insts() {
+		fmt.Fprintf(buf, "\t%s\n", inst)
+	}
+	fmt.Fprintf(buf, "\t%s", block.Term())
+	return buf.String()
 }

@@ -93,6 +93,6 @@ func (f *Function) String() string {
 	for _, block := range f.blocks {
 		fmt.Fprintln(buf, block)
 	}
-	buf.WriteString("}\n")
+	buf.WriteString("}")
 	return buf.String()
 }

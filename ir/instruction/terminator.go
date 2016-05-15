@@ -1,6 +1,8 @@
 package instruction
 
 import (
+	"fmt"
+
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -74,7 +76,14 @@ func NewRet(typ types.Type, val value.Value) (*Ret, error) {
 }
 
 func (*Ret) Type() types.Type { panic("Ret.Type: not yet implemented") }
-func (*Ret) String() string   { panic("Ret.String: not yet implemented") }
+
+// String returns the string representation of the return instruction.
+func (inst *Ret) String() string {
+	if inst.val == nil {
+		return fmt.Sprintf("ret %v", inst.typ)
+	}
+	return fmt.Sprintf("ret %v", inst.val)
+}
 
 // TODO: Add support for the remaining terminator instructions:
 //    http://llvm.org/docs/LangRef.html#br-instruction
