@@ -75,14 +75,16 @@ func NewRet(typ types.Type, val value.Value) (*Ret, error) {
 	return &Ret{typ: typ, val: val}, nil
 }
 
-func (*Ret) Type() types.Type { panic("Ret.Type: not yet implemented") }
+func (inst *Ret) Type() types.Type {
+	return inst.typ
+}
 
 // String returns the string representation of the return instruction.
 func (inst *Ret) String() string {
 	if inst.val == nil {
 		return fmt.Sprintf("ret %v", inst.typ)
 	}
-	return fmt.Sprintf("ret %v", inst.val)
+	return fmt.Sprintf("ret %v %v", inst.val.Type(), inst.val)
 }
 
 // TODO: Add support for the remaining terminator instructions:

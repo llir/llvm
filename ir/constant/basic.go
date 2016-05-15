@@ -90,6 +90,10 @@ func (v *Int) String() string {
 		s = v.x.String()
 	}
 
+	// TODO: Remove type from string representation. It breaks printing of add
+	// instructions; e.g.
+	//
+	//    add i32 i32 13, i32 42
 	return fmt.Sprintf("%s %s", v.Type(), s)
 }
 
