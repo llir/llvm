@@ -1,6 +1,12 @@
 package instruction
 
-import "github.com/llir/llvm/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
+	"github.com/mewkiz/pkg/errutil"
+)
 
 // References:
 //    http://llvm.org/docs/LangRef.html#bitwise-binary-operations
@@ -38,10 +44,36 @@ type Or struct{}
 func (*Or) Type() types.Type { panic("Or.Type: not yet implemented") }
 func (*Or) String() string   { panic("Or.String: not yet implemented") }
 
-type Xor struct{}
+// Xor represents an exclusive-OR instruction.
+type Xor struct {
+	// Operand type.
+	typ types.Type
+	// Operands.
+	x, y value.Value
+}
 
-func (*Xor) Type() types.Type { panic("Xor.Type: not yet implemented") }
-func (*Xor) String() string   { panic("Xor.String: not yet implemented") }
+// NewXor returns a new xor instruction based on the given operand type and
+// values.
+func NewXor(typ types.Type, x, y value.Value) (*Xor, error) {
+	// Sanity check.
+	if !types.Equal(typ, x.Type()) {
+		return nil, errutil.Newf("type mismatch between operand type %q and type of x %q", typ, x.Type())
+	}
+	if !types.Equal(typ, y.Type()) {
+		return nil, errutil.Newf("type mismatch between operand type %q and type of y %q", typ, y.Type())
+	}
+	return &Xor{typ: typ, x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *Xor) Type() types.Type {
+	return inst.typ
+}
+
+// String returns the string representation of the instruction.
+func (inst *Xor) String() string {
+	return fmt.Sprintf("xor %v %v, %v", inst.typ, inst.x, inst.y)
+}
 
 // isInst ensures that only non-branching instructions can be assigned to the
 // Instruction interface.
