@@ -189,17 +189,17 @@ type FRem struct{}
 func (*FRem) Type() types.Type { panic("FRem.Type: not yet implemented") }
 func (*FRem) String() string   { panic("FRem.String: not yet implemented") }
 
-// isInst ensures that only non-branching instructions can be assigned to the
-// Instruction interface.
-func (*Add) isInst()  {}
-func (*FAdd) isInst() {}
-func (*Sub) isInst()  {}
-func (*FSub) isInst() {}
-func (*Mul) isInst()  {}
-func (*FMul) isInst() {}
-func (*UDiv) isInst() {}
-func (*SDiv) isInst() {}
-func (*FDiv) isInst() {}
-func (*URem) isInst() {}
-func (*SRem) isInst() {}
-func (*FRem) isInst() {}
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*Add) isValueInst()  {}
+func (*FAdd) isValueInst() {}
+func (*Sub) isValueInst()  {}
+func (*FSub) isValueInst() {}
+func (*Mul) isValueInst()  {}
+func (*FMul) isValueInst() {}
+func (*UDiv) isValueInst() {}
+func (*SDiv) isValueInst() {}
+func (*FDiv) isValueInst() {}
+func (*URem) isValueInst() {}
+func (*SRem) isValueInst() {}
+func (*FRem) isValueInst() {}

@@ -49,12 +49,12 @@ type LandingPad struct{}
 func (*LandingPad) Type() types.Type { panic("LandingPad.Type: not yet implemented") }
 func (*LandingPad) String() string   { panic("LandingPad.String: not yet implemented") }
 
-// isInst ensures that only non-branching instructions can be assigned to the
-// Instruction interface.
-func (*ICmp) isInst()       {}
-func (*FCmp) isInst()       {}
-func (*PHI) isInst()        {}
-func (*Select) isInst()     {}
-func (*Call) isInst()       {}
-func (*VAArg) isInst()      {}
-func (*LandingPad) isInst() {}
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*ICmp) isValueInst()       {}
+func (*FCmp) isValueInst()       {}
+func (*PHI) isValueInst()        {}
+func (*Select) isValueInst()     {}
+func (*Call) isValueInst()       {}
+func (*VAArg) isValueInst()      {}
+func (*LandingPad) isValueInst() {}

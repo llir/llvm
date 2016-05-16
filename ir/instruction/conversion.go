@@ -85,18 +85,18 @@ type AddrSpaceCast struct{}
 func (*AddrSpaceCast) Type() types.Type { panic("AddrSpaceCast.Type: not yet implemented") }
 func (*AddrSpaceCast) String() string   { panic("AddrSpaceCast.String: not yet implemented") }
 
-// isInst ensures that only non-branching instructions can be assigned to the
-// Instruction interface.
-func (*Trunc) isInst()         {}
-func (*ZExt) isInst()          {}
-func (*SExt) isInst()          {}
-func (*FPTrunc) isInst()       {}
-func (*FPExt) isInst()         {}
-func (*FPToUI) isInst()        {}
-func (*FPToSI) isInst()        {}
-func (*UIToFP) isInst()        {}
-func (*SIToFP) isInst()        {}
-func (*PtrToInt) isInst()      {}
-func (*IntToPtr) isInst()      {}
-func (*BitCast) isInst()       {}
-func (*AddrSpaceCast) isInst() {}
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*Trunc) isValueInst()         {}
+func (*ZExt) isValueInst()          {}
+func (*SExt) isValueInst()          {}
+func (*FPTrunc) isValueInst()       {}
+func (*FPExt) isValueInst()         {}
+func (*FPToUI) isValueInst()        {}
+func (*FPToSI) isValueInst()        {}
+func (*UIToFP) isValueInst()        {}
+func (*SIToFP) isValueInst()        {}
+func (*PtrToInt) isValueInst()      {}
+func (*IntToPtr) isValueInst()      {}
+func (*BitCast) isValueInst()       {}
+func (*AddrSpaceCast) isValueInst() {}

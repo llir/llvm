@@ -22,61 +22,10 @@ type Instruction interface {
 
 // Make sure that each instruction implements the Instruction interface.
 var (
-	// Binary Operations
-	_ Instruction = &Add{}
-	_ Instruction = &FAdd{}
-	_ Instruction = &Sub{}
-	_ Instruction = &FSub{}
-	_ Instruction = &Mul{}
-	_ Instruction = &FMul{}
-	_ Instruction = &UDiv{}
-	_ Instruction = &SDiv{}
-	_ Instruction = &FDiv{}
-	_ Instruction = &URem{}
-	_ Instruction = &SRem{}
-	_ Instruction = &FRem{}
-	// Bitwise Binary Operations
-	_ Instruction = &Shl{}
-	_ Instruction = &LShr{}
-	_ Instruction = &AShr{}
-	_ Instruction = &And{}
-	_ Instruction = &Or{}
-	_ Instruction = &Xor{}
-	// Vector Operations
-	_ Instruction = &ExtractElement{}
-	_ Instruction = &InsertElement{}
-	_ Instruction = &ShuffleVector{}
-	// Aggregate Operations
-	_ Instruction = &ExtractValue{}
-	_ Instruction = &InsertValue{}
+	// Local variable declarations.
+	_ Instruction = &LocalVarDef{}
+
 	// Memory Access and Addressing Operations
-	_ Instruction = &Alloca{}
-	_ Instruction = &Load{}
 	_ Instruction = &Store{}
 	_ Instruction = &Fence{}
-	_ Instruction = &CmpXchg{}
-	_ Instruction = &AtomicRMW{}
-	_ Instruction = &GetElementPtr{}
-	// Conversion Operations
-	_ Instruction = &Trunc{}
-	_ Instruction = &ZExt{}
-	_ Instruction = &SExt{}
-	_ Instruction = &FPTrunc{}
-	_ Instruction = &FPExt{}
-	_ Instruction = &FPToUI{}
-	_ Instruction = &FPToSI{}
-	_ Instruction = &UIToFP{}
-	_ Instruction = &SIToFP{}
-	_ Instruction = &PtrToInt{}
-	_ Instruction = &IntToPtr{}
-	_ Instruction = &BitCast{}
-	_ Instruction = &AddrSpaceCast{}
-	// Other Operations
-	_ Instruction = &ICmp{}
-	_ Instruction = &FCmp{}
-	_ Instruction = &PHI{}
-	_ Instruction = &Select{}
-	_ Instruction = &Call{}
-	_ Instruction = &VAArg{}
-	_ Instruction = &LandingPad{}
 )

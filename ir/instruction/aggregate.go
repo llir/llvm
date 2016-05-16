@@ -19,7 +19,7 @@ type InsertValue struct{}
 func (*InsertValue) Type() types.Type { panic("InsertValue.Type: not yet implemented") }
 func (*InsertValue) String() string   { panic("InsertValue.String: not yet implemented") }
 
-// isInst ensures that only non-branching instructions can be assigned to the
-// Instruction interface.
-func (*ExtractValue) isInst() {}
-func (*InsertValue) isInst()  {}
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*ExtractValue) isValueInst() {}
+func (*InsertValue) isValueInst()  {}

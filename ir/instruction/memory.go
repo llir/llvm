@@ -49,12 +49,15 @@ type GetElementPtr struct{}
 func (*GetElementPtr) Type() types.Type { panic("GetElementPtr.Type: not yet implemented") }
 func (*GetElementPtr) String() string   { panic("GetElementPtr.String: not yet implemented") }
 
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*Alloca) isValueInst()        {}
+func (*Load) isValueInst()          {}
+func (*CmpXchg) isValueInst()       {}
+func (*AtomicRMW) isValueInst()     {}
+func (*GetElementPtr) isValueInst() {}
+
 // isInst ensures that only non-branching instructions can be assigned to the
 // Instruction interface.
-func (*Alloca) isInst()        {}
-func (*Load) isInst()          {}
-func (*Store) isInst()         {}
-func (*Fence) isInst()         {}
-func (*CmpXchg) isInst()       {}
-func (*AtomicRMW) isInst()     {}
-func (*GetElementPtr) isInst() {}
+func (*Store) isInst() {}
+func (*Fence) isInst() {}

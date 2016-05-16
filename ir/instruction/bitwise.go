@@ -75,11 +75,11 @@ func (inst *Xor) String() string {
 	return fmt.Sprintf("xor %v %v, %v", inst.typ, inst.x, inst.y)
 }
 
-// isInst ensures that only non-branching instructions can be assigned to the
-// Instruction interface.
-func (*Shl) isInst()  {}
-func (*LShr) isInst() {}
-func (*AShr) isInst() {}
-func (*And) isInst()  {}
-func (*Or) isInst()   {}
-func (*Xor) isInst()  {}
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*Shl) isValueInst()  {}
+func (*LShr) isValueInst() {}
+func (*AShr) isValueInst() {}
+func (*And) isValueInst()  {}
+func (*Or) isValueInst()   {}
+func (*Xor) isValueInst()  {}

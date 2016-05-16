@@ -25,8 +25,8 @@ type ShuffleVector struct{}
 func (*ShuffleVector) Type() types.Type { panic("ShuffleVector.Type: not yet implemented") }
 func (*ShuffleVector) String() string   { panic("ShuffleVector.String: not yet implemented") }
 
-// isInst ensures that only non-branching instructions can be assigned to the
-// Instruction interface.
-func (*ExtractElement) isInst() {}
-func (*InsertElement) isInst()  {}
-func (*ShuffleVector) isInst()  {}
+// isValueInst ensures that only instructions which return values can be
+// assigned to the Value interface.
+func (*ExtractElement) isValueInst() {}
+func (*InsertElement) isValueInst()  {}
+func (*ShuffleVector) isValueInst()  {}
