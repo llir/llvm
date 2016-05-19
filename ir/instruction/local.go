@@ -40,6 +40,8 @@ func (def *LocalVarDef) Type() types.Type {
 	return def.val.Type()
 }
 
+// TODO: Add support for printing unnamed local identifiers; e.g. %3.
+
 // String returns the string representation of the local variable definition.
 func (def *LocalVarDef) String() string {
 	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Value())
