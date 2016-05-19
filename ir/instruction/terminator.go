@@ -75,11 +75,12 @@ func NewRet(typ types.Type, val value.Value) (*Ret, error) {
 	return &Ret{typ: typ, val: val}, nil
 }
 
+// Type returns the type of the value produced by the instruction.
 func (inst *Ret) Type() types.Type {
 	return inst.typ
 }
 
-// String returns the string representation of the return instruction.
+// String returns the string representation of the instruction.
 func (inst *Ret) String() string {
 	if inst.val == nil {
 		return fmt.Sprintf("ret %v", inst.typ)
@@ -95,10 +96,44 @@ func (inst *Ret) String() string {
 //    http://llvm.org/docs/LangRef.html#resume-instruction
 //    http://llvm.org/docs/LangRef.html#unreachable-instruction
 
-type Br struct{}
+// Br represents a branch instruction, which may be either conditional or
+// unconditional.
+type Br struct {
+	// Branching condition; or nil if unconditional branch.
+	cond value.Value
+	// Basic block label name of the true branch; or target branch if
+	// unconditional branch.
+	trueBranch string
+	// Basic block label name of the false branch; or empty string if
+	// unconditional branch.
+	falseBranch string
+}
 
-func (*Br) Type() types.Type { panic("Br.Type: not yet implemented") }
-func (*Br) String() string   { panic("Br.String: not yet implemented") }
+// TODO: Consider splitting Br into two instructions, a conditional and an
+// unconditional branch instruction.
+
+// NewBr returns a new branch instruction based on the given branching
+// condition, and the true and false target branches. For unconditional
+// branches, cond is nil and falseBranch is empty string.
+func NewBr(cond value.Value, trueBranch, falseBranch string) (*Br, error) {
+	if !types.Equal(cond.Type(), types.I1) {
+		return nil, errutil.Newf("conditional type mismatch; expected i1, got %v", cond.Type())
+	}
+	return &Br{cond: cond, trueBranch: trueBranch, falseBranch: falseBranch}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (*Br) Type() types.Type {
+	return types.NewVoid()
+}
+
+// String returns the string representation of the instruction.
+func (inst *Br) String() string {
+	if inst.cond != nil {
+		fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, inst.trueBranch, inst.falseBranch)
+	}
+	return fmt.Sprintf("br label %s", inst.trueBranch)
+}
 
 type Switch struct{}
 
