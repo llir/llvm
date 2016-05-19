@@ -144,10 +144,38 @@ type Select struct{}
 func (*Select) Type() types.Type { panic("Select.Type: not yet implemented") }
 func (*Select) String() string   { panic("Select.String: not yet implemented") }
 
-type Call struct{}
+// Call represents a call instruction.
+type Call struct {
+	// Function return type.
+	result types.Type
+	// Function name.
+	fname string
+	// Function arguments.
+	args []value.Value
+}
 
-func (*Call) Type() types.Type { panic("Call.Type: not yet implemented") }
-func (*Call) String() string   { panic("Call.String: not yet implemented") }
+// NewCall returns a new call instruction based on the given function return
+// type, function name, and function arguments.
+func NewCall(result types.Type, fname string, args []value.Value) (*Call, error) {
+	return &Call{result: result, fname: fname, args: args}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *Call) Type() types.Type {
+	return inst.result
+}
+
+// String returns the string representation of the instruction.
+func (inst *Call) String() string {
+	argsBuf := new(bytes.Buffer)
+	for i, arg := range inst.args {
+		if i > 0 {
+			argsBuf.WriteString(", ")
+		}
+		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), arg)
+	}
+	return fmt.Sprintf("call %s %s(%s)", inst.result, inst.fname, argsBuf)
+}
 
 type VAArg struct{}
 
