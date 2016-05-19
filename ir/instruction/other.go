@@ -1,6 +1,12 @@
 package instruction
 
-import "github.com/llir/llvm/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
+	"github.com/mewkiz/pkg/errutil"
+)
 
 // References:
 //    http://llvm.org/docs/LangRef.html#other-operations
@@ -14,10 +20,66 @@ import "github.com/llir/llvm/ir/types"
 //    http://llvm.org/docs/LangRef.html#va-arg-instruction
 //    http://llvm.org/docs/LangRef.html#landingpad-instruction
 
-type ICmp struct{}
+// ICmp represents an integer comparison instruction.
+type ICmp struct {
+	// Condition.
+	cond ICond
+	// Operands.
+	x, y value.Value
+}
 
-func (*ICmp) Type() types.Type { panic("ICmp.Type: not yet implemented") }
-func (*ICmp) String() string   { panic("ICmp.String: not yet implemented") }
+func NewICmp(cond ICond, x, y value.Value) (*ICmp, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between type of x (%v) and y (%v)", x.Type(), y.Type())
+	}
+	return &ICmp{cond: cond, x: x, y: x}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *ICmp) Type() types.Type {
+	return types.I1
+}
+
+// String returns the string representation of the instruction.
+func (inst *ICmp) String() string {
+	return fmt.Sprintf("icmp %s %s %s, %s", inst.cond, inst.x.Type(), inst.x, inst.y)
+}
+
+// ICond represents an integer comparison condition.
+type ICond int
+
+// Integer comparison conditions.
+const (
+	ICondEq  = iota // equal
+	ICondNE         // not equal
+	ICondUGT        // unsigned greater than
+	ICondUGE        // unsigned greater or equal
+	ICondULT        // unsigned less than
+	ICondULE        // unsigned less or equal
+	ICondSGT        // signed greater than
+	ICondSGE        // signed greater or equal
+	ICondSLT        // signed less than
+	ICondSLE        // signed less or equal
+)
+
+func (cond ICond) String() string {
+	m := map[ICond]string{
+		ICondEq:  "eq",
+		ICondNE:  "ne",
+		ICondUGT: "ugt",
+		ICondUGE: "uge",
+		ICondULT: "ult",
+		ICondULE: "ule",
+		ICondSGT: "sgt",
+		ICondSGE: "sge",
+		ICondSLT: "slt",
+		ICondSLE: "sle",
+	}
+	if s, ok := m[cond]; ok {
+		return s
+	}
+	return fmt.Sprintf("ICond(%d)", int(cond))
+}
 
 type FCmp struct{}
 

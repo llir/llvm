@@ -97,10 +97,13 @@ func SameLength(a, b Type) bool {
 
 // Convenience types.
 var (
+	// I1 represents the i1 type.
+	I1 *Int
 	// I8 represents the i8 type.
 	I8 *Int
 )
 
 func init() {
+	I1, _ = NewInt(1)
 	I8, _ = NewInt(8)
 }
