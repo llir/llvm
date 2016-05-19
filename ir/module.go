@@ -69,9 +69,19 @@ func (m *Module) String() string {
 		fmt.Fprintln(buf, global)
 	}
 
-	// TODO: Print functions.
+	// Function declarations; e.g.
+	//    declare i32 @printf(i8*, ...)
+	//
+	// Function definitions; e.g.
+	//    define i32 @main() {
+	//       ret i32 42
+	//    }
+	for _, fn := range m.Funcs {
+		fmt.Fprintln(buf, fn)
+	}
+
 	// TODO: Print named metadata.
 	// TODO: Print metadata.
-	//return buf.String()
-	panic("Modlue.String: not yet implemented")
+
+	return buf.String()
 }
