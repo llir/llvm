@@ -18,6 +18,12 @@ type LocalVarDef struct {
 	val ValueInst
 }
 
+// NewLocalVarDef returns a new local variable definition based on the given
+// name and initial value instruction.
+func NewLocalVarDef(name string, val ValueInst) (*LocalVarDef, error) {
+	return &LocalVarDef{name: name, val: val}, nil
+}
+
 // Name returns the name of the defined local variable.
 func (def *LocalVarDef) Name() string {
 	return def.name
@@ -37,15 +43,6 @@ func (def *LocalVarDef) Type() types.Type {
 // String returns the string representation of the local variable definition.
 func (def *LocalVarDef) String() string {
 	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Value())
-}
-
-// NewLocalVarDef returns a new local variable definition based on the given
-// name and initial value instruction.
-func NewLocalVarDef(name string, val ValueInst) *LocalVarDef {
-	return &LocalVarDef{
-		name: name,
-		val:  val,
-	}
 }
 
 // isInst ensures that only non-branching instructions can be assigned to the
