@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/internal/math/big"
 	"github.com/llir/llvm/ir/types"
 )
@@ -205,6 +206,15 @@ func (v *Float) String() string {
 type Pointer struct {
 	// Pointer type.
 	typ *types.Pointer
+	// Global variable name.
+	name string
+}
+
+// NewPointer returns a new pointer constant based on the given type and global
+// identifier name.
+func NewPointer(typ *types.Pointer, name string) (*Pointer, error) {
+	// TODO: Figure out how to represent `null` pointers.
+	return &Pointer{typ: typ, name: name}, nil
 }
 
 // TODO: Figure out how to represent pointer constants. Add the necessary fields
@@ -217,11 +227,10 @@ func (v *Pointer) Type() types.Type {
 
 // String returns a string representation of the pointer constant; e.g.
 //
-//    i32(i8*, ...)* @printf
+//    @printf
 func (v *Pointer) String() string {
-	// TODO: Implement the String method once the fields of the Pointer structure
-	// are known.
-	panic("Pointer.String: not yet implemented")
+	// TODO: Add support for `null` pointers.
+	return asm.EncGlobal(v.name)
 }
 
 // isConst ensures that only constant values can be assigned to the Constant
