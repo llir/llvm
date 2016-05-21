@@ -136,7 +136,7 @@ func (t *Param) String() string {
 // Pointer represents a pointer type.
 //
 // Examples:
-//    int32*
+//    i32*
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#pointer-type
