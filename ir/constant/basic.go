@@ -52,17 +52,36 @@ func NewInt(typ types.Type, s string) (*Int, error) {
 		return nil, fmt.Errorf("integer constant %q type mismatch; expected i1, got %v", s, typ)
 	}
 
-	// TODO: Implement support for the HexIntConstant representation:
-	//    [us]0x[0-9A-Fa-f]+
-	// TODO: Track the upstream removal of HexIntConstant
-	//    ref: http://lists.cs.uiuc.edu/pipermail/llvmdev/2015-February/081621.html
+	// Parse hexadecimal integer constant.
+	if s, ok := stripHexPrefix(s); ok {
+		if _, ok := v.x.SetString(s, 16); !ok {
+			return nil, fmt.Errorf("unable to parse hexadecimal integer constant %q", s)
+		}
+		return v, nil
+	}
 
 	// Parse integer constant.
-	if _, ok = v.x.SetString(s, 10); !ok {
+	if _, ok := v.x.SetString(s, 10); !ok {
 		return nil, fmt.Errorf("unable to parse integer constant %q", s)
 	}
 
 	return v, nil
+}
+
+// stripHexPrefix attempts to strip a hexadecimal prefix from the given string.
+// The returned boolean value reports whether a hexadecimal prefix was located.
+//
+// Hexadecimal integer format.
+//
+//    [us]0x[0-9A-Fa-f]+
+func stripHexPrefix(s string) (string, bool) {
+	switch {
+	case strings.HasPrefix(s, "u0x"), strings.HasPrefix(s, "s0x"):
+		return s[len("u0x"):], true
+	case strings.HasPrefix(s, "0x"):
+		return s[len("0x"):], true
+	}
+	return s, false
 }
 
 // Type returns the type of the value.
