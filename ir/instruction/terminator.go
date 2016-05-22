@@ -116,8 +116,10 @@ type Br struct {
 // condition, and the true and false target branches. For unconditional
 // branches, cond is nil and falseBranch is empty string.
 func NewBr(cond value.Value, trueBranch, falseBranch string) (*Br, error) {
-	if !types.Equal(cond.Type(), types.I1) {
-		return nil, errutil.Newf("conditional type mismatch; expected i1, got %v", cond.Type())
+	if cond != nil {
+		if !types.Equal(cond.Type(), types.I1) {
+			return nil, errutil.Newf("conditional type mismatch; expected i1, got %v", cond.Type())
+		}
 	}
 	return &Br{cond: cond, trueBranch: trueBranch, falseBranch: falseBranch}, nil
 }
