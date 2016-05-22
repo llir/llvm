@@ -3,6 +3,7 @@ package instruction
 import (
 	"fmt"
 
+	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -132,9 +133,9 @@ func (*Br) Type() types.Type {
 // String returns the string representation of the instruction.
 func (inst *Br) String() string {
 	if inst.cond != nil {
-		fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, inst.trueBranch, inst.falseBranch)
+		fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, asm.EncLocal(inst.trueBranch), asm.EncLocal(inst.falseBranch))
 	}
-	return fmt.Sprintf("br label %s", inst.trueBranch)
+	return fmt.Sprintf("br label %s", asm.EncLocal(inst.trueBranch))
 }
 
 type Switch struct{}
