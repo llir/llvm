@@ -122,6 +122,9 @@ func NewParam(typ Type, name string) *Param {
 
 // Equal reports whether t and u are of equal type.
 func (t *Param) Equal(u Type) bool {
+	if u, ok := u.(*Param); ok {
+		return t.Type.Equal(u.Type)
+	}
 	return t.Type.Equal(u)
 }
 

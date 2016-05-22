@@ -46,14 +46,19 @@ func Equal(t, u Type) bool {
 	return t.Equal(u)
 }
 
-// IsInt returns true if t is an integer type, and false otherwise.
+// IsVoid reports whether t is a void type.
+func IsVoid(t Type) bool {
+	_, ok := t.(*Void)
+	return ok
+}
+
+// IsInt reports whether t is an integer type.
 func IsInt(t Type) bool {
 	_, ok := t.(*Int)
 	return ok
 }
 
-// IsInts returns true if t is an integer type or a vector of integers type, and
-// false otherwise.
+// IsInts reports whether t is an integer type or a vector of integers type.
 func IsInts(t Type) bool {
 	if t, ok := t.(*Vector); ok {
 		return IsInt(t.Elem())
@@ -61,14 +66,14 @@ func IsInts(t Type) bool {
 	return IsInt(t)
 }
 
-// IsFloat returns true if t is a floating point type, and false otherwise.
+// IsFloat reports whether t is a floating point type.
 func IsFloat(t Type) bool {
 	_, ok := t.(*Float)
 	return ok
 }
 
-// IsFloats returns true if t is a floating point type or a vector of floating
-// points type, and false otherwise.
+// IsInts reports whether t is an floating point type or a vector of floating
+// points type.
 func IsFloats(t Type) bool {
 	if t, ok := t.(*Vector); ok {
 		return IsFloat(t.Elem())
@@ -76,9 +81,8 @@ func IsFloats(t Type) bool {
 	return IsFloat(t)
 }
 
-// SameLength returns true if both types are vectors or arrays of the same
-// length or if both types are distinct from vectors and arrays, and false
-// otherwise.
+// SameLength reports whether t and u are both vectors or arrays of the same
+// length or both distinct from vectors and arrays.
 func SameLength(a, b Type) bool {
 	type Lener interface {
 		Len() int
