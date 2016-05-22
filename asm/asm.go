@@ -14,7 +14,7 @@ import "strings"
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func EncGlobal(name string) string {
-	return "@" + escape(name)
+	return "@" + Escape(name)
 }
 
 // EncLocal encodes a local name to its LLVM IR assembly representation.
@@ -27,7 +27,7 @@ func EncGlobal(name string) string {
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func EncLocal(name string) string {
-	return "%" + escape(name)
+	return "%" + Escape(name)
 }
 
 const (
@@ -48,9 +48,9 @@ const (
 	tail = head + decimal
 )
 
-// escape replaces any characters which are not valid in identifiers with
+// Escape replaces any characters which are not valid in identifiers with
 // corresponding hexadecimal escape sequence (\XX).
-func escape(s string) string {
+func Escape(s string) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -82,4 +82,48 @@ func escape(s string) string {
 		j += 3
 	}
 	return string(buf)
+}
+
+// Unescape replaces hexadecimal escape sequences (\xx) in s with their
+// corresponding characters.
+func Unescape(s string) string {
+	if !strings.ContainsRune(s, '\\') {
+		return s
+	}
+	j := 0
+	buf := []byte(s)
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		if b == '\\' && i+2 < len(s) {
+			x1, ok := unhex(s[i+1])
+			if ok {
+				x2, ok := unhex(s[i+2])
+				if ok {
+					b = x1<<4 | x2
+					i += 2
+				}
+			}
+		}
+		if i != j {
+			buf[j] = b
+		}
+		j++
+	}
+	return string(buf[:j])
+}
+
+// unhex returns the numeric value represented by the hexadecimal digit b. It
+// returns false if b is not a hexadecimal digit.
+func unhex(b byte) (v byte, ok bool) {
+	// This is an adapted copy of the unhex function from the strconv package,
+	// which is goverend by a BSD-style license.
+	switch {
+	case '0' <= b && b <= '9':
+		return b - '0', true
+	case 'a' <= b && b <= 'f':
+		return b - 'a' + 10, true
+	case 'A' <= b && b <= 'F':
+		return b - 'A' + 10, true
+	}
+	return 0, false
 }

@@ -3,10 +3,14 @@ package constant
 import (
 	"bytes"
 	"fmt"
+	"strconv"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/ir/types"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // Vector represents a vector constant which is a vetor containing only
@@ -117,6 +121,55 @@ func NewArray(typ types.Type, elems []Constant) (*Array, error) {
 	v.elems = elems
 
 	return v, nil
+}
+
+// NewCharArray returns a character array constant based on the given array type
+// and string.
+func NewCharArray(typ types.Type, s string) (*Array, error) {
+	// Verify array type.
+	v := new(Array)
+	var ok bool
+	v.typ, ok = typ.(*types.Array)
+	if !ok {
+		return nil, fmt.Errorf("invalid type %q for array constant", typ)
+	}
+	var err error
+	s, err = unquote(s)
+	if err != nil {
+		return nil, errutil.Err(err)
+	}
+
+	// Verify array element types.
+	if len(s) != v.typ.Len() {
+		return nil, fmt.Errorf("incorrect number of elements in character array constant; expected %d, got %d", v.typ.Len(), len(s))
+	}
+	elemType := v.typ.Elem()
+	if !types.Equal(elemType, types.I8) {
+		return nil, fmt.Errorf("invalid character array element type; expected %q, got %q", types.I8, elemType)
+	}
+	for i := 0; i < len(s); i++ {
+		elem, err := NewInt(elemType, strconv.Itoa(int(s[i])))
+		if err != nil {
+			return nil, errutil.Err(err)
+		}
+		v.elems = append(v.elems, elem)
+	}
+
+	return v, nil
+}
+
+// unquote interprets s as a double-quoted LLVM IR string literal, returning the
+// string value that s quotes.
+func unquote(s string) (string, error) {
+	if !strings.HasPrefix(s, `"`) {
+		return "", errutil.Newf(`invalid prefix of quoted string %q; expected '"'`, s)
+	}
+	s = s[1:]
+	if !strings.HasSuffix(s, `"`) {
+		return "", errutil.Newf(`invalid suffix of quoted string %q; expected '"'`, s)
+	}
+	s = s[:len(s)-1]
+	return asm.Unescape(s), nil
 }
 
 // Type returns the type of the value.

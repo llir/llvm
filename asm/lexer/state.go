@@ -5,6 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/asm/token"
 )
 
@@ -239,7 +240,7 @@ func lexExclaim(l *lexer) stateFn {
 	if l.accept(head + `\`) {
 		l.acceptRun(tail + `\`)
 		s := l.input[l.start+1 : l.cur] // skip leading exclamation mark (!)
-		l.emitCustom(token.MetadataVar, unescape(s))
+		l.emitCustom(token.MetadataVar, asm.Unescape(s))
 		return lexToken
 	}
 
@@ -593,53 +594,9 @@ func readString(l *lexer) (s string, ok bool) {
 			l.errorf("illegal UTF-8 encoding")
 		case '"':
 			s := l.input[start : l.cur-1] // skip leading and trailing double quotes (")
-			return unescape(s), true
+			return asm.Unescape(s), true
 		}
 	}
-}
-
-// unescape replaces hexadecimal escape sequences (\xx) in s with their
-// corresponding characters.
-func unescape(s string) string {
-	if !strings.ContainsRune(s, '\\') {
-		return s
-	}
-	j := 0
-	buf := []byte(s)
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-		if b == '\\' && i+2 < len(s) {
-			x1, ok := unhex(s[i+1])
-			if ok {
-				x2, ok := unhex(s[i+2])
-				if ok {
-					b = x1<<4 | x2
-					i += 2
-				}
-			}
-		}
-		if i != j {
-			buf[j] = b
-		}
-		j++
-	}
-	return string(buf[:j])
-}
-
-// unhex returns the numeric value represented by the hexadecimal digit b. It
-// returns false if b is not a hexadecimal digit.
-func unhex(b byte) (v byte, ok bool) {
-	// This is an adapted copy of the unhex function from the strconv package,
-	// which is goverend by a BSD-style license.
-	switch {
-	case '0' <= b && b <= '9':
-		return b - '0', true
-	case 'a' <= b && b <= 'f':
-		return b - 'a' + 10, true
-	case 'A' <= b && b <= 'F':
-		return b - 'A' + 10, true
-	}
-	return 0, false
 }
 
 // isDigit returns true if r is a digit (0-9), and false otherwise.
