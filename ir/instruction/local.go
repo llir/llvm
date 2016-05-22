@@ -55,7 +55,7 @@ func (def *LocalVarDef) Type() types.Type {
 
 // String returns the string representation of the local variable definition.
 func (def *LocalVarDef) String() string {
-	if types.IsVoid(def.Type()) {
+	if types.IsVoid(def.Type()) || len(def.Name()) == 0 {
 		return def.Value().String()
 	}
 	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Value())
