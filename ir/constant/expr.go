@@ -1,10 +1,15 @@
+// References:
+//    http://llvm.org/docs/LangRef.html#constant-expressions
+
 package constant
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // TODO: Complete the list of expression implementations.
@@ -12,15 +17,16 @@ import (
 // An Expr represents a constant expression.
 //
 // Expr is one of the following concrete types:
-//    *constant.IntTrunc
-//    *constant.IntZeroExt
-//    *constant.IntSignExt
-//    *constant.FloatTrunc
-//    *constant.FloatExt
-//    *constant.FloatToUint
-//    *constant.FloatToInt
-//    *constant.UintToFloat
-//    *constant.IntToFloat
+//    *constant.Trunc
+//    *constant.ZExt
+//    *constant.SExt
+//    *constant.FPTrunc
+//    *constant.FPExt
+//    *constant.FPToUI
+//    *constant.FPToSI
+//    *constant.UIToFP
+//    *constant.SIToFP
+//    *constant.GetElementPtr
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
@@ -33,18 +39,19 @@ type Expr interface {
 
 // Make sure that each constant expression implements the Expr interface.
 var (
-	_ Expr = &IntTrunc{}
-	_ Expr = &IntZeroExt{}
-	_ Expr = &IntSignExt{}
-	_ Expr = &FloatTrunc{}
-	_ Expr = &FloatExt{}
-	_ Expr = &FloatToUint{}
-	_ Expr = &FloatToInt{}
-	_ Expr = &UintToFloat{}
-	_ Expr = &IntToFloat{}
+	_ Expr = &Trunc{}
+	_ Expr = &ZExt{}
+	_ Expr = &SExt{}
+	_ Expr = &FPTrunc{}
+	_ Expr = &FPExt{}
+	_ Expr = &FPToUI{}
+	_ Expr = &FPToSI{}
+	_ Expr = &UIToFP{}
+	_ Expr = &SIToFP{}
+	_ Expr = &GetElementPtr{}
 )
 
-// IntTrunc is a constant expression which truncates an integer constant to a
+// Trunc is a constant expression which truncates an integer constant to a
 // smaller or equally sized integer type.
 //
 // Examples:
@@ -52,18 +59,18 @@ var (
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type IntTrunc struct {
+type Trunc struct {
 	// Original integer constant.
 	orig *Int
 	// New integer type.
 	to *types.Int
 }
 
-// NewIntTrunc returns a constant expression which truncates the integer
-// constant orig to a smaller or equally sized integer type.
-func NewIntTrunc(orig Constant, to types.Type) (*IntTrunc, error) {
+// NewTrunc returns a constant expression which truncates the integer constant
+// orig to a smaller or equally sized integer type.
+func NewTrunc(orig Constant, to types.Type) (*Trunc, error) {
 	// Verify type of original integer constant.
-	exp := new(IntTrunc)
+	exp := new(Trunc)
 	var ok bool
 	exp.orig, ok = orig.(*Int)
 	if !ok {
@@ -84,44 +91,44 @@ func NewIntTrunc(orig Constant, to types.Type) (*IntTrunc, error) {
 }
 
 // Type returns the type of the value.
-func (exp *IntTrunc) Type() types.Type {
+func (exp *Trunc) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *IntTrunc) Calc() Constant {
-	panic("IntTrunc.Calc: not yet implemented.")
+func (exp *Trunc) Calc() Constant {
+	panic("Trunc.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the integer truncation expression;
 // e.g.
 //
 //    trunc(i32 15 to i3)
-func (exp *IntTrunc) String() string {
+func (exp *Trunc) String() string {
 	return fmt.Sprintf("trunc(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// IntZeroExt is a constant expression which zero extends an integer constant to
-// a larger or equally sized integer type.
+// ZExt is a constant expression which zero extends an integer constant to a
+// larger or equally sized integer type.
 //
 // Examples:
 //    zext(i1 true to i5)   ; yields i5:1
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type IntZeroExt struct {
+type ZExt struct {
 	// Original integer constant.
 	orig *Int
 	// New integer type.
 	to *types.Int
 }
 
-// NewIntZeroExt returns a constant expression which zero extends the integer
-// constant orig to a larger or equally sized integer type.
-func NewIntZeroExt(orig Constant, to types.Type) (*IntZeroExt, error) {
+// NewZExt returns a constant expression which zero extends the integer constant
+// orig to a larger or equally sized integer type.
+func NewZExt(orig Constant, to types.Type) (*ZExt, error) {
 	// Verify type of original integer constant.
-	exp := new(IntZeroExt)
+	exp := new(ZExt)
 	var ok bool
 	exp.orig, ok = orig.(*Int)
 	if !ok {
@@ -142,44 +149,44 @@ func NewIntZeroExt(orig Constant, to types.Type) (*IntZeroExt, error) {
 }
 
 // Type returns the type of the value.
-func (exp *IntZeroExt) Type() types.Type {
+func (exp *ZExt) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *IntZeroExt) Calc() Constant {
-	panic("IntZeroExt.Calc: not yet implemented.")
+func (exp *ZExt) Calc() Constant {
+	panic("ZExt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the integer zero extension
 // expression; e.g.
 //
 //    zext(i1 true to i5)
-func (exp *IntZeroExt) String() string {
+func (exp *ZExt) String() string {
 	return fmt.Sprintf("zext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// IntSignExt is a constant expression which sign extends an integer constant to
-// a larger or equally sized integer type.
+// SExt is a constant expression which sign extends an integer constant to a
+// larger or equally sized integer type.
 //
 // Examples:
 //    sext(i1 true to i5)   ; yields i5:31
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type IntSignExt struct {
+type SExt struct {
 	// Original integer constant.
 	orig *Int
 	// New integer type.
 	to *types.Int
 }
 
-// NewIntSignExt returns a constant expression which sign extends the integer
-// constant orig to a larger or equally sized integer type.
-func NewIntSignExt(orig Constant, to types.Type) (*IntSignExt, error) {
+// NewSExt returns a constant expression which sign extends the integer constant
+// orig to a larger or equally sized integer type.
+func NewSExt(orig Constant, to types.Type) (*SExt, error) {
 	// Verify type of original integer constant.
-	exp := new(IntSignExt)
+	exp := new(SExt)
 	var ok bool
 	exp.orig, ok = orig.(*Int)
 	if !ok {
@@ -200,44 +207,44 @@ func NewIntSignExt(orig Constant, to types.Type) (*IntSignExt, error) {
 }
 
 // Type returns the type of the value.
-func (exp *IntSignExt) Type() types.Type {
+func (exp *SExt) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *IntSignExt) Calc() Constant {
-	panic("IntSignExt.Calc: not yet implemented.")
+func (exp *SExt) Calc() Constant {
+	panic("SExt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the integer sign extension
 // expression; e.g.
 //
 //    sext(i1 true to i5)
-func (exp *IntSignExt) String() string {
+func (exp *SExt) String() string {
 	return fmt.Sprintf("sext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// FloatTrunc is a constant expression which truncates a floating point constant
-// to a smaller floating point type or one of the same kind.
+// FPTrunc is a constant expression which truncates a floating point constant to
+// a smaller floating point type or one of the same kind.
 //
 // Examples:
 //    fptrunc(double 4.0 to float)   ; yields float:4.0
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FloatTrunc struct {
+type FPTrunc struct {
 	// Original floating point constant.
 	orig *Float
 	// New floating point type.
 	to *types.Float
 }
 
-// NewFloatTrunc returns a constant expression which truncates the floating
-// point constant orig to a smaller floating point type or one of the same kind.
-func NewFloatTrunc(orig Constant, to types.Type) (*FloatTrunc, error) {
+// NewFPTrunc returns a constant expression which truncates the floating point
+// constant orig to a smaller floating point type or one of the same kind.
+func NewFPTrunc(orig Constant, to types.Type) (*FPTrunc, error) {
 	// Verify type of original floating point constant.
-	exp := new(FloatTrunc)
+	exp := new(FPTrunc)
 	var ok bool
 	exp.orig, ok = orig.(*Float)
 	if !ok {
@@ -261,44 +268,44 @@ func NewFloatTrunc(orig Constant, to types.Type) (*FloatTrunc, error) {
 }
 
 // Type returns the type of the value.
-func (exp *FloatTrunc) Type() types.Type {
+func (exp *FPTrunc) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FloatTrunc) Calc() Constant {
-	panic("FloatTrunc.Calc: not yet implemented.")
+func (exp *FPTrunc) Calc() Constant {
+	panic("FPTrunc.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the floating point truncation
 // expression; e.g.
 //
 //    float fptrunc(double 4.0 to float)
-func (exp *FloatTrunc) String() string {
+func (exp *FPTrunc) String() string {
 	return fmt.Sprintf("fptrunc(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// FloatExt is a constant expression which extends a floating point constant to
-// a larger floating point type or one of the same kind.
+// FPExt is a constant expression which extends a floating point constant to a
+// larger floating point type or one of the same kind.
 //
 // Examples:
 //    fpext(float 4.0 to double)   ; yields double:4.0
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FloatExt struct {
+type FPExt struct {
 	// Original floating point constant.
 	orig *Float
 	// New floating point type.
 	to *types.Float
 }
 
-// NewFloatExt returns a constant expression which extends the floating point
+// NewFPExt returns a constant expression which extends the floating point
 // constant orig to a larger floating point type or one of the same kind.
-func NewFloatExt(orig Constant, to types.Type) (*FloatExt, error) {
+func NewFPExt(orig Constant, to types.Type) (*FPExt, error) {
 	// Verify type of original floating point constant.
-	exp := new(FloatExt)
+	exp := new(FPExt)
 	var ok bool
 	exp.orig, ok = orig.(*Float)
 	if !ok {
@@ -322,27 +329,27 @@ func NewFloatExt(orig Constant, to types.Type) (*FloatExt, error) {
 }
 
 // Type returns the type of the value.
-func (exp *FloatExt) Type() types.Type {
+func (exp *FPExt) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FloatExt) Calc() Constant {
-	panic("FloatExt.Calc: not yet implemented.")
+func (exp *FPExt) Calc() Constant {
+	panic("FPExt.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the floating point extension
 // expression; e.g.
 //
 //    fpext(float 4.0 to double)
-func (exp *FloatExt) String() string {
+func (exp *FPExt) String() string {
 	return fmt.Sprintf("fpext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// FloatToUint is a constant expression which converts a floating point constant
-// (or constant vector) to the corresponding unsigned integer constant (or
-// constant vector).
+// FPToUI is a constant expression which converts a floating point constant (or
+// constant vector) to the corresponding unsigned integer constant (or constant
+// vector).
 //
 // Examples:
 //    fptoui(float 4.0 to i32)                       ; yields i32:4
@@ -350,17 +357,17 @@ func (exp *FloatExt) String() string {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FloatToUint struct {
+type FPToUI struct {
 	// Original floating point value (or vector).
 	orig value.Value
 	// New integer type (or vector).
 	to types.Type
 }
 
-// NewFloatToUint returns a constant expression which converts the floating
-// point constant (or constant vector) orig to the corresponding unsigned
-// integer constant (or constant vector).
-func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
+// NewFPToUI returns a constant expression which converts the floating point
+// constant (or constant vector) orig to the corresponding unsigned integer
+// constant (or constant vector).
+func NewFPToUI(orig Constant, to types.Type) (*FPToUI, error) {
 	// Verify type of original floating point constant (or constant vector).
 	if !types.IsFloats(orig.Type()) {
 		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
@@ -376,18 +383,18 @@ func NewFloatToUint(orig Constant, to types.Type) (*FloatToUint, error) {
 		return nil, fmt.Errorf("invalid floating point to unsigned integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
-	return &FloatToUint{orig: orig, to: to}, nil
+	return &FPToUI{orig: orig, to: to}, nil
 }
 
 // Type returns the type of the value.
-func (exp *FloatToUint) Type() types.Type {
+func (exp *FPToUI) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FloatToUint) Calc() Constant {
-	panic("FloatToUint.Calc: not yet implemented.")
+func (exp *FPToUI) Calc() Constant {
+	panic("FPToUI.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -396,13 +403,13 @@ func (exp *FloatToUint) Calc() Constant {
 //
 //    fptoui(float 4.0 to i32)
 //    fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
-func (exp *FloatToUint) String() string {
+func (exp *FPToUI) String() string {
 	return fmt.Sprintf("fptoui(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// FloatToInt is a constant expression which converts a floating point constant
-// (or constant vector) to the corresponding signed integer constant (or
-// constant vector).
+// FPToSI is a constant expression which converts a floating point constant (or
+// constant vector) to the corresponding signed integer constant (or constant
+// vector).
 //
 // Examples:
 //    fptosi(float -4.0 to i32)                       ; yields i32:-4
@@ -410,17 +417,17 @@ func (exp *FloatToUint) String() string {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type FloatToInt struct {
+type FPToSI struct {
 	// Original floating point value (or vector).
 	orig value.Value
 	// New type (or vector).
 	to types.Type
 }
 
-// NewFloatToInt returns a constant expression which converts the floating point
+// NewFPToSI returns a constant expression which converts the floating point
 // constant (or constant vector) orig to the corresponding signed integer
 // constant (or constant vector).
-func NewFloatToInt(orig Constant, to types.Type) (*FloatToInt, error) {
+func NewFPToSI(orig Constant, to types.Type) (*FPToSI, error) {
 	// Verify type of original floating point constant (or constant vector).
 	if !types.IsFloats(orig.Type()) {
 		return nil, fmt.Errorf("invalid floating point to signed integer conversion; expected floating point constant (or constant vector) for orig, got %q", orig.Type())
@@ -436,18 +443,18 @@ func NewFloatToInt(orig Constant, to types.Type) (*FloatToInt, error) {
 		return nil, fmt.Errorf("invalid floating point to signed integer conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
-	return &FloatToInt{orig: orig, to: to}, nil
+	return &FPToSI{orig: orig, to: to}, nil
 }
 
 // Type returns the type of the value.
-func (exp *FloatToInt) Type() types.Type {
+func (exp *FPToSI) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FloatToInt) Calc() Constant {
-	panic("FloatToInt.Calc: not yet implemented.")
+func (exp *FPToSI) Calc() Constant {
+	panic("FPToSI.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -456,13 +463,13 @@ func (exp *FloatToInt) Calc() Constant {
 //
 //    fptosi(float -4.0 to i32)
 //    fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
-func (exp *FloatToInt) String() string {
+func (exp *FPToSI) String() string {
 	return fmt.Sprintf("fptosi(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// UintToFloat is a constant expression which converts an unsigned integer
-// constant (or constant vector) to the corresponding floating point constant
-// (or constant vector).
+// UIToFP is a constant expression which converts an unsigned integer constant
+// (or constant vector) to the corresponding floating point constant (or
+// constant vector).
 //
 // Examples:
 //    uitofp(i32 4 to float)                     ; yields float:4.0
@@ -470,17 +477,17 @@ func (exp *FloatToInt) String() string {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type UintToFloat struct {
+type UIToFP struct {
 	// Original unsigned integer value (or vector).
 	orig value.Value
 	// New floating point type (or vector).
 	to types.Type
 }
 
-// NewUintToFloat returns a constant expression which converts the unsigned
-// integer constant (or constant vector) orig to the corresponding floating
-// point constant (or constant vector).
-func NewUintToFloat(orig Constant, to types.Type) (*UintToFloat, error) {
+// NewUIToFP returns a constant expression which converts the unsigned integer
+// constant (or constant vector) orig to the corresponding floating point
+// constant (or constant vector).
+func NewUIToFP(orig Constant, to types.Type) (*UIToFP, error) {
 	// Verify type of original integer constant (or constant vector).
 	if !types.IsInts(orig.Type()) {
 		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
@@ -496,18 +503,18 @@ func NewUintToFloat(orig Constant, to types.Type) (*UintToFloat, error) {
 		return nil, fmt.Errorf("invalid unsigned integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
-	return &UintToFloat{orig: orig, to: to}, nil
+	return &UIToFP{orig: orig, to: to}, nil
 }
 
 // Type returns the type of the value.
-func (exp *UintToFloat) Type() types.Type {
+func (exp *UIToFP) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *UintToFloat) Calc() Constant {
-	panic("UintToFloat.Calc: not yet implemented.")
+func (exp *UIToFP) Calc() Constant {
+	panic("UIToFP.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -516,13 +523,13 @@ func (exp *UintToFloat) Calc() Constant {
 //
 //    uitofp(i32 4 to float)
 //    uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
-func (exp *UintToFloat) String() string {
+func (exp *UIToFP) String() string {
 	return fmt.Sprintf("uitofp(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
-// IntToFloat is a constant expression which converts a signed integer constant
-// (or constant vector) to the corresponding floating point constant (or
-// constant vector).
+// SIToFP is a constant expression which converts a signed integer constant (or
+// constant vector) to the corresponding floating point constant (or constant
+// vector).
 //
 // Examples:
 //    sitofp(i32 -4 to float)                     ; yields float:-4.0
@@ -530,17 +537,17 @@ func (exp *UintToFloat) String() string {
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#constant-expressions
-type IntToFloat struct {
+type SIToFP struct {
 	// Original signed integer value (or vector).
 	orig value.Value
 	// New floating point type (or vector).
 	to types.Type
 }
 
-// NewIntToFloat returns a constant expression which converts the signed integer
+// NewSIToFP returns a constant expression which converts the signed integer
 // constant (or constant vector) orig to the corresponding floating point
 // constant (or constant vector).
-func NewIntToFloat(orig Constant, to types.Type) (*IntToFloat, error) {
+func NewSIToFP(orig Constant, to types.Type) (*SIToFP, error) {
 	// Verify type of original integer constant (or constant vector).
 	if !types.IsInts(orig.Type()) {
 		return nil, fmt.Errorf("invalid signed integer to floating point conversion; expected integer constant (or constant vector) for orig, got %q", orig.Type())
@@ -556,18 +563,18 @@ func NewIntToFloat(orig Constant, to types.Type) (*IntToFloat, error) {
 		return nil, fmt.Errorf("invalid signed integer to floating point conversion; cannot convert from %q to %q", orig.Type(), to)
 	}
 
-	return &IntToFloat{orig: orig, to: to}, nil
+	return &SIToFP{orig: orig, to: to}, nil
 }
 
 // Type returns the type of the value.
-func (exp *IntToFloat) Type() types.Type {
+func (exp *SIToFP) Type() types.Type {
 	return exp.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *IntToFloat) Calc() Constant {
-	panic("IntToFloat.Calc: not yet implemented.")
+func (exp *SIToFP) Calc() Constant {
+	panic("SIToFP.Calc: not yet implemented.")
 }
 
 // String returns a string representation of the constant expression which
@@ -576,7 +583,7 @@ func (exp *IntToFloat) Calc() Constant {
 //
 //    sitofp(i32 -4 to float)
 //    sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
-func (exp *IntToFloat) String() string {
+func (exp *SIToFP) String() string {
 	return fmt.Sprintf("sitofp(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
@@ -585,7 +592,58 @@ func (exp *IntToFloat) String() string {
 //    - inttoptr
 //    - bitcast
 //    - addrspacecast
-//    - getelementptr
+
+// GetElementPtr represents a getelementptr expression.
+type GetElementPtr struct {
+	// Value type.
+	typ types.Type
+	// Element type.
+	elem types.Type
+	// Memory address of the element.
+	addr value.Value
+	// Element indices.
+	indices []value.Value
+}
+
+// NewGetElementPtr returns a new getelementptr expression based on the given
+// type, element type, address and element indices.
+func NewGetElementPtr(typ, elem types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
+	// Sanity checks.
+	switch addrType := addr.Type().(type) {
+	case *types.Pointer:
+		if !types.Equal(elem, addrType.Elem()) {
+			return nil, errutil.Newf("type mismatch between %v and %v", elem, addrType.Elem())
+		}
+	default:
+		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addrType)
+	}
+	return &GetElementPtr{typ: typ, elem: elem, addr: addr, indices: indices}, nil
+}
+
+// Type returns the type of the value produced by the expression.
+func (exp *GetElementPtr) Type() types.Type {
+	return exp.typ
+}
+
+// Calc calculates and returns a constant which is equivalent to the constant
+// expression.
+func (exp *GetElementPtr) Calc() Constant {
+	panic("GetElementPtr.Calc: not yet implemented.")
+}
+
+// String returns the string representation of the expression.
+func (exp *GetElementPtr) String() string {
+	if len(exp.indices) > 0 {
+		indicesBuf := new(bytes.Buffer)
+		for _, index := range exp.indices {
+			fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
+		}
+		return fmt.Sprintf("getelementptr(%s, %s %s %s)", exp.elem, exp.addr.Type(), exp.addr, indicesBuf)
+	}
+	return fmt.Sprintf("getelementptr(%s, %s %s)", exp.elem, exp.addr.Type(), exp.addr)
+}
+
+// TODO: Add support for the following constant expressions:
 //    - select
 //    - icmp
 //    - fcmp
@@ -599,12 +657,13 @@ func (exp *IntToFloat) String() string {
 
 // isConst ensures that only constant values can be assigned to the Constant
 // interface.
-func (*IntTrunc) isConst()    {}
-func (*IntZeroExt) isConst()  {}
-func (*IntSignExt) isConst()  {}
-func (*FloatTrunc) isConst()  {}
-func (*FloatExt) isConst()    {}
-func (*FloatToUint) isConst() {}
-func (*FloatToInt) isConst()  {}
-func (*UintToFloat) isConst() {}
-func (*IntToFloat) isConst()  {}
+func (*Trunc) isConst()         {}
+func (*ZExt) isConst()          {}
+func (*SExt) isConst()          {}
+func (*FPTrunc) isConst()       {}
+func (*FPExt) isConst()         {}
+func (*FPToUI) isConst()        {}
+func (*FPToSI) isConst()        {}
+func (*UIToFP) isConst()        {}
+func (*SIToFP) isConst()        {}
+func (*GetElementPtr) isConst() {}

@@ -1,3 +1,6 @@
+// References:
+//    http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
+
 package instruction
 
 import (
@@ -9,17 +12,10 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// References:
-//    http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
-
 // TODO: Add support for the remaining memory access and addressing operations:
-//    http://llvm.org/docs/LangRef.html#alloca-instruction
-//    http://llvm.org/docs/LangRef.html#load-instruction
-//    http://llvm.org/docs/LangRef.html#store-instruction
 //    http://llvm.org/docs/LangRef.html#fence-instruction
 //    http://llvm.org/docs/LangRef.html#cmpxchg-instruction
 //    http://llvm.org/docs/LangRef.html#atomicrmw-instruction
-//    http://llvm.org/docs/LangRef.html#getelementptr-instruction
 
 // Alloca represents an alloca instruction.
 type Alloca struct {
@@ -132,7 +128,7 @@ func (*AtomicRMW) String() string   { panic("AtomicRMW.String: not yet implement
 // GetElementPtr represents a getelementptr instruction.
 type GetElementPtr struct {
 	// Element type.
-	typ types.Type
+	elem types.Type
 	// Memory address of the element.
 	addr value.Value
 	// Element indices.
@@ -140,23 +136,25 @@ type GetElementPtr struct {
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
-// type, address and element indices.
-func NewGetElementPtr(typ types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
+// element type, address and element indices.
+func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
 	// Sanity checks.
 	switch addrType := addr.Type().(type) {
 	case *types.Pointer:
-		if elem := addrType.Elem(); !types.Equal(typ, elem) {
-			return nil, errutil.Newf("type mismatch between %v and %v", typ, elem)
+		if !types.Equal(elem, addrType.Elem()) {
+			return nil, errutil.Newf("type mismatch between %v and %v", elem, addrType.Elem())
 		}
 	default:
 		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addrType)
 	}
-	return &GetElementPtr{typ: typ, addr: addr, indices: indices}, nil
+	return &GetElementPtr{elem: elem, addr: addr, indices: indices}, nil
 }
 
 // Type returns the type of the value produced by the instruction.
 func (inst *GetElementPtr) Type() types.Type {
-	return inst.typ
+	// TODO: Return the correct type of the value, as calculated by traversing
+	// the element type using the element indices.
+	return inst.elem
 }
 
 // String returns the string representation of the instruction.
@@ -166,9 +164,9 @@ func (inst *GetElementPtr) String() string {
 		for _, index := range inst.indices {
 			fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
 		}
-		return fmt.Sprintf("getelementptr %s, %s %s %s", inst.typ, inst.addr.Type(), inst.addr, indicesBuf)
+		return fmt.Sprintf("getelementptr %s, %s %s %s", inst.elem, inst.addr.Type(), inst.addr, indicesBuf)
 	}
-	return fmt.Sprintf("getelementptr %s, %s %s", inst.typ, inst.addr.Type(), inst.addr)
+	return fmt.Sprintf("getelementptr %s, %s %s", inst.elem, inst.addr.Type(), inst.addr)
 }
 
 // isValueInst ensures that only instructions which return values can be
