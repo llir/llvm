@@ -3,8 +3,10 @@ package ir
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 
 	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -22,6 +24,9 @@ type Function struct {
 	sig *types.Func
 	// Basic blocks of the function, or nil if function declaration.
 	blocks []*BasicBlock
+	// localID represents a counter used for assigning unique local IDs to
+	// unnamed local variables and basic blocks.
+	localID int
 }
 
 // NewFunction returns a new function based on the given name and function
@@ -47,9 +52,35 @@ func (f *Function) Blocks() []*BasicBlock {
 	return f.blocks
 }
 
-// SetBlocks sets the basic blocks of the function body to the given basic
-// blocks.
-func (f *Function) SetBlocks(blocks []*BasicBlock) {
+// SetBody sets the function body to the given basic blocks and the parent
+// function of each basic block to the given function, and assigns unique local
+// IDs to unnamed basic blocks and local variable definitions.
+func (f *Function) SetBody(blocks []*BasicBlock) {
+	// Set the function body of each basic block to the given function.
+	for _, block := range blocks {
+		block.SetParent(f)
+	}
+
+	// Assign unique local IDs to unnamed basic block and local variable
+	// definitions.
+	for _, block := range blocks {
+		// Assign unique local IDs to unnamed basic block.
+		if len(block.Name()) == 0 {
+			block.SetName(f.nextID())
+		}
+
+		// Assign unique local IDs to unnamed local variable definitions.
+		for _, inst := range block.Insts() {
+			if def, ok := inst.(*instruction.LocalVarDef); ok {
+				if len(def.Name()) == 0 {
+					def.SetName(f.nextID())
+				}
+			}
+		}
+	}
+
+	// TODO: Calculate local IDs for unnamed basic blocks and local variables,
+	// and update their names respectively.
 	f.blocks = blocks
 }
 
@@ -95,4 +126,12 @@ func (f *Function) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
+}
+
+// nextID returns the next unique local ID of the given function, and increments
+// the internal localID counter.
+func (f *Function) nextID() string {
+	id := strconv.Itoa(f.localID)
+	f.localID++
+	return id
 }

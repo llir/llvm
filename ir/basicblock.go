@@ -28,8 +28,11 @@ type BasicBlock struct {
 
 // NewBasicBlock returns a new basic block based on the given name, non-
 // terminating instructions and terminator.
-func NewBasicBlock(name string, insts []instruction.Instruction, term instruction.Terminator) *BasicBlock {
-	return &BasicBlock{name: name, insts: insts, term: term}
+func NewBasicBlock(name string, insts []instruction.Instruction, term instruction.Terminator) (*BasicBlock, error) {
+	// TODO: Verify that name is not a local ID. Unnamed basic blocks should be
+	// assigned a local ID implicitly by the internal localID counter of the
+	// given function rather than explicitly assigned.
+	return &BasicBlock{name: name, insts: insts, term: term}, nil
 }
 
 // Name returns the name of the basic block.
@@ -37,12 +40,23 @@ func (block *BasicBlock) Name() string {
 	return block.name
 }
 
+// TODO: Add note to SetName not set local IDs explicitly, as these are assigned
+// implicitly by the internal localID counter.
+
+// SetName sets the name of the basic block.
+func (block *BasicBlock) SetName(name string) {
+	block.name = name
+}
+
 // Parent returns the parent function of the basic block.
 func (block *BasicBlock) Parent() *Function {
 	return block.parent
 }
 
-// TODO: Add SetParent method to BasicBlock?
+// SetParent sets the parent function of the basic block.
+func (block *BasicBlock) SetParent(parent *Function) {
+	block.parent = parent
+}
 
 // Insts returns the non-terminating instructions of the basic block.
 func (block *BasicBlock) Insts() []instruction.Instruction {
