@@ -174,7 +174,7 @@ func (inst *Call) String() string {
 		}
 		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), arg)
 	}
-	return fmt.Sprintf("call %s %s(%s)", inst.result, inst.fname, argsBuf)
+	return fmt.Sprintf("call %s %s(%s)", inst.result, asm.EncGlobal(inst.fname), argsBuf)
 }
 
 type VAArg struct{}

@@ -95,7 +95,7 @@ func NewStore(val, addr value.Value) (*Store, error) {
 	// Sanity checks.
 	switch addrType := addr.Type().(type) {
 	case *types.Pointer:
-		if elem := addrType.Elem(); types.Equal(val.Type(), elem) {
+		if elem := addrType.Elem(); !types.Equal(val.Type(), elem) {
 			return nil, errutil.Newf("type mismatch between %v and %v", val.Type(), elem)
 		}
 	default:
