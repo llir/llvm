@@ -78,5 +78,5 @@ func (d *GlobalDecl) String() string {
 	// Global variable definition; e.g.
 	//     @x = global i32 42
 	//     @s = constant [13 x i8] c"hello world\0A\00"
-	return fmt.Sprintf("%s = %s %s", asm.EncGlobal(d.Name()), decl, d.Value())
+	return fmt.Sprintf("%s = %s %s %s", asm.EncGlobal(d.Name()), decl, d.Type(), d.Value())
 }

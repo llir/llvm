@@ -8,6 +8,8 @@ import (
 )
 
 // TODO: Complete the list of value implementations.
+//
+//    *ir.BasicBlock
 
 // A Value represents a computed value that may be used as an operand of other
 // values. Some values can have a name and they belong to a function or a
@@ -15,9 +17,8 @@ import (
 //
 // Value is one of the following types:
 //
-//    *ir.BasicBlock
-//    ir.Instruction
-//    ir.Terminator
+//    constant.Constant
+//    *instruction.Local
 type Value interface {
 	fmt.Stringer
 	// Type returns the type of the value.

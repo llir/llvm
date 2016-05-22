@@ -62,7 +62,7 @@ func NewLoad(typ types.Type, addr value.Value) (*Load, error) {
 	// Sanity checks.
 	switch addrType := addr.Type().(type) {
 	case *types.Pointer:
-		if elem := addrType.Elem(); types.Equal(typ, elem) {
+		if elem := addrType.Elem(); !types.Equal(typ, elem) {
 			return nil, errutil.Newf("type mismatch between %v and %v", typ, elem)
 		}
 	default:
@@ -145,7 +145,7 @@ func NewGetElementPtr(typ types.Type, addr value.Value, indices []value.Value) (
 	// Sanity checks.
 	switch addrType := addr.Type().(type) {
 	case *types.Pointer:
-		if elem := addrType.Elem(); types.Equal(typ, elem) {
+		if elem := addrType.Elem(); !types.Equal(typ, elem) {
 			return nil, errutil.Newf("type mismatch between %v and %v", typ, elem)
 		}
 	default:

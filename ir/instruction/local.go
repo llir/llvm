@@ -35,7 +35,7 @@ func (def *LocalVarDef) Value() ValueInst {
 	return def.val
 }
 
-// // Type returns the type of the value.
+// Type returns the type of the value.
 func (def *LocalVarDef) Type() types.Type {
 	return def.val.Type()
 }
@@ -44,9 +44,42 @@ func (def *LocalVarDef) Type() types.Type {
 
 // String returns the string representation of the local variable definition.
 func (def *LocalVarDef) String() string {
+	if types.IsVoid(def.Type()) {
+		return def.Value().String()
+	}
 	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Value())
 }
 
 // isInst ensures that only non-branching instructions can be assigned to the
 // Instruction interface.
 func (def *LocalVarDef) isInst() {}
+
+// TODO: Consider implementing Local using a pointer to the corresponding
+// LocalVarDecl, and defining Local.String in terms of LocalVarDef.Name(), thus
+// keeping the names in sync.
+
+// TODO: Consider moving Local to the ir package, as it may be used for basic
+// blocks as well.
+
+// A Local represents a local variable.
+type Local struct {
+	// Name of the local variable.
+	name string
+	// Variable type.
+	typ types.Type
+}
+
+// NewLocal returns a new local variable based on the given name and type.
+func NewLocal(name string, typ types.Type) (*Local, error) {
+	return &Local{name: name, typ: typ}, nil
+}
+
+// Type returns the type of the value.
+func (l *Local) Type() types.Type {
+	return l.typ
+}
+
+// String returns the string representation of the local variable.
+func (l *Local) String() string {
+	return asm.EncLocal(l.name)
+}
