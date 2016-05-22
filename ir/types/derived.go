@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+
+	"github.com/llir/llvm/asm"
 )
 
 // Func represents a function type.
@@ -131,7 +133,7 @@ func (t *Param) Equal(u Type) bool {
 // String returns a string representation of the function parameter type.
 func (t *Param) String() string {
 	if len(t.Name) > 0 {
-		return fmt.Sprintf("%v %v", t.Type, t.Name)
+		return fmt.Sprintf("%v %v", t.Type, asm.EncLocal(t.Name))
 	}
 	return t.Type.String()
 }
