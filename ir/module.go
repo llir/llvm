@@ -14,7 +14,7 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#module-structure
 type Module struct {
-	// Data layout of the module.
+	// Data layout of the target.
 	//
 	// Examples:
 	//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
@@ -22,14 +22,15 @@ type Module struct {
 	// References:
 	//    http://llvm.org/docs/LangRef.html#data-layout
 	Layout string
-	// Target host of the module.
+	// Target triple specifying the host architecture, operating system and
+	// vendor of the target.
 	//
 	// Examples:
 	//    x86_64-unknown-linux-gnu
 	//
 	// References:
 	//    http://llvm.org/docs/LangRef.html#target-triple
-	Target string
+	Triple string
 	// Type definitions.
 	Types []*types.NamedStruct
 	// Global variables.
@@ -53,8 +54,8 @@ func (m *Module) String() string {
 
 	// Target triple; e.g.
 	//    target triple = "x86_64-unknown-linux-gnu"
-	if len(m.Target) > 0 {
-		fmt.Fprintf(buf, "target triple = %q\n", m.Target)
+	if len(m.Triple) > 0 {
+		fmt.Fprintf(buf, "target triple = %q\n", m.Triple)
 	}
 
 	// Type definitions; e.g.
