@@ -106,7 +106,7 @@ func (exp *Trunc) Calc() Constant {
 //
 //    trunc(i32 15 to i3)
 func (exp *Trunc) String() string {
-	return fmt.Sprintf("trunc(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("trunc (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // ZExt is a constant expression which zero extends an integer constant to a
@@ -164,7 +164,7 @@ func (exp *ZExt) Calc() Constant {
 //
 //    zext(i1 true to i5)
 func (exp *ZExt) String() string {
-	return fmt.Sprintf("zext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("zext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // SExt is a constant expression which sign extends an integer constant to a
@@ -222,7 +222,7 @@ func (exp *SExt) Calc() Constant {
 //
 //    sext(i1 true to i5)
 func (exp *SExt) String() string {
-	return fmt.Sprintf("sext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("sext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FPTrunc is a constant expression which truncates a floating point constant to
@@ -283,7 +283,7 @@ func (exp *FPTrunc) Calc() Constant {
 //
 //    float fptrunc(double 4.0 to float)
 func (exp *FPTrunc) String() string {
-	return fmt.Sprintf("fptrunc(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fptrunc (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FPExt is a constant expression which extends a floating point constant to a
@@ -344,7 +344,7 @@ func (exp *FPExt) Calc() Constant {
 //
 //    fpext(float 4.0 to double)
 func (exp *FPExt) String() string {
-	return fmt.Sprintf("fpext(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fpext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FPToUI is a constant expression which converts a floating point constant (or
@@ -404,7 +404,7 @@ func (exp *FPToUI) Calc() Constant {
 //    fptoui(float 4.0 to i32)
 //    fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
 func (exp *FPToUI) String() string {
-	return fmt.Sprintf("fptoui(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fptoui (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // FPToSI is a constant expression which converts a floating point constant (or
@@ -464,7 +464,7 @@ func (exp *FPToSI) Calc() Constant {
 //    fptosi(float -4.0 to i32)
 //    fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
 func (exp *FPToSI) String() string {
-	return fmt.Sprintf("fptosi(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("fptosi (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // UIToFP is a constant expression which converts an unsigned integer constant
@@ -524,7 +524,7 @@ func (exp *UIToFP) Calc() Constant {
 //    uitofp(i32 4 to float)
 //    uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
 func (exp *UIToFP) String() string {
-	return fmt.Sprintf("uitofp(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("uitofp (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // SIToFP is a constant expression which converts a signed integer constant (or
@@ -584,7 +584,7 @@ func (exp *SIToFP) Calc() Constant {
 //    sitofp(i32 -4 to float)
 //    sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
 func (exp *SIToFP) String() string {
-	return fmt.Sprintf("sitofp(%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+	return fmt.Sprintf("sitofp (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
 // TODO: Add support for the following constant expressions:
@@ -633,14 +633,11 @@ func (exp *GetElementPtr) Calc() Constant {
 
 // String returns the string representation of the expression.
 func (exp *GetElementPtr) String() string {
-	if len(exp.indices) > 0 {
-		indicesBuf := new(bytes.Buffer)
-		for _, index := range exp.indices {
-			fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
-		}
-		return fmt.Sprintf("getelementptr(%s, %s %s %s)", exp.elem, exp.addr.Type(), exp.addr, indicesBuf)
+	indicesBuf := new(bytes.Buffer)
+	for _, index := range exp.indices {
+		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
 	}
-	return fmt.Sprintf("getelementptr(%s, %s %s)", exp.elem, exp.addr.Type(), exp.addr)
+	return fmt.Sprintf("getelementptr (%s, %s %s%s)", exp.elem, exp.addr.Type(), exp.addr, indicesBuf)
 }
 
 // TODO: Add support for the following constant expressions:

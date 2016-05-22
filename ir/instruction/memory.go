@@ -159,14 +159,11 @@ func (inst *GetElementPtr) Type() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *GetElementPtr) String() string {
-	if len(inst.indices) > 0 {
-		indicesBuf := new(bytes.Buffer)
-		for _, index := range inst.indices {
-			fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
-		}
-		return fmt.Sprintf("getelementptr %s, %s %s %s", inst.elem, inst.addr.Type(), inst.addr, indicesBuf)
+	indicesBuf := new(bytes.Buffer)
+	for _, index := range inst.indices {
+		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
 	}
-	return fmt.Sprintf("getelementptr %s, %s %s", inst.elem, inst.addr.Type(), inst.addr)
+	return fmt.Sprintf("getelementptr %s, %s %s%s", inst.elem, inst.addr.Type(), inst.addr, indicesBuf)
 }
 
 // isValueInst ensures that only instructions which return values can be
