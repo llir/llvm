@@ -233,8 +233,38 @@ func (v *Pointer) String() string {
 	return asm.EncGlobal(v.name)
 }
 
+// ZeroInitializer represents a zero initializer.
+//
+// Examples:
+//    zeroinitializer
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#complex-constants
+type ZeroInitializer struct {
+	// Value type.
+	typ types.Type
+}
+
+// NewZeroInitializer returns a new zero initializer based on the given type.
+func NewZeroInitializer(typ types.Type) (*ZeroInitializer, error) {
+	return &ZeroInitializer{typ: typ}, nil
+}
+
+// Type returns the type of the value.
+func (v *ZeroInitializer) Type() types.Type {
+	return v.typ
+}
+
+// String returns a string representation of the zero initializer; e.g.
+//
+//    zeroinitializer
+func (v *ZeroInitializer) String() string {
+	return "zeroinitializer"
+}
+
 // isConst ensures that only constant values can be assigned to the Constant
 // interface.
-func (*Int) isConst()     {}
-func (*Float) isConst()   {}
-func (*Pointer) isConst() {}
+func (*Int) isConst()             {}
+func (*Float) isConst()           {}
+func (*Pointer) isConst()         {}
+func (*ZeroInitializer) isConst() {}
