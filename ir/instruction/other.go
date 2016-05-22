@@ -33,7 +33,7 @@ func NewICmp(cond ICond, x, y value.Value) (*ICmp, error) {
 	if !types.Equal(x.Type(), y.Type()) {
 		return nil, errutil.Newf("type mismatch between type of x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	return &ICmp{cond: cond, x: x, y: x}, nil
+	return &ICmp{cond: cond, x: x, y: y}, nil
 }
 
 // Type returns the type of the value produced by the instruction.

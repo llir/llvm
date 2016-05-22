@@ -3,9 +3,12 @@ package ir
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
+	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/types"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // A BasicBlock is a sequence of non-branching instructions, terminated by a
@@ -90,23 +93,56 @@ func (block *BasicBlock) String() string {
 func (block *BasicBlock) assignIDs() error {
 	f := block.Parent()
 
-	// TODO: Validate that explicitly named local IDs conform to the localID
-	// counter and update the localID counter to keep them (explicitly and
-	// implicitly named local IDs) in sync.
+	// Named represents a named basic block or local variable definition.
+	type Named interface {
+		Name() string
+		SetName(name string)
+	}
+
+	// setName assigns unique local IDs to unnamed basic blocks and local
+	// variable definitions.
+	setName := func(n Named) error {
+		if name := n.Name(); len(name) == 0 {
+			n.SetName(f.nextID())
+		} else if isLocalID(name) {
+			// Validate that explicitly named local IDs conform to the localID
+			// counter and update the localID counter to keep explicitly and
+			// implicitly named local IDs in sync.
+			if want := f.nextID(); name != want {
+				return errutil.Newf("invalid local ID; expected %s, got %s", asm.EncLocal(want), asm.EncLocal(name))
+			}
+		}
+		return nil
+	}
 
 	// Assign unique local IDs to unnamed basic blocks.
-	if len(block.Name()) == 0 {
-		block.SetName(f.nextID())
+	if err := setName(block); err != nil {
+		return errutil.Err(err)
 	}
 
 	// Assign unique local IDs to unnamed local variable definitions.
 	for _, inst := range block.Insts() {
 		if def, ok := inst.(*instruction.LocalVarDef); ok {
-			if len(def.Name()) == 0 && !types.IsVoid(def.Value().Type()) {
-				def.SetName(f.nextID())
+			if !types.IsVoid(def.Value().Type()) {
+				if err := setName(def); err != nil {
+					return errutil.Err(err)
+				}
 			}
 		}
 	}
 
 	return nil
+}
+
+// isLocalID reports whether the given name is a local ID (e.g. "%42").
+func isLocalID(name string) bool {
+	if len(name) == 0 {
+		panic("invalid name length; expected > 0")
+	}
+	for _, r := range name {
+		if strings.IndexRune("0123456789", r) == -1 {
+			return false
+		}
+	}
+	return true
 }

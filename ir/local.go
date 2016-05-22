@@ -19,6 +19,11 @@ func NewLocal(name string, typ types.Type) (*Local, error) {
 	return &Local{name: name, typ: typ}, nil
 }
 
+// Name returns the name of the local variable.
+func (l *Local) Name() string {
+	return l.name
+}
+
 // Type returns the type of the value.
 func (l *Local) Type() types.Type {
 	return l.typ

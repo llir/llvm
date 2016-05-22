@@ -133,7 +133,7 @@ func (*Br) Type() types.Type {
 // String returns the string representation of the instruction.
 func (inst *Br) String() string {
 	if inst.cond != nil {
-		fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, asm.EncLocal(inst.trueBranch), asm.EncLocal(inst.falseBranch))
+		return fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, asm.EncLocal(inst.trueBranch), asm.EncLocal(inst.falseBranch))
 	}
 	return fmt.Sprintf("br label %s", asm.EncLocal(inst.trueBranch))
 }
