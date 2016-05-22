@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/llir/llvm/asm"
-	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/types"
+	"github.com/mewkiz/pkg/errutil"
 )
 
 // A Function declaration specifies the name and type of a function. A function
@@ -55,33 +55,22 @@ func (f *Function) Blocks() []*BasicBlock {
 // SetBody sets the function body to the given basic blocks and the parent
 // function of each basic block to the given function, and assigns unique local
 // IDs to unnamed basic blocks and local variable definitions.
-func (f *Function) SetBody(blocks []*BasicBlock) {
+func (f *Function) SetBody(blocks []*BasicBlock) error {
 	// Set the function body of each basic block to the given function.
 	for _, block := range blocks {
 		block.SetParent(f)
 	}
+	f.blocks = blocks
 
-	// Assign unique local IDs to unnamed basic block and local variable
+	// Assign unique local IDs to unnamed basic blocks and local variable
 	// definitions.
 	for _, block := range blocks {
-		// Assign unique local IDs to unnamed basic block.
-		if len(block.Name()) == 0 {
-			block.SetName(f.nextID())
-		}
-
-		// Assign unique local IDs to unnamed local variable definitions.
-		for _, inst := range block.Insts() {
-			if def, ok := inst.(*instruction.LocalVarDef); ok {
-				if len(def.Name()) == 0 {
-					def.SetName(f.nextID())
-				}
-			}
+		if err := block.assignIDs(); err != nil {
+			return errutil.Err(err)
 		}
 	}
 
-	// TODO: Calculate local IDs for unnamed basic blocks and local variables,
-	// and update their names respectively.
-	f.blocks = blocks
+	return nil
 }
 
 // AppendBlock appends the given block to the basic blocks of the function body.

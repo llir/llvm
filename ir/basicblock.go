@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/ir/instruction"
+	"github.com/llir/llvm/ir/types"
 )
 
 // A BasicBlock is a sequence of non-branching instructions, terminated by a
@@ -82,4 +83,30 @@ func (block *BasicBlock) String() string {
 	}
 	fmt.Fprintf(buf, "\t%s", block.Term())
 	return buf.String()
+}
+
+// assignIDs assigns unique IDs to unnamed basic blocks and local variable
+// definitions.
+func (block *BasicBlock) assignIDs() error {
+	f := block.Parent()
+
+	// TODO: Validate that explicitly named local IDs conform to the localID
+	// counter and update the localID counter to keep them (explicitly and
+	// implicitly named local IDs) in sync.
+
+	// Assign unique local IDs to unnamed basic blocks.
+	if len(block.Name()) == 0 {
+		block.SetName(f.nextID())
+	}
+
+	// Assign unique local IDs to unnamed local variable definitions.
+	for _, inst := range block.Insts() {
+		if def, ok := inst.(*instruction.LocalVarDef); ok {
+			if len(def.Name()) == 0 && !types.IsVoid(def.Value().Type()) {
+				def.SetName(f.nextID())
+			}
+		}
+	}
+
+	return nil
 }
