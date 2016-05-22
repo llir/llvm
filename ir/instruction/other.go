@@ -51,16 +51,16 @@ type ICond int
 
 // Integer comparison conditions.
 const (
-	ICondEq  = iota // equal
-	ICondNE         // not equal
-	ICondUGT        // unsigned greater than
-	ICondUGE        // unsigned greater or equal
-	ICondULT        // unsigned less than
-	ICondULE        // unsigned less or equal
-	ICondSGT        // signed greater than
-	ICondSGE        // signed greater or equal
-	ICondSLT        // signed less than
-	ICondSLE        // signed less or equal
+	ICondEq  ICond = iota // equal
+	ICondNE               // not equal
+	ICondUGT              // unsigned greater than
+	ICondUGE              // unsigned greater or equal
+	ICondULT              // unsigned less than
+	ICondULE              // unsigned less or equal
+	ICondSGT              // signed greater than
+	ICondSGE              // signed greater or equal
+	ICondSLT              // signed less than
+	ICondSLE              // signed less or equal
 )
 
 func (cond ICond) String() string {
