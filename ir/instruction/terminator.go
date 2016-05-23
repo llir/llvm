@@ -200,6 +200,7 @@ func (*Unreachable) String() string   { panic("Unreachable.String: not yet imple
 // isTerm ensures that only terminator instructions can be assigned to the
 // Terminator interface.
 func (*Ret) isTerm()         {}
+func (*Jmp) isTerm()         {}
 func (*Br) isTerm()          {}
 func (*Switch) isTerm()      {}
 func (*IndirectBr) isTerm()  {}
