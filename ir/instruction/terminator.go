@@ -1,3 +1,8 @@
+// TODO: Consider removing the Type method from terminator instructions, as it
+// should have become unnecessary when ValueInst was introduced. Also consider
+// removing the Type method from `store` and `fence`, the two non-terminator
+// instructions which are not value instructions.
+
 package instruction
 
 import (
@@ -90,39 +95,71 @@ func (inst *Ret) String() string {
 }
 
 // TODO: Add support for the remaining terminator instructions:
-//    http://llvm.org/docs/LangRef.html#br-instruction
 //    http://llvm.org/docs/LangRef.html#switch-instruction
 //    http://llvm.org/docs/LangRef.html#indirectbr-instruction
 //    http://llvm.org/docs/LangRef.html#invoke-instruction
 //    http://llvm.org/docs/LangRef.html#resume-instruction
 //    http://llvm.org/docs/LangRef.html#unreachable-instruction
 
-// Br represents a branch instruction, which may be either conditional or
-// unconditional.
+// Jmp represents an unconditional branch instruction.
+type Jmp struct {
+	// Basic block label name of the target branch.
+	target string
+}
+
+// NewJmp returns a new unconditional branch instruction based on the given
+// target branch.
+func NewJmp(target string) (*Jmp, error) {
+	return &Jmp{target: target}, nil
+}
+
+// Target returns the basic block label name of the target branch.
+func (inst *Jmp) Target() string {
+	return inst.target
+}
+
+// Type returns the type of the value produced by the instruction.
+func (*Jmp) Type() types.Type {
+	return types.NewVoid()
+}
+
+// String returns the string representation of the instruction.
+func (inst *Jmp) String() string {
+	return fmt.Sprintf("br label %s", asm.EncLocal(inst.target))
+}
+
+// Br represents a conditional branch instruction.
 type Br struct {
-	// Branching condition; or nil if unconditional branch.
+	// Branching condition.
 	cond value.Value
-	// Basic block label name of the true branch; or target branch if
-	// unconditional branch.
+	// Basic block label name of the true target branch.
 	trueBranch string
-	// Basic block label name of the false branch; or empty string if
-	// unconditional branch.
+	// Basic block label name of the false target branch.
 	falseBranch string
 }
 
-// TODO: Consider splitting Br into two instructions, a conditional and an
-// unconditional branch instruction.
-
-// NewBr returns a new branch instruction based on the given branching
-// condition, and the true and false target branches. For unconditional
-// branches, cond is nil and falseBranch is empty string.
+// NewBr returns a new conditional branch instruction based on the given
+// branching condition, and the true and false target branches.
 func NewBr(cond value.Value, trueBranch, falseBranch string) (*Br, error) {
-	if cond != nil {
-		if !types.Equal(cond.Type(), types.I1) {
-			return nil, errutil.Newf("conditional type mismatch; expected i1, got %v", cond.Type())
-		}
+	if !types.Equal(cond.Type(), types.I1) {
+		return nil, errutil.Newf("conditional type mismatch; expected i1, got %v", cond.Type())
 	}
 	return &Br{cond: cond, trueBranch: trueBranch, falseBranch: falseBranch}, nil
+}
+
+// Cond returns the branching condition of the instruction
+func (inst *Br) Cond() value.Value {
+	return inst.cond
+}
+
+// TrueBranch returns the basic block label name of the true target branch.
+func (inst *Br) TrueBranch() string {
+	return inst.trueBranch
+}
+
+// FalseBranch returns the basic block label name of the false target branch.
+func (inst *Br) FalseBranch() string {
+	return inst.falseBranch
 }
 
 // Type returns the type of the value produced by the instruction.
@@ -132,10 +169,7 @@ func (*Br) Type() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Br) String() string {
-	if inst.cond != nil {
-		return fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, asm.EncLocal(inst.trueBranch), asm.EncLocal(inst.falseBranch))
-	}
-	return fmt.Sprintf("br label %s", asm.EncLocal(inst.trueBranch))
+	return fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, asm.EncLocal(inst.trueBranch), asm.EncLocal(inst.falseBranch))
 }
 
 type Switch struct{}
