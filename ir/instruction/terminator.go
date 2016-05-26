@@ -30,6 +30,7 @@ type Terminator interface {
 // interface.
 var (
 	_ Terminator = &Ret{}
+	_ Terminator = &Jmp{}
 	_ Terminator = &Br{}
 	_ Terminator = &Switch{}
 	_ Terminator = &IndirectBr{}

@@ -39,6 +39,7 @@ var (
 	_ Constant = &Int{}
 	_ Constant = &Float{}
 	_ Constant = &Pointer{}
+	_ Constant = &NullPointer{}
 	_ Constant = &Vector{}
 	_ Constant = &Array{}
 	_ Constant = &Struct{}

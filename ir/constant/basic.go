@@ -214,13 +214,14 @@ func (v *Float) String() string {
 	return strings.Replace(s, "e+", "e", -1)
 }
 
+// TODO: Consider merging Pointer with NullPointer.
+
 // Pointer represents a pointer constant.
 //
 // Examples:
-//    null, @foo
+//    @foo
 //
 // References:
-//    http://llvm.org/docs/LangRef.html#simple-constants
 //    http://llvm.org/docs/LangRef.html#global-variable-and-function-addresses
 type Pointer struct {
 	// Pointer type.
@@ -232,12 +233,8 @@ type Pointer struct {
 // NewPointer returns a new pointer constant based on the given type and global
 // identifier name.
 func NewPointer(typ *types.Pointer, name string) (*Pointer, error) {
-	// TODO: Figure out how to represent `null` pointers.
 	return &Pointer{typ: typ, name: name}, nil
 }
-
-// TODO: Figure out how to represent pointer constants. Add the necessary fields
-// to the Pointer struct and implement the NewPointer constructor afterwards.
 
 // Type returns the type of the value.
 func (v *Pointer) Type() types.Type {
@@ -248,8 +245,36 @@ func (v *Pointer) Type() types.Type {
 //
 //    @printf
 func (v *Pointer) String() string {
-	// TODO: Add support for `null` pointers.
 	return asm.EncGlobal(v.name)
+}
+
+// NullPointer represents a null pointer constant.
+//
+// Examples:
+//    null
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#simple-constants
+type NullPointer struct {
+	// Pointer type.
+	typ *types.Pointer
+}
+
+// NewNullPointer returns a new null pointer constant based on the given type.
+func NewNullPointer(typ *types.Pointer) (*NullPointer, error) {
+	return &NullPointer{typ: typ}, nil
+}
+
+// Type returns the type of the value.
+func (v *NullPointer) Type() types.Type {
+	return v.typ
+}
+
+// String returns a string representation of the null pointer constant; e.g.
+//
+//    null
+func (v *NullPointer) String() string {
+	return "null"
 }
 
 // ZeroInitializer represents a zero initializer.
@@ -286,4 +311,5 @@ func (v *ZeroInitializer) String() string {
 func (*Int) isConst()             {}
 func (*Float) isConst()           {}
 func (*Pointer) isConst()         {}
+func (*NullPointer) isConst()     {}
 func (*ZeroInitializer) isConst() {}
