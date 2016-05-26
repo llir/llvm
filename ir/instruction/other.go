@@ -139,10 +139,51 @@ func (inc *Incoming) String() string {
 	return fmt.Sprintf("[ %s, %s ]", inc.val, asm.EncLocal(inc.pred))
 }
 
-type Select struct{}
+// Select represents a select instruction.
+type Select struct {
+	// Selection condition.
+	cond value.Value
+	// Operands.
+	x, y value.Value
+}
 
-func (*Select) Type() types.Type { panic("Select.Type: not yet implemented") }
-func (*Select) String() string   { panic("Select.String: not yet implemented") }
+// NewSelect returns a new select instruction based on the given selection
+// condition, and operands.
+func NewSelect(cond, x, y value.Value) (*Select, error) {
+	// TODO: Add support for boolean vector selection condition type.
+	if !types.Equal(cond.Type(), types.I1) {
+		return nil, errutil.Newf("invalid selection condition type; expected i1, got %v", cond.Type())
+	}
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("mismatch between operand type x %v and operand type y %v", x.Type(), y.Type())
+	}
+	return &Select{cond: cond, x: x, y: y}, nil
+}
+
+// Cond returns the selection condition of the instruction.
+func (inst *Select) Cond() value.Value {
+	return inst.cond
+}
+
+// X returns the x operand of the instruction.
+func (inst *Select) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the instruction.
+func (inst *Select) Y() value.Value {
+	return inst.y
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *Select) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *Select) String() string {
+	return fmt.Sprintf("select %s %s, %s %s, %s %s", inst.cond.Type(), inst.cond, inst.x.Type(), inst.x, inst.y.Type(), inst.y)
+}
 
 // Call represents a call instruction.
 type Call struct {
