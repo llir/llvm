@@ -8,186 +8,358 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
+// === [ Binary instructions ] =================================================
+//
 // References:
 //    http://llvm.org/docs/LangRef.html#binary-operations
 
-// TODO: Add support for the remaining binary operations:
-//    http://llvm.org/docs/LangRef.html#add-instruction
-//    http://llvm.org/docs/LangRef.html#fadd-instruction
-//    http://llvm.org/docs/LangRef.html#sub-instruction
-//    http://llvm.org/docs/LangRef.html#fsub-instruction
-//    http://llvm.org/docs/LangRef.html#mul-instruction
-//    http://llvm.org/docs/LangRef.html#fmul-instruction
-//    http://llvm.org/docs/LangRef.html#udiv-instruction
-//    http://llvm.org/docs/LangRef.html#sdiv-instruction
-//    http://llvm.org/docs/LangRef.html#fdiv-instruction
-//    http://llvm.org/docs/LangRef.html#urem-instruction
-//    http://llvm.org/docs/LangRef.html#srem-instruction
-//    http://llvm.org/docs/LangRef.html#frem-instruction
+// --- [ `add` ] ---------------------------------------------------------------
 
 // Add represents an addition instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#add-instruction
 type Add struct {
-	// Operand type.
-	typ types.Type
 	// Operands.
 	x, y value.Value
 }
 
-// NewAdd returns a new add instruction based on the given operand type and
-// values.
-func NewAdd(typ types.Type, x, y value.Value) (*Add, error) {
-	// Sanity check.
-	if !types.Equal(typ, x.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of x %q", typ, x.Type())
+// NewAdd returns a new add instruction based on the given operands.
+func NewAdd(x, y value.Value) (*Add, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	if !types.Equal(typ, y.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of y %q", typ, y.Type())
-	}
-	return &Add{typ: typ, x: x, y: y}, nil
+	return &Add{x: x, y: y}, nil
 }
 
 // Type returns the type of the value produced by the instruction.
 func (inst *Add) Type() types.Type {
-	return inst.typ
+	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *Add) String() string {
-	return fmt.Sprintf("add %v %v, %v", inst.typ, inst.x, inst.y)
+	return fmt.Sprintf("add %v %v, %v", inst.x.Type(), inst.x, inst.y)
 }
 
-type FAdd struct{}
+// --- [ `fadd` ] --------------------------------------------------------------
 
-func (*FAdd) Type() types.Type { panic("FAdd.Type: not yet implemented") }
-func (*FAdd) String() string   { panic("FAdd.String: not yet implemented") }
-
-// Sub represents a subtraction instruction.
-type Sub struct {
-	// Operand type.
-	typ types.Type
+// FAdd represents a floating-point addition instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fadd-instruction
+type FAdd struct {
 	// Operands.
 	x, y value.Value
 }
 
-// NewSub returns a new sub instruction based on the given operand type and
-// values.
-func NewSub(typ types.Type, x, y value.Value) (*Sub, error) {
-	// Sanity check.
-	if !types.Equal(typ, x.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of x %q", typ, x.Type())
+// NewFAdd returns a new fadd instruction based on the given operands.
+func NewFAdd(x, y value.Value) (*FAdd, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	if !types.Equal(typ, y.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of y %q", typ, y.Type())
+	return &FAdd{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *FAdd) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *FAdd) String() string {
+	return fmt.Sprintf("fadd %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
+
+// --- [ `sub` ] ---------------------------------------------------------------
+
+// Sub represents a subtraction instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#sub-instruction
+type Sub struct {
+	// Operands.
+	x, y value.Value
+}
+
+// NewSub returns a new sub instruction based on the given operands.
+func NewSub(x, y value.Value) (*Sub, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	return &Sub{typ: typ, x: x, y: y}, nil
+	return &Sub{x: x, y: y}, nil
 }
 
 // Type returns the type of the value produced by the instruction.
 func (inst *Sub) Type() types.Type {
-	return inst.typ
+	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *Sub) String() string {
-	return fmt.Sprintf("sub %v %v, %v", inst.typ, inst.x, inst.y)
+	return fmt.Sprintf("sub %v %v, %v", inst.x.Type(), inst.x, inst.y)
 }
 
-type FSub struct{}
+// --- [ `fsub` ] --------------------------------------------------------------
 
-func (*FSub) Type() types.Type { panic("FSub.Type: not yet implemented") }
-func (*FSub) String() string   { panic("FSub.String: not yet implemented") }
-
-// Mul represents a multiplication instruction.
-type Mul struct {
-	// Operand type.
-	typ types.Type
+// FSub represents a floating-point subtraction instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fsub-instruction
+type FSub struct {
 	// Operands.
 	x, y value.Value
 }
 
-// NewMul returns a new mul instruction based on the given operand type and
-// values.
-func NewMul(typ types.Type, x, y value.Value) (*Mul, error) {
-	// Sanity check.
-	if !types.Equal(typ, x.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of x %q", typ, x.Type())
+// NewFSub returns a new fsub instruction based on the given operands.
+func NewFSub(x, y value.Value) (*FSub, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	if !types.Equal(typ, y.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of y %q", typ, y.Type())
+	return &FSub{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *FSub) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *FSub) String() string {
+	return fmt.Sprintf("fsub %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
+
+// --- [ `mul` ] ---------------------------------------------------------------
+
+// Mul represents a multiplication instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#mul-instruction
+type Mul struct {
+	// Operands.
+	x, y value.Value
+}
+
+// NewMul returns a new mul instruction based on the given operands.
+func NewMul(x, y value.Value) (*Mul, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	return &Mul{typ: typ, x: x, y: y}, nil
+	return &Mul{x: x, y: y}, nil
 }
 
 // Type returns the type of the value produced by the instruction.
 func (inst *Mul) Type() types.Type {
-	return inst.typ
+	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *Mul) String() string {
-	return fmt.Sprintf("mul %v %v, %v", inst.typ, inst.x, inst.y)
+	return fmt.Sprintf("mul %v %v, %v", inst.x.Type(), inst.x, inst.y)
 }
 
-type FMul struct{}
+// --- [ `fmul` ] --------------------------------------------------------------
 
-func (*FMul) Type() types.Type { panic("FMul.Type: not yet implemented") }
-func (*FMul) String() string   { panic("FMul.String: not yet implemented") }
-
-type UDiv struct{}
-
-func (*UDiv) Type() types.Type { panic("UDiv.Type: not yet implemented") }
-func (*UDiv) String() string   { panic("UDiv.String: not yet implemented") }
-
-// SDiv represents a signed division instruction.
-type SDiv struct {
-	// Operand type.
-	typ types.Type
+// FMul represents a floating-point multiplication instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fmul-instruction
+type FMul struct {
 	// Operands.
 	x, y value.Value
 }
 
-// NewSDiv returns a new sdiv instruction based on the given operand type and
-// values.
-func NewSDiv(typ types.Type, x, y value.Value) (*SDiv, error) {
-	// Sanity check.
-	if !types.Equal(typ, x.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of x %q", typ, x.Type())
+// NewFMul returns a new fmul instruction based on the given operands.
+func NewFMul(x, y value.Value) (*FMul, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	if !types.Equal(typ, y.Type()) {
-		return nil, errutil.Newf("type mismatch between operand type %q and type of y %q", typ, y.Type())
+	return &FMul{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *FMul) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *FMul) String() string {
+	return fmt.Sprintf("fmul %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
+
+// --- [ `udiv` ] --------------------------------------------------------------
+
+// UDiv represents an unsigned division instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#udiv-instruction
+type UDiv struct {
+	// Operands.
+	x, y value.Value
+}
+
+// NewUDiv returns a new udiv instruction based on the given operands.
+func NewUDiv(x, y value.Value) (*UDiv, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
 	}
-	return &SDiv{typ: typ, x: x, y: y}, nil
+	return &UDiv{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *UDiv) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *UDiv) String() string {
+	return fmt.Sprintf("udiv %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
+
+// --- [ `sdiv` ] --------------------------------------------------------------
+
+// SDiv represents a signed division instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#sdiv-instruction
+type SDiv struct {
+	// Operands.
+	x, y value.Value
+}
+
+// NewSDiv returns a new sdiv instruction based on the given operands.
+func NewSDiv(x, y value.Value) (*SDiv, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
+	}
+	return &SDiv{x: x, y: y}, nil
 }
 
 // Type returns the type of the value produced by the instruction.
 func (inst *SDiv) Type() types.Type {
-	return inst.typ
+	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *SDiv) String() string {
-	return fmt.Sprintf("sdiv %v %v, %v", inst.typ, inst.x, inst.y)
+	return fmt.Sprintf("sdiv %v %v, %v", inst.x.Type(), inst.x, inst.y)
 }
 
-type FDiv struct{}
+// --- [ `fdiv` ] --------------------------------------------------------------
 
-func (*FDiv) Type() types.Type { panic("FDiv.Type: not yet implemented") }
-func (*FDiv) String() string   { panic("FDiv.String: not yet implemented") }
+// FDiv represents a floating-point division instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fdiv-instruction
+type FDiv struct {
+	// Operands.
+	x, y value.Value
+}
 
-type URem struct{}
+// NewFDiv returns a new fdiv instruction based on the given operands.
+func NewFDiv(x, y value.Value) (*FDiv, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
+	}
+	return &FDiv{x: x, y: y}, nil
+}
 
-func (*URem) Type() types.Type { panic("URem.Type: not yet implemented") }
-func (*URem) String() string   { panic("URem.String: not yet implemented") }
+// Type returns the type of the value produced by the instruction.
+func (inst *FDiv) Type() types.Type {
+	return inst.x.Type()
+}
 
-type SRem struct{}
+// String returns the string representation of the instruction.
+func (inst *FDiv) String() string {
+	return fmt.Sprintf("fdiv %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
 
-func (*SRem) Type() types.Type { panic("SRem.Type: not yet implemented") }
-func (*SRem) String() string   { panic("SRem.String: not yet implemented") }
+// --- [ `urem` ] --------------------------------------------------------------
 
-type FRem struct{}
+// URem represents an unsigned remainder instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#urem-instruction
+type URem struct {
+	// Operands.
+	x, y value.Value
+}
 
-func (*FRem) Type() types.Type { panic("FRem.Type: not yet implemented") }
-func (*FRem) String() string   { panic("FRem.String: not yet implemented") }
+// NewURem returns a new urem instruction based on the given operands.
+func NewURem(x, y value.Value) (*URem, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
+	}
+	return &URem{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *URem) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *URem) String() string {
+	return fmt.Sprintf("urem %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
+
+// --- [ `srem` ] --------------------------------------------------------------
+
+// SRem represents a signed remainder instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#srem-instruction
+type SRem struct {
+	// Operands.
+	x, y value.Value
+}
+
+// NewSRem returns a new srem instruction based on the given operands.
+func NewSRem(x, y value.Value) (*SRem, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
+	}
+	return &SRem{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *SRem) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *SRem) String() string {
+	return fmt.Sprintf("srem %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
+
+// --- [ `frem` ] --------------------------------------------------------------
+
+// FRem represents a floating-point remainder instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#frem-instruction
+type FRem struct {
+	// Operands.
+	x, y value.Value
+}
+
+// NewFRem returns a new frem instruction based on the given operands.
+func NewFRem(x, y value.Value) (*FRem, error) {
+	if !types.Equal(x.Type(), y.Type()) {
+		return nil, errutil.Newf("type mismatch between x (%v) and y (%v)", x.Type(), y.Type())
+	}
+	return &FRem{x: x, y: y}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (inst *FRem) Type() types.Type {
+	return inst.x.Type()
+}
+
+// String returns the string representation of the instruction.
+func (inst *FRem) String() string {
+	return fmt.Sprintf("frem %v %v, %v", inst.x.Type(), inst.x, inst.y)
+}
 
 // isValueInst ensures that only instructions which return values can be
 // assigned to the Value interface.
