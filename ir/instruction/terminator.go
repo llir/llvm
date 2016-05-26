@@ -100,7 +100,6 @@ func (inst *Ret) String() string {
 //    http://llvm.org/docs/LangRef.html#indirectbr-instruction
 //    http://llvm.org/docs/LangRef.html#invoke-instruction
 //    http://llvm.org/docs/LangRef.html#resume-instruction
-//    http://llvm.org/docs/LangRef.html#unreachable-instruction
 
 // Jmp represents an unconditional branch instruction.
 type Jmp struct {
@@ -193,10 +192,26 @@ type Resume struct{}
 func (*Resume) Type() types.Type { panic("Resume.Type: not yet implemented") }
 func (*Resume) String() string   { panic("Resume.String: not yet implemented") }
 
+// Unreachable represents an unreachable instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#unreachable-instruction
 type Unreachable struct{}
 
-func (*Unreachable) Type() types.Type { panic("Unreachable.Type: not yet implemented") }
-func (*Unreachable) String() string   { panic("Unreachable.String: not yet implemented") }
+// NewUnreachable returns a new unreachable instruction.
+func NewUnreachable() (*Unreachable, error) {
+	return &Unreachable{}, nil
+}
+
+// Type returns the type of the value produced by the instruction.
+func (*Unreachable) Type() types.Type {
+	return types.NewVoid()
+}
+
+// String returns the string representation of the instruction.
+func (inst *Unreachable) String() string {
+	return "unreachable"
+}
 
 // isTerm ensures that only terminator instructions can be assigned to the
 // Terminator interface.
