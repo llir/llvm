@@ -32,9 +32,9 @@ var (
 	_ ValueInst = &FRem{}
 
 	// Bitwise Binary Operations
-	_ ValueInst = &Shl{}
-	_ ValueInst = &LShr{}
-	_ ValueInst = &AShr{}
+	_ ValueInst = &ShL{}
+	_ ValueInst = &LShR{}
+	_ ValueInst = &AShR{}
 	_ ValueInst = &And{}
 	_ ValueInst = &Or{}
 	_ ValueInst = &Xor{}
