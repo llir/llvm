@@ -1,3 +1,5 @@
+//go:generate go run gen.go
+
 // Package instruction declares the instructions of LLVM IR.
 package instruction
 
