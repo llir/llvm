@@ -70,7 +70,7 @@ func (ctx *Context) SetAlias(name string, typ Type) error {
 // structures have been assigned bodies.
 func (ctx *Context) Validate() error {
 	for _, t := range ctx.structs {
-		if t.Struct == nil {
+		if t.typ == nil {
 			return fmt.Errorf("empty body of identified structure %q", asm.EncLocal(t.Name()))
 		}
 	}
@@ -82,13 +82,29 @@ type NamedStruct struct {
 	// name specifies the name of the identified structure.
 	name string
 	// Structure body.
-	*Struct
+	typ *Struct
 }
 
 // Name returns the name of the identified structure.
 func (t *NamedStruct) Name() string {
 	// TODO: Handle unnamed identified structures (generate anonymous names).
 	return t.name
+}
+
+// Type returns the underlying type of the identified structure.
+func (t *NamedStruct) Type() *Struct {
+	return t.typ
+}
+
+// SetType sets the underlying structure type definition of the identified
+// structure.
+func (t *NamedStruct) SetType(typ *Struct) error {
+	if typ == nil {
+		t.typ = typ
+	} else if !t.typ.Equal(typ) {
+		return fmt.Errorf("redefinition of identified structure %q; old definition %v, new definition %v", asm.EncLocal(t.Name()), t.typ, typ)
+	}
+	return nil
 }
 
 // Equal returns true if the given types are equal, and false otherwise.
