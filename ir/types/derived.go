@@ -40,13 +40,13 @@ func NewFunc(result Type, params []*Param, variadic bool) (*Func, error) {
 
 	// Validate function parameter types (any type except void and function).
 	for _, param := range params {
-		switch param.Type.(type) {
+		switch param.typ.(type) {
 		case *Int, *Float, *MMX, *Label, *Metadata, *Pointer, *Vector, *Array, *Struct:
 			// valid type
 		case *Void:
 			return nil, errors.New("invalid function parameter type; void type only allowed for function results")
 		default:
-			return nil, fmt.Errorf("invalid function parameter type %q", param.Type)
+			return nil, fmt.Errorf("invalid function parameter type %q", param.typ)
 		}
 	}
 
@@ -111,31 +111,31 @@ func (t *Func) String() string {
 // A Param represents a function parameter.
 type Param struct {
 	// Parameter type.
-	Type Type
+	typ Type
 	// Parameter name; or empty.
-	Name string
+	name string
 }
 
 // NewParam returns a function parameter type based on the given parameter type
 // and name.
 func NewParam(typ Type, name string) *Param {
-	return &Param{Type: typ, Name: name}
+	return &Param{typ: typ, name: name}
 }
 
 // Equal reports whether t and u are of equal type.
 func (t *Param) Equal(u Type) bool {
 	if u, ok := u.(*Param); ok {
-		return t.Type.Equal(u.Type)
+		return t.typ.Equal(u.typ)
 	}
-	return t.Type.Equal(u)
+	return t.typ.Equal(u)
 }
 
 // String returns a string representation of the function parameter type.
 func (t *Param) String() string {
-	if len(t.Name) > 0 {
-		return fmt.Sprintf("%v %v", t.Type, asm.EncLocal(t.Name))
+	if len(t.name) > 0 {
+		return fmt.Sprintf("%v %v", t.typ, asm.EncLocal(t.name))
 	}
-	return t.Type.String()
+	return t.typ.String()
 }
 
 // Pointer represents a pointer type.

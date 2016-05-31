@@ -164,22 +164,26 @@ func init() {
 		log.Fatalln(err)
 	}
 	// void (i32)
-	voidFunci32Typ, err = types.NewFunc(voidTyp, []types.Type{i32Typ}, false)
+	i32Param := types.NewParam(i32Typ, "")
+	i32Params := []*types.Param{i32Param}
+	voidFunci32Typ, err = types.NewFunc(voidTyp, i32Params, false)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// void (float)
-	voidFuncf32Typ, err = types.NewFunc(voidTyp, []types.Type{f32Typ}, false)
+	f32Param := types.NewParam(f32Typ, "")
+	f32Params := []*types.Param{f32Param}
+	voidFuncf32Typ, err = types.NewFunc(voidTyp, f32Params, false)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// void (i32, ...)
-	voidFunci32EllipsisTyp, err = types.NewFunc(voidTyp, []types.Type{i32Typ}, true)
+	voidFunci32EllipsisTyp, err = types.NewFunc(voidTyp, i32Params, true)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	// i32 (i32)
-	funcTyp, err = types.NewFunc(i32Typ, []types.Type{i32Typ}, false)
+	funcTyp, err = types.NewFunc(i32Typ, i32Params, false)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -549,7 +553,7 @@ func TestMetadataString(t *testing.T) {
 func TestFuncString(t *testing.T) {
 	golden := []struct {
 		result   types.Type
-		params   []types.Type
+		params   []*types.Param
 		variadic bool
 		want     string
 		err      string
@@ -561,27 +565,27 @@ func TestFuncString(t *testing.T) {
 		},
 		// i=1
 		{
-			result: i32Typ, params: []types.Type{i32Typ},
+			result: i32Typ, params: []*types.Param{types.NewParam(i32Typ, "")},
 			want: "i32 (i32)",
 		},
 		// i=2
 		{
-			result: voidTyp, params: []types.Type{i32Typ, i8Typ},
+			result: voidTyp, params: []*types.Param{types.NewParam(i32Typ, ""), types.NewParam(i8Typ, "")},
 			want: "void (i32, i8)",
 		},
 		// i=3
 		{
-			result: i32Typ, params: []types.Type{i8PtrTyp}, variadic: true,
+			result: i32Typ, params: []*types.Param{types.NewParam(i8PtrTyp, "")}, variadic: true,
 			want: "i32 (i8*, ...)",
 		},
 		// i=4
 		{
-			result: i32Typ, params: []types.Type{voidTyp}, // i32 (void)
+			result: i32Typ, params: []*types.Param{types.NewParam(voidTyp, "")}, // i32 (void)
 			want: "", err: "invalid function parameter type; void type only allowed for function results",
 		},
 		// i=5
 		{
-			result: i32Typ, params: []types.Type{funcTyp}, // i32 (i32 (i32))
+			result: i32Typ, params: []*types.Param{types.NewParam(funcTyp, "")}, // i32 (i32 (i32))
 			want: "", err: `invalid function parameter type "i32 (i32)"`,
 		},
 		// i=6
