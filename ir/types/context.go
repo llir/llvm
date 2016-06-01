@@ -91,14 +91,14 @@ func (t *NamedStruct) Name() string {
 	return t.name
 }
 
-// Type returns the underlying type of the identified structure.
-func (t *NamedStruct) Type() *Struct {
+// Struct returns the underlying structure type of the identified structure.
+func (t *NamedStruct) Struct() *Struct {
 	return t.typ
 }
 
-// SetType sets the underlying structure type definition of the identified
+// SetStruct sets the underlying structure type definition of the identified
 // structure.
-func (t *NamedStruct) SetType(typ *Struct) error {
+func (t *NamedStruct) SetStruct(typ *Struct) error {
 	if typ == nil {
 		t.typ = typ
 	} else if !t.typ.Equal(typ) {
