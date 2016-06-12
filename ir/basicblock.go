@@ -36,6 +36,10 @@ func NewBasicBlock(name string, insts []instruction.Instruction, term instructio
 	// TODO: Verify that name is not a local ID. Unnamed basic blocks should be
 	// assigned a local ID implicitly by the internal localID counter of the
 	// given function rather than explicitly assigned.
+	//
+	// Another option (which is currently implemented) is to allow local IDs to
+	// be explicitly assigned, as they are validated during the ID assignment
+	// stage (see BasicBlock.assignIDs).
 	return &BasicBlock{name: name, insts: insts, term: term}, nil
 }
 
@@ -52,6 +56,31 @@ func (block *BasicBlock) SetName(name string) {
 	block.name = name
 }
 
+// Insts returns the non-terminating instructions of the basic block.
+func (block *BasicBlock) Insts() []instruction.Instruction {
+	return block.insts
+}
+
+// SetInsts sets the instructions of the basic block.
+func (block *BasicBlock) SetInsts(insts []instruction.Instruction) {
+	block.insts = insts
+}
+
+// AppendInst appends the given instruction to the basic block.
+func (block *BasicBlock) AppendInst(inst instruction.Instruction) {
+	block.insts = append(block.insts, inst)
+}
+
+// Term returns the terminator of the basic block.
+func (block *BasicBlock) Term() instruction.Terminator {
+	return block.term
+}
+
+// SetTerm sets the terminator of the basic block.
+func (block *BasicBlock) SetTerm(term instruction.Terminator) {
+	block.term = term
+}
+
 // Parent returns the parent function of the basic block.
 func (block *BasicBlock) Parent() *Function {
 	return block.parent
@@ -60,19 +89,6 @@ func (block *BasicBlock) Parent() *Function {
 // SetParent sets the parent function of the basic block.
 func (block *BasicBlock) SetParent(parent *Function) {
 	block.parent = parent
-}
-
-// Insts returns the non-terminating instructions of the basic block.
-func (block *BasicBlock) Insts() []instruction.Instruction {
-	return block.insts
-}
-
-// TODO: Add AppendInst and SetInsts methods to BasicBlock? Analogously defined
-// as for Function.AppendBlock and Function.SetBlocks.
-
-// Term returns the terminator of the basic block.
-func (block *BasicBlock) Term() instruction.Terminator {
-	return block.term
 }
 
 // String returns the string representation of the basic block.
