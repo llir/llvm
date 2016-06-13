@@ -32,8 +32,8 @@ func NewAlloca(typ types.Type, nelems int) (*Alloca, error) {
 	return &Alloca{typ: typ, nelems: nelems}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Alloca) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *Alloca) RetType() types.Type {
 	return inst.typ
 }
 
@@ -67,14 +67,14 @@ func NewLoad(typ types.Type, addr value.Value) (*Load, error) {
 	return &Load{typ: typ, addr: addr}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Load) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *Load) RetType() types.Type {
 	return inst.typ
 }
 
 // String returns the string representation of the instruction.
 func (inst *Load) String() string {
-	return fmt.Sprintf("load %s, %s %s", inst.typ, inst.addr.Type(), inst.addr)
+	return fmt.Sprintf("load %s, %s %s", inst.typ, inst.addr.Type(), value.String(inst.addr))
 }
 
 // Store represents a store instruction.
@@ -100,30 +100,26 @@ func NewStore(val, addr value.Value) (*Store, error) {
 	return &Store{val: val, addr: addr}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Store) Type() types.Type {
-	return types.NewVoid()
-}
-
 // String returns the string representation of the instruction.
 func (inst *Store) String() string {
-	return fmt.Sprintf("store %s %s, %s %s", inst.val.Type(), inst.val, inst.addr.Type(), inst.addr)
+	return fmt.Sprintf("store %s %s, %s %s", inst.val.Type(), value.String(inst.val), inst.addr.Type(), value.String(inst.addr))
 }
 
 type Fence struct{}
 
-func (*Fence) Type() types.Type { panic("Fence.Type: not yet implemented") }
-func (*Fence) String() string   { panic("Fence.String: not yet implemented") }
+func (*Fence) String() string { panic("Fence.String: not yet implemented") }
 
 type CmpXchg struct{}
 
-func (*CmpXchg) Type() types.Type { panic("CmpXchg.Type: not yet implemented") }
-func (*CmpXchg) String() string   { panic("CmpXchg.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*CmpXchg) RetType() types.Type { panic("CmpXchg.RetType: not yet implemented") }
+func (*CmpXchg) String() string      { panic("CmpXchg.String: not yet implemented") }
 
 type AtomicRMW struct{}
 
-func (*AtomicRMW) Type() types.Type { panic("AtomicRMW.Type: not yet implemented") }
-func (*AtomicRMW) String() string   { panic("AtomicRMW.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*AtomicRMW) RetType() types.Type { panic("AtomicRMW.RetType: not yet implemented") }
+func (*AtomicRMW) String() string      { panic("AtomicRMW.String: not yet implemented") }
 
 // GetElementPtr represents a getelementptr instruction.
 type GetElementPtr struct {
@@ -150,8 +146,8 @@ func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) 
 	return &GetElementPtr{elem: elem, addr: addr, indices: indices}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *GetElementPtr) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *GetElementPtr) RetType() types.Type {
 	// TODO: Return the correct type of the value, as calculated by traversing
 	// the element type using the element indices.
 	return inst.elem
@@ -161,18 +157,10 @@ func (inst *GetElementPtr) Type() types.Type {
 func (inst *GetElementPtr) String() string {
 	indicesBuf := new(bytes.Buffer)
 	for _, index := range inst.indices {
-		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
+		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), value.String(index))
 	}
-	return fmt.Sprintf("getelementptr %s, %s %s%s", inst.elem, inst.addr.Type(), inst.addr, indicesBuf)
+	return fmt.Sprintf("getelementptr %s, %s %s%s", inst.elem, inst.addr.Type(), value.String(inst.addr), indicesBuf)
 }
-
-// isValueInst ensures that only instructions which return values can be
-// assigned to the Value interface.
-func (*Alloca) isValueInst()        {}
-func (*Load) isValueInst()          {}
-func (*CmpXchg) isValueInst()       {}
-func (*AtomicRMW) isValueInst()     {}
-func (*GetElementPtr) isValueInst() {}
 
 // isInst ensures that only non-branching instructions can be assigned to the
 // Instruction interface.

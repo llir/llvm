@@ -68,7 +68,7 @@ func (v *Vector) String() string {
 		if i > 0 {
 			buf.WriteString(", ")
 		}
-		fmt.Fprintf(buf, "%s %s", elem.Type(), elem.String())
+		fmt.Fprintf(buf, "%s %s", elem.Type(), elem)
 	}
 	return fmt.Sprintf("<%s>", buf)
 }

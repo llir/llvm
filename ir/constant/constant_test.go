@@ -625,7 +625,7 @@ func TestStructString(t *testing.T) {
 	}
 }
 
-func TestIntTruncString(t *testing.T) {
+func TestTruncString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -635,7 +635,7 @@ func TestIntTruncString(t *testing.T) {
 		// i=0
 		{
 			orig: i32Fifteen, to: i3Typ,
-			want: "i3 trunc(i32 15 to i3)",
+			want: "i3 trunc (i32 15 to i3)",
 		},
 		// i=1
 		{
@@ -655,7 +655,7 @@ func TestIntTruncString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewIntTrunc(g.orig, g.to)
+		v, err := constant.NewTrunc(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -670,7 +670,7 @@ func TestIntTruncString(t *testing.T) {
 	}
 }
 
-func TestIntZeroExtString(t *testing.T) {
+func TestZExtString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -680,7 +680,7 @@ func TestIntZeroExtString(t *testing.T) {
 		// i=0
 		{
 			orig: i1One, to: i5Typ,
-			want: "i5 zext(i1 true to i5)",
+			want: "i5 zext (i1 true to i5)",
 		},
 		// i=1
 		{
@@ -700,7 +700,7 @@ func TestIntZeroExtString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewIntZeroExt(g.orig, g.to)
+		v, err := constant.NewZExt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -715,7 +715,7 @@ func TestIntZeroExtString(t *testing.T) {
 	}
 }
 
-func TestIntSignExtString(t *testing.T) {
+func TestSExtString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -725,7 +725,7 @@ func TestIntSignExtString(t *testing.T) {
 		// i=0
 		{
 			orig: i1One, to: i5Typ,
-			want: "i5 sext(i1 true to i5)",
+			want: "i5 sext (i1 true to i5)",
 		},
 		// i=1
 		{
@@ -745,7 +745,7 @@ func TestIntSignExtString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewIntSignExt(g.orig, g.to)
+		v, err := constant.NewSExt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -760,7 +760,7 @@ func TestIntSignExtString(t *testing.T) {
 	}
 }
 
-func TestFloatTruncString(t *testing.T) {
+func TestFPTruncString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -770,7 +770,7 @@ func TestFloatTruncString(t *testing.T) {
 		// i=0
 		{
 			orig: f64Four, to: f32Typ,
-			want: "float fptrunc(double 4.0 to float)",
+			want: "float fptrunc (double 4.0 to float)",
 		},
 		// i=1
 		{
@@ -803,7 +803,7 @@ func TestFloatTruncString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewFloatTrunc(g.orig, g.to)
+		v, err := constant.NewFPTrunc(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -818,7 +818,7 @@ func TestFloatTruncString(t *testing.T) {
 	}
 }
 
-func TestFloatExtString(t *testing.T) {
+func TestFPExtString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -828,7 +828,7 @@ func TestFloatExtString(t *testing.T) {
 		// i=0
 		{
 			orig: f32Four, to: f64Typ,
-			want: "double fpext(float 4.0 to double)",
+			want: "double fpext (float 4.0 to double)",
 		},
 		// i=1
 		{
@@ -861,7 +861,7 @@ func TestFloatExtString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewFloatExt(g.orig, g.to)
+		v, err := constant.NewFPExt(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -876,7 +876,7 @@ func TestFloatExtString(t *testing.T) {
 	}
 }
 
-func TestFloatToUintString(t *testing.T) {
+func TestFPToUIString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -886,12 +886,12 @@ func TestFloatToUintString(t *testing.T) {
 		// i=0
 		{
 			orig: f32Four, to: i32Typ,
-			want: "i32 fptoui(float 4.0 to i32)",
+			want: "i32 fptoui (float 4.0 to i32)",
 		},
 		// i=1
 		{
 			orig: f32x2VecThreeFour, to: i32x2VecTyp,
-			want: "<2 x i32> fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)",
+			want: "<2 x i32> fptoui (<2 x float> <float 3.0, float 4.0> to <2 x i32>)",
 		},
 		// i=2
 		{
@@ -921,7 +921,7 @@ func TestFloatToUintString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewFloatToUint(g.orig, g.to)
+		v, err := constant.NewFPToUI(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -936,7 +936,7 @@ func TestFloatToUintString(t *testing.T) {
 	}
 }
 
-func TestFloatToIntString(t *testing.T) {
+func TestFPToSIString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -946,12 +946,12 @@ func TestFloatToIntString(t *testing.T) {
 		// i=0
 		{
 			orig: f32MinusFour, to: i32Typ,
-			want: "i32 fptosi(float -4.0 to i32)",
+			want: "i32 fptosi (float -4.0 to i32)",
 		},
 		// i=1
 		{
 			orig: f32x2VecMinusThreeFour, to: i32x2VecTyp,
-			want: "<2 x i32> fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)",
+			want: "<2 x i32> fptosi (<2 x float> <float -3.0, float 4.0> to <2 x i32>)",
 		},
 		// i=2
 		{
@@ -981,7 +981,7 @@ func TestFloatToIntString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewFloatToInt(g.orig, g.to)
+		v, err := constant.NewFPToSI(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -996,7 +996,7 @@ func TestFloatToIntString(t *testing.T) {
 	}
 }
 
-func TestUintToFloatString(t *testing.T) {
+func TestUIToFPString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -1006,12 +1006,12 @@ func TestUintToFloatString(t *testing.T) {
 		// i=0
 		{
 			orig: i32Four, to: f32Typ,
-			want: "float uitofp(i32 4 to float)",
+			want: "float uitofp (i32 4 to float)",
 		},
 		// i=1
 		{
 			orig: i32x2VecThreeFortyTwo, to: f32x2VecTyp,
-			want: "<2 x float> uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)",
+			want: "<2 x float> uitofp (<2 x i32> <i32 3, i32 42> to <2 x float>)",
 		},
 		// i=2
 		{
@@ -1041,7 +1041,7 @@ func TestUintToFloatString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewUintToFloat(g.orig, g.to)
+		v, err := constant.NewUIToFP(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -1056,7 +1056,7 @@ func TestUintToFloatString(t *testing.T) {
 	}
 }
 
-func TestIntToFloatString(t *testing.T) {
+func TestSIToFPString(t *testing.T) {
 	golden := []struct {
 		orig constant.Constant
 		to   types.Type
@@ -1066,12 +1066,12 @@ func TestIntToFloatString(t *testing.T) {
 		// i=0
 		{
 			orig: i32MinusFour, to: f32Typ,
-			want: "float sitofp(i32 -4 to float)",
+			want: "float sitofp (i32 -4 to float)",
 		},
 		// i=1
 		{
 			orig: i32x2VecMinusThreeFifteen, to: f32x2VecTyp,
-			want: "<2 x float> sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)",
+			want: "<2 x float> sitofp (<2 x i32> <i32 -3, i32 15> to <2 x float>)",
 		},
 		// i=2
 		{
@@ -1101,7 +1101,7 @@ func TestIntToFloatString(t *testing.T) {
 	}
 
 	for i, g := range golden {
-		v, err := constant.NewIntToFloat(g.orig, g.to)
+		v, err := constant.NewSIToFP(g.orig, g.to)
 		if !sameError(err, g.err) {
 			t.Errorf("i=%d: error mismatch; expected %v, got %v", i, g.err, err)
 			continue
@@ -1134,3 +1134,15 @@ func sameError(err error, s string) bool {
 	}
 	return strings.HasPrefix(t, s)
 }
+
+// Ensure that each constant implements the Constant interface.
+var (
+	_ constant.Constant = &constant.Int{}
+	_ constant.Constant = &constant.Float{}
+	_ constant.Constant = &constant.Pointer{}
+	_ constant.Constant = &constant.NullPointer{}
+	_ constant.Constant = &constant.Vector{}
+	_ constant.Constant = &constant.Array{}
+	_ constant.Constant = &constant.Struct{}
+	_ constant.Constant = constant.Expr(nil)
+)

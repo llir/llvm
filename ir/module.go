@@ -37,8 +37,6 @@ type Module struct {
 	Globals []*GlobalDecl
 	// Function definitions and external function declarations.
 	Funcs []*Function
-	// Metadata nodes.
-	MetaNodes []*Metadata
 }
 
 // String returns a string representation of the module and its top-level
@@ -61,7 +59,7 @@ func (m *Module) String() string {
 	// Type definitions; e.g.
 	//    %foo = type {i32}
 	for _, typ := range m.Types {
-		fmt.Fprintf(buf, "%s = type %v\n", asm.EncLocal(typ.Name()), typ.Struct())
+		fmt.Fprintf(buf, "%v = type %v\n", asm.EncLocal(typ.Name()), typ.Struct())
 	}
 
 	// Global variables; e.g.

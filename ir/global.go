@@ -64,19 +64,19 @@ func (d *GlobalDecl) Immutable() bool {
 
 // String returns the string representation of the global variable declaration.
 func (d *GlobalDecl) String() string {
-	decl := "global"
+	immutableSpec := "global"
 	if d.Immutable() {
-		decl = "constant"
+		immutableSpec = "constant"
 	}
 
 	// External global variable declaration; e.g.
 	//    @y = external global i32
 	if d.val == nil {
-		return fmt.Sprintf("%s = external %s %s", asm.EncGlobal(d.Name()), decl, d.Type())
+		return fmt.Sprintf("%s = external %s %s", asm.EncGlobal(d.Name()), immutableSpec, d.Type())
 	}
 
 	// Global variable definition; e.g.
 	//     @x = global i32 42
 	//     @s = constant [13 x i8] c"hello world\0A\00"
-	return fmt.Sprintf("%s = %s %s %s", asm.EncGlobal(d.Name()), decl, d.Type(), d.Value())
+	return fmt.Sprintf("%s = %s %s %s", asm.EncGlobal(d.Name()), immutableSpec, d.Type(), value.String(d.Value()))
 }

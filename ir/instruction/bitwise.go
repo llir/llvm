@@ -34,14 +34,14 @@ func NewShL(x, y value.Value) (*ShL, error) {
 	return &ShL{x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *ShL) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *ShL) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *ShL) String() string {
-	return fmt.Sprintf("shl %v %v, %v", inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("shl %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -63,14 +63,14 @@ func NewLShR(x, y value.Value) (*LShR, error) {
 	return &LShR{x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *LShR) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *LShR) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *LShR) String() string {
-	return fmt.Sprintf("lshr %v %v, %v", inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("lshr %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -92,14 +92,14 @@ func NewAShR(x, y value.Value) (*AShR, error) {
 	return &AShR{x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *AShR) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *AShR) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *AShR) String() string {
-	return fmt.Sprintf("ashr %v %v, %v", inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("ashr %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -121,14 +121,14 @@ func NewAnd(x, y value.Value) (*And, error) {
 	return &And{x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *And) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *And) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *And) String() string {
-	return fmt.Sprintf("and %v %v, %v", inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("and %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -150,14 +150,14 @@ func NewOr(x, y value.Value) (*Or, error) {
 	return &Or{x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Or) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *Or) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *Or) String() string {
-	return fmt.Sprintf("or %v %v, %v", inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("or %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -179,21 +179,12 @@ func NewXor(x, y value.Value) (*Xor, error) {
 	return &Xor{x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Xor) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *Xor) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *Xor) String() string {
-	return fmt.Sprintf("xor %v %v, %v", inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("xor %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
-
-// isValueInst ensures that only instructions which return values can be
-// assigned to the Value interface.
-func (*ShL) isValueInst()  {}
-func (*LShR) isValueInst() {}
-func (*AShR) isValueInst() {}
-func (*And) isValueInst()  {}
-func (*Or) isValueInst()   {}
-func (*Xor) isValueInst()  {}

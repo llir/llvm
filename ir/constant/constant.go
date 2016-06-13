@@ -33,15 +33,3 @@ type Constant interface {
 	// interface.
 	isConst()
 }
-
-// Make sure that each constant implements the Constant interface.
-var (
-	_ Constant = &Int{}
-	_ Constant = &Float{}
-	_ Constant = &Pointer{}
-	_ Constant = &NullPointer{}
-	_ Constant = &Vector{}
-	_ Constant = &Array{}
-	_ Constant = &Struct{}
-	_ Constant = Expr(nil)
-)

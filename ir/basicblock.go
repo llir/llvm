@@ -118,6 +118,9 @@ func (block *BasicBlock) assignIDs() error {
 	// setName assigns unique local IDs to unnamed basic blocks and local
 	// variable definitions.
 	setName := func(n Named) error {
+		// TODO: Ensure that global variables cannot be mixed up with local
+		// variables. This should be easy, as global variables may not be unnamed.
+		// Check that global variables are always given a name during creation.
 		if name := n.Name(); len(name) == 0 {
 			n.SetName(f.nextID())
 		} else if isLocalID(name) {
@@ -139,7 +142,7 @@ func (block *BasicBlock) assignIDs() error {
 	// Assign unique local IDs to unnamed local variable definitions.
 	for _, inst := range block.Insts() {
 		if def, ok := inst.(*instruction.LocalVarDef); ok {
-			if !types.IsVoid(def.Value().Type()) {
+			if !types.IsVoid(def.Inst().RetType()) {
 				if err := setName(def); err != nil {
 					return errutil.Err(err)
 				}

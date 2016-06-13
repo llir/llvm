@@ -52,10 +52,10 @@ func (f *Function) Blocks() []*BasicBlock {
 	return f.blocks
 }
 
-// SetBody sets the function body to the given basic blocks and the parent
+// SetBlocks sets the function body to the given basic blocks and the parent
 // function of each basic block to the given function, and assigns unique local
 // IDs to unnamed basic blocks and local variable definitions.
-func (f *Function) SetBody(blocks []*BasicBlock) error {
+func (f *Function) SetBlocks(blocks []*BasicBlock) error {
 	// Set the function body of each basic block to the given function.
 	for _, block := range blocks {
 		block.SetParent(f)
@@ -71,11 +71,6 @@ func (f *Function) SetBody(blocks []*BasicBlock) error {
 	}
 
 	return nil
-}
-
-// AppendBlock appends the given block to the basic blocks of the function body.
-func (f *Function) AppendBlock(block *BasicBlock) {
-	f.blocks = append(f.blocks, block)
 }
 
 // String returns the string representation of the function declaration.

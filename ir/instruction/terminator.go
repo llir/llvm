@@ -1,8 +1,3 @@
-// TODO: Consider removing the Type method from terminator instructions, as it
-// should have become unnecessary when ValueInst was introduced. Also consider
-// removing the Type method from `store` and `fence`, the two non-terminator
-// instructions which are not value instructions.
-
 package instruction
 
 import (
@@ -12,31 +7,6 @@ import (
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
-)
-
-// A Terminator is a control flow instruction (e.g. br, ret, …) which terminates
-// a basic block.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#terminator-instructions
-type Terminator interface {
-	value.Value
-	// isTerm ensures that only terminator instructions can be assigned to the
-	// Terminator interface.
-	isTerm()
-}
-
-// Make sure that each terminator instruction implements the Terminator
-// interface.
-var (
-	_ Terminator = &Ret{}
-	_ Terminator = &Jmp{}
-	_ Terminator = &Br{}
-	_ Terminator = &Switch{}
-	_ Terminator = &IndirectBr{}
-	_ Terminator = &Invoke{}
-	_ Terminator = &Resume{}
-	_ Terminator = &Unreachable{}
 )
 
 // A Ret instruction returns control flow (and optionally a value) from a callee
@@ -82,17 +52,12 @@ func NewRet(typ types.Type, val value.Value) (*Ret, error) {
 	return &Ret{typ: typ, val: val}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Ret) Type() types.Type {
-	return inst.typ
-}
-
 // String returns the string representation of the instruction.
-func (inst *Ret) String() string {
-	if inst.val == nil {
-		return fmt.Sprintf("ret %v", inst.typ)
+func (term *Ret) String() string {
+	if term.val == nil {
+		return fmt.Sprintf("ret %v", term.typ)
 	}
-	return fmt.Sprintf("ret %v %v", inst.val.Type(), inst.val)
+	return fmt.Sprintf("ret %v %v", term.val.Type(), value.String(term.val))
 }
 
 // TODO: Add support for the remaining terminator instructions:
@@ -114,18 +79,13 @@ func NewJmp(target string) (*Jmp, error) {
 }
 
 // Target returns the basic block label name of the target branch.
-func (inst *Jmp) Target() string {
-	return inst.target
-}
-
-// Type returns the type of the value produced by the instruction.
-func (*Jmp) Type() types.Type {
-	return types.NewVoid()
+func (term *Jmp) Target() string {
+	return term.target
 }
 
 // String returns the string representation of the instruction.
-func (inst *Jmp) String() string {
-	return fmt.Sprintf("br label %s", asm.EncLocal(inst.target))
+func (term *Jmp) String() string {
+	return fmt.Sprintf("br label %s", asm.EncLocal(term.target))
 }
 
 // Br represents a conditional branch instruction.
@@ -148,49 +108,40 @@ func NewBr(cond value.Value, trueBranch, falseBranch string) (*Br, error) {
 }
 
 // Cond returns the branching condition of the instruction
-func (inst *Br) Cond() value.Value {
-	return inst.cond
+func (term *Br) Cond() value.Value {
+	return term.cond
 }
 
 // TrueBranch returns the basic block label name of the true target branch.
-func (inst *Br) TrueBranch() string {
-	return inst.trueBranch
+func (term *Br) TrueBranch() string {
+	return term.trueBranch
 }
 
 // FalseBranch returns the basic block label name of the false target branch.
-func (inst *Br) FalseBranch() string {
-	return inst.falseBranch
-}
-
-// Type returns the type of the value produced by the instruction.
-func (*Br) Type() types.Type {
-	return types.NewVoid()
+func (term *Br) FalseBranch() string {
+	return term.falseBranch
 }
 
 // String returns the string representation of the instruction.
-func (inst *Br) String() string {
-	return fmt.Sprintf("br %s %s, label %s, label %s", inst.cond.Type(), inst.cond, asm.EncLocal(inst.trueBranch), asm.EncLocal(inst.falseBranch))
+func (term *Br) String() string {
+	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), value.String(term.cond), asm.EncLocal(term.trueBranch), asm.EncLocal(term.falseBranch))
 }
 
 type Switch struct{}
 
-func (*Switch) Type() types.Type { panic("Switch.Type: not yet implemented") }
-func (*Switch) String() string   { panic("Switch.String: not yet implemented") }
+func (*Switch) String() string { panic("Switch.String: not yet implemented") }
 
 type IndirectBr struct{}
 
-func (*IndirectBr) Type() types.Type { panic("IndirectBr.Type: not yet implemented") }
-func (*IndirectBr) String() string   { panic("IndirectBr.String: not yet implemented") }
+func (*IndirectBr) String() string { panic("IndirectBr.String: not yet implemented") }
 
 type Invoke struct{}
 
-func (*Invoke) Type() types.Type { panic("Invoke.Type: not yet implemented") }
-func (*Invoke) String() string   { panic("Invoke.String: not yet implemented") }
+func (*Invoke) String() string { panic("Invoke.String: not yet implemented") }
 
 type Resume struct{}
 
-func (*Resume) Type() types.Type { panic("Resume.Type: not yet implemented") }
-func (*Resume) String() string   { panic("Resume.String: not yet implemented") }
+func (*Resume) String() string { panic("Resume.String: not yet implemented") }
 
 // Unreachable represents an unreachable instruction.
 //
@@ -203,13 +154,8 @@ func NewUnreachable() (*Unreachable, error) {
 	return &Unreachable{}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (*Unreachable) Type() types.Type {
-	return types.NewVoid()
-}
-
 // String returns the string representation of the instruction.
-func (inst *Unreachable) String() string {
+func (term *Unreachable) String() string {
 	return "unreachable"
 }
 

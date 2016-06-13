@@ -11,15 +11,12 @@ import "github.com/llir/llvm/ir/types"
 
 type ExtractValue struct{}
 
-func (*ExtractValue) Type() types.Type { panic("ExtractValue.Type: not yet implemented") }
-func (*ExtractValue) String() string   { panic("ExtractValue.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*ExtractValue) RetType() types.Type { panic("ExtractValue.RetType: not yet implemented") }
+func (*ExtractValue) String() string      { panic("ExtractValue.String: not yet implemented") }
 
 type InsertValue struct{}
 
-func (*InsertValue) Type() types.Type { panic("InsertValue.Type: not yet implemented") }
-func (*InsertValue) String() string   { panic("InsertValue.String: not yet implemented") }
-
-// isValueInst ensures that only instructions which return values can be
-// assigned to the Value interface.
-func (*ExtractValue) isValueInst() {}
-func (*InsertValue) isValueInst()  {}
+// RetType returns the type of the value produced by the instruction.
+func (*InsertValue) RetType() types.Type { panic("InsertValue.RetType: not yet implemented") }
+func (*InsertValue) String() string      { panic("InsertValue.String: not yet implemented") }

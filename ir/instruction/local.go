@@ -15,16 +15,16 @@ type LocalVarDef struct {
 	// Name of the local variable.
 	name string
 	// Initial value.
-	val ValueInst
+	inst ValueInst
 }
 
 // NewLocalVarDef returns a new local variable definition based on the given
 // name and initial value instruction.
-func NewLocalVarDef(name string, val ValueInst) (*LocalVarDef, error) {
+func NewLocalVarDef(name string, inst ValueInst) (*LocalVarDef, error) {
 	// TODO: Verify that name is not a local ID. Unnamed local variable
 	// definitions should be assigned a local ID implicitly by the internal
 	// localID counter of the given function rather than explicitly assigned.
-	return &LocalVarDef{name: name, val: val}, nil
+	return &LocalVarDef{name: name, inst: inst}, nil
 }
 
 // Name returns the name of the defined local variable.
@@ -40,25 +40,26 @@ func (def *LocalVarDef) SetName(name string) {
 	def.name = name
 }
 
-// Value returns the instruction defining the initial value of the local
+// Inst returns the instruction defining the initial value of the local
 // variable definition.
-func (def *LocalVarDef) Value() ValueInst {
-	return def.val
+func (def *LocalVarDef) Inst() ValueInst {
+	return def.inst
 }
 
 // Type returns the type of the value.
 func (def *LocalVarDef) Type() types.Type {
-	return def.val.Type()
+	return def.inst.RetType()
 }
 
-// TODO: Add support for printing unnamed local identifiers; e.g. %3.
-
-// String returns the string representation of the local variable definition.
+// String returns the string representation of the local variable definition;
+// e.g.
+//
+//    %foo = add i32 13, 42
 func (def *LocalVarDef) String() string {
 	if types.IsVoid(def.Type()) || len(def.Name()) == 0 {
-		return def.Value().String()
+		return def.Inst().String()
 	}
-	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Value())
+	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Inst())
 }
 
 // isInst ensures that only non-branching instructions can be assigned to the

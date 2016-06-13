@@ -12,21 +12,18 @@ import "github.com/llir/llvm/ir/types"
 
 type ExtractElement struct{}
 
-func (*ExtractElement) Type() types.Type { panic("ExtractElement.Type: not yet implemented") }
-func (*ExtractElement) String() string   { panic("ExtractElement.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*ExtractElement) RetType() types.Type { panic("ExtractElement.RetType: not yet implemented") }
+func (*ExtractElement) String() string      { panic("ExtractElement.String: not yet implemented") }
 
 type InsertElement struct{}
 
-func (*InsertElement) Type() types.Type { panic("InsertElement.Type: not yet implemented") }
-func (*InsertElement) String() string   { panic("InsertElement.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*InsertElement) RetType() types.Type { panic("InsertElement.RetType: not yet implemented") }
+func (*InsertElement) String() string      { panic("InsertElement.String: not yet implemented") }
 
 type ShuffleVector struct{}
 
-func (*ShuffleVector) Type() types.Type { panic("ShuffleVector.Type: not yet implemented") }
-func (*ShuffleVector) String() string   { panic("ShuffleVector.String: not yet implemented") }
-
-// isValueInst ensures that only instructions which return values can be
-// assigned to the Value interface.
-func (*ExtractElement) isValueInst() {}
-func (*InsertElement) isValueInst()  {}
-func (*ShuffleVector) isValueInst()  {}
+// RetType returns the type of the value produced by the instruction.
+func (*ShuffleVector) RetType() types.Type { panic("ShuffleVector.RetType: not yet implemented") }
+func (*ShuffleVector) String() string      { panic("ShuffleVector.String: not yet implemented") }

@@ -36,14 +36,14 @@ func NewICmp(cond ICond, x, y value.Value) (*ICmp, error) {
 	return &ICmp{cond: cond, x: x, y: y}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *ICmp) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *ICmp) RetType() types.Type {
 	return types.I1
 }
 
 // String returns the string representation of the instruction.
 func (inst *ICmp) String() string {
-	return fmt.Sprintf("icmp %s %s %s, %s", inst.cond, inst.x.Type(), inst.x, inst.y)
+	return fmt.Sprintf("icmp %s %s %s, %s", inst.cond, inst.x.Type(), value.String(inst.x), value.String(inst.y))
 }
 
 // ICond represents an integer comparison condition.
@@ -84,8 +84,9 @@ func (cond ICond) String() string {
 
 type FCmp struct{}
 
-func (*FCmp) Type() types.Type { panic("FCmp.Type: not yet implemented") }
-func (*FCmp) String() string   { panic("FCmp.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*FCmp) RetType() types.Type { panic("FCmp.RetType: not yet implemented") }
+func (*FCmp) String() string      { panic("FCmp.String: not yet implemented") }
 
 // PHI represents a phi instruction, which is used to implement the φ node in
 // the SSA graph representation of the function.
@@ -102,8 +103,8 @@ func NewPHI(typ types.Type, incs []*Incoming) (*PHI, error) {
 	return &PHI{typ: typ, incs: incs}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *PHI) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *PHI) RetType() types.Type {
 	return inst.typ
 }
 
@@ -136,7 +137,7 @@ func NewIncoming(val value.Value, pred string) (*Incoming, error) {
 
 // String returns the string representation of the incoming value.
 func (inc *Incoming) String() string {
-	return fmt.Sprintf("[ %s, %s ]", inc.val, asm.EncLocal(inc.pred))
+	return fmt.Sprintf("[ %s, %s ]", value.String(inc.val), asm.EncLocal(inc.pred))
 }
 
 // Select represents a select instruction.
@@ -175,14 +176,14 @@ func (inst *Select) Y() value.Value {
 	return inst.y
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Select) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *Select) RetType() types.Type {
 	return inst.x.Type()
 }
 
 // String returns the string representation of the instruction.
 func (inst *Select) String() string {
-	return fmt.Sprintf("select %s %s, %s %s, %s %s", inst.cond.Type(), inst.cond, inst.x.Type(), inst.x, inst.y.Type(), inst.y)
+	return fmt.Sprintf("select %s %s, %s %s, %s %s", inst.cond.Type(), value.String(inst.cond), inst.x.Type(), value.String(inst.x), inst.y.Type(), value.String(inst.y))
 }
 
 // Call represents a call instruction.
@@ -201,8 +202,8 @@ func NewCall(result types.Type, fname string, args []value.Value) (*Call, error)
 	return &Call{result: result, fname: fname, args: args}, nil
 }
 
-// Type returns the type of the value produced by the instruction.
-func (inst *Call) Type() types.Type {
+// RetType returns the type of the value produced by the instruction.
+func (inst *Call) RetType() types.Type {
 	return inst.result
 }
 
@@ -213,27 +214,19 @@ func (inst *Call) String() string {
 		if i > 0 {
 			argsBuf.WriteString(", ")
 		}
-		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), arg)
+		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), value.String(arg))
 	}
 	return fmt.Sprintf("call %s %s(%s)", inst.result, asm.EncGlobal(inst.fname), argsBuf)
 }
 
 type VAArg struct{}
 
-func (*VAArg) Type() types.Type { panic("VAArg.Type: not yet implemented") }
-func (*VAArg) String() string   { panic("VAArg.String: not yet implemented") }
+// RetType returns the type of the value produced by the instruction.
+func (*VAArg) RetType() types.Type { panic("VAArg.RetType: not yet implemented") }
+func (*VAArg) String() string      { panic("VAArg.String: not yet implemented") }
 
 type LandingPad struct{}
 
-func (*LandingPad) Type() types.Type { panic("LandingPad.Type: not yet implemented") }
-func (*LandingPad) String() string   { panic("LandingPad.String: not yet implemented") }
-
-// isValueInst ensures that only instructions which return values can be
-// assigned to the Value interface.
-func (*ICmp) isValueInst()       {}
-func (*FCmp) isValueInst()       {}
-func (*PHI) isValueInst()        {}
-func (*Select) isValueInst()     {}
-func (*Call) isValueInst()       {}
-func (*VAArg) isValueInst()      {}
-func (*LandingPad) isValueInst() {}
+// RetType returns the type of the value produced by the instruction.
+func (*LandingPad) RetType() types.Type { panic("LandingPad.RetType: not yet implemented") }
+func (*LandingPad) String() string      { panic("LandingPad.String: not yet implemented") }
