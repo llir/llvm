@@ -52,6 +52,11 @@ func IsVoid(t Type) bool {
 	return ok
 }
 
+// IsBool reports whether t is a boolean type (i.e. an integer type of size 1).
+func IsBool(t Type) bool {
+	return t.Equal(I1)
+}
+
 // IsInt reports whether t is an integer type.
 func IsInt(t Type) bool {
 	_, ok := t.(*Int)
