@@ -2,11 +2,11 @@ package constant
 
 import (
 	"fmt"
+	"math/big"
 	"strconv"
 	"strings"
 
 	"github.com/llir/llvm/asm"
-	"github.com/llir/llvm/internal/math/big"
 	"github.com/llir/llvm/ir/types"
 )
 
