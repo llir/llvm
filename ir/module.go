@@ -39,6 +39,11 @@ type Module struct {
 	Funcs []*Function
 }
 
+// NewModule returns a new LLVM IR module.
+func NewModule() *Module {
+	return &Module{}
+}
+
 // String returns a string representation of the module and its top-level
 // declarations and definitions of types, global variables, functions and
 // metadata notes.

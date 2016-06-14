@@ -290,8 +290,8 @@ type ZeroInitializer struct {
 }
 
 // NewZeroInitializer returns a new zero initializer based on the given type.
-func NewZeroInitializer(typ types.Type) (*ZeroInitializer, error) {
-	return &ZeroInitializer{typ: typ}, nil
+func NewZeroInitializer(typ types.Type) *ZeroInitializer {
+	return &ZeroInitializer{typ: typ}
 }
 
 // Type returns the type of the value.

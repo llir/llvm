@@ -20,11 +20,11 @@ type LocalVarDef struct {
 
 // NewLocalVarDef returns a new local variable definition based on the given
 // name and initial value instruction.
-func NewLocalVarDef(name string, inst ValueInst) (*LocalVarDef, error) {
+func NewLocalVarDef(name string, inst ValueInst) *LocalVarDef {
 	// TODO: Verify that name is not a local ID. Unnamed local variable
 	// definitions should be assigned a local ID implicitly by the internal
 	// localID counter of the given function rather than explicitly assigned.
-	return &LocalVarDef{name: name, inst: inst}, nil
+	return &LocalVarDef{name: name, inst: inst}
 }
 
 // Name returns the name of the defined local variable.
