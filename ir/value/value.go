@@ -19,7 +19,7 @@ import (
 type Value interface {
 	fmt.Stringer
 	// ValueString returns a string representation of the value.
-	ValueString()
+	ValueString() string
 	// Type returns the type of the value.
 	Type() types.Type
 }

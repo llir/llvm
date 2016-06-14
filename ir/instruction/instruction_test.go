@@ -1,6 +1,14 @@
 package instruction_test
 
-import "github.com/llir/llvm/ir/instruction"
+import (
+	"github.com/llir/llvm/ir/instruction"
+	"github.com/llir/llvm/ir/value"
+)
+
+// Ensure that each value implements the Value interface.
+var (
+	_ value.Value = &instruction.LocalVarDef{}
+)
 
 // Ensure that each instruction implements the Instruction interface.
 var (

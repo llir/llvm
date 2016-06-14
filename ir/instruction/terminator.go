@@ -57,7 +57,7 @@ func (term *Ret) String() string {
 	if term.val == nil {
 		return fmt.Sprintf("ret %v", term.typ)
 	}
-	return fmt.Sprintf("ret %v %v", term.val.Type(), value.String(term.val))
+	return fmt.Sprintf("ret %v %v", term.val.Type(), term.val.ValueString())
 }
 
 // TODO: Add support for the remaining terminator instructions:
@@ -137,7 +137,7 @@ func (term *Br) FalseBranch() value.NamedValue {
 
 // String returns the string representation of the instruction.
 func (term *Br) String() string {
-	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), value.String(term.cond), asm.EncLocal(term.trueBranch.Name()), asm.EncLocal(term.falseBranch.Name()))
+	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), term.cond.ValueString(), asm.EncLocal(term.trueBranch.Name()), asm.EncLocal(term.falseBranch.Name()))
 }
 
 type Switch struct{}

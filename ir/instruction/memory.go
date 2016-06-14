@@ -90,7 +90,7 @@ func (inst *Load) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Load) String() string {
-	return fmt.Sprintf("load %s, %s %s", inst.typ, inst.addr.Type(), value.String(inst.addr))
+	return fmt.Sprintf("load %s, %s %s", inst.typ, inst.addr.Type(), inst.addr.ValueString())
 }
 
 // Store represents a store instruction.
@@ -118,7 +118,7 @@ func NewStore(val, addr value.Value) (*Store, error) {
 
 // String returns the string representation of the instruction.
 func (inst *Store) String() string {
-	return fmt.Sprintf("store %s %s, %s %s", inst.val.Type(), value.String(inst.val), inst.addr.Type(), value.String(inst.addr))
+	return fmt.Sprintf("store %s %s, %s %s", inst.val.Type(), inst.val.ValueString(), inst.addr.Type(), inst.addr.ValueString())
 }
 
 type Fence struct{}
@@ -173,9 +173,9 @@ func (inst *GetElementPtr) RetType() types.Type {
 func (inst *GetElementPtr) String() string {
 	indicesBuf := new(bytes.Buffer)
 	for _, index := range inst.indices {
-		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), value.String(index))
+		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index.ValueString())
 	}
-	return fmt.Sprintf("getelementptr %s, %s %s%s", inst.elem, inst.addr.Type(), value.String(inst.addr), indicesBuf)
+	return fmt.Sprintf("getelementptr %s, %s %s%s", inst.elem, inst.addr.Type(), inst.addr.ValueString(), indicesBuf)
 }
 
 // isInst ensures that only non-branching instructions can be assigned to the

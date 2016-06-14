@@ -108,6 +108,11 @@ func (v *Int) String() string {
 	return v.x.String()
 }
 
+// ValueString returns a string representation of the value.
+func (v *Int) ValueString() string {
+	return v.String()
+}
+
 // Float represents a floating point constant.
 //
 // Examples:
@@ -214,6 +219,11 @@ func (v *Float) String() string {
 	return strings.Replace(s, "e+", "e", -1)
 }
 
+// ValueString returns a string representation of the value.
+func (v *Float) ValueString() string {
+	return v.String()
+}
+
 // TODO: Consider merging Pointer with NullPointer.
 
 // Pointer represents a pointer constant.
@@ -248,6 +258,11 @@ func (v *Pointer) String() string {
 	return asm.EncGlobal(v.name)
 }
 
+// ValueString returns a string representation of the value.
+func (v *Pointer) ValueString() string {
+	return v.String()
+}
+
 // NullPointer represents a null pointer constant.
 //
 // Examples:
@@ -277,6 +292,11 @@ func (v *NullPointer) String() string {
 	return "null"
 }
 
+// ValueString returns a string representation of the value.
+func (v *NullPointer) ValueString() string {
+	return v.String()
+}
+
 // ZeroInitializer represents a zero initializer.
 //
 // Examples:
@@ -304,6 +324,11 @@ func (v *ZeroInitializer) Type() types.Type {
 //    zeroinitializer
 func (v *ZeroInitializer) String() string {
 	return "zeroinitializer"
+}
+
+// ValueString returns a string representation of the value.
+func (v *ZeroInitializer) ValueString() string {
+	return v.String()
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

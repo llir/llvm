@@ -43,8 +43,13 @@ func (f *Function) Name() string {
 	return f.name
 }
 
-// Type returns the function signature.
-func (f *Function) Type() *types.Func {
+// Sig returns the function signature.
+func (f *Function) Sig() *types.Func {
+	return f.sig
+}
+
+// Type returns the type of the value.
+func (f *Function) Type() types.Type {
 	return f.sig
 }
 
@@ -100,19 +105,19 @@ func (f *Function) String() string {
 	//    "void @foo()"
 	//    "i32 @printf(i8*, ...)"
 	paramsBuf := new(bytes.Buffer)
-	for i, param := range f.sig.Params() {
+	for i, param := range f.Sig().Params() {
 		if i > 0 {
 			paramsBuf.WriteString(", ")
 		}
 		paramsBuf.WriteString(param.String())
 	}
-	if f.sig.IsVariadic() {
-		if len(f.sig.Params()) > 0 {
+	if f.Sig().IsVariadic() {
+		if len(f.Sig().Params()) > 0 {
 			paramsBuf.WriteString(", ")
 		}
 		paramsBuf.WriteString("...")
 	}
-	sig := fmt.Sprintf("%s %s(%s)", f.sig.Result(), asm.EncGlobal(f.Name()), paramsBuf)
+	sig := fmt.Sprintf("%s %s(%s)", f.Sig().Result(), f.ValueString(), paramsBuf)
 
 	// Function declaration; e.g.
 	//    declare i32 @printf(i8*, ...)
@@ -122,8 +127,8 @@ func (f *Function) String() string {
 
 	// Function definition; e.g.
 	//     define i32 @main() {
-	//      ret i32 42
-	//   }
+	//        ret i32 42
+	//     }
 	buf := new(bytes.Buffer)
 	fmt.Fprintf(buf, "define %s {\n", sig)
 	for _, block := range f.blocks {
@@ -131,6 +136,11 @@ func (f *Function) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
+}
+
+// ValueString returns a string representation of the value.
+func (f *Function) ValueString() string {
+	return asm.EncGlobal(f.Name())
 }
 
 // nextID returns the next unique local ID of the given function, and increments

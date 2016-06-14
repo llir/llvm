@@ -73,6 +73,11 @@ func (v *Vector) String() string {
 	return fmt.Sprintf("<%s>", buf)
 }
 
+// ValueString returns a string representation of the value.
+func (v *Vector) ValueString() string {
+	return v.String()
+}
+
 // Array represents an array constant which is an array containing only
 // constants.
 //
@@ -204,6 +209,11 @@ func (v *Array) String() string {
 	return fmt.Sprintf("[%s]", buf)
 }
 
+// ValueString returns a string representation of the value.
+func (v *Array) ValueString() string {
+	return v.String()
+}
+
 // escape replaces any characters which are not printable with corresponding
 // hexadecimal escape sequence (\XX).
 func escape(s string) string {
@@ -310,6 +320,11 @@ func (v *Struct) String() string {
 	}
 
 	return fmt.Sprintf("{%s}", buf)
+}
+
+// ValueString returns a string representation of the value.
+func (v *Struct) ValueString() string {
+	return v.String()
 }
 
 // isConst ensures that only constant values can be assigned to the Constant

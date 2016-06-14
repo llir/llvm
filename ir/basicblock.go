@@ -42,6 +42,11 @@ func NewBasicBlock(name string) *BasicBlock {
 	return &BasicBlock{name: name}
 }
 
+// Type returns the type of the value.
+func (block *BasicBlock) Type() types.Type {
+	return types.NewLabel()
+}
+
 // Name returns the name of the basic block.
 func (block *BasicBlock) Name() string {
 	return block.name
@@ -101,6 +106,11 @@ func (block *BasicBlock) String() string {
 	}
 	fmt.Fprintf(buf, "\t%s", block.Term())
 	return buf.String()
+}
+
+// ValueString returns a string representation of the value.
+func (block *BasicBlock) ValueString() string {
+	return asm.EncLocal(block.Name())
 }
 
 // assignIDs assigns unique IDs to unnamed basic blocks and local variable

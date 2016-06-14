@@ -41,7 +41,7 @@ func (inst *ShL) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *ShL) String() string {
-	return fmt.Sprintf("shl %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("shl %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -70,7 +70,7 @@ func (inst *LShR) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *LShR) String() string {
-	return fmt.Sprintf("lshr %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("lshr %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -99,7 +99,7 @@ func (inst *AShR) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *AShR) String() string {
-	return fmt.Sprintf("ashr %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("ashr %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -128,7 +128,7 @@ func (inst *And) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *And) String() string {
-	return fmt.Sprintf("and %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("and %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -157,7 +157,7 @@ func (inst *Or) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Or) String() string {
-	return fmt.Sprintf("or %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("or %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -186,5 +186,5 @@ func (inst *Xor) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Xor) String() string {
-	return fmt.Sprintf("xor %v %v, %v", inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("xor %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }

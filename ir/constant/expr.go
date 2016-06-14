@@ -95,6 +95,11 @@ func (exp *Trunc) String() string {
 	return fmt.Sprintf("trunc (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
+// ValueString returns a string representation of the value.
+func (v *Trunc) ValueString() string {
+	return v.String()
+}
+
 // ZExt is a constant expression which zero extends an integer constant to a
 // larger or equally sized integer type.
 //
@@ -153,6 +158,11 @@ func (exp *ZExt) String() string {
 	return fmt.Sprintf("zext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
+// ValueString returns a string representation of the value.
+func (v *ZExt) ValueString() string {
+	return v.String()
+}
+
 // SExt is a constant expression which sign extends an integer constant to a
 // larger or equally sized integer type.
 //
@@ -209,6 +219,11 @@ func (exp *SExt) Calc() Constant {
 //    sext(i1 true to i5)
 func (exp *SExt) String() string {
 	return fmt.Sprintf("sext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+}
+
+// ValueString returns a string representation of the value.
+func (v *SExt) ValueString() string {
+	return v.String()
 }
 
 // FPTrunc is a constant expression which truncates a floating point constant to
@@ -272,6 +287,11 @@ func (exp *FPTrunc) String() string {
 	return fmt.Sprintf("fptrunc (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
+// ValueString returns a string representation of the value.
+func (v *FPTrunc) ValueString() string {
+	return v.String()
+}
+
 // FPExt is a constant expression which extends a floating point constant to a
 // larger floating point type or one of the same kind.
 //
@@ -331,6 +351,11 @@ func (exp *FPExt) Calc() Constant {
 //    fpext(float 4.0 to double)
 func (exp *FPExt) String() string {
 	return fmt.Sprintf("fpext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+}
+
+// ValueString returns a string representation of the value.
+func (v *FPExt) ValueString() string {
+	return v.String()
 }
 
 // FPToUI is a constant expression which converts a floating point constant (or
@@ -393,6 +418,11 @@ func (exp *FPToUI) String() string {
 	return fmt.Sprintf("fptoui (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
+// ValueString returns a string representation of the value.
+func (v *FPToUI) ValueString() string {
+	return v.String()
+}
+
 // FPToSI is a constant expression which converts a floating point constant (or
 // constant vector) to the corresponding signed integer constant (or constant
 // vector).
@@ -451,6 +481,11 @@ func (exp *FPToSI) Calc() Constant {
 //    fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
 func (exp *FPToSI) String() string {
 	return fmt.Sprintf("fptosi (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+}
+
+// ValueString returns a string representation of the value.
+func (v *FPToSI) ValueString() string {
+	return v.String()
 }
 
 // UIToFP is a constant expression which converts an unsigned integer constant
@@ -513,6 +548,11 @@ func (exp *UIToFP) String() string {
 	return fmt.Sprintf("uitofp (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
+// ValueString returns a string representation of the value.
+func (v *UIToFP) ValueString() string {
+	return v.String()
+}
+
 // SIToFP is a constant expression which converts a signed integer constant (or
 // constant vector) to the corresponding floating point constant (or constant
 // vector).
@@ -573,6 +613,11 @@ func (exp *SIToFP) String() string {
 	return fmt.Sprintf("sitofp (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
 }
 
+// ValueString returns a string representation of the value.
+func (v *SIToFP) ValueString() string {
+	return v.String()
+}
+
 // TODO: Add support for the following constant expressions:
 //    - ptrtoint
 //    - inttoptr
@@ -624,6 +669,11 @@ func (exp *GetElementPtr) String() string {
 		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
 	}
 	return fmt.Sprintf("getelementptr (%s, %s %s%s)", exp.elem, exp.addr.Type(), exp.addr, indicesBuf)
+}
+
+// ValueString returns a string representation of the value.
+func (v *GetElementPtr) ValueString() string {
+	return v.String()
 }
 
 // TODO: Add support for the following constant expressions:

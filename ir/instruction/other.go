@@ -43,7 +43,7 @@ func (inst *ICmp) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *ICmp) String() string {
-	return fmt.Sprintf("icmp %s %s %s, %s", inst.cond, inst.x.Type(), value.String(inst.x), value.String(inst.y))
+	return fmt.Sprintf("icmp %s %s %s, %s", inst.cond, inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
 }
 
 // ICond represents an integer comparison condition.
@@ -153,7 +153,7 @@ func (inc *Incoming) Pred() value.NamedValue {
 
 // String returns the string representation of the incoming value.
 func (inc *Incoming) String() string {
-	return fmt.Sprintf("[ %s, %s ]", value.String(inc.val), asm.EncLocal(inc.pred.Name()))
+	return fmt.Sprintf("[ %s, %s ]", inc.val.ValueString(), asm.EncLocal(inc.pred.Name()))
 }
 
 // Select represents a select instruction.
@@ -199,7 +199,7 @@ func (inst *Select) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Select) String() string {
-	return fmt.Sprintf("select %s %s, %s %s, %s %s", inst.cond.Type(), value.String(inst.cond), inst.x.Type(), value.String(inst.x), inst.y.Type(), value.String(inst.y))
+	return fmt.Sprintf("select %s %s, %s %s, %s %s", inst.cond.Type(), inst.cond.ValueString(), inst.x.Type(), inst.x.ValueString(), inst.y.Type(), inst.y.ValueString())
 }
 
 // Call represents a call instruction.
@@ -230,7 +230,7 @@ func (inst *Call) String() string {
 		if i > 0 {
 			argsBuf.WriteString(", ")
 		}
-		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), value.String(arg))
+		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), arg.ValueString())
 	}
 	return fmt.Sprintf("call %s %s(%s)", inst.result, asm.EncGlobal(inst.fname), argsBuf)
 }

@@ -39,7 +39,7 @@ func (inst *Trunc) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Trunc) String() string {
-	return fmt.Sprintf("trunc %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("trunc %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ zext ] ----------------------------------------------------------------
@@ -67,7 +67,7 @@ func (inst *ZExt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *ZExt) String() string {
-	return fmt.Sprintf("zext %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("zext %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -95,7 +95,7 @@ func (inst *SExt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *SExt) String() string {
-	return fmt.Sprintf("sext %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("sext %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ fptrunc ] -------------------------------------------------------------
@@ -123,7 +123,7 @@ func (inst *FPTrunc) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPTrunc) String() string {
-	return fmt.Sprintf("fptrunc %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("fptrunc %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -151,7 +151,7 @@ func (inst *FPExt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPExt) String() string {
-	return fmt.Sprintf("fpext %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("fpext %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ fptoui ] --------------------------------------------------------------
@@ -179,7 +179,7 @@ func (inst *FPToUI) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPToUI) String() string {
-	return fmt.Sprintf("fptoui %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("fptoui %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -207,7 +207,7 @@ func (inst *FPToSI) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPToSI) String() string {
-	return fmt.Sprintf("fptosi %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("fptosi %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ uitofp ] --------------------------------------------------------------
@@ -235,7 +235,7 @@ func (inst *UIToFP) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *UIToFP) String() string {
-	return fmt.Sprintf("uitofp %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("uitofp %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -263,7 +263,7 @@ func (inst *SIToFP) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *SIToFP) String() string {
-	return fmt.Sprintf("sitofp %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("sitofp %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ ptrtoint ] ------------------------------------------------------------
@@ -291,7 +291,7 @@ func (inst *PtrToInt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *PtrToInt) String() string {
-	return fmt.Sprintf("ptrtoint %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("ptrtoint %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -319,7 +319,7 @@ func (inst *IntToPtr) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *IntToPtr) String() string {
-	return fmt.Sprintf("inttoptr %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("inttoptr %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ bitcast ] -------------------------------------------------------------
@@ -347,7 +347,7 @@ func (inst *BitCast) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *BitCast) String() string {
-	return fmt.Sprintf("bitcast %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("bitcast %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 
 // --- [ addrspacecast ] -------------------------------------------------------
@@ -375,5 +375,5 @@ func (inst *AddrSpaceCast) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *AddrSpaceCast) String() string {
-	return fmt.Sprintf("addrspacecast %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("addrspacecast %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
