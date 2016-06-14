@@ -29,6 +29,8 @@ type ICmp struct {
 	x, y value.Value
 }
 
+// NewICmp returns a new icmp instruction based on the given condition and
+// operands.
 func NewICmp(cond ICond, x, y value.Value) (*ICmp, error) {
 	if !types.Equal(x.Type(), y.Type()) {
 		return nil, errutil.Newf("type mismatch between type of x (%v) and y (%v)", x.Type(), y.Type())
