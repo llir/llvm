@@ -69,23 +69,29 @@ func (term *Ret) String() string {
 // Jmp represents an unconditional branch instruction.
 type Jmp struct {
 	// Basic block label name of the target branch.
-	target string
+	target value.NamedValue
 }
 
 // NewJmp returns a new unconditional branch instruction based on the given
 // target branch.
-func NewJmp(target string) (*Jmp, error) {
+func NewJmp(target value.NamedValue) (*Jmp, error) {
+	// TODO: Validate that target is an *ir.BasicBlock. Better yet, chance the
+	// signature of NewJmp to enforce this. Another approach, is to simply check
+	// that the type of target is "label".
 	return &Jmp{target: target}, nil
 }
 
+// TODO: Consider returning *ir.BasicBlock from Target. The problem is that this
+// would create a circular dependency.
+
 // Target returns the basic block label name of the target branch.
-func (term *Jmp) Target() string {
+func (term *Jmp) Target() value.NamedValue {
 	return term.target
 }
 
 // String returns the string representation of the instruction.
 func (term *Jmp) String() string {
-	return fmt.Sprintf("br label %s", asm.EncLocal(term.target))
+	return fmt.Sprintf("br label %s", asm.EncLocal(term.target.Name()))
 }
 
 // Br represents a conditional branch instruction.
@@ -93,14 +99,18 @@ type Br struct {
 	// Branching condition.
 	cond value.Value
 	// Basic block label name of the true target branch.
-	trueBranch string
+	trueBranch value.NamedValue
 	// Basic block label name of the false target branch.
-	falseBranch string
+	falseBranch value.NamedValue
 }
 
 // NewBr returns a new conditional branch instruction based on the given
 // branching condition, and the true and false target branches.
-func NewBr(cond value.Value, trueBranch, falseBranch string) (*Br, error) {
+func NewBr(cond value.Value, trueBranch, falseBranch value.NamedValue) (*Br, error) {
+	// TODO: Validate that trueBranch and falseBranch are of type *ir.BasicBlock.
+	// Better yet, chance the signature of NewBr to enforce this. Another
+	// approach, is to simply check that the type of trueBranch and falseBranch
+	// are both "label".
 	if !types.Equal(cond.Type(), types.I1) {
 		return nil, errutil.Newf("conditional type mismatch; expected i1, got %v", cond.Type())
 	}
@@ -112,19 +122,22 @@ func (term *Br) Cond() value.Value {
 	return term.cond
 }
 
+// TODO: Consider returning *ir.BasicBlock from TrueBranch and FalseBranch. The
+// problem is that this would create a circular dependency.
+
 // TrueBranch returns the basic block label name of the true target branch.
-func (term *Br) TrueBranch() string {
+func (term *Br) TrueBranch() value.NamedValue {
 	return term.trueBranch
 }
 
 // FalseBranch returns the basic block label name of the false target branch.
-func (term *Br) FalseBranch() string {
+func (term *Br) FalseBranch() value.NamedValue {
 	return term.falseBranch
 }
 
 // String returns the string representation of the instruction.
 func (term *Br) String() string {
-	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), value.String(term.cond), asm.EncLocal(term.trueBranch), asm.EncLocal(term.falseBranch))
+	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), value.String(term.cond), asm.EncLocal(term.trueBranch.Name()), asm.EncLocal(term.falseBranch.Name()))
 }
 
 type Switch struct{}

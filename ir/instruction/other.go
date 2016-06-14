@@ -125,19 +125,35 @@ func (inst *PHI) String() string {
 type Incoming struct {
 	// Incoming value.
 	val value.Value
-	// Label name of the predecessor basic block of the incoming value.
-	pred string
+	// Predecessor basic block of the incoming value.
+	pred value.NamedValue
 }
 
-// NewIncoming returns a new incoming value based on the given value and label
-// name of the predecessor basic block.
-func NewIncoming(val value.Value, pred string) (*Incoming, error) {
+// NewIncoming returns a new incoming value based on the given value and
+// predecessor basic block.
+func NewIncoming(val value.Value, pred value.NamedValue) (*Incoming, error) {
+	// TODO: Validate that pred is of type *ir.BasicBlock. Better yet, chance the
+	// signature of NewIncoming to enforce this. Another approach, is to simply
+	// check that the type of pred is "label".
 	return &Incoming{val: val, pred: pred}, nil
+}
+
+// TODO: Consider returning *ir.BasicBlock from Pred. The problem is that this
+// would create a circular dependency.
+
+// Value returns the incoming value of a given predecessor basic block.
+func (inc *Incoming) Value() value.Value {
+	return inc.val
+}
+
+// Pred returns the predecessor basic block of the incoming value.
+func (inc *Incoming) Pred() value.NamedValue {
+	return inc.pred
 }
 
 // String returns the string representation of the incoming value.
 func (inc *Incoming) String() string {
-	return fmt.Sprintf("[ %s, %s ]", value.String(inc.val), asm.EncLocal(inc.pred))
+	return fmt.Sprintf("[ %s, %s ]", value.String(inc.val), asm.EncLocal(inc.pred.Name()))
 }
 
 // Select represents a select instruction.

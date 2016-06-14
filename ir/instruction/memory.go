@@ -19,17 +19,23 @@ import (
 
 // Alloca represents an alloca instruction.
 type Alloca struct {
+	// Result type.
+	typ *types.Pointer
 	// Element type.
-	typ types.Type
+	elem types.Type
 	// Number of elements.
 	nelems int
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type
 // and number of elments.
-func NewAlloca(typ types.Type, nelems int) (*Alloca, error) {
+func NewAlloca(elem types.Type, nelems int) (*Alloca, error) {
 	// TODO: Add sanity check for nelems?
-	return &Alloca{typ: typ, nelems: nelems}, nil
+	typ, err := types.NewPointer(elem)
+	if err != nil {
+		return nil, errutil.Err(err)
+	}
+	return &Alloca{typ: typ, elem: elem, nelems: nelems}, nil
 }
 
 // RetType returns the type of the value produced by the instruction.
@@ -37,12 +43,22 @@ func (inst *Alloca) RetType() types.Type {
 	return inst.typ
 }
 
+// Elem returns the element type of allocated value.
+func (inst *Alloca) Elem() types.Type {
+	return inst.elem
+}
+
+// NElems returns the number of elements allocated.
+func (inst *Alloca) NElems() int {
+	return inst.nelems
+}
+
 // String returns the string representation of the instruction.
 func (inst *Alloca) String() string {
 	if inst.nelems != 1 {
-		return fmt.Sprintf("alloca %s, i32 %d", inst.typ, inst.nelems)
+		return fmt.Sprintf("alloca %s, i32 %d", inst.Elem(), inst.NElems())
 	}
-	return fmt.Sprintf("alloca %s", inst.typ)
+	return fmt.Sprintf("alloca %s", inst.Elem())
 }
 
 // Load represents a load instruction.

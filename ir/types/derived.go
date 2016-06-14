@@ -122,6 +122,20 @@ func NewParam(typ Type, name string) *Param {
 	return &Param{typ: typ, name: name}
 }
 
+// TODO: Consider renaming ParamType and ParamName to Type and Name. The risk is
+// that parameter types may be used for value.Value as they would then implement
+// the interface (while not being a value proper, but rather a simple type).
+
+// ParamType returns the type of the parameter.
+func (t *Param) ParamType() Type {
+	return t.typ
+}
+
+// ParamName returns the name of the parameter.
+func (t *Param) ParamName() string {
+	return t.name
+}
+
 // Equal reports whether t and u are of equal type.
 func (t *Param) Equal(u Type) bool {
 	if u, ok := u.(*Param); ok {
