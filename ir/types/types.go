@@ -72,7 +72,7 @@ func IsFloat(t Type) bool {
 	return ok
 }
 
-// IsInts reports whether t is an floating point type or a vector of floating
+// IsFloats reports whether t is an floating point type or a vector of floating
 // points type.
 func IsFloats(t Type) bool {
 	if t, ok := t.(*Vector); ok {

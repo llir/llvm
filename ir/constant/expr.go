@@ -56,34 +56,34 @@ type Trunc struct {
 // orig to a smaller or equally sized integer type.
 func NewTrunc(orig Constant, to types.Type) (*Trunc, error) {
 	// Verify type of original integer constant.
-	exp := new(Trunc)
+	v := new(Trunc)
 	var ok bool
-	exp.orig, ok = orig.(*Int)
+	v.orig, ok = orig.(*Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid integer truncation; expected integer constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
-	exp.to, ok = to.(*types.Int)
+	v.to, ok = to.(*types.Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid integer truncation; expected integer target type, got %q", to)
 	}
-	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	newSize, origSize := v.to.Size(), v.orig.typ.Size()
 	if newSize > origSize {
 		return nil, fmt.Errorf("invalid integer truncation; target size (%d) larger than original size (%d)", newSize, origSize)
 	}
 
-	return exp, nil
+	return v, nil
 }
 
 // Type returns the type of the value.
-func (exp *Trunc) Type() types.Type {
-	return exp.to
+func (v *Trunc) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *Trunc) Calc() Constant {
+func (v *Trunc) Calc() Constant {
 	panic("Trunc.Calc: not yet implemented.")
 }
 
@@ -91,8 +91,8 @@ func (exp *Trunc) Calc() Constant {
 // e.g.
 //
 //    trunc(i32 15 to i3)
-func (exp *Trunc) String() string {
-	return fmt.Sprintf("trunc (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *Trunc) String() string {
+	return fmt.Sprintf("trunc (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -119,34 +119,34 @@ type ZExt struct {
 // orig to a larger or equally sized integer type.
 func NewZExt(orig Constant, to types.Type) (*ZExt, error) {
 	// Verify type of original integer constant.
-	exp := new(ZExt)
+	v := new(ZExt)
 	var ok bool
-	exp.orig, ok = orig.(*Int)
+	v.orig, ok = orig.(*Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid integer zero extension; expected integer constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
-	exp.to, ok = to.(*types.Int)
+	v.to, ok = to.(*types.Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid integer zero extension; expected integer target type, got %q", to)
 	}
-	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	newSize, origSize := v.to.Size(), v.orig.typ.Size()
 	if newSize < origSize {
 		return nil, fmt.Errorf("invalid integer zero extension; target size (%d) smaller than original size (%d)", newSize, origSize)
 	}
 
-	return exp, nil
+	return v, nil
 }
 
 // Type returns the type of the value.
-func (exp *ZExt) Type() types.Type {
-	return exp.to
+func (v *ZExt) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *ZExt) Calc() Constant {
+func (v *ZExt) Calc() Constant {
 	panic("ZExt.Calc: not yet implemented.")
 }
 
@@ -154,8 +154,8 @@ func (exp *ZExt) Calc() Constant {
 // expression; e.g.
 //
 //    zext(i1 true to i5)
-func (exp *ZExt) String() string {
-	return fmt.Sprintf("zext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *ZExt) String() string {
+	return fmt.Sprintf("zext (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -182,34 +182,34 @@ type SExt struct {
 // orig to a larger or equally sized integer type.
 func NewSExt(orig Constant, to types.Type) (*SExt, error) {
 	// Verify type of original integer constant.
-	exp := new(SExt)
+	v := new(SExt)
 	var ok bool
-	exp.orig, ok = orig.(*Int)
+	v.orig, ok = orig.(*Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid integer sign extension; expected integer constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
-	exp.to, ok = to.(*types.Int)
+	v.to, ok = to.(*types.Int)
 	if !ok {
 		return nil, fmt.Errorf("invalid integer sign extension; expected integer target type, got %q", to)
 	}
-	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
+	newSize, origSize := v.to.Size(), v.orig.typ.Size()
 	if newSize < origSize {
 		return nil, fmt.Errorf("invalid integer sign extension; target size (%d) smaller than original size (%d)", newSize, origSize)
 	}
 
-	return exp, nil
+	return v, nil
 }
 
 // Type returns the type of the value.
-func (exp *SExt) Type() types.Type {
-	return exp.to
+func (v *SExt) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *SExt) Calc() Constant {
+func (v *SExt) Calc() Constant {
 	panic("SExt.Calc: not yet implemented.")
 }
 
@@ -217,8 +217,8 @@ func (exp *SExt) Calc() Constant {
 // expression; e.g.
 //
 //    sext(i1 true to i5)
-func (exp *SExt) String() string {
-	return fmt.Sprintf("sext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *SExt) String() string {
+	return fmt.Sprintf("sext (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -245,37 +245,37 @@ type FPTrunc struct {
 // constant orig to a smaller floating point type or one of the same kind.
 func NewFPTrunc(orig Constant, to types.Type) (*FPTrunc, error) {
 	// Verify type of original floating point constant.
-	exp := new(FPTrunc)
+	v := new(FPTrunc)
 	var ok bool
-	exp.orig, ok = orig.(*Float)
+	v.orig, ok = orig.(*Float)
 	if !ok {
 		return nil, fmt.Errorf("invalid floating point truncation; expected floating point constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
-	exp.to, ok = to.(*types.Float)
+	v.to, ok = to.(*types.Float)
 	if !ok {
 		return nil, fmt.Errorf("invalid floating point truncation; expected floating point target type, got %q", to)
 	}
-	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
-	newKind, origKind := exp.to.Kind(), exp.orig.typ.Kind()
+	newSize, origSize := v.to.Size(), v.orig.typ.Size()
+	newKind, origKind := v.to.Kind(), v.orig.typ.Kind()
 	if newSize > origSize {
 		return nil, fmt.Errorf("invalid floating point truncation; target size (%d) larger than original size (%d)", newSize, origSize)
 	} else if newSize == origSize && newKind != origKind {
-		return nil, fmt.Errorf("invalid floating point truncation; cannot convert from %q to %q", exp.orig.typ, exp.to)
+		return nil, fmt.Errorf("invalid floating point truncation; cannot convert from %q to %q", v.orig.typ, v.to)
 	}
 
-	return exp, nil
+	return v, nil
 }
 
 // Type returns the type of the value.
-func (exp *FPTrunc) Type() types.Type {
-	return exp.to
+func (v *FPTrunc) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FPTrunc) Calc() Constant {
+func (v *FPTrunc) Calc() Constant {
 	panic("FPTrunc.Calc: not yet implemented.")
 }
 
@@ -283,8 +283,8 @@ func (exp *FPTrunc) Calc() Constant {
 // expression; e.g.
 //
 //    float fptrunc(double 4.0 to float)
-func (exp *FPTrunc) String() string {
-	return fmt.Sprintf("fptrunc (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *FPTrunc) String() string {
+	return fmt.Sprintf("fptrunc (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -311,37 +311,37 @@ type FPExt struct {
 // constant orig to a larger floating point type or one of the same kind.
 func NewFPExt(orig Constant, to types.Type) (*FPExt, error) {
 	// Verify type of original floating point constant.
-	exp := new(FPExt)
+	v := new(FPExt)
 	var ok bool
-	exp.orig, ok = orig.(*Float)
+	v.orig, ok = orig.(*Float)
 	if !ok {
 		return nil, fmt.Errorf("invalid floating point extension; expected floating point constant for orig, got %q", orig.Type())
 	}
 
 	// Verify target type.
-	exp.to, ok = to.(*types.Float)
+	v.to, ok = to.(*types.Float)
 	if !ok {
 		return nil, fmt.Errorf("invalid floating point extension; expected floating point target type, got %q", to)
 	}
-	newSize, origSize := exp.to.Size(), exp.orig.typ.Size()
-	newKind, origKind := exp.to.Kind(), exp.orig.typ.Kind()
+	newSize, origSize := v.to.Size(), v.orig.typ.Size()
+	newKind, origKind := v.to.Kind(), v.orig.typ.Kind()
 	if newSize < origSize {
 		return nil, fmt.Errorf("invalid floating point extension; target size (%d) smaller than original size (%d)", newSize, origSize)
 	} else if newSize == origSize && newKind != origKind {
-		return nil, fmt.Errorf("invalid floating point extension; cannot convert from %q to %q", exp.orig.typ, exp.to)
+		return nil, fmt.Errorf("invalid floating point extension; cannot convert from %q to %q", v.orig.typ, v.to)
 	}
 
-	return exp, nil
+	return v, nil
 }
 
 // Type returns the type of the value.
-func (exp *FPExt) Type() types.Type {
-	return exp.to
+func (v *FPExt) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FPExt) Calc() Constant {
+func (v *FPExt) Calc() Constant {
 	panic("FPExt.Calc: not yet implemented.")
 }
 
@@ -349,8 +349,8 @@ func (exp *FPExt) Calc() Constant {
 // expression; e.g.
 //
 //    fpext(float 4.0 to double)
-func (exp *FPExt) String() string {
-	return fmt.Sprintf("fpext (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *FPExt) String() string {
+	return fmt.Sprintf("fpext (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -398,13 +398,13 @@ func NewFPToUI(orig Constant, to types.Type) (*FPToUI, error) {
 }
 
 // Type returns the type of the value.
-func (exp *FPToUI) Type() types.Type {
-	return exp.to
+func (v *FPToUI) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FPToUI) Calc() Constant {
+func (v *FPToUI) Calc() Constant {
 	panic("FPToUI.Calc: not yet implemented.")
 }
 
@@ -414,8 +414,8 @@ func (exp *FPToUI) Calc() Constant {
 //
 //    fptoui(float 4.0 to i32)
 //    fptoui(<2 x float> <float 3.0, float 4.0> to <2 x i32>)
-func (exp *FPToUI) String() string {
-	return fmt.Sprintf("fptoui (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *FPToUI) String() string {
+	return fmt.Sprintf("fptoui (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -463,13 +463,13 @@ func NewFPToSI(orig Constant, to types.Type) (*FPToSI, error) {
 }
 
 // Type returns the type of the value.
-func (exp *FPToSI) Type() types.Type {
-	return exp.to
+func (v *FPToSI) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *FPToSI) Calc() Constant {
+func (v *FPToSI) Calc() Constant {
 	panic("FPToSI.Calc: not yet implemented.")
 }
 
@@ -479,8 +479,8 @@ func (exp *FPToSI) Calc() Constant {
 //
 //    fptosi(float -4.0 to i32)
 //    fptosi(<2 x float> <float -3.0, float 4.0> to <2 x i32>)
-func (exp *FPToSI) String() string {
-	return fmt.Sprintf("fptosi (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *FPToSI) String() string {
+	return fmt.Sprintf("fptosi (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -528,13 +528,13 @@ func NewUIToFP(orig Constant, to types.Type) (*UIToFP, error) {
 }
 
 // Type returns the type of the value.
-func (exp *UIToFP) Type() types.Type {
-	return exp.to
+func (v *UIToFP) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *UIToFP) Calc() Constant {
+func (v *UIToFP) Calc() Constant {
 	panic("UIToFP.Calc: not yet implemented.")
 }
 
@@ -544,8 +544,8 @@ func (exp *UIToFP) Calc() Constant {
 //
 //    uitofp(i32 4 to float)
 //    uitofp(<2 x i32> <i32 3, i32 42> to <2 x float>)
-func (exp *UIToFP) String() string {
-	return fmt.Sprintf("uitofp (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *UIToFP) String() string {
+	return fmt.Sprintf("uitofp (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -593,13 +593,13 @@ func NewSIToFP(orig Constant, to types.Type) (*SIToFP, error) {
 }
 
 // Type returns the type of the value.
-func (exp *SIToFP) Type() types.Type {
-	return exp.to
+func (v *SIToFP) Type() types.Type {
+	return v.to
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *SIToFP) Calc() Constant {
+func (v *SIToFP) Calc() Constant {
 	panic("SIToFP.Calc: not yet implemented.")
 }
 
@@ -609,8 +609,8 @@ func (exp *SIToFP) Calc() Constant {
 //
 //    sitofp(i32 -4 to float)
 //    sitofp(<2 x i32> <i32 -3, i32 15> to <2 x float>)
-func (exp *SIToFP) String() string {
-	return fmt.Sprintf("sitofp (%s %s to %s)", exp.orig.Type(), exp.orig, exp.to)
+func (v *SIToFP) String() string {
+	return fmt.Sprintf("sitofp (%s %s to %s)", v.orig.Type(), v.orig, v.to)
 }
 
 // ValueString returns a string representation of the value.
@@ -652,23 +652,23 @@ func NewGetElementPtr(typ, elem types.Type, addr value.Value, indices []value.Va
 }
 
 // Type returns the type of the value produced by the expression.
-func (exp *GetElementPtr) Type() types.Type {
-	return exp.typ
+func (v *GetElementPtr) Type() types.Type {
+	return v.typ
 }
 
 // Calc calculates and returns a constant which is equivalent to the constant
 // expression.
-func (exp *GetElementPtr) Calc() Constant {
+func (v *GetElementPtr) Calc() Constant {
 	panic("GetElementPtr.Calc: not yet implemented.")
 }
 
 // String returns the string representation of the expression.
-func (exp *GetElementPtr) String() string {
+func (v *GetElementPtr) String() string {
 	indicesBuf := new(bytes.Buffer)
-	for _, index := range exp.indices {
+	for _, index := range v.indices {
 		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
 	}
-	return fmt.Sprintf("getelementptr (%s, %s %s%s)", exp.elem, exp.addr.Type(), exp.addr, indicesBuf)
+	return fmt.Sprintf("getelementptr (%s, %s %s%s)", v.elem, v.addr.Type(), v.addr, indicesBuf)
 }
 
 // ValueString returns a string representation of the value.
