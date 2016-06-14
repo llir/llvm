@@ -59,7 +59,12 @@ func (def *LocalVarDef) String() string {
 	if types.IsVoid(def.Type()) || len(def.Name()) == 0 {
 		return def.Inst().String()
 	}
-	return fmt.Sprintf("%s = %s", asm.EncLocal(def.Name()), def.Inst())
+	return fmt.Sprintf("%s = %s", def.ValueString(), def.Inst())
+}
+
+// ValueString returns a string representation of the value.
+func (def *LocalVarDef) ValueString() string {
+	return asm.EncLocal(def.Name())
 }
 
 // isInst ensures that only non-branching instructions can be assigned to the

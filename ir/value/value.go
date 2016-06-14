@@ -18,6 +18,8 @@ import (
 //    constant.Constant
 type Value interface {
 	fmt.Stringer
+	// ValueString returns a string representation of the value.
+	ValueString()
 	// Type returns the type of the value.
 	Type() types.Type
 }
@@ -41,12 +43,4 @@ type NamedValue interface {
 	Value
 	// Name returns the name of the value.
 	Name() string
-}
-
-// String returns a string representation of the value.
-func String(v Value) string {
-	if v, ok := v.(NamedValue); ok {
-		return v.Name()
-	}
-	return v.String()
 }
