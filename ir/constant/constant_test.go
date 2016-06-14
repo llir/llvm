@@ -1149,14 +1149,14 @@ var (
 
 // Ensure that each constant expression implements the Expr interface.
 var (
-	_ Expr = &Trunc{}
-	_ Expr = &ZExt{}
-	_ Expr = &SExt{}
-	_ Expr = &FPTrunc{}
-	_ Expr = &FPExt{}
-	_ Expr = &FPToUI{}
-	_ Expr = &FPToSI{}
-	_ Expr = &UIToFP{}
-	_ Expr = &SIToFP{}
-	_ Expr = &GetElementPtr{}
+	_ constant.Expr = &constant.Trunc{}
+	_ constant.Expr = &constant.ZExt{}
+	_ constant.Expr = &constant.SExt{}
+	_ constant.Expr = &constant.FPTrunc{}
+	_ constant.Expr = &constant.FPExt{}
+	_ constant.Expr = &constant.FPToUI{}
+	_ constant.Expr = &constant.FPToSI{}
+	_ constant.Expr = &constant.UIToFP{}
+	_ constant.Expr = &constant.SIToFP{}
+	_ constant.Expr = &constant.GetElementPtr{}
 )
