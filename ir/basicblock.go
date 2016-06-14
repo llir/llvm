@@ -31,7 +31,7 @@ type BasicBlock struct {
 }
 
 // NewBasicBlock returns a new basic block based on the given name.
-func NewBasicBlock(name string) (*BasicBlock, error) {
+func NewBasicBlock(name string) *BasicBlock {
 	// TODO: Verify that name is not a local ID. Unnamed basic blocks should be
 	// assigned a local ID implicitly by the internal localID counter of the
 	// given function rather than explicitly assigned.
@@ -39,7 +39,7 @@ func NewBasicBlock(name string) (*BasicBlock, error) {
 	// Another option (which is currently implemented) is to allow local IDs to
 	// be explicitly assigned, as they are validated during the ID assignment
 	// stage (see BasicBlock.assignIDs).
-	return &BasicBlock{name: name}, nil
+	return &BasicBlock{name: name}
 }
 
 // Name returns the name of the basic block.
