@@ -18,7 +18,7 @@ import (
 
 func main() {
 	files := []File{
-		File{
+		{
 			Template: "binary.tmpl",
 			Path:     "binary.go",
 			Desc:     "Binary instructions",
@@ -74,7 +74,7 @@ func main() {
 				},
 			},
 		},
-		File{
+		{
 			Template: "binary.tmpl",
 			Path:     "bitwise.go",
 			Desc:     "Bitwise binary instructions",
@@ -106,7 +106,7 @@ func main() {
 				},
 			},
 		},
-		File{
+		{
 			Template: "conversion.tmpl",
 			Path:     "conversion.go",
 			Desc:     "Conversion instructions",
