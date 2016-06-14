@@ -1146,3 +1146,17 @@ var (
 	_ constant.Constant = &constant.Struct{}
 	_ constant.Constant = constant.Expr(nil)
 )
+
+// Ensure that each constant expression implements the Expr interface.
+var (
+	_ Expr = &Trunc{}
+	_ Expr = &ZExt{}
+	_ Expr = &SExt{}
+	_ Expr = &FPTrunc{}
+	_ Expr = &FPExt{}
+	_ Expr = &FPToUI{}
+	_ Expr = &FPToSI{}
+	_ Expr = &UIToFP{}
+	_ Expr = &SIToFP{}
+	_ Expr = &GetElementPtr{}
+)

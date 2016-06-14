@@ -31,6 +31,9 @@ type Function struct {
 
 // NewFunction returns a new function based on the given name and function
 // signature.
+//
+// The caller is responsible for invoking AssignIDs once all basic blocks have
+// been added to the function.
 func NewFunction(name string, sig *types.Func) *Function {
 	return &Function{name: name, sig: sig}
 }
@@ -64,12 +67,30 @@ func (f *Function) SetBlocks(blocks []*BasicBlock) error {
 
 	// Assign unique local IDs to unnamed basic blocks and local variable
 	// definitions.
-	for _, block := range blocks {
+	if err := f.AssignIDs(); err != nil {
+		return errutil.Err(err)
+	}
+
+	return nil
+}
+
+// AppendBlock appends the given basic block to the function.
+//
+// The caller is responsible for invoking AssignIDs once all basic blocks have
+// been added to the function.
+func (f *Function) AppendBlock(block *BasicBlock) {
+	block.SetParent(f)
+	f.blocks = append(f.blocks, block)
+}
+
+// AssignIDs assigns unique local IDs to unnamed basic blocks and local variable
+// definitions.
+func (f *Function) AssignIDs() error {
+	for _, block := range f.blocks {
 		if err := block.assignIDs(); err != nil {
 			return errutil.Err(err)
 		}
 	}
-
 	return nil
 }
 

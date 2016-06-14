@@ -30,9 +30,8 @@ type BasicBlock struct {
 	term instruction.Terminator
 }
 
-// NewBasicBlock returns a new basic block based on the given name, non-
-// terminating instructions and terminator.
-func NewBasicBlock(name string, insts []instruction.Instruction, term instruction.Terminator) (*BasicBlock, error) {
+// NewBasicBlock returns a new basic block based on the given name.
+func NewBasicBlock(name string) (*BasicBlock, error) {
 	// TODO: Verify that name is not a local ID. Unnamed basic blocks should be
 	// assigned a local ID implicitly by the internal localID counter of the
 	// given function rather than explicitly assigned.
@@ -40,7 +39,7 @@ func NewBasicBlock(name string, insts []instruction.Instruction, term instructio
 	// Another option (which is currently implemented) is to allow local IDs to
 	// be explicitly assigned, as they are validated during the ID assignment
 	// stage (see BasicBlock.assignIDs).
-	return &BasicBlock{name: name, insts: insts, term: term}, nil
+	return &BasicBlock{name: name}, nil
 }
 
 // Name returns the name of the basic block.

@@ -37,20 +37,6 @@ type Expr interface {
 	Calc() Constant
 }
 
-// Make sure that each constant expression implements the Expr interface.
-var (
-	_ Expr = &Trunc{}
-	_ Expr = &ZExt{}
-	_ Expr = &SExt{}
-	_ Expr = &FPTrunc{}
-	_ Expr = &FPExt{}
-	_ Expr = &FPToUI{}
-	_ Expr = &FPToSI{}
-	_ Expr = &UIToFP{}
-	_ Expr = &SIToFP{}
-	_ Expr = &GetElementPtr{}
-)
-
 // Trunc is a constant expression which truncates an integer constant to a
 // smaller or equally sized integer type.
 //
