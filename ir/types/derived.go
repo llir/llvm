@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/llir/llvm/asm"
 )
@@ -119,20 +120,17 @@ type Param struct {
 // NewParam returns a function parameter type based on the given parameter type
 // and name.
 func NewParam(typ Type, name string) *Param {
+	log.Printf("typ: %v, name: %q\n", typ, name)
 	return &Param{typ: typ, name: name}
 }
 
-// TODO: Consider renaming ParamType and ParamName to Type and Name. The risk is
-// that parameter types may be used for value.Value as they would then implement
-// the interface (while not being a value proper, but rather a simple type).
-
-// ParamType returns the type of the parameter.
-func (t *Param) ParamType() Type {
+// Type returns the type of the parameter.
+func (t *Param) Type() Type {
 	return t.typ
 }
 
-// ParamName returns the name of the parameter.
-func (t *Param) ParamName() string {
+// Name returns the name of the parameter.
+func (t *Param) Name() string {
 	return t.name
 }
 
@@ -150,6 +148,11 @@ func (t *Param) String() string {
 		return fmt.Sprintf("%v %v", t.typ, asm.EncLocal(t.name))
 	}
 	return t.typ.String()
+}
+
+// ValueString returns a string representation of the value.
+func (t *Param) ValueString() string {
+	return asm.EncLocal(t.Name())
 }
 
 // Pointer represents a pointer type.

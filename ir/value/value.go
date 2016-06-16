@@ -16,6 +16,7 @@ import (
 //    *ir.BasicBlock
 //    *instruction.LocalVarDef
 //    constant.Constant
+//    *types.Param
 type Value interface {
 	fmt.Stringer
 	// ValueString returns a string representation of the value.
