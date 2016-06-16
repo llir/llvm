@@ -14,6 +14,7 @@ import (
 //
 //    *ir.Function
 //    *ir.BasicBlock
+//    *ir.GlobalDecl
 //    *instruction.LocalVarDef
 //    constant.Constant
 //    *types.Param
