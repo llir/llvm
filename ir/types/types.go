@@ -91,6 +91,18 @@ func IsFloats(t Type) bool {
 	return IsFloat(t)
 }
 
+// IsArray reports whether t is an array type.
+func IsArray(t Type) bool {
+	_, ok := t.(*Array)
+	return ok
+}
+
+// IsPointer reports whether t is a pointer type.
+func IsPointer(t Type) bool {
+	_, ok := t.(*Pointer)
+	return ok
+}
+
 // SameLength reports whether t and u are both vectors or arrays of the same
 // length or both distinct from vectors and arrays.
 func SameLength(a, b Type) bool {
