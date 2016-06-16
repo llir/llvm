@@ -1,7 +1,12 @@
 // Package types declares the data types of LLVM IR.
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+
+	"github.com/mewkiz/pkg/errutil"
+)
 
 // A Type represents an LLVM IR type.
 //
@@ -110,9 +115,28 @@ var (
 	I1 *Int
 	// I8 represents the i8 type.
 	I8 *Int
+	// I32 represents the i32 type.
+	I32 *Int
+	// I64 represents the i64 type.
+	I64 *Int
 )
 
 func init() {
-	I1, _ = NewInt(1)
-	I8, _ = NewInt(8)
+	var err error
+	I1, err = NewInt(1)
+	if err != nil {
+		log.Fatal(errutil.Err(err))
+	}
+	I8, err = NewInt(8)
+	if err != nil {
+		log.Fatal(errutil.Err(err))
+	}
+	I32, err = NewInt(32)
+	if err != nil {
+		log.Fatal(errutil.Err(err))
+	}
+	I64, err = NewInt(64)
+	if err != nil {
+		log.Fatal(errutil.Err(err))
+	}
 }

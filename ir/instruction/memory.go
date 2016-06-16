@@ -139,6 +139,8 @@ func (*AtomicRMW) String() string      { panic("AtomicRMW.String: not yet implem
 
 // GetElementPtr represents a getelementptr instruction.
 type GetElementPtr struct {
+	// Result type.
+	typ *types.Pointer
 	// Element type.
 	elem types.Type
 	// Memory address of the element.
@@ -159,14 +161,23 @@ func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) 
 	default:
 		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addrType)
 	}
-	return &GetElementPtr{elem: elem, addr: addr, indices: indices}, nil
+	var typ *types.Pointer
+	switch elem := elem.(type) {
+	case *types.Array:
+		var err error
+		typ, err = types.NewPointer(elem.Elem())
+		if err != nil {
+			return nil, errutil.Err(err)
+		}
+	default:
+		panic(fmt.Sprintf("instruction.NewGetElementPtr: support for type %T not yet implemented", elem))
+	}
+	return &GetElementPtr{typ: typ, elem: elem, addr: addr, indices: indices}, nil
 }
 
 // RetType returns the type of the value produced by the instruction.
 func (inst *GetElementPtr) RetType() types.Type {
-	// TODO: Return the correct type of the value, as calculated by traversing
-	// the element type using the element indices.
-	return inst.elem
+	return inst.typ
 }
 
 // String returns the string representation of the instruction.
