@@ -169,6 +169,12 @@ func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) 
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
+	case *types.Pointer:
+		var err error
+		typ, err = types.NewPointer(elem.Elem())
+		if err != nil {
+			return nil, errutil.Err(err)
+		}
 	default:
 		panic(fmt.Sprintf("instruction.NewGetElementPtr: support for type %T not yet implemented", elem))
 	}
