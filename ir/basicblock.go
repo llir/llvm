@@ -99,7 +99,11 @@ func (block *BasicBlock) SetParent(parent *Function) {
 func (block *BasicBlock) String() string {
 	buf := new(bytes.Buffer)
 	if len(block.Name()) > 0 {
-		fmt.Fprintf(buf, "%s:\n", block.Name())
+		if isLocalID(block.Name()) {
+			fmt.Fprintf(buf, "; <label>:%s\n", block.Name())
+		} else {
+			fmt.Fprintf(buf, "%s:\n", block.Name())
+		}
 	}
 	for _, inst := range block.Insts() {
 		fmt.Fprintf(buf, "\t%s\n", inst)
