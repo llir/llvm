@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/llir/llvm/asm"
 )
@@ -120,7 +119,6 @@ type Param struct {
 // NewParam returns a function parameter type based on the given parameter type
 // and name.
 func NewParam(typ Type, name string) *Param {
-	log.Printf("typ: %v, name: %q\n", typ, name)
 	return &Param{typ: typ, name: name}
 }
 
