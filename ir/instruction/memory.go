@@ -178,7 +178,8 @@ func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) 
 		}
 		switch ee := e.(type) {
 		case *types.Pointer:
-			e = ee.Elem()
+			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+			return nil, errutil.Newf(`unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep`)
 		case *types.Array:
 			e = ee.Elem()
 		case *types.Struct:
