@@ -626,8 +626,8 @@ func (v *SIToFP) ValueString() string {
 
 // GetElementPtr represents a getelementptr expression.
 type GetElementPtr struct {
-	// Value type.
-	typ types.Type
+	// Result type.
+	typ *types.Pointer
 	// Element type.
 	elem types.Type
 	// Memory address of the element.
@@ -637,16 +637,52 @@ type GetElementPtr struct {
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
-// type, element type, address and element indices.
-func NewGetElementPtr(typ, elem types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
+// element type, address and element indices.
+//
+// Preconditions:
+//    * elem is of the same type as addr.Type().Elem().
+//    * addr is of pointer type.
+//    * indices used to index structure fields are integer constants.
+func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
+	// TODO: Change type of indices to []*constant.Int or []constant.Constant?
+
 	// Sanity checks.
-	switch addrType := addr.Type().(type) {
-	case *types.Pointer:
-		if !types.Equal(elem, addrType.Elem()) {
-			return nil, errutil.Newf("type mismatch between %v and %v", elem, addrType.Elem())
+	addrType, ok := addr.Type().(*types.Pointer)
+	if !ok {
+		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addr.Type())
+	}
+	if !types.Equal(elem, addrType.Elem()) {
+		return nil, errutil.Newf("type mismatch between %v and %v", elem, addrType.Elem())
+	}
+
+	e := addrType.Elem()
+	for i, index := range indices {
+		if i == 0 {
+			// Ignore checking the 0th index as it simply follows the pointer of
+			// addr.
+			//
+			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+			continue
 		}
-	default:
-		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addrType)
+		switch ee := e.(type) {
+		case *types.Pointer:
+			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+			return nil, errutil.Newf(`unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep`)
+		case *types.Array:
+			e = ee.Elem()
+		case *types.Struct:
+			idx, ok := index.(*Int)
+			if !ok {
+				return nil, errutil.Newf("invalid index type for structure element; expected *constant.Int, got %T", index)
+			}
+			e = ee.Fields()[idx.Value().Int64()]
+		default:
+			panic(fmt.Sprintf("constant.NewGetElementPtr: support for indexing element type %T not yet implemented", e))
+		}
+	}
+	typ, err := types.NewPointer(e)
+	if err != nil {
+		return nil, errutil.Err(err)
 	}
 	return &GetElementPtr{typ: typ, elem: elem, addr: addr, indices: indices}, nil
 }
@@ -668,7 +704,7 @@ func (v *GetElementPtr) String() string {
 	for _, index := range v.indices {
 		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
 	}
-	return fmt.Sprintf("getelementptr (%s, %s %s%s)", v.elem, v.addr.Type(), v.addr, indicesBuf)
+	return fmt.Sprintf("getelementptr (%s, %s %s%s)", v.elem, v.addr.Type(), v.addr.ValueString(), indicesBuf)
 }
 
 // ValueString returns a string representation of the value.
