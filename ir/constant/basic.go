@@ -89,6 +89,11 @@ func (v *Int) Type() types.Type {
 	return v.typ
 }
 
+// Value returns the value of the integer constant.
+func (v *Int) Value() *big.Int {
+	return v.x
+}
+
 // String returns a string representation of the integer, either as a signed
 // integer (e.g. 42, -13) or as a boolean (e.g. true, false) depending on the
 // type; e.g.
