@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -151,32 +152,48 @@ type GetElementPtr struct {
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
 // element type, address and element indices.
+//
+// Preconditions:
+//    * elem is of the same type as addr.Type().Elem().
+//    * addr is of pointer type.
+//    * indices used to index structure fields are integer constants.
 func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
 	// Sanity checks.
-	switch addrType := addr.Type().(type) {
-	case *types.Pointer:
-		if !types.Equal(elem, addrType.Elem()) {
-			return nil, errutil.Newf("type mismatch between %v and %v", elem, addrType.Elem())
-		}
-	default:
-		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addrType)
+	addrType, ok := addr.Type().(*types.Pointer)
+	if !ok {
+		return nil, errutil.Newf("invalid pointer type; expected *types.Pointer, got %T", addr.Type())
 	}
-	var typ *types.Pointer
-	switch elem := elem.(type) {
-	case *types.Array:
-		var err error
-		typ, err = types.NewPointer(elem.Elem())
-		if err != nil {
-			return nil, errutil.Err(err)
+	if !types.Equal(elem, addrType.Elem()) {
+		return nil, errutil.Newf("type mismatch between %v and %v", elem, addrType.Elem())
+	}
+
+	e := addrType.Elem()
+	for i, index := range indices {
+		if i == 0 {
+			// Ignore checking the 0th index as it simply follows the pointer of
+			// addr.
+			//
+			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+			continue
 		}
-	case *types.Pointer:
-		var err error
-		typ, err = types.NewPointer(elem.Elem())
-		if err != nil {
-			return nil, errutil.Err(err)
+		switch ee := e.(type) {
+		case *types.Pointer:
+			e = ee.Elem()
+		case *types.Array:
+			e = ee.Elem()
+		case *types.Struct:
+			idx, ok := index.(*constant.Int)
+			if !ok {
+				return nil, errutil.Newf("invalid index type for structure element; expected *constant.Int, got %T", index)
+			}
+			e = ee.Fields()[idx.Value().Int64()]
+		default:
+			panic(fmt.Sprintf("instruction.NewGetElementPtr: support for indexing element type %T not yet implemented", e))
 		}
-	default:
-		panic(fmt.Sprintf("instruction.NewGetElementPtr: support for type %T not yet implemented", elem))
+	}
+	typ, err := types.NewPointer(e)
+	if err != nil {
+		return nil, errutil.Err(err)
 	}
 	return &GetElementPtr{typ: typ, elem: elem, addr: addr, indices: indices}, nil
 }
