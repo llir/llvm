@@ -633,7 +633,7 @@ type GetElementPtr struct {
 	// Memory address of the element.
 	addr value.Value
 	// Element indices.
-	indices []value.Value
+	indices []Constant
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
@@ -643,9 +643,7 @@ type GetElementPtr struct {
 //    * elem is of the same type as addr.Type().Elem().
 //    * addr is of pointer type.
 //    * indices used to index structure fields are integer constants.
-func NewGetElementPtr(elem types.Type, addr value.Value, indices []value.Value) (*GetElementPtr, error) {
-	// TODO: Change type of indices to []*constant.Int or []constant.Constant?
-
+func NewGetElementPtr(elem types.Type, addr value.Value, indices []Constant) (*GetElementPtr, error) {
 	// Sanity checks.
 	addrType, ok := addr.Type().(*types.Pointer)
 	if !ok {
@@ -702,7 +700,7 @@ func (v *GetElementPtr) Calc() Constant {
 func (v *GetElementPtr) String() string {
 	indicesBuf := new(bytes.Buffer)
 	for _, index := range v.indices {
-		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index)
+		fmt.Fprintf(indicesBuf, ", %s %s", index.Type(), index.ValueString())
 	}
 	return fmt.Sprintf("getelementptr (%s, %s %s%s)", v.elem, v.addr.Type(), v.addr.ValueString(), indicesBuf)
 }
