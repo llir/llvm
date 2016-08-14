@@ -1,0 +1,33 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+@t = global [2 x i8] zeroinitializer
+define i32 @main() {
+0:
+	%1 = alloca i32
+	%b = alloca i32
+	store i32 0, i32* %1
+	store i32 10, i32* %b
+	store i8 0, i8* getelementptr ([2 x i8], [2 x i8]* @t, i32 0, i64 1)
+	br label %2
+2:
+	%3 = load i32, i32* %b
+	%4 = icmp ne i32 %3, 0
+	br i1 %4, label %5, label %12
+5:
+	%6 = load i32, i32* %b
+	%7 = add i32 48, %6
+	%8 = sub i32 %7, 1
+	%9 = trunc i32 %8 to i8
+	store i8 %9, i8* getelementptr ([2 x i8], [2 x i8]* @t, i32 0, i64 0)
+	call void @putstring(i8* getelementptr ([2 x i8], [2 x i8]* @t, i32 0, i32 0))
+	%10 = load i32, i32* %b
+	%11 = sub i32 %10, 1
+	store i32 %11, i32* %b
+	br label %2
+12:
+	store i8 10, i8* getelementptr ([2 x i8], [2 x i8]* @t, i32 0, i64 0)
+	call void @putstring(i8* getelementptr ([2 x i8], [2 x i8]* @t, i32 0, i32 0))
+	%13 = load i32, i32* %1
+	ret i32 %13
+}
+declare void @putstring(i8*)

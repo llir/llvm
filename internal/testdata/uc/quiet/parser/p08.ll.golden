@@ -1,0 +1,27 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+define i32 @main() {
+0:
+	%1 = alloca i32
+	%x = alloca i32
+	%y = alloca i32
+	store i32 0, i32* %1
+	%2 = load i32, i32* %x
+	%3 = icmp ne i32 %2, 0
+	br i1 %3, label %4, label %10
+4:
+	%5 = load i32, i32* %y
+	%6 = icmp ne i32 %5, 0
+	br i1 %6, label %7, label %8
+7:
+	store i32 4711, i32* %x
+	br label %9
+8:
+	store i32 42, i32* %x
+	br label %9
+9:
+	br label %10
+10:
+	%11 = load i32, i32* %1
+	ret i32 %11
+}

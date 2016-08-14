@@ -1,0 +1,162 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+@n = global i32 0
+@board = global [8 x i32] zeroinitializer
+define void @printboard(i32* %board) {
+0:
+	%1 = alloca i32*
+	%i = alloca i32
+	store i32* %board, i32** %1
+	store i32 0, i32* %i
+	br label %2
+2:
+	%3 = load i32, i32* %i
+	%4 = load i32, i32* @n
+	%5 = icmp slt i32 %3, %4
+	br i1 %5, label %6, label %14
+6:
+	%7 = load i32, i32* %i
+	%8 = sext i32 %7 to i64
+	%9 = load i32*, i32** %1
+	%10 = getelementptr i32, i32* %9, i64 %8
+	%11 = load i32, i32* %10
+	call void @putint(i32 %11)
+	%12 = load i32, i32* %i
+	%13 = add i32 %12, 1
+	store i32 %13, i32* %i
+	br label %2
+14:
+	ret void
+}
+declare void @putint(i32)
+define i32 @check(i32 %col, i32 %row) {
+0:
+	%1 = alloca i32
+	%2 = alloca i32
+	%3 = alloca i32
+	%i = alloca i32
+	%j = alloca i32
+	store i32 %col, i32* %2
+	store i32 %row, i32* %3
+	%4 = load i32, i32* %2
+	%5 = sub i32 %4, 1
+	store i32 %5, i32* %i
+	br label %6
+6:
+	%7 = load i32, i32* %i
+	%8 = icmp sge i32 %7, 0
+	br i1 %8, label %9, label %43
+9:
+	%10 = load i32, i32* %i
+	%11 = sext i32 %10 to i64
+	%12 = getelementptr [8 x i32], [8 x i32]* @board, i32 0, i64 %11
+	%13 = load i32, i32* %12
+	store i32 %13, i32* %j
+	%14 = load i32, i32* %j
+	%15 = load i32, i32* %3
+	%16 = icmp eq i32 %14, %15
+	br i1 %16, label %17, label %18
+17:
+	store i32 0, i32* %1
+	br label %44
+18:
+	%19 = load i32, i32* %j
+	%20 = load i32, i32* %3
+	%21 = icmp sgt i32 %19, %20
+	br i1 %21, label %22, label %31
+22:
+	%23 = load i32, i32* %2
+	%24 = load i32, i32* %i
+	%25 = sub i32 %23, %24
+	%26 = load i32, i32* %j
+	%27 = load i32, i32* %3
+	%28 = sub i32 %26, %27
+	%29 = icmp eq i32 %25, %28
+	br i1 %29, label %30, label %31
+30:
+	store i32 0, i32* %1
+	br label %44
+31:
+	%32 = load i32, i32* %2
+	%33 = load i32, i32* %i
+	%34 = sub i32 %32, %33
+	%35 = load i32, i32* %3
+	%36 = load i32, i32* %j
+	%37 = sub i32 %35, %36
+	%38 = icmp eq i32 %34, %37
+	br i1 %38, label %39, label %40
+39:
+	store i32 0, i32* %1
+	br label %44
+40:
+	%41 = load i32, i32* %i
+	%42 = sub i32 %41, 1
+	store i32 %42, i32* %i
+	br label %6
+43:
+	store i32 1, i32* %1
+	br label %44
+44:
+	%45 = load i32, i32* %1
+	ret i32 %45
+}
+define i32 @queen(i32 %col, i32 %row) {
+0:
+	%1 = alloca i32
+	%2 = alloca i32
+	%3 = alloca i32
+	store i32 %col, i32* %2
+	store i32 %row, i32* %3
+	%4 = load i32, i32* %2
+	%5 = load i32, i32* @n
+	%6 = icmp sge i32 %4, %5
+	br i1 %6, label %7, label %8
+7:
+	store i32 1, i32* %1
+	br label %32
+8:
+	br label %9
+9:
+	%10 = load i32, i32* %3
+	%11 = load i32, i32* @n
+	%12 = icmp slt i32 %10, %11
+	br i1 %12, label %13, label %31
+13:
+	%14 = load i32, i32* %3
+	%15 = load i32, i32* %2
+	%16 = sext i32 %15 to i64
+	%17 = getelementptr [8 x i32], [8 x i32]* @board, i32 0, i64 %16
+	store i32 %14, i32* %17
+	%18 = load i32, i32* %2
+	%19 = load i32, i32* %3
+	%20 = call i32 @check(i32 %18, i32 %19)
+	%21 = icmp ne i32 %20, 0
+	br i1 %21, label %22, label %28
+22:
+	%23 = load i32, i32* %2
+	%24 = add i32 %23, 1
+	%25 = call i32 @queen(i32 %24, i32 0)
+	%26 = icmp ne i32 %25, 0
+	br i1 %26, label %27, label %28
+27:
+	store i32 1, i32* %1
+	br label %32
+28:
+	%29 = load i32, i32* %3
+	%30 = add i32 %29, 1
+	store i32 %30, i32* %3
+	br label %9
+31:
+	store i32 0, i32* %1
+	br label %32
+32:
+	%33 = load i32, i32* %1
+	ret i32 %33
+}
+define i32 @main() {
+0:
+	store i32 8, i32* @n
+	%1 = call i32 @queen(i32 0, i32 0)
+	call void @printboard(i32* getelementptr ([8 x i32], [8 x i32]* @board, i32 0, i32 0))
+	ret i32 0
+}

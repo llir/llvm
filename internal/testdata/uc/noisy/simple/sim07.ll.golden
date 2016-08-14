@@ -1,0 +1,87 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+define i32 @main() {
+0:
+	%1 = alloca i32
+	%i = alloca i32
+	%space = alloca [2 x i8]
+	%X = alloca [2 x i8]
+	%Y = alloca [2 x i8]
+	%W = alloca [2 x i8]
+	%nl = alloca [2 x i8]
+	store i32 0, i32* %1
+	%2 = getelementptr [2 x i8], [2 x i8]* %space, i32 0, i64 0
+	store i8 32, i8* %2
+	%3 = getelementptr [2 x i8], [2 x i8]* %space, i32 0, i64 1
+	store i8 0, i8* %3
+	%4 = getelementptr [2 x i8], [2 x i8]* %X, i32 0, i64 0
+	store i8 88, i8* %4
+	%5 = getelementptr [2 x i8], [2 x i8]* %X, i32 0, i64 1
+	store i8 0, i8* %5
+	%6 = getelementptr [2 x i8], [2 x i8]* %Y, i32 0, i64 0
+	store i8 89, i8* %6
+	%7 = getelementptr [2 x i8], [2 x i8]* %Y, i32 0, i64 1
+	store i8 0, i8* %7
+	%8 = getelementptr [2 x i8], [2 x i8]* %W, i32 0, i64 0
+	store i8 87, i8* %8
+	%9 = getelementptr [2 x i8], [2 x i8]* %W, i32 0, i64 1
+	store i8 0, i8* %9
+	%10 = getelementptr [2 x i8], [2 x i8]* %nl, i32 0, i64 0
+	store i8 10, i8* %10
+	%11 = getelementptr [2 x i8], [2 x i8]* %nl, i32 0, i64 1
+	store i8 0, i8* %11
+	store i32 0, i32* %i
+	br label %12
+12:
+	%13 = load i32, i32* %i
+	%14 = icmp ne i32 %13, 21
+	br i1 %14, label %15, label %43
+15:
+	%16 = load i32, i32* %i
+	call void @putint(i32 %16)
+	%17 = getelementptr [2 x i8], [2 x i8]* %space, i32 0, i32 0
+	call void @putstring(i8* %17)
+	%18 = load i32, i32* %i
+	%19 = sdiv i32 %18, 2
+	%20 = mul i32 %19, 2
+	%21 = load i32, i32* %i
+	%22 = icmp eq i32 %20, %21
+	br i1 %22, label %23, label %25
+23:
+	%24 = getelementptr [2 x i8], [2 x i8]* %X, i32 0, i32 0
+	call void @putstring(i8* %24)
+	br label %25
+25:
+	%26 = load i32, i32* %i
+	%27 = sdiv i32 %26, 3
+	%28 = mul i32 %27, 3
+	%29 = load i32, i32* %i
+	%30 = icmp eq i32 %28, %29
+	br i1 %30, label %31, label %33
+31:
+	%32 = getelementptr [2 x i8], [2 x i8]* %Y, i32 0, i32 0
+	call void @putstring(i8* %32)
+	br label %39
+33:
+	%34 = load i32, i32* %i
+	%35 = icmp sgt i32 %34, 10
+	br i1 %35, label %36, label %38
+36:
+	%37 = getelementptr [2 x i8], [2 x i8]* %W, i32 0, i32 0
+	call void @putstring(i8* %37)
+	br label %38
+38:
+	br label %39
+39:
+	%40 = getelementptr [2 x i8], [2 x i8]* %nl, i32 0, i32 0
+	call void @putstring(i8* %40)
+	%41 = load i32, i32* %i
+	%42 = add i32 %41, 1
+	store i32 %42, i32* %i
+	br label %12
+43:
+	%44 = load i32, i32* %1
+	ret i32 %44
+}
+declare void @putint(i32)
+declare void @putstring(i8*)

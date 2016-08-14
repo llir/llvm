@@ -1,0 +1,59 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+@x = global i32 0
+@y = global i8 0
+define i32 @main() {
+0:
+	%1 = alloca i32
+	%z = alloca i32
+	%w = alloca i8
+	store i32 0, i32* %1
+	%2 = load i32, i32* @x
+	%3 = load i8, i8* @y
+	%4 = sext i8 %3 to i32
+	%5 = add i32 %2, %4
+	%6 = load i32, i32* %z
+	%7 = add i32 %5, %6
+	%8 = load i8, i8* %w
+	%9 = sext i8 %8 to i32
+	%10 = add i32 %7, %9
+	store i32 %10, i32* @x
+	store i32 42, i32* %z
+	store i32 42, i32* @x
+	%11 = load i32, i32* @x
+	%12 = load i32, i32* %z
+	%13 = icmp eq i32 %11, %12
+	%14 = zext i1 %13 to i32
+	%15 = icmp eq i32 %14, 42
+	%16 = zext i1 %15 to i32
+	%17 = load i32, i32* @x
+	store i32 99, i32* %z
+	%18 = icmp eq i32 %17, 99
+	%19 = zext i1 %18 to i32
+	br label %20
+20:
+	%21 = load i32, i32* @x
+	%22 = icmp ne i32 %21, 0
+	br i1 %22, label %23, label %24
+23:
+	store i32 0, i32* @x
+	br label %20
+24:
+	store i8 4, i8* @y
+	%25 = load i32, i32* @x
+	%26 = load i8, i8* @y
+	%27 = sext i8 %26 to i32
+	%28 = icmp sgt i32 %25, %27
+	%29 = zext i1 %28 to i32
+	%30 = trunc i32 %29 to i8
+	store i8 %30, i8* %w
+	%31 = load i32, i32* @x
+	%32 = icmp slt i32 0, %31
+	%33 = zext i1 %32 to i32
+	%34 = icmp slt i32 %33, 10
+	%35 = zext i1 %34 to i32
+	%36 = trunc i32 %35 to i8
+	store i8 %36, i8* @y
+	%37 = load i32, i32* %1
+	ret i32 %37
+}

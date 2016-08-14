@@ -1,0 +1,17 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+@a = global [10 x i32] zeroinitializer
+define i32 @main() {
+0:
+	%b = alloca [10 x i32]
+	store i32 123, i32* getelementptr ([10 x i32], [10 x i32]* @a, i32 0, i64 7)
+	%1 = getelementptr [10 x i32], [10 x i32]* %b, i32 0, i64 5
+	store i32 456, i32* %1
+	%2 = load i32, i32* getelementptr ([10 x i32], [10 x i32]* @a, i32 0, i64 7)
+	call void @putint(i32 %2)
+	%3 = getelementptr [10 x i32], [10 x i32]* %b, i32 0, i64 5
+	%4 = load i32, i32* %3
+	call void @putint(i32 %4)
+	ret i32 0
+}
+declare void @putint(i32)

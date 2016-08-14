@@ -1,0 +1,1172 @@
+// ### [ Lexical part ] ########################################################
+
+// === [ Source code representation ] ==========================================
+
+// --- [ Characters ] ----------------------------------------------------------
+
+_ascii_letter
+	: 'A' - 'Z'
+	| 'a' - 'z'
+;
+
+// --- [ Letters and digits ] --------------------------------------------------
+
+_letter
+	: _ascii_letter
+	| '$'
+	| '-'
+	| '.'
+	| '_'
+;
+
+_decimal_digit
+	: '0' - '9'
+;
+
+_hex_digit
+	: '0' - '9'
+	| 'A' - 'F'
+	| 'a' - 'f'
+;
+
+// === [ Lexical elements ] ====================================================
+
+// --- [ Comments ] ------------------------------------------------------------
+
+!comment : ';' { . } '\n' ;
+
+// --- [ Tokens ] --------------------------------------------------------------
+
+// White space, formed from spaces (U+0020), horizontal tabs (U+0009), carriage
+// returns (U+000D), newlines (U+000A), and null characters (U+0000), is ignored
+// except as it separates tokens that would otherwise combine into a single
+// token.
+!whitespace : '\x00' | ' ' | '\t' | '\r' | '\n' ;
+
+// --- [ Identifiers ] ---------------------------------------------------------
+
+_name
+	: _letter { _letter | _decimal_digit }
+;
+
+_quoted_name
+	: _quoted_string
+;
+
+_id
+	: _decimals
+;
+
+// ___ [ Global identifiers ] __________________________________________________
+
+// TODO: Rename globalx to global once gocc#20 is fixed [1].
+//
+//
+// [1]: https://github.com/goccmack/gocc/issues/20
+
+globalx
+	: _global_name
+	| _global_id
+;
+
+_global_name
+	: '@' ( _name | _quoted_name )
+;
+
+_global_id
+	: '@' _id
+;
+
+// ___ [ Local identifiers ] ___________________________________________________
+
+local
+	: _local_name
+	| _local_id
+;
+
+_local_name
+	: '%' ( _name | _quoted_name )
+;
+
+_local_id
+	: '%' _id
+;
+
+// ___ [ Attribute group identifiers ] _________________________________________
+
+attr_group_id
+	: '#' _id
+;
+
+// ___ [ Metadata identifiers ] ________________________________________________
+
+metadata_name
+	: '!' _name
+;
+
+metadata_id
+	: '!' _id
+;
+
+// ___ [ Labels ] ______________________________________________________________
+
+// TODO: Rename labelx to label once gocc#20 is fixed [1].
+//
+//
+// [1]: https://github.com/goccmack/gocc/issues/20
+
+labelx
+	: ( _letter | _decimal_digit ) { _letter | _decimal_digit } ':'
+	| _quoted_string ':'
+;
+
+// --- [ Integer literals ] ----------------------------------------------------
+
+int_lit
+	: _decimal_lit
+	| _hex_lit
+;
+
+_decimal_lit
+	: [ '-' ] _decimals
+;
+
+_decimals
+	: _decimal_digit { _decimal_digit }
+;
+
+_hex_lit
+	: ( 's' | 'u' ) '0' 'x' _hex_digit { _hex_digit }
+;
+
+// --- [ String literals ] -----------------------------------------------------
+
+string_lit
+	: _quoted_string
+;
+
+_quoted_string
+	: '"' { . } '"'
+;
+
+// --- [ Types ] ---------------------------------------------------------------
+
+int_type
+	: 'i' _decimals
+;
+
+// ### [ Syntactic part ] ######################################################
+
+<< import (
+	"github.com/llir/llvm/ir/instruction"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/spec/gocc/irx"
+) >>
+
+// === [ Modules ] =============================================================
+
+Module
+	: TopLevelDecls                               << irx.NewModule($0) >>
+;
+
+// === [ Declarations ] ========================================================
+
+TopLevelDecls
+	: empty
+	| TopLevelDeclList
+;
+
+TopLevelDeclList
+	: TopLevelDecl                                << irx.NewTopLevelDeclList($0) >>
+	| TopLevelDeclList TopLevelDecl               << irx.AppendTopLevelDecl($0, $1) >>
+;
+
+TopLevelDecl
+	: TargetSpec
+	| TypeDef
+	| GlobalVarDecl
+	| FuncDecl
+	| FuncDef
+	| AttrGroupDef
+	| MetadataDef
+;
+
+// --- [ Target specifiers ] ---------------------------------------------------
+
+TargetSpec
+	: "target" TargetLayout                       << irx.NewTargetLayout($1) >>
+	| "target" TargetTriple                       << irx.NewTargetTriple($1) >>
+;
+
+TargetLayout
+	: "datalayout" "=" LayoutSpec                 << $2, nil >>
+;
+
+LayoutSpec
+	: string_lit
+;
+
+TargetTriple
+	: "triple" "=" TripleSpec                     << $2, nil >>
+;
+
+TripleSpec
+	: string_lit
+;
+
+// --- [ Type definitions ] ----------------------------------------------------
+
+// TODO: Check which types (besides structure types) that are allowed in type
+// definitions.
+
+TypeDef
+	: Local "=" "type" Type
+;
+
+// --- [ Global variable declarations ] ----------------------------------------
+
+GlobalVarDecl
+	// Named global variable.
+	: Global "=" GlobalVar                        << irx.NewGlobalVarDecl($0, $2) >>
+;
+
+GlobalVar
+	// Global variable definition.
+	: OptVarLinkage OptUnnamedAddr
+	  Immutable Type Value
+	  OptAlignment                                << irx.NewGlobalVar($2, $3, $4) >>
+	// Global variable declaration.
+	| ExternLinkage OptUnnamedAddr
+	  Immutable Type
+	  OptAlignment                                << irx.NewGlobalVar($2, $3, nil) >>
+;
+
+OptVarLinkage
+	: empty
+	| VarLinkage
+;
+
+VarLinkage
+	: "appending"
+	| "available_externally"
+	| "common"
+	| "internal"
+	| "linkonce"
+	| "linkonce_odr"
+	| "private"
+	| "weak"
+	| "weak_odr"
+;
+
+ExternLinkage
+	: "extern_weak"
+	| "external"
+;
+
+OptUnnamedAddr
+	: empty
+	| UnnamedAddr
+;
+
+UnnamedAddr
+	: "unnamed_addr"
+;
+
+Immutable
+	: "constant"                                  << true, nil >>
+	| "global"                                    << false, nil >>
+;
+
+OptAlignment
+	: empty
+	| "," Alignment
+;
+
+Alignment
+	: "align" int_lit
+;
+
+// --- [ Function declarations ] -----------------------------------------------
+
+FuncDecl
+	: "declare" OptExternLinkage FuncHeader       << irx.NewFuncDecl($2) >>
+;
+
+OptExternLinkage
+	: empty
+	| ExternLinkage
+;
+
+FuncDef
+	: "define" OptFuncLinkage
+	  FuncHeader FuncBody                         << irx.NewFuncDef($2, $3) >>
+;
+
+OptFuncLinkage
+	: empty
+	| FuncLinkage
+;
+
+// TODO: Investigate why "external" is a valid linkage for function definitions
+// (but not global variable definitions).
+
+FuncLinkage
+	: "available_externally"
+	| "external"
+	| "internal"
+	| "linkonce"
+	| "linkonce_odr"
+	| "private"
+	| "weak"
+	| "weak_odr"
+;
+
+FuncHeader
+	: Result FuncName "(" Params ")"
+	  OptUnnamedAddr Attrs OptFuncAlignment       << irx.NewFunc($0, $1, $3) >>
+;
+
+Result
+	: ResultAttrs ResultType                      << $1, nil >>
+;
+
+ResultAttrs
+	: empty
+	| ResultAttrList
+;
+
+ResultAttrList
+	: ResultAttr
+	| ResultAttrList ResultAttr
+;
+
+ResultAttr
+	: string_lit
+	| string_lit "=" string_lit
+	| Alignment
+	| "dereferenceable"
+	| "dereferenceable" "(" int_lit ")"
+	| "dereferenceable_or_null"
+	| "dereferenceable_or_null" "(" int_lit ")"
+	| "inreg"
+	| "noalias"
+	| "nonnull"
+	| "signext"
+	| "zeroext"
+;
+
+FuncName
+	: Global
+;
+
+Params
+	: empty
+	| "..."                                       << irx.NewParams(nil, true) >>
+	| ParamList                                   << irx.NewParams($0, false) >>
+	| ParamList "," "..."                         << irx.NewParams($0, true) >>
+;
+
+ParamList
+	: Param                                       << irx.NewParamList($0) >>
+	| ParamList "," Param                         << irx.AppendParam($0, $2) >>
+;
+
+Param
+	: Type ParamAttrs                             << irx.NewParam($0, nil) >>
+	| Type ParamAttrs Local                       << irx.NewParam($0, $2) >>
+;
+
+ParamAttrs
+	: empty
+	| ParamAttrList
+;
+
+ParamAttrList
+	: ParamAttr
+	| ParamAttrList ParamAttr
+;
+
+ParamAttr
+	: ResultAttr
+	| "byval"
+	| "inalloca"
+	| "nest"
+	| "nocapture"
+	| "readnone"
+	| "readonly"
+	| "returned"
+	| "sret"
+	| "swifterror"
+	| "swiftself"
+;
+
+OptFuncAlignment
+	: empty
+	| Alignment
+;
+
+FuncBody
+	: "{" BasicBlocks "}"                         << $1, nil >>
+;
+
+// --- [ Attribute group definitions ] -----------------------------------------
+
+AttrGroupDef
+	: "attributes" AttrGroup "=" "{" Attrs "}"
+;
+
+AttrGroup
+	: attr_group_id
+;
+
+Attrs
+	: empty
+	| AttrList
+;
+
+AttrList
+	: Attr
+	| AttrList Attr
+;
+
+Attr
+	: AttrGroup
+	| string_lit
+	| string_lit "=" string_lit
+	| "alignstack" "(" int_lit ")"
+	| "allocsize" "(" int_lit ")"
+	| "allocsize" "(" int_lit "," int_lit ")"
+	| "alwaysinline"
+	| "argmemonly"
+	| "builtin"
+	| "cold"
+	| "convergent"
+	| "inaccessiblemem_or_argmemonly"
+	| "inaccessiblememonly"
+	| "inlinehint"
+	| "jumptable"
+	| "minsize"
+	| "naked"
+	| "nobuiltin"
+	| "noduplicate"
+	| "noimplicitfloat"
+	| "noinline"
+	| "nonlazybind"
+	| "norecurse"
+	| "noredzone"
+	| "noreturn"
+	| "nounwind"
+	| "optnone"
+	| "optsize"
+	| "readnone"
+	| "readonly"
+	| "returns_twice"
+	| "safestack"
+	| "sanitize_address"
+	| "sanitize_memory"
+	| "sanitize_thread"
+	| "ssp"
+	| "sspreq"
+	| "sspstrong"
+	| "uwtable"
+;
+
+// --- [ Metadata definitions ] ------------------------------------------------
+
+MetadataDef
+	: metadata_name "=" NamedMetadataNode
+	| metadata_id "=" UnnamedMetadataNode
+;
+
+NamedMetadataNode
+	: "!" "{" MetadataNodeIDs "}"
+;
+
+MetadataNodeIDs
+	: empty
+	| MetadataNodeIDList
+;
+
+MetadataNodeIDList
+	: metadata_id
+	| MetadataNodeIDList "," metadata_id
+;
+
+UnnamedMetadataNode
+	: "!" "{" MetadataNodes "}"
+;
+
+MetadataNodes
+	: empty
+	| MetadataNodeList
+;
+
+MetadataNodeList
+	: MetadataNode
+	| MetadataNodeList "," MetadataNode
+;
+
+MetadataNode
+	: "!" string_lit
+	| Type Value
+	| metadata_id
+	| UnnamedMetadataNode
+	| NullPointerConst
+;
+
+// === [ Types ] ===============================================================
+
+Type
+	: IntType
+	| PointerType
+	| ArrayType
+	| StructType
+	| FuncType
+	| UserType
+;
+
+ResultType
+	: VoidType
+	| Type
+;
+
+// --- [ Void type ] -----------------------------------------------------------
+
+// Note, the void type is only allowed for function results. Therefore, it is
+// excluded from the syntax body of Type and handled through special-cases in
+// the FuncHeader, FuncType and RetInst production rules.
+//
+// References:
+//    * https://github.com/llir/spec/issues/2
+VoidType
+	: "void"                                      << types.NewVoid(), nil >>
+;
+
+// --- [ Label type ] ----------------------------------------------------------
+
+// Note, the label type is only allowed for basic block labels used in a
+// specific set of instructions. Therefore, it is excluded from the syntax body
+// of Type and handled through special-cases in the BrInst and SwitchInst
+// production rules.
+LabelType
+	: "label"                                     << types.NewLabel(), nil >>
+;
+
+// --- [ Integer type ] --------------------------------------------------------
+
+IntType
+	: int_type                                    << irx.NewIntType($0) >>
+;
+
+// --- [ Pointer type ] --------------------------------------------------------
+
+PointerType
+	: Type "*"                                    << irx.NewPointerType($0) >>
+;
+
+// --- [ Array type ] ----------------------------------------------------------
+
+ArrayType
+	: "[" int_lit "x" Type "]"                    << irx.NewArrayType($1, $3) >>
+;
+
+// --- [ Structure type ] ------------------------------------------------------
+
+StructType
+	: "{" Fields "}"                              << irx.NewStructType($1, false) >>
+	| "<" "{" Fields "}" ">"                      << irx.NewStructType($2, true) >>
+;
+
+Fields
+	: empty
+	| FieldList
+;
+
+FieldList
+	: Field                                       << irx.NewFieldList($0) >>
+	| FieldList "," Field                         << irx.AppendField($0, $2) >>
+;
+
+Field
+	: Type
+;
+
+// --- [ Function type ] -------------------------------------------------------
+
+FuncType
+	: ResultType "(" Params ")"                   << irx.NewFuncType($0, $2) >>
+;
+
+// --- [ User-defined type ] ---------------------------------------------------
+
+UserType
+	: Local
+;
+
+// === [ Local identifiers ] ===================================================
+
+Local
+	: local                                       << irx.NewLocal($0) >>
+;
+
+// === [ Values ] ==============================================================
+
+Value
+	: Local
+	| Constant
+;
+
+// === [ Constants ] ===========================================================
+
+Constant
+	: BoolConst
+	| IntConst
+	| NullPointerConst
+	| ArrayConst
+	| ZeroInitializer
+	| Global
+	| ConstExpr
+;
+
+// --- [ Boolean constants ] ---------------------------------------------------
+
+BoolConst
+	: "false"                                     << irx.NewIntConst($0) >>
+	| "true"                                      << irx.NewIntConst($0) >>
+;
+
+// --- [ Integer constants ] ---------------------------------------------------
+
+IntConst
+	: int_lit                                     << irx.NewIntConst($0) >>
+;
+
+// --- [ Null pointer constants ] ----------------------------------------------
+
+NullPointerConst
+	: "null"                                      << &irx.NullPointerConst{}, nil >>
+;
+
+// --- [ Array constants ] -----------------------------------------------------
+
+ArrayConst
+	: CharArrayConst
+;
+
+CharArrayConst
+	: "c" string_lit                              << irx.NewCharArrayConst($1) >>
+;
+
+// --- [ Zero initializer ] ----------------------------------------------------
+
+ZeroInitializer
+	: "zeroinitializer"                           << &irx.ZeroInitializer{}, nil >>
+;
+
+// --- [ Global identifiers ] --------------------------------------------------
+
+Global
+	: globalx                                     << irx.NewGlobal($0) >>
+;
+
+// --- [ Constant expressions ] ------------------------------------------------
+
+// ___ [ `getelementptr` expression ] __________________________________________
+
+ConstExpr
+	: GetelementptrExpr
+;
+
+GetelementptrExpr
+	: "getelementptr" OptInbounds "("
+	  ElemType "," PointerType Addr ElemIndices
+	  ")"                                         << irx.NewGetElementPtrExpr($3, $5, $6, $7) >>
+;
+
+// === [ Basic blocks ] ========================================================
+
+BasicBlocks
+	: empty
+	| BasicBlockList
+;
+
+BasicBlockList
+	: BasicBlock                                  << irx.NewBasicBlockList($0) >>
+	| BasicBlockList BasicBlock                   << irx.AppendBasicBlock($0, $1) >>
+;
+
+BasicBlock
+	// Unnamed basic block.
+	: Instructions Terminator                     << irx.NewBasicBlock(nil, $0, $1) >>
+	// Named basic block.
+	| labelx Instructions Terminator              << irx.NewBasicBlock($0, $1, $2) >>
+;
+
+Instructions
+	: empty
+	| InstructionList
+;
+
+InstructionList
+	: Instruction                                 << irx.NewInstructionList($0) >>
+	| InstructionList Instruction                 << irx.AppendInstruction($0, $1) >>
+;
+
+// === [ Instructions ] ========================================================
+
+// Non-terminating instructions.
+Instruction
+	: StmtInst
+	| LocalVarDef
+;
+
+// Statement instructions are non-terminating instruction with side-effects
+// which do not return values.
+StmtInst
+	: StoreInst
+;
+
+// --- [ Local variable definition ] -------------------------------------------
+
+LocalVarDef
+	// Unnamed local variable.
+	: ValueInst                                   << irx.NewLocalVarDef(nil, $0) >>
+	// Named local variable.
+	| Local "=" ValueInst                         << irx.NewLocalVarDef($0, $2) >>
+;
+
+// Value instructions are non-terminating instruction which return values.
+ValueInst
+	// Binary instructions.
+	: AddInst
+	| FaddInst
+	| SubInst
+	| FsubInst
+	| MulInst
+	| FmulInst
+	| UdivInst
+	| SdivInst
+	| FdivInst
+	| UremInst
+	| SremInst
+	| FremInst
+	// Bitwise binary instructions.
+	| ShlInst
+	| LshrInst
+	| AshrInst
+	| AndInst
+	| OrInst
+	| XorInst
+	// Vector instructions.
+	// Aggregate instructions.
+	// Memory instructions.
+	| AllocaInst
+	| LoadInst
+	| GetelementptrInst
+	// Conversion instructions.
+	| TruncInst
+	| ZextInst
+	| SextInst
+	| FptruncInst
+	| FpextInst
+	| FptouiInst
+	| FptosiInst
+	| UitofpInst
+	| SitofpInst
+	| PtrtointInst
+	| InttoptrInst
+	| BitcastInst
+	| AddrspacecastInst
+	// Other instructions.
+	| IcmpInst
+	| PhiInst
+	| SelectInst
+	| CallInst
+;
+
+// --- [ Terminator instructions ] ---------------------------------------------
+
+// Terminator instructions terminate basic blocks.
+Terminator
+	: RetInst
+	| BrInst
+	| UnreachableInst
+;
+
+// ___ [ `ret` instruction ] ___________________________________________________
+
+RetInst
+	: "ret" VoidType                              << instruction.NewRet(types.NewVoid(), nil) >>
+	| "ret" Type Value                            << irx.NewRetInst($1, $2) >>
+;
+
+// ___ [ `br` instruction ] ____________________________________________________
+
+BrInst
+	: "br" LabelType TargetBranch                 << irx.NewJmpInst($2) >>
+	| "br" IntType Cond
+	  "," LabelType TrueBranch
+	  "," LabelType FalseBranch                   << irx.NewBrInst($1, $2, $5, $8) >>
+;
+
+TargetBranch
+	: Local
+;
+
+Cond
+	: Value
+;
+
+TrueBranch
+	: Local
+;
+
+FalseBranch
+	: Local
+;
+
+// ___ [ `unreachable` instruction ] ___________________________________________
+
+UnreachableInst
+	: "unreachable"                               << &instruction.Unreachable{}, nil >>
+;
+
+// --- [ Binary instructions ] -------------------------------------------------
+
+// ___ [ `add` instruction ] ___________________________________________________
+
+AddInst
+	: "add" OptWrapFlags Type Value "," Value     << irx.NewAddInst($2, $3, $5) >>
+;
+
+OptWrapFlags
+	: empty
+	| "nsw"
+	| "nuw"
+	| "nsw" "nuw"
+	| "nuw" "nsw"
+;
+
+// ___ [ `fadd` instruction ] __________________________________________________
+
+FaddInst
+	: "fadd" Type Value "," Value                 << irx.NewFAddInst($1, $2, $4) >>
+;
+
+// ___ [ `sub` instruction ] ___________________________________________________
+
+SubInst
+	: "sub" OptWrapFlags Type Value "," Value     << irx.NewSubInst($2, $3, $5) >>
+;
+
+// ___ [ `fsub` instruction ] __________________________________________________
+
+FsubInst
+	: "fsub" Type Value "," Value                 << irx.NewFSubInst($1, $2, $4) >>
+;
+
+// ___ [ `mul` instruction ] ___________________________________________________
+
+MulInst
+	: "mul" OptWrapFlags Type Value "," Value     << irx.NewMulInst($2, $3, $5) >>
+;
+
+// ___ [ `fmul` instruction ] __________________________________________________
+
+FmulInst
+	: "fmul" Type Value "," Value                 << irx.NewFMulInst($1, $2, $4) >>
+;
+
+// ___ [ `udiv` instruction ] __________________________________________________
+
+UdivInst
+	: "udiv" OptExact Type Value "," Value        << irx.NewUDivInst($2, $3, $5) >>
+;
+
+OptExact
+	: empty
+	| "exact"
+;
+
+// ___ [ `sdiv` instruction ] __________________________________________________
+
+SdivInst
+	: "sdiv" OptExact Type Value "," Value        << irx.NewSDivInst($2, $3, $5) >>
+;
+
+// ___ [ `fdiv` instruction ] __________________________________________________
+
+FdivInst
+	: "fdiv" OptExact Type Value "," Value        << irx.NewFDivInst($2, $3, $5) >>
+;
+
+// ___ [ `urem` instruction ] __________________________________________________
+
+UremInst
+	: "urem" OptExact Type Value "," Value        << irx.NewURemInst($2, $3, $5) >>
+;
+
+// ___ [ `srem` instruction ] __________________________________________________
+
+SremInst
+	: "srem" OptExact Type Value "," Value        << irx.NewSRemInst($2, $3, $5) >>
+;
+
+// ___ [ `frem` instruction ] __________________________________________________
+
+FremInst
+	: "frem" OptExact Type Value "," Value        << irx.NewFRemInst($2, $3, $5) >>
+;
+
+// --- [ Bitwise binary instructions ] -----------------------------------------
+
+// ___ [ `shl` instruction ] ___________________________________________________
+
+ShlInst
+	: "shl" Type Value "," Value                  << irx.NewShLInst($1, $2, $4) >>
+;
+
+// ___ [ `lshr` instruction ] __________________________________________________
+
+LshrInst
+	: "lshr" Type Value "," Value                  << irx.NewLShRInst($1, $2, $4) >>
+;
+
+// ___ [ `ashr` instruction ] __________________________________________________
+
+AshrInst
+	: "ashr" Type Value "," Value                  << irx.NewAShRInst($1, $2, $4) >>
+;
+
+// ___ [ `and` instruction ] ___________________________________________________
+
+AndInst
+	: "and" Type Value "," Value                  << irx.NewAndInst($1, $2, $4) >>
+;
+
+// ___ [ `or` instruction ] ____________________________________________________
+
+OrInst
+	: "or" Type Value "," Value                  << irx.NewOrInst($1, $2, $4) >>
+;
+
+// ___ [ `xor` instruction ] ___________________________________________________
+
+XorInst
+	: "xor" Type Value "," Value                  << irx.NewXorInst($1, $2, $4) >>
+;
+
+// --- [ Memory instructions ] -------------------------------------------------
+
+// ___ [ `alloca` instruction ] ________________________________________________
+
+// TODO: Figure out how to hande the optional NumElements of alloca without LR-1
+// conflicts.
+
+AllocaInst
+	: "alloca" Type OptAlignment                  << irx.NewAllocaInst($1, 1) >>
+;
+
+// ___ [ `load` instruction ] __________________________________________________
+
+LoadInst
+	: "load" Type "," PointerType Addr
+	  OptAlignment                                << irx.NewLoadInst($1, $3, $4) >>
+;
+
+Addr
+	: Value
+;
+
+// ___ [ `store` instruction ] _________________________________________________
+
+StoreInst
+	: "store" Type Value "," PointerType Addr
+	  OptAlignment                                << irx.NewStoreInst($1, $2, $4, $5) >>
+;
+
+// ___ [ `getelementptr` instruction ] _________________________________________
+
+GetelementptrInst
+	: "getelementptr" OptInbounds
+	  ElemType "," PointerType Addr ElemIndices   << irx.NewGetElementPtrInst($2, $4, $5, $6) >>
+;
+
+OptInbounds
+	: empty
+	| "inbounds"
+;
+
+ElemType
+	: Type
+;
+
+ElemIndices
+	: empty
+	| ElemIndexList
+;
+
+ElemIndexList
+	: ElemIndex                                   << irx.NewValueList($0) >>
+	| ElemIndexList ElemIndex                     << irx.AppendValue($0, $1) >>
+;
+
+ElemIndex
+	: "," IntType Value                           << irx.NewValue($1, $2) >>
+;
+
+// --- [ Conversion instructions ] ---------------------------------------------
+
+// ___ [ `trunc` instruction ] _________________________________________________
+
+TruncInst
+	: "trunc" FromType Value "to" ToType          << irx.NewTruncInst($1, $2, $4) >>
+;
+
+FromType
+	: Type
+;
+
+ToType
+	: Type
+;
+
+// ___ [ `zext` instruction ] __________________________________________________
+
+ZextInst
+	: "zext" FromType Value "to" ToType           << irx.NewZExtInst($1, $2, $4) >>
+;
+
+// ___ [ `sext` instruction ] __________________________________________________
+
+SextInst
+	: "sext" FromType Value "to" ToType           << irx.NewSExtInst($1, $2, $4) >>
+;
+
+// ___ [ `fptrunc` instruction ] _______________________________________________
+
+FptruncInst
+	: "fptrunc" FromType Value "to" ToType           << irx.NewFPTruncInst($1, $2, $4) >>
+;
+
+// ___ [ `fpext` instruction ] _________________________________________________
+
+FpextInst
+	: "fpext" FromType Value "to" ToType           << irx.NewFPExtInst($1, $2, $4) >>
+;
+
+// ___ [ `fptoui` instruction ] ________________________________________________
+
+FptouiInst
+	: "fptoui" FromType Value "to" ToType           << irx.NewFPToUIInst($1, $2, $4) >>
+;
+
+// ___ [ `fptosi` instruction ] ________________________________________________
+
+FptosiInst
+	: "fptosi" FromType Value "to" ToType           << irx.NewFPToSIInst($1, $2, $4) >>
+;
+
+// ___ [ `uitofp` instruction ] ________________________________________________
+
+UitofpInst
+	: "uitofp" FromType Value "to" ToType           << irx.NewUIToFPInst($1, $2, $4) >>
+;
+
+// ___ [ `sitofp` instruction ] ________________________________________________
+
+SitofpInst
+	: "sitofp" FromType Value "to" ToType           << irx.NewSIToFPInst($1, $2, $4) >>
+;
+
+// ___ [ `ptrtoint` instruction ] ______________________________________________
+
+PtrtointInst
+	: "ptrtoint" FromType Value "to" ToType           << irx.NewPtrToIntInst($1, $2, $4) >>
+;
+
+// ___ [ `inttoptr` instruction ] ______________________________________________
+
+InttoptrInst
+	: "inttoptr" FromType Value "to" ToType           << irx.NewIntToPtrInst($1, $2, $4) >>
+;
+
+// ___ [ `bitcast` instruction ] _______________________________________________
+
+BitcastInst
+	: "bitcast" FromType Value "to" ToType        << irx.NewBitCastInst($1, $2, $4) >>
+;
+
+// ___ [ `addrspacecast` instruction ] _________________________________________
+
+AddrspacecastInst
+	: "addrspacecast" FromType Value "to" ToType        << irx.NewAddrSpaceCastInst($1, $2, $4) >>
+;
+
+// --- [ Other instructions ] --------------------------------------------------
+
+// ___ [ `icmp` instruction ] __________________________________________________
+
+IcmpInst
+	: "icmp" ICond Type Value "," Value           << irx.NewICmpInst($1, $2, $3, $5) >>
+;
+
+ICond
+	: "eq"                                        << instruction.ICondEq, nil >>
+	| "ne"                                        << instruction.ICondNE, nil >>
+	| "ugt"                                       << instruction.ICondUGT, nil >>
+	| "uge"                                       << instruction.ICondUGE, nil >>
+	| "ult"                                       << instruction.ICondULT, nil >>
+	| "ule"                                       << instruction.ICondULE, nil >>
+	| "sgt"                                       << instruction.ICondSGT, nil >>
+	| "sge"                                       << instruction.ICondSGE, nil >>
+	| "slt"                                       << instruction.ICondSLT, nil >>
+	| "sle"                                       << instruction.ICondSLE, nil >>
+;
+
+// ___ [ `phi` instruction ] ___________________________________________________
+
+PhiInst
+	: "phi" Type IncomingValueList                << irx.NewPHIInst($1, $2) >>
+;
+
+IncomingValueList
+	: IncomingValue                               << irx.NewIncomingList($0) >>
+	| IncomingValueList "," IncomingValue         << irx.AppendIncoming($0, $2) >>
+;
+
+IncomingValue
+	: "[" Value "," Predecessor "]"               << irx.NewIncoming($1, $3) >>
+;
+
+Predecessor
+	: Local
+;
+
+// ___ [ `select` instruction ] ________________________________________________
+
+SelectInst
+	: "select" Type Cond
+	  "," Type Value "," Type Value               << irx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
+;
+
+// ___ [ `call` instruction ] __________________________________________________
+
+CallInst
+	: "call" Result FuncName "(" Args ")"
+	  Attrs                                       << irx.NewCallInst($1, $2, $4) >>
+;
+
+Args
+	: empty
+	| ArgList
+;
+
+ArgList
+	: Arg                                         << irx.NewValueList($0) >>
+	| ArgList "," Arg                             << irx.AppendValue($0, $2) >>
+;
+
+Arg
+	: Type ParamAttrs Value                       << irx.NewValue($0, $2) >>
+;

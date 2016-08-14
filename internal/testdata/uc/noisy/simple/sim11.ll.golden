@@ -1,0 +1,50 @@
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+define void @f(i32 %i, i8* %v) {
+0:
+	%1 = alloca i32
+	%2 = alloca i8*
+	store i32 %i, i32* %1
+	store i8* %v, i8** %2
+	%3 = load i32, i32* %1
+	%4 = trunc i32 %3 to i8
+	%5 = load i8*, i8** %2
+	%6 = getelementptr i8, i8* %5, i64 0
+	store i8 %4, i8* %6
+	ret void
+}
+define i32 @main() {
+0:
+	%1 = alloca i32
+	%t = alloca [2 x i8]
+	%b = alloca i32
+	store i32 0, i32* %1
+	store i32 10, i32* %b
+	%2 = getelementptr [2 x i8], [2 x i8]* %t, i32 0, i64 1
+	store i8 0, i8* %2
+	br label %3
+3:
+	%4 = load i32, i32* %b
+	%5 = icmp ne i32 %4, 0
+	br i1 %5, label %6, label %14
+6:
+	%7 = load i32, i32* %b
+	%8 = add i32 48, %7
+	%9 = sub i32 %8, 1
+	%10 = getelementptr [2 x i8], [2 x i8]* %t, i32 0, i32 0
+	call void @f(i32 %9, i8* %10)
+	%11 = getelementptr [2 x i8], [2 x i8]* %t, i32 0, i32 0
+	call void @putstring(i8* %11)
+	%12 = load i32, i32* %b
+	%13 = sub i32 %12, 1
+	store i32 %13, i32* %b
+	br label %3
+14:
+	%15 = getelementptr [2 x i8], [2 x i8]* %t, i32 0, i32 0
+	call void @f(i32 10, i8* %15)
+	%16 = getelementptr [2 x i8], [2 x i8]* %t, i32 0, i32 0
+	call void @putstring(i8* %16)
+	%17 = load i32, i32* %1
+	ret i32 %17
+}
+declare void @putstring(i8*)
