@@ -20,7 +20,7 @@ import (
 // References:
 //    http://www.llvm.org/docs/LangRef.html#globalvars
 type GlobalDecl struct {
-	// Variable name.
+	// Global variable name.
 	name string
 	// Global variable type.
 	typ *types.Pointer
@@ -44,7 +44,7 @@ func NewGlobalDef(name string, val value.Value, immutable bool) (*GlobalDecl, er
 }
 
 // NewGlobalDecl returns a new external global variable declaration of the given
-// name and type. The variable is read-only if immutable is true.
+// name and underlying type. The variable is read-only if immutable is true.
 func NewGlobalDecl(name string, underlying types.Type, immutable bool) (*GlobalDecl, error) {
 	typ, err := types.NewPointer(underlying)
 	if err != nil {

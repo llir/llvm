@@ -37,6 +37,7 @@ type Module struct {
 	Globals []*GlobalDecl
 	// Function definitions and external function declarations.
 	Funcs []*Function
+	// TODO: Add support for metadata.
 }
 
 // NewModule returns a new LLVM IR module.
@@ -44,9 +45,7 @@ func NewModule() *Module {
 	return &Module{}
 }
 
-// String returns a string representation of the module and its top-level
-// declarations and definitions of types, global variables, functions and
-// metadata notes.
+// String returns a string representation of the module.
 func (m *Module) String() string {
 	// Data layout; e.g.
 	//    target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
@@ -80,8 +79,8 @@ func (m *Module) String() string {
 	//    define i32 @main() {
 	//       ret i32 42
 	//    }
-	for _, fn := range m.Funcs {
-		fmt.Fprintln(buf, fn)
+	for _, f := range m.Funcs {
+		fmt.Fprintln(buf, f)
 	}
 
 	// TODO: Print named metadata.
