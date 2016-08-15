@@ -14,17 +14,17 @@ import (
 //
 // Examples:
 //    @x = global i32 42
-//    @s = constant [13 x i8] c"hello world\0A\00"
 //    @y = external global i32
+//    @s = constant [13 x i8] c"hello world\0A\00"
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#globalvars
+//    http://llvm.org/docs/LangRef.html#global-variables
 type GlobalDecl struct {
 	// Global variable name.
 	name string
 	// Global variable type.
 	typ *types.Pointer
-	// Underlying type of global variable.
+	// Underlying type of the global variable.
 	underlying types.Type
 	// Initial value, or nil if defined externally.
 	val value.Value
