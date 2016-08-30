@@ -5,9 +5,9 @@ import (
 	"log"
 	"testing"
 
+	"github.com/llir/llvm/asm/internal/lexer"
+	"github.com/llir/llvm/asm/internal/parser"
 	"github.com/llir/llvm/ir"
-	"github.com/llir/spec/gocc/lexer"
-	"github.com/llir/spec/gocc/parser"
 	"github.com/mewkiz/pkg/errutil"
 )
 

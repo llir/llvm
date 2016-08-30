@@ -26,12 +26,12 @@ import (
 	"strings"
 
 	"github.com/kr/pretty"
+	"github.com/llir/llvm/asm/internal/token"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
-	"github.com/llir/spec/gocc/token"
 	"github.com/mewkiz/pkg/errutil"
 )
 
@@ -147,11 +147,11 @@ func NewGlobalVarDecl(gname, globalVar interface{}) (*ir.GlobalDecl, error) {
 
 		// Global variable declaration.
 		if globalVar.val == nil {
-			return ir.NewGlobalDecl(name, globalVar.typ, globalVar.immutable), nil
+			return ir.NewGlobalDecl(name, globalVar.typ, globalVar.immutable)
 		}
 
 		// Global variable definition.
-		return ir.NewGlobalDef(name, globalVar.val, globalVar.immutable), nil
+		return ir.NewGlobalDef(name, globalVar.val, globalVar.immutable)
 	}
 	return nil, errutil.Newf("invalid global variable type; expected *GlobalVar, got %T", globalVar)
 }
@@ -203,7 +203,7 @@ func NewFuncDecl(fn interface{}) (*ir.Function, error) {
 func NewFuncDef(fn, blocks interface{}) (*ir.Function, error) {
 	if fn, ok := fn.(*ir.Function); ok {
 		if blocks, ok := blocks.([]*ir.BasicBlock); ok {
-			if err := fn.SetBody(blocks); err != nil {
+			if err := fn.SetBlocks(blocks); err != nil {
 				return nil, errutil.Err(err)
 			}
 			return fn, nil
@@ -410,22 +410,43 @@ func NewFuncType(result, params interface{}) (*types.Func, error) {
 
 // === [ Local identifiers ] ===================================================
 
-// A Local represents a local identifier value.
-type Local struct {
+// A LocalDummy represents a dummy value of a local variable. Dummy values for
+// local variables are used during syntax directed translation, and later
+// replaced by their corresponding values in a later stage of parsing. The
+// reason for this is that there is no clear way to keep a context for functions
+// around during parsing within the Gocc generated parsers.
+type LocalDummy struct {
 	// Local identifier name.
 	name string
 }
 
-// NewLocal returns a new local identifier based on the given local identifier
-// name.
-func NewLocal(nameToken interface{}) (*Local, error) {
+// Dummy implementation of value.NamedValue
+
+func (l *LocalDummy) String() string {
+	panic("dummy implementation")
+}
+
+func (l *LocalDummy) ValueString() string {
+	panic("dummy implementation")
+}
+
+func (l *LocalDummy) Type() types.Type {
+	panic("dummy implementation")
+}
+
+func (l *LocalDummy) Name() string {
+	panic("dummy implementation")
+}
+
+// NewLocalDummy returns a new dummy value for the given local identifier name.
+func NewLocalDummy(nameToken interface{}) (*LocalDummy, error) {
 	if nameToken, ok := nameToken.(*token.Token); ok {
 		// Strip "%" prefix.
 		name, err := stripLocalPrefix(nameToken.Lit)
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		return &Local{name: name}, nil
+		return &LocalDummy{name: name}, nil
 	}
 	return nil, errutil.Newf("invalid local identifier name type; expected *token.Token, got %T", nameToken)
 }
@@ -449,8 +470,8 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 	//    * ...
 	if typ, ok := typ.(types.Type); ok {
 		switch val := val.(type) {
-		case *Local:
-			return ir.NewLocal(val.name, typ)
+		case *LocalDummy:
+			return val, nil
 		case *Global:
 			// TODO: Retreive type from val.typ once support for forward reference
 			// of global variable declarations have been added.
@@ -469,9 +490,9 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 		case *CharArrayConst:
 			return constant.NewCharArray(typ, val.val)
 		case *ZeroInitializer:
-			return constant.NewZeroInitializer(typ)
+			return constant.NewZeroInitializer(typ), nil
 		case *GetElementPtrExpr:
-			return constant.NewGetElementPtr(typ, val.elem, val.addr, val.indices)
+			return constant.NewGetElementPtr(val.elem, val.addr, val.indices)
 		default:
 			pretty.Println(val)
 			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
@@ -589,7 +610,7 @@ type GetElementPtrExpr struct {
 	// Memory address of the element.
 	addr value.Value
 	// Element indices.
-	indices []value.Value
+	indices []constant.Constant
 }
 
 // NewGetElementPtrExpr returns a new getelementptr constant expression based on
@@ -600,9 +621,9 @@ func NewGetElementPtrExpr(elem, addrType, addr, elemIndices interface{}) (*GetEl
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		var indices []value.Value
+		var indices []constant.Constant
 		switch elemIndices := elemIndices.(type) {
-		case []value.Value:
+		case []constant.Constant:
 			indices = elemIndices
 		case nil:
 		default:
@@ -656,9 +677,14 @@ func NewBasicBlock(nameToken, insts, term interface{}) (*ir.BasicBlock, error) {
 	if term, ok := term.(instruction.Terminator); ok {
 		switch insts := insts.(type) {
 		case []instruction.Instruction:
-			return ir.NewBasicBlock(name, insts, term)
+			block := ir.NewBasicBlock(name)
+			block.SetInsts(insts)
+			block.SetTerm(term)
+			return block, nil
 		case nil:
-			return ir.NewBasicBlock(name, nil, term)
+			block := ir.NewBasicBlock(name)
+			block.SetTerm(term)
+			return block, nil
 		default:
 			return nil, errutil.Newf("invalid non-terminating instructions type; expected []instruction.Instruction, got %T", insts)
 		}
@@ -707,7 +733,7 @@ func NewLocalVarDef(lname, valInst interface{}) (*instruction.LocalVarDef, error
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		return instruction.NewLocalVarDef(name, valInst)
+		return instruction.NewLocalVarDef(name, valInst), nil
 	}
 	return nil, errutil.Newf("invalid value instruction type; expected instruction.ValueInst, got %T", valInst)
 }
@@ -734,9 +760,9 @@ func NewRetInst(typ, val interface{}) (*instruction.Ret, error) {
 // NewJmpInst returns a new unconditional branch instruction based on the given
 // target branch.
 func NewJmpInst(ltarget interface{}) (*instruction.Jmp, error) {
-	target, err := getLocalName(ltarget)
-	if err != nil {
-		return nil, errutil.Err(err)
+	target, ok := ltarget.(*LocalDummy)
+	if !ok {
+		return nil, errutil.Newf("invalid target type; expected *LocalDummy, got %T", ltarget)
 	}
 	return instruction.NewJmp(target)
 }
@@ -748,13 +774,13 @@ func NewBrInst(condType, condVal, ltrueBranch, lfalseBranch interface{}) (*instr
 	if err != nil {
 		return nil, errutil.Err(err)
 	}
-	falseBranch, err := getLocalName(lfalseBranch)
-	if err != nil {
-		return nil, errutil.Err(err)
+	falseBranch, ok := lfalseBranch.(*LocalDummy)
+	if !ok {
+		return nil, errutil.Newf("invalid false branch type; expected *LocalDummy, got %T", lfalseBranch)
 	}
-	trueBranch, err := getLocalName(ltrueBranch)
-	if err != nil {
-		return nil, errutil.Err(err)
+	trueBranch, ok := ltrueBranch.(*LocalDummy)
+	if !ok {
+		return nil, errutil.Newf("invalid true branch type; expected *LocalDummy, got %T", ltrueBranch)
 	}
 	return instruction.NewBr(cond, trueBranch, falseBranch)
 }
@@ -1110,16 +1136,16 @@ func AppendIncoming(list, inc interface{}) ([]*Incoming, error) {
 type Incoming struct {
 	// Incoming value.
 	val interface{}
-	// Label name of the predecessor basic block of the incoming value.
-	pred string
+	// Predecessor basic block of the incoming value.
+	pred *LocalDummy
 }
 
 // NewIncoming returns a new incoming value based on the given value and
 // predecessor basic block label name.
 func NewIncoming(val, lpred interface{}) (*Incoming, error) {
-	pred, err := getLocalName(lpred)
-	if err != nil {
-		return nil, errutil.Err(err)
+	pred, ok := lpred.(*LocalDummy)
+	if !ok {
+		return nil, errutil.Newf("invalid predecessor type; expected *LocalDummy, got %T", lpred)
 	}
 	return &Incoming{val: val, pred: pred}, nil
 }
@@ -1180,11 +1206,11 @@ func getGlobalName(gname interface{}) (string, error) {
 // if nil is provided.
 func getLocalName(lname interface{}) (string, error) {
 	switch lname := lname.(type) {
-	case *Local:
+	case *LocalDummy:
 		return lname.name, nil
 	case nil:
 		return "", nil
 	default:
-		return "", errutil.Newf("invalid local identifier name type; expected *Local, got %T", lname)
+		return "", errutil.Newf("invalid local identifier name type; expected *LocalDummy, got %T", lname)
 	}
 }

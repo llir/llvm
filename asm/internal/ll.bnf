@@ -158,9 +158,9 @@ int_type
 // ### [ Syntactic part ] ######################################################
 
 << import (
+	"github.com/llir/llvm/asm/internal/irx"
 	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/types"
-	"github.com/llir/spec/gocc/irx"
 ) >>
 
 // === [ Modules ] =============================================================
@@ -606,7 +606,7 @@ UserType
 // === [ Local identifiers ] ===================================================
 
 Local
-	: local                                       << irx.NewLocal($0) >>
+	: local                                       << irx.NewLocalDummy($0) >>
 ;
 
 // === [ Values ] ==============================================================

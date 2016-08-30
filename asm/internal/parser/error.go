@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/llir/spec/gocc/errors"
+	"github.com/llir/llvm/asm/internal/errors"
 )
 
 // NewError returns a user-friendly parse error.
