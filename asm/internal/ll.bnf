@@ -929,13 +929,13 @@ ShlInst
 // ___ [ `lshr` instruction ] __________________________________________________
 
 LshrInst
-	: "lshr" Type Value "," Value                  << irx.NewLShRInst($1, $2, $4) >>
+	: "lshr" Type Value "," Value                 << irx.NewLShRInst($1, $2, $4) >>
 ;
 
 // ___ [ `ashr` instruction ] __________________________________________________
 
 AshrInst
-	: "ashr" Type Value "," Value                  << irx.NewAShRInst($1, $2, $4) >>
+	: "ashr" Type Value "," Value                 << irx.NewAShRInst($1, $2, $4) >>
 ;
 
 // ___ [ `and` instruction ] ___________________________________________________
@@ -947,7 +947,7 @@ AndInst
 // ___ [ `or` instruction ] ____________________________________________________
 
 OrInst
-	: "or" Type Value "," Value                  << irx.NewOrInst($1, $2, $4) >>
+	: "or" Type Value "," Value                   << irx.NewOrInst($1, $2, $4) >>
 ;
 
 // ___ [ `xor` instruction ] ___________________________________________________
@@ -1046,49 +1046,49 @@ SextInst
 // ___ [ `fptrunc` instruction ] _______________________________________________
 
 FptruncInst
-	: "fptrunc" FromType Value "to" ToType           << irx.NewFPTruncInst($1, $2, $4) >>
+	: "fptrunc" FromType Value "to" ToType        << irx.NewFPTruncInst($1, $2, $4) >>
 ;
 
 // ___ [ `fpext` instruction ] _________________________________________________
 
 FpextInst
-	: "fpext" FromType Value "to" ToType           << irx.NewFPExtInst($1, $2, $4) >>
+	: "fpext" FromType Value "to" ToType          << irx.NewFPExtInst($1, $2, $4) >>
 ;
 
 // ___ [ `fptoui` instruction ] ________________________________________________
 
 FptouiInst
-	: "fptoui" FromType Value "to" ToType           << irx.NewFPToUIInst($1, $2, $4) >>
+	: "fptoui" FromType Value "to" ToType         << irx.NewFPToUIInst($1, $2, $4) >>
 ;
 
 // ___ [ `fptosi` instruction ] ________________________________________________
 
 FptosiInst
-	: "fptosi" FromType Value "to" ToType           << irx.NewFPToSIInst($1, $2, $4) >>
+	: "fptosi" FromType Value "to" ToType         << irx.NewFPToSIInst($1, $2, $4) >>
 ;
 
 // ___ [ `uitofp` instruction ] ________________________________________________
 
 UitofpInst
-	: "uitofp" FromType Value "to" ToType           << irx.NewUIToFPInst($1, $2, $4) >>
+	: "uitofp" FromType Value "to" ToType         << irx.NewUIToFPInst($1, $2, $4) >>
 ;
 
 // ___ [ `sitofp` instruction ] ________________________________________________
 
 SitofpInst
-	: "sitofp" FromType Value "to" ToType           << irx.NewSIToFPInst($1, $2, $4) >>
+	: "sitofp" FromType Value "to" ToType         << irx.NewSIToFPInst($1, $2, $4) >>
 ;
 
 // ___ [ `ptrtoint` instruction ] ______________________________________________
 
 PtrtointInst
-	: "ptrtoint" FromType Value "to" ToType           << irx.NewPtrToIntInst($1, $2, $4) >>
+	: "ptrtoint" FromType Value "to" ToType       << irx.NewPtrToIntInst($1, $2, $4) >>
 ;
 
 // ___ [ `inttoptr` instruction ] ______________________________________________
 
 InttoptrInst
-	: "inttoptr" FromType Value "to" ToType           << irx.NewIntToPtrInst($1, $2, $4) >>
+	: "inttoptr" FromType Value "to" ToType       << irx.NewIntToPtrInst($1, $2, $4) >>
 ;
 
 // ___ [ `bitcast` instruction ] _______________________________________________
@@ -1100,7 +1100,7 @@ BitcastInst
 // ___ [ `addrspacecast` instruction ] _________________________________________
 
 AddrspacecastInst
-	: "addrspacecast" FromType Value "to" ToType        << irx.NewAddrSpaceCastInst($1, $2, $4) >>
+	: "addrspacecast" FromType Value "to" ToType  << irx.NewAddrSpaceCastInst($1, $2, $4) >>
 ;
 
 // --- [ Other instructions ] --------------------------------------------------
