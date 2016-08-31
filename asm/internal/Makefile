@@ -3,11 +3,11 @@ gen: ll.bnf
 	find . -type f -name '*.go' | xargs goimports -w
 
 debug_lexer: ll.bnf
-	gocc -debug_lexer -v -a $<
+	gocc -debug_lexer -v $<
 	find . -type f -name '*.go' | xargs goimports -w
 
 debug_parser: ll.bnf
-	gocc -debug_parser -v -a $<
+	gocc -debug_parser -v $<
 	find . -type f -name '*.go' | xargs goimports -w
 
 clean:
