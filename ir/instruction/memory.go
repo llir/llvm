@@ -117,6 +117,16 @@ func NewStore(val, addr value.Value) (*Store, error) {
 	return &Store{val: val, addr: addr}, nil
 }
 
+// Val returns the value to store in memory.
+func (inst *Store) Val() value.Value {
+	return inst.val
+}
+
+// Addr returns the address at which to store.
+func (inst *Store) Addr() value.Value {
+	return inst.addr
+}
+
 // String returns the string representation of the instruction.
 func (inst *Store) String() string {
 	return fmt.Sprintf("store %s %s, %s %s", inst.val.Type(), inst.val.ValueString(), inst.addr.Type(), inst.addr.ValueString())

@@ -56,7 +56,8 @@ func NewModule(decls interface{}) (*ir.Module, error) {
 				//panic(fmt.Sprintf("support for top-level declaration type %T not yet implemented", decl))
 			}
 		}
-		return module, nil
+		// Replace dummy values with their corresponding local variables.
+		return fixModule(module), nil
 	}
 	return nil, errutil.Newf("invalid top-level declarations type; expected []TopLevelDecl, got %T", decls)
 }
@@ -733,7 +734,7 @@ func NewLocalVarDef(lname, valInst interface{}) (*instruction.LocalVarDef, error
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		return instruction.NewLocalVarDef(name, valInst), nil
+		return instruction.NewLocalVarDef(name, valInst)
 	}
 	return nil, errutil.Newf("invalid value instruction type; expected instruction.ValueInst, got %T", valInst)
 }

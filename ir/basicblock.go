@@ -155,7 +155,7 @@ func (block *BasicBlock) assignIDs() error {
 	// Assign unique local IDs to unnamed local variable definitions.
 	for _, inst := range block.Insts() {
 		if def, ok := inst.(*instruction.LocalVarDef); ok {
-			if !types.IsVoid(def.Inst().RetType()) {
+			if !types.IsVoid(def.ValInst().RetType()) {
 				if err := setName(def); err != nil {
 					return errutil.Err(err)
 				}
