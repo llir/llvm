@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -89,16 +89,16 @@ func (d *GlobalDecl) String() string {
 	// External global variable declaration; e.g.
 	//    @y = external global i32
 	if d.val == nil {
-		return fmt.Sprintf("%s = external %s %s", asm.EncGlobal(d.Name()), immutableSpec, d.Underlying())
+		return fmt.Sprintf("%s = external %s %s", enc.Global(d.Name()), immutableSpec, d.Underlying())
 	}
 
 	// Global variable definition; e.g.
 	//     @x = global i32 42
 	//     @s = constant [13 x i8] c"hello world\0A\00"
-	return fmt.Sprintf("%s = %s %s %s", asm.EncGlobal(d.Name()), immutableSpec, d.Underlying(), d.Value().ValueString())
+	return fmt.Sprintf("%s = %s %s %s", enc.Global(d.Name()), immutableSpec, d.Underlying(), d.Value().ValueString())
 }
 
 // ValueString returns a string representation of the value.
 func (d *GlobalDecl) ValueString() string {
-	return asm.EncGlobal(d.Name())
+	return enc.Global(d.Name())
 }

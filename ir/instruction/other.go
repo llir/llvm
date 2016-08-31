@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -155,7 +155,7 @@ func (inc *Incoming) Pred() value.NamedValue {
 
 // String returns the string representation of the incoming value.
 func (inc *Incoming) String() string {
-	return fmt.Sprintf("[ %s, %s ]", inc.val.ValueString(), asm.EncLocal(inc.pred.Name()))
+	return fmt.Sprintf("[ %s, %s ]", inc.val.ValueString(), enc.Local(inc.pred.Name()))
 }
 
 // Select represents a select instruction.
@@ -234,7 +234,7 @@ func (inst *Call) String() string {
 		}
 		fmt.Fprintf(argsBuf, "%s %s", arg.Type(), arg.ValueString())
 	}
-	return fmt.Sprintf("call %s %s(%s)", inst.result, asm.EncGlobal(inst.fname), argsBuf)
+	return fmt.Sprintf("call %s %s(%s)", inst.result, enc.Global(inst.fname), argsBuf)
 }
 
 type VAArg struct{}

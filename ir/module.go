@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -63,7 +63,7 @@ func (m *Module) String() string {
 	// Type definitions; e.g.
 	//    %foo = type {i32}
 	for _, typ := range m.Types {
-		fmt.Fprintf(buf, "%v = type %v\n", asm.EncLocal(typ.Name()), typ.Struct())
+		fmt.Fprintf(buf, "%v = type %v\n", enc.Local(typ.Name()), typ.Struct())
 	}
 
 	// Global variables; e.g.

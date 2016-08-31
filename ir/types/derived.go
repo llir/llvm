@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 )
 
 // Func represents a function type.
@@ -143,14 +143,14 @@ func (t *Param) Equal(u Type) bool {
 // String returns a string representation of the function parameter type.
 func (t *Param) String() string {
 	if len(t.name) > 0 {
-		return fmt.Sprintf("%v %v", t.typ, asm.EncLocal(t.name))
+		return fmt.Sprintf("%v %v", t.typ, enc.Local(t.name))
 	}
 	return t.typ.String()
 }
 
 // ValueString returns a string representation of the value.
 func (t *Param) ValueString() string {
-	return asm.EncLocal(t.Name())
+	return enc.Local(t.Name())
 }
 
 // Pointer represents a pointer type.

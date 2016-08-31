@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -260,7 +260,7 @@ func (v *Pointer) Type() types.Type {
 //
 //    @printf
 func (v *Pointer) String() string {
-	return asm.EncGlobal(v.name)
+	return enc.Global(v.name)
 }
 
 // ValueString returns a string representation of the value.

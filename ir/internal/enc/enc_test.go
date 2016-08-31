@@ -3,7 +3,7 @@ package enc_test
 import (
 	"testing"
 
-	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/internal/enc"
 )
 
 func TestGlobal(t *testing.T) {

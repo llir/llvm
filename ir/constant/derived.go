@@ -8,7 +8,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
@@ -174,7 +174,7 @@ func unquote(s string) (string, error) {
 		return "", errutil.Newf(`invalid suffix of quoted string %q; expected '"'`, s)
 	}
 	s = s[:len(s)-1]
-	return asm.Unescape(s), nil
+	return enc.Unescape(s), nil
 }
 
 // Type returns the type of the value.

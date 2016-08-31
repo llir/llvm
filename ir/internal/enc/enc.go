@@ -82,9 +82,9 @@ func escape(s string) string {
 	return string(buf)
 }
 
-// unescape replaces hexadecimal escape sequences (\xx) in s with their
+// Unescape replaces hexadecimal escape sequences (\xx) in s with their
 // corresponding characters.
-func unescape(s string) string {
+func Unescape(s string) string {
 	if !strings.ContainsRune(s, '\\') {
 		return s
 	}

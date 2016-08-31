@@ -3,7 +3,7 @@ package instruction
 import (
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -91,7 +91,7 @@ func (term *Jmp) Target() value.NamedValue {
 
 // String returns the string representation of the instruction.
 func (term *Jmp) String() string {
-	return fmt.Sprintf("br label %s", asm.EncLocal(term.target.Name()))
+	return fmt.Sprintf("br label %s", enc.Local(term.target.Name()))
 }
 
 // Br represents a conditional branch instruction.
@@ -137,7 +137,7 @@ func (term *Br) FalseBranch() value.NamedValue {
 
 // String returns the string representation of the instruction.
 func (term *Br) String() string {
-	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), term.cond.ValueString(), asm.EncLocal(term.trueBranch.Name()), asm.EncLocal(term.falseBranch.Name()))
+	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), term.cond.ValueString(), enc.Local(term.trueBranch.Name()), enc.Local(term.falseBranch.Name()))
 }
 
 type Switch struct{}

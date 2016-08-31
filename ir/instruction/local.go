@@ -3,7 +3,7 @@ package instruction
 import (
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -64,7 +64,7 @@ func (def *LocalVarDef) String() string {
 
 // ValueString returns a string representation of the value.
 func (def *LocalVarDef) ValueString() string {
-	return asm.EncLocal(def.Name())
+	return enc.Local(def.Name())
 }
 
 // isInst ensures that only non-branching instructions can be assigned to the

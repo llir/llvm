@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/ir/instruction"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
@@ -114,7 +114,7 @@ func (block *BasicBlock) String() string {
 
 // ValueString returns a string representation of the value.
 func (block *BasicBlock) ValueString() string {
-	return asm.EncLocal(block.Name())
+	return enc.Local(block.Name())
 }
 
 // assignIDs assigns unique IDs to unnamed basic blocks and local variable
@@ -141,7 +141,7 @@ func (block *BasicBlock) assignIDs() error {
 			// counter and update the localID counter to keep explicitly and
 			// implicitly named local IDs in sync.
 			if want := f.nextID(); name != want {
-				return errutil.Newf("invalid local ID; expected %s, got %s", asm.EncLocal(want), asm.EncLocal(name))
+				return errutil.Newf("invalid local ID; expected %s, got %s", enc.Local(want), enc.Local(name))
 			}
 		}
 		return nil

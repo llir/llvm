@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/mewkiz/pkg/errutil"
 )
@@ -140,7 +140,7 @@ func (f *Function) String() string {
 
 // ValueString returns a string representation of the value.
 func (f *Function) ValueString() string {
-	return asm.EncGlobal(f.Name())
+	return enc.Global(f.Name())
 }
 
 // nextID returns the next unique local ID of the given function, and increments

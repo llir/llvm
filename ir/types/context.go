@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir/internal/enc"
 )
 
 // Context represents the type context of a LLVM IR module. It is used during
@@ -37,7 +37,7 @@ func NewContext() *Context {
 // identified structure.
 func (ctx *Context) Struct(name string) (*NamedStruct, error) {
 	if old, ok := ctx.alias[name]; ok {
-		return nil, fmt.Errorf("redefinition of type alias %q (%q) as identified structure", asm.EncLocal(name), old)
+		return nil, fmt.Errorf("redefinition of type alias %q (%q) as identified structure", enc.Local(name), old)
 	}
 	t, ok := ctx.structs[name]
 	if !ok {
@@ -57,10 +57,10 @@ func (ctx *Context) Alias(name string) (Type, bool) {
 // SetAlias creates a type alias between the given name and type.
 func (ctx *Context) SetAlias(name string, typ Type) error {
 	if _, ok := ctx.structs[name]; ok {
-		return fmt.Errorf("redefinition of identified structure %q as type alias (%q)", asm.EncLocal(name), typ)
+		return fmt.Errorf("redefinition of identified structure %q as type alias (%q)", enc.Local(name), typ)
 	}
 	if old, ok := ctx.alias[name]; ok {
-		return fmt.Errorf("redefinition of type alias %q; old mapping %q, new mapping %q", asm.EncLocal(name), old, typ)
+		return fmt.Errorf("redefinition of type alias %q; old mapping %q, new mapping %q", enc.Local(name), old, typ)
 	}
 	ctx.alias[name] = typ
 	return nil
@@ -71,7 +71,7 @@ func (ctx *Context) SetAlias(name string, typ Type) error {
 func (ctx *Context) Validate() error {
 	for _, t := range ctx.structs {
 		if t.typ == nil {
-			return fmt.Errorf("empty body of identified structure %q", asm.EncLocal(t.Name()))
+			return fmt.Errorf("empty body of identified structure %q", enc.Local(t.Name()))
 		}
 	}
 	return nil
@@ -102,7 +102,7 @@ func (t *NamedStruct) SetStruct(typ *Struct) error {
 	if typ == nil {
 		t.typ = typ
 	} else if !t.typ.Equal(typ) {
-		return fmt.Errorf("redefinition of identified structure %q; old definition %v, new definition %v", asm.EncLocal(t.Name()), t.typ, typ)
+		return fmt.Errorf("redefinition of identified structure %q; old definition %v, new definition %v", enc.Local(t.Name()), t.typ, typ)
 	}
 	return nil
 }
@@ -124,5 +124,5 @@ func (t *NamedStruct) Equal(u Type) bool {
 // always printed by their type names.
 func (t *NamedStruct) String() string {
 	// e.g. "%regset"
-	return asm.EncLocal(t.Name())
+	return enc.Local(t.Name())
 }
