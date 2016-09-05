@@ -796,7 +796,7 @@ Terminator
 // ___ [ `ret` instruction ] ___________________________________________________
 
 RetInst
-	: "ret" VoidType                              << instruction.NewRet(types.NewVoid(), nil) >>
+	: "ret" VoidType                              << instruction.NewRet(nil) >>
 	| "ret" Type Value                            << irx.NewRetInst($1, $2) >>
 ;
 

@@ -187,12 +187,6 @@ func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.Val
 
 // === [ Terminators ] =========================================================
 
-// fixTerm replaces dummy values within the given terminator with their
-// corresponding local variables.
-func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator {
-	panic("irx.dummyMap.fixTerm: not yet implemented")
-}
-
 //    *Ret
 //    *Jmp
 //    *Br
@@ -202,10 +196,47 @@ func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator
 //    *Resume
 //    *Unreachable
 
+// fixTerm replaces dummy values within the given terminator with their
+// corresponding local variables.
+func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator {
+	switch oldTerm := oldTerm.(type) {
+	case *instruction.Ret:
+		oldVal := oldTerm.Value()
+		var val value.Value
+		if oldVal != nil {
+			val = m.fixValue(oldVal)
+		}
+		term, err := instruction.NewRet(val)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return term
+	case *instruction.Jmp:
+		panic("irx.dummyMap.fixTerm: Jmp not yet implemented")
+	case *instruction.Br:
+		panic("irx.dummyMap.fixTerm: Br not yet implemented")
+	case *instruction.Switch:
+		panic("irx.dummyMap.fixTerm: Switch not yet implemented")
+	case *instruction.IndirectBr:
+		panic("irx.dummyMap.fixTerm: IndirectBr not yet implemented")
+	case *instruction.Invoke:
+		panic("irx.dummyMap.fixTerm: Invoke not yet implemented")
+	case *instruction.Resume:
+		panic("irx.dummyMap.fixTerm: Resume not yet implemented")
+	case *instruction.Unreachable:
+		panic("irx.dummyMap.fixTerm: Unreachable not yet implemented")
+	default:
+		panic(fmt.Sprintf("support for terminator type %T not yet implemented", oldTerm))
+	}
+}
+
 // === [ Values ] ==============================================================
 
 // fixValue replaces dummy values within the given value with their
 // corresponding local variables.
 func (m dummyMap) fixValue(oldVal value.Value) value.Value {
-	panic("irx.dummyMap.fixValue: not yet implemented")
+	switch oldVal := oldVal.(type) {
+	default:
+		panic(fmt.Sprintf("support for value type %T not yet implemented", oldVal))
+	}
 }

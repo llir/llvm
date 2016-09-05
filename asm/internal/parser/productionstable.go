@@ -2655,13 +2655,13 @@ var productionsTable = ProdTab{
 		},
 	},
 	ProdTabEntry{
-		String: `RetInst : "ret" VoidType	<< instruction.NewRet(types.NewVoid(), nil) >>`,
+		String: `RetInst : "ret" VoidType	<< instruction.NewRet(nil) >>`,
 		Id:         "RetInst",
 		NTType:     88,
 		Index:      263,
 		NumSymbols: 2,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return instruction.NewRet(types.NewVoid(), nil)
+			return instruction.NewRet(nil)
 		},
 	},
 	ProdTabEntry{

@@ -9,7 +9,7 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// A Ret instruction returns control flow (and optionally a value) from a callee
+// A Ret instruction returns control flow, and optionally a value, from a callee
 // back to its caller.
 //
 // Syntax:
@@ -17,47 +17,38 @@ import (
 //    ret void
 //
 // Semantics:
-//    return Val;
+//    return val;
 //    return;
 //
 // Reference:
 //    http://llvm.org/docs/LangRef.html#ret-instruction
 type Ret struct {
-	// Return type.
-	typ types.Type
-	// Return value; or nil in case of a void return.
+	// Return value; or nil if "void" return.
 	val value.Value
 }
 
-// NewRet returns a new ret instruction based on the given return type and
-// value. A nil value indicates a "void" return instruction.
-func NewRet(typ types.Type, val value.Value) (*Ret, error) {
-	// Sanity check.
-	switch {
-	case typ.Equal(types.NewVoid()):
-		// Void return.
-		if val != nil {
-			return nil, errutil.Newf(`expected no return value for return type "void"; got %q`, val)
-		}
-	default:
-		// Value return.
-		if val == nil {
-			return nil, errutil.Newf(`expected return value for return type %q; got nil`, typ)
-		}
-		if valTyp := val.Type(); !typ.Equal(valTyp) {
-			return nil, errutil.Newf("type mismatch between return type %q and return value %q", typ, valTyp)
-		}
+// NewRet returns a new ret instruction based on the given return value. A nil
+// return value indicates a "void" return instruction.
+func NewRet(val value.Value) (*Ret, error) {
+	if val != nil && types.IsVoid(val.Type()) {
+		return nil, errutil.Newf(`expected no return value for return type "void"; got %q`, val)
 	}
+	return &Ret{val: val}, nil
+}
 
-	return &Ret{typ: typ, val: val}, nil
+// Value returns the return value of the ret instruction. A nil return value
+// indicates a "void" return instruction.
+func (term *Ret) Value() value.Value {
+	return term.val
 }
 
 // String returns the string representation of the instruction.
 func (term *Ret) String() string {
 	if term.val == nil {
-		return fmt.Sprintf("ret %v", term.typ)
+		return "ret void"
 	}
-	return fmt.Sprintf("ret %v %v", term.val.Type(), term.val.ValueString())
+	val := term.Value()
+	return fmt.Sprintf("ret %v %v", val.Type(), val.ValueString())
 }
 
 // TODO: Add support for the remaining terminator instructions:

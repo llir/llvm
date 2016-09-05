@@ -751,7 +751,7 @@ func NewRetInst(typ, val interface{}) (*instruction.Ret, error) {
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		return instruction.NewRet(typ, val)
+		return instruction.NewRet(val)
 	}
 	return nil, errutil.Newf("invalid result type; expected types.Type, got %T", typ)
 }
