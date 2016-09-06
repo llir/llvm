@@ -114,7 +114,119 @@ func (m dummyMap) fixFenceInst(oldInst *instruction.Fence) *instruction.Fence {
 // fixValueInst replaces dummy values within the given value instruction with
 // their corresponding local variables.
 func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.ValueInst {
-	panic("irx.dummyMap.fixValueInst: not yet implemented")
+	switch oldValInst := oldValInst.(type) {
+	// Binary Operations
+	case *instruction.Add:
+		oldValInst
+	case *instruction.FAdd:
+		panic("irx.dummyMap.fixValueInst: FAdd not yet implemented")
+	case *instruction.Sub:
+		panic("irx.dummyMap.fixValueInst: Sub not yet implemented")
+	case *instruction.FSub:
+		panic("irx.dummyMap.fixValueInst: FSub not yet implemented")
+	case *instruction.Mul:
+		panic("irx.dummyMap.fixValueInst: Mul not yet implemented")
+	case *instruction.FMul:
+		panic("irx.dummyMap.fixValueInst: FMul not yet implemented")
+	case *instruction.UDiv:
+		panic("irx.dummyMap.fixValueInst: UDiv not yet implemented")
+	case *instruction.SDiv:
+		panic("irx.dummyMap.fixValueInst: SDiv not yet implemented")
+	case *instruction.FDiv:
+		panic("irx.dummyMap.fixValueInst: FDiv not yet implemented")
+	case *instruction.URem:
+		panic("irx.dummyMap.fixValueInst: URem not yet implemented")
+	case *instruction.SRem:
+		panic("irx.dummyMap.fixValueInst: SRem not yet implemented")
+	case *instruction.FRem:
+		panic("irx.dummyMap.fixValueInst: FRem not yet implemented")
+
+	// Bitwise Binary Operations
+	case *instruction.ShL:
+		panic("irx.dummyMap.fixValueInst: ShL not yet implemented")
+	case *instruction.LShR:
+		panic("irx.dummyMap.fixValueInst: LShR not yet implemented")
+	case *instruction.AShR:
+		panic("irx.dummyMap.fixValueInst: AShR not yet implemented")
+	case *instruction.And:
+		panic("irx.dummyMap.fixValueInst: And not yet implemented")
+	case *instruction.Or:
+		panic("irx.dummyMap.fixValueInst: Or not yet implemented")
+	case *instruction.Xor:
+		panic("irx.dummyMap.fixValueInst: Xor not yet implemented")
+
+	// Vector Operations
+	case *instruction.ExtractElement:
+		panic("irx.dummyMap.fixValueInst: ExtractElement not yet implemented")
+	case *instruction.InsertElement:
+		panic("irx.dummyMap.fixValueInst: InsertElement not yet implemented")
+	case *instruction.ShuffleVector:
+		panic("irx.dummyMap.fixValueInst: ShuffleVector not yet implemented")
+
+	// Aggregate Operations
+	case *instruction.ExtractValue:
+		panic("irx.dummyMap.fixValueInst: ExtractValue not yet implemented")
+	case *instruction.InsertValue:
+		panic("irx.dummyMap.fixValueInst: InsertValue not yet implemented")
+
+	// Memory Access and Addressing Operations
+	case *instruction.Alloca:
+		panic("irx.dummyMap.fixValueInst: Alloca not yet implemented")
+	case *instruction.Load:
+		panic("irx.dummyMap.fixValueInst: Load not yet implemented")
+	case *instruction.CmpXchg:
+		panic("irx.dummyMap.fixValueInst: CmpXchg not yet implemented")
+	case *instruction.AtomicRMW:
+		panic("irx.dummyMap.fixValueInst: AtomicRMW not yet implemented")
+	case *instruction.GetElementPtr:
+		panic("irx.dummyMap.fixValueInst: GetElementPtr not yet implemented")
+
+	// Conversion Operations
+	case *instruction.Trunc:
+		panic("irx.dummyMap.fixValueInst: Trunc not yet implemented")
+	case *instruction.ZExt:
+		panic("irx.dummyMap.fixValueInst: ZExt not yet implemented")
+	case *instruction.SExt:
+		panic("irx.dummyMap.fixValueInst: SExt not yet implemented")
+	case *instruction.FPTrunc:
+		panic("irx.dummyMap.fixValueInst: FPTrunc not yet implemented")
+	case *instruction.FPExt:
+		panic("irx.dummyMap.fixValueInst: FPExt not yet implemented")
+	case *instruction.FPToUI:
+		panic("irx.dummyMap.fixValueInst: FPToUI not yet implemented")
+	case *instruction.FPToSI:
+		panic("irx.dummyMap.fixValueInst: FPToSI not yet implemented")
+	case *instruction.UIToFP:
+		panic("irx.dummyMap.fixValueInst: UIToFP not yet implemented")
+	case *instruction.SIToFP:
+		panic("irx.dummyMap.fixValueInst: SIToFP not yet implemented")
+	case *instruction.PtrToInt:
+		panic("irx.dummyMap.fixValueInst: PtrToInt not yet implemented")
+	case *instruction.IntToPtr:
+		panic("irx.dummyMap.fixValueInst: IntToPtr not yet implemented")
+	case *instruction.BitCast:
+		panic("irx.dummyMap.fixValueInst: BitCast not yet implemented")
+	case *instruction.AddrSpaceCast:
+		panic("irx.dummyMap.fixValueInst: AddrSpaceCast not yet implemented")
+
+	// Other Operations
+	case *instruction.ICmp:
+		panic("irx.dummyMap.fixValueInst: ICmp not yet implemented")
+	case *instruction.FCmp:
+		panic("irx.dummyMap.fixValueInst: FCmp not yet implemented")
+	case *instruction.PHI:
+		panic("irx.dummyMap.fixValueInst: PHI not yet implemented")
+	case *instruction.Select:
+		panic("irx.dummyMap.fixValueInst: Select not yet implemented")
+	case *instruction.Call:
+		panic("irx.dummyMap.fixValueInst: Call not yet implemented")
+	case *instruction.VAArg:
+		panic("irx.dummyMap.fixValueInst: VAArg not yet implemented")
+	case *instruction.LandingPad:
+		panic("irx.dummyMap.fixValueInst: LandingPad not yet implemented")
+	default:
+		panic("irx.dummyMap.fixValueInst: not yet implemented")
+	}
 }
 
 // --- [ Binary Operations ] ---------------------------------------------------

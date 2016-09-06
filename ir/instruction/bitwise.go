@@ -34,6 +34,16 @@ func NewShL(x, y value.Value) (*ShL, error) {
 	return &ShL{x: x, y: y}, nil
 }
 
+// X returns the x operand of the shl instruction.
+func (inst *ShL) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the shl instruction.
+func (inst *ShL) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *ShL) RetType() types.Type {
 	return inst.x.Type()
@@ -41,7 +51,8 @@ func (inst *ShL) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *ShL) String() string {
-	return fmt.Sprintf("shl %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("shl %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -63,6 +74,16 @@ func NewLShR(x, y value.Value) (*LShR, error) {
 	return &LShR{x: x, y: y}, nil
 }
 
+// X returns the x operand of the lshr instruction.
+func (inst *LShR) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the lshr instruction.
+func (inst *LShR) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *LShR) RetType() types.Type {
 	return inst.x.Type()
@@ -70,7 +91,8 @@ func (inst *LShR) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *LShR) String() string {
-	return fmt.Sprintf("lshr %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("lshr %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -92,6 +114,16 @@ func NewAShR(x, y value.Value) (*AShR, error) {
 	return &AShR{x: x, y: y}, nil
 }
 
+// X returns the x operand of the ashr instruction.
+func (inst *AShR) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the ashr instruction.
+func (inst *AShR) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *AShR) RetType() types.Type {
 	return inst.x.Type()
@@ -99,7 +131,8 @@ func (inst *AShR) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *AShR) String() string {
-	return fmt.Sprintf("ashr %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("ashr %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -121,6 +154,16 @@ func NewAnd(x, y value.Value) (*And, error) {
 	return &And{x: x, y: y}, nil
 }
 
+// X returns the x operand of the and instruction.
+func (inst *And) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the and instruction.
+func (inst *And) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *And) RetType() types.Type {
 	return inst.x.Type()
@@ -128,7 +171,8 @@ func (inst *And) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *And) String() string {
-	return fmt.Sprintf("and %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("and %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -150,6 +194,16 @@ func NewOr(x, y value.Value) (*Or, error) {
 	return &Or{x: x, y: y}, nil
 }
 
+// X returns the x operand of the or instruction.
+func (inst *Or) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the or instruction.
+func (inst *Or) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *Or) RetType() types.Type {
 	return inst.x.Type()
@@ -157,7 +211,8 @@ func (inst *Or) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Or) String() string {
-	return fmt.Sprintf("or %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("or %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -179,6 +234,16 @@ func NewXor(x, y value.Value) (*Xor, error) {
 	return &Xor{x: x, y: y}, nil
 }
 
+// X returns the x operand of the xor instruction.
+func (inst *Xor) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the xor instruction.
+func (inst *Xor) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *Xor) RetType() types.Type {
 	return inst.x.Type()
@@ -186,5 +251,6 @@ func (inst *Xor) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Xor) String() string {
-	return fmt.Sprintf("xor %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("xor %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }

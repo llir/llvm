@@ -41,6 +41,6 @@ func (inst *{{ .Name }}) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *{{ .Name }}) String() string {
-	return fmt.Sprintf("{{ lower .Name }} %v %v to %v", inst.from.Type(), value.String(inst.from), inst.to)
+	return fmt.Sprintf("{{ lower .Name }} %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
 }
 {{- end }}

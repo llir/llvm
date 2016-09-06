@@ -34,6 +34,16 @@ func NewAdd(x, y value.Value) (*Add, error) {
 	return &Add{x: x, y: y}, nil
 }
 
+// X returns the x operand of the add instruction.
+func (inst *Add) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the add instruction.
+func (inst *Add) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *Add) RetType() types.Type {
 	return inst.x.Type()
@@ -41,7 +51,8 @@ func (inst *Add) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Add) String() string {
-	return fmt.Sprintf("add %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("add %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -63,6 +74,16 @@ func NewFAdd(x, y value.Value) (*FAdd, error) {
 	return &FAdd{x: x, y: y}, nil
 }
 
+// X returns the x operand of the fadd instruction.
+func (inst *FAdd) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fadd instruction.
+func (inst *FAdd) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FAdd) RetType() types.Type {
 	return inst.x.Type()
@@ -70,7 +91,8 @@ func (inst *FAdd) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FAdd) String() string {
-	return fmt.Sprintf("fadd %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("fadd %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -92,6 +114,16 @@ func NewSub(x, y value.Value) (*Sub, error) {
 	return &Sub{x: x, y: y}, nil
 }
 
+// X returns the x operand of the sub instruction.
+func (inst *Sub) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the sub instruction.
+func (inst *Sub) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *Sub) RetType() types.Type {
 	return inst.x.Type()
@@ -99,7 +131,8 @@ func (inst *Sub) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Sub) String() string {
-	return fmt.Sprintf("sub %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("sub %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -121,6 +154,16 @@ func NewFSub(x, y value.Value) (*FSub, error) {
 	return &FSub{x: x, y: y}, nil
 }
 
+// X returns the x operand of the fsub instruction.
+func (inst *FSub) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fsub instruction.
+func (inst *FSub) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FSub) RetType() types.Type {
 	return inst.x.Type()
@@ -128,7 +171,8 @@ func (inst *FSub) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FSub) String() string {
-	return fmt.Sprintf("fsub %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("fsub %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -150,6 +194,16 @@ func NewMul(x, y value.Value) (*Mul, error) {
 	return &Mul{x: x, y: y}, nil
 }
 
+// X returns the x operand of the mul instruction.
+func (inst *Mul) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the mul instruction.
+func (inst *Mul) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *Mul) RetType() types.Type {
 	return inst.x.Type()
@@ -157,7 +211,8 @@ func (inst *Mul) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Mul) String() string {
-	return fmt.Sprintf("mul %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("mul %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -179,6 +234,16 @@ func NewFMul(x, y value.Value) (*FMul, error) {
 	return &FMul{x: x, y: y}, nil
 }
 
+// X returns the x operand of the fmul instruction.
+func (inst *FMul) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fmul instruction.
+func (inst *FMul) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FMul) RetType() types.Type {
 	return inst.x.Type()
@@ -186,7 +251,8 @@ func (inst *FMul) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FMul) String() string {
-	return fmt.Sprintf("fmul %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("fmul %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -208,6 +274,16 @@ func NewUDiv(x, y value.Value) (*UDiv, error) {
 	return &UDiv{x: x, y: y}, nil
 }
 
+// X returns the x operand of the udiv instruction.
+func (inst *UDiv) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the udiv instruction.
+func (inst *UDiv) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *UDiv) RetType() types.Type {
 	return inst.x.Type()
@@ -215,7 +291,8 @@ func (inst *UDiv) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *UDiv) String() string {
-	return fmt.Sprintf("udiv %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("udiv %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -237,6 +314,16 @@ func NewSDiv(x, y value.Value) (*SDiv, error) {
 	return &SDiv{x: x, y: y}, nil
 }
 
+// X returns the x operand of the sdiv instruction.
+func (inst *SDiv) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the sdiv instruction.
+func (inst *SDiv) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *SDiv) RetType() types.Type {
 	return inst.x.Type()
@@ -244,7 +331,8 @@ func (inst *SDiv) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *SDiv) String() string {
-	return fmt.Sprintf("sdiv %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("sdiv %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -266,6 +354,16 @@ func NewFDiv(x, y value.Value) (*FDiv, error) {
 	return &FDiv{x: x, y: y}, nil
 }
 
+// X returns the x operand of the fdiv instruction.
+func (inst *FDiv) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fdiv instruction.
+func (inst *FDiv) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FDiv) RetType() types.Type {
 	return inst.x.Type()
@@ -273,7 +371,8 @@ func (inst *FDiv) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FDiv) String() string {
-	return fmt.Sprintf("fdiv %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("fdiv %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -295,6 +394,16 @@ func NewURem(x, y value.Value) (*URem, error) {
 	return &URem{x: x, y: y}, nil
 }
 
+// X returns the x operand of the urem instruction.
+func (inst *URem) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the urem instruction.
+func (inst *URem) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *URem) RetType() types.Type {
 	return inst.x.Type()
@@ -302,7 +411,8 @@ func (inst *URem) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *URem) String() string {
-	return fmt.Sprintf("urem %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("urem %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -324,6 +434,16 @@ func NewSRem(x, y value.Value) (*SRem, error) {
 	return &SRem{x: x, y: y}, nil
 }
 
+// X returns the x operand of the srem instruction.
+func (inst *SRem) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the srem instruction.
+func (inst *SRem) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *SRem) RetType() types.Type {
 	return inst.x.Type()
@@ -331,7 +451,8 @@ func (inst *SRem) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *SRem) String() string {
-	return fmt.Sprintf("srem %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("srem %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -353,6 +474,16 @@ func NewFRem(x, y value.Value) (*FRem, error) {
 	return &FRem{x: x, y: y}, nil
 }
 
+// X returns the x operand of the frem instruction.
+func (inst *FRem) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the frem instruction.
+func (inst *FRem) Y() value.Value {
+	return inst.y
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FRem) RetType() types.Type {
 	return inst.x.Type()
@@ -360,5 +491,6 @@ func (inst *FRem) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FRem) String() string {
-	return fmt.Sprintf("frem %v %v, %v", inst.x.Type(), inst.x.ValueString(), inst.y.ValueString())
+	x, y := inst.X(), inst.Y()
+	return fmt.Sprintf("frem %v %v, %v", x.Type(), x.ValueString(), y.ValueString())
 }
