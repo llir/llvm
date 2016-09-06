@@ -117,7 +117,13 @@ func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.Val
 	switch oldValInst := oldValInst.(type) {
 	// Binary Operations
 	case *instruction.Add:
-		oldValInst
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewAdd(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FAdd:
 		panic("irx.dummyMap.fixValueInst: FAdd not yet implemented")
 	case *instruction.Sub:
