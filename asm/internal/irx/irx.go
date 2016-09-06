@@ -424,19 +424,19 @@ type LocalDummy struct {
 // Dummy implementation of value.NamedValue
 
 func (l *LocalDummy) String() string {
-	panic("dummy implementation")
+	panic(fmt.Sprintf("dummy implementation (%q)", l.name))
 }
 
 func (l *LocalDummy) ValueString() string {
-	panic("dummy implementation")
+	panic(fmt.Sprintf("dummy implementation (%q)", l.name))
 }
 
 func (l *LocalDummy) Type() types.Type {
-	panic("dummy implementation")
+	return &TypeDummy{}
 }
 
 func (l *LocalDummy) Name() string {
-	panic("dummy implementation")
+	panic(fmt.Sprintf("dummy implementation (%q)", l.name))
 }
 
 // NewLocalDummy returns a new dummy value for the given local identifier name.
@@ -460,6 +460,19 @@ func stripLocalPrefix(name []byte) (string, error) {
 	}
 	// Strip "%" prefix.
 	return s[1:], nil
+}
+
+// A TypeDummy represents a dummy type that is equal to every LLVM IR type.
+type TypeDummy struct{}
+
+// Equal reports whether t and u are of equal type.
+func (*TypeDummy) Equal(u types.Type) bool {
+	return true
+}
+
+// String returns a string representation of the void type.
+func (*TypeDummy) String() string {
+	panic("dummy implementation")
 }
 
 // === [ Values ] ==============================================================

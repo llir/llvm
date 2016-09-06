@@ -15,6 +15,23 @@ import (
 // dummyMap maps local variable names to their corresponding values.
 type dummyMap map[string]value.Value
 
+// set maps name to the given value.
+func (m dummyMap) set(name string, val value.Value) {
+	if old, ok := m[name]; ok {
+		panic(fmt.Sprintf("mapping for %q already present; old value %v, new value %v", name, old, val))
+	}
+	m[name] = val
+}
+
+// get returns the value for the given name.
+func (m dummyMap) get(name string) value.Value {
+	val, ok := m[name]
+	if !ok {
+		panic(fmt.Sprintf("unable to locate mapping for %q", name))
+	}
+	return val
+}
+
 // fixModule replaces dummy values within the given module with their
 // corresponding local variables.
 func fixModule(module *ir.Module) *ir.Module {
@@ -86,6 +103,7 @@ func (m dummyMap) fixLocalVarDefInst(oldInst *instruction.LocalVarDef) *instruct
 	if err != nil {
 		panic(errutil.Err(err))
 	}
+	m.set(name, inst)
 	return inst
 }
 
@@ -457,6 +475,8 @@ func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator
 // corresponding local variables.
 func (m dummyMap) fixValue(oldVal value.Value) value.Value {
 	switch oldVal := oldVal.(type) {
+	case *LocalDummy:
+		return m.get(oldVal.name)
 	case constant.Constant:
 		return oldVal
 	default:
