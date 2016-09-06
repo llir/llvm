@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/value"
 	"github.com/mewkiz/pkg/errutil"
@@ -236,6 +237,8 @@ func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator
 // corresponding local variables.
 func (m dummyMap) fixValue(oldVal value.Value) value.Value {
 	switch oldVal := oldVal.(type) {
+	case constant.Constant:
+		return oldVal
 	default:
 		panic(fmt.Sprintf("support for value type %T not yet implemented", oldVal))
 	}

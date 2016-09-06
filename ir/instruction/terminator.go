@@ -20,7 +20,7 @@ import (
 //    return val;
 //    return;
 //
-// Reference:
+// References:
 //    http://llvm.org/docs/LangRef.html#ret-instruction
 type Ret struct {
 	// Return value; or nil if "void" return.
@@ -44,10 +44,10 @@ func (term *Ret) Value() value.Value {
 
 // String returns the string representation of the instruction.
 func (term *Ret) String() string {
-	if term.val == nil {
+	val := term.Value()
+	if val == nil {
 		return "ret void"
 	}
-	val := term.Value()
 	return fmt.Sprintf("ret %v %v", val.Type(), val.ValueString())
 }
 
