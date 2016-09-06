@@ -125,41 +125,143 @@ func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.Val
 		}
 		return inst
 	case *instruction.FAdd:
-		panic("irx.dummyMap.fixValueInst: FAdd not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewFAdd(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.Sub:
-		panic("irx.dummyMap.fixValueInst: Sub not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewSub(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FSub:
-		panic("irx.dummyMap.fixValueInst: FSub not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewFSub(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.Mul:
-		panic("irx.dummyMap.fixValueInst: Mul not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewMul(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FMul:
-		panic("irx.dummyMap.fixValueInst: FMul not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewFMul(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.UDiv:
-		panic("irx.dummyMap.fixValueInst: UDiv not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewUDiv(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.SDiv:
-		panic("irx.dummyMap.fixValueInst: SDiv not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewSDiv(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FDiv:
-		panic("irx.dummyMap.fixValueInst: FDiv not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewFDiv(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.URem:
-		panic("irx.dummyMap.fixValueInst: URem not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewURem(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.SRem:
-		panic("irx.dummyMap.fixValueInst: SRem not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewSRem(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FRem:
-		panic("irx.dummyMap.fixValueInst: FRem not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewFRem(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 
 	// Bitwise Binary Operations
 	case *instruction.ShL:
-		panic("irx.dummyMap.fixValueInst: ShL not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewShL(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.LShR:
-		panic("irx.dummyMap.fixValueInst: LShR not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewLShR(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.AShR:
-		panic("irx.dummyMap.fixValueInst: AShR not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewAShR(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.And:
-		panic("irx.dummyMap.fixValueInst: And not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewAnd(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.Or:
-		panic("irx.dummyMap.fixValueInst: Or not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewOr(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.Xor:
-		panic("irx.dummyMap.fixValueInst: Xor not yet implemented")
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewXor(x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 
 	// Vector Operations
 	case *instruction.ExtractElement:
