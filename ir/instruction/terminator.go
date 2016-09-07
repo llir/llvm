@@ -69,6 +69,11 @@ func NewJmp(target value.NamedValue) (*Jmp, error) {
 	// TODO: Validate that target is an *ir.BasicBlock. Better yet, chance the
 	// signature of NewJmp to enforce this. Another approach, is to simply check
 	// that the type of target is "label".
+
+	// TODO: Re-enable type checking. Figure out how to handle dummy types.
+	//if !types.IsLabel(target.Type()) {
+	//	return nil, errutil.Newf("invalid target type; expected *types.Label, got %T", target.Type())
+	//}
 	return &Jmp{target: target}, nil
 }
 

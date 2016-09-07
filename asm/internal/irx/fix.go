@@ -51,6 +51,15 @@ func fixModule(module *ir.Module) *ir.Module {
 // corresponding local variables.
 func (m dummyMap) fixFunc(oldFunc *ir.Function) *ir.Function {
 	f := ir.NewFunction(oldFunc.Name(), oldFunc.Sig())
+
+	// Add mapping for basic blocks so they may be forward-referenced from
+	// instructions.
+	for _, oldBlock := range oldFunc.Blocks() {
+		name := oldBlock.Name()
+		block := ir.NewBasicBlock(name)
+		m.set(name, block)
+	}
+
 	for _, oldBlock := range oldFunc.Blocks() {
 		block := m.fixBlock(oldBlock)
 		f.AppendBlock(block)
@@ -66,14 +75,19 @@ func (m dummyMap) fixFunc(oldFunc *ir.Function) *ir.Function {
 // fixBlock replaces dummy values within the given basic block with their
 // corresponding local variables.
 func (m dummyMap) fixBlock(oldBlock *ir.BasicBlock) *ir.BasicBlock {
-	block := ir.NewBasicBlock(oldBlock.Name())
+	name := oldBlock.Name()
+	block := m.get(name)
+	b, ok := block.(*ir.BasicBlock)
+	if !ok {
+		panic(fmt.Sprintf("invalid basic block type; expected *ir.BasicBlock, got %T", block))
+	}
 	for _, oldInst := range oldBlock.Insts() {
 		inst := m.fixInst(oldInst)
-		block.AppendInst(inst)
+		b.AppendInst(inst)
 	}
 	term := m.fixTerm(oldBlock.Term())
-	block.SetTerm(term)
-	return block
+	b.SetTerm(term)
+	return b
 }
 
 // === [ Instructions ] ========================================================
@@ -451,7 +465,12 @@ func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator
 		}
 		return term
 	case *instruction.Jmp:
-		panic("irx.dummyMap.fixTerm: Jmp not yet implemented")
+		target := m.fixNamedValue(oldTerm.Target())
+		term, err := instruction.NewJmp(target)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return term
 	case *instruction.Br:
 		panic("irx.dummyMap.fixTerm: Br not yet implemented")
 	case *instruction.Switch:
@@ -481,5 +500,21 @@ func (m dummyMap) fixValue(oldVal value.Value) value.Value {
 		return oldVal
 	default:
 		panic(fmt.Sprintf("support for value type %T not yet implemented", oldVal))
+	}
+}
+
+// fixNamedValue replaces named dummy values within the given value with their
+// corresponding local variables.
+func (m dummyMap) fixNamedValue(oldVal value.NamedValue) value.NamedValue {
+	switch oldVal := oldVal.(type) {
+	case *LocalDummy:
+		val := m.get(oldVal.name)
+		v, ok := val.(value.NamedValue)
+		if !ok {
+			panic(fmt.Sprintf("invalid type of named value; expected value.NamedValue, got %T", val))
+		}
+		return v
+	default:
+		panic(fmt.Sprintf("support for named value type %T not yet implemented", oldVal))
 	}
 }

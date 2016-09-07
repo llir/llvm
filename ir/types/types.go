@@ -103,6 +103,12 @@ func IsPointer(t Type) bool {
 	return ok
 }
 
+// IsLabel reports whether t is a label type.
+func IsLabel(t Type) bool {
+	_, ok := t.(*Label)
+	return ok
+}
+
 // SameLength reports whether t and u are both vectors or arrays of the same
 // length or both distinct from vectors and arrays.
 func SameLength(a, b Type) bool {
