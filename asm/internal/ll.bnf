@@ -562,7 +562,12 @@ IntType
 // --- [ Floating point type ] -------------------------------------------------
 
 FloatType
-	: "float"                                     << types.NewFloat(types.Float32) >>
+	: "half"                                      << types.NewFloat(types.Float16) >>
+	| "float"                                     << types.NewFloat(types.Float32) >>
+	| "double"                                    << types.NewFloat(types.Float64) >>
+	| "fp128"                                     << types.NewFloat(types.Float128) >>
+	| "x86_fp80"                                  << types.NewFloat(types.Float80_x86) >>
+	| "ppc_fp128"                                 << types.NewFloat(types.Float128_PPC) >>
 ;
 
 // --- [ Pointer type ] --------------------------------------------------------
