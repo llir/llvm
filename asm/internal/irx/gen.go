@@ -136,7 +136,7 @@ type Instruction struct {
 	Desc string
 }
 
-// gen generates a source file containing the instructions of the given
+// Gen generates a source file containing the instructions of the given
 // category.
 func (f File) Gen() error {
 	t := template.New("inst")
