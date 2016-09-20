@@ -155,10 +155,6 @@ int_type
 	: 'i' _decimals
 ;
 
-float_type
-	: 'f' 'l' 'o' 'a' 't'
-;
-
 // ### [ Syntactic part ] ######################################################
 
 << import (
@@ -563,10 +559,10 @@ IntType
 	: int_type                                    << irx.NewIntType($0) >>
 ;
 
-// --- [ Float type ] --------------------------------------------------------
+// --- [ Floating point type ] -------------------------------------------------
 
 FloatType
-	: float_type                                    << types.NewFloat(types.Float32) >>
+	: "float"                                     << types.NewFloat(types.Float32) >>
 ;
 
 // --- [ Pointer type ] --------------------------------------------------------
