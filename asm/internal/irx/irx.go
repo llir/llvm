@@ -1119,7 +1119,7 @@ func NewPHIInst(typ, incList interface{}) (*instruction.PHI, error) {
 				}
 				incs = append(incs, inc)
 			}
-			return instruction.NewPHI(typ, incs)
+			return instruction.NewPHI(incs)
 		}
 		return nil, errutil.Newf("invalid incoming values type; expected []*Incoming, got %T", incList)
 	}

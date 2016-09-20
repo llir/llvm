@@ -3285,13 +3285,13 @@ var productionsTable = ProdTab{
 		},
 	},
 	ProdTabEntry{
-		String: `ICond : "eq"	<< instruction.ICondEq, nil >>`,
+		String: `ICond : "eq"	<< instruction.ICondEQ, nil >>`,
 		Id:         "ICond",
 		NTType:     141,
 		Index:      326,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return instruction.ICondEq, nil
+			return instruction.ICondEQ, nil
 		},
 	},
 	ProdTabEntry{

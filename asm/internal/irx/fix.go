@@ -351,19 +351,65 @@ func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.Val
 
 	// Other Operations
 	case *instruction.ICmp:
-		panic("irx.dummyMap.fixValueInst: ICmp not yet implemented")
+		cond := oldValInst.Cond()
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewICmp(cond, x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FCmp:
 		panic("irx.dummyMap.fixValueInst: FCmp not yet implemented")
 	case *instruction.PHI:
-		panic("irx.dummyMap.fixValueInst: PHI not yet implemented")
+		oldIncs := oldValInst.Incs()
+		var incs []*instruction.Incoming
+		for _, oldInc := range oldIncs {
+			val := m.fixValue(oldInc.Value())
+			pred := m.fixNamedValue(oldInc.Pred())
+			inc, err := instruction.NewIncoming(val, pred)
+			if err != nil {
+				panic(errutil.Err(err))
+			}
+			incs = append(incs, inc)
+		}
+		inst, err := instruction.NewPHI(incs)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.Select:
-		panic("irx.dummyMap.fixValueInst: Select not yet implemented")
+		cond := m.fixValue(oldValInst.Cond())
+		x := m.fixValue(oldValInst.X())
+		y := m.fixValue(oldValInst.Y())
+		inst, err := instruction.NewSelect(cond, x, y)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.Call:
-		panic("irx.dummyMap.fixValueInst: Call not yet implemented")
+		result := oldValInst.RetType()
+		// TODO: Fix value of callee if the type of Callee changes from string to
+		// value.Value.
+		callee := oldValInst.Callee()
+		var args []value.Value
+		for _, oldArg := range oldValInst.Args() {
+			arg := m.fixValue(oldArg)
+			args = append(args, arg)
+		}
+		inst, err := instruction.NewCall(result, callee, args)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.VAArg:
 		panic("irx.dummyMap.fixValueInst: VAArg not yet implemented")
 	case *instruction.LandingPad:
 		panic("irx.dummyMap.fixValueInst: LandingPad not yet implemented")
+	case *instruction.CatchPad:
+		panic("irx.dummyMap.fixValueInst: CatchPad not yet implemented")
+	case *instruction.CleanupPad:
+		panic("irx.dummyMap.fixValueInst: CleanupPad not yet implemented")
 	default:
 		panic("irx.dummyMap.fixValueInst: not yet implemented")
 	}
