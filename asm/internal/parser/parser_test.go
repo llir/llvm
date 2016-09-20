@@ -17,7 +17,7 @@ func TestParser(t *testing.T) {
 		want string
 	}{
 		{
-			path: "../testdata/minimal/a.ll.golden",
+			path: "../testdata/minimal/a.ll",
 			want: "../testdata/minimal/a.ll.golden",
 		},
 		/*

@@ -2,6 +2,8 @@
 find . -type f -name '*.ll' | xargs -I '{}' clang -S -emit-llvm -c -o '{}.golden' '{}'
 #find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i "; <label>:([0-9]+)[^\n]+\n" "\$1:\n" '{}'
 find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i ";[^\n]+\n" "" '{}'
+find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i "target datalayout[^\n]+\n" "" '{}'
+find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i "target triple[^\n]+\n" "" '{}'
 find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i "attributes[^\n]+\n" "" '{}'
 find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i " #[0-9]+" "" '{}'
 find . -type f -name '*.ll.golden' | xargs -I '{}' sar -i "[!][^\n]+\n" "" '{}'
