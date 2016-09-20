@@ -8,6 +8,21 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
+// Make sure that each type implements the Type interface.
+var (
+	_ Type = &types.Void{}
+	_ Type = &types.Int{}
+	_ Type = &types.Float{}
+	_ Type = &types.MMX{}
+	_ Type = &types.Label{}
+	_ Type = &types.Metadata{}
+	_ Type = &types.Func{}
+	_ Type = &types.Pointer{}
+	_ Type = &types.Vector{}
+	_ Type = &types.Array{}
+	_ Type = &types.Struct{}
+)
+
 // Types used by test cases.
 var (
 	// Void type.

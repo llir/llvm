@@ -31,44 +31,37 @@ type Type interface {
 	Equal(u Type) bool
 }
 
-// Make sure that each type implements the Type interface.
-var (
-	_ Type = &Void{}
-	_ Type = &Int{}
-	_ Type = &Float{}
-	_ Type = &MMX{}
-	_ Type = &Label{}
-	_ Type = &Metadata{}
-	_ Type = &Func{}
-	_ Type = &Pointer{}
-	_ Type = &Vector{}
-	_ Type = &Array{}
-	_ Type = &Struct{}
-)
-
 // Equal reports whether t and u are of equal type.
 func Equal(t, u Type) bool {
 	return t.Equal(u)
 }
 
-// IsVoid reports whether t is a void type.
+// IsVoid reports whether t is of void type.
 func IsVoid(t Type) bool {
 	_, ok := t.(*Void)
 	return ok
 }
 
-// IsBool reports whether t is a boolean type (i.e. an integer type of size 1).
+// IsBool reports whether t is of boolean type (i.e. integer of size 1).
 func IsBool(t Type) bool {
 	return t.Equal(I1)
 }
 
-// IsInt reports whether t is an integer type.
+// IsBools reports whether t is of boolean or boolean vector type.
+func IsBools(t Type) bool {
+	if t, ok := t.(*Vector); ok {
+		return IsBool(t.Elem())
+	}
+	return IsBool(t)
+}
+
+// IsInt reports whether t is of integer type.
 func IsInt(t Type) bool {
 	_, ok := t.(*Int)
 	return ok
 }
 
-// IsInts reports whether t is an integer type or a vector of integers type.
+// IsInts reports whether t is of integer or integer vector type.
 func IsInts(t Type) bool {
 	if t, ok := t.(*Vector); ok {
 		return IsInt(t.Elem())
@@ -76,14 +69,14 @@ func IsInts(t Type) bool {
 	return IsInt(t)
 }
 
-// IsFloat reports whether t is a floating point type.
+// IsFloat reports whether t is of floating point type.
 func IsFloat(t Type) bool {
 	_, ok := t.(*Float)
 	return ok
 }
 
-// IsFloats reports whether t is an floating point type or a vector of floating
-// points type.
+// IsFloats reports whether t is of floating point or floating point vector
+// type.
 func IsFloats(t Type) bool {
 	if t, ok := t.(*Vector); ok {
 		return IsFloat(t.Elem())
@@ -91,21 +84,29 @@ func IsFloats(t Type) bool {
 	return IsFloat(t)
 }
 
-// IsArray reports whether t is an array type.
-func IsArray(t Type) bool {
-	_, ok := t.(*Array)
+// IsLabel reports whether t is of label type.
+func IsLabel(t Type) bool {
+	_, ok := t.(*Label)
 	return ok
 }
 
-// IsPointer reports whether t is a pointer type.
+// IsPointer reports whether t is of pointer type.
 func IsPointer(t Type) bool {
 	_, ok := t.(*Pointer)
 	return ok
 }
 
-// IsLabel reports whether t is a label type.
-func IsLabel(t Type) bool {
-	_, ok := t.(*Label)
+// IsPointers reports whether t is of pointer or pointer vector type.
+func IsPointers(t Type) bool {
+	if t, ok := t.(*Vector); ok {
+		return IsPointer(t.Elem())
+	}
+	return IsPointer(t)
+}
+
+// IsArray reports whether t is of array type.
+func IsArray(t Type) bool {
+	_, ok := t.(*Array)
 	return ok
 }
 
