@@ -636,6 +636,9 @@ type GetElementPtr struct {
 	indices []Constant
 }
 
+// TODO: Remove elem parameter to make consistnent with
+// instruction.NewGetElementPtr.
+
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // element type, address and element indices.
 //
