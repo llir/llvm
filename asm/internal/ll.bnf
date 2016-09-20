@@ -155,6 +155,10 @@ int_type
 	: 'i' _decimals
 ;
 
+float_type
+	: 'f' 'l' 'o' 'a' 't'
+;
+
 // ### [ Syntactic part ] ######################################################
 
 << import (
@@ -518,6 +522,7 @@ MetadataNode
 
 Type
 	: IntType
+	| FloatType
 	| PointerType
 	| ArrayType
 	| StructType
@@ -556,6 +561,12 @@ LabelType
 
 IntType
 	: int_type                                    << irx.NewIntType($0) >>
+;
+
+// --- [ Float type ] --------------------------------------------------------
+
+FloatType
+	: float_type                                    << types.NewFloat(types.Float32) >>
 ;
 
 // --- [ Pointer type ] --------------------------------------------------------
