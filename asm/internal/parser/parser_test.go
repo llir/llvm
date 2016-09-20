@@ -22,6 +22,10 @@ func TestParser(t *testing.T) {
 		},
 		/*
 			{
+				path: "../testdata/minimal/fcmp.ll",
+				want: "../testdata/minimal/fcmp.ll.golden",
+			},
+			{
 				path: "../testdata/uc/noisy/advanced/8queens.ll",
 				want: "../testdata/uc/noisy/advanced/8queens.ll.golden",
 			},

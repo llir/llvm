@@ -1,4 +1,4 @@
-all: c4 sqlite uc
+all: c4 sqlite uc minimal
 
 c4:
 	make -C $@
@@ -9,4 +9,7 @@ sqlite:
 uc:
 	make -C $@
 
-.PHONY: c4 sqlite uc
+minimal:
+	make -C $@
+
+.PHONY: c4 sqlite uc minimal
