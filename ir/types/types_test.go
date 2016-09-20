@@ -10,17 +10,17 @@ import (
 
 // Make sure that each type implements the Type interface.
 var (
-	_ Type = &types.Void{}
-	_ Type = &types.Int{}
-	_ Type = &types.Float{}
-	_ Type = &types.MMX{}
-	_ Type = &types.Label{}
-	_ Type = &types.Metadata{}
-	_ Type = &types.Func{}
-	_ Type = &types.Pointer{}
-	_ Type = &types.Vector{}
-	_ Type = &types.Array{}
-	_ Type = &types.Struct{}
+	_ types.Type = &types.Void{}
+	_ types.Type = &types.Int{}
+	_ types.Type = &types.Float{}
+	_ types.Type = &types.MMX{}
+	_ types.Type = &types.Label{}
+	_ types.Type = &types.Metadata{}
+	_ types.Type = &types.Func{}
+	_ types.Type = &types.Pointer{}
+	_ types.Type = &types.Vector{}
+	_ types.Type = &types.Array{}
+	_ types.Type = &types.Struct{}
 )
 
 // Types used by test cases.
