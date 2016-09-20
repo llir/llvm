@@ -827,13 +827,20 @@ func NewAllocaInst(typ, nelems interface{}) (*instruction.Alloca, error) {
 
 // NewLoadInst returns a new load instruction based on the given type and
 // address.
-func NewLoadInst(typ, addrType, addr interface{}) (*instruction.Load, error) {
+func NewLoadInst(typ, srcAddrType, srcAddr interface{}) (*instruction.Load, error) {
 	if typ, ok := typ.(types.Type); ok {
-		addr, err := NewValue(addrType, addr)
+		srcAddr, err := NewValue(srcAddrType, srcAddr)
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		return instruction.NewLoad(typ, addr)
+		srcAddrType, ok := srcAddr.Type().(*types.Pointer)
+		if !ok {
+			return nil, errutil.Newf("invalid source address pointer type; expected *types.Pointer, got %T", srcAddr.Type())
+		}
+		if !types.Equal(typ, srcAddrType.Elem()) {
+			return nil, errutil.Newf("type mismatch between element type (%v) and source address element type (%v)", typ, srcAddrType.Elem())
+		}
+		return instruction.NewLoad(srcAddr)
 	}
 	return nil, errutil.Newf("invalid operand type; expected types.Type, got %T", typ)
 }
@@ -842,30 +849,30 @@ func NewLoadInst(typ, addrType, addr interface{}) (*instruction.Load, error) {
 
 // NewStoreInst returns a new store instruction based on the given value and
 // address.
-func NewStoreInst(typ, val, addrType, addr interface{}) (*instruction.Store, error) {
+func NewStoreInst(srcType, src, dstAddrType, dstAddr interface{}) (*instruction.Store, error) {
 	{
-		val, err := NewValue(typ, val)
+		src, err := NewValue(srcType, src)
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
-		if addrType, ok := addrType.(types.Type); ok {
-			addr, err := NewValue(addrType, addr)
+		if dstAddrType, ok := dstAddrType.(types.Type); ok {
+			dstAddr, err := NewValue(dstAddrType, dstAddr)
 			if err != nil {
 				return nil, errutil.Err(err)
 			}
-			return instruction.NewStore(val, addr)
+			return instruction.NewStore(src, dstAddr)
 		}
 	}
-	return nil, errutil.Newf("invalid pointer type; expected types.Type, got %T", addrType)
+	return nil, errutil.Newf("invalid pointer type; expected types.Type, got %T", dstAddrType)
 }
 
 // ___ [ `getelementptr` instruction ] _________________________________________
 
 // NewGetElementPtrInst returns a new getelementptr instruction based on the
 // given element type, address and element indices.
-func NewGetElementPtrInst(elem, addrType, addr, elemIndices interface{}) (*instruction.GetElementPtr, error) {
+func NewGetElementPtrInst(elem, srcAddrType, srcAddr, elemIndices interface{}) (*instruction.GetElementPtr, error) {
 	if elem, ok := elem.(types.Type); ok {
-		addr, err := NewValue(addrType, addr)
+		srcAddr, err := NewValue(srcAddrType, srcAddr)
 		if err != nil {
 			return nil, errutil.Err(err)
 		}
@@ -877,7 +884,15 @@ func NewGetElementPtrInst(elem, addrType, addr, elemIndices interface{}) (*instr
 		default:
 			panic(fmt.Sprintf("support for element indices type %T not yet implemented", elemIndices))
 		}
-		return instruction.NewGetElementPtr(elem, addr, indices)
+		// Validate that elem is of identical type as the element type of srcAddr.
+		srcAddrType, ok := srcAddr.Type().(*types.Pointer)
+		if !ok {
+			return nil, errutil.Newf("invalid source address pointer type; expected *types.Pointer, got %T", srcAddr.Type())
+		}
+		if !types.Equal(elem, srcAddrType.Elem()) {
+			return nil, errutil.Newf("type mismatch between element type (%v) and source address element type (%v)", elem, srcAddrType.Elem())
+		}
+		return instruction.NewGetElementPtr(srcAddr, indices)
 	}
 	return nil, errutil.Newf("invalid operand type; expected types.Type, got %T", elem)
 }

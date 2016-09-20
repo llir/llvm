@@ -124,11 +124,9 @@ func (m dummyMap) fixLocalVarDefInst(oldInst *instruction.LocalVarDef) *instruct
 // fixStoreInst replaces dummy values within the given Store instruction with
 // their corresponding local variables.
 func (m dummyMap) fixStoreInst(oldInst *instruction.Store) *instruction.Store {
-	oldVal := oldInst.Val()
-	val := m.fixValue(oldVal)
-	oldAddr := oldInst.Addr()
-	addr := m.fixValue(oldAddr)
-	inst, err := instruction.NewStore(val, addr)
+	src := m.fixValue(oldInst.Src())
+	dstAddr := m.fixValue(oldInst.DstAddr())
+	inst, err := instruction.NewStore(src, dstAddr)
 	if err != nil {
 		panic(errutil.Err(err))
 	}
@@ -311,15 +309,31 @@ func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.Val
 
 	// Memory Access and Addressing Operations
 	case *instruction.Alloca:
-		panic("irx.dummyMap.fixValueInst: Alloca not yet implemented")
+		// Nothing to do; alloca contains no dummy values.
+		return oldValInst
 	case *instruction.Load:
-		panic("irx.dummyMap.fixValueInst: Load not yet implemented")
+		srcAddr := m.fixValue(oldValInst.SrcAddr())
+		inst, err := instruction.NewLoad(srcAddr)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.CmpXchg:
 		panic("irx.dummyMap.fixValueInst: CmpXchg not yet implemented")
 	case *instruction.AtomicRMW:
 		panic("irx.dummyMap.fixValueInst: AtomicRMW not yet implemented")
 	case *instruction.GetElementPtr:
-		panic("irx.dummyMap.fixValueInst: GetElementPtr not yet implemented")
+		srcAddr := m.fixValue(oldValInst.SrcAddr())
+		var indices []value.Value
+		for _, oldIndex := range oldValInst.Indices() {
+			index := m.fixValue(oldIndex)
+			indices = append(indices, index)
+		}
+		inst, err := instruction.NewGetElementPtr(srcAddr, indices)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 
 	// Conversion Operations
 	case *instruction.Trunc:
