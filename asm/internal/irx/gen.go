@@ -21,7 +21,7 @@ func main() {
 	// files. Currently, the data is duplicated and present in both the irx and
 	// the instruction packages.
 	files := []File{
-		File{
+		{
 			Path: "binary.go",
 			Desc: "Binary instructions",
 			URL:  "http://llvm.org/docs/LangRef.html#binary-operations",
@@ -76,7 +76,7 @@ func main() {
 				},
 			},
 		},
-		File{
+		{
 			Path: "bitwise.go",
 			Desc: "Bitwise binary instructions",
 			URL:  "http://llvm.org/docs/LangRef.html#bitwise-binary-operations",
