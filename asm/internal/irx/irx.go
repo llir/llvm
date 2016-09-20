@@ -52,7 +52,15 @@ func NewModule(decls interface{}) (*ir.Module, error) {
 			case *ir.GlobalDecl:
 				module.Globals = append(module.Globals, decl)
 			default:
-				log.Printf("support for top-level declaration type %T not yet implemented", decl)
+				logFlags := log.Flags()
+				log.SetFlags(log.Lshortfile)
+				if declType, ok := decl.(*token.Token); ok {
+					log.Printf("Offset %v: support for token '%s' not yet implemented", declType.Offset, declType.Lit)
+
+				} else {
+					log.Printf("support for top-level declaration type %T not yet implemented", decl)
+				}
+				log.SetFlags(logFlags)
 				//panic(fmt.Sprintf("support for top-level declaration type %T not yet implemented", decl))
 			}
 		}
