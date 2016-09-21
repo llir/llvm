@@ -556,6 +556,22 @@ func NewIntConst(valToken interface{}) (*IntConst, error) {
 	return nil, errutil.Newf("invalid integer constant type; expected *token.Token, got %T", valToken)
 }
 
+// --- [ Float constants ] ---------------------------------------------------
+
+// An FloatConst represents an float constant.
+type FloatConst struct {
+	// Float value.
+	val string
+}
+
+// NewFloatConst returns a new float constant based on the given value.
+func NewFloatConst(valToken interface{}) (*FloatConst, error) {
+	if valToken, ok := valToken.(*token.Token); ok {
+		return &FloatConst{val: string(valToken.Lit)}, nil
+	}
+	return nil, errutil.Newf("invalid float constant type; expected *token.Token, got %T", valToken)
+}
+
 // --- [ Null pointer constants ] ----------------------------------------------
 
 // A NullPointerConst represents a null pointer constant.
