@@ -139,6 +139,28 @@ _hex_lit
 	: ( 's' | 'u' ) '0' 'x' _hex_digit { _hex_digit }
 ;
 
+// --- [ Float literals ] ----------------------------------------------------
+
+float_lit
+	: _frac_lit
+	| _sci_lit
+	| _float_hex_lit
+;
+
+_frac_lit
+	: _decimal_lit '.' _decimals
+;
+
+//TODO: double check 'E'
+_sci_lit
+	: _frac_lit ( 'e' | 'E' ) ( '+' | '-' ) _decimals
+;
+
+//TODO: double check
+_float_hex_lit
+	:  '0' 'x'{ ( 'L' | 'M' ) } _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+;
+
 // --- [ String literals ] -----------------------------------------------------
 
 string_lit
@@ -562,7 +584,12 @@ IntType
 // --- [ Floating point type ] -------------------------------------------------
 
 FloatType
-	: "float"                                     << types.NewFloat(types.Float32) >>
+	: "half"                                      << types.NewFloat(types.Float16) >>
+	| "float"                                     << types.NewFloat(types.Float32) >>
+	| "double"                                    << types.NewFloat(types.Float64) >>
+	| "fp128"                                     << types.NewFloat(types.Float128) >>
+	| "x86_fp80"                                  << types.NewFloat(types.Float80_x86) >>
+	| "ppc_fp128"                                 << types.NewFloat(types.Float128_PPC) >>
 ;
 
 // --- [ Pointer type ] --------------------------------------------------------
@@ -628,6 +655,7 @@ Value
 Constant
 	: BoolConst
 	| IntConst
+	| FloatConst
 	| NullPointerConst
 	| ArrayConst
 	| ZeroInitializer
@@ -646,6 +674,12 @@ BoolConst
 
 IntConst
 	: int_lit                                     << irx.NewIntConst($0) >>
+;
+
+// --- [ Float constants ] ---------------------------------------------------
+
+FloatConst
+	: float_lit                                   << irx.NewFloatConst($0) >>
 ;
 
 // --- [ Null pointer constants ] ----------------------------------------------
