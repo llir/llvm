@@ -337,31 +337,109 @@ func (m dummyMap) fixValueInst(oldValInst instruction.ValueInst) instruction.Val
 
 	// Conversion Operations
 	case *instruction.Trunc:
-		panic("irx.dummyMap.fixValueInst: Trunc not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewTrunc(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.ZExt:
-		panic("irx.dummyMap.fixValueInst: ZExt not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewZExt(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.SExt:
-		panic("irx.dummyMap.fixValueInst: SExt not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewSExt(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FPTrunc:
-		panic("irx.dummyMap.fixValueInst: FPTrunc not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewFPTrunc(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FPExt:
-		panic("irx.dummyMap.fixValueInst: FPExt not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewFPExt(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FPToUI:
-		panic("irx.dummyMap.fixValueInst: FPToUI not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewFPToUI(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.FPToSI:
-		panic("irx.dummyMap.fixValueInst: FPToSI not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewFPToSI(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.UIToFP:
-		panic("irx.dummyMap.fixValueInst: UIToFP not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewUIToFP(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.SIToFP:
-		panic("irx.dummyMap.fixValueInst: SIToFP not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewSIToFP(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.PtrToInt:
-		panic("irx.dummyMap.fixValueInst: PtrToInt not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewPtrToInt(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.IntToPtr:
-		panic("irx.dummyMap.fixValueInst: IntToPtr not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewIntToPtr(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.BitCast:
-		panic("irx.dummyMap.fixValueInst: BitCast not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewBitCast(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 	case *instruction.AddrSpaceCast:
-		panic("irx.dummyMap.fixValueInst: AddrSpaceCast not yet implemented")
+		from := m.fixValue(oldValInst.From())
+		to := oldValInst.RetType()
+		inst, err := instruction.NewAddrSpaceCast(from, to)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return inst
 
 	// Other Operations
 	case *instruction.ICmp:
