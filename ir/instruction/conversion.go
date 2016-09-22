@@ -32,6 +32,11 @@ func NewTrunc(from value.Value, to types.Type) (*Trunc, error) {
 	return &Trunc{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the trunc instruction.
+func (inst *Trunc) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *Trunc) RetType() types.Type {
 	return inst.to
@@ -39,7 +44,8 @@ func (inst *Trunc) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *Trunc) String() string {
-	return fmt.Sprintf("trunc %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("trunc %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ zext ] ----------------------------------------------------------------
@@ -60,6 +66,11 @@ func NewZExt(from value.Value, to types.Type) (*ZExt, error) {
 	return &ZExt{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the zext instruction.
+func (inst *ZExt) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *ZExt) RetType() types.Type {
 	return inst.to
@@ -67,7 +78,8 @@ func (inst *ZExt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *ZExt) String() string {
-	return fmt.Sprintf("zext %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("zext %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -88,6 +100,11 @@ func NewSExt(from value.Value, to types.Type) (*SExt, error) {
 	return &SExt{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the sext instruction.
+func (inst *SExt) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *SExt) RetType() types.Type {
 	return inst.to
@@ -95,7 +112,8 @@ func (inst *SExt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *SExt) String() string {
-	return fmt.Sprintf("sext %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("sext %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ fptrunc ] -------------------------------------------------------------
@@ -116,6 +134,11 @@ func NewFPTrunc(from value.Value, to types.Type) (*FPTrunc, error) {
 	return &FPTrunc{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the fptrunc instruction.
+func (inst *FPTrunc) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FPTrunc) RetType() types.Type {
 	return inst.to
@@ -123,7 +146,8 @@ func (inst *FPTrunc) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPTrunc) String() string {
-	return fmt.Sprintf("fptrunc %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("fptrunc %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -144,6 +168,11 @@ func NewFPExt(from value.Value, to types.Type) (*FPExt, error) {
 	return &FPExt{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the fpext instruction.
+func (inst *FPExt) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FPExt) RetType() types.Type {
 	return inst.to
@@ -151,7 +180,8 @@ func (inst *FPExt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPExt) String() string {
-	return fmt.Sprintf("fpext %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("fpext %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ fptoui ] --------------------------------------------------------------
@@ -172,6 +202,11 @@ func NewFPToUI(from value.Value, to types.Type) (*FPToUI, error) {
 	return &FPToUI{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the fptoui instruction.
+func (inst *FPToUI) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FPToUI) RetType() types.Type {
 	return inst.to
@@ -179,7 +214,8 @@ func (inst *FPToUI) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPToUI) String() string {
-	return fmt.Sprintf("fptoui %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("fptoui %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -200,6 +236,11 @@ func NewFPToSI(from value.Value, to types.Type) (*FPToSI, error) {
 	return &FPToSI{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the fptosi instruction.
+func (inst *FPToSI) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *FPToSI) RetType() types.Type {
 	return inst.to
@@ -207,7 +248,8 @@ func (inst *FPToSI) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *FPToSI) String() string {
-	return fmt.Sprintf("fptosi %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("fptosi %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ uitofp ] --------------------------------------------------------------
@@ -228,6 +270,11 @@ func NewUIToFP(from value.Value, to types.Type) (*UIToFP, error) {
 	return &UIToFP{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the uitofp instruction.
+func (inst *UIToFP) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *UIToFP) RetType() types.Type {
 	return inst.to
@@ -235,7 +282,8 @@ func (inst *UIToFP) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *UIToFP) String() string {
-	return fmt.Sprintf("uitofp %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("uitofp %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -256,6 +304,11 @@ func NewSIToFP(from value.Value, to types.Type) (*SIToFP, error) {
 	return &SIToFP{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the sitofp instruction.
+func (inst *SIToFP) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *SIToFP) RetType() types.Type {
 	return inst.to
@@ -263,7 +316,8 @@ func (inst *SIToFP) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *SIToFP) String() string {
-	return fmt.Sprintf("sitofp %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("sitofp %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ ptrtoint ] ------------------------------------------------------------
@@ -284,6 +338,11 @@ func NewPtrToInt(from value.Value, to types.Type) (*PtrToInt, error) {
 	return &PtrToInt{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the ptrtoint instruction.
+func (inst *PtrToInt) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *PtrToInt) RetType() types.Type {
 	return inst.to
@@ -291,7 +350,8 @@ func (inst *PtrToInt) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *PtrToInt) String() string {
-	return fmt.Sprintf("ptrtoint %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("ptrtoint %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -312,6 +372,11 @@ func NewIntToPtr(from value.Value, to types.Type) (*IntToPtr, error) {
 	return &IntToPtr{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the inttoptr instruction.
+func (inst *IntToPtr) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *IntToPtr) RetType() types.Type {
 	return inst.to
@@ -319,7 +384,8 @@ func (inst *IntToPtr) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *IntToPtr) String() string {
-	return fmt.Sprintf("inttoptr %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("inttoptr %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ bitcast ] -------------------------------------------------------------
@@ -340,6 +406,11 @@ func NewBitCast(from value.Value, to types.Type) (*BitCast, error) {
 	return &BitCast{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the bitcast instruction.
+func (inst *BitCast) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *BitCast) RetType() types.Type {
 	return inst.to
@@ -347,7 +418,8 @@ func (inst *BitCast) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *BitCast) String() string {
-	return fmt.Sprintf("bitcast %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("bitcast %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
 
 // --- [ addrspacecast ] -------------------------------------------------------
@@ -368,6 +440,11 @@ func NewAddrSpaceCast(from value.Value, to types.Type) (*AddrSpaceCast, error) {
 	return &AddrSpaceCast{from: from, to: to}, nil
 }
 
+// From returns the value before conversion of the addrspacecast instruction.
+func (inst *AddrSpaceCast) From() value.Value {
+	return inst.from
+}
+
 // RetType returns the type of the value produced by the instruction.
 func (inst *AddrSpaceCast) RetType() types.Type {
 	return inst.to
@@ -375,5 +452,6 @@ func (inst *AddrSpaceCast) RetType() types.Type {
 
 // String returns the string representation of the instruction.
 func (inst *AddrSpaceCast) String() string {
-	return fmt.Sprintf("addrspacecast %v %v to %v", inst.from.Type(), inst.from.ValueString(), inst.to)
+	from := inst.From()
+	return fmt.Sprintf("addrspacecast %v %v to %v", from.Type(), from.ValueString(), inst.RetType())
 }
