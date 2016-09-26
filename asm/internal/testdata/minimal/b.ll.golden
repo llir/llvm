@@ -1,0 +1,5 @@
+define i32 @main() {
+; <label>:0
+	%foo = add i32 42, 42
+	ret i32 %foo
+}
