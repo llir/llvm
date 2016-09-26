@@ -610,7 +610,14 @@ func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator
 		}
 		return term
 	case *instruction.Br:
-		panic("irx.dummyMap.fixTerm: Br not yet implemented")
+		cond := m.fixValue(oldTerm.Cond())
+		trueBranch := m.fixNamedValue(oldTerm.TrueBranch())
+		falseBranch := m.fixNamedValue(oldTerm.FalseBranch())
+		term, err := instruction.NewBr(cond, trueBranch, falseBranch)
+		if err != nil {
+			panic(errutil.Err(err))
+		}
+		return term
 	case *instruction.Switch:
 		panic("irx.dummyMap.fixTerm: Switch not yet implemented")
 	case *instruction.IndirectBr:
@@ -619,6 +626,12 @@ func (m dummyMap) fixTerm(oldTerm instruction.Terminator) instruction.Terminator
 		panic("irx.dummyMap.fixTerm: Invoke not yet implemented")
 	case *instruction.Resume:
 		panic("irx.dummyMap.fixTerm: Resume not yet implemented")
+	case *instruction.CatchSwitch:
+		panic("irx.dummyMap.fixTerm: CatchSwitch not yet implemented")
+	case *instruction.CatchRet:
+		panic("irx.dummyMap.fixTerm: CatchRet not yet implemented")
+	case *instruction.CleanupRet:
+		panic("irx.dummyMap.fixTerm: CleanupRet not yet implemented")
 	case *instruction.Unreachable:
 		panic("irx.dummyMap.fixTerm: Unreachable not yet implemented")
 	default:

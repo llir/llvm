@@ -9,16 +9,10 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
-// A Ret instruction returns control flow, and optionally a value, from a callee
-// back to its caller.
-//
-// Syntax:
-//    ret <Type> <Val>
-//    ret void
-//
-// Semantics:
-//    return val;
-//    return;
+// --- [ ret ] -----------------------------------------------------------------
+
+// Ret represents a ret instruction, which returns control flow, and optionally
+// a value, from a callee back to its caller.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#ret-instruction
@@ -51,11 +45,7 @@ func (term *Ret) String() string {
 	return fmt.Sprintf("ret %v %v", val.Type(), val.ValueString())
 }
 
-// TODO: Add support for the remaining terminator instructions:
-//    http://llvm.org/docs/LangRef.html#switch-instruction
-//    http://llvm.org/docs/LangRef.html#indirectbr-instruction
-//    http://llvm.org/docs/LangRef.html#invoke-instruction
-//    http://llvm.org/docs/LangRef.html#resume-instruction
+// --- [ jmp ] -----------------------------------------------------------------
 
 // Jmp represents an unconditional branch instruction.
 type Jmp struct {
@@ -89,6 +79,8 @@ func (term *Jmp) Target() value.NamedValue {
 func (term *Jmp) String() string {
 	return fmt.Sprintf("br label %s", enc.Local(term.target.Name()))
 }
+
+// --- [ br ] ------------------------------------------------------------------
 
 // Br represents a conditional branch instruction.
 type Br struct {
@@ -133,24 +125,107 @@ func (term *Br) FalseBranch() value.NamedValue {
 
 // String returns the string representation of the instruction.
 func (term *Br) String() string {
-	return fmt.Sprintf("br %s %s, label %s, label %s", term.cond.Type(), term.cond.ValueString(), enc.Local(term.trueBranch.Name()), enc.Local(term.falseBranch.Name()))
+	cond := term.Cond()
+	trueBranch, falseBranch := term.TrueBranch(), term.FalseBranch()
+	// TODO: Make use of ValueString rather than enc.Local for trueBranch and
+	// falseBranch.
+	return fmt.Sprintf("br %s %s, label %s, label %s", cond.Type(), cond.ValueString(), enc.Local(trueBranch.Name()), enc.Local(falseBranch.Name()))
 }
 
+// --- [ switch ] --------------------------------------------------------------
+
+// TODO: Implement Switch.
+
+// Switch represents a switch instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#switch-instruction
 type Switch struct{}
 
-func (*Switch) String() string { panic("Switch.String: not yet implemented") }
+// String returns the string representation of the instruction.
+func (term *Switch) String() string { panic("Switch.String: not yet implemented") }
 
+// --- [ indirectbr ] ----------------------------------------------------------
+
+// TODO: Implement IndirectBr.
+
+// IndirectBr represents an indirectbr instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#indirectbr-instruction
 type IndirectBr struct{}
 
-func (*IndirectBr) String() string { panic("IndirectBr.String: not yet implemented") }
+// String returns the string representation of the instruction.
+func (term *IndirectBr) String() string { panic("IndirectBr.String: not yet implemented") }
 
+// --- [ invoke ] --------------------------------------------------------------
+
+// TODO: Implement Invoke.
+
+// Invoke represents an invoke instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#invoke-instruction
 type Invoke struct{}
 
-func (*Invoke) String() string { panic("Invoke.String: not yet implemented") }
+// String returns the string representation of the instruction.
+func (term *Invoke) String() string { panic("Invoke.String: not yet implemented") }
 
+// --- [ resume ] --------------------------------------------------------------
+
+// TODO: Implement Resume.
+
+// Resume represents a resume instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#resume-instruction
 type Resume struct{}
 
-func (*Resume) String() string { panic("Resume.String: not yet implemented") }
+// String returns the string representation of the instruction.
+func (term *Resume) String() string { panic("Resume.String: not yet implemented") }
+
+// --- [ catchswitch ] ---------------------------------------------------------
+
+// TODO: Implement CatchSwitch.
+
+// CatchSwitch represents a catchswitch instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#catchswitch-instruction
+type CatchSwitch struct{}
+
+// String returns the string representation of the instruction.
+func (term *CatchSwitch) String() string { panic("CatchSwitch.String: not yet implemented") }
+
+// --- [ catchret ] ------------------------------------------------------------
+
+// TODO: Implement CatchRet.
+
+// CatchRet represents a catchret instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#catchret-instruction
+type CatchRet struct{}
+
+// String returns the string representation of the instruction.
+func (term *CatchRet) String() string { panic("CatchRet.String: not yet implemented") }
+
+// --- [ cleanupret ] ----------------------------------------------------------
+
+// TODO: Implement CleanupRet.
+
+// CleanupRet represents a cleanupret instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#cleanupret-instruction
+type CleanupRet struct{}
+
+// String returns the string representation of the instruction.
+func (term *CleanupRet) String() string { panic("CleanupRet.String: not yet implemented") }
+
+// --- [ unreachable ] ---------------------------------------------------------
+
+// TODO: Implement Unreachable.
 
 // Unreachable represents an unreachable instruction.
 //
@@ -177,4 +252,7 @@ func (*Switch) isTerm()      {}
 func (*IndirectBr) isTerm()  {}
 func (*Invoke) isTerm()      {}
 func (*Resume) isTerm()      {}
+func (*CatchSwitch) isTerm() {}
+func (*CatchRet) isTerm()    {}
+func (*CleanupRet) isTerm()  {}
 func (*Unreachable) isTerm() {}
