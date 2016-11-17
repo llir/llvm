@@ -1,6 +1,9 @@
 package ir
 
-import "github.com/llir/llvm/ir/types"
+import (
+	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/types"
+)
 
 // A Function represents an LLVM IR function definition or external function
 // declaration. The body of a function definition consists of a set of basic
@@ -17,6 +20,11 @@ type Function struct {
 	typ *types.Func
 	// Basic blocks of the function.
 	blocks []*BasicBlock
+}
+
+// NewFunction returns a new LLVM IR function based on the given name.
+func NewFunction(name string) *ir.Function {
+	return &ir.Function{name: name}
 }
 
 // A Param represents a function parameter.
