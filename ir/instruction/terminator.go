@@ -1,3 +1,8 @@
+// === [ Terminator instructions ] =============================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#terminator-instructions
+
 package instruction
 
 import (
