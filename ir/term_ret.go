@@ -34,45 +34,45 @@ func NewRet(x value.Value) *TermRet {
 }
 
 // Type returns the type of the instruction.
-func (i *TermRet) Type() types.Type {
-	if i.x != nil {
-		return i.x.Type()
+func (t *TermRet) Type() types.Type {
+	if t.x != nil {
+		return t.x.Type()
 	}
 	return types.Void
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *TermRet) Ident() string {
+func (t *TermRet) Ident() string {
 	// TODO: Encode name if containing special characters.
-	return "%" + i.name
+	return "%" + t.name
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *TermRet) LLVMString() string {
-	if i.x != nil {
-		return fmt.Sprintf("ret %v %v", i.x.Type().LLVMString(), i.x.Ident())
+func (t *TermRet) LLVMString() string {
+	if t.x != nil {
+		return fmt.Sprintf("ret %v %v", t.x.Type().LLVMString(), t.x.Ident())
 	}
 	return "ret void"
 }
 
 // Successors returns the successor basic blocks of the terminator.
-func (i *TermRet) Successors() []*BasicBlock {
+func (t *TermRet) Successors() []*BasicBlock {
 	// Return instructions have no successors.
 	return nil
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *TermRet) Parent() *BasicBlock {
-	return i.parent
+func (t *TermRet) Parent() *BasicBlock {
+	return t.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *TermRet) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (t *TermRet) SetParent(parent *BasicBlock) {
+	t.parent = parent
 }
 
 // SetName sets the name of the local variable storing the result of the
 // instruction.
-func (i *TermRet) SetName(name string) {
-	i.name = name
+func (t *TermRet) SetName(name string) {
+	t.name = name
 }
