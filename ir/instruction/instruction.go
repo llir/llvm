@@ -10,6 +10,6 @@ import "github.com/llir/llvm/ir/value"
 //    TODO
 type Instruction interface {
 	value.Value
-	// Block returns the parent basic block of the instruction.
-	Block() value.Value
+	// Parent returns the parent basic block of the instruction.
+	Parent() value.Value
 }

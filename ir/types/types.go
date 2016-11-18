@@ -11,6 +11,18 @@ type Type interface {
 	Equal(u Type) bool
 }
 
-// Func represents a function type.
-type Func struct {
+// FuncType represents a function type.
+type FuncType struct {
 }
+
+// LabelType represents a label type, which is used for basic block values.
+type LabelType struct {
+}
+
+// Equal reports whether t and u are of equal type.
+func (t LabelType) Equal(u Type) bool {
+	_, ok := u.(LabelType)
+	return ok
+}
+
+var Label = &LabelType{}

@@ -8,11 +8,11 @@ import "github.com/llir/llvm/ir/types"
 //
 // Value may have one of the following underlying types.
 //
-//    constant.Constant
 //    *ir.BasicBlock
 //    *ir.Function
 //    *ir.Global
 //    *ir.Param
+//    constant.Constant
 //    instruction.Instruction
 type Value interface {
 	// Type returns the type of the value.

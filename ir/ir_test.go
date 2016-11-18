@@ -12,12 +12,17 @@ type LLVMStringer interface {
 	LLVMString() string
 }
 
-// Validates that the LLVMStringer and value.Named interface are implemented by
-// the relevant types.
+// Validates that the value.Value interface is implemented by the relevant
+// types.
+var (
+	_ value.Value = &ir.BasicBlock{}
+	_ value.Value = &ir.Function{}
+	_ value.Value = &ir.Global{}
+	_ value.Value = &ir.Param{}
+)
+
+// Validates that the LLVMStringer interface is implemented by the relevant
+// types.
 var (
 	_ LLVMStringer = &ir.Module{}
-	_ value.Named  = &ir.BasicBlock{}
-	_ value.Named  = &ir.Function{}
-	_ value.Named  = &ir.Global{}
-	_ value.Named  = &ir.Param{}
 )
