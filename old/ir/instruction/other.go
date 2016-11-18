@@ -294,7 +294,7 @@ func (inst *Select) String() string {
 type Call struct {
 	// Function return type.
 	result types.Type
-	// Calleee function name.
+	// Callee function name.
 	callee string
 	// Function arguments.
 	args []value.Value

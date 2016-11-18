@@ -10,8 +10,8 @@ import "github.com/llir/llvm/ir/value"
 //
 //    TODO
 type Terminator interface {
-	// Block returns the parent basic block of the terminator.
-	Block() value.Value
+	// Parent returns the parent basic block of the instruction.
+	Parent() value.Value
 	// LLVMString returns the LLVM syntax representation of the terminator.
 	LLVMString() string
 	// Successors returns the successor basic blocks of the terminator.

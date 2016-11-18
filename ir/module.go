@@ -2,6 +2,10 @@
 package ir
 
 import (
+	"bytes"
+	"fmt"
+
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -19,9 +23,30 @@ func NewModule() *Module {
 	return &Module{}
 }
 
-// AppendFunc appends a function to the module.
-func (m *Module) AppendFunc(name string, ret types.Type, params ...Param) *Function {
-	f := NewFunction(name, ret, params)
+// LLVMString returns the LLVM syntax representation of the module.
+func (m *Module) LLVMString() string {
+	buf := &bytes.Buffer{}
+	for _, f := range m.funcs {
+		fmt.Fprintln(buf, f.LLVMString())
+	}
+	for _, g := range m.globals {
+		fmt.Fprintln(buf, g.LLVMString())
+	}
+	return buf.String()
+}
+
+// NewFunc appends a new function to the module based on the given function
+// name, return type and parameters.
+func (m *Module) NewFunc(name string, ret types.Type, params ...*Param) *Function {
+	f := NewFunc(name, ret, params...)
 	m.funcs = append(m.funcs, f)
 	return f
+}
+
+// NewGlobal appends a new global variable to the module based on the given
+// global variable name, underlying type and optional initial value.
+func (m *Module) NewGlobal(name string, underlying types.Type, init ...constant.Constant) *Global {
+	global := NewGlobal(name, underlying, init...)
+	m.globals = append(m.globals, global)
+	return global
 }

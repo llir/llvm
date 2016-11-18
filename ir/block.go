@@ -43,26 +43,61 @@ func (block *BasicBlock) LLVMString() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s:\n", block.name)
 	for _, inst := range block.insts {
-		fmt.Fprintf(buf, "\t%v\n", inst)
+		fmt.Fprintf(buf, "\t%v\n", inst.LLVMString())
 	}
-	fmt.Fprintf(buf, "\t%v\n", block.term)
+	fmt.Fprintf(buf, "\t%v\n", block.term.LLVMString())
 	return buf.String()
 }
 
-// Append appends the given instruction to the basic block.
-func (block *BasicBlock) Append(inst instruction.Instruction) {
+// NewAdd appends a new add instruction to the basic block based on the given
+// operands.
+func (block *BasicBlock) NewAdd(x, y value.Value) *instruction.Add {
+	inst := instruction.NewAdd(x, y)
+	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
+	return inst
 }
 
-// AppendAdd appends an add instruction to the basic block.
-func (block *BasicBlock) AppendAdd(x, y value.Value) *instruction.Add {
-	add := instruction.NewAdd(x, y)
-	add.SetParent(block)
-	block.Append(add)
-	return add
+// NewCall appends a new call instruction to the basic block based on the given
+// callee and function arguments.
+func (block *BasicBlock) NewCall(callee value.Value, args ...value.Value) *instruction.Call {
+	inst := instruction.NewCall(callee, args...)
+	inst.SetParent(block)
+	block.insts = append(block.insts, inst)
+	return inst
+}
+
+// NewMul appends a new mul instruction to the basic block based on the given
+// operands.
+func (block *BasicBlock) NewMul(x, y value.Value) *instruction.Mul {
+	inst := instruction.NewMul(x, y)
+	inst.SetParent(block)
+	block.insts = append(block.insts, inst)
+	return inst
+}
+
+// NewLoad appends a new load instruction to the basic block based on the given
+// source address.
+func (block *BasicBlock) NewLoad(src value.Value) *instruction.Load {
+	inst := instruction.NewLoad(src)
+	inst.SetParent(block)
+	block.insts = append(block.insts, inst)
+	return inst
+}
+
+// NewRet appends a new ret instruction to the basic block based on the given
+// return value. A nil return value indicates a "void" return instruction.
+func (block *BasicBlock) NewRet(x value.Value) *instruction.Ret {
+	term := instruction.NewRet(x)
+	term.SetParent(block)
+	block.term = term
+	return term
 }
 
 // SetParent sets the parent function of the basic block.
 func (block *BasicBlock) SetParent(parent value.Value) {
-	block.parent = parent
+	if parent, ok := parent.(*Function); ok {
+		block.parent = parent
+	}
+	panic(fmt.Sprintf("invalid type, expected *ir.Function, got %T", parent))
 }

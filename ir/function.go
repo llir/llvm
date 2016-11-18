@@ -1,6 +1,11 @@
 package ir
 
-import "github.com/llir/llvm/ir/types"
+import (
+	"bytes"
+	"fmt"
+
+	"github.com/llir/llvm/ir/types"
+)
 
 // A Function represents an LLVM IR function definition or external function
 // declaration. The body of a function definition consists of a set of basic
@@ -13,6 +18,8 @@ type Function struct {
 	parent *Module
 	// Function name.
 	name string
+	// Return type.
+	ret types.Type
 	// Function parameters.
 	params []*Param
 	// Function type.
@@ -21,9 +28,15 @@ type Function struct {
 	blocks []*BasicBlock
 }
 
-// NewFunction returns a new LLVM IR function based on the given name.
-func NewFunction(name string, ret types.Type, params ...Param) *Function {
-	return &Function{name: name}
+// NewFunc returns a new LLVM IR function based on the given name, return type
+// and parameters.
+func NewFunc(name string, ret types.Type, params ...*Param) *Function {
+	var ps []types.Type
+	for _, param := range params {
+		ps = append(ps, param.typ)
+	}
+	typ := types.NewFuncType(ret, ps...)
+	return &Function{name: name, ret: ret, params: params, typ: typ}
 }
 
 // Type returns the type of the function.
@@ -39,7 +52,39 @@ func (f *Function) Ident() string {
 
 // LLVMString returns the LLVM syntax representation of the function.
 func (f *Function) LLVMString() string {
-	panic("not yet implemented")
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "%v %v(", f.ret.LLVMString(), f.Ident())
+	for i, param := range f.params {
+		if i != 0 {
+			buf.WriteString(", ")
+			fmt.Fprintf(buf, param.typ.LLVMString(), param.name)
+		}
+	}
+	buf.WriteString(")")
+	if len(f.blocks) > 0 {
+		fmt.Fprintln(buf, " {")
+		for _, block := range f.blocks {
+			fmt.Fprintln(buf, block.LLVMString())
+		}
+		fmt.Fprintln(buf, "}")
+	}
+	return buf.String()
+}
+
+// NewParam appends a new parameter to the function based on the given parameter
+// name and type.
+func (f *Function) NewParam(name string, typ types.Type) *Param {
+	param := &Param{name: name, typ: typ}
+	f.params = append(f.params, param)
+	return param
+}
+
+// NewBlock appends a new basic block to the function based on the given basic
+// block label name.
+func (f *Function) NewBlock(name string) *BasicBlock {
+	block := &BasicBlock{name: name}
+	f.blocks = append(f.blocks, block)
+	return block
 }
 
 // A Param represents a function parameter.
@@ -48,4 +93,20 @@ type Param struct {
 	name string
 	// Parameter type.
 	typ types.Type
+}
+
+// Type returns the type of the function parameter.
+func (p *Param) Type() types.Type {
+	return p.typ
+}
+
+// Ident returns the identifier associated with the function parameter.
+func (p *Param) Ident() string {
+	// TODO: Encode name if containing special characters.
+	return "%" + p.name
+}
+
+// LLVMString returns the LLVM syntax representation of the function parameter.
+func (p *Param) LLVMString() string {
+	return fmt.Sprintf("%v %v", p.typ, p.Ident())
 }
