@@ -88,6 +88,16 @@ func (f *Function) NewBlock(name string) *BasicBlock {
 	return block
 }
 
+// Parent returns the parent module of the function.
+func (f *Function) Parent() *Module {
+	return f.parent
+}
+
+// SetParent sets the parent module of the function.
+func (f *Function) SetParent(parent *Module) {
+	f.parent = parent
+}
+
 // A Param represents a function parameter.
 type Param struct {
 	// Parameter name.
@@ -105,19 +115,4 @@ func (p *Param) Type() types.Type {
 func (p *Param) Ident() string {
 	// TODO: Encode name if containing special characters.
 	return "%" + p.name
-}
-
-// LLVMString returns the LLVM syntax representation of the function parameter.
-func (p *Param) LLVMString() string {
-	return fmt.Sprintf("%v %v", p.typ, p.Ident())
-}
-
-// Parent returns the parent module of the function.
-func (f *Function) Parent() *Module {
-	return f.parent
-}
-
-// SetParent sets the parent module of the function.
-func (f *Function) SetParent(parent *Module) {
-	f.parent = parent
 }

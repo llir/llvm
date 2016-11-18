@@ -8,8 +8,8 @@ package ir
 type Terminator interface {
 	// Parent returns the parent basic block of the instruction.
 	Parent() *BasicBlock
-	// LLVMString returns the LLVM syntax representation of the terminator.
-	LLVMString() string
 	// Successors returns the successor basic blocks of the terminator.
 	Successors() []*BasicBlock
+	// LLVMString returns the LLVM syntax representation of the terminator.
+	LLVMString() string
 }

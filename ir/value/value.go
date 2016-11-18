@@ -19,6 +19,4 @@ type Value interface {
 	Type() types.Type
 	// Ident returns the identifier associated with the value.
 	Ident() string
-	// LLVMString returns the LLVM syntax representation of the value.
-	LLVMString() string
 }

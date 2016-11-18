@@ -11,4 +11,6 @@ type Instruction interface {
 	value.Value
 	// Parent returns the parent basic block of the instruction.
 	Parent() *BasicBlock
+	// LLVMString returns the LLVM syntax representation of the instruction.
+	LLVMString() string
 }

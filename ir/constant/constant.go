@@ -63,8 +63,3 @@ func (i *Int) Ident() string {
 	}
 	return fmt.Sprintf("%d", i.x)
 }
-
-// LLVMString returns the LLVM syntax representation of the integer constant.
-func (i *Int) LLVMString() string {
-	return fmt.Sprintf("%v %v", i.typ, i.Ident())
-}
