@@ -50,7 +50,7 @@ func (block *BasicBlock) LLVMString() string {
 
 // NewAdd appends a new add instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewAdd(x, y value.Value) *Add {
+func (block *BasicBlock) NewAdd(x, y value.Value) *AddInst {
 	inst := NewAdd(x, y)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -59,7 +59,7 @@ func (block *BasicBlock) NewAdd(x, y value.Value) *Add {
 
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
-func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *Call {
+func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *CallInst {
 	inst := NewCall(callee, args...)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -68,7 +68,7 @@ func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *Call {
 
 // NewMul appends a new mul instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewMul(x, y value.Value) *Mul {
+func (block *BasicBlock) NewMul(x, y value.Value) *MulInst {
 	inst := NewMul(x, y)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -77,7 +77,7 @@ func (block *BasicBlock) NewMul(x, y value.Value) *Mul {
 
 // NewLoad appends a new load instruction to the basic block based on the given
 // source address.
-func (block *BasicBlock) NewLoad(src value.Value) *Load {
+func (block *BasicBlock) NewLoad(src value.Value) *LoadInst {
 	inst := NewLoad(src)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -86,7 +86,7 @@ func (block *BasicBlock) NewLoad(src value.Value) *Load {
 
 // NewRet appends a new ret instruction to the basic block based on the given
 // return value. A nil return value indicates a "void" return instruction.
-func (block *BasicBlock) NewRet(x value.Value) *Ret {
+func (block *BasicBlock) NewRet(x value.Value) *RetTerm {
 	term := NewRet(x)
 	term.SetParent(block)
 	block.term = term
