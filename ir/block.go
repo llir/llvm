@@ -50,7 +50,7 @@ func (block *BasicBlock) LLVMString() string {
 
 // NewAdd appends a new add instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewAdd(x, y value.Value) *AddInst {
+func (block *BasicBlock) NewAdd(x, y value.Value) *InstAdd {
 	inst := NewAdd(x, y)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -59,7 +59,7 @@ func (block *BasicBlock) NewAdd(x, y value.Value) *AddInst {
 
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
-func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *CallInst {
+func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -68,7 +68,7 @@ func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *CallIns
 
 // NewMul appends a new mul instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewMul(x, y value.Value) *MulInst {
+func (block *BasicBlock) NewMul(x, y value.Value) *InstMul {
 	inst := NewMul(x, y)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -77,7 +77,7 @@ func (block *BasicBlock) NewMul(x, y value.Value) *MulInst {
 
 // NewLoad appends a new load instruction to the basic block based on the given
 // source address.
-func (block *BasicBlock) NewLoad(src value.Value) *LoadInst {
+func (block *BasicBlock) NewLoad(src value.Value) *InstLoad {
 	inst := NewLoad(src)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
@@ -86,7 +86,7 @@ func (block *BasicBlock) NewLoad(src value.Value) *LoadInst {
 
 // NewRet appends a new ret instruction to the basic block based on the given
 // return value. A nil return value indicates a "void" return instruction.
-func (block *BasicBlock) NewRet(x value.Value) *RetTerm {
+func (block *BasicBlock) NewRet(x value.Value) *TermRet {
 	term := NewRet(x)
 	term.SetParent(block)
 	block.term = term

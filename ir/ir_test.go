@@ -30,14 +30,14 @@ var (
 // Validates that the ir.Instruction interface is implemented by the relevant
 // types.
 var (
-	_ ir.Instruction = &ir.Add{}
-	_ ir.Instruction = &ir.Call{}
-	_ ir.Instruction = &ir.Load{}
-	_ ir.Instruction = &ir.Mul{}
+	_ ir.Instruction = &ir.InstAdd{}
+	_ ir.Instruction = &ir.InstCall{}
+	_ ir.Instruction = &ir.InstLoad{}
+	_ ir.Instruction = &ir.InstMul{}
 )
 
 // Validates that the ir.Terminator interface is implemented by the relevant
 // types.
 var (
-	_ ir.Terminator = &ir.Ret{}
+	_ ir.Terminator = &ir.TermRet{}
 )

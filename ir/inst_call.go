@@ -8,8 +8,8 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// CallInst represents a callInst instruction.
-type CallInst struct {
+// InstCall represents a Instcall instruction.
+type InstCall struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Local variable name storing the result of the instruction.
@@ -24,23 +24,23 @@ type CallInst struct {
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
-func NewCall(callee *Function, args ...value.Value) *CallInst {
-	return &CallInst{callee: callee, args: args, result: callee.ret}
+func NewCall(callee *Function, args ...value.Value) *InstCall {
+	return &InstCall{callee: callee, args: args, result: callee.ret}
 }
 
 // Type returns the type of the instruction.
-func (i *CallInst) Type() types.Type {
+func (i *InstCall) Type() types.Type {
 	return i.result
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *CallInst) Ident() string {
+func (i *InstCall) Ident() string {
 	// TODO: Encode name if containing special characters.
 	return "%" + i.name
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *CallInst) LLVMString() string {
+func (i *InstCall) LLVMString() string {
 	buf := &bytes.Buffer{}
 	if !i.result.Equal(types.Void) {
 		fmt.Fprintf(buf, "%v = ", i.Ident())
@@ -57,17 +57,17 @@ func (i *CallInst) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *CallInst) Parent() *BasicBlock {
+func (i *InstCall) Parent() *BasicBlock {
 	return i.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *CallInst) SetParent(parent *BasicBlock) {
+func (i *InstCall) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
 
 // SetName sets the name of the local variable storing the result of the
 // instruction.
-func (i *CallInst) SetName(name string) {
+func (i *InstCall) SetName(name string) {
 	i.name = name
 }

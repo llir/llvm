@@ -7,8 +7,8 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// RetTerm represents a return terminator instruction.
-type RetTerm struct {
+// TermRet represents a return terminator instruction.
+type TermRet struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Local variable name storing the result of the instruction.
@@ -19,7 +19,7 @@ type RetTerm struct {
 
 // TODO: Consider changing the signature of NewRet to
 //
-//    func NewRet(x ...value.Value) *RetTerm
+//    func NewRet(x ...value.Value) *TermRet
 //
 // thus making the value optional.
 //
@@ -29,12 +29,12 @@ type RetTerm struct {
 
 // NewRet returns a new ret instruction based on the given return value. A nil
 // return value indicates a "void" return instruction.
-func NewRet(x value.Value) *RetTerm {
-	return &RetTerm{x: x}
+func NewRet(x value.Value) *TermRet {
+	return &TermRet{x: x}
 }
 
 // Type returns the type of the instruction.
-func (i *RetTerm) Type() types.Type {
+func (i *TermRet) Type() types.Type {
 	if i.x != nil {
 		return i.x.Type()
 	}
@@ -42,13 +42,13 @@ func (i *RetTerm) Type() types.Type {
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *RetTerm) Ident() string {
+func (i *TermRet) Ident() string {
 	// TODO: Encode name if containing special characters.
 	return "%" + i.name
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *RetTerm) LLVMString() string {
+func (i *TermRet) LLVMString() string {
 	if i.x != nil {
 		return fmt.Sprintf("ret %v %v", i.x.Type().LLVMString(), i.x.Ident())
 	}
@@ -56,23 +56,23 @@ func (i *RetTerm) LLVMString() string {
 }
 
 // Successors returns the successor basic blocks of the terminator.
-func (i *RetTerm) Successors() []*BasicBlock {
+func (i *TermRet) Successors() []*BasicBlock {
 	// Return instructions have no successors.
 	return nil
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *RetTerm) Parent() *BasicBlock {
+func (i *TermRet) Parent() *BasicBlock {
 	return i.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *RetTerm) SetParent(parent *BasicBlock) {
+func (i *TermRet) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
 
 // SetName sets the name of the local variable storing the result of the
 // instruction.
-func (i *RetTerm) SetName(name string) {
+func (i *TermRet) SetName(name string) {
 	i.name = name
 }
