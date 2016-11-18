@@ -1,4 +1,4 @@
-package instruction
+package ir
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 // Load represents a load instruction.
 type Load struct {
 	// Parent basic block.
-	parent value.Value
+	parent *BasicBlock
 	// Local variable name storing the result of the instruction.
 	name string
 	// Source address.
@@ -44,12 +44,12 @@ func (i *Load) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *Load) Parent() value.Value {
+func (i *Load) Parent() *BasicBlock {
 	return i.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *Load) SetParent(parent value.Value) {
+func (i *Load) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
 

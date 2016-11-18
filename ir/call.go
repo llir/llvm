@@ -1,4 +1,4 @@
-package instruction
+package ir
 
 import (
 	"bytes"
@@ -11,14 +11,11 @@ import (
 // Call represents a call instruction.
 type Call struct {
 	// Parent basic block.
-	parent value.Value
+	parent *BasicBlock
 	// Local variable name storing the result of the instruction.
 	name string
-	// TODO: Figure out how to represent f as *ir.Function rather than
-	// value.Value.
-
 	// Callee.
-	callee value.Value
+	callee *Function
 	// Function arguments.
 	args []value.Value
 	// Result type of the call instruction.
@@ -27,12 +24,8 @@ type Call struct {
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
-func NewCall(callee value.Value, args ...value.Value) *Call {
-	if typ, ok := callee.Type().(*types.FuncType); ok {
-		result := typ.Ret()
-		return &Call{callee: callee, args: args, result: result}
-	}
-	panic(fmt.Sprintf("invalid callee type; expected *types.FuncType, got %T", callee))
+func NewCall(callee *Function, args ...value.Value) *Call {
+	return &Call{callee: callee, args: args, result: callee.ret}
 }
 
 // Type returns the type of the instruction.
@@ -64,12 +57,12 @@ func (i *Call) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *Call) Parent() value.Value {
+func (i *Call) Parent() *BasicBlock {
 	return i.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *Call) SetParent(parent value.Value) {
+func (i *Call) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
 

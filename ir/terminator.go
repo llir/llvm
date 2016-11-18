@@ -1,6 +1,4 @@
-package instruction
-
-import "github.com/llir/llvm/ir/value"
+package ir
 
 // TODO: Figure out how to return a *ir.BasicBlock instead of a value.Value.
 
@@ -11,9 +9,9 @@ import "github.com/llir/llvm/ir/value"
 //    TODO
 type Terminator interface {
 	// Parent returns the parent basic block of the instruction.
-	Parent() value.Value
+	Parent() *BasicBlock
 	// LLVMString returns the LLVM syntax representation of the terminator.
 	LLVMString() string
 	// Successors returns the successor basic blocks of the terminator.
-	Successors() []value.Value
+	Successors() []*BasicBlock
 }

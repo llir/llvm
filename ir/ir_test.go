@@ -26,3 +26,18 @@ var (
 var (
 	_ LLVMStringer = &ir.Module{}
 )
+
+// Validates that the ir.Instruction interface is implemented by the relevant
+// types.
+var (
+	_ ir.Instruction = &ir.Add{}
+	_ ir.Instruction = &ir.Call{}
+	_ ir.Instruction = &ir.Load{}
+	_ ir.Instruction = &ir.Mul{}
+)
+
+// Validates that the ir.Terminator interface is implemented by the relevant
+// types.
+var (
+	_ ir.Terminator = &ir.Ret{}
+)

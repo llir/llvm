@@ -28,9 +28,9 @@ type Function struct {
 	blocks []*BasicBlock
 }
 
-// NewFunc returns a new LLVM IR function based on the given name, return type
-// and parameters.
-func NewFunc(name string, ret types.Type, params ...*Param) *Function {
+// NewFunction returns a new LLVM IR function based on the given name, return
+// type and parameters.
+func NewFunction(name string, ret types.Type, params ...*Param) *Function {
 	var ps []types.Type
 	for _, param := range params {
 		ps = append(ps, param.typ)
@@ -83,6 +83,7 @@ func (f *Function) NewParam(name string, typ types.Type) *Param {
 // block label name.
 func (f *Function) NewBlock(name string) *BasicBlock {
 	block := &BasicBlock{name: name}
+	block.SetParent(f)
 	f.blocks = append(f.blocks, block)
 	return block
 }
@@ -109,4 +110,14 @@ func (p *Param) Ident() string {
 // LLVMString returns the LLVM syntax representation of the function parameter.
 func (p *Param) LLVMString() string {
 	return fmt.Sprintf("%v %v", p.typ, p.Ident())
+}
+
+// Parent returns the parent module of the function.
+func (f *Function) Parent() *Module {
+	return f.parent
+}
+
+// SetParent sets the parent module of the function.
+func (f *Function) SetParent(parent *Module) {
+	f.parent = parent
 }

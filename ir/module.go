@@ -35,10 +35,11 @@ func (m *Module) LLVMString() string {
 	return buf.String()
 }
 
-// NewFunc appends a new function to the module based on the given function
+// NewFunction appends a new function to the module based on the given function
 // name, return type and parameters.
-func (m *Module) NewFunc(name string, ret types.Type, params ...*Param) *Function {
-	f := NewFunc(name, ret, params...)
+func (m *Module) NewFunction(name string, ret types.Type, params ...*Param) *Function {
+	f := NewFunction(name, ret, params...)
+	f.SetParent(m)
 	m.funcs = append(m.funcs, f)
 	return f
 }

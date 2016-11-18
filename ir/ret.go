@@ -1,4 +1,4 @@
-package instruction
+package ir
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 // Ret represents a return instruction.
 type Ret struct {
 	// Parent basic block.
-	parent value.Value
+	parent *BasicBlock
 	// Local variable name storing the result of the instruction.
 	name string
 	// Return value; or nil if "void" return.
@@ -56,18 +56,18 @@ func (i *Ret) LLVMString() string {
 }
 
 // Successors returns the successor basic blocks of the terminator.
-func (i *Ret) Successors() []value.Value {
+func (i *Ret) Successors() []*BasicBlock {
 	// Return instructions have no successors.
 	return nil
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *Ret) Parent() value.Value {
+func (i *Ret) Parent() *BasicBlock {
 	return i.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *Ret) SetParent(parent value.Value) {
+func (i *Ret) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
 

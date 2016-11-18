@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/llir/llvm/ir/instruction"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -21,9 +20,9 @@ type BasicBlock struct {
 	// Label name of the basic block.
 	name string
 	// Non-branching instructions of the basic block.
-	insts []instruction.Instruction
+	insts []Instruction
 	// Terminator instruction of the basic block.
-	term instruction.Terminator
+	term Terminator
 }
 
 // Type returns the type of the basic block.
@@ -51,8 +50,8 @@ func (block *BasicBlock) LLVMString() string {
 
 // NewAdd appends a new add instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewAdd(x, y value.Value) *instruction.Add {
-	inst := instruction.NewAdd(x, y)
+func (block *BasicBlock) NewAdd(x, y value.Value) *Add {
+	inst := NewAdd(x, y)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
 	return inst
@@ -60,8 +59,8 @@ func (block *BasicBlock) NewAdd(x, y value.Value) *instruction.Add {
 
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
-func (block *BasicBlock) NewCall(callee value.Value, args ...value.Value) *instruction.Call {
-	inst := instruction.NewCall(callee, args...)
+func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *Call {
+	inst := NewCall(callee, args...)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
 	return inst
@@ -69,8 +68,8 @@ func (block *BasicBlock) NewCall(callee value.Value, args ...value.Value) *instr
 
 // NewMul appends a new mul instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewMul(x, y value.Value) *instruction.Mul {
-	inst := instruction.NewMul(x, y)
+func (block *BasicBlock) NewMul(x, y value.Value) *Mul {
+	inst := NewMul(x, y)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
 	return inst
@@ -78,8 +77,8 @@ func (block *BasicBlock) NewMul(x, y value.Value) *instruction.Mul {
 
 // NewLoad appends a new load instruction to the basic block based on the given
 // source address.
-func (block *BasicBlock) NewLoad(src value.Value) *instruction.Load {
-	inst := instruction.NewLoad(src)
+func (block *BasicBlock) NewLoad(src value.Value) *Load {
+	inst := NewLoad(src)
 	inst.SetParent(block)
 	block.insts = append(block.insts, inst)
 	return inst
@@ -87,17 +86,19 @@ func (block *BasicBlock) NewLoad(src value.Value) *instruction.Load {
 
 // NewRet appends a new ret instruction to the basic block based on the given
 // return value. A nil return value indicates a "void" return instruction.
-func (block *BasicBlock) NewRet(x value.Value) *instruction.Ret {
-	term := instruction.NewRet(x)
+func (block *BasicBlock) NewRet(x value.Value) *Ret {
+	term := NewRet(x)
 	term.SetParent(block)
 	block.term = term
 	return term
 }
 
+// Parent returns the parent function of the basic block.
+func (block *BasicBlock) Parent() *Function {
+	return block.parent
+}
+
 // SetParent sets the parent function of the basic block.
-func (block *BasicBlock) SetParent(parent value.Value) {
-	if parent, ok := parent.(*Function); ok {
-		block.parent = parent
-	}
-	panic(fmt.Sprintf("invalid type, expected *ir.Function, got %T", parent))
+func (block *BasicBlock) SetParent(parent *Function) {
+	block.parent = parent
 }
