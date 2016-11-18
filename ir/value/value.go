@@ -13,7 +13,7 @@ import "github.com/llir/llvm/ir/types"
 //    *ir.Global
 //    *ir.Param
 //    constant.Constant
-//    instruction.Instruction
+//    ir.Instruction
 type Value interface {
 	// Type returns the type of the value.
 	Type() types.Type

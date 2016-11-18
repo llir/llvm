@@ -1,7 +1,5 @@
 package ir
 
-// TODO: Figure out how to return a *ir.BasicBlock instead of a value.Value.
-
 // A Terminator represents an LLVM IR terminator.
 //
 // Terminator may have one of the following underlying types.
