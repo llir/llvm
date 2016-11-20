@@ -9,8 +9,15 @@ import "github.com/llir/llvm/ir/value"
 //    TODO
 type Instruction interface {
 	value.Value
-	// Parent returns the parent basic block of the instruction.
-	Parent() *BasicBlock
 	// LLVMString returns the LLVM syntax representation of the instruction.
 	LLVMString() string
+	// Parent returns the parent basic block of the instruction.
+	Parent() *BasicBlock
+}
+
+// parentSetter is the interface that wraps the SetParent method of
+// instructions and terminators.
+type parentSetter interface {
+	// SetParent sets the parent basic block of the instruction.
+	SetParent(b *BasicBlock)
 }

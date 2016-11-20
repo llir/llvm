@@ -7,7 +7,7 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// InstAdd represents an addition instruction.
+// InstAdd represents an add instruction.
 type InstAdd struct {
 	// Parent basic block.
 	parent *BasicBlock

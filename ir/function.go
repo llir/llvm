@@ -11,8 +11,8 @@ import (
 // declaration. The body of a function definition consists of a set of basic
 // blocks, interconnected by control flow instructions.
 //
-// Functions may be referenced from terminator instructions (e.g. call), and are
-// thus considered LLVM IR values of function type.
+// Functions may be referenced from terminators (e.g. call), and are thus
+// considered LLVM IR values of function type.
 type Function struct {
 	// Parent module of the function.
 	parent *Module

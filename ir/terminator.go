@@ -6,10 +6,10 @@ package ir
 //
 //    TODO
 type Terminator interface {
-	// Parent returns the parent basic block of the instruction.
+	// LLVMString returns the LLVM syntax representation of the terminator.
+	LLVMString() string
+	// Parent returns the parent basic block of the terminator.
 	Parent() *BasicBlock
 	// Successors returns the successor basic blocks of the terminator.
 	Successors() []*BasicBlock
-	// LLVMString returns the LLVM syntax representation of the terminator.
-	LLVMString() string
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// InstMul represents a multiplication instruction.
+// InstMul represents a mul instruction.
 type InstMul struct {
 	// Parent basic block.
 	parent *BasicBlock
