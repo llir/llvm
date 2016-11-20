@@ -25,7 +25,7 @@ type InstCall struct {
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
 func NewCall(callee *Function, args ...value.Value) *InstCall {
-	return &InstCall{callee: callee, args: args, result: callee.ret}
+	return &InstCall{callee: callee, args: args, result: callee.typ.RetType()}
 }
 
 // Type returns the type of the instruction.

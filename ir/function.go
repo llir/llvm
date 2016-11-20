@@ -18,25 +18,17 @@ type Function struct {
 	parent *Module
 	// Function name.
 	name string
-	// Return type.
-	ret types.Type
-	// Function parameters.
-	params []*Param
 	// Function type.
 	typ *types.FuncType
-	// Basic blocks of the function; or nil if function declaration.
+	// Basic blocks of the function; or nil if external function declaration.
 	blocks []*BasicBlock
 }
 
 // NewFunction returns a new function based on the given function name, return
 // type and parameters.
-func NewFunction(name string, ret types.Type, params ...*Param) *Function {
-	var ps []types.Type
-	for _, param := range params {
-		ps = append(ps, param.typ)
-	}
-	typ := types.NewFuncType(ret, ps...)
-	return &Function{name: name, ret: ret, params: params, typ: typ}
+func NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
+	typ := types.NewFunc(ret, params...)
+	return &Function{name: name, typ: typ}
 }
 
 // Type returns the type of the function.
@@ -52,40 +44,54 @@ func (f *Function) Ident() string {
 
 // LLVMString returns the LLVM syntax representation of the function.
 func (f *Function) LLVMString() string {
-	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%v %v(", f.ret.LLVMString(), f.Ident())
-	for i, param := range f.params {
+	// Function signature.
+	sig := &bytes.Buffer{}
+	fmt.Fprintf(sig, "%s %s(",
+		f.RetType().LLVMString(),
+		f.Ident())
+	params := f.Params()
+	for i, p := range params {
 		if i != 0 {
-			buf.WriteString(", ")
-			fmt.Fprintf(buf, param.typ.LLVMString(), param.name)
+			sig.WriteString(", ")
 		}
+		fmt.Fprintf(sig, "%s %s",
+			p.Type().LLVMString(),
+			p.Ident())
 	}
-	buf.WriteString(")")
-	if len(f.blocks) > 0 {
-		fmt.Fprintln(buf, " {")
-		for _, block := range f.blocks {
-			fmt.Fprintln(buf, block.LLVMString())
+	if f.Variadic() {
+		if len(params) > 0 {
+			sig.WriteString(", ")
+		}
+		sig.WriteString("...")
+	}
+	sig.WriteString(")")
+	if blocks := f.Blocks(); len(blocks) > 0 {
+		// Function definition.
+		buf := &bytes.Buffer{}
+		fmt.Fprintf(buf, "define %s {\n", sig)
+		for _, b := range blocks {
+			fmt.Fprintln(buf, b.LLVMString())
 		}
 		buf.WriteString("}")
+		return buf.String()
 	}
-	return buf.String()
+	// External function declaration.
+	return fmt.Sprintf("declare %s", sig)
 }
 
-// NewParam appends a new parameter to the function based on the given parameter
-// name and type.
-func (f *Function) NewParam(name string, typ types.Type) *Param {
-	param := &Param{name: name, typ: typ}
-	f.params = append(f.params, param)
-	return param
+// RetType returns the return type of the function.
+func (f *Function) RetType() types.Type {
+	return f.typ.RetType()
 }
 
-// NewBlock appends a new basic block to the function based on the given basic
-// block label name.
-func (f *Function) NewBlock(name string) *BasicBlock {
-	block := &BasicBlock{name: name}
-	block.SetParent(f)
-	f.blocks = append(f.blocks, block)
-	return block
+// Params returns the function parameters of the function.
+func (f *Function) Params() []*types.Param {
+	return f.typ.Params()
+}
+
+// Blocks returns the basic blocks of the function.
+func (f *Function) Blocks() []*BasicBlock {
+	return f.blocks
 }
 
 // Parent returns the parent module of the function.
@@ -98,27 +104,37 @@ func (f *Function) SetParent(parent *Module) {
 	f.parent = parent
 }
 
-// A Param represents a function parameter.
-type Param struct {
-	// Parameter name.
-	name string
-	// Parameter type.
-	typ types.Type
+// Variadic reports whether the function is variadic.
+func (f *Function) Variadic() bool {
+	return f.typ.Variadic()
 }
 
-// NewParam returns a new function parameter based on the given parameter name
-// and type.
-func NewParam(name string, typ types.Type) *Param {
-	return &Param{name: name, typ: typ}
+// SetVariadic sets the variadicity of the function.
+func (f *Function) SetVariadic(variadic bool) {
+	f.typ.SetVariadic(variadic)
 }
 
-// Type returns the type of the function parameter.
-func (p *Param) Type() types.Type {
-	return p.typ
+// AppendParam appends the given function parameter to the function.
+func (f *Function) AppendParam(p *types.Param) {
+	f.typ.AppendParam(p)
 }
 
-// Ident returns the identifier associated with the function parameter.
-func (p *Param) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "%" + p.name
+// AppendBlock appends the given basic block to the function.
+func (f *Function) AppendBlock(b *BasicBlock) {
+	b.SetParent(f)
+	f.blocks = append(f.blocks, b)
+}
+
+// NewParam appends a new function parameter to the function based on the given
+// parameter name and type.
+func (f *Function) NewParam(name string, typ types.Type) *types.Param {
+	return f.typ.NewParam(name, typ)
+}
+
+// NewBlock appends a new basic block to the function based on the given label
+// name. An empty label name indicates an anonymous basic block.
+func (f *Function) NewBlock(name string) *BasicBlock {
+	b := NewBlock(name)
+	f.AppendBlock(b)
+	return b
 }

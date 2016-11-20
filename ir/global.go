@@ -64,14 +64,14 @@ func (g *Global) LLVMString() string {
 	content := g.ContentType()
 	if init, ok := g.Init(); ok {
 		// Global variable definition.
-		return fmt.Sprintf("%v = %v %v %v",
+		return fmt.Sprintf("%s = %s %s %s",
 			g.Ident(),
 			imm,
 			content.LLVMString(),
 			init.Ident())
 	}
 	// External global variable declaration.
-	return fmt.Sprintf("%v = external %v %v",
+	return fmt.Sprintf("%s = external %s %s",
 		g.Ident(),
 		imm,
 		content.LLVMString())

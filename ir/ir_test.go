@@ -18,7 +18,6 @@ var (
 	_ value.Value = &ir.BasicBlock{}
 	_ value.Value = &ir.Function{}
 	_ value.Value = &ir.Global{}
-	_ value.Value = &ir.Param{}
 )
 
 // Validates that the LLVMStringer interface is implemented by the relevant

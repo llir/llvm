@@ -17,12 +17,18 @@ import (
 type BasicBlock struct {
 	// Parent function of the basic block.
 	parent *Function
-	// Label name of the basic block.
+	// Label name of the basic block; or empty if anonymous basic block.
 	name string
 	// Non-branching instructions of the basic block.
 	insts []Instruction
 	// Terminator instruction of the basic block.
 	term Terminator
+}
+
+// NewBlock returns a new basic block based on the given label name. An empty
+// label name indicates an anonymous basic block.
+func NewBlock(name string) *BasicBlock {
+	return &BasicBlock{name: name}
 }
 
 // Type returns the type of the basic block.

@@ -20,25 +20,32 @@ type Type interface {
 
 // FuncType represents a function type.
 type FuncType struct {
-	ret    Type
-	params []Type
+	ret      Type
+	params   []*Param
+	variadic bool
 }
 
-// NewFuncType returns a new function type based on the given return type and
+// NewFunc returns a new function type based on the given return type and
 // parameters.
-func NewFuncType(ret Type, params ...Type) *FuncType {
+func NewFunc(ret Type, params ...*Param) *FuncType {
 	return &FuncType{ret: ret, params: params}
 }
 
 // LLVMString returns the LLVM syntax representation of the type.
 func (t *FuncType) LLVMString() string {
 	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%v (", t.ret.LLVMString())
-	for i, param := range t.params {
+	fmt.Fprintf(buf, "%s (", t.ret.LLVMString())
+	for i, p := range t.params {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		fmt.Fprintf(buf, "%v", param.LLVMString())
+		fmt.Fprintf(buf, "%s", p.Type().LLVMString())
+	}
+	if t.Variadic() {
+		if len(t.params) > 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString("...")
 	}
 	buf.WriteString(")")
 	return buf.String()
@@ -54,7 +61,7 @@ func (t *FuncType) Equal(u Type) bool {
 			return false
 		}
 		for i := range t.params {
-			if !t.params[i].Equal(u.params[i]) {
+			if !t.params[i].Type().Equal(u.params[i].Type()) {
 				return false
 			}
 		}
@@ -63,14 +70,37 @@ func (t *FuncType) Equal(u Type) bool {
 	return false
 }
 
-// Ret returns the return type of the function type.
-func (t *FuncType) Ret() Type {
+// RetType returns the return type of the function type.
+func (t *FuncType) RetType() Type {
 	return t.ret
 }
 
 // Params returns the parameter types of the function type.
-func (t *FuncType) Params() []Type {
+func (t *FuncType) Params() []*Param {
 	return t.params
+}
+
+// Variadic reports whether the function type is variadic.
+func (t *FuncType) Variadic() bool {
+	return t.variadic
+}
+
+// SetVariadic sets the variadicity of the function type.
+func (t *FuncType) SetVariadic(variadic bool) {
+	t.variadic = variadic
+}
+
+// AppendParam appends the given function parameter to the function type.
+func (t *FuncType) AppendParam(p *Param) {
+	t.params = append(t.params, p)
+}
+
+// NewParam appends a new function parameter to the function type based on the
+// given parameter name and type.
+func (t *FuncType) NewParam(name string, typ Type) *Param {
+	p := NewParam(name, typ)
+	t.AppendParam(p)
+	return p
 }
 
 // LabelType represents a label type, which is used for basic block values.
@@ -130,7 +160,7 @@ func NewPointer(elem Type) *PointerType {
 
 // LLVMString returns the LLVM syntax representation of the type.
 func (t *PointerType) LLVMString() string {
-	return fmt.Sprintf("*%v", t.elem.LLVMString())
+	return fmt.Sprintf("*%s", t.elem.LLVMString())
 }
 
 // Equal reports whether t and u are of equal type.

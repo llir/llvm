@@ -11,7 +11,7 @@ import "github.com/llir/llvm/ir/types"
 //    *ir.BasicBlock
 //    *ir.Function
 //    *ir.Global
-//    *ir.Param
+//    *types.Param
 //    constant.Constant
 //    ir.Instruction
 type Value interface {
