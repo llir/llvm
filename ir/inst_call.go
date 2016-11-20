@@ -8,7 +8,7 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// InstCall represents a Instcall instruction.
+// InstCall represents a call instruction.
 type InstCall struct {
 	// Parent basic block.
 	parent *BasicBlock

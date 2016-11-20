@@ -66,7 +66,7 @@ func (f *Function) LLVMString() string {
 		for _, block := range f.blocks {
 			fmt.Fprintln(buf, block.LLVMString())
 		}
-		fmt.Fprintln(buf, "}")
+		buf.WriteString("}")
 	}
 	return buf.String()
 }
@@ -104,6 +104,12 @@ type Param struct {
 	name string
 	// Parameter type.
 	typ types.Type
+}
+
+// NewParam returns a new function parameter based on the given parameter name
+// and type.
+func NewParam(name string, typ types.Type) *Param {
+	return &Param{name: name, typ: typ}
 }
 
 // Type returns the type of the function parameter.

@@ -19,8 +19,8 @@ import (
 type Global struct {
 	// Global variable name.
 	name string
-	// Underlying pointer type.
-	underlying types.Type
+	// Content type.
+	content types.Type
 	// Initial value; or nil if defined externally.
 	init constant.Constant
 	// Immutability of the global variable.
@@ -30,10 +30,10 @@ type Global struct {
 }
 
 // NewGlobal appends a new global variable to the module based on the given
-// global variable name, type and optional initial value.
-func NewGlobal(name string, underlying types.Type, init ...constant.Constant) *Global {
-	typ := types.NewPointer(underlying)
-	global := &Global{name: name, underlying: underlying, typ: typ}
+// global variable name, content type and optional initial value.
+func NewGlobal(name string, content types.Type, init ...constant.Constant) *Global {
+	typ := types.NewPointer(content)
+	global := &Global{name: name, content: content, typ: typ}
 	switch len(init) {
 	case 0:
 		// External global variable declaration with initial value.
@@ -57,9 +57,9 @@ func (g *Global) Ident() string {
 	return "@" + g.name
 }
 
-// Underlying returns the underlying type of the global variable.
-func (g *Global) Underlying() types.Type {
-	return g.underlying
+// Content returns the content type of the global variable.
+func (g *Global) Content() types.Type {
+	return g.content
 }
 
 // LLVMString returns the LLVM syntax representation of the global variable.
@@ -69,7 +69,7 @@ func (g *Global) LLVMString() string {
 		imm = "constant"
 	}
 	if g.init != nil {
-		return fmt.Sprintf("%v = %v %v %v", g.Ident(), imm, g.underlying.LLVMString(), g.init.Ident())
+		return fmt.Sprintf("%v = %v %v %v", g.Ident(), imm, g.content.LLVMString(), g.init.Ident())
 	}
-	return fmt.Sprintf("%v = external %v %v", g.Ident(), imm, g.underlying.LLVMString())
+	return fmt.Sprintf("%v = external %v %v", g.Ident(), imm, g.content.LLVMString())
 }
