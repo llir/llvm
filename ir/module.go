@@ -64,10 +64,18 @@ func (m *Module) NewFunction(name string, ret types.Type, params ...*Param) *Fun
 	return f
 }
 
-// NewGlobal appends a new global variable to the module based on the given
-// global variable name, content type and optional initial value.
-func (m *Module) NewGlobal(name string, content types.Type, init ...constant.Constant) *Global {
-	global := NewGlobal(name, content, init...)
-	m.AppendGlobal(global)
-	return global
+// NewGlobalDecl appends a new external global variable declaration to the
+// module based on the given global variable name and content type.
+func (m *Module) NewGlobalDecl(name string, content types.Type) *Global {
+	g := NewGlobalDecl(name, content)
+	m.AppendGlobal(g)
+	return g
+}
+
+// NewGlobalDef appends a new global variable definition to the module based on
+// the given global variable name and initial value.
+func (m *Module) NewGlobalDef(name string, init constant.Constant) *Global {
+	g := NewGlobalDef(name, init)
+	m.AppendGlobal(g)
+	return g
 }

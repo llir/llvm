@@ -23,27 +23,25 @@ type Global struct {
 	content types.Type
 	// Initial value; or nil if defined externally.
 	init constant.Constant
-	// Immutability of the global variable.
-	immutable bool
 	// Global variable type.
 	typ *types.PointerType
+	// Immutability of the global variable.
+	immutable bool
 }
 
-// NewGlobal appends a new global variable to the module based on the given
-// global variable name, content type and optional initial value.
-func NewGlobal(name string, content types.Type, init ...constant.Constant) *Global {
+// NewGlobalDecl returns a new external global variable declaration based on the
+// given global variable name and content type.
+func NewGlobalDecl(name string, content types.Type) *Global {
 	typ := types.NewPointer(content)
-	global := &Global{name: name, content: content, typ: typ}
-	switch len(init) {
-	case 0:
-		// External global variable declaration with initial value.
-	case 1:
-		// Global variable definition with initial value.
-		global.init = init[0]
-	default:
-		panic(fmt.Sprintf("invalid number of initializers; expected 0 or 1, got %d", len(init)))
-	}
-	return global
+	return &Global{name: name, content: content, typ: typ}
+}
+
+// NewGlobalDef returns a new global variable definition based on the given
+// global variable name and initial value.
+func NewGlobalDef(name string, init constant.Constant) *Global {
+	content := init.Type()
+	typ := types.NewPointer(content)
+	return &Global{name: name, content: content, init: init, typ: typ}
 }
 
 // Type returns the type of the global variable.
@@ -57,19 +55,48 @@ func (g *Global) Ident() string {
 	return "@" + g.name
 }
 
-// Content returns the content type of the global variable.
-func (g *Global) Content() types.Type {
-	return g.content
-}
-
 // LLVMString returns the LLVM syntax representation of the global variable.
 func (g *Global) LLVMString() string {
 	imm := "global"
-	if g.immutable {
+	if g.Immutable() {
 		imm = "constant"
 	}
-	if g.init != nil {
-		return fmt.Sprintf("%v = %v %v %v", g.Ident(), imm, g.content.LLVMString(), g.init.Ident())
+	content := g.ContentType()
+	if init, ok := g.Init(); ok {
+		// Global variable definition.
+		return fmt.Sprintf("%v = %v %v %v",
+			g.Ident(),
+			imm,
+			content.LLVMString(),
+			init.Ident())
 	}
-	return fmt.Sprintf("%v = external %v %v", g.Ident(), imm, g.content.LLVMString())
+	// External global variable declaration.
+	return fmt.Sprintf("%v = external %v %v",
+		g.Ident(),
+		imm,
+		content.LLVMString())
+}
+
+// ContentType returns the content type of the global variable.
+func (g *Global) ContentType() types.Type {
+	return g.content
+}
+
+// Init returns the initial value of the global variable and a boolean
+// indicating if an initializer was present.
+func (g *Global) Init() (constant.Constant, bool) {
+	if g.init != nil {
+		return g.init, true
+	}
+	return nil, false
+}
+
+// Immutable reports whether the global variable is immutable.
+func (g *Global) Immutable() bool {
+	return g.immutable
+}
+
+// SetImmutable sets the immutability of the global variable.
+func (g *Global) SetImmutable(immutable bool) {
+	g.immutable = immutable
 }

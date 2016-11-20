@@ -24,11 +24,11 @@ type Function struct {
 	params []*Param
 	// Function type.
 	typ *types.FuncType
-	// Basic blocks of the function.
+	// Basic blocks of the function; or nil if function declaration.
 	blocks []*BasicBlock
 }
 
-// NewFunction returns a new LLVM IR function based on the given name, return
+// NewFunction returns a new function based on the given function name, return
 // type and parameters.
 func NewFunction(name string, ret types.Type, params ...*Param) *Function {
 	var ps []types.Type
