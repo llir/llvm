@@ -89,6 +89,16 @@ func (f *Function) Params() []*types.Param {
 	return f.typ.Params()
 }
 
+// Variadic reports whether the function is variadic.
+func (f *Function) Variadic() bool {
+	return f.typ.Variadic()
+}
+
+// SetVariadic sets the variadicity of the function.
+func (f *Function) SetVariadic(variadic bool) {
+	f.typ.SetVariadic(variadic)
+}
+
 // Blocks returns the basic blocks of the function.
 func (f *Function) Blocks() []*BasicBlock {
 	return f.blocks
@@ -102,16 +112,6 @@ func (f *Function) Parent() *Module {
 // SetParent sets the parent module of the function.
 func (f *Function) SetParent(parent *Module) {
 	f.parent = parent
-}
-
-// Variadic reports whether the function is variadic.
-func (f *Function) Variadic() bool {
-	return f.typ.Variadic()
-}
-
-// SetVariadic sets the variadicity of the function.
-func (f *Function) SetVariadic(variadic bool) {
-	f.typ.SetVariadic(variadic)
 }
 
 // AppendParam appends the given function parameter to the function.
