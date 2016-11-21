@@ -8,44 +8,52 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+// --- [ call ] ----------------------------------------------------------------
+
 // InstCall represents a call instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#call-instruction
 type InstCall struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Local variable name storing the result of the instruction.
-	name string
+	// Identifier associated with the instruction.
+	id string
 	// Callee.
 	callee *Function
 	// Function arguments.
 	args []value.Value
-	// Result type of the call instruction.
-	result types.Type
 }
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
 func NewCall(callee *Function, args ...value.Value) *InstCall {
-	return &InstCall{callee: callee, args: args, result: callee.typ.RetType()}
+	return &InstCall{callee: callee, args: args}
 }
 
 // Type returns the type of the instruction.
 func (i *InstCall) Type() types.Type {
-	return i.result
+	return i.callee.typ.RetType()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstCall) Ident() string {
-	return local(i.name)
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstCall) SetIdent(id string) {
+	i.id = id
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
 func (i *InstCall) LLVMString() string {
 	buf := &bytes.Buffer{}
-	if !i.result.Equal(types.Void) {
+	if !i.Type().Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", i.Ident())
 	}
 	fmt.Fprintf(buf, "call %s %s(",
-		i.result.LLVMString(),
+		i.Type().LLVMString(),
 		i.callee.Ident())
 	for i, arg := range i.args {
 		if i != 0 {
@@ -67,10 +75,4 @@ func (i *InstCall) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstCall) SetParent(parent *BasicBlock) {
 	i.parent = parent
-}
-
-// SetName sets the name of the local variable storing the result of the
-// instruction.
-func (i *InstCall) SetName(name string) {
-	i.name = name
 }
