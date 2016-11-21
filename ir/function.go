@@ -38,8 +38,7 @@ func (f *Function) Type() types.Type {
 
 // Ident returns the identifier associated with the function.
 func (f *Function) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "@" + f.name
+	return global(f.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the function.

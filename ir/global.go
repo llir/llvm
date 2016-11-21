@@ -51,8 +51,7 @@ func (g *Global) Type() types.Type {
 
 // Ident returns the identifier associated with the global variable.
 func (g *Global) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "@" + g.name
+	return global(g.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the global variable.

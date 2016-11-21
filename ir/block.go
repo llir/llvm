@@ -38,15 +38,13 @@ func (b *BasicBlock) Type() types.Type {
 
 // Ident returns the identifier associated with the basic block.
 func (b *BasicBlock) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "%" + b.name
+	return local(b.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the basic block.
 func (b *BasicBlock) LLVMString() string {
 	buf := &bytes.Buffer{}
-	// TODO: Encode name if containing special characters.
-	fmt.Fprintf(buf, "%s:\n", b.name)
+	fmt.Fprintf(buf, "%s:\n", enc(b.name))
 	for _, i := range b.Insts() {
 		fmt.Fprintf(buf, "\t%s\n", i.LLVMString())
 	}

@@ -39,7 +39,12 @@ func (i *InstLoad) Ident() string {
 
 // LLVMString returns the LLVM syntax representation of the instruction.
 func (i *InstLoad) LLVMString() string {
-	return fmt.Sprintf("%v = load %v, %v %v", i.Ident(), i.Type().LLVMString(), i.src.Type().LLVMString(), i.src.Ident())
+	src := i.Src()
+	return fmt.Sprintf("%s = load %s, %s %s",
+		i.Ident(),
+		i.Type().LLVMString(),
+		src.Type().LLVMString(),
+		src.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -56,4 +61,9 @@ func (i *InstLoad) SetParent(parent *BasicBlock) {
 // instruction.
 func (i *InstLoad) SetName(name string) {
 	i.name = name
+}
+
+// Src returns the source address of the load instruction.
+func (i *InstLoad) Src() value.Value {
+	return i.src
 }

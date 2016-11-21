@@ -1,4 +1,4 @@
-package ir
+package types
 
 // global returns the global identifier corresponding to the given ID.
 func global(id string) string {

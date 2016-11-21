@@ -42,14 +42,18 @@ func (i *InstCall) Ident() string {
 func (i *InstCall) LLVMString() string {
 	buf := &bytes.Buffer{}
 	if !i.result.Equal(types.Void) {
-		fmt.Fprintf(buf, "%v = ", i.Ident())
+		fmt.Fprintf(buf, "%s = ", i.Ident())
 	}
-	fmt.Fprintf(buf, "call %v %v(", i.result.LLVMString(), i.callee.Ident())
+	fmt.Fprintf(buf, "call %s %s(",
+		i.result.LLVMString(),
+		i.callee.Ident())
 	for i, arg := range i.args {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		fmt.Fprintf(buf, "%v %v", arg.Type().LLVMString(), arg.Ident())
+		fmt.Fprintf(buf, "%s %s",
+			arg.Type().LLVMString(),
+			arg.Ident())
 	}
 	buf.WriteString(")")
 	return buf.String()

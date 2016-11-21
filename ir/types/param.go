@@ -24,6 +24,5 @@ func (p *Param) Type() Type {
 
 // Ident returns the identifier associated with the function parameter.
 func (p *Param) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "%" + p.name
+	return local(p.name)
 }
