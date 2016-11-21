@@ -3,8 +3,8 @@ package value
 
 import "github.com/llir/llvm/ir/types"
 
-// A Value represents an LLVM IR value, which may be used as an operand of other
-// values.
+// A Value represents an LLVM IR value, which may be used as an operand of
+// instructions and terminators.
 //
 // Value may have one of the following underlying types.
 //
