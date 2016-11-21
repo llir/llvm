@@ -35,8 +35,7 @@ func (i *InstCall) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstCall) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "%" + i.name
+	return local(i.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

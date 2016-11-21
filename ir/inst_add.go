@@ -11,8 +11,8 @@ import (
 type InstAdd struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Local variable name storing the result of the instruction.
-	name string
+	// Identifier associated with the instruction.
+	id string
 	// Operands.
 	x, y value.Value
 }
@@ -29,13 +29,21 @@ func (i *InstAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAdd) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "%" + i.name
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstAdd) SetIdent(id string) {
+	i.id = id
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
 func (i *InstAdd) LLVMString() string {
-	return fmt.Sprintf("%v = add %v %v, %v", i.Ident(), i.Type().LLVMString(), i.x.Ident(), i.y.Ident())
+	return fmt.Sprintf("%s = add %s %s, %s",
+		i.Ident(),
+		i.Type().LLVMString(),
+		i.x.Ident(),
+		i.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -46,10 +54,4 @@ func (i *InstAdd) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstAdd) SetParent(parent *BasicBlock) {
 	i.parent = parent
-}
-
-// SetName sets the name of the local variable storing the result of the
-// instruction.
-func (i *InstAdd) SetName(name string) {
-	i.name = name
 }

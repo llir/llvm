@@ -23,7 +23,7 @@ func NewRet(x value.Value) *TermRet {
 // LLVMString returns the LLVM syntax representation of the terminator.
 func (t *TermRet) LLVMString() string {
 	if x, ok := t.X(); ok {
-		return fmt.Sprintf("ret %v %v",
+		return fmt.Sprintf("ret %s %s",
 			x.Type().LLVMString(),
 			x.Ident())
 	}

@@ -34,8 +34,7 @@ func (i *InstLoad) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstLoad) Ident() string {
-	// TODO: Encode name if containing special characters.
-	return "%" + i.name
+	return local(i.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

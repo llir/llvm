@@ -90,26 +90,12 @@ func (b *BasicBlock) AppendInst(i Instruction) {
 	b.insts = append(b.insts, i)
 }
 
+// --- [ Binary instructions ] -------------------------------------------------
+
 // NewAdd appends a new add instruction to the basic block based on the given
 // operands.
 func (b *BasicBlock) NewAdd(x, y value.Value) *InstAdd {
 	i := NewAdd(x, y)
-	b.AppendInst(i)
-	return i
-}
-
-// NewCall appends a new call instruction to the basic block based on the given
-// callee and function arguments.
-func (b *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
-	i := NewCall(callee, args...)
-	b.AppendInst(i)
-	return i
-}
-
-// NewLoad appends a new load instruction to the basic block based on the given
-// source address.
-func (b *BasicBlock) NewLoad(src value.Value) *InstLoad {
-	i := NewLoad(src)
 	b.AppendInst(i)
 	return i
 }
@@ -121,6 +107,36 @@ func (b *BasicBlock) NewMul(x, y value.Value) *InstMul {
 	b.AppendInst(i)
 	return i
 }
+
+// --- [ Bitwise instructions ] ------------------------------------------------
+
+// --- [ Vector instructions ] -------------------------------------------------
+
+// --- [ Aggregate instructions ] ----------------------------------------------
+
+// --- [ Memory instructions ] -------------------------------------------------
+
+// NewLoad appends a new load instruction to the basic block based on the given
+// source address.
+func (b *BasicBlock) NewLoad(src value.Value) *InstLoad {
+	i := NewLoad(src)
+	b.AppendInst(i)
+	return i
+}
+
+// --- [ Conversion instructions ] ---------------------------------------------
+
+// --- [ Other instructions ] --------------------------------------------------
+
+// NewCall appends a new call instruction to the basic block based on the given
+// callee and function arguments.
+func (b *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
+	i := NewCall(callee, args...)
+	b.AppendInst(i)
+	return i
+}
+
+// --- [ Terminators ] ---------------------------------------------------------
 
 // NewRet sets the terminator of the basic block to a new ret terminator based
 // on the given return value. A nil return value indicates a "void" return.
