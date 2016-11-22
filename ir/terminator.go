@@ -8,6 +8,8 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+// TODO: Add remaining underlying terminator types.
+
 // A Terminator represents an LLVM IR terminator.
 //
 // Terminator may have one of the following underlying types.
@@ -15,7 +17,8 @@ import (
 //    *ir.TermRet
 //    *ir.TermBr
 //    *ir.TermCondBr
-//    TODO
+//    *ir.TermSwitch
+//    *ir.TermUnreachable
 type Terminator interface {
 	// LLVMString returns the LLVM syntax representation of the terminator.
 	LLVMString() string
@@ -311,4 +314,37 @@ func (c *Case) Target() *BasicBlock {
 
 // --- [ unreachable ] ---------------------------------------------------------
 
-// TODO: Add support for unreachable.
+// TermUnreachable represents an unreachable terminator.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#unreachable-instruction
+type TermUnreachable struct {
+	// Parent basic block.
+	parent *BasicBlock
+}
+
+// NewUnreachable returns a new unreachable terminator.
+func NewUnreachable() *TermUnreachable {
+	return &TermUnreachable{}
+}
+
+// LLVMString returns the LLVM syntax representation of the terminator.
+func (t *TermUnreachable) LLVMString() string {
+	return "unreachable"
+}
+
+// Parent returns the parent basic block of the terminator.
+func (t *TermUnreachable) Parent() *BasicBlock {
+	return t.parent
+}
+
+// SetParent sets the parent basic block of the terminator.
+func (t *TermUnreachable) SetParent(parent *BasicBlock) {
+	t.parent = parent
+}
+
+// Successors returns the successor basic blocks of the terminator.
+func (t *TermUnreachable) Successors() []*BasicBlock {
+	// unreachable terminators have no successors.
+	return nil
+}

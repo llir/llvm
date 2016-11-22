@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/llvm/ir/value"
 
+// TODO: Add remaining underlying instruction types.
+
 // An Instruction represents a non-branching LLVM IR instruction.
 //
 // Instruction may have one of the following underlying types.

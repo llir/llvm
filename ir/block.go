@@ -400,3 +400,11 @@ func (b *BasicBlock) NewSwitch(x value.Value, targetDefault *BasicBlock, cases .
 	b.SetTerm(t)
 	return t
 }
+
+// NewUnreachable sets the terminator of the basic block to a new unreachable
+// terminator.
+func (b *BasicBlock) NewUnreachable() *TermUnreachable {
+	t := NewUnreachable()
+	b.SetTerm(t)
+	return t
+}
