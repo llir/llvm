@@ -258,6 +258,14 @@ func (b *BasicBlock) NewLoad(src value.Value) *InstLoad {
 	return i
 }
 
+// NewStore appends a new store instruction to the basic block based on the
+// given source value and destination address.
+func (b *BasicBlock) NewStore(src, dst value.Value) *InstStore {
+	i := NewStore(src, dst)
+	b.AppendInst(i)
+	return i
+}
+
 // --- [ Conversion instructions ] ---------------------------------------------
 
 // NewTrunc appends a new trunc instruction to the basic block based on the

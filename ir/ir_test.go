@@ -18,6 +18,8 @@ var (
 	_ value.Value = &ir.BasicBlock{}
 	_ value.Value = &ir.Function{}
 	_ value.Value = &ir.Global{}
+	// TODO: Check that all instructions producing results implement the
+	// value.Value interface.
 )
 
 // Validates that the LLVMStringer interface is implemented by the relevant

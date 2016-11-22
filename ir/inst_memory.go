@@ -157,7 +157,54 @@ func (i *InstLoad) Src() value.Value {
 
 // --- [ store ] ---------------------------------------------------------------
 
-// TODO: Add support for store.
+// InstStore represents a store instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#store-instruction
+type InstStore struct {
+	// Parent basic block.
+	parent *BasicBlock
+	// Source value.
+	src value.Value
+	// Destination address.
+	dst value.Value
+}
+
+// NewStore returns a new store instruction based on the given source value and
+// destination address.
+func NewStore(src, dst value.Value) *InstStore {
+	return &InstStore{src: src, dst: dst}
+}
+
+// LLVMString returns the LLVM syntax representation of the instruction.
+func (i *InstStore) LLVMString() string {
+	src, dst := i.Src(), i.Dst()
+	return fmt.Sprintf("store %s %s, %s %s",
+		src.Type().LLVMString(),
+		src.Ident(),
+		dst.Type().LLVMString(),
+		dst.Ident())
+}
+
+// Parent returns the parent basic block of the instruction.
+func (i *InstStore) Parent() *BasicBlock {
+	return i.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (i *InstStore) SetParent(parent *BasicBlock) {
+	i.parent = parent
+}
+
+// Src returns the source value of the store instruction.
+func (i *InstStore) Src() value.Value {
+	return i.src
+}
+
+// Dst returns the destination address of the store instruction.
+func (i *InstStore) Dst() value.Value {
+	return i.dst
+}
 
 // --- [ fence ] ---------------------------------------------------------------
 

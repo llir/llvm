@@ -20,10 +20,7 @@ import (
 //    *ir.TermSwitch
 //    *ir.TermUnreachable
 type Terminator interface {
-	// LLVMString returns the LLVM syntax representation of the terminator.
-	LLVMString() string
-	// Parent returns the parent basic block of the terminator.
-	Parent() *BasicBlock
+	Instruction
 	// Successors returns the successor basic blocks of the terminator.
 	Successors() []*BasicBlock
 }
