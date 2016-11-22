@@ -78,6 +78,16 @@ func (f *Function) LLVMString() string {
 	return fmt.Sprintf("declare %s", sig)
 }
 
+// Parent returns the parent module of the function.
+func (f *Function) Parent() *Module {
+	return f.parent
+}
+
+// SetParent sets the parent module of the function.
+func (f *Function) SetParent(parent *Module) {
+	f.parent = parent
+}
+
 // RetType returns the return type of the function.
 func (f *Function) RetType() types.Type {
 	return f.typ.RetType()
@@ -101,16 +111,6 @@ func (f *Function) SetVariadic(variadic bool) {
 // Blocks returns the basic blocks of the function.
 func (f *Function) Blocks() []*BasicBlock {
 	return f.blocks
-}
-
-// Parent returns the parent module of the function.
-func (f *Function) Parent() *Module {
-	return f.parent
-}
-
-// SetParent sets the parent module of the function.
-func (f *Function) SetParent(parent *Module) {
-	f.parent = parent
 }
 
 // AppendParam appends the given function parameter to the function.

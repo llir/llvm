@@ -52,6 +52,16 @@ func (b *BasicBlock) LLVMString() string {
 	return buf.String()
 }
 
+// Parent returns the parent function of the basic block.
+func (b *BasicBlock) Parent() *Function {
+	return b.parent
+}
+
+// SetParent sets the parent function of the basic block.
+func (b *BasicBlock) SetParent(parent *Function) {
+	b.parent = parent
+}
+
 // Insts returns the non-branching instructions of the basic block.
 func (b *BasicBlock) Insts() []Instruction {
 	return b.insts
@@ -68,16 +78,6 @@ func (b *BasicBlock) SetTerm(t Terminator) {
 		t.SetParent(b)
 	}
 	b.term = t
-}
-
-// Parent returns the parent function of the basic block.
-func (b *BasicBlock) Parent() *Function {
-	return b.parent
-}
-
-// SetParent sets the parent function of the basic block.
-func (b *BasicBlock) SetParent(parent *Function) {
-	b.parent = parent
 }
 
 // AppendInst appends the given instruction to the basic block.
@@ -241,6 +241,14 @@ func (b *BasicBlock) NewXor(x, y value.Value) *InstXor {
 // --- [ Aggregate instructions ] ----------------------------------------------
 
 // --- [ Memory instructions ] -------------------------------------------------
+
+// NewAlloca appends a new alloca instruction to the basic block based on the
+// given element type.
+func (b *BasicBlock) NewAlloca(elem types.Type) *InstAlloca {
+	i := NewAlloca(elem)
+	b.AppendInst(i)
+	return i
+}
 
 // NewLoad appends a new load instruction to the basic block based on the given
 // source address.
