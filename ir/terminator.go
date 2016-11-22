@@ -1,8 +1,10 @@
 package ir
 
 import (
+	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -88,12 +90,15 @@ type TermBr struct {
 	parent *BasicBlock
 	// Target branch.
 	target *BasicBlock
+	// Successors basic blocks.
+	successors []*BasicBlock
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
 // branch.
 func NewBr(target *BasicBlock) *TermBr {
-	return &TermBr{target: target}
+	successors := []*BasicBlock{target}
+	return &TermBr{target: target, successors: successors}
 }
 
 // LLVMString returns the LLVM syntax representation of the terminator.
@@ -113,7 +118,7 @@ func (t *TermBr) SetParent(parent *BasicBlock) {
 
 // Successors returns the successor basic blocks of the terminator.
 func (t *TermBr) Successors() []*BasicBlock {
-	return []*BasicBlock{t.target}
+	return t.successors
 }
 
 // Target returns the target branch of the br terminator.
@@ -136,12 +141,15 @@ type TermCondBr struct {
 	targetTrue *BasicBlock
 	// Target branch when condition is false.
 	targetFalse *BasicBlock
+	// Successors basic blocks.
+	successors []*BasicBlock
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
 // branching condition and conditional target branches.
 func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
-	return &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse}
+	successors := []*BasicBlock{targetTrue, targetFalse}
+	return &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
 }
 
 // LLVMString returns the LLVM syntax representation of the terminator.
@@ -164,7 +172,7 @@ func (t *TermCondBr) SetParent(parent *BasicBlock) {
 
 // Successors returns the successor basic blocks of the terminator.
 func (t *TermCondBr) Successors() []*BasicBlock {
-	return []*BasicBlock{t.targetTrue, t.targetFalse}
+	return t.successors
 }
 
 // Cond returns the branching condition of the br terminator.
@@ -186,7 +194,108 @@ func (t *TermCondBr) TargetFalse() *BasicBlock {
 
 // --- [ switch ] --------------------------------------------------------------
 
-// TODO: Add support for switch.
+// TermSwitch represents a switch terminator.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#switch-instruction
+type TermSwitch struct {
+	// Parent basic block.
+	parent *BasicBlock
+	// Control variable.
+	x value.Value
+	// Default target branch.
+	targetDefault *BasicBlock
+	// Switch cases.
+	cases []*Case
+	// Successors basic blocks.
+	successors []*BasicBlock
+}
+
+// NewSwitch returns a new switch terminator based on the given control
+// variable, default target branch and switch cases.
+func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
+	successors := []*BasicBlock{targetDefault}
+	for _, c := range cases {
+		successors = append(successors, c.target)
+	}
+	return &TermSwitch{x: x, targetDefault: targetDefault, cases: cases, successors: successors}
+}
+
+// LLVMString returns the LLVM syntax representation of the terminator.
+func (t *TermSwitch) LLVMString() string {
+	buf := &bytes.Buffer{}
+	x := t.X()
+	fmt.Fprintf(buf, "switch %s %s, label %s [ ",
+		x.Type().LLVMString(),
+		x.Ident(),
+		t.TargetDefault().Ident())
+	for i, c := range t.Cases() {
+		if i != 0 {
+			buf.WriteString("\n\t\t")
+		}
+		x := c.X()
+		fmt.Fprintf(buf, "%s %s, label %s",
+			x.Type(),
+			x.Ident(),
+			c.Target().Ident())
+	}
+	buf.WriteString(" ]")
+	return buf.String()
+}
+
+// Parent returns the parent basic block of the terminator.
+func (t *TermSwitch) Parent() *BasicBlock {
+	return t.parent
+}
+
+// SetParent sets the parent basic block of the terminator.
+func (t *TermSwitch) SetParent(parent *BasicBlock) {
+	t.parent = parent
+}
+
+// Successors returns the successor basic blocks of the terminator.
+func (t *TermSwitch) Successors() []*BasicBlock {
+	return t.successors
+}
+
+// X returns the control variable of the switch terminator.
+func (t *TermSwitch) X() value.Value {
+	return t.x
+}
+
+// TargetDefault returns the default target branch of the switch terminator.
+func (t *TermSwitch) TargetDefault() *BasicBlock {
+	return t.targetDefault
+}
+
+// Cases returns the switch cases of the switch terminator.
+func (t *TermSwitch) Cases() []*Case {
+	return t.cases
+}
+
+// A Case represents a case of a switch terminator.
+type Case struct {
+	// Case comparand.
+	x *constant.Int
+	// Case target branch.
+	target *BasicBlock
+}
+
+// NewCase returns a new switch case based on the given case comparand and
+// target branch.
+func NewCase(x *constant.Int, target *BasicBlock) *Case {
+	return &Case{x: x, target: target}
+}
+
+// X returns the case comparand.
+func (c *Case) X() *constant.Int {
+	return c.x
+}
+
+// Target returns the case target branch.
+func (c *Case) Target() *BasicBlock {
+	return c.target
+}
 
 // --- [ indirectbr ] ----------------------------------------------------------
 

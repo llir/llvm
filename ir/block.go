@@ -392,3 +392,11 @@ func (b *BasicBlock) NewCondBr(cond value.Value, targetTrue, targetFalse *BasicB
 	b.SetTerm(t)
 	return t
 }
+
+// NewSwitch sets the terminator of the basic block to a new switch terminator
+// based on the given control variable, default target branch and switch cases.
+func (b *BasicBlock) NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
+	t := NewSwitch(x, targetDefault, cases...)
+	b.SetTerm(t)
+	return t
+}
