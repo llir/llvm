@@ -191,6 +191,46 @@ func (t *VoidType) Equal(u Type) bool {
 	return ok
 }
 
+// VectorType represents a vector type.
+type VectorType struct {
+	elem Type
+	len  int
+}
+
+// NewVector returns a new vector type based on the given element type and
+// vector length.
+func NewVector(elem Type, len int) *VectorType {
+	return &VectorType{elem: elem, len: len}
+}
+
+// LLVMString returns the LLVM syntax representation of the type.
+func (t *VectorType) LLVMString() string {
+	return fmt.Sprintf("<%d x %s>",
+		t.Len(),
+		t.Elem().LLVMString())
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *VectorType) Equal(u Type) bool {
+	if u, ok := u.(*VectorType); ok {
+		if !t.elem.Equal(u.elem) {
+			return false
+		}
+		return t.len == u.len
+	}
+	return false
+}
+
+// Elem returns the element type of the vector type.
+func (t *VectorType) Elem() Type {
+	return t.elem
+}
+
+// Len returns the length of the vector type.
+func (t *VectorType) Len() int {
+	return t.len
+}
+
 var (
 	Label = &LabelType{}
 	Void  = &VoidType{}

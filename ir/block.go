@@ -374,6 +374,14 @@ func (b *BasicBlock) NewAddrSpaceCast(from value.Value, to types.Type) *InstAddr
 
 // --- [ Other instructions ] --------------------------------------------------
 
+// NewICmp appends a new icmp instruction to the basic block based on the given
+// integer condition code and operands.
+func (b *BasicBlock) NewICmp(cond IntPred, x, y value.Value) *InstICmp {
+	i := NewICmp(cond, x, y)
+	b.AppendInst(i)
+	return i
+}
+
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
 func (b *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
