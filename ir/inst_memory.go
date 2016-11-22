@@ -7,15 +7,22 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+// --- [ alloca ] --------------------------------------------------------------
+
+// --- [ load ] ----------------------------------------------------------------
+
 // InstLoad represents a load instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#load-instruction
 type InstLoad struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Local variable name storing the result of the instruction.
-	name string
+	// Identifier associated with the instruction.
+	id string
 	// Source address.
 	src value.Value
-	// Result type produced by the instruction.
+	// Type of the instruction.
 	typ types.Type
 }
 
@@ -34,7 +41,12 @@ func (i *InstLoad) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstLoad) Ident() string {
-	return local(i.name)
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstLoad) SetIdent(id string) {
+	i.id = id
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -57,13 +69,17 @@ func (i *InstLoad) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
 
-// SetName sets the name of the local variable storing the result of the
-// instruction.
-func (i *InstLoad) SetName(name string) {
-	i.name = name
-}
-
 // Src returns the source address of the load instruction.
 func (i *InstLoad) Src() value.Value {
 	return i.src
 }
+
+// --- [ store ] ---------------------------------------------------------------
+
+// --- [ fence ] ---------------------------------------------------------------
+
+// --- [ cmpxchg ] -------------------------------------------------------------
+
+// --- [ atomicrmw ] -----------------------------------------------------------
+
+// --- [ getelementptr ] -------------------------------------------------------

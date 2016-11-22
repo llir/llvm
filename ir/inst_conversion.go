@@ -61,11 +61,6 @@ func (i *InstTrunc) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the trunc instruction.
-func (i *InstTrunc) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstTrunc) Parent() *BasicBlock {
 	return i.parent
@@ -74,6 +69,11 @@ func (i *InstTrunc) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstTrunc) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the trunc instruction.
+func (i *InstTrunc) From() value.Value {
+	return i.from
 }
 
 // --- [ zext ] ----------------------------------------------------------------
@@ -123,11 +123,6 @@ func (i *InstZExt) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the zext instruction.
-func (i *InstZExt) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstZExt) Parent() *BasicBlock {
 	return i.parent
@@ -136,6 +131,11 @@ func (i *InstZExt) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstZExt) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the zext instruction.
+func (i *InstZExt) From() value.Value {
+	return i.from
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -185,11 +185,6 @@ func (i *InstSExt) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the sext instruction.
-func (i *InstSExt) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstSExt) Parent() *BasicBlock {
 	return i.parent
@@ -198,6 +193,11 @@ func (i *InstSExt) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstSExt) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the sext instruction.
+func (i *InstSExt) From() value.Value {
+	return i.from
 }
 
 // --- [ fptrunc ] -------------------------------------------------------------
@@ -247,11 +247,6 @@ func (i *InstFPTrunc) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the fptrunc instruction.
-func (i *InstFPTrunc) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFPTrunc) Parent() *BasicBlock {
 	return i.parent
@@ -260,6 +255,11 @@ func (i *InstFPTrunc) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFPTrunc) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the fptrunc instruction.
+func (i *InstFPTrunc) From() value.Value {
+	return i.from
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -309,11 +309,6 @@ func (i *InstFPExt) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the fpext instruction.
-func (i *InstFPExt) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFPExt) Parent() *BasicBlock {
 	return i.parent
@@ -322,6 +317,11 @@ func (i *InstFPExt) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFPExt) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the fpext instruction.
+func (i *InstFPExt) From() value.Value {
+	return i.from
 }
 
 // --- [ fptoui ] --------------------------------------------------------------
@@ -371,11 +371,6 @@ func (i *InstFPToUI) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the fptoui instruction.
-func (i *InstFPToUI) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFPToUI) Parent() *BasicBlock {
 	return i.parent
@@ -384,6 +379,11 @@ func (i *InstFPToUI) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFPToUI) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the fptoui instruction.
+func (i *InstFPToUI) From() value.Value {
+	return i.from
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -433,11 +433,6 @@ func (i *InstFPToSI) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the fptosi instruction.
-func (i *InstFPToSI) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFPToSI) Parent() *BasicBlock {
 	return i.parent
@@ -446,6 +441,11 @@ func (i *InstFPToSI) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFPToSI) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the fptosi instruction.
+func (i *InstFPToSI) From() value.Value {
+	return i.from
 }
 
 // --- [ uitofp ] --------------------------------------------------------------
@@ -495,11 +495,6 @@ func (i *InstUIToFP) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the uitofp instruction.
-func (i *InstUIToFP) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstUIToFP) Parent() *BasicBlock {
 	return i.parent
@@ -508,6 +503,11 @@ func (i *InstUIToFP) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstUIToFP) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the uitofp instruction.
+func (i *InstUIToFP) From() value.Value {
+	return i.from
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -557,11 +557,6 @@ func (i *InstSIToFP) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the sitofp instruction.
-func (i *InstSIToFP) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstSIToFP) Parent() *BasicBlock {
 	return i.parent
@@ -570,6 +565,11 @@ func (i *InstSIToFP) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstSIToFP) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the sitofp instruction.
+func (i *InstSIToFP) From() value.Value {
+	return i.from
 }
 
 // --- [ ptrtoint ] ------------------------------------------------------------
@@ -619,11 +619,6 @@ func (i *InstPtrToInt) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the ptrtoint instruction.
-func (i *InstPtrToInt) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstPtrToInt) Parent() *BasicBlock {
 	return i.parent
@@ -632,6 +627,11 @@ func (i *InstPtrToInt) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstPtrToInt) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the ptrtoint instruction.
+func (i *InstPtrToInt) From() value.Value {
+	return i.from
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -681,11 +681,6 @@ func (i *InstIntToPtr) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the inttoptr instruction.
-func (i *InstIntToPtr) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstIntToPtr) Parent() *BasicBlock {
 	return i.parent
@@ -694,6 +689,11 @@ func (i *InstIntToPtr) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstIntToPtr) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the inttoptr instruction.
+func (i *InstIntToPtr) From() value.Value {
+	return i.from
 }
 
 // --- [ bitcast ] -------------------------------------------------------------
@@ -743,11 +743,6 @@ func (i *InstBitCast) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the bitcast instruction.
-func (i *InstBitCast) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstBitCast) Parent() *BasicBlock {
 	return i.parent
@@ -756,6 +751,11 @@ func (i *InstBitCast) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstBitCast) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the bitcast instruction.
+func (i *InstBitCast) From() value.Value {
+	return i.from
 }
 
 // --- [ addrspacecast ] -------------------------------------------------------
@@ -805,11 +805,6 @@ func (i *InstAddrSpaceCast) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the addrspacecast instruction.
-func (i *InstAddrSpaceCast) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstAddrSpaceCast) Parent() *BasicBlock {
 	return i.parent
@@ -818,4 +813,9 @@ func (i *InstAddrSpaceCast) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstAddrSpaceCast) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the addrspacecast instruction.
+func (i *InstAddrSpaceCast) From() value.Value {
+	return i.from
 }

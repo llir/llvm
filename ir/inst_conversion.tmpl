@@ -62,11 +62,6 @@ func (i *Inst{{ .Name }}) LLVMString() string {
 		i.Type().LLVMString())
 }
 
-// From returns the value before conversion of the {{ lower .Name }} instruction.
-func (i *Inst{{ .Name }}) From() value.Value {
-	return i.from
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *Inst{{ .Name }}) Parent() *BasicBlock {
 	return i.parent
@@ -75,5 +70,10 @@ func (i *Inst{{ .Name }}) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// From returns the value before conversion of the {{ lower .Name }} instruction.
+func (i *Inst{{ .Name }}) From() value.Value {
+	return i.from
 }
 {{- end }}

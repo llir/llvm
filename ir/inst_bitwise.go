@@ -58,16 +58,6 @@ func (i *InstShL) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the shl instruction.
-func (inst *InstShL) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the shl instruction.
-func (inst *InstShL) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstShL) Parent() *BasicBlock {
 	return i.parent
@@ -76,6 +66,16 @@ func (i *InstShL) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstShL) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the shl instruction.
+func (inst *InstShL) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the shl instruction.
+func (inst *InstShL) Y() value.Value {
+	return inst.y
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -122,16 +122,6 @@ func (i *InstLShR) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the lshr instruction.
-func (inst *InstLShR) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the lshr instruction.
-func (inst *InstLShR) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstLShR) Parent() *BasicBlock {
 	return i.parent
@@ -140,6 +130,16 @@ func (i *InstLShR) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstLShR) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the lshr instruction.
+func (inst *InstLShR) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the lshr instruction.
+func (inst *InstLShR) Y() value.Value {
+	return inst.y
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -186,16 +186,6 @@ func (i *InstAShR) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the ashr instruction.
-func (inst *InstAShR) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the ashr instruction.
-func (inst *InstAShR) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstAShR) Parent() *BasicBlock {
 	return i.parent
@@ -204,6 +194,16 @@ func (i *InstAShR) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstAShR) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the ashr instruction.
+func (inst *InstAShR) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the ashr instruction.
+func (inst *InstAShR) Y() value.Value {
+	return inst.y
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -250,16 +250,6 @@ func (i *InstAnd) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the and instruction.
-func (inst *InstAnd) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the and instruction.
-func (inst *InstAnd) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstAnd) Parent() *BasicBlock {
 	return i.parent
@@ -268,6 +258,16 @@ func (i *InstAnd) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstAnd) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the and instruction.
+func (inst *InstAnd) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the and instruction.
+func (inst *InstAnd) Y() value.Value {
+	return inst.y
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -314,16 +314,6 @@ func (i *InstOr) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the or instruction.
-func (inst *InstOr) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the or instruction.
-func (inst *InstOr) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstOr) Parent() *BasicBlock {
 	return i.parent
@@ -332,6 +322,16 @@ func (i *InstOr) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstOr) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the or instruction.
+func (inst *InstOr) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the or instruction.
+func (inst *InstOr) Y() value.Value {
+	return inst.y
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -378,16 +378,6 @@ func (i *InstXor) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the xor instruction.
-func (inst *InstXor) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the xor instruction.
-func (inst *InstXor) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstXor) Parent() *BasicBlock {
 	return i.parent
@@ -396,4 +386,14 @@ func (i *InstXor) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstXor) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the xor instruction.
+func (inst *InstXor) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the xor instruction.
+func (inst *InstXor) Y() value.Value {
+	return inst.y
 }

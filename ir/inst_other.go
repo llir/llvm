@@ -8,6 +8,14 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+// --- [ icmp ] ----------------------------------------------------------------
+
+// --- [ fcmp ] ----------------------------------------------------------------
+
+// --- [ phi ] -----------------------------------------------------------------
+
+// --- [ select ] --------------------------------------------------------------
+
 // --- [ call ] ----------------------------------------------------------------
 
 // InstCall represents a call instruction.
@@ -49,13 +57,14 @@ func (i *InstCall) SetIdent(id string) {
 // LLVMString returns the LLVM syntax representation of the instruction.
 func (i *InstCall) LLVMString() string {
 	buf := &bytes.Buffer{}
-	if !i.Type().Equal(types.Void) {
+	typ := i.Type()
+	if !typ.Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", i.Ident())
 	}
 	fmt.Fprintf(buf, "call %s %s(",
-		i.Type().LLVMString(),
-		i.callee.Ident())
-	for i, arg := range i.args {
+		typ.LLVMString(),
+		i.Callee().Ident())
+	for i, arg := range i.Args() {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -76,3 +85,21 @@ func (i *InstCall) Parent() *BasicBlock {
 func (i *InstCall) SetParent(parent *BasicBlock) {
 	i.parent = parent
 }
+
+// Callee returns the callee of the call instruction.
+func (i *InstCall) Callee() *Function {
+	return i.callee
+}
+
+// Args returns the function arguments of the call instruction.
+func (i *InstCall) Args() []value.Value {
+	return i.args
+}
+
+// --- [ va_arg ] --------------------------------------------------------------
+
+// --- [ landingpad ] ----------------------------------------------------------
+
+// --- [ catchpad ] ------------------------------------------------------------
+
+// --- [ cleanuppad ] ----------------------------------------------------------

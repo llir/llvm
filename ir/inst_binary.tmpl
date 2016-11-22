@@ -59,16 +59,6 @@ func (i *Inst{{ .Name }}) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *Inst{{ .Name }}) Parent() *BasicBlock {
 	return i.parent
@@ -77,5 +67,15 @@ func (i *Inst{{ .Name }}) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the {{ lower .Name }} instruction.
+func (inst *Inst{{ .Name }}) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the {{ lower .Name }} instruction.
+func (inst *Inst{{ .Name }}) Y() value.Value {
+	return inst.y
 }
 {{- end }}

@@ -58,16 +58,6 @@ func (i *InstAdd) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the add instruction.
-func (inst *InstAdd) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the add instruction.
-func (inst *InstAdd) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstAdd) Parent() *BasicBlock {
 	return i.parent
@@ -76,6 +66,16 @@ func (i *InstAdd) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstAdd) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the add instruction.
+func (inst *InstAdd) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the add instruction.
+func (inst *InstAdd) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -122,16 +122,6 @@ func (i *InstFAdd) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the fadd instruction.
-func (inst *InstFAdd) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the fadd instruction.
-func (inst *InstFAdd) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFAdd) Parent() *BasicBlock {
 	return i.parent
@@ -140,6 +130,16 @@ func (i *InstFAdd) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFAdd) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the fadd instruction.
+func (inst *InstFAdd) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fadd instruction.
+func (inst *InstFAdd) Y() value.Value {
+	return inst.y
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -186,16 +186,6 @@ func (i *InstSub) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the sub instruction.
-func (inst *InstSub) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the sub instruction.
-func (inst *InstSub) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstSub) Parent() *BasicBlock {
 	return i.parent
@@ -204,6 +194,16 @@ func (i *InstSub) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstSub) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the sub instruction.
+func (inst *InstSub) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the sub instruction.
+func (inst *InstSub) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -250,16 +250,6 @@ func (i *InstFSub) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the fsub instruction.
-func (inst *InstFSub) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the fsub instruction.
-func (inst *InstFSub) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFSub) Parent() *BasicBlock {
 	return i.parent
@@ -268,6 +258,16 @@ func (i *InstFSub) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFSub) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the fsub instruction.
+func (inst *InstFSub) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fsub instruction.
+func (inst *InstFSub) Y() value.Value {
+	return inst.y
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -314,16 +314,6 @@ func (i *InstMul) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the mul instruction.
-func (inst *InstMul) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the mul instruction.
-func (inst *InstMul) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstMul) Parent() *BasicBlock {
 	return i.parent
@@ -332,6 +322,16 @@ func (i *InstMul) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstMul) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the mul instruction.
+func (inst *InstMul) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the mul instruction.
+func (inst *InstMul) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -378,16 +378,6 @@ func (i *InstFMul) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the fmul instruction.
-func (inst *InstFMul) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the fmul instruction.
-func (inst *InstFMul) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFMul) Parent() *BasicBlock {
 	return i.parent
@@ -396,6 +386,16 @@ func (i *InstFMul) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFMul) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the fmul instruction.
+func (inst *InstFMul) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fmul instruction.
+func (inst *InstFMul) Y() value.Value {
+	return inst.y
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -442,16 +442,6 @@ func (i *InstUDiv) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the udiv instruction.
-func (inst *InstUDiv) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the udiv instruction.
-func (inst *InstUDiv) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstUDiv) Parent() *BasicBlock {
 	return i.parent
@@ -460,6 +450,16 @@ func (i *InstUDiv) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstUDiv) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the udiv instruction.
+func (inst *InstUDiv) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the udiv instruction.
+func (inst *InstUDiv) Y() value.Value {
+	return inst.y
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -506,16 +506,6 @@ func (i *InstSDiv) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the sdiv instruction.
-func (inst *InstSDiv) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the sdiv instruction.
-func (inst *InstSDiv) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstSDiv) Parent() *BasicBlock {
 	return i.parent
@@ -524,6 +514,16 @@ func (i *InstSDiv) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstSDiv) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the sdiv instruction.
+func (inst *InstSDiv) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the sdiv instruction.
+func (inst *InstSDiv) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -570,16 +570,6 @@ func (i *InstFDiv) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the fdiv instruction.
-func (inst *InstFDiv) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the fdiv instruction.
-func (inst *InstFDiv) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFDiv) Parent() *BasicBlock {
 	return i.parent
@@ -588,6 +578,16 @@ func (i *InstFDiv) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFDiv) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the fdiv instruction.
+func (inst *InstFDiv) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fdiv instruction.
+func (inst *InstFDiv) Y() value.Value {
+	return inst.y
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -634,16 +634,6 @@ func (i *InstURem) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the urem instruction.
-func (inst *InstURem) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the urem instruction.
-func (inst *InstURem) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstURem) Parent() *BasicBlock {
 	return i.parent
@@ -652,6 +642,16 @@ func (i *InstURem) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstURem) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the urem instruction.
+func (inst *InstURem) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the urem instruction.
+func (inst *InstURem) Y() value.Value {
+	return inst.y
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -698,16 +698,6 @@ func (i *InstSRem) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the srem instruction.
-func (inst *InstSRem) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the srem instruction.
-func (inst *InstSRem) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstSRem) Parent() *BasicBlock {
 	return i.parent
@@ -716,6 +706,16 @@ func (i *InstSRem) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstSRem) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the srem instruction.
+func (inst *InstSRem) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the srem instruction.
+func (inst *InstSRem) Y() value.Value {
+	return inst.y
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -762,16 +762,6 @@ func (i *InstFRem) LLVMString() string {
 		i.y.Ident())
 }
 
-// X returns the x operand of the frem instruction.
-func (inst *InstFRem) X() value.Value {
-	return inst.x
-}
-
-// Y returns the y operand of the frem instruction.
-func (inst *InstFRem) Y() value.Value {
-	return inst.y
-}
-
 // Parent returns the parent basic block of the instruction.
 func (i *InstFRem) Parent() *BasicBlock {
 	return i.parent
@@ -780,4 +770,14 @@ func (i *InstFRem) Parent() *BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (i *InstFRem) SetParent(parent *BasicBlock) {
 	i.parent = parent
+}
+
+// X returns the x operand of the frem instruction.
+func (inst *InstFRem) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the frem instruction.
+func (inst *InstFRem) Y() value.Value {
+	return inst.y
 }
