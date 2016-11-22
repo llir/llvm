@@ -375,3 +375,20 @@ func (b *BasicBlock) NewRet(x value.Value) *TermRet {
 	b.SetTerm(t)
 	return t
 }
+
+// NewBr sets the terminator of the basic block to a new unconditional br
+// terminator based on the given target branch.
+func (b *BasicBlock) NewBr(target *BasicBlock) *TermBr {
+	t := NewBr(target)
+	b.SetTerm(t)
+	return t
+}
+
+// NewCondBr sets the terminator of the basic block to a new conditional br
+// terminator based on the given branching condition and conditional target
+// branches.
+func (b *BasicBlock) NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
+	t := NewCondBr(cond, targetTrue, targetFalse)
+	b.SetTerm(t)
+	return t
+}
