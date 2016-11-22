@@ -382,6 +382,14 @@ func (b *BasicBlock) NewICmp(cond IntPred, x, y value.Value) *InstICmp {
 	return i
 }
 
+// NewFCmp appends a new fcmp instruction to the basic block based on the given
+// floating-point condition code and operands.
+func (b *BasicBlock) NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
+	i := NewFCmp(cond, x, y)
+	b.AppendInst(i)
+	return i
+}
+
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
 func (b *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {

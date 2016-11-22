@@ -94,32 +94,32 @@ type IntPred int
 
 // Integer condition codes.
 const (
-	IntEQ  IntPred = iota + 1 // eq: equal
-	IntNE                     // ne: not equal
-	IntUGT                    // ugt: unsigned greater than
-	IntUGE                    // uge: unsigned greater than or equal
-	IntULT                    // ult: unsigned less than
-	IntULE                    // ule: unsigned less than or equal
-	IntSGT                    // sgt: signed greater than
-	IntSGE                    // sge: signed greater than or equal
-	IntSLT                    // slt: signed less than
-	IntSLE                    // sle: signed less than or equal
+	IntEq  IntPred = iota + 1 // eq: equal
+	IntNe                     // ne: not equal
+	IntUgt                    // ugt: unsigned greater than
+	IntUge                    // uge: unsigned greater than or equal
+	IntUlt                    // ult: unsigned less than
+	IntUle                    // ule: unsigned less than or equal
+	IntSgt                    // sgt: signed greater than
+	IntSge                    // sge: signed greater than or equal
+	IntSlt                    // slt: signed less than
+	IntSle                    // sle: signed less than or equal
 )
 
 // LLVMString returns the LLVM syntax representation of the integer condition
 // code.
 func (cond IntPred) LLVMString() string {
 	m := map[IntPred]string{
-		IntEQ:  "eq",
-		IntNE:  "ne",
-		IntUGT: "ugt",
-		IntUGE: "uge",
-		IntULT: "ult",
-		IntULE: "ule",
-		IntSGT: "sgt",
-		IntSGE: "sge",
-		IntSLT: "slt",
-		IntSLE: "sle",
+		IntEq:  "eq",
+		IntNe:  "ne",
+		IntUgt: "ugt",
+		IntUge: "uge",
+		IntUlt: "ult",
+		IntUle: "ule",
+		IntSgt: "sgt",
+		IntSge: "sge",
+		IntSlt: "slt",
+		IntSle: "sle",
 	}
 	if s, ok := m[cond]; ok {
 		return s
@@ -129,7 +129,134 @@ func (cond IntPred) LLVMString() string {
 
 // --- [ fcmp ] ----------------------------------------------------------------
 
-// TODO: Add support for fcmp.
+// InstFCmp represents an fcmp instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#fcmp-instruction
+type InstFCmp struct {
+	// Parent basic block.
+	parent *BasicBlock
+	// Identifier associated with the instruction.
+	id string
+	// Floating-point condition code.
+	cond FloatPred
+	// Operands.
+	x, y value.Value
+	// Type of the instruction.
+	typ types.Type
+}
+
+// NewFCmp returns a new fcmp instruction based on the given floating-point
+// condition code and operands.
+func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
+	var typ types.Type = types.I1
+	if t, ok := x.Type().(*types.VectorType); ok {
+		typ = types.NewVector(types.I1, t.Len())
+	}
+	return &InstFCmp{cond: cond, x: x, y: y, typ: typ}
+}
+
+// Type returns the type of the instruction.
+func (i *InstFCmp) Type() types.Type {
+	return i.typ
+}
+
+// Ident returns the identifier associated with the instruction.
+func (i *InstFCmp) Ident() string {
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstFCmp) SetIdent(id string) {
+	i.id = id
+}
+
+// LLVMString returns the LLVM syntax representation of the instruction.
+func (i *InstFCmp) LLVMString() string {
+	x, y := i.X(), i.Y()
+	return fmt.Sprintf("%s = fcmp %s %s %s, %s %s",
+		i.Ident(),
+		i.Cond().LLVMString(),
+		x.Type().LLVMString(),
+		x.Ident(),
+		y.Type().LLVMString(),
+		y.Ident())
+}
+
+// Parent returns the parent basic block of the instruction.
+func (i *InstFCmp) Parent() *BasicBlock {
+	return i.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (i *InstFCmp) SetParent(parent *BasicBlock) {
+	i.parent = parent
+}
+
+// Cond returns the floating-point condition code of the fcmp instruction.
+func (inst *InstFCmp) Cond() FloatPred {
+	return inst.cond
+}
+
+// X returns the x operand of the fcmp instruction.
+func (inst *InstFCmp) X() value.Value {
+	return inst.x
+}
+
+// Y returns the y operand of the fcmp instruction.
+func (inst *InstFCmp) Y() value.Value {
+	return inst.y
+}
+
+// FloatPred represents the set of condition codes of the fcmp instruction.
+type FloatPred int
+
+// Floating-point condition codes.
+const (
+	FloatFalse FloatPred = iota + 1 // false: no comparison, always returns false
+	FloatOeq                        // oeq: ordered and equal
+	FloatOgt                        // ogt: ordered and greater than
+	FloatOge                        // oge: ordered and greater than or equal
+	FloatOlt                        // olt: ordered and less than
+	FloatOle                        // ole: ordered and less than or equal
+	FloatOne                        // one: ordered and not equal
+	FloatOrd                        // ord: ordered (no nans)
+	FloatUeq                        // ueq: unordered or equal
+	FloatUgt                        // ugt: unordered or greater than
+	FloatUge                        // uge: unordered or greater than or equal
+	FloatUlt                        // ult: unordered or less than
+	FloatUle                        // ule: unordered or less than or equal
+	FloatUne                        // une: unordered or not equal
+	FloatUno                        // uno: unordered (either nans)
+	FloatTrue                       // true: no comparison, always returns true
+)
+
+// LLVMString returns the LLVM syntax representation of the floating-point
+// condition code.
+func (cond FloatPred) LLVMString() string {
+	m := map[FloatPred]string{
+		FloatFalse: "false",
+		FloatOeq:   "oeq",
+		FloatOgt:   "ogt",
+		FloatOge:   "oge",
+		FloatOlt:   "olt",
+		FloatOle:   "ole",
+		FloatOne:   "one",
+		FloatOrd:   "ord",
+		FloatUeq:   "ueq",
+		FloatUgt:   "ugt",
+		FloatUge:   "uge",
+		FloatUlt:   "ult",
+		FloatUle:   "ule",
+		FloatUne:   "une",
+		FloatUno:   "uno",
+		FloatTrue:  "true",
+	}
+	if s, ok := m[cond]; ok {
+		return s
+	}
+	return fmt.Sprintf("<unknown floating-point condition code %d>", int(cond))
+}
 
 // --- [ phi ] -----------------------------------------------------------------
 
