@@ -94,32 +94,32 @@ type IntPred int
 
 // Integer condition codes.
 const (
-	IntPredEQ  IntPred = iota + 1 // eq: equal
-	IntPredNE                     // ne: not equal
-	IntPredUGT                    // ugt: unsigned greater than
-	IntPredUGE                    // uge: unsigned greater than or equal
-	IntPredULT                    // ult: unsigned less than
-	IntPredULE                    // ule: unsigned less than or equal
-	IntPredSGT                    // sgt: signed greater than
-	IntPredSGE                    // sge: signed greater than or equal
-	IntPredSLT                    // slt: signed less than
-	IntPredSLE                    // sle: signed less than or equal
+	IntEQ  IntPred = iota + 1 // eq: equal
+	IntNE                     // ne: not equal
+	IntUGT                    // ugt: unsigned greater than
+	IntUGE                    // uge: unsigned greater than or equal
+	IntULT                    // ult: unsigned less than
+	IntULE                    // ule: unsigned less than or equal
+	IntSGT                    // sgt: signed greater than
+	IntSGE                    // sge: signed greater than or equal
+	IntSLT                    // slt: signed less than
+	IntSLE                    // sle: signed less than or equal
 )
 
 // LLVMString returns the LLVM syntax representation of the integer condition
 // code.
 func (cond IntPred) LLVMString() string {
 	m := map[IntPred]string{
-		IntPredEQ:  "eq",
-		IntPredNE:  "ne",
-		IntPredUGT: "ugt",
-		IntPredUGE: "uge",
-		IntPredULT: "ult",
-		IntPredULE: "ule",
-		IntPredSGT: "sgt",
-		IntPredSGE: "sge",
-		IntPredSLT: "slt",
-		IntPredSLE: "sle",
+		IntEQ:  "eq",
+		IntNE:  "ne",
+		IntUGT: "ugt",
+		IntUGE: "uge",
+		IntULT: "ult",
+		IntULE: "ule",
+		IntSGT: "sgt",
+		IntSGE: "sge",
+		IntSLT: "slt",
+		IntSLE: "sle",
 	}
 	if s, ok := m[cond]; ok {
 		return s
