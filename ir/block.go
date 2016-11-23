@@ -390,6 +390,14 @@ func (b *BasicBlock) NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	return i
 }
 
+// NewPHI appends a new phi instruction to the basic block based on the given
+// incoming values.
+func (b *BasicBlock) NewPHI(incs ...*Incoming) *InstPHI {
+	i := NewPHI(incs...)
+	b.AppendInst(i)
+	return i
+}
+
 // NewSelect appends a new select instruction to the basic block based on the
 // given selection condition and operands.
 func (b *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {

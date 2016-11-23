@@ -260,7 +260,94 @@ func (cond FloatPred) LLVMString() string {
 
 // --- [ phi ] -----------------------------------------------------------------
 
-// TODO: Add support for phi.
+// InstPHI represents a phi instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#phi-instruction
+type InstPHI struct {
+	// Parent basic block.
+	parent *BasicBlock
+	// Identifier associated with the instruction.
+	id string
+	// Incoming values.
+	incs []*Incoming
+	// Type of the instruction.
+	typ types.Type
+}
+
+// NewPHI returns a new phi instruction based on the given incoming values.
+func NewPHI(incs ...*Incoming) *InstPHI {
+	if len(incs) < 1 {
+		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
+	}
+	typ := incs[0].x.Type()
+	return &InstPHI{incs: incs, typ: typ}
+}
+
+// Type returns the type of the instruction.
+func (i *InstPHI) Type() types.Type {
+	return i.typ
+}
+
+// Ident returns the identifier associated with the instruction.
+func (i *InstPHI) Ident() string {
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstPHI) SetIdent(id string) {
+	i.id = id
+}
+
+// LLVMString returns the LLVM syntax representation of the instruction.
+func (i *InstPHI) LLVMString() string {
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "%s = phi %s ",
+		i.Ident(),
+		i.Type().LLVMString())
+	for j, inc := range i.Incs() {
+		if j != 0 {
+			buf.WriteString(", ")
+		}
+		fmt.Fprintf(buf, "[ %s, %s ]",
+			inc.X().Ident(),
+			inc.Pred().Ident())
+	}
+	return buf.String()
+}
+
+// Parent returns the parent basic block of the instruction.
+func (i *InstPHI) Parent() *BasicBlock {
+	return i.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (i *InstPHI) SetParent(parent *BasicBlock) {
+	i.parent = parent
+}
+
+// Incs returns the incoming values of the phi instruction.
+func (i *InstPHI) Incs() []*Incoming {
+	return i.incs
+}
+
+// Incoming represents an incoming value of a phi instruction.
+type Incoming struct {
+	// Incoming value of the predecessor basic block.
+	x value.Value
+	// Predecessor basic block of the incoming value.
+	pred *BasicBlock
+}
+
+// X returns the incoming value of the predecessor basic block.
+func (inc *Incoming) X() value.Value {
+	return inc.x
+}
+
+// Pred returns the predecessor basic block of the incoming value.
+func (inc *Incoming) Pred() *BasicBlock {
+	return inc.pred
+}
 
 // --- [ select ] --------------------------------------------------------------
 

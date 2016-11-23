@@ -273,7 +273,7 @@ func (t *TermSwitch) Cases() []*Case {
 	return t.cases
 }
 
-// A Case represents a case of a switch terminator.
+// Case represents a case of a switch terminator.
 type Case struct {
 	// Case comparand.
 	x *constant.Int
