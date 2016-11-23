@@ -16,11 +16,11 @@ import (
 //
 // http://llvm.org/docs/LangRef.html#terminator-instructions
 //
-//    *ir.TermRet
-//    *ir.TermBr
-//    *ir.TermCondBr
-//    *ir.TermSwitch
-//    *ir.TermUnreachable
+//    *ir.TermRet           (https://godoc.org/github.com/llir/llvm/ir#TermRet)
+//    *ir.TermBr            (https://godoc.org/github.com/llir/llvm/ir#TermBr)
+//    *ir.TermCondBr        (https://godoc.org/github.com/llir/llvm/ir#TermCondBr)
+//    *ir.TermSwitch        (https://godoc.org/github.com/llir/llvm/ir#TermSwitch)
+//    *ir.TermUnreachable   (https://godoc.org/github.com/llir/llvm/ir#TermUnreachable)
 type Terminator interface {
 	Instruction
 	// Successors returns the successor basic blocks of the terminator.
