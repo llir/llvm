@@ -31,8 +31,8 @@ func (m *Module) LLVMString() string {
 	for _, f := range m.Funcs() {
 		fmt.Fprintln(buf, f.LLVMString())
 	}
-	for _, g := range m.Globals() {
-		fmt.Fprintln(buf, g.LLVMString())
+	for _, global := range m.Globals() {
+		fmt.Fprintln(buf, global.LLVMString())
 	}
 	return buf.String()
 }
@@ -54,8 +54,8 @@ func (m *Module) AppendFunction(f *Function) {
 }
 
 // AppendGlobal appends the given global variable to the module.
-func (m *Module) AppendGlobal(g *Global) {
-	m.globals = append(m.globals, g)
+func (m *Module) AppendGlobal(global *Global) {
+	m.globals = append(m.globals, global)
 }
 
 // NewFunction appends a new function to the module based on the given function
@@ -69,15 +69,15 @@ func (m *Module) NewFunction(name string, ret types.Type, params ...*types.Param
 // NewGlobalDecl appends a new external global variable declaration to the
 // module based on the given global variable name and content type.
 func (m *Module) NewGlobalDecl(name string, content types.Type) *Global {
-	g := NewGlobalDecl(name, content)
-	m.AppendGlobal(g)
-	return g
+	global := NewGlobalDecl(name, content)
+	m.AppendGlobal(global)
+	return global
 }
 
 // NewGlobalDef appends a new global variable definition to the module based on
 // the given global variable name and initial value.
 func (m *Module) NewGlobalDef(name string, init constant.Constant) *Global {
-	g := NewGlobalDef(name, init)
-	m.AppendGlobal(g)
-	return g
+	global := NewGlobalDef(name, init)
+	m.AppendGlobal(global)
+	return global
 }

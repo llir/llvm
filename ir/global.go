@@ -46,57 +46,57 @@ func NewGlobalDef(name string, init constant.Constant) *Global {
 }
 
 // Type returns the type of the global variable.
-func (g *Global) Type() types.Type {
-	return g.typ
+func (global *Global) Type() types.Type {
+	return global.typ
 }
 
 // Ident returns the identifier associated with the global variable.
-func (g *Global) Ident() string {
-	return enc.Global(g.name)
+func (global *Global) Ident() string {
+	return enc.Global(global.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the global variable.
-func (g *Global) LLVMString() string {
+func (global *Global) LLVMString() string {
 	imm := "global"
-	if g.Immutable() {
+	if global.Immutable() {
 		imm = "constant"
 	}
-	content := g.ContentType()
-	if init, ok := g.Init(); ok {
+	content := global.ContentType()
+	if init, ok := global.Init(); ok {
 		// Global variable definition.
 		return fmt.Sprintf("%s = %s %s %s",
-			g.Ident(),
+			global.Ident(),
 			imm,
 			content.LLVMString(),
 			init.Ident())
 	}
 	// External global variable declaration.
 	return fmt.Sprintf("%s = external %s %s",
-		g.Ident(),
+		global.Ident(),
 		imm,
 		content.LLVMString())
 }
 
 // ContentType returns the content type of the global variable.
-func (g *Global) ContentType() types.Type {
-	return g.content
+func (global *Global) ContentType() types.Type {
+	return global.content
 }
 
 // Init returns the initial value of the global variable and a boolean
 // indicating if an initializer was present.
-func (g *Global) Init() (constant.Constant, bool) {
-	if g.init != nil {
-		return g.init, true
+func (global *Global) Init() (constant.Constant, bool) {
+	if global.init != nil {
+		return global.init, true
 	}
 	return nil, false
 }
 
 // Immutable reports whether the global variable is immutable.
-func (g *Global) Immutable() bool {
-	return g.immutable
+func (global *Global) Immutable() bool {
+	return global.immutable
 }
 
 // SetImmutable sets the immutability of the global variable.
-func (g *Global) SetImmutable(immutable bool) {
-	g.immutable = immutable
+func (global *Global) SetImmutable(immutable bool) {
+	global.immutable = immutable
 }
