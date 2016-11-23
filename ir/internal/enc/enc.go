@@ -12,7 +12,7 @@ import "strings"
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func Global(name string) string {
-	return "@" + escape(name)
+	return "@" + Escape(name)
 }
 
 // Local encodes a local name to its LLVM IR assembly representation.
@@ -25,7 +25,7 @@ func Global(name string) string {
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func Local(name string) string {
-	return "%" + escape(name)
+	return "%" + Escape(name)
 }
 
 const (
@@ -46,9 +46,9 @@ const (
 	tail = head + decimal
 )
 
-// escape replaces any characters which are not valid in identifiers with
+// Escape replaces any characters which are not valid in identifiers with
 // corresponding hexadecimal escape sequence (\XX).
-func escape(s string) string {
+func Escape(s string) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -79,7 +79,8 @@ func escape(s string) string {
 		buf[j+2] = hextable[b&0x0F]
 		j += 3
 	}
-	return string(buf)
+	// Add surrounding quotes.
+	return `"` + string(buf) + `"`
 }
 
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their

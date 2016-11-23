@@ -14,7 +14,7 @@ func TestGlobal(t *testing.T) {
 		// i=0
 		{s: "foo", want: "@foo"},
 		// i=1
-		{s: "a b", want: `@a\20b`},
+		{s: "a b", want: `@"a\20b"`},
 		// i=2
 		{s: "$a", want: "@$a"},
 		// i=3
@@ -24,13 +24,13 @@ func TestGlobal(t *testing.T) {
 		// i=5
 		{s: "_a", want: "@_a"},
 		// i=6
-		{s: "#a", want: `@\23a`},
+		{s: "#a", want: `@"\23a"`},
 		// i=7
-		{s: "a b#c", want: `@a\20b\23c`},
+		{s: "a b#c", want: `@"a\20b\23c"`},
 		// i=8
 		{s: "2", want: "@2"},
 		// i=9
-		{s: "foo世bar", want: `@foo\E4\B8\96bar`},
+		{s: "foo世bar", want: `@"foo\E4\B8\96bar"`},
 	}
 
 	for i, g := range golden {
@@ -49,7 +49,7 @@ func TestLocal(t *testing.T) {
 		// i=0
 		{s: "foo", want: "%foo"},
 		// i=1
-		{s: "a b", want: `%a\20b`},
+		{s: "a b", want: `%"a\20b"`},
 		// i=2
 		{s: "$a", want: "%$a"},
 		// i=3
@@ -59,13 +59,13 @@ func TestLocal(t *testing.T) {
 		// i=5
 		{s: "_a", want: "%_a"},
 		// i=6
-		{s: "#a", want: `%\23a`},
+		{s: "#a", want: `%"\23a"`},
 		// i=7
-		{s: "a b#c", want: `%a\20b\23c`},
+		{s: "a b#c", want: `%"a\20b\23c"`},
 		// i=8
 		{s: "2", want: "%2"},
 		// i=9
-		{s: "foo世bar", want: `%foo\E4\B8\96bar`},
+		{s: "foo世bar", want: `%"foo\E4\B8\96bar"`},
 	}
 
 	for i, g := range golden {
