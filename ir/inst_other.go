@@ -333,13 +333,19 @@ func (i *InstPHI) Incs() []*Incoming {
 
 // Incoming represents an incoming value of a phi instruction.
 type Incoming struct {
-	// Incoming value of the predecessor basic block.
+	// Incoming value.
 	x value.Value
 	// Predecessor basic block of the incoming value.
 	pred *BasicBlock
 }
 
-// X returns the incoming value of the predecessor basic block.
+// NewIncoming returns a new incoming value based on the given value and
+// predecessor basic block.
+func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
+	return &Incoming{x: x, pred: pred}
+}
+
+// X returns the incoming value.
 func (inc *Incoming) X() value.Value {
 	return inc.x
 }
