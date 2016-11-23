@@ -69,13 +69,13 @@ func (i *InstAdd) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the add instruction.
-func (inst *InstAdd) X() value.Value {
-	return inst.x
+func (i *InstAdd) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the add instruction.
-func (inst *InstAdd) Y() value.Value {
-	return inst.y
+func (i *InstAdd) Y() value.Value {
+	return i.y
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -133,13 +133,13 @@ func (i *InstFAdd) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the fadd instruction.
-func (inst *InstFAdd) X() value.Value {
-	return inst.x
+func (i *InstFAdd) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the fadd instruction.
-func (inst *InstFAdd) Y() value.Value {
-	return inst.y
+func (i *InstFAdd) Y() value.Value {
+	return i.y
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -197,13 +197,13 @@ func (i *InstSub) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the sub instruction.
-func (inst *InstSub) X() value.Value {
-	return inst.x
+func (i *InstSub) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the sub instruction.
-func (inst *InstSub) Y() value.Value {
-	return inst.y
+func (i *InstSub) Y() value.Value {
+	return i.y
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -261,13 +261,13 @@ func (i *InstFSub) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the fsub instruction.
-func (inst *InstFSub) X() value.Value {
-	return inst.x
+func (i *InstFSub) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the fsub instruction.
-func (inst *InstFSub) Y() value.Value {
-	return inst.y
+func (i *InstFSub) Y() value.Value {
+	return i.y
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -325,13 +325,13 @@ func (i *InstMul) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the mul instruction.
-func (inst *InstMul) X() value.Value {
-	return inst.x
+func (i *InstMul) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the mul instruction.
-func (inst *InstMul) Y() value.Value {
-	return inst.y
+func (i *InstMul) Y() value.Value {
+	return i.y
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -389,13 +389,13 @@ func (i *InstFMul) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the fmul instruction.
-func (inst *InstFMul) X() value.Value {
-	return inst.x
+func (i *InstFMul) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the fmul instruction.
-func (inst *InstFMul) Y() value.Value {
-	return inst.y
+func (i *InstFMul) Y() value.Value {
+	return i.y
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -453,13 +453,13 @@ func (i *InstUDiv) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the udiv instruction.
-func (inst *InstUDiv) X() value.Value {
-	return inst.x
+func (i *InstUDiv) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the udiv instruction.
-func (inst *InstUDiv) Y() value.Value {
-	return inst.y
+func (i *InstUDiv) Y() value.Value {
+	return i.y
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -517,13 +517,13 @@ func (i *InstSDiv) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the sdiv instruction.
-func (inst *InstSDiv) X() value.Value {
-	return inst.x
+func (i *InstSDiv) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the sdiv instruction.
-func (inst *InstSDiv) Y() value.Value {
-	return inst.y
+func (i *InstSDiv) Y() value.Value {
+	return i.y
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -581,13 +581,13 @@ func (i *InstFDiv) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the fdiv instruction.
-func (inst *InstFDiv) X() value.Value {
-	return inst.x
+func (i *InstFDiv) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the fdiv instruction.
-func (inst *InstFDiv) Y() value.Value {
-	return inst.y
+func (i *InstFDiv) Y() value.Value {
+	return i.y
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -645,13 +645,13 @@ func (i *InstURem) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the urem instruction.
-func (inst *InstURem) X() value.Value {
-	return inst.x
+func (i *InstURem) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the urem instruction.
-func (inst *InstURem) Y() value.Value {
-	return inst.y
+func (i *InstURem) Y() value.Value {
+	return i.y
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -709,13 +709,13 @@ func (i *InstSRem) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the srem instruction.
-func (inst *InstSRem) X() value.Value {
-	return inst.x
+func (i *InstSRem) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the srem instruction.
-func (inst *InstSRem) Y() value.Value {
-	return inst.y
+func (i *InstSRem) Y() value.Value {
+	return i.y
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -773,11 +773,11 @@ func (i *InstFRem) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the frem instruction.
-func (inst *InstFRem) X() value.Value {
-	return inst.x
+func (i *InstFRem) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the frem instruction.
-func (inst *InstFRem) Y() value.Value {
-	return inst.y
+func (i *InstFRem) Y() value.Value {
+	return i.y
 }

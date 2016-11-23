@@ -70,12 +70,12 @@ func (i *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) X() value.Value {
-	return inst.x
+func (i *Inst{{ .Name }}) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) Y() value.Value {
-	return inst.y
+func (i *Inst{{ .Name }}) Y() value.Value {
+	return i.y
 }
 {{- end }}

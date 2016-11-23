@@ -69,13 +69,13 @@ func (i *InstShL) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the shl instruction.
-func (inst *InstShL) X() value.Value {
-	return inst.x
+func (i *InstShL) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the shl instruction.
-func (inst *InstShL) Y() value.Value {
-	return inst.y
+func (i *InstShL) Y() value.Value {
+	return i.y
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -133,13 +133,13 @@ func (i *InstLShR) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the lshr instruction.
-func (inst *InstLShR) X() value.Value {
-	return inst.x
+func (i *InstLShR) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the lshr instruction.
-func (inst *InstLShR) Y() value.Value {
-	return inst.y
+func (i *InstLShR) Y() value.Value {
+	return i.y
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -197,13 +197,13 @@ func (i *InstAShR) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the ashr instruction.
-func (inst *InstAShR) X() value.Value {
-	return inst.x
+func (i *InstAShR) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the ashr instruction.
-func (inst *InstAShR) Y() value.Value {
-	return inst.y
+func (i *InstAShR) Y() value.Value {
+	return i.y
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -261,13 +261,13 @@ func (i *InstAnd) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the and instruction.
-func (inst *InstAnd) X() value.Value {
-	return inst.x
+func (i *InstAnd) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the and instruction.
-func (inst *InstAnd) Y() value.Value {
-	return inst.y
+func (i *InstAnd) Y() value.Value {
+	return i.y
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -325,13 +325,13 @@ func (i *InstOr) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the or instruction.
-func (inst *InstOr) X() value.Value {
-	return inst.x
+func (i *InstOr) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the or instruction.
-func (inst *InstOr) Y() value.Value {
-	return inst.y
+func (i *InstOr) Y() value.Value {
+	return i.y
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -389,11 +389,11 @@ func (i *InstXor) SetParent(parent *BasicBlock) {
 }
 
 // X returns the x operand of the xor instruction.
-func (inst *InstXor) X() value.Value {
-	return inst.x
+func (i *InstXor) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the xor instruction.
-func (inst *InstXor) Y() value.Value {
-	return inst.y
+func (i *InstXor) Y() value.Value {
+	return i.y
 }

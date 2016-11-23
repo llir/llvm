@@ -75,18 +75,18 @@ func (i *InstICmp) SetParent(parent *BasicBlock) {
 }
 
 // Cond returns the integer condition code of the icmp instruction.
-func (inst *InstICmp) Cond() IntPred {
-	return inst.cond
+func (i *InstICmp) Cond() IntPred {
+	return i.cond
 }
 
 // X returns the x operand of the icmp instruction.
-func (inst *InstICmp) X() value.Value {
-	return inst.x
+func (i *InstICmp) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the icmp instruction.
-func (inst *InstICmp) Y() value.Value {
-	return inst.y
+func (i *InstICmp) Y() value.Value {
+	return i.y
 }
 
 // IntPred represents the set of condition codes of the icmp instruction.
@@ -194,18 +194,18 @@ func (i *InstFCmp) SetParent(parent *BasicBlock) {
 }
 
 // Cond returns the floating-point condition code of the fcmp instruction.
-func (inst *InstFCmp) Cond() FloatPred {
-	return inst.cond
+func (i *InstFCmp) Cond() FloatPred {
+	return i.cond
 }
 
 // X returns the x operand of the fcmp instruction.
-func (inst *InstFCmp) X() value.Value {
-	return inst.x
+func (i *InstFCmp) X() value.Value {
+	return i.x
 }
 
 // Y returns the y operand of the fcmp instruction.
-func (inst *InstFCmp) Y() value.Value {
-	return inst.y
+func (i *InstFCmp) Y() value.Value {
+	return i.y
 }
 
 // FloatPred represents the set of condition codes of the fcmp instruction.
