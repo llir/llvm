@@ -51,7 +51,7 @@ func (c *Int) Type() types.Type {
 
 // Ident returns the value of the integer constant.
 func (c *Int) Ident() string {
-	if c.typ.Bits() == 1 {
+	if c.typ.Size() == 1 {
 		switch c.x {
 		case 0:
 			return "false"
