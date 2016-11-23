@@ -25,14 +25,14 @@ func NewModule() *Module {
 	return &Module{}
 }
 
-// LLVMString returns the LLVM syntax representation of the module.
-func (m *Module) LLVMString() string {
+// String returns the LLVM syntax representation of the module.
+func (m *Module) String() string {
 	buf := &bytes.Buffer{}
 	for _, f := range m.Funcs() {
-		fmt.Fprintln(buf, f.LLVMString())
+		fmt.Fprintln(buf, f)
 	}
 	for _, global := range m.Globals() {
-		fmt.Fprintln(buf, global.LLVMString())
+		fmt.Fprintln(buf, global)
 	}
 	return buf.String()
 }

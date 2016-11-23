@@ -12,10 +12,9 @@ import (
 //
 //   TODO
 type Type interface {
+	fmt.Stringer
 	// Equal reports whether t and u are of equal type.
 	Equal(u Type) bool
-	// LLVMString returns the LLVM syntax representation of the type.
-	LLVMString() string
 }
 
 // FuncType represents a function type.
@@ -31,15 +30,15 @@ func NewFunc(ret Type, params ...*Param) *FuncType {
 	return &FuncType{ret: ret, params: params}
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *FuncType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *FuncType) String() string {
 	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s (", t.ret.LLVMString())
+	fmt.Fprintf(buf, "%s (", t.ret)
 	for i, p := range t.params {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		fmt.Fprintf(buf, "%s", p.Type().LLVMString())
+		buf.WriteString(p.Type().String())
 	}
 	if t.Variadic() {
 		if len(t.params) > 0 {
@@ -107,8 +106,8 @@ func (t *FuncType) NewParam(name string, typ Type) *Param {
 type LabelType struct {
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *LabelType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *LabelType) String() string {
 	return "label"
 }
 
@@ -129,8 +128,8 @@ func NewInt(bits int) *IntType {
 	return &IntType{bits: bits}
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *IntType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *IntType) String() string {
 	return fmt.Sprintf("i%d", t.bits)
 }
 
@@ -158,9 +157,9 @@ func NewPointer(elem Type) *PointerType {
 	return &PointerType{elem: elem}
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *PointerType) LLVMString() string {
-	return fmt.Sprintf("%s*", t.elem.LLVMString())
+// String returns the LLVM syntax representation of the type.
+func (t *PointerType) String() string {
+	return fmt.Sprintf("%s*", t.elem)
 }
 
 // Equal reports whether t and u are of equal type.
@@ -180,8 +179,8 @@ func (t *PointerType) Elem() Type {
 type VoidType struct {
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *VoidType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *VoidType) String() string {
 	return "void"
 }
 
@@ -203,11 +202,11 @@ func NewVector(elem Type, len int) *VectorType {
 	return &VectorType{elem: elem, len: len}
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *VectorType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *VectorType) String() string {
 	return fmt.Sprintf("<%d x %s>",
 		t.Len(),
-		t.Elem().LLVMString())
+		t.Elem())
 }
 
 // Equal reports whether t and u are of equal type.
@@ -243,11 +242,11 @@ func NewArray(elem Type, len int) *ArrayType {
 	return &ArrayType{elem: elem, len: len}
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *ArrayType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *ArrayType) String() string {
 	return fmt.Sprintf("[%d x %s]",
 		t.Len(),
-		t.Elem().LLVMString())
+		t.Elem())
 }
 
 // Equal reports whether t and u are of equal type.
@@ -281,15 +280,15 @@ func NewStruct(fields ...Type) *StructType {
 	return &StructType{fields: fields}
 }
 
-// LLVMString returns the LLVM syntax representation of the type.
-func (t *StructType) LLVMString() string {
+// String returns the LLVM syntax representation of the type.
+func (t *StructType) String() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
 	for i, field := range t.fields {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(field.LLVMString())
+		buf.WriteString(field.String())
 	}
 	buf.WriteString("}")
 	return buf.String()

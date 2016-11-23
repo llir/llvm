@@ -50,13 +50,13 @@ func (inst *InstAlloca) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstAlloca) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstAlloca) String() string {
 	if nelems, ok := inst.NElems(); ok {
 		return fmt.Sprintf("%s = alloca %s, %s %s",
 			inst.Ident(),
 			inst.ElemType(),
-			nelems.Type().LLVMString(),
+			nelems.Type(),
 			nelems.Ident())
 	}
 	return fmt.Sprintf("%s = alloca %s",
@@ -133,13 +133,13 @@ func (inst *InstLoad) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstLoad) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstLoad) String() string {
 	src := inst.Src()
 	return fmt.Sprintf("%s = load %s, %s %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
-		src.Type().LLVMString(),
+		inst.Type(),
+		src.Type(),
 		src.Ident())
 }
 
@@ -179,13 +179,13 @@ func NewStore(src, dst value.Value) *InstStore {
 	return &InstStore{src: src, dst: dst}
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstStore) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstStore) String() string {
 	src, dst := inst.Src(), inst.Dst()
 	return fmt.Sprintf("store %s %s, %s %s",
-		src.Type().LLVMString(),
+		src.Type(),
 		src.Ident(),
-		dst.Type().LLVMString(),
+		dst.Type(),
 		dst.Ident())
 }
 
@@ -288,18 +288,18 @@ func (inst *InstGetElementPtr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstGetElementPtr) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstGetElementPtr) String() string {
 	buf := &bytes.Buffer{}
 	src := inst.Src()
 	fmt.Fprintf(buf, "%s = getelementptr %s, %s %s",
 		inst.Ident(),
-		inst.elem.LLVMString(),
-		src.Type().LLVMString(),
+		inst.elem,
+		src.Type(),
 		src.Ident())
 	for _, index := range inst.Indices() {
 		fmt.Fprintf(buf, ", %s %s",
-			index.Type().LLVMString(),
+			index.Type(),
 			index.Ident())
 	}
 	return buf.String()

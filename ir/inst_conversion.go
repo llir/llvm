@@ -52,14 +52,14 @@ func (inst *InstTrunc) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstTrunc) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstTrunc) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = trunc %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -114,14 +114,14 @@ func (inst *InstZExt) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstZExt) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstZExt) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = zext %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -176,14 +176,14 @@ func (inst *InstSExt) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstSExt) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstSExt) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = sext %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -238,14 +238,14 @@ func (inst *InstFPTrunc) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFPTrunc) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFPTrunc) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = fptrunc %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -300,14 +300,14 @@ func (inst *InstFPExt) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFPExt) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFPExt) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = fpext %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -362,14 +362,14 @@ func (inst *InstFPToUI) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFPToUI) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFPToUI) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = fptoui %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -424,14 +424,14 @@ func (inst *InstFPToSI) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFPToSI) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFPToSI) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = fptosi %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -486,14 +486,14 @@ func (inst *InstUIToFP) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstUIToFP) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstUIToFP) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = uitofp %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -548,14 +548,14 @@ func (inst *InstSIToFP) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstSIToFP) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstSIToFP) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = sitofp %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -610,14 +610,14 @@ func (inst *InstPtrToInt) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstPtrToInt) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstPtrToInt) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = ptrtoint %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -672,14 +672,14 @@ func (inst *InstIntToPtr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstIntToPtr) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstIntToPtr) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = inttoptr %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -734,14 +734,14 @@ func (inst *InstBitCast) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstBitCast) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstBitCast) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = bitcast %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.
@@ -796,14 +796,14 @@ func (inst *InstAddrSpaceCast) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstAddrSpaceCast) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstAddrSpaceCast) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = addrspacecast %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.

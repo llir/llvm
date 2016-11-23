@@ -53,14 +53,14 @@ func (inst *Inst{{ .Name }}) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *Inst{{ .Name }}) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *Inst{{ .Name }}) String() string {
 	from := inst.From()
 	return fmt.Sprintf("%s = {{ lower .Name }} %s %s to %s",
 		inst.Ident(),
-		from.Type().LLVMString(),
+		from.Type(),
 		from.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 }
 
 // Parent returns the parent basic block of the instruction.

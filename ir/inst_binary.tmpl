@@ -51,11 +51,11 @@ func (inst *Inst{{ .Name }}) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *Inst{{ .Name }}) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *Inst{{ .Name }}) String() string {
 	return fmt.Sprintf("%s = {{ lower .Name }} %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }

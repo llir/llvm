@@ -1,16 +1,11 @@
 package ir_test
 
 import (
+	"fmt"
+
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/value"
 )
-
-// LLVMStringer is implemented by any value that has a LLVMString method, which
-// defines the LLVM syntax of that value.
-type LLVMStringer interface {
-	// LLVMString returns the LLVM syntax representation of the terminator.
-	LLVMString() string
-}
 
 // Validates that the value.Value interface is implemented by the relevant
 // types.
@@ -22,13 +17,13 @@ var (
 	// value.Value interface.
 )
 
-// Validates that the LLVMStringer interface is implemented by the relevant
+// Validates that the fmt.Stringer interface is implemented by the relevant
 // types.
 var (
-	_ LLVMStringer = &ir.BasicBlock{}
-	_ LLVMStringer = &ir.Function{}
-	_ LLVMStringer = &ir.Global{}
-	_ LLVMStringer = &ir.Module{}
+	_ fmt.Stringer = &ir.BasicBlock{}
+	_ fmt.Stringer = &ir.Function{}
+	_ fmt.Stringer = &ir.Global{}
+	_ fmt.Stringer = &ir.Module{}
 )
 
 // Validates that the ir.Instruction interface is implemented by the relevant

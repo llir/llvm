@@ -53,15 +53,15 @@ func (inst *InstICmp) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstICmp) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstICmp) String() string {
 	x, y := inst.X(), inst.Y()
 	return fmt.Sprintf("%s = icmp %s %s %s, %s %s",
 		inst.Ident(),
-		inst.Cond().LLVMString(),
-		x.Type().LLVMString(),
+		inst.Cond(),
+		x.Type(),
 		x.Ident(),
-		y.Type().LLVMString(),
+		y.Type(),
 		y.Ident())
 }
 
@@ -107,9 +107,9 @@ const (
 	IntSLE                    // sle: signed less than or equal
 )
 
-// LLVMString returns the LLVM syntax representation of the integer condition
+// String returns the LLVM syntax representation of the integer condition
 // code.
-func (cond IntPred) LLVMString() string {
+func (cond IntPred) String() string {
 	m := map[IntPred]string{
 		IntEQ:  "eq",
 		IntNE:  "ne",
@@ -172,15 +172,15 @@ func (inst *InstFCmp) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFCmp) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFCmp) String() string {
 	x, y := inst.X(), inst.Y()
 	return fmt.Sprintf("%s = fcmp %s %s %s, %s %s",
 		inst.Ident(),
-		inst.Cond().LLVMString(),
-		x.Type().LLVMString(),
+		inst.Cond(),
+		x.Type(),
 		x.Ident(),
-		y.Type().LLVMString(),
+		y.Type(),
 		y.Ident())
 }
 
@@ -232,9 +232,9 @@ const (
 	FloatTrue                       // true: no comparison, always returns true
 )
 
-// LLVMString returns the LLVM syntax representation of the floating-point
+// String returns the LLVM syntax representation of the floating-point
 // condition code.
-func (cond FloatPred) LLVMString() string {
+func (cond FloatPred) String() string {
 	m := map[FloatPred]string{
 		FloatFalse: "false",
 		FloatOEQ:   "oeq",
@@ -300,12 +300,12 @@ func (inst *InstPhi) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstPhi) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstPhi) String() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s = phi %s ",
 		inst.Ident(),
-		inst.Type().LLVMString())
+		inst.Type())
 	for j, inc := range inst.Incs() {
 		if j != 0 {
 			buf.WriteString(", ")
@@ -394,16 +394,16 @@ func (inst *InstSelect) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstSelect) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstSelect) String() string {
 	cond, x, y := inst.Cond(), inst.X(), inst.Y()
 	return fmt.Sprintf("%s = select %s %s, %s %s, %s %s",
 		inst.Ident(),
-		cond.Type().LLVMString(),
+		cond.Type(),
 		cond.Ident(),
-		x.Type().LLVMString(),
+		x.Type(),
 		x.Ident(),
-		y.Type().LLVMString(),
+		y.Type(),
 		y.Ident())
 }
 
@@ -470,22 +470,22 @@ func (inst *InstCall) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstCall) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstCall) String() string {
 	buf := &bytes.Buffer{}
 	typ := inst.Type()
 	if !typ.Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", inst.Ident())
 	}
 	fmt.Fprintf(buf, "call %s %s(",
-		typ.LLVMString(),
+		typ,
 		inst.Callee().Ident())
 	for i, arg := range inst.Args() {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		fmt.Fprintf(buf, "%s %s",
-			arg.Type().LLVMString(),
+			arg.Type(),
 			arg.Ident())
 	}
 	buf.WriteString(")")

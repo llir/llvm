@@ -50,11 +50,11 @@ func (inst *InstAdd) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstAdd) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstAdd) String() string {
 	return fmt.Sprintf("%s = add %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -114,11 +114,11 @@ func (inst *InstFAdd) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFAdd) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFAdd) String() string {
 	return fmt.Sprintf("%s = fadd %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -178,11 +178,11 @@ func (inst *InstSub) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstSub) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstSub) String() string {
 	return fmt.Sprintf("%s = sub %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -242,11 +242,11 @@ func (inst *InstFSub) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFSub) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFSub) String() string {
 	return fmt.Sprintf("%s = fsub %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -306,11 +306,11 @@ func (inst *InstMul) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstMul) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstMul) String() string {
 	return fmt.Sprintf("%s = mul %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -370,11 +370,11 @@ func (inst *InstFMul) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFMul) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFMul) String() string {
 	return fmt.Sprintf("%s = fmul %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -434,11 +434,11 @@ func (inst *InstUDiv) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstUDiv) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstUDiv) String() string {
 	return fmt.Sprintf("%s = udiv %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -498,11 +498,11 @@ func (inst *InstSDiv) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstSDiv) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstSDiv) String() string {
 	return fmt.Sprintf("%s = sdiv %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -562,11 +562,11 @@ func (inst *InstFDiv) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFDiv) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFDiv) String() string {
 	return fmt.Sprintf("%s = fdiv %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -626,11 +626,11 @@ func (inst *InstURem) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstURem) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstURem) String() string {
 	return fmt.Sprintf("%s = urem %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -690,11 +690,11 @@ func (inst *InstSRem) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstSRem) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstSRem) String() string {
 	return fmt.Sprintf("%s = srem %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -754,11 +754,11 @@ func (inst *InstFRem) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstFRem) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstFRem) String() string {
 	return fmt.Sprintf("%s = frem %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }

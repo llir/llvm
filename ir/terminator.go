@@ -44,11 +44,11 @@ func NewRet(x value.Value) *TermRet {
 	return &TermRet{x: x}
 }
 
-// LLVMString returns the LLVM syntax representation of the terminator.
-func (term *TermRet) LLVMString() string {
+// String returns the LLVM syntax representation of the terminator.
+func (term *TermRet) String() string {
 	if x, ok := term.X(); ok {
 		return fmt.Sprintf("ret %s %s",
-			x.Type().LLVMString(),
+			x.Type(),
 			x.Ident())
 	}
 	return "ret void"
@@ -101,8 +101,8 @@ func NewBr(target *BasicBlock) *TermBr {
 	return &TermBr{target: target, successors: successors}
 }
 
-// LLVMString returns the LLVM syntax representation of the terminator.
-func (term *TermBr) LLVMString() string {
+// String returns the LLVM syntax representation of the terminator.
+func (term *TermBr) String() string {
 	return fmt.Sprintf("br label %s", term.Target().Ident())
 }
 
@@ -152,8 +152,8 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondB
 	return &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
 }
 
-// LLVMString returns the LLVM syntax representation of the terminator.
-func (term *TermCondBr) LLVMString() string {
+// String returns the LLVM syntax representation of the terminator.
+func (term *TermCondBr) String() string {
 	return fmt.Sprintf("br i1 %s, label %s, label %s",
 		term.Cond().Ident(),
 		term.TargetTrue().Ident(),
@@ -221,12 +221,12 @@ func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSw
 	return &TermSwitch{x: x, targetDefault: targetDefault, cases: cases, successors: successors}
 }
 
-// LLVMString returns the LLVM syntax representation of the terminator.
-func (term *TermSwitch) LLVMString() string {
+// String returns the LLVM syntax representation of the terminator.
+func (term *TermSwitch) String() string {
 	buf := &bytes.Buffer{}
 	x := term.X()
 	fmt.Fprintf(buf, "switch %s %s, label %s [ ",
-		x.Type().LLVMString(),
+		x.Type(),
 		x.Ident(),
 		term.TargetDefault().Ident())
 	for i, c := range term.Cases() {
@@ -325,8 +325,8 @@ func NewUnreachable() *TermUnreachable {
 	return &TermUnreachable{}
 }
 
-// LLVMString returns the LLVM syntax representation of the terminator.
-func (term *TermUnreachable) LLVMString() string {
+// String returns the LLVM syntax representation of the terminator.
+func (term *TermUnreachable) String() string {
 	return "unreachable"
 }
 

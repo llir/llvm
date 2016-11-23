@@ -50,11 +50,11 @@ func (inst *InstShl) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstShl) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstShl) String() string {
 	return fmt.Sprintf("%s = shl %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -114,11 +114,11 @@ func (inst *InstLShr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstLShr) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstLShr) String() string {
 	return fmt.Sprintf("%s = lshr %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -178,11 +178,11 @@ func (inst *InstAShr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstAShr) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstAShr) String() string {
 	return fmt.Sprintf("%s = ashr %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -242,11 +242,11 @@ func (inst *InstAnd) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstAnd) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstAnd) String() string {
 	return fmt.Sprintf("%s = and %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -306,11 +306,11 @@ func (inst *InstOr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstOr) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstOr) String() string {
 	return fmt.Sprintf("%s = or %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }
@@ -370,11 +370,11 @@ func (inst *InstXor) SetIdent(ident string) {
 	inst.ident = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstXor) LLVMString() string {
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstXor) String() string {
 	return fmt.Sprintf("%s = xor %s %s, %s",
 		inst.Ident(),
-		inst.Type().LLVMString(),
+		inst.Type(),
 		inst.x.Ident(),
 		inst.y.Ident())
 }

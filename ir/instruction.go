@@ -1,5 +1,7 @@
 package ir
 
+import "fmt"
+
 // TODO: Add remaining underlying instruction types.
 
 // An Instruction represents a non-branching LLVM IR instruction.
@@ -12,8 +14,7 @@ package ir
 //
 //    TODO
 type Instruction interface {
-	// LLVMString returns the LLVM syntax representation of the instruction.
-	LLVMString() string
+	fmt.Stringer
 	// Parent returns the parent basic block of the instruction.
 	Parent() *BasicBlock
 }

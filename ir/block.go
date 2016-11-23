@@ -47,14 +47,14 @@ func (block *BasicBlock) SetIdent(ident string) {
 	block.name = ident
 }
 
-// LLVMString returns the LLVM syntax representation of the basic block.
-func (block *BasicBlock) LLVMString() string {
+// String returns the LLVM syntax representation of the basic block.
+func (block *BasicBlock) String() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s:\n", enc.Escape(block.name))
 	for _, inst := range block.Insts() {
-		fmt.Fprintf(buf, "\t%s\n", inst.LLVMString())
+		fmt.Fprintf(buf, "\t%s\n", inst)
 	}
-	fmt.Fprintf(buf, "\t%s", block.Term().LLVMString())
+	fmt.Fprintf(buf, "\t%s", block.Term())
 	return buf.String()
 }
 

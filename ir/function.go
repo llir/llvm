@@ -45,14 +45,14 @@ func (f *Function) Ident() string {
 	return enc.Global(f.name)
 }
 
-// LLVMString returns the LLVM syntax representation of the function.
-func (f *Function) LLVMString() string {
+// String returns the LLVM syntax representation of the function.
+func (f *Function) String() string {
 	// Assign unique local IDs to unnamed basic blocks and local variables.
 	assignIDs(f)
 	// Function signature.
 	sig := &bytes.Buffer{}
 	fmt.Fprintf(sig, "%s %s(",
-		f.RetType().LLVMString(),
+		f.RetType(),
 		f.Ident())
 	params := f.Params()
 	for i, p := range params {
@@ -60,7 +60,7 @@ func (f *Function) LLVMString() string {
 			sig.WriteString(", ")
 		}
 		fmt.Fprintf(sig, "%s %s",
-			p.Type().LLVMString(),
+			p.Type(),
 			p.Ident())
 	}
 	if f.Variadic() {
@@ -75,7 +75,7 @@ func (f *Function) LLVMString() string {
 		buf := &bytes.Buffer{}
 		fmt.Fprintf(buf, "define %s {\n", sig)
 		for _, block := range blocks {
-			fmt.Fprintln(buf, block.LLVMString())
+			fmt.Fprintln(buf, block)
 		}
 		buf.WriteString("}")
 		return buf.String()

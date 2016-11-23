@@ -55,8 +55,8 @@ func (global *Global) Ident() string {
 	return enc.Global(global.name)
 }
 
-// LLVMString returns the LLVM syntax representation of the global variable.
-func (global *Global) LLVMString() string {
+// String returns the LLVM syntax representation of the global variable.
+func (global *Global) String() string {
 	imm := "global"
 	if global.Immutable() {
 		imm = "constant"
@@ -67,14 +67,14 @@ func (global *Global) LLVMString() string {
 		return fmt.Sprintf("%s = %s %s %s",
 			global.Ident(),
 			imm,
-			content.LLVMString(),
+			content,
 			init.Ident())
 	}
 	// External global variable declaration.
 	return fmt.Sprintf("%s = external %s %s",
 		global.Ident(),
 		imm,
-		content.LLVMString())
+		content)
 }
 
 // ContentType returns the content type of the global variable.
