@@ -266,6 +266,14 @@ func (b *BasicBlock) NewStore(src, dst value.Value) *InstStore {
 	return i
 }
 
+// NewGetElementPtr appends a new getelementptr instruction to the basic block
+// based on the given source address and indices.
+func (b *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
+	i := NewGetElementPtr(src, indices...)
+	b.AppendInst(i)
+	return i
+}
+
 // --- [ Conversion instructions ] ---------------------------------------------
 
 // NewTrunc appends a new trunc instruction to the basic block based on the

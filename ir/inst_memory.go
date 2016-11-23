@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/llir/llvm/ir/types"
@@ -214,4 +215,85 @@ func (i *InstStore) Dst() value.Value {
 
 // --- [ getelementptr ] -------------------------------------------------------
 
-// TODO: Add support for getelementptr.
+// InstGetElementPtr represents a getelementptr instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#getelementptr-instruction
+type InstGetElementPtr struct {
+	// Parent basic block.
+	parent *BasicBlock
+	// Identifier associated with the instruction.
+	id string
+	// Source address.
+	src value.Value
+	// Indices.
+	indices []value.Value
+	// Type of the instruction.
+	typ types.Type
+	// Source address element type.
+	elem types.Type
+}
+
+// NewGetElementPtr returns a new getelementptr instruction based on the given
+// source address and indices.
+func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
+	if t, ok := src.Type().(*types.PointerType); ok {
+		// TODO: calculate typ based on indices.
+		var typ types.Type
+		elem := t.Elem()
+		return &InstGetElementPtr{src: src, indices: indices, typ: typ, elem: elem}
+	}
+	panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
+}
+
+// Type returns the type of the instruction.
+func (i *InstGetElementPtr) Type() types.Type {
+	return i.typ
+}
+
+// Ident returns the identifier associated with the instruction.
+func (i *InstGetElementPtr) Ident() string {
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstGetElementPtr) SetIdent(id string) {
+	i.id = id
+}
+
+// LLVMString returns the LLVM syntax representation of the instruction.
+func (i *InstGetElementPtr) LLVMString() string {
+	buf := &bytes.Buffer{}
+	src := i.Src()
+	fmt.Fprintf(buf, "%s = getelementptr %s, %s %s",
+		i.Ident(),
+		i.elem.LLVMString(),
+		src.Type().LLVMString(),
+		src.Ident())
+	for _, index := range i.Indices() {
+		fmt.Fprintf(buf, ", %s %s",
+			index.Type().LLVMString(),
+			index.Ident())
+	}
+	return buf.String()
+}
+
+// Parent returns the parent basic block of the instruction.
+func (i *InstGetElementPtr) Parent() *BasicBlock {
+	return i.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (i *InstGetElementPtr) SetParent(parent *BasicBlock) {
+	i.parent = parent
+}
+
+// Src returns the source address of the getelementptr instruction.
+func (i *InstGetElementPtr) Src() value.Value {
+	return i.src
+}
+
+// Indices returns the indices of the getelementptr instruction.
+func (i *InstGetElementPtr) Indices() []value.Value {
+	return i.indices
+}
