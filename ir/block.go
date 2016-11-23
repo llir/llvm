@@ -79,11 +79,11 @@ func (block *BasicBlock) Term() Terminator {
 }
 
 // SetTerm sets the terminator of the basic block.
-func (block *BasicBlock) SetTerm(t Terminator) {
-	if t, ok := t.(parentSetter); ok {
-		t.SetParent(block)
+func (block *BasicBlock) SetTerm(term Terminator) {
+	if term, ok := term.(parentSetter); ok {
+		term.SetParent(block)
 	}
-	block.term = t
+	block.term = term
 }
 
 // AppendInst appends the given instruction to the basic block.
@@ -440,40 +440,40 @@ func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCal
 // NewRet sets the terminator of the basic block to a new ret terminator based
 // on the given return value. A nil return value indicates a "void" return.
 func (block *BasicBlock) NewRet(x value.Value) *TermRet {
-	t := NewRet(x)
-	block.SetTerm(t)
-	return t
+	term := NewRet(x)
+	block.SetTerm(term)
+	return term
 }
 
 // NewBr sets the terminator of the basic block to a new unconditional br
 // terminator based on the given target branch.
 func (block *BasicBlock) NewBr(target *BasicBlock) *TermBr {
-	t := NewBr(target)
-	block.SetTerm(t)
-	return t
+	term := NewBr(target)
+	block.SetTerm(term)
+	return term
 }
 
 // NewCondBr sets the terminator of the basic block to a new conditional br
 // terminator based on the given branching condition and conditional target
 // branches.
 func (block *BasicBlock) NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
-	t := NewCondBr(cond, targetTrue, targetFalse)
-	block.SetTerm(t)
-	return t
+	term := NewCondBr(cond, targetTrue, targetFalse)
+	block.SetTerm(term)
+	return term
 }
 
 // NewSwitch sets the terminator of the basic block to a new switch terminator
 // based on the given control variable, default target branch and switch cases.
 func (block *BasicBlock) NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
-	t := NewSwitch(x, targetDefault, cases...)
-	block.SetTerm(t)
-	return t
+	term := NewSwitch(x, targetDefault, cases...)
+	block.SetTerm(term)
+	return term
 }
 
 // NewUnreachable sets the terminator of the basic block to a new unreachable
 // terminator.
 func (block *BasicBlock) NewUnreachable() *TermUnreachable {
-	t := NewUnreachable()
-	block.SetTerm(t)
-	return t
+	term := NewUnreachable()
+	block.SetTerm(term)
+	return term
 }
