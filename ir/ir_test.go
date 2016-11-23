@@ -1,33 +1,11 @@
 package ir_test
 
 import (
-	"fmt"
-
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/value"
 )
 
-// Validates that the value.Value interface is implemented by the relevant
-// types.
-var (
-	_ value.Value = &ir.BasicBlock{}
-	_ value.Value = &ir.Function{}
-	_ value.Value = &ir.Global{}
-	// TODO: Check that all instructions producing results implement the
-	// value.Value interface.
-)
-
-// Validates that the fmt.Stringer interface is implemented by the relevant
-// types.
-var (
-	_ fmt.Stringer = &ir.BasicBlock{}
-	_ fmt.Stringer = &ir.Function{}
-	_ fmt.Stringer = &ir.Global{}
-	_ fmt.Stringer = &ir.Module{}
-)
-
-// Validates that the ir.Instruction interface is implemented by the relevant
-// types.
+// Valutate that the relevant types satisfy the ir.Instruction interface.
 var (
 	// Binary instructions
 	_ ir.Instruction = &ir.InstAdd{}
@@ -42,7 +20,6 @@ var (
 	_ ir.Instruction = &ir.InstURem{}
 	_ ir.Instruction = &ir.InstSRem{}
 	_ ir.Instruction = &ir.InstFRem{}
-
 	// Bitwise instructions
 	_ ir.Instruction = &ir.InstShl{}
 	_ ir.Instruction = &ir.InstLShr{}
@@ -50,22 +27,94 @@ var (
 	_ ir.Instruction = &ir.InstAnd{}
 	_ ir.Instruction = &ir.InstOr{}
 	_ ir.Instruction = &ir.InstXor{}
-
 	// Vector instructions
-
 	// Aggregate instructions
-
 	// Memory instructions
+	_ ir.Instruction = &ir.InstAlloca{}
 	_ ir.Instruction = &ir.InstLoad{}
-
+	_ ir.Instruction = &ir.InstStore{}
+	_ ir.Instruction = &ir.InstGetElementPtr{}
 	// Conversion instructions
-
+	_ ir.Instruction = &ir.InstTrunc{}
+	_ ir.Instruction = &ir.InstZExt{}
+	_ ir.Instruction = &ir.InstSExt{}
+	_ ir.Instruction = &ir.InstFPTrunc{}
+	_ ir.Instruction = &ir.InstFPExt{}
+	_ ir.Instruction = &ir.InstFPToUI{}
+	_ ir.Instruction = &ir.InstFPToSI{}
+	_ ir.Instruction = &ir.InstUIToFP{}
+	_ ir.Instruction = &ir.InstSIToFP{}
+	_ ir.Instruction = &ir.InstPtrToInt{}
+	_ ir.Instruction = &ir.InstIntToPtr{}
+	_ ir.Instruction = &ir.InstBitCast{}
+	_ ir.Instruction = &ir.InstAddrSpaceCast{}
 	// Other instructions
+	_ ir.Instruction = &ir.InstICmp{}
+	_ ir.Instruction = &ir.InstFCmp{}
+	_ ir.Instruction = &ir.InstPhi{}
+	_ ir.Instruction = &ir.InstSelect{}
 	_ ir.Instruction = &ir.InstCall{}
 )
 
-// Validates that the ir.Terminator interface is implemented by the relevant
-// types.
+// Valutate that the relevant types satisfy the ir.Terminator interface.
 var (
+	// Terminators
 	_ ir.Terminator = &ir.TermRet{}
+	_ ir.Terminator = &ir.TermBr{}
+	_ ir.Terminator = &ir.TermCondBr{}
+	_ ir.Terminator = &ir.TermSwitch{}
+	_ ir.Terminator = &ir.TermUnreachable{}
+)
+
+// Valutate that the relevant types satisfy the value.Value interface.
+var (
+	_ value.Value = &ir.BasicBlock{}
+	_ value.Value = &ir.Function{}
+	_ value.Value = &ir.Global{}
+	// Binary instructions
+	_ value.Value = &ir.InstAdd{}
+	_ value.Value = &ir.InstFAdd{}
+	_ value.Value = &ir.InstSub{}
+	_ value.Value = &ir.InstFSub{}
+	_ value.Value = &ir.InstMul{}
+	_ value.Value = &ir.InstFMul{}
+	_ value.Value = &ir.InstUDiv{}
+	_ value.Value = &ir.InstSDiv{}
+	_ value.Value = &ir.InstFDiv{}
+	_ value.Value = &ir.InstURem{}
+	_ value.Value = &ir.InstSRem{}
+	_ value.Value = &ir.InstFRem{}
+	// Bitwise instructions
+	_ value.Value = &ir.InstShl{}
+	_ value.Value = &ir.InstLShr{}
+	_ value.Value = &ir.InstAShr{}
+	_ value.Value = &ir.InstAnd{}
+	_ value.Value = &ir.InstOr{}
+	_ value.Value = &ir.InstXor{}
+	// Vector instructions
+	// Aggregate instructions
+	// Memory instructions
+	_ value.Value = &ir.InstAlloca{}
+	_ value.Value = &ir.InstLoad{}
+	_ value.Value = &ir.InstGetElementPtr{}
+	// Conversion instructions
+	_ value.Value = &ir.InstTrunc{}
+	_ value.Value = &ir.InstZExt{}
+	_ value.Value = &ir.InstSExt{}
+	_ value.Value = &ir.InstFPTrunc{}
+	_ value.Value = &ir.InstFPExt{}
+	_ value.Value = &ir.InstFPToUI{}
+	_ value.Value = &ir.InstFPToSI{}
+	_ value.Value = &ir.InstUIToFP{}
+	_ value.Value = &ir.InstSIToFP{}
+	_ value.Value = &ir.InstPtrToInt{}
+	_ value.Value = &ir.InstIntToPtr{}
+	_ value.Value = &ir.InstBitCast{}
+	_ value.Value = &ir.InstAddrSpaceCast{}
+	// Other instructions
+	_ value.Value = &ir.InstICmp{}
+	_ value.Value = &ir.InstFCmp{}
+	_ value.Value = &ir.InstPhi{}
+	_ value.Value = &ir.InstSelect{}
+	_ value.Value = &ir.InstCall{}
 )
