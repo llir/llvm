@@ -13,7 +13,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/mewkiz/pkg/errutil"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -169,7 +169,7 @@ func main() {
 	}
 	for _, file := range files {
 		if err := file.gen(); err != nil {
-			log.Fatal(err)
+			log.Fatalf("%+v", err)
 		}
 	}
 }
@@ -208,18 +208,18 @@ func (f *File) gen() error {
 	}
 	t.Funcs(funcs)
 	if _, err := t.ParseFiles(f.Template); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	buf := new(bytes.Buffer)
 	if err := t.Execute(buf, f); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	src, err := format.Source(buf.Bytes())
 	if err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	if err := ioutil.WriteFile(f.Path, src, 0644); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	return nil
 }
