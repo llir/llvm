@@ -19,7 +19,7 @@ type InstICmp struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Integer condition code.
 	cond IntPred
 	// Operands.
@@ -45,12 +45,12 @@ func (i *InstICmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstICmp) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstICmp) SetIdent(id string) {
-	i.id = id
+func (i *InstICmp) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -138,7 +138,7 @@ type InstFCmp struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Floating-point condition code.
 	cond FloatPred
 	// Operands.
@@ -164,12 +164,12 @@ func (i *InstFCmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFCmp) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFCmp) SetIdent(id string) {
-	i.id = id
+func (i *InstFCmp) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -269,7 +269,7 @@ type InstPHI struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Incoming values.
 	incs []*Incoming
 	// Type of the instruction.
@@ -292,12 +292,12 @@ func (i *InstPHI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstPHI) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstPHI) SetIdent(id string) {
-	i.id = id
+func (i *InstPHI) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -366,7 +366,7 @@ type InstSelect struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Selection condition.
 	cond value.Value
 	// Operands.
@@ -386,12 +386,12 @@ func (i *InstSelect) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSelect) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSelect) SetIdent(id string) {
-	i.id = id
+func (i *InstSelect) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -442,7 +442,7 @@ type InstCall struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Callee.
 	callee *Function
 	// Function arguments.
@@ -462,12 +462,12 @@ func (i *InstCall) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstCall) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstCall) SetIdent(id string) {
-	i.id = id
+func (i *InstCall) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

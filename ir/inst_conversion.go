@@ -25,7 +25,7 @@ type InstTrunc struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -44,12 +44,12 @@ func (i *InstTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstTrunc) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstTrunc) SetIdent(id string) {
-	i.id = id
+func (i *InstTrunc) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -87,7 +87,7 @@ type InstZExt struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -106,12 +106,12 @@ func (i *InstZExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstZExt) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstZExt) SetIdent(id string) {
-	i.id = id
+func (i *InstZExt) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -149,7 +149,7 @@ type InstSExt struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -168,12 +168,12 @@ func (i *InstSExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSExt) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSExt) SetIdent(id string) {
-	i.id = id
+func (i *InstSExt) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -211,7 +211,7 @@ type InstFPTrunc struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -230,12 +230,12 @@ func (i *InstFPTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFPTrunc) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPTrunc) SetIdent(id string) {
-	i.id = id
+func (i *InstFPTrunc) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -273,7 +273,7 @@ type InstFPExt struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -292,12 +292,12 @@ func (i *InstFPExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFPExt) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPExt) SetIdent(id string) {
-	i.id = id
+func (i *InstFPExt) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -335,7 +335,7 @@ type InstFPToUI struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -354,12 +354,12 @@ func (i *InstFPToUI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFPToUI) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPToUI) SetIdent(id string) {
-	i.id = id
+func (i *InstFPToUI) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -397,7 +397,7 @@ type InstFPToSI struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -416,12 +416,12 @@ func (i *InstFPToSI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFPToSI) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPToSI) SetIdent(id string) {
-	i.id = id
+func (i *InstFPToSI) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -459,7 +459,7 @@ type InstUIToFP struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -478,12 +478,12 @@ func (i *InstUIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstUIToFP) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstUIToFP) SetIdent(id string) {
-	i.id = id
+func (i *InstUIToFP) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -521,7 +521,7 @@ type InstSIToFP struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -540,12 +540,12 @@ func (i *InstSIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSIToFP) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSIToFP) SetIdent(id string) {
-	i.id = id
+func (i *InstSIToFP) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -583,7 +583,7 @@ type InstPtrToInt struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -602,12 +602,12 @@ func (i *InstPtrToInt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstPtrToInt) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstPtrToInt) SetIdent(id string) {
-	i.id = id
+func (i *InstPtrToInt) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -645,7 +645,7 @@ type InstIntToPtr struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -664,12 +664,12 @@ func (i *InstIntToPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstIntToPtr) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstIntToPtr) SetIdent(id string) {
-	i.id = id
+func (i *InstIntToPtr) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -707,7 +707,7 @@ type InstBitCast struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -726,12 +726,12 @@ func (i *InstBitCast) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstBitCast) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstBitCast) SetIdent(id string) {
-	i.id = id
+func (i *InstBitCast) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -769,7 +769,7 @@ type InstAddrSpaceCast struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -788,12 +788,12 @@ func (i *InstAddrSpaceCast) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAddrSpaceCast) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAddrSpaceCast) SetIdent(id string) {
-	i.id = id
+func (i *InstAddrSpaceCast) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

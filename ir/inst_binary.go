@@ -25,7 +25,7 @@ type InstAdd struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -42,12 +42,12 @@ func (i *InstAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAdd) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAdd) SetIdent(id string) {
-	i.id = id
+func (i *InstAdd) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -89,7 +89,7 @@ type InstFAdd struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -106,12 +106,12 @@ func (i *InstFAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFAdd) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFAdd) SetIdent(id string) {
-	i.id = id
+func (i *InstFAdd) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -153,7 +153,7 @@ type InstSub struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -170,12 +170,12 @@ func (i *InstSub) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSub) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSub) SetIdent(id string) {
-	i.id = id
+func (i *InstSub) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -217,7 +217,7 @@ type InstFSub struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -234,12 +234,12 @@ func (i *InstFSub) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFSub) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFSub) SetIdent(id string) {
-	i.id = id
+func (i *InstFSub) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -281,7 +281,7 @@ type InstMul struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -298,12 +298,12 @@ func (i *InstMul) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstMul) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstMul) SetIdent(id string) {
-	i.id = id
+func (i *InstMul) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -345,7 +345,7 @@ type InstFMul struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -362,12 +362,12 @@ func (i *InstFMul) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFMul) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFMul) SetIdent(id string) {
-	i.id = id
+func (i *InstFMul) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -409,7 +409,7 @@ type InstUDiv struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -426,12 +426,12 @@ func (i *InstUDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstUDiv) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstUDiv) SetIdent(id string) {
-	i.id = id
+func (i *InstUDiv) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -473,7 +473,7 @@ type InstSDiv struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -490,12 +490,12 @@ func (i *InstSDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSDiv) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSDiv) SetIdent(id string) {
-	i.id = id
+func (i *InstSDiv) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -537,7 +537,7 @@ type InstFDiv struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -554,12 +554,12 @@ func (i *InstFDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFDiv) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFDiv) SetIdent(id string) {
-	i.id = id
+func (i *InstFDiv) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -601,7 +601,7 @@ type InstURem struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -618,12 +618,12 @@ func (i *InstURem) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstURem) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstURem) SetIdent(id string) {
-	i.id = id
+func (i *InstURem) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -665,7 +665,7 @@ type InstSRem struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -682,12 +682,12 @@ func (i *InstSRem) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSRem) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSRem) SetIdent(id string) {
-	i.id = id
+func (i *InstSRem) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -729,7 +729,7 @@ type InstFRem struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -746,12 +746,12 @@ func (i *InstFRem) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFRem) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFRem) SetIdent(id string) {
-	i.id = id
+func (i *InstFRem) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

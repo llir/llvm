@@ -25,7 +25,7 @@ type InstShL struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -42,12 +42,12 @@ func (i *InstShL) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstShL) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstShL) SetIdent(id string) {
-	i.id = id
+func (i *InstShL) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -89,7 +89,7 @@ type InstLShR struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -106,12 +106,12 @@ func (i *InstLShR) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstLShR) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstLShR) SetIdent(id string) {
-	i.id = id
+func (i *InstLShR) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -153,7 +153,7 @@ type InstAShR struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -170,12 +170,12 @@ func (i *InstAShR) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAShR) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAShR) SetIdent(id string) {
-	i.id = id
+func (i *InstAShR) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -217,7 +217,7 @@ type InstAnd struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -234,12 +234,12 @@ func (i *InstAnd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAnd) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAnd) SetIdent(id string) {
-	i.id = id
+func (i *InstAnd) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -281,7 +281,7 @@ type InstOr struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -298,12 +298,12 @@ func (i *InstOr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstOr) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstOr) SetIdent(id string) {
-	i.id = id
+func (i *InstOr) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -345,7 +345,7 @@ type InstXor struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Operands.
 	x, y value.Value
 }
@@ -362,12 +362,12 @@ func (i *InstXor) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstXor) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstXor) SetIdent(id string) {
-	i.id = id
+func (i *InstXor) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

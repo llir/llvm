@@ -20,7 +20,7 @@ type InstAlloca struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Element type.
 	elem types.Type
 	// Type of the instruction.
@@ -42,12 +42,12 @@ func (i *InstAlloca) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAlloca) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAlloca) SetIdent(id string) {
-	i.id = id
+func (i *InstAlloca) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -103,7 +103,7 @@ type InstLoad struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Source address.
 	src value.Value
 	// Type of the instruction.
@@ -125,12 +125,12 @@ func (i *InstLoad) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstLoad) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstLoad) SetIdent(id string) {
-	i.id = id
+func (i *InstLoad) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
@@ -225,7 +225,7 @@ type InstGetElementPtr struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Source address.
 	src value.Value
 	// Element indices.
@@ -280,12 +280,12 @@ func (i *InstGetElementPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstGetElementPtr) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstGetElementPtr) SetIdent(id string) {
-	i.id = id
+func (i *InstGetElementPtr) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.

@@ -26,7 +26,7 @@ type Inst{{ .Name }} struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
-	id string
+	ident string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -45,12 +45,12 @@ func (i *Inst{{ .Name }}) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *Inst{{ .Name }}) Ident() string {
-	return enc.Local(i.id)
+	return enc.Local(i.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *Inst{{ .Name }}) SetIdent(id string) {
-	i.id = id
+func (i *Inst{{ .Name }}) SetIdent(ident string) {
+	i.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
