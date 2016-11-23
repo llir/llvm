@@ -264,7 +264,79 @@ func (cond FloatPred) LLVMString() string {
 
 // --- [ select ] --------------------------------------------------------------
 
-// TODO: Add support for select.
+// InstSelect represents a select instruction.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#select-instruction
+type InstSelect struct {
+	// Parent basic block.
+	parent *BasicBlock
+	// Identifier associated with the instruction.
+	id string
+	// Selection condition.
+	cond value.Value
+	// Operands.
+	x, y value.Value
+}
+
+// NewSelect returns a new select instruction based on the given selection
+// condition and operands.
+func NewSelect(cond, x, y value.Value) *InstSelect {
+	return &InstSelect{cond: cond, x: x, y: y}
+}
+
+// Type returns the type of the instruction.
+func (i *InstSelect) Type() types.Type {
+	return i.x.Type()
+}
+
+// Ident returns the identifier associated with the instruction.
+func (i *InstSelect) Ident() string {
+	return local(i.id)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (i *InstSelect) SetIdent(id string) {
+	i.id = id
+}
+
+// LLVMString returns the LLVM syntax representation of the instruction.
+func (i *InstSelect) LLVMString() string {
+	cond, x, y := i.Cond(), i.X(), i.Y()
+	return fmt.Sprintf("%s = select %s %s, %s %s, %s %s",
+		i.Ident(),
+		cond.Type().LLVMString(),
+		cond.Ident(),
+		x.Type().LLVMString(),
+		x.Ident(),
+		y.Type().LLVMString(),
+		y.Ident())
+}
+
+// Parent returns the parent basic block of the instruction.
+func (i *InstSelect) Parent() *BasicBlock {
+	return i.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (i *InstSelect) SetParent(parent *BasicBlock) {
+	i.parent = parent
+}
+
+// Cond returns the selection condition of the select instruction.
+func (i *InstSelect) Cond() value.Value {
+	return i.cond
+}
+
+// X returns the x operand of the select instruction.
+func (i *InstSelect) X() value.Value {
+	return i.x
+}
+
+// Y returns the y operand of the select instruction.
+func (i *InstSelect) Y() value.Value {
+	return i.y
+}
 
 // --- [ call ] ----------------------------------------------------------------
 

@@ -390,6 +390,14 @@ func (b *BasicBlock) NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	return i
 }
 
+// NewSelect appends a new select instruction to the basic block based on the
+// given selection condition and operands.
+func (b *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
+	i := NewSelect(cond, x, y)
+	b.AppendInst(i)
+	return i
+}
+
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
 func (b *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
