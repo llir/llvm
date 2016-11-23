@@ -38,43 +38,43 @@ func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 }
 
 // Type returns the type of the instruction.
-func (i *InstTrunc) Type() types.Type {
-	return i.to
+func (inst *InstTrunc) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstTrunc) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstTrunc) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstTrunc) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstTrunc) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstTrunc) LLVMString() string {
-	from := i.From()
+func (inst *InstTrunc) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = trunc %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstTrunc) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstTrunc) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstTrunc) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstTrunc) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the trunc instruction.
-func (i *InstTrunc) From() value.Value {
-	return i.from
+func (inst *InstTrunc) From() value.Value {
+	return inst.from
 }
 
 // --- [ zext ] ----------------------------------------------------------------
@@ -100,43 +100,43 @@ func NewZExt(from value.Value, to types.Type) *InstZExt {
 }
 
 // Type returns the type of the instruction.
-func (i *InstZExt) Type() types.Type {
-	return i.to
+func (inst *InstZExt) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstZExt) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstZExt) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstZExt) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstZExt) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstZExt) LLVMString() string {
-	from := i.From()
+func (inst *InstZExt) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = zext %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstZExt) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstZExt) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstZExt) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstZExt) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the zext instruction.
-func (i *InstZExt) From() value.Value {
-	return i.from
+func (inst *InstZExt) From() value.Value {
+	return inst.from
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -162,43 +162,43 @@ func NewSExt(from value.Value, to types.Type) *InstSExt {
 }
 
 // Type returns the type of the instruction.
-func (i *InstSExt) Type() types.Type {
-	return i.to
+func (inst *InstSExt) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstSExt) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstSExt) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSExt) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstSExt) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstSExt) LLVMString() string {
-	from := i.From()
+func (inst *InstSExt) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = sext %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstSExt) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstSExt) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstSExt) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstSExt) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the sext instruction.
-func (i *InstSExt) From() value.Value {
-	return i.from
+func (inst *InstSExt) From() value.Value {
+	return inst.from
 }
 
 // --- [ fptrunc ] -------------------------------------------------------------
@@ -224,43 +224,43 @@ func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFPTrunc) Type() types.Type {
-	return i.to
+func (inst *InstFPTrunc) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFPTrunc) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFPTrunc) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPTrunc) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFPTrunc) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFPTrunc) LLVMString() string {
-	from := i.From()
+func (inst *InstFPTrunc) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = fptrunc %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFPTrunc) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFPTrunc) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFPTrunc) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFPTrunc) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the fptrunc instruction.
-func (i *InstFPTrunc) From() value.Value {
-	return i.from
+func (inst *InstFPTrunc) From() value.Value {
+	return inst.from
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -286,43 +286,43 @@ func NewFPExt(from value.Value, to types.Type) *InstFPExt {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFPExt) Type() types.Type {
-	return i.to
+func (inst *InstFPExt) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFPExt) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFPExt) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPExt) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFPExt) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFPExt) LLVMString() string {
-	from := i.From()
+func (inst *InstFPExt) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = fpext %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFPExt) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFPExt) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFPExt) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFPExt) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the fpext instruction.
-func (i *InstFPExt) From() value.Value {
-	return i.from
+func (inst *InstFPExt) From() value.Value {
+	return inst.from
 }
 
 // --- [ fptoui ] --------------------------------------------------------------
@@ -348,43 +348,43 @@ func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFPToUI) Type() types.Type {
-	return i.to
+func (inst *InstFPToUI) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFPToUI) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFPToUI) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPToUI) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFPToUI) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFPToUI) LLVMString() string {
-	from := i.From()
+func (inst *InstFPToUI) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = fptoui %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFPToUI) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFPToUI) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFPToUI) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFPToUI) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the fptoui instruction.
-func (i *InstFPToUI) From() value.Value {
-	return i.from
+func (inst *InstFPToUI) From() value.Value {
+	return inst.from
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -410,43 +410,43 @@ func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFPToSI) Type() types.Type {
-	return i.to
+func (inst *InstFPToSI) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFPToSI) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFPToSI) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFPToSI) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFPToSI) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFPToSI) LLVMString() string {
-	from := i.From()
+func (inst *InstFPToSI) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = fptosi %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFPToSI) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFPToSI) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFPToSI) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFPToSI) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the fptosi instruction.
-func (i *InstFPToSI) From() value.Value {
-	return i.from
+func (inst *InstFPToSI) From() value.Value {
+	return inst.from
 }
 
 // --- [ uitofp ] --------------------------------------------------------------
@@ -472,43 +472,43 @@ func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 }
 
 // Type returns the type of the instruction.
-func (i *InstUIToFP) Type() types.Type {
-	return i.to
+func (inst *InstUIToFP) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstUIToFP) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstUIToFP) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstUIToFP) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstUIToFP) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstUIToFP) LLVMString() string {
-	from := i.From()
+func (inst *InstUIToFP) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = uitofp %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstUIToFP) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstUIToFP) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstUIToFP) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstUIToFP) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the uitofp instruction.
-func (i *InstUIToFP) From() value.Value {
-	return i.from
+func (inst *InstUIToFP) From() value.Value {
+	return inst.from
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -534,43 +534,43 @@ func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 }
 
 // Type returns the type of the instruction.
-func (i *InstSIToFP) Type() types.Type {
-	return i.to
+func (inst *InstSIToFP) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstSIToFP) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstSIToFP) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSIToFP) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstSIToFP) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstSIToFP) LLVMString() string {
-	from := i.From()
+func (inst *InstSIToFP) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = sitofp %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstSIToFP) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstSIToFP) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstSIToFP) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstSIToFP) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the sitofp instruction.
-func (i *InstSIToFP) From() value.Value {
-	return i.from
+func (inst *InstSIToFP) From() value.Value {
+	return inst.from
 }
 
 // --- [ ptrtoint ] ------------------------------------------------------------
@@ -596,43 +596,43 @@ func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 }
 
 // Type returns the type of the instruction.
-func (i *InstPtrToInt) Type() types.Type {
-	return i.to
+func (inst *InstPtrToInt) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstPtrToInt) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstPtrToInt) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstPtrToInt) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstPtrToInt) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstPtrToInt) LLVMString() string {
-	from := i.From()
+func (inst *InstPtrToInt) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = ptrtoint %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstPtrToInt) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstPtrToInt) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstPtrToInt) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstPtrToInt) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the ptrtoint instruction.
-func (i *InstPtrToInt) From() value.Value {
-	return i.from
+func (inst *InstPtrToInt) From() value.Value {
+	return inst.from
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -658,43 +658,43 @@ func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 }
 
 // Type returns the type of the instruction.
-func (i *InstIntToPtr) Type() types.Type {
-	return i.to
+func (inst *InstIntToPtr) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstIntToPtr) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstIntToPtr) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstIntToPtr) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstIntToPtr) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstIntToPtr) LLVMString() string {
-	from := i.From()
+func (inst *InstIntToPtr) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = inttoptr %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstIntToPtr) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstIntToPtr) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstIntToPtr) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstIntToPtr) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the inttoptr instruction.
-func (i *InstIntToPtr) From() value.Value {
-	return i.from
+func (inst *InstIntToPtr) From() value.Value {
+	return inst.from
 }
 
 // --- [ bitcast ] -------------------------------------------------------------
@@ -720,43 +720,43 @@ func NewBitCast(from value.Value, to types.Type) *InstBitCast {
 }
 
 // Type returns the type of the instruction.
-func (i *InstBitCast) Type() types.Type {
-	return i.to
+func (inst *InstBitCast) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstBitCast) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstBitCast) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstBitCast) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstBitCast) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstBitCast) LLVMString() string {
-	from := i.From()
+func (inst *InstBitCast) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = bitcast %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstBitCast) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstBitCast) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstBitCast) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstBitCast) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the bitcast instruction.
-func (i *InstBitCast) From() value.Value {
-	return i.from
+func (inst *InstBitCast) From() value.Value {
+	return inst.from
 }
 
 // --- [ addrspacecast ] -------------------------------------------------------
@@ -782,41 +782,41 @@ func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 }
 
 // Type returns the type of the instruction.
-func (i *InstAddrSpaceCast) Type() types.Type {
-	return i.to
+func (inst *InstAddrSpaceCast) Type() types.Type {
+	return inst.to
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstAddrSpaceCast) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstAddrSpaceCast) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAddrSpaceCast) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstAddrSpaceCast) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstAddrSpaceCast) LLVMString() string {
-	from := i.From()
+func (inst *InstAddrSpaceCast) LLVMString() string {
+	from := inst.From()
 	return fmt.Sprintf("%s = addrspacecast %s %s to %s",
-		i.Ident(),
+		inst.Ident(),
 		from.Type().LLVMString(),
 		from.Ident(),
-		i.Type().LLVMString())
+		inst.Type().LLVMString())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstAddrSpaceCast) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstAddrSpaceCast) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstAddrSpaceCast) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstAddrSpaceCast) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // From returns the value before conversion of the addrspacecast instruction.
-func (i *InstAddrSpaceCast) From() value.Value {
-	return i.from
+func (inst *InstAddrSpaceCast) From() value.Value {
+	return inst.from
 }

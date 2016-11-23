@@ -17,10 +17,3 @@ type Instruction interface {
 	// Parent returns the parent basic block of the instruction.
 	Parent() *BasicBlock
 }
-
-// parentSetter is the interface that wraps the SetParent method of
-// instructions and terminators.
-type parentSetter interface {
-	// SetParent sets the parent basic block of the instruction.
-	SetParent(b *BasicBlock)
-}

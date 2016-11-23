@@ -37,46 +37,46 @@ func New{{ .Name }}(x, y value.Value) *Inst{{ .Name }} {
 }
 
 // Type returns the type of the instruction.
-func (i *Inst{{ .Name }}) Type() types.Type {
-	return i.x.Type()
+func (inst *Inst{{ .Name }}) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *Inst{{ .Name }}) Ident() string {
-	return enc.Local(i.ident)
+func (inst *Inst{{ .Name }}) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *Inst{{ .Name }}) SetIdent(ident string) {
-	i.ident = ident
+func (inst *Inst{{ .Name }}) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *Inst{{ .Name }}) LLVMString() string {
+func (inst *Inst{{ .Name }}) LLVMString() string {
 	return fmt.Sprintf("%s = {{ lower .Name }} %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *Inst{{ .Name }}) Parent() *BasicBlock {
-	return i.parent
+func (inst *Inst{{ .Name }}) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the {{ lower .Name }} instruction.
-func (i *Inst{{ .Name }}) X() value.Value {
-	return i.x
+func (inst *Inst{{ .Name }}) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the {{ lower .Name }} instruction.
-func (i *Inst{{ .Name }}) Y() value.Value {
-	return i.y
+func (inst *Inst{{ .Name }}) Y() value.Value {
+	return inst.y
 }
 {{- end }}

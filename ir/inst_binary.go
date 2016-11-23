@@ -36,47 +36,47 @@ func NewAdd(x, y value.Value) *InstAdd {
 }
 
 // Type returns the type of the instruction.
-func (i *InstAdd) Type() types.Type {
-	return i.x.Type()
+func (inst *InstAdd) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstAdd) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstAdd) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAdd) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstAdd) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstAdd) LLVMString() string {
+func (inst *InstAdd) LLVMString() string {
 	return fmt.Sprintf("%s = add %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstAdd) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstAdd) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstAdd) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstAdd) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the add instruction.
-func (i *InstAdd) X() value.Value {
-	return i.x
+func (inst *InstAdd) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the add instruction.
-func (i *InstAdd) Y() value.Value {
-	return i.y
+func (inst *InstAdd) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -100,47 +100,47 @@ func NewFAdd(x, y value.Value) *InstFAdd {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFAdd) Type() types.Type {
-	return i.x.Type()
+func (inst *InstFAdd) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFAdd) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFAdd) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFAdd) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFAdd) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFAdd) LLVMString() string {
+func (inst *InstFAdd) LLVMString() string {
 	return fmt.Sprintf("%s = fadd %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFAdd) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFAdd) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFAdd) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFAdd) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the fadd instruction.
-func (i *InstFAdd) X() value.Value {
-	return i.x
+func (inst *InstFAdd) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the fadd instruction.
-func (i *InstFAdd) Y() value.Value {
-	return i.y
+func (inst *InstFAdd) Y() value.Value {
+	return inst.y
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -164,47 +164,47 @@ func NewSub(x, y value.Value) *InstSub {
 }
 
 // Type returns the type of the instruction.
-func (i *InstSub) Type() types.Type {
-	return i.x.Type()
+func (inst *InstSub) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstSub) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstSub) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSub) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstSub) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstSub) LLVMString() string {
+func (inst *InstSub) LLVMString() string {
 	return fmt.Sprintf("%s = sub %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstSub) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstSub) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstSub) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstSub) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the sub instruction.
-func (i *InstSub) X() value.Value {
-	return i.x
+func (inst *InstSub) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the sub instruction.
-func (i *InstSub) Y() value.Value {
-	return i.y
+func (inst *InstSub) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -228,47 +228,47 @@ func NewFSub(x, y value.Value) *InstFSub {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFSub) Type() types.Type {
-	return i.x.Type()
+func (inst *InstFSub) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFSub) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFSub) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFSub) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFSub) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFSub) LLVMString() string {
+func (inst *InstFSub) LLVMString() string {
 	return fmt.Sprintf("%s = fsub %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFSub) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFSub) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFSub) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFSub) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the fsub instruction.
-func (i *InstFSub) X() value.Value {
-	return i.x
+func (inst *InstFSub) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the fsub instruction.
-func (i *InstFSub) Y() value.Value {
-	return i.y
+func (inst *InstFSub) Y() value.Value {
+	return inst.y
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -292,47 +292,47 @@ func NewMul(x, y value.Value) *InstMul {
 }
 
 // Type returns the type of the instruction.
-func (i *InstMul) Type() types.Type {
-	return i.x.Type()
+func (inst *InstMul) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstMul) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstMul) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstMul) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstMul) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstMul) LLVMString() string {
+func (inst *InstMul) LLVMString() string {
 	return fmt.Sprintf("%s = mul %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstMul) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstMul) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstMul) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstMul) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the mul instruction.
-func (i *InstMul) X() value.Value {
-	return i.x
+func (inst *InstMul) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the mul instruction.
-func (i *InstMul) Y() value.Value {
-	return i.y
+func (inst *InstMul) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -356,47 +356,47 @@ func NewFMul(x, y value.Value) *InstFMul {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFMul) Type() types.Type {
-	return i.x.Type()
+func (inst *InstFMul) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFMul) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFMul) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFMul) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFMul) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFMul) LLVMString() string {
+func (inst *InstFMul) LLVMString() string {
 	return fmt.Sprintf("%s = fmul %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFMul) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFMul) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFMul) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFMul) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the fmul instruction.
-func (i *InstFMul) X() value.Value {
-	return i.x
+func (inst *InstFMul) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the fmul instruction.
-func (i *InstFMul) Y() value.Value {
-	return i.y
+func (inst *InstFMul) Y() value.Value {
+	return inst.y
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -420,47 +420,47 @@ func NewUDiv(x, y value.Value) *InstUDiv {
 }
 
 // Type returns the type of the instruction.
-func (i *InstUDiv) Type() types.Type {
-	return i.x.Type()
+func (inst *InstUDiv) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstUDiv) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstUDiv) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstUDiv) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstUDiv) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstUDiv) LLVMString() string {
+func (inst *InstUDiv) LLVMString() string {
 	return fmt.Sprintf("%s = udiv %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstUDiv) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstUDiv) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstUDiv) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstUDiv) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the udiv instruction.
-func (i *InstUDiv) X() value.Value {
-	return i.x
+func (inst *InstUDiv) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the udiv instruction.
-func (i *InstUDiv) Y() value.Value {
-	return i.y
+func (inst *InstUDiv) Y() value.Value {
+	return inst.y
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -484,47 +484,47 @@ func NewSDiv(x, y value.Value) *InstSDiv {
 }
 
 // Type returns the type of the instruction.
-func (i *InstSDiv) Type() types.Type {
-	return i.x.Type()
+func (inst *InstSDiv) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstSDiv) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstSDiv) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSDiv) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstSDiv) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstSDiv) LLVMString() string {
+func (inst *InstSDiv) LLVMString() string {
 	return fmt.Sprintf("%s = sdiv %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstSDiv) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstSDiv) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstSDiv) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstSDiv) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the sdiv instruction.
-func (i *InstSDiv) X() value.Value {
-	return i.x
+func (inst *InstSDiv) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the sdiv instruction.
-func (i *InstSDiv) Y() value.Value {
-	return i.y
+func (inst *InstSDiv) Y() value.Value {
+	return inst.y
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -548,47 +548,47 @@ func NewFDiv(x, y value.Value) *InstFDiv {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFDiv) Type() types.Type {
-	return i.x.Type()
+func (inst *InstFDiv) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFDiv) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFDiv) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFDiv) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFDiv) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFDiv) LLVMString() string {
+func (inst *InstFDiv) LLVMString() string {
 	return fmt.Sprintf("%s = fdiv %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFDiv) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFDiv) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFDiv) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFDiv) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the fdiv instruction.
-func (i *InstFDiv) X() value.Value {
-	return i.x
+func (inst *InstFDiv) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the fdiv instruction.
-func (i *InstFDiv) Y() value.Value {
-	return i.y
+func (inst *InstFDiv) Y() value.Value {
+	return inst.y
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -612,47 +612,47 @@ func NewURem(x, y value.Value) *InstURem {
 }
 
 // Type returns the type of the instruction.
-func (i *InstURem) Type() types.Type {
-	return i.x.Type()
+func (inst *InstURem) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstURem) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstURem) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstURem) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstURem) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstURem) LLVMString() string {
+func (inst *InstURem) LLVMString() string {
 	return fmt.Sprintf("%s = urem %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstURem) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstURem) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstURem) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstURem) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the urem instruction.
-func (i *InstURem) X() value.Value {
-	return i.x
+func (inst *InstURem) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the urem instruction.
-func (i *InstURem) Y() value.Value {
-	return i.y
+func (inst *InstURem) Y() value.Value {
+	return inst.y
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -676,47 +676,47 @@ func NewSRem(x, y value.Value) *InstSRem {
 }
 
 // Type returns the type of the instruction.
-func (i *InstSRem) Type() types.Type {
-	return i.x.Type()
+func (inst *InstSRem) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstSRem) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstSRem) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstSRem) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstSRem) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstSRem) LLVMString() string {
+func (inst *InstSRem) LLVMString() string {
 	return fmt.Sprintf("%s = srem %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstSRem) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstSRem) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstSRem) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstSRem) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the srem instruction.
-func (i *InstSRem) X() value.Value {
-	return i.x
+func (inst *InstSRem) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the srem instruction.
-func (i *InstSRem) Y() value.Value {
-	return i.y
+func (inst *InstSRem) Y() value.Value {
+	return inst.y
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -740,45 +740,45 @@ func NewFRem(x, y value.Value) *InstFRem {
 }
 
 // Type returns the type of the instruction.
-func (i *InstFRem) Type() types.Type {
-	return i.x.Type()
+func (inst *InstFRem) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstFRem) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstFRem) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstFRem) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstFRem) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstFRem) LLVMString() string {
+func (inst *InstFRem) LLVMString() string {
 	return fmt.Sprintf("%s = frem %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstFRem) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstFRem) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstFRem) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstFRem) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the frem instruction.
-func (i *InstFRem) X() value.Value {
-	return i.x
+func (inst *InstFRem) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the frem instruction.
-func (i *InstFRem) Y() value.Value {
-	return i.y
+func (inst *InstFRem) Y() value.Value {
+	return inst.y
 }

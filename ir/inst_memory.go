@@ -36,61 +36,61 @@ func NewAlloca(elem types.Type) *InstAlloca {
 }
 
 // Type returns the type of the instruction.
-func (i *InstAlloca) Type() types.Type {
-	return i.typ
+func (inst *InstAlloca) Type() types.Type {
+	return inst.typ
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstAlloca) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstAlloca) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAlloca) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstAlloca) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstAlloca) LLVMString() string {
-	if nelems, ok := i.NElems(); ok {
+func (inst *InstAlloca) LLVMString() string {
+	if nelems, ok := inst.NElems(); ok {
 		return fmt.Sprintf("%s = alloca %s, %s %s",
-			i.Ident(),
-			i.ElemType(),
+			inst.Ident(),
+			inst.ElemType(),
 			nelems.Type().LLVMString(),
 			nelems.Ident())
 	}
 	return fmt.Sprintf("%s = alloca %s",
-		i.Ident(),
-		i.ElemType())
+		inst.Ident(),
+		inst.ElemType())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstAlloca) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstAlloca) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstAlloca) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstAlloca) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // ElemType returns the element type of the alloca instruction.
-func (i *InstAlloca) ElemType() types.Type {
-	return i.elem
+func (inst *InstAlloca) ElemType() types.Type {
+	return inst.elem
 }
 
 // NElems returns the number of elements of the alloca instruction and a boolean
 // indicating if the number of elements were present.
-func (i *InstAlloca) NElems() (value.Value, bool) {
-	if i.nelems != nil {
-		return i.nelems, true
+func (inst *InstAlloca) NElems() (value.Value, bool) {
+	if inst.nelems != nil {
+		return inst.nelems, true
 	}
 	return nil, false
 }
 
 // SetNElems sets the number of elements of the alloca instruction.
-func (i *InstAlloca) SetNElems(nelems value.Value) {
-	i.nelems = nelems
+func (inst *InstAlloca) SetNElems(nelems value.Value) {
+	inst.nelems = nelems
 }
 
 // --- [ load ] ----------------------------------------------------------------
@@ -119,43 +119,43 @@ func NewLoad(src value.Value) *InstLoad {
 }
 
 // Type returns the type of the instruction.
-func (i *InstLoad) Type() types.Type {
-	return i.typ
+func (inst *InstLoad) Type() types.Type {
+	return inst.typ
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstLoad) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstLoad) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstLoad) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstLoad) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstLoad) LLVMString() string {
-	src := i.Src()
+func (inst *InstLoad) LLVMString() string {
+	src := inst.Src()
 	return fmt.Sprintf("%s = load %s, %s %s",
-		i.Ident(),
-		i.Type().LLVMString(),
+		inst.Ident(),
+		inst.Type().LLVMString(),
 		src.Type().LLVMString(),
 		src.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstLoad) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstLoad) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstLoad) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstLoad) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // Src returns the source address of the load instruction.
-func (i *InstLoad) Src() value.Value {
-	return i.src
+func (inst *InstLoad) Src() value.Value {
+	return inst.src
 }
 
 // --- [ store ] ---------------------------------------------------------------
@@ -180,8 +180,8 @@ func NewStore(src, dst value.Value) *InstStore {
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstStore) LLVMString() string {
-	src, dst := i.Src(), i.Dst()
+func (inst *InstStore) LLVMString() string {
+	src, dst := inst.Src(), inst.Dst()
 	return fmt.Sprintf("store %s %s, %s %s",
 		src.Type().LLVMString(),
 		src.Ident(),
@@ -190,23 +190,23 @@ func (i *InstStore) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstStore) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstStore) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstStore) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstStore) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // Src returns the source value of the store instruction.
-func (i *InstStore) Src() value.Value {
-	return i.src
+func (inst *InstStore) Src() value.Value {
+	return inst.src
 }
 
 // Dst returns the destination address of the store instruction.
-func (i *InstStore) Dst() value.Value {
-	return i.dst
+func (inst *InstStore) Dst() value.Value {
+	return inst.dst
 }
 
 // --- [ fence ] ---------------------------------------------------------------
@@ -274,30 +274,30 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 }
 
 // Type returns the type of the instruction.
-func (i *InstGetElementPtr) Type() types.Type {
-	return i.typ
+func (inst *InstGetElementPtr) Type() types.Type {
+	return inst.typ
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstGetElementPtr) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstGetElementPtr) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstGetElementPtr) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstGetElementPtr) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstGetElementPtr) LLVMString() string {
+func (inst *InstGetElementPtr) LLVMString() string {
 	buf := &bytes.Buffer{}
-	src := i.Src()
+	src := inst.Src()
 	fmt.Fprintf(buf, "%s = getelementptr %s, %s %s",
-		i.Ident(),
-		i.elem.LLVMString(),
+		inst.Ident(),
+		inst.elem.LLVMString(),
 		src.Type().LLVMString(),
 		src.Ident())
-	for _, index := range i.Indices() {
+	for _, index := range inst.Indices() {
 		fmt.Fprintf(buf, ", %s %s",
 			index.Type().LLVMString(),
 			index.Ident())
@@ -306,21 +306,21 @@ func (i *InstGetElementPtr) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstGetElementPtr) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstGetElementPtr) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstGetElementPtr) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstGetElementPtr) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // Src returns the source address of the getelementptr instruction.
-func (i *InstGetElementPtr) Src() value.Value {
-	return i.src
+func (inst *InstGetElementPtr) Src() value.Value {
+	return inst.src
 }
 
 // Indices returns the element indices of the getelementptr instruction.
-func (i *InstGetElementPtr) Indices() []value.Value {
-	return i.indices
+func (inst *InstGetElementPtr) Indices() []value.Value {
+	return inst.indices
 }

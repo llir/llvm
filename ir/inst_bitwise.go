@@ -36,47 +36,47 @@ func NewShL(x, y value.Value) *InstShL {
 }
 
 // Type returns the type of the instruction.
-func (i *InstShL) Type() types.Type {
-	return i.x.Type()
+func (inst *InstShL) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstShL) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstShL) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstShL) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstShL) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstShL) LLVMString() string {
+func (inst *InstShL) LLVMString() string {
 	return fmt.Sprintf("%s = shl %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstShL) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstShL) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstShL) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstShL) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the shl instruction.
-func (i *InstShL) X() value.Value {
-	return i.x
+func (inst *InstShL) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the shl instruction.
-func (i *InstShL) Y() value.Value {
-	return i.y
+func (inst *InstShL) Y() value.Value {
+	return inst.y
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -100,47 +100,47 @@ func NewLShR(x, y value.Value) *InstLShR {
 }
 
 // Type returns the type of the instruction.
-func (i *InstLShR) Type() types.Type {
-	return i.x.Type()
+func (inst *InstLShR) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstLShR) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstLShR) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstLShR) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstLShR) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstLShR) LLVMString() string {
+func (inst *InstLShR) LLVMString() string {
 	return fmt.Sprintf("%s = lshr %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstLShR) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstLShR) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstLShR) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstLShR) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the lshr instruction.
-func (i *InstLShR) X() value.Value {
-	return i.x
+func (inst *InstLShR) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the lshr instruction.
-func (i *InstLShR) Y() value.Value {
-	return i.y
+func (inst *InstLShR) Y() value.Value {
+	return inst.y
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -164,47 +164,47 @@ func NewAShR(x, y value.Value) *InstAShR {
 }
 
 // Type returns the type of the instruction.
-func (i *InstAShR) Type() types.Type {
-	return i.x.Type()
+func (inst *InstAShR) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstAShR) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstAShR) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAShR) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstAShR) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstAShR) LLVMString() string {
+func (inst *InstAShR) LLVMString() string {
 	return fmt.Sprintf("%s = ashr %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstAShR) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstAShR) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstAShR) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstAShR) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the ashr instruction.
-func (i *InstAShR) X() value.Value {
-	return i.x
+func (inst *InstAShR) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the ashr instruction.
-func (i *InstAShR) Y() value.Value {
-	return i.y
+func (inst *InstAShR) Y() value.Value {
+	return inst.y
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -228,47 +228,47 @@ func NewAnd(x, y value.Value) *InstAnd {
 }
 
 // Type returns the type of the instruction.
-func (i *InstAnd) Type() types.Type {
-	return i.x.Type()
+func (inst *InstAnd) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstAnd) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstAnd) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstAnd) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstAnd) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstAnd) LLVMString() string {
+func (inst *InstAnd) LLVMString() string {
 	return fmt.Sprintf("%s = and %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstAnd) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstAnd) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstAnd) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstAnd) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the and instruction.
-func (i *InstAnd) X() value.Value {
-	return i.x
+func (inst *InstAnd) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the and instruction.
-func (i *InstAnd) Y() value.Value {
-	return i.y
+func (inst *InstAnd) Y() value.Value {
+	return inst.y
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -292,47 +292,47 @@ func NewOr(x, y value.Value) *InstOr {
 }
 
 // Type returns the type of the instruction.
-func (i *InstOr) Type() types.Type {
-	return i.x.Type()
+func (inst *InstOr) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstOr) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstOr) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstOr) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstOr) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstOr) LLVMString() string {
+func (inst *InstOr) LLVMString() string {
 	return fmt.Sprintf("%s = or %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstOr) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstOr) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstOr) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstOr) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the or instruction.
-func (i *InstOr) X() value.Value {
-	return i.x
+func (inst *InstOr) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the or instruction.
-func (i *InstOr) Y() value.Value {
-	return i.y
+func (inst *InstOr) Y() value.Value {
+	return inst.y
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -356,45 +356,45 @@ func NewXor(x, y value.Value) *InstXor {
 }
 
 // Type returns the type of the instruction.
-func (i *InstXor) Type() types.Type {
-	return i.x.Type()
+func (inst *InstXor) Type() types.Type {
+	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (i *InstXor) Ident() string {
-	return enc.Local(i.ident)
+func (inst *InstXor) Ident() string {
+	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (i *InstXor) SetIdent(ident string) {
-	i.ident = ident
+func (inst *InstXor) SetIdent(ident string) {
+	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (i *InstXor) LLVMString() string {
+func (inst *InstXor) LLVMString() string {
 	return fmt.Sprintf("%s = xor %s %s, %s",
-		i.Ident(),
-		i.Type().LLVMString(),
-		i.x.Ident(),
-		i.y.Ident())
+		inst.Ident(),
+		inst.Type().LLVMString(),
+		inst.x.Ident(),
+		inst.y.Ident())
 }
 
 // Parent returns the parent basic block of the instruction.
-func (i *InstXor) Parent() *BasicBlock {
-	return i.parent
+func (inst *InstXor) Parent() *BasicBlock {
+	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (i *InstXor) SetParent(parent *BasicBlock) {
-	i.parent = parent
+func (inst *InstXor) SetParent(parent *BasicBlock) {
+	inst.parent = parent
 }
 
 // X returns the x operand of the xor instruction.
-func (i *InstXor) X() value.Value {
-	return i.x
+func (inst *InstXor) X() value.Value {
+	return inst.x
 }
 
 // Y returns the y operand of the xor instruction.
-func (i *InstXor) Y() value.Value {
-	return i.y
+func (inst *InstXor) Y() value.Value {
+	return inst.y
 }

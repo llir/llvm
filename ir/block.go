@@ -51,8 +51,8 @@ func (block *BasicBlock) SetIdent(ident string) {
 func (block *BasicBlock) LLVMString() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s:\n", enc.Escape(block.name))
-	for _, i := range block.Insts() {
-		fmt.Fprintf(buf, "\t%s\n", i.LLVMString())
+	for _, inst := range block.Insts() {
+		fmt.Fprintf(buf, "\t%s\n", inst.LLVMString())
 	}
 	fmt.Fprintf(buf, "\t%s", block.Term().LLVMString())
 	return buf.String()
@@ -87,11 +87,18 @@ func (block *BasicBlock) SetTerm(t Terminator) {
 }
 
 // AppendInst appends the given instruction to the basic block.
-func (block *BasicBlock) AppendInst(i Instruction) {
-	if i, ok := i.(parentSetter); ok {
-		i.SetParent(block)
+func (block *BasicBlock) AppendInst(inst Instruction) {
+	if inst, ok := inst.(parentSetter); ok {
+		inst.SetParent(block)
 	}
-	block.insts = append(block.insts, i)
+	block.insts = append(block.insts, inst)
+}
+
+// parentSetter is the interface that wraps the SetParent method of instructions
+// and terminators.
+type parentSetter interface {
+	// SetParent sets the parent basic block of the instruction.
+	SetParent(parent *BasicBlock)
 }
 
 // --- [ Binary instructions ] -------------------------------------------------
@@ -99,97 +106,97 @@ func (block *BasicBlock) AppendInst(i Instruction) {
 // NewAdd appends a new add instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewAdd(x, y value.Value) *InstAdd {
-	i := NewAdd(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewAdd(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFAdd appends a new fadd instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewFAdd(x, y value.Value) *InstFAdd {
-	i := NewFAdd(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewFAdd(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewSub appends a new sub instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewSub(x, y value.Value) *InstSub {
-	i := NewSub(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewSub(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFSub appends a new fsub instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewFSub(x, y value.Value) *InstFSub {
-	i := NewFSub(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewFSub(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewMul appends a new mul instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewMul(x, y value.Value) *InstMul {
-	i := NewMul(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewMul(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFMul appends a new fmul instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewFMul(x, y value.Value) *InstFMul {
-	i := NewFMul(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewFMul(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewUDiv appends a new udiv instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewUDiv(x, y value.Value) *InstUDiv {
-	i := NewUDiv(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewUDiv(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewSDiv appends a new sdiv instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewSDiv(x, y value.Value) *InstSDiv {
-	i := NewSDiv(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewSDiv(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFDiv appends a new fdiv instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewFDiv(x, y value.Value) *InstFDiv {
-	i := NewFDiv(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewFDiv(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewURem appends a new urem instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewURem(x, y value.Value) *InstURem {
-	i := NewURem(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewURem(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewSRem appends a new srem instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewSRem(x, y value.Value) *InstSRem {
-	i := NewSRem(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewSRem(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFRem appends a new frem instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewFRem(x, y value.Value) *InstFRem {
-	i := NewFRem(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewFRem(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // --- [ Bitwise instructions ] ------------------------------------------------
@@ -197,49 +204,49 @@ func (block *BasicBlock) NewFRem(x, y value.Value) *InstFRem {
 // NewShL appends a new shl instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewShL(x, y value.Value) *InstShL {
-	i := NewShL(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewShL(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewLShR appends a new lshr instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewLShR(x, y value.Value) *InstLShR {
-	i := NewLShR(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewLShR(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewAShR appends a new ashr instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewAShR(x, y value.Value) *InstAShR {
-	i := NewAShR(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewAShR(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewAnd appends a new and instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewAnd(x, y value.Value) *InstAnd {
-	i := NewAnd(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewAnd(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewOr appends a new or instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewOr(x, y value.Value) *InstOr {
-	i := NewOr(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewOr(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewXor appends a new xor instruction to the basic block based on the given
 // operands.
 func (block *BasicBlock) NewXor(x, y value.Value) *InstXor {
-	i := NewXor(x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewXor(x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // --- [ Vector instructions ] -------------------------------------------------
@@ -251,33 +258,33 @@ func (block *BasicBlock) NewXor(x, y value.Value) *InstXor {
 // NewAlloca appends a new alloca instruction to the basic block based on the
 // given element type.
 func (block *BasicBlock) NewAlloca(elem types.Type) *InstAlloca {
-	i := NewAlloca(elem)
-	block.AppendInst(i)
-	return i
+	inst := NewAlloca(elem)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewLoad appends a new load instruction to the basic block based on the given
 // source address.
 func (block *BasicBlock) NewLoad(src value.Value) *InstLoad {
-	i := NewLoad(src)
-	block.AppendInst(i)
-	return i
+	inst := NewLoad(src)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewStore appends a new store instruction to the basic block based on the
 // given source value and destination address.
 func (block *BasicBlock) NewStore(src, dst value.Value) *InstStore {
-	i := NewStore(src, dst)
-	block.AppendInst(i)
-	return i
+	inst := NewStore(src, dst)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewGetElementPtr appends a new getelementptr instruction to the basic block
 // based on the given source address and element indices.
 func (block *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
-	i := NewGetElementPtr(src, indices...)
-	block.AppendInst(i)
-	return i
+	inst := NewGetElementPtr(src, indices...)
+	block.AppendInst(inst)
+	return inst
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------
@@ -285,105 +292,105 @@ func (block *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Valu
 // NewTrunc appends a new trunc instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewTrunc(from value.Value, to types.Type) *InstTrunc {
-	i := NewTrunc(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewTrunc(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewZExt appends a new zext instruction to the basic block based on the given
 // source value and target type.
 func (block *BasicBlock) NewZExt(from value.Value, to types.Type) *InstZExt {
-	i := NewZExt(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewZExt(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewSExt appends a new sext instruction to the basic block based on the given
 // source value and target type.
 func (block *BasicBlock) NewSExt(from value.Value, to types.Type) *InstSExt {
-	i := NewSExt(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewSExt(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFPTrunc appends a new fptrunc instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
-	i := NewFPTrunc(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewFPTrunc(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFPExt appends a new fpext instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewFPExt(from value.Value, to types.Type) *InstFPExt {
-	i := NewFPExt(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewFPExt(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFPToUI appends a new fptoui instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
-	i := NewFPToUI(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewFPToUI(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFPToSI appends a new fptosi instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
-	i := NewFPToSI(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewFPToSI(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewUIToFP appends a new uitofp instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
-	i := NewUIToFP(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewUIToFP(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewSIToFP appends a new sitofp instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
-	i := NewSIToFP(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewSIToFP(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewPtrToInt appends a new ptrtoint instruction to the basic block based on
 // the given source value and target type.
 func (block *BasicBlock) NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
-	i := NewPtrToInt(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewPtrToInt(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewIntToPtr appends a new inttoptr instruction to the basic block based on
 // the given source value and target type.
 func (block *BasicBlock) NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
-	i := NewIntToPtr(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewIntToPtr(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewBitCast appends a new bitcast instruction to the basic block based on the
 // given source value and target type.
 func (block *BasicBlock) NewBitCast(from value.Value, to types.Type) *InstBitCast {
-	i := NewBitCast(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewBitCast(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewAddrSpaceCast appends a new addrspacecast instruction to the basic block
 // based on the given source value and target type.
 func (block *BasicBlock) NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
-	i := NewAddrSpaceCast(from, to)
-	block.AppendInst(i)
-	return i
+	inst := NewAddrSpaceCast(from, to)
+	block.AppendInst(inst)
+	return inst
 }
 
 // --- [ Other instructions ] --------------------------------------------------
@@ -391,41 +398,41 @@ func (block *BasicBlock) NewAddrSpaceCast(from value.Value, to types.Type) *Inst
 // NewICmp appends a new icmp instruction to the basic block based on the given
 // integer condition code and operands.
 func (block *BasicBlock) NewICmp(cond IntPred, x, y value.Value) *InstICmp {
-	i := NewICmp(cond, x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewICmp(cond, x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewFCmp appends a new fcmp instruction to the basic block based on the given
 // floating-point condition code and operands.
 func (block *BasicBlock) NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
-	i := NewFCmp(cond, x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewFCmp(cond, x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewPHI appends a new phi instruction to the basic block based on the given
 // incoming values.
 func (block *BasicBlock) NewPHI(incs ...*Incoming) *InstPHI {
-	i := NewPHI(incs...)
-	block.AppendInst(i)
-	return i
+	inst := NewPHI(incs...)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewSelect appends a new select instruction to the basic block based on the
 // given selection condition and operands.
 func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
-	i := NewSelect(cond, x, y)
-	block.AppendInst(i)
-	return i
+	inst := NewSelect(cond, x, y)
+	block.AppendInst(inst)
+	return inst
 }
 
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
 func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
-	i := NewCall(callee, args...)
-	block.AppendInst(i)
-	return i
+	inst := NewCall(callee, args...)
+	block.AppendInst(inst)
+	return inst
 }
 
 // --- [ Terminators ] ---------------------------------------------------------
