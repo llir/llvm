@@ -49,9 +49,9 @@ var (
 	_ ir.Instruction = &ir.InstFRem{}
 
 	// Bitwise instructions
-	_ ir.Instruction = &ir.InstShL{}
-	_ ir.Instruction = &ir.InstLShR{}
-	_ ir.Instruction = &ir.InstAShR{}
+	_ ir.Instruction = &ir.InstShl{}
+	_ ir.Instruction = &ir.InstLShr{}
+	_ ir.Instruction = &ir.InstAShr{}
 	_ ir.Instruction = &ir.InstAnd{}
 	_ ir.Instruction = &ir.InstOr{}
 	_ ir.Instruction = &ir.InstXor{}
