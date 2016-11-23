@@ -17,7 +17,7 @@ import (
 type BasicBlock struct {
 	// Parent function of the basic block.
 	parent *Function
-	// Label name of the basic block; or empty if anonymous basic block.
+	// Label name of the basic block; or empty if unnamed basic block.
 	name string
 	// Non-branching instructions of the basic block.
 	insts []Instruction
@@ -26,7 +26,7 @@ type BasicBlock struct {
 }
 
 // NewBlock returns a new basic block based on the given label name. An empty
-// label name indicates an anonymous basic block.
+// label name indicates an unnamed basic block.
 func NewBlock(name string) *BasicBlock {
 	return &BasicBlock{name: name}
 }
@@ -39,6 +39,11 @@ func (b *BasicBlock) Type() types.Type {
 // Ident returns the identifier associated with the basic block.
 func (b *BasicBlock) Ident() string {
 	return local(b.name)
+}
+
+// SetIdent sets the identifier associated with the basic block.
+func (b *BasicBlock) SetIdent(ident string) {
+	b.name = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the basic block.

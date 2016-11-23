@@ -160,7 +160,7 @@ func NewPointer(elem Type) *PointerType {
 
 // LLVMString returns the LLVM syntax representation of the type.
 func (t *PointerType) LLVMString() string {
-	return fmt.Sprintf("*%s", t.elem.LLVMString())
+	return fmt.Sprintf("%s*", t.elem.LLVMString())
 }
 
 // Equal reports whether t and u are of equal type.

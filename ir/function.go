@@ -3,8 +3,11 @@ package ir
 import (
 	"bytes"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // A Function represents an LLVM IR function definition or external function
@@ -43,6 +46,8 @@ func (f *Function) Ident() string {
 
 // LLVMString returns the LLVM syntax representation of the function.
 func (f *Function) LLVMString() string {
+	// Assign unique local IDs to unnamed basic blocks and local variables.
+	assignIDs(f)
 	// Function signature.
 	sig := &bytes.Buffer{}
 	fmt.Fprintf(sig, "%s %s(",
@@ -131,9 +136,67 @@ func (f *Function) NewParam(name string, typ types.Type) *types.Param {
 }
 
 // NewBlock appends a new basic block to the function based on the given label
-// name. An empty label name indicates an anonymous basic block.
+// name. An empty label name indicates an unnamed basic block.
 func (f *Function) NewBlock(name string) *BasicBlock {
 	b := NewBlock(name)
 	f.AppendBlock(b)
 	return b
+}
+
+// assignIDs assigns unique local IDs to unnamed basic blocks and local
+// variables of the function.
+func assignIDs(f *Function) {
+	// identifiable represents a basic block or local variable.
+	type identifiable interface {
+		value.Value
+		// SetIdent sets the identifier associated with the value.
+		SetIdent(ident string)
+	}
+	id := 0
+	setName := func(n identifiable) {
+		got := n.Ident()
+		switch {
+		case isUnnamed(got):
+			n.SetIdent(strconv.Itoa(id))
+			id++
+		case isLocalID(got):
+			want := local(strconv.Itoa(id))
+			if got != want {
+				panic(fmt.Sprintf("invalid local ID; expected %s, got %s", want, got))
+			}
+			id++
+		}
+	}
+	for _, block := range f.blocks {
+		setName(block)
+		for _, inst := range block.insts {
+			n, ok := inst.(identifiable)
+			if !ok {
+				continue
+			}
+			if n.Type().Equal(types.Void) {
+				continue
+			}
+			setName(n)
+		}
+	}
+}
+
+// isUnnamed reports whether the given identifier is unnamed.
+func isUnnamed(ident string) bool {
+	return len(ident) == 0 || ident == "%" || ident == "@"
+}
+
+// isLocalID reports whether the given identifier is a local ID (e.g. "%42").
+func isLocalID(ident string) bool {
+	if !strings.HasPrefix(ident, "%") {
+		return false
+	}
+	ident = ident[1:]
+	for _, r := range ident {
+		if strings.IndexRune("0123456789", r) == -1 {
+			return false
+		}
+	}
+	return len(ident) > 0
 }
