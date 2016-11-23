@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -226,7 +227,7 @@ type InstGetElementPtr struct {
 	id string
 	// Source address.
 	src value.Value
-	// Indices.
+	// Element indices.
 	indices []value.Value
 	// Type of the instruction.
 	typ types.Type
@@ -235,15 +236,40 @@ type InstGetElementPtr struct {
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
-// source address and indices.
+// source address and element indices.
 func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
-	if t, ok := src.Type().(*types.PointerType); ok {
-		// TODO: calculate typ based on indices.
-		var typ types.Type
-		elem := t.Elem()
-		return &InstGetElementPtr{src: src, indices: indices, typ: typ, elem: elem}
+	srcType, ok := src.Type().(*types.PointerType)
+	if !ok {
+		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
-	panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
+	elem := srcType.Elem()
+	e := elem
+	for i, index := range indices {
+		if i == 0 {
+			// Ignore checking the 0th index as it simply follows the pointer of
+			// src.
+			//
+			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+			continue
+		}
+		switch t := e.(type) {
+		case *types.PointerType:
+			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+			panic("unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep")
+		case *types.ArrayType:
+			e = t.Elem()
+		case *types.StructType:
+			idx, ok := index.(*constant.Int)
+			if !ok {
+				panic(fmt.Sprintf("invalid index type for structure element; expected *constant.Int, got %T", index))
+			}
+			e = t.Fields()[idx.X()]
+		default:
+			panic(fmt.Sprintf("support for indexing element type %T not yet implemented", e))
+		}
+	}
+	typ := types.NewPointer(e)
+	return &InstGetElementPtr{src: src, indices: indices, typ: typ, elem: elem}
 }
 
 // Type returns the type of the instruction.
@@ -293,7 +319,7 @@ func (i *InstGetElementPtr) Src() value.Value {
 	return i.src
 }
 
-// Indices returns the indices of the getelementptr instruction.
+// Indices returns the element indices of the getelementptr instruction.
 func (i *InstGetElementPtr) Indices() []value.Value {
 	return i.indices
 }

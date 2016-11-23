@@ -45,21 +45,26 @@ func NewInt(x int64, typ types.Type) *Int {
 }
 
 // Type returns the type of the integer constant.
-func (i *Int) Type() types.Type {
-	return i.typ
+func (c *Int) Type() types.Type {
+	return c.typ
 }
 
 // Ident returns the value of the integer constant.
-func (i *Int) Ident() string {
-	if i.typ.Bits() == 1 {
-		switch i.x {
+func (c *Int) Ident() string {
+	if c.typ.Bits() == 1 {
+		switch c.x {
 		case 0:
 			return "false"
 		case 1:
 			return "true"
 		default:
-			panic(fmt.Sprintf("invalid integer constant value; expected 0 or 1, got %d", i.x))
+			panic(fmt.Sprintf("invalid integer constant value; expected 0 or 1, got %d", c.x))
 		}
 	}
-	return fmt.Sprintf("%d", i.x)
+	return fmt.Sprintf("%d", c.x)
+}
+
+// X returns the value of the integer constant.
+func (c *Int) X() int64 {
+	return c.x
 }

@@ -267,7 +267,7 @@ func (b *BasicBlock) NewStore(src, dst value.Value) *InstStore {
 }
 
 // NewGetElementPtr appends a new getelementptr instruction to the basic block
-// based on the given source address and indices.
+// based on the given source address and element indices.
 func (b *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
 	i := NewGetElementPtr(src, indices...)
 	b.AppendInst(i)

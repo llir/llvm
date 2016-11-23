@@ -231,6 +231,91 @@ func (t *VectorType) Len() int {
 	return t.len
 }
 
+// ArrayType represents an array type.
+type ArrayType struct {
+	elem Type
+	len  int
+}
+
+// NewArray returns a new array type based on the given element type and array
+// length.
+func NewArray(elem Type, len int) *ArrayType {
+	return &ArrayType{elem: elem, len: len}
+}
+
+// LLVMString returns the LLVM syntax representation of the type.
+func (t *ArrayType) LLVMString() string {
+	return fmt.Sprintf("[%d x %s]",
+		t.Len(),
+		t.Elem().LLVMString())
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *ArrayType) Equal(u Type) bool {
+	if u, ok := u.(*ArrayType); ok {
+		if !t.elem.Equal(u.elem) {
+			return false
+		}
+		return t.len == u.len
+	}
+	return false
+}
+
+// Elem returns the element type of the array type.
+func (t *ArrayType) Elem() Type {
+	return t.elem
+}
+
+// Len returns the length of the array type.
+func (t *ArrayType) Len() int {
+	return t.len
+}
+
+// StructType represents a struct type.
+type StructType struct {
+	fields []Type
+}
+
+// NewStruct returns a new struct type based on the given struct fields.
+func NewStruct(fields ...Type) *StructType {
+	return &StructType{fields: fields}
+}
+
+// LLVMString returns the LLVM syntax representation of the type.
+func (t *StructType) LLVMString() string {
+	buf := &bytes.Buffer{}
+	buf.WriteString("{")
+	for i, field := range t.fields {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(field.LLVMString())
+	}
+	buf.WriteString("}")
+	return buf.String()
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *StructType) Equal(u Type) bool {
+	if u, ok := u.(*StructType); ok {
+		if len(t.fields) != len(u.fields) {
+			return false
+		}
+		for i := range t.fields {
+			if !t.fields[i].Equal(u.fields[i]) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+// Fields returns the struct fields of the struct type.
+func (t *StructType) Fields() []Type {
+	return t.fields
+}
+
 var (
 	Label = &LabelType{}
 	Void  = &VoidType{}
