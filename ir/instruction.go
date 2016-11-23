@@ -1,3 +1,8 @@
+// === [ Instructions ] ========================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#instruction-reference
+
 package ir
 
 import "fmt"

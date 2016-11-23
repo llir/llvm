@@ -1,3 +1,8 @@
+// === [ Global variables ] ====================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#global-variables
+
 package ir
 
 import (

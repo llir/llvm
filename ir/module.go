@@ -1,5 +1,10 @@
 //go:generate go run gen.go
 
+// === [ Modules ] =============================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#module-structure
+
 // Package ir declares the types used to represent LLVM IR modules.
 package ir
 

@@ -1,3 +1,8 @@
+// === [ Functions ] ===========================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#functions
+
 package ir
 
 import (
