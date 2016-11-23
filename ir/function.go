@@ -60,13 +60,13 @@ func (f *Function) String() string {
 		f.RetType(),
 		f.Ident())
 	params := f.Params()
-	for i, p := range params {
+	for i, param := range params {
 		if i != 0 {
 			sig.WriteString(", ")
 		}
 		fmt.Fprintf(sig, "%s %s",
-			p.Type(),
-			p.Ident())
+			param.Type(),
+			param.Ident())
 	}
 	if f.Variadic() {
 		if len(params) > 0 {
@@ -125,8 +125,8 @@ func (f *Function) Blocks() []*BasicBlock {
 }
 
 // AppendParam appends the given function parameter to the function.
-func (f *Function) AppendParam(p *types.Param) {
-	f.typ.AppendParam(p)
+func (f *Function) AppendParam(param *types.Param) {
+	f.typ.AppendParam(param)
 }
 
 // AppendBlock appends the given basic block to the function.

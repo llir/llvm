@@ -34,11 +34,11 @@ func NewFunc(ret Type, params ...*Param) *FuncType {
 func (t *FuncType) String() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s (", t.ret)
-	for i, p := range t.params {
+	for i, param := range t.params {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(p.Type().String())
+		buf.WriteString(param.Type().String())
 	}
 	if t.Variadic() {
 		if len(t.params) > 0 {
@@ -90,16 +90,16 @@ func (t *FuncType) SetVariadic(variadic bool) {
 }
 
 // AppendParam appends the given function parameter to the function type.
-func (t *FuncType) AppendParam(p *Param) {
-	t.params = append(t.params, p)
+func (t *FuncType) AppendParam(param *Param) {
+	t.params = append(t.params, param)
 }
 
 // NewParam appends a new function parameter to the function type based on the
 // given parameter name and type.
 func (t *FuncType) NewParam(name string, typ Type) *Param {
-	p := NewParam(name, typ)
-	t.AppendParam(p)
-	return p
+	param := NewParam(name, typ)
+	t.AppendParam(param)
+	return param
 }
 
 // LabelType represents a label type, which is used for basic block values.

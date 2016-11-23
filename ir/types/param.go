@@ -20,11 +20,11 @@ func NewParam(name string, typ Type) *Param {
 }
 
 // Type returns the type of the function parameter.
-func (p *Param) Type() Type {
-	return p.typ
+func (param *Param) Type() Type {
+	return param.typ
 }
 
 // Ident returns the identifier associated with the function parameter.
-func (p *Param) Ident() string {
-	return enc.Local(p.name)
+func (param *Param) Ident() string {
+	return enc.Local(param.name)
 }
