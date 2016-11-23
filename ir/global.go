@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -51,7 +52,7 @@ func (g *Global) Type() types.Type {
 
 // Ident returns the identifier associated with the global variable.
 func (g *Global) Ident() string {
-	return global(g.name)
+	return enc.Global(g.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the global variable.

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -44,7 +45,7 @@ func (i *InstICmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstICmp) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -163,7 +164,7 @@ func (i *InstFCmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFCmp) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -291,7 +292,7 @@ func (i *InstPHI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstPHI) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -385,7 +386,7 @@ func (i *InstSelect) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSelect) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -461,7 +462,7 @@ func (i *InstCall) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstCall) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.

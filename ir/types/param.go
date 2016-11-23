@@ -1,5 +1,7 @@
 package types
 
+import "github.com/llir/llvm/ir/internal/enc"
+
 // A Param represents an LLVM IR function parameter.
 //
 // Function parameters may be referenced from instructions (e.g. add), and are
@@ -24,5 +26,5 @@ func (p *Param) Type() Type {
 
 // Ident returns the identifier associated with the function parameter.
 func (p *Param) Ident() string {
-	return local(p.name)
+	return enc.Local(p.name)
 }

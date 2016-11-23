@@ -10,6 +10,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -44,7 +45,7 @@ func (i *Inst{{ .Name }}) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *Inst{{ .Name }}) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.

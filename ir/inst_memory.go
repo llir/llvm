@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -41,7 +42,7 @@ func (i *InstAlloca) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAlloca) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -124,7 +125,7 @@ func (i *InstLoad) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstLoad) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -279,7 +280,7 @@ func (i *InstGetElementPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstGetElementPtr) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.

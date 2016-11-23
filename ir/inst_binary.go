@@ -10,6 +10,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -41,7 +42,7 @@ func (i *InstAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstAdd) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -105,7 +106,7 @@ func (i *InstFAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFAdd) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -169,7 +170,7 @@ func (i *InstSub) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSub) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -233,7 +234,7 @@ func (i *InstFSub) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFSub) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -297,7 +298,7 @@ func (i *InstMul) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstMul) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -361,7 +362,7 @@ func (i *InstFMul) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFMul) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -425,7 +426,7 @@ func (i *InstUDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstUDiv) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -489,7 +490,7 @@ func (i *InstSDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSDiv) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -553,7 +554,7 @@ func (i *InstFDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFDiv) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -617,7 +618,7 @@ func (i *InstURem) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstURem) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -681,7 +682,7 @@ func (i *InstSRem) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstSRem) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.
@@ -745,7 +746,7 @@ func (i *InstFRem) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (i *InstFRem) Ident() string {
-	return local(i.id)
+	return enc.Local(i.id)
 }
 
 // SetIdent sets the identifier associated with the instruction.

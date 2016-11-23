@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -38,7 +39,7 @@ func (b *BasicBlock) Type() types.Type {
 
 // Ident returns the identifier associated with the basic block.
 func (b *BasicBlock) Ident() string {
-	return local(b.name)
+	return enc.Local(b.name)
 }
 
 // SetIdent sets the identifier associated with the basic block.
@@ -49,7 +50,7 @@ func (b *BasicBlock) SetIdent(ident string) {
 // LLVMString returns the LLVM syntax representation of the basic block.
 func (b *BasicBlock) LLVMString() string {
 	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s:\n", enc(b.name))
+	fmt.Fprintf(buf, "%s:\n", enc.Escape(b.name))
 	for _, i := range b.Insts() {
 		fmt.Fprintf(buf, "\t%s\n", i.LLVMString())
 	}

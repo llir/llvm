@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/llir/llvm/ir/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -41,7 +42,7 @@ func (f *Function) Type() types.Type {
 
 // Ident returns the identifier associated with the function.
 func (f *Function) Ident() string {
-	return global(f.name)
+	return enc.Global(f.name)
 }
 
 // LLVMString returns the LLVM syntax representation of the function.
@@ -160,7 +161,7 @@ func assignIDs(f *Function) {
 			n.SetIdent(strconv.Itoa(id))
 			id++
 		case isLocalID(got):
-			want := local(strconv.Itoa(id))
+			want := enc.Local(strconv.Itoa(id))
 			if got != want {
 				panic(fmt.Sprintf("invalid local ID; expected %s, got %s", want, got))
 			}
