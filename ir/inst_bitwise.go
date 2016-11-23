@@ -17,11 +17,11 @@ import (
 
 // --- [ shl ] -----------------------------------------------------------------
 
-// InstShL represents a shift left instruction.
+// InstShl represents a shift left instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#shl-instruction
-type InstShL struct {
+type InstShl struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
@@ -30,28 +30,28 @@ type InstShL struct {
 	x, y value.Value
 }
 
-// NewShL returns a new shl instruction based on the given operands.
-func NewShL(x, y value.Value) *InstShL {
-	return &InstShL{x: x, y: y}
+// NewShl returns a new shl instruction based on the given operands.
+func NewShl(x, y value.Value) *InstShl {
+	return &InstShl{x: x, y: y}
 }
 
 // Type returns the type of the instruction.
-func (inst *InstShL) Type() types.Type {
+func (inst *InstShl) Type() types.Type {
 	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (inst *InstShL) Ident() string {
+func (inst *InstShl) Ident() string {
 	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (inst *InstShL) SetIdent(ident string) {
+func (inst *InstShl) SetIdent(ident string) {
 	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstShL) LLVMString() string {
+func (inst *InstShl) LLVMString() string {
 	return fmt.Sprintf("%s = shl %s %s, %s",
 		inst.Ident(),
 		inst.Type().LLVMString(),
@@ -60,32 +60,32 @@ func (inst *InstShL) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (inst *InstShL) Parent() *BasicBlock {
+func (inst *InstShl) Parent() *BasicBlock {
 	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (inst *InstShL) SetParent(parent *BasicBlock) {
+func (inst *InstShl) SetParent(parent *BasicBlock) {
 	inst.parent = parent
 }
 
 // X returns the x operand of the shl instruction.
-func (inst *InstShL) X() value.Value {
+func (inst *InstShl) X() value.Value {
 	return inst.x
 }
 
 // Y returns the y operand of the shl instruction.
-func (inst *InstShL) Y() value.Value {
+func (inst *InstShl) Y() value.Value {
 	return inst.y
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
 
-// InstLShR represents a logical shift right instruction.
+// InstLShr represents a logical shift right instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#lshr-instruction
-type InstLShR struct {
+type InstLShr struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
@@ -94,28 +94,28 @@ type InstLShR struct {
 	x, y value.Value
 }
 
-// NewLShR returns a new lshr instruction based on the given operands.
-func NewLShR(x, y value.Value) *InstLShR {
-	return &InstLShR{x: x, y: y}
+// NewLShr returns a new lshr instruction based on the given operands.
+func NewLShr(x, y value.Value) *InstLShr {
+	return &InstLShr{x: x, y: y}
 }
 
 // Type returns the type of the instruction.
-func (inst *InstLShR) Type() types.Type {
+func (inst *InstLShr) Type() types.Type {
 	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (inst *InstLShR) Ident() string {
+func (inst *InstLShr) Ident() string {
 	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (inst *InstLShR) SetIdent(ident string) {
+func (inst *InstLShr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstLShR) LLVMString() string {
+func (inst *InstLShr) LLVMString() string {
 	return fmt.Sprintf("%s = lshr %s %s, %s",
 		inst.Ident(),
 		inst.Type().LLVMString(),
@@ -124,32 +124,32 @@ func (inst *InstLShR) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (inst *InstLShR) Parent() *BasicBlock {
+func (inst *InstLShr) Parent() *BasicBlock {
 	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (inst *InstLShR) SetParent(parent *BasicBlock) {
+func (inst *InstLShr) SetParent(parent *BasicBlock) {
 	inst.parent = parent
 }
 
 // X returns the x operand of the lshr instruction.
-func (inst *InstLShR) X() value.Value {
+func (inst *InstLShr) X() value.Value {
 	return inst.x
 }
 
 // Y returns the y operand of the lshr instruction.
-func (inst *InstLShR) Y() value.Value {
+func (inst *InstLShr) Y() value.Value {
 	return inst.y
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
 
-// InstAShR represents an arithmetic shift right instruction.
+// InstAShr represents an arithmetic shift right instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#ashr-instruction
-type InstAShR struct {
+type InstAShr struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
@@ -158,28 +158,28 @@ type InstAShR struct {
 	x, y value.Value
 }
 
-// NewAShR returns a new ashr instruction based on the given operands.
-func NewAShR(x, y value.Value) *InstAShR {
-	return &InstAShR{x: x, y: y}
+// NewAShr returns a new ashr instruction based on the given operands.
+func NewAShr(x, y value.Value) *InstAShr {
+	return &InstAShr{x: x, y: y}
 }
 
 // Type returns the type of the instruction.
-func (inst *InstAShR) Type() types.Type {
+func (inst *InstAShr) Type() types.Type {
 	return inst.x.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
-func (inst *InstAShR) Ident() string {
+func (inst *InstAShr) Ident() string {
 	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (inst *InstAShR) SetIdent(ident string) {
+func (inst *InstAShr) SetIdent(ident string) {
 	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstAShR) LLVMString() string {
+func (inst *InstAShr) LLVMString() string {
 	return fmt.Sprintf("%s = ashr %s %s, %s",
 		inst.Ident(),
 		inst.Type().LLVMString(),
@@ -188,22 +188,22 @@ func (inst *InstAShR) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (inst *InstAShR) Parent() *BasicBlock {
+func (inst *InstAShr) Parent() *BasicBlock {
 	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (inst *InstAShR) SetParent(parent *BasicBlock) {
+func (inst *InstAShr) SetParent(parent *BasicBlock) {
 	inst.parent = parent
 }
 
 // X returns the x operand of the ashr instruction.
-func (inst *InstAShR) X() value.Value {
+func (inst *InstAShr) X() value.Value {
 	return inst.x
 }
 
 // Y returns the y operand of the ashr instruction.
-func (inst *InstAShR) Y() value.Value {
+func (inst *InstAShr) Y() value.Value {
 	return inst.y
 }
 

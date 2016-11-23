@@ -201,26 +201,26 @@ func (block *BasicBlock) NewFRem(x, y value.Value) *InstFRem {
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
-// NewShL appends a new shl instruction to the basic block based on the given
+// NewShl appends a new shl instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewShL(x, y value.Value) *InstShL {
-	inst := NewShL(x, y)
+func (block *BasicBlock) NewShl(x, y value.Value) *InstShl {
+	inst := NewShl(x, y)
 	block.AppendInst(inst)
 	return inst
 }
 
-// NewLShR appends a new lshr instruction to the basic block based on the given
+// NewLShr appends a new lshr instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewLShR(x, y value.Value) *InstLShR {
-	inst := NewLShR(x, y)
+func (block *BasicBlock) NewLShr(x, y value.Value) *InstLShr {
+	inst := NewLShr(x, y)
 	block.AppendInst(inst)
 	return inst
 }
 
-// NewAShR appends a new ashr instruction to the basic block based on the given
+// NewAShr appends a new ashr instruction to the basic block based on the given
 // operands.
-func (block *BasicBlock) NewAShR(x, y value.Value) *InstAShR {
-	inst := NewAShR(x, y)
+func (block *BasicBlock) NewAShr(x, y value.Value) *InstAShr {
+	inst := NewAShr(x, y)
 	block.AppendInst(inst)
 	return inst
 }
@@ -411,10 +411,10 @@ func (block *BasicBlock) NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	return inst
 }
 
-// NewPHI appends a new phi instruction to the basic block based on the given
+// NewPhi appends a new phi instruction to the basic block based on the given
 // incoming values.
-func (block *BasicBlock) NewPHI(incs ...*Incoming) *InstPHI {
-	inst := NewPHI(incs...)
+func (block *BasicBlock) NewPhi(incs ...*Incoming) *InstPhi {
+	inst := NewPhi(incs...)
 	block.AppendInst(inst)
 	return inst
 }

@@ -95,32 +95,32 @@ type IntPred int
 
 // Integer condition codes.
 const (
-	IntEq  IntPred = iota + 1 // eq: equal
-	IntNe                     // ne: not equal
-	IntUgt                    // ugt: unsigned greater than
-	IntUge                    // uge: unsigned greater than or equal
-	IntUlt                    // ult: unsigned less than
-	IntUle                    // ule: unsigned less than or equal
-	IntSgt                    // sgt: signed greater than
-	IntSge                    // sge: signed greater than or equal
-	IntSlt                    // slt: signed less than
-	IntSle                    // sle: signed less than or equal
+	IntEQ  IntPred = iota + 1 // eq: equal
+	IntNE                     // ne: not equal
+	IntUGT                    // ugt: unsigned greater than
+	IntUGE                    // uge: unsigned greater than or equal
+	IntULT                    // ult: unsigned less than
+	IntULE                    // ule: unsigned less than or equal
+	IntSGT                    // sgt: signed greater than
+	IntSGE                    // sge: signed greater than or equal
+	IntSLT                    // slt: signed less than
+	IntSLE                    // sle: signed less than or equal
 )
 
 // LLVMString returns the LLVM syntax representation of the integer condition
 // code.
 func (cond IntPred) LLVMString() string {
 	m := map[IntPred]string{
-		IntEq:  "eq",
-		IntNe:  "ne",
-		IntUgt: "ugt",
-		IntUge: "uge",
-		IntUlt: "ult",
-		IntUle: "ule",
-		IntSgt: "sgt",
-		IntSge: "sge",
-		IntSlt: "slt",
-		IntSle: "sle",
+		IntEQ:  "eq",
+		IntNE:  "ne",
+		IntUGT: "ugt",
+		IntUGE: "uge",
+		IntULT: "ult",
+		IntULE: "ule",
+		IntSGT: "sgt",
+		IntSGE: "sge",
+		IntSLT: "slt",
+		IntSLE: "sle",
 	}
 	if s, ok := m[cond]; ok {
 		return s
@@ -215,20 +215,20 @@ type FloatPred int
 // Floating-point condition codes.
 const (
 	FloatFalse FloatPred = iota + 1 // false: no comparison, always returns false
-	FloatOeq                        // oeq: ordered and equal
-	FloatOgt                        // ogt: ordered and greater than
-	FloatOge                        // oge: ordered and greater than or equal
-	FloatOlt                        // olt: ordered and less than
-	FloatOle                        // ole: ordered and less than or equal
-	FloatOne                        // one: ordered and not equal
-	FloatOrd                        // ord: ordered (no nans)
-	FloatUeq                        // ueq: unordered or equal
-	FloatUgt                        // ugt: unordered or greater than
-	FloatUge                        // uge: unordered or greater than or equal
-	FloatUlt                        // ult: unordered or less than
-	FloatUle                        // ule: unordered or less than or equal
-	FloatUne                        // une: unordered or not equal
-	FloatUno                        // uno: unordered (either nans)
+	FloatOEQ                        // oeq: ordered and equal
+	FloatOGT                        // ogt: ordered and greater than
+	FloatOGE                        // oge: ordered and greater than or equal
+	FloatOLT                        // olt: ordered and less than
+	FloatOLE                        // ole: ordered and less than or equal
+	FloatONE                        // one: ordered and not equal
+	FloatORD                        // ord: ordered (no nans)
+	FloatUEQ                        // ueq: unordered or equal
+	FloatUGT                        // ugt: unordered or greater than
+	FloatUGE                        // uge: unordered or greater than or equal
+	FloatULT                        // ult: unordered or less than
+	FloatULE                        // ule: unordered or less than or equal
+	FloatUNE                        // une: unordered or not equal
+	FloatUNO                        // uno: unordered (either nans)
 	FloatTrue                       // true: no comparison, always returns true
 )
 
@@ -237,20 +237,20 @@ const (
 func (cond FloatPred) LLVMString() string {
 	m := map[FloatPred]string{
 		FloatFalse: "false",
-		FloatOeq:   "oeq",
-		FloatOgt:   "ogt",
-		FloatOge:   "oge",
-		FloatOlt:   "olt",
-		FloatOle:   "ole",
-		FloatOne:   "one",
-		FloatOrd:   "ord",
-		FloatUeq:   "ueq",
-		FloatUgt:   "ugt",
-		FloatUge:   "uge",
-		FloatUlt:   "ult",
-		FloatUle:   "ule",
-		FloatUne:   "une",
-		FloatUno:   "uno",
+		FloatOEQ:   "oeq",
+		FloatOGT:   "ogt",
+		FloatOGE:   "oge",
+		FloatOLT:   "olt",
+		FloatOLE:   "ole",
+		FloatONE:   "one",
+		FloatORD:   "ord",
+		FloatUEQ:   "ueq",
+		FloatUGT:   "ugt",
+		FloatUGE:   "uge",
+		FloatULT:   "ult",
+		FloatULE:   "ule",
+		FloatUNE:   "une",
+		FloatUNO:   "uno",
 		FloatTrue:  "true",
 	}
 	if s, ok := m[cond]; ok {
@@ -261,11 +261,11 @@ func (cond FloatPred) LLVMString() string {
 
 // --- [ phi ] -----------------------------------------------------------------
 
-// InstPHI represents a phi instruction.
+// InstPhi represents a phi instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#phi-instruction
-type InstPHI struct {
+type InstPhi struct {
 	// Parent basic block.
 	parent *BasicBlock
 	// Identifier associated with the instruction.
@@ -276,32 +276,32 @@ type InstPHI struct {
 	typ types.Type
 }
 
-// NewPHI returns a new phi instruction based on the given incoming values.
-func NewPHI(incs ...*Incoming) *InstPHI {
+// NewPhi returns a new phi instruction based on the given incoming values.
+func NewPhi(incs ...*Incoming) *InstPhi {
 	if len(incs) < 1 {
 		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
 	}
 	typ := incs[0].x.Type()
-	return &InstPHI{incs: incs, typ: typ}
+	return &InstPhi{incs: incs, typ: typ}
 }
 
 // Type returns the type of the instruction.
-func (inst *InstPHI) Type() types.Type {
+func (inst *InstPhi) Type() types.Type {
 	return inst.typ
 }
 
 // Ident returns the identifier associated with the instruction.
-func (inst *InstPHI) Ident() string {
+func (inst *InstPhi) Ident() string {
 	return enc.Local(inst.ident)
 }
 
 // SetIdent sets the identifier associated with the instruction.
-func (inst *InstPHI) SetIdent(ident string) {
+func (inst *InstPhi) SetIdent(ident string) {
 	inst.ident = ident
 }
 
 // LLVMString returns the LLVM syntax representation of the instruction.
-func (inst *InstPHI) LLVMString() string {
+func (inst *InstPhi) LLVMString() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s = phi %s ",
 		inst.Ident(),
@@ -318,17 +318,17 @@ func (inst *InstPHI) LLVMString() string {
 }
 
 // Parent returns the parent basic block of the instruction.
-func (inst *InstPHI) Parent() *BasicBlock {
+func (inst *InstPhi) Parent() *BasicBlock {
 	return inst.parent
 }
 
 // SetParent sets the parent basic block of the instruction.
-func (inst *InstPHI) SetParent(parent *BasicBlock) {
+func (inst *InstPhi) SetParent(parent *BasicBlock) {
 	inst.parent = parent
 }
 
 // Incs returns the incoming values of the phi instruction.
-func (inst *InstPHI) Incs() []*Incoming {
+func (inst *InstPhi) Incs() []*Incoming {
 	return inst.incs
 }
 

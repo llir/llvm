@@ -81,15 +81,15 @@ func main() {
 			URL:      "http://llvm.org/docs/LangRef.html#bitwise-binary-operations",
 			Insts: []*Instruction{
 				{
-					Name: "ShL",
+					Name: "Shl",
 					Desc: "a shift left",
 				},
 				{
-					Name: "LShR",
+					Name: "LShr",
 					Desc: "a logical shift right",
 				},
 				{
-					Name: "AShR",
+					Name: "AShr",
 					Desc: "an arithmetic shift right",
 				},
 				{
