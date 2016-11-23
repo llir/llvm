@@ -1,3 +1,8 @@
+// === [ Terminators ] =========================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#terminator-instructions
+
 package ir
 
 import (
