@@ -8,11 +8,13 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// TODO: Add remaining underlying terminator types.
-
 // A Terminator represents an LLVM IR terminator.
 //
 // Terminator may have one of the following underlying types.
+//
+// Terminators
+//
+// http://llvm.org/docs/LangRef.html#terminator-instructions
 //
 //    *ir.TermRet
 //    *ir.TermBr
