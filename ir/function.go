@@ -74,8 +74,8 @@ func (f *Function) LLVMString() string {
 		// Function definition.
 		buf := &bytes.Buffer{}
 		fmt.Fprintf(buf, "define %s {\n", sig)
-		for _, b := range blocks {
-			fmt.Fprintln(buf, b.LLVMString())
+		for _, block := range blocks {
+			fmt.Fprintln(buf, block.LLVMString())
 		}
 		buf.WriteString("}")
 		return buf.String()
@@ -125,9 +125,9 @@ func (f *Function) AppendParam(p *types.Param) {
 }
 
 // AppendBlock appends the given basic block to the function.
-func (f *Function) AppendBlock(b *BasicBlock) {
-	b.SetParent(f)
-	f.blocks = append(f.blocks, b)
+func (f *Function) AppendBlock(block *BasicBlock) {
+	block.SetParent(f)
+	f.blocks = append(f.blocks, block)
 }
 
 // NewParam appends a new function parameter to the function based on the given
@@ -139,9 +139,9 @@ func (f *Function) NewParam(name string, typ types.Type) *types.Param {
 // NewBlock appends a new basic block to the function based on the given label
 // name. An empty label name indicates an unnamed basic block.
 func (f *Function) NewBlock(name string) *BasicBlock {
-	b := NewBlock(name)
-	f.AppendBlock(b)
-	return b
+	block := NewBlock(name)
+	f.AppendBlock(block)
+	return block
 }
 
 // assignIDs assigns unique local IDs to unnamed basic blocks and local
