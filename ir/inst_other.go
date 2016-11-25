@@ -462,7 +462,7 @@ func NewCall(callee *Function, args ...value.Value) *InstCall {
 
 // Type returns the type of the instruction.
 func (inst *InstCall) Type() types.Type {
-	return inst.callee.typ.RetType()
+	return inst.callee.sig.RetType()
 }
 
 // Ident returns the identifier associated with the instruction.

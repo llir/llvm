@@ -91,19 +91,7 @@ type FloatType struct {
 
 // String returns the LLVM syntax representation of the type.
 func (t *FloatType) String() string {
-	m := map[FloatKind]string{
-		FloatKindIEEE_16:           "half",
-		FloatKindIEEE_32:           "float",
-		FloatKindIEEE_64:           "double",
-		FloatKindIEEE_128:          "fp128",
-		FloatKindDoubleExtended_80: "x86_fp80",
-		FloatKindDoubleDouble_128:  "ppc_fp128",
-	}
-	kind := t.Kind()
-	if s, ok := m[kind]; ok {
-		return s
-	}
-	return fmt.Sprintf("<unknown floating-point kind %d>", int(kind))
+	return t.kind.String()
 }
 
 // Equal reports whether t and u are of equal type.
@@ -131,3 +119,22 @@ const (
 	FloatKindDoubleExtended_80                  // x86_fp80:  80-bit floating point type (x87)
 	FloatKindDoubleDouble_128                   // ppc_fp128: 128-bit floating point type (two 64-bits, PowerPC)
 )
+
+// String returns the LLVM syntax representation of the floating-point kind.
+func (kind FloatKind) String() string {
+	switch kind {
+	case FloatKindIEEE_16:
+		return "half"
+	case FloatKindIEEE_32:
+		return "float"
+	case FloatKindIEEE_64:
+		return "double"
+	case FloatKindIEEE_128:
+		return "fp128"
+	case FloatKindDoubleExtended_80:
+		return "x86_fp80"
+	case FloatKindDoubleDouble_128:
+		return "ppc_fp128"
+	}
+	return fmt.Sprintf("<unknown floating-point kind %d>", int(kind))
+}

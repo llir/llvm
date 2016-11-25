@@ -269,7 +269,7 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 			if !ok {
 				panic(fmt.Sprintf("invalid index type for structure element; expected *constant.Int, got %T", index))
 			}
-			e = t.Fields()[idx.X()]
+			e = t.Fields()[idx.Int64()]
 		default:
 			panic(fmt.Sprintf("support for indexing element type %T not yet implemented", e))
 		}

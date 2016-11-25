@@ -7,8 +7,6 @@
 package constant
 
 import (
-	"fmt"
-
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -18,80 +16,36 @@ import (
 //
 // Constant may have one of the following underlying types.
 //
-//    TODO
+// Simple constants
+//
+// http://llvm.org/docs/LangRef.html#simple-constants
+//
+//    *constant.Int
+//    *constant.Float
+//    *constant.Null
+//
+// Complex constants
+//
+// http://llvm.org/docs/LangRef.html#complex-constants
+//
+//    *constant.Vector
+//    *constant.Array
+//    *constant.Struct
+//    *constant.ZeroInitializer
+//
+// Constant expressions
+//
+// http://llvm.org/docs/LangRef.html#constant-expressions
+//
+//    constant.Expr
 type Constant interface {
 	value.Value
 }
 
-// --- [ integer ] -------------------------------------------------------------
-
-// Int represents an integer constant.
-type Int struct {
-	// Constant value.
-	x int64
-	// Constant type.
-	typ *types.IntType
-}
-
-// NewInt returns a new integer constant of the given value and type.
-func NewInt(x int64, typ types.Type) *Int {
-	if typ, ok := typ.(*types.IntType); ok {
-		return &Int{x: x, typ: typ}
-	}
-	panic(fmt.Sprintf("invalid integer constant type; expected *types.IntType, got %T", typ))
-}
-
-// Type returns the type of the constant.
-func (c *Int) Type() types.Type {
-	return c.typ
-}
-
-// Ident returns the value of the constant.
-func (c *Int) Ident() string {
-	if c.typ.Size() == 1 {
-		switch c.x {
-		case 0:
-			return "false"
-		case 1:
-			return "true"
-		default:
-			panic(fmt.Sprintf("invalid integer constant value; expected 0 or 1, got %d", c.x))
-		}
-	}
-	return fmt.Sprintf("%d", c.x)
-}
-
-// X returns the value of the integer constant.
-func (c *Int) X() int64 {
-	return c.x
-}
-
-// --- [ floating-point ] ------------------------------------------------------
-
-// Float represents a floating-point constant.
-type Float struct {
-	// Constant value.
-	x float64
-	// Constant type.
-	typ types.Type
-}
-
-// NewFloat returns a new floating-point constant of the given value and type.
-func NewFloat(x float64, typ types.Type) *Float {
-	return &Float{x: x, typ: typ}
-}
-
-// Type returns the type of the constant.
-func (c *Float) Type() types.Type {
-	return c.typ
-}
-
-// Ident returns the value of the constant.
-func (c *Float) Ident() string {
-	return fmt.Sprintf("%g", c.x)
-}
-
-// X returns the value of the integer constant.
-func (c *Float) X() float64 {
-	return c.x
-}
+// Convenience constants.
+var (
+	// True represents the `true` constant.
+	True = NewInt(1, types.I1)
+	// False represents the `false` constant.
+	False = NewInt(0, types.I1)
+)

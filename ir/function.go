@@ -102,6 +102,11 @@ func (f *Function) SetParent(parent *Module) {
 	f.parent = parent
 }
 
+// Sig returns the signature of the function.
+func (f *Function) Sig() *types.FuncType {
+	return f.sig
+}
+
 // RetType returns the return type of the function.
 func (f *Function) RetType() types.Type {
 	return f.sig.RetType()
