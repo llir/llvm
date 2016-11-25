@@ -28,21 +28,24 @@ type Function struct {
 	// Function name.
 	name string
 	// Function type.
-	typ *types.FuncType
+	sig *types.FuncType
 	// Basic blocks of the function; or nil if external function declaration.
 	blocks []*BasicBlock
+	// Function type.
+	typ *types.PointerType
 }
 
 // NewFunction returns a new function based on the given function name, return
 // type and parameters.
 func NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
-	typ := types.NewFunc(ret, params...)
-	return &Function{name: name, typ: typ}
+	sig := types.NewFunc(ret, params...)
+	typ := types.NewPointer(sig)
+	return &Function{name: name, sig: sig, typ: typ}
 }
 
 // Type returns the type of the function.
 func (f *Function) Type() types.Type {
-	return f.typ
+	return f.sig
 }
 
 // Ident returns the identifier associated with the function.
@@ -101,22 +104,22 @@ func (f *Function) SetParent(parent *Module) {
 
 // RetType returns the return type of the function.
 func (f *Function) RetType() types.Type {
-	return f.typ.RetType()
+	return f.sig.RetType()
 }
 
 // Params returns the function parameters of the function.
 func (f *Function) Params() []*types.Param {
-	return f.typ.Params()
+	return f.sig.Params()
 }
 
 // Variadic reports whether the function is variadic.
 func (f *Function) Variadic() bool {
-	return f.typ.Variadic()
+	return f.sig.Variadic()
 }
 
 // SetVariadic sets the variadicity of the function.
 func (f *Function) SetVariadic(variadic bool) {
-	f.typ.SetVariadic(variadic)
+	f.sig.SetVariadic(variadic)
 }
 
 // Blocks returns the basic blocks of the function.
@@ -126,7 +129,7 @@ func (f *Function) Blocks() []*BasicBlock {
 
 // AppendParam appends the given function parameter to the function.
 func (f *Function) AppendParam(param *types.Param) {
-	f.typ.AppendParam(param)
+	f.sig.AppendParam(param)
 }
 
 // AppendBlock appends the given basic block to the function.
@@ -138,7 +141,7 @@ func (f *Function) AppendBlock(block *BasicBlock) {
 // NewParam appends a new function parameter to the function based on the given
 // parameter name and type.
 func (f *Function) NewParam(name string, typ types.Type) *types.Param {
-	return f.typ.NewParam(name, typ)
+	return f.sig.NewParam(name, typ)
 }
 
 // NewBlock appends a new basic block to the function based on the given label
