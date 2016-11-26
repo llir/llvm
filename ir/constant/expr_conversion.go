@@ -36,7 +36,7 @@ func (expr *ExprTrunc) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprTrunc) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("trunc (%s %s to %s)",
@@ -78,7 +78,7 @@ func (expr *ExprZExt) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprZExt) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("zext (%s %s to %s)",
@@ -120,7 +120,7 @@ func (expr *ExprSExt) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprSExt) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("sext (%s %s to %s)",
@@ -162,7 +162,7 @@ func (expr *ExprFPTrunc) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFPTrunc) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("fptrunc (%s %s to %s)",
@@ -204,7 +204,7 @@ func (expr *ExprFPExt) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFPExt) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("fpext (%s %s to %s)",
@@ -246,7 +246,7 @@ func (expr *ExprFPToUI) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFPToUI) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("fptoui (%s %s to %s)",
@@ -288,7 +288,7 @@ func (expr *ExprFPToSI) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFPToSI) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("fptosi (%s %s to %s)",
@@ -330,7 +330,7 @@ func (expr *ExprUIToFP) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprUIToFP) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("uitofp (%s %s to %s)",
@@ -372,7 +372,7 @@ func (expr *ExprSIToFP) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprSIToFP) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("sitofp (%s %s to %s)",
@@ -414,7 +414,7 @@ func (expr *ExprPtrToInt) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprPtrToInt) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("ptrtoint (%s %s to %s)",
@@ -456,7 +456,7 @@ func (expr *ExprIntToPtr) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprIntToPtr) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("inttoptr (%s %s to %s)",
@@ -498,7 +498,7 @@ func (expr *ExprBitCast) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprBitCast) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("bitcast (%s %s to %s)",
@@ -540,7 +540,7 @@ func (expr *ExprAddrSpaceCast) Type() types.Type {
 	return expr.to
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprAddrSpaceCast) Ident() string {
 	from := expr.From()
 	return fmt.Sprintf("addrspacecast (%s %s to %s)",

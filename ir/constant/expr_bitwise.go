@@ -34,7 +34,7 @@ func (expr *ExprShl) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprShl) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("shl (%s %s, %s %s)",
@@ -80,7 +80,7 @@ func (expr *ExprLShr) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprLShr) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("lshr (%s %s, %s %s)",
@@ -126,7 +126,7 @@ func (expr *ExprAShr) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprAShr) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("ashr (%s %s, %s %s)",
@@ -172,7 +172,7 @@ func (expr *ExprAnd) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprAnd) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("and (%s %s, %s %s)",
@@ -218,7 +218,7 @@ func (expr *ExprOr) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprOr) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("or (%s %s, %s %s)",
@@ -264,7 +264,7 @@ func (expr *ExprXor) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprXor) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("xor (%s %s, %s %s)",

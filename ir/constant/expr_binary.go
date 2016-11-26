@@ -34,7 +34,7 @@ func (expr *ExprAdd) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprAdd) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("add (%s %s, %s %s)",
@@ -80,7 +80,7 @@ func (expr *ExprFAdd) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFAdd) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fadd (%s %s, %s %s)",
@@ -126,7 +126,7 @@ func (expr *ExprSub) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprSub) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("sub (%s %s, %s %s)",
@@ -172,7 +172,7 @@ func (expr *ExprFSub) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFSub) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fsub (%s %s, %s %s)",
@@ -218,7 +218,7 @@ func (expr *ExprMul) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprMul) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("mul (%s %s, %s %s)",
@@ -264,7 +264,7 @@ func (expr *ExprFMul) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFMul) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fmul (%s %s, %s %s)",
@@ -310,7 +310,7 @@ func (expr *ExprUDiv) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprUDiv) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("udiv (%s %s, %s %s)",
@@ -356,7 +356,7 @@ func (expr *ExprSDiv) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprSDiv) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("sdiv (%s %s, %s %s)",
@@ -402,7 +402,7 @@ func (expr *ExprFDiv) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFDiv) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fdiv (%s %s, %s %s)",
@@ -448,7 +448,7 @@ func (expr *ExprURem) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprURem) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("urem (%s %s, %s %s)",
@@ -494,7 +494,7 @@ func (expr *ExprSRem) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprSRem) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("srem (%s %s, %s %s)",
@@ -540,7 +540,7 @@ func (expr *ExprFRem) Type() types.Type {
 	return expr.x.Type()
 }
 
-// Ident returns the identifier associated with the constant expression.
+// Ident returns the string representation of the constant expression.
 func (expr *ExprFRem) Ident() string {
 	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("frem (%s %s, %s %s)",
