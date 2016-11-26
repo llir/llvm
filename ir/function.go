@@ -219,3 +219,9 @@ func isLocalID(ident string) bool {
 	}
 	return len(ident) > 0
 }
+
+// NewParam returns a new function parameter based on the given parameter name
+// and type.
+func NewParam(name string, typ types.Type) *types.Param {
+	return types.NewParam(name, typ)
+}
