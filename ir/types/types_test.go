@@ -739,6 +739,181 @@ func TestFuncEqual(t *testing.T) {
 	}
 }
 
+func TestPointerEqual(t *testing.T) {
+	i8ptr := types.NewPointer(types.I8)
+	i32ptr := types.NewPointer(types.I32)
+	voidptr := types.NewPointer(types.Void)
+
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.PointerType{}, u: &types.VoidType{}},
+		{want: false, t: &types.PointerType{}, u: &types.LabelType{}},
+		{want: false, t: &types.PointerType{}, u: &types.IntType{}},
+		{want: false, t: &types.PointerType{}, u: &types.FloatType{}},
+		{want: false, t: &types.PointerType{}, u: &types.FuncType{}},
+		{want: true, t: i8ptr, u: i8ptr},
+		{want: false, t: i8ptr, u: i32ptr},
+		{want: false, t: i8ptr, u: voidptr},
+		{want: false, t: i32ptr, u: i8ptr},
+		{want: true, t: i32ptr, u: i32ptr},
+		{want: false, t: i32ptr, u: voidptr},
+		{want: false, t: voidptr, u: i8ptr},
+		{want: false, t: voidptr, u: i32ptr},
+		{want: true, t: voidptr, u: voidptr},
+		{want: false, t: &types.PointerType{}, u: &types.VectorType{}},
+		{want: false, t: &types.PointerType{}, u: &types.ArrayType{}},
+		{want: false, t: &types.PointerType{}, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestVectorEqual(t *testing.T) {
+	i32x8vec := types.NewVector(types.I32, 8)
+	i32x10vec := types.NewVector(types.I32, 10)
+	i8x8vec := types.NewVector(types.I8, 8)
+	i8x10vec := types.NewVector(types.I8, 10)
+
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.VectorType{}, u: &types.VoidType{}},
+		{want: false, t: &types.VectorType{}, u: &types.LabelType{}},
+		{want: false, t: &types.VectorType{}, u: &types.IntType{}},
+		{want: false, t: &types.VectorType{}, u: &types.FloatType{}},
+		{want: false, t: &types.VectorType{}, u: &types.FuncType{}},
+		{want: false, t: &types.VectorType{}, u: &types.PointerType{}},
+		{want: true, t: i32x8vec, u: i32x8vec},
+		{want: false, t: i32x8vec, u: i32x10vec},
+		{want: false, t: i32x8vec, u: i8x8vec},
+		{want: false, t: i32x8vec, u: i8x10vec},
+		{want: false, t: i32x10vec, u: i32x8vec},
+		{want: true, t: i32x10vec, u: i32x10vec},
+		{want: false, t: i32x10vec, u: i8x8vec},
+		{want: false, t: i32x10vec, u: i8x10vec},
+		{want: false, t: i8x8vec, u: i32x8vec},
+		{want: false, t: i8x8vec, u: i32x10vec},
+		{want: true, t: i8x8vec, u: i8x8vec},
+		{want: false, t: i8x8vec, u: i8x10vec},
+		{want: false, t: i8x10vec, u: i32x8vec},
+		{want: false, t: i8x10vec, u: i32x10vec},
+		{want: false, t: i8x10vec, u: i8x8vec},
+		{want: true, t: i8x10vec, u: i8x10vec},
+		{want: false, t: &types.VectorType{}, u: &types.ArrayType{}},
+		{want: false, t: &types.VectorType{}, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestArrayEqual(t *testing.T) {
+	i32x8arr := types.NewArray(types.I32, 8)
+	i32x10arr := types.NewArray(types.I32, 10)
+	i8x8arr := types.NewArray(types.I8, 8)
+	i8x10arr := types.NewArray(types.I8, 10)
+
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.ArrayType{}, u: &types.VoidType{}},
+		{want: false, t: &types.ArrayType{}, u: &types.LabelType{}},
+		{want: false, t: &types.ArrayType{}, u: &types.IntType{}},
+		{want: false, t: &types.ArrayType{}, u: &types.FloatType{}},
+		{want: false, t: &types.ArrayType{}, u: &types.FuncType{}},
+		{want: false, t: &types.ArrayType{}, u: &types.PointerType{}},
+		{want: false, t: &types.ArrayType{}, u: &types.VectorType{}},
+		{want: true, t: i32x8arr, u: i32x8arr},
+		{want: false, t: i32x8arr, u: i32x10arr},
+		{want: false, t: i32x8arr, u: i8x8arr},
+		{want: false, t: i32x8arr, u: i8x10arr},
+		{want: false, t: i32x10arr, u: i32x8arr},
+		{want: true, t: i32x10arr, u: i32x10arr},
+		{want: false, t: i32x10arr, u: i8x8arr},
+		{want: false, t: i32x10arr, u: i8x10arr},
+		{want: false, t: i8x8arr, u: i32x8arr},
+		{want: false, t: i8x8arr, u: i32x10arr},
+		{want: true, t: i8x8arr, u: i8x8arr},
+		{want: false, t: i8x8arr, u: i8x10arr},
+		{want: false, t: i8x10arr, u: i32x8arr},
+		{want: false, t: i8x10arr, u: i32x10arr},
+		{want: false, t: i8x10arr, u: i8x8arr},
+		{want: true, t: i8x10arr, u: i8x10arr},
+		{want: false, t: &types.ArrayType{}, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestStructEqual(t *testing.T) {
+	i8, i32 := types.I8, types.I32
+	i8i8struct := types.NewStruct(i8, i8)
+	i8i32struct := types.NewStruct(i8, i32)
+	i8struct := types.NewStruct(i8)
+	i32struct := types.NewStruct(i32)
+	emptystruct := types.NewStruct()
+
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.StructType{}, u: &types.VoidType{}},
+		{want: false, t: &types.StructType{}, u: &types.LabelType{}},
+		{want: false, t: &types.StructType{}, u: &types.IntType{}},
+		{want: false, t: &types.StructType{}, u: &types.FloatType{}},
+		{want: false, t: &types.StructType{}, u: &types.FuncType{}},
+		{want: false, t: &types.StructType{}, u: &types.PointerType{}},
+		{want: false, t: &types.StructType{}, u: &types.VectorType{}},
+		{want: false, t: &types.StructType{}, u: &types.ArrayType{}},
+		{want: true, t: i8i8struct, u: i8i8struct},
+		{want: false, t: i8i8struct, u: i8i32struct},
+		{want: false, t: i8i8struct, u: i8struct},
+		{want: false, t: i8i8struct, u: i32struct},
+		{want: false, t: i8i8struct, u: emptystruct},
+		{want: false, t: i8i32struct, u: i8i8struct},
+		{want: true, t: i8i32struct, u: i8i32struct},
+		{want: false, t: i8i32struct, u: i8struct},
+		{want: false, t: i8i32struct, u: i32struct},
+		{want: false, t: i8i32struct, u: emptystruct},
+		{want: false, t: i8struct, u: i8i8struct},
+		{want: false, t: i8struct, u: i8i32struct},
+		{want: true, t: i8struct, u: i8struct},
+		{want: false, t: i8struct, u: i32struct},
+		{want: false, t: i8struct, u: emptystruct},
+		{want: false, t: i32struct, u: i8i8struct},
+		{want: false, t: i32struct, u: i8i32struct},
+		{want: false, t: i32struct, u: i8struct},
+		{want: true, t: i32struct, u: i32struct},
+		{want: false, t: i32struct, u: emptystruct},
+		{want: false, t: emptystruct, u: i8i8struct},
+		{want: false, t: emptystruct, u: i8i32struct},
+		{want: false, t: emptystruct, u: i8struct},
+		{want: false, t: emptystruct, u: i32struct},
+		{want: true, t: emptystruct, u: emptystruct},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
 // Valutate that the relevant types satisfy the value.Value interface.
 var (
 	_ value.Value = &types.Param{}
