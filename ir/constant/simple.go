@@ -32,8 +32,8 @@ func NewInt(x int64, typ types.Type) *Int {
 	panic(fmt.Sprintf("invalid integer constant type; expected *types.IntType, got %T", typ))
 }
 
-// NewInt returns a new integer constant based on the given integer string and
-// type.
+// NewIntFromString returns a new integer constant based on the given integer
+// string and type.
 func NewIntFromString(s string, typ types.Type) *Int {
 	// Parse boolean integer constants.
 	c := NewInt(0, typ)
