@@ -61,12 +61,11 @@ func (inst *InstICmp) SetIdent(ident string) {
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstICmp) String() string {
 	x, y := inst.X(), inst.Y()
-	return fmt.Sprintf("%s = icmp %s %s %s, %s %s",
+	return fmt.Sprintf("%s = icmp %s %s %s, %s",
 		inst.Ident(),
 		inst.Cond(),
 		x.Type(),
 		x.Ident(),
-		y.Type(),
 		y.Ident())
 }
 
@@ -180,12 +179,11 @@ func (inst *InstFCmp) SetIdent(ident string) {
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFCmp) String() string {
 	x, y := inst.X(), inst.Y()
-	return fmt.Sprintf("%s = fcmp %s %s %s, %s %s",
+	return fmt.Sprintf("%s = fcmp %s %s %s, %s",
 		inst.Ident(),
 		inst.Cond(),
 		x.Type(),
 		x.Ident(),
-		y.Type(),
 		y.Ident())
 }
 
