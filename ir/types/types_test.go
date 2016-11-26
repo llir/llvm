@@ -1,9 +1,19 @@
 package types_test
 
 import (
+	"testing"
+
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
+
+func TestVoidString(t *testing.T) {
+	const want = "void"
+	got := types.Void.String()
+	if got != want {
+		t.Errorf("expected %q, got %q", want, got)
+	}
+}
 
 // Valutate that the relevant types satisfy the value.Value interface.
 var (
