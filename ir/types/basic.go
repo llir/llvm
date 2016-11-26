@@ -91,7 +91,7 @@ type FloatType struct {
 
 // String returns the LLVM syntax representation of the type.
 func (t *FloatType) String() string {
-	return t.kind.String()
+	return t.Kind().String()
 }
 
 // Equal reports whether t and u are of equal type.

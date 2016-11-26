@@ -33,8 +33,8 @@ func NewFunc(ret Type, params ...*Param) *FuncType {
 // String returns the LLVM syntax representation of the type.
 func (t *FuncType) String() string {
 	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s (", t.ret)
-	for i, param := range t.params {
+	fmt.Fprintf(buf, "%s (", t.RetType())
+	for i, param := range t.Params() {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -147,7 +147,7 @@ func NewPointer(elem Type) *PointerType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *PointerType) String() string {
-	return fmt.Sprintf("%s*", t.elem)
+	return fmt.Sprintf("%s*", t.Elem())
 }
 
 // Equal reports whether t and u are of equal type.
@@ -277,7 +277,7 @@ func NewStruct(fields ...Type) *StructType {
 func (t *StructType) String() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
-	for i, field := range t.fields {
+	for i, field := range t.Fields() {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
