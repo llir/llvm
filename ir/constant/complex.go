@@ -36,7 +36,7 @@ func (c *Vector) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *Vector) Ident() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("<")
@@ -83,7 +83,7 @@ func (c *Array) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *Array) Ident() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("[")
@@ -129,7 +129,7 @@ func (c *Struct) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *Struct) Ident() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
@@ -169,7 +169,7 @@ func (c *ZeroInitializer) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *ZeroInitializer) Ident() string {
 	return "zeroinitializer"
 }

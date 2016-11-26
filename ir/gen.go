@@ -8,163 +8,190 @@ import (
 	"bytes"
 	"fmt"
 	"go/format"
+	"html/template"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 	"strings"
-	"text/template"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
+	binaryInsts := []*Instruction{
+		{
+			Name: "Add",
+			Desc: "an addition",
+		},
+		{
+			Name: "FAdd",
+			Desc: "a floating-point addition",
+		},
+		{
+			Name: "Sub",
+			Desc: "a subtraction",
+		},
+		{
+			Name: "FSub",
+			Desc: "a floating-point subtraction",
+		},
+		{
+			Name: "Mul",
+			Desc: "a multiplication",
+		},
+		{
+			Name: "FMul",
+			Desc: "a floating-point multiplication",
+		},
+		{
+			Name: "UDiv",
+			Desc: "an unsigned division",
+		},
+		{
+			Name: "SDiv",
+			Desc: "a signed division",
+		},
+		{
+			Name: "FDiv",
+			Desc: "a floating-point division",
+		},
+		{
+			Name: "URem",
+			Desc: "an unsigned remainder",
+		},
+		{
+			Name: "SRem",
+			Desc: "a signed remainder",
+		},
+		{
+			Name: "FRem",
+			Desc: "a floating-point remainder",
+		},
+	}
+	bitwiseInsts := []*Instruction{
+		{
+			Name: "Shl",
+			Desc: "a shift left",
+		},
+		{
+			Name: "LShr",
+			Desc: "a logical shift right",
+		},
+		{
+			Name: "AShr",
+			Desc: "an arithmetic shift right",
+		},
+		{
+			Name: "And",
+			Desc: "an AND",
+		},
+		{
+			Name: "Or",
+			Desc: "an OR",
+		},
+		{
+			Name: "Xor",
+			Desc: "an exclusive-OR",
+		},
+	}
+	conversionInsts := []*Instruction{
+		{
+			Name: "Trunc",
+			Desc: "a truncation",
+		},
+		{
+			Name: "ZExt",
+			Desc: "a zero extension",
+		},
+		{
+			Name: "SExt",
+			Desc: "a sign extension",
+		},
+		{
+			Name: "FPTrunc",
+			Desc: "a floating-point truncation",
+		},
+		{
+			Name: "FPExt",
+			Desc: "a floating-point extension",
+		},
+		{
+			Name: "FPToUI",
+			Desc: "a floating-point to unsigned integer conversion",
+		},
+		{
+			Name: "FPToSI",
+			Desc: "a floating-point to signed integer conversion",
+		},
+		{
+			Name: "UIToFP",
+			Desc: "an unsigned integer to floating-point conversion",
+		},
+		{
+			Name: "SIToFP",
+			Desc: "a signed integer to floating-point conversion",
+		},
+		{
+			Name: "PtrToInt",
+			Desc: "a pointer to integer conversion",
+		},
+		{
+			Name: "IntToPtr",
+			Desc: "an integer to pointer conversion",
+		},
+		{
+			Name: "BitCast",
+			Desc: "a bitcast",
+		},
+		{
+			Name: "AddrSpaceCast",
+			Desc: "an address space cast",
+		},
+	}
 	files := []*File{
+		// Instructions.
 		{
 			Template: "inst_binary.tmpl",
 			Path:     "inst_binary.go",
 			Desc:     "Binary instructions",
 			URL:      "http://llvm.org/docs/LangRef.html#binary-operations",
-			Insts: []*Instruction{
-				{
-					Name: "Add",
-					Desc: "an addition",
-				},
-				{
-					Name: "FAdd",
-					Desc: "a floating-point addition",
-				},
-				{
-					Name: "Sub",
-					Desc: "a subtraction",
-				},
-				{
-					Name: "FSub",
-					Desc: "a floating-point subtraction",
-				},
-				{
-					Name: "Mul",
-					Desc: "a multiplication",
-				},
-				{
-					Name: "FMul",
-					Desc: "a floating-point multiplication",
-				},
-				{
-					Name: "UDiv",
-					Desc: "an unsigned division",
-				},
-				{
-					Name: "SDiv",
-					Desc: "a signed division",
-				},
-				{
-					Name: "FDiv",
-					Desc: "a floating-point division",
-				},
-				{
-					Name: "URem",
-					Desc: "an unsigned remainder",
-				},
-				{
-					Name: "SRem",
-					Desc: "a signed remainder",
-				},
-				{
-					Name: "FRem",
-					Desc: "a floating-point remainder",
-				},
-			},
+			Insts:    binaryInsts,
 		},
 		{
 			Template: "inst_binary.tmpl",
 			Path:     "inst_bitwise.go",
 			Desc:     "Bitwise instructions",
 			URL:      "http://llvm.org/docs/LangRef.html#bitwise-binary-operations",
-			Insts: []*Instruction{
-				{
-					Name: "Shl",
-					Desc: "a shift left",
-				},
-				{
-					Name: "LShr",
-					Desc: "a logical shift right",
-				},
-				{
-					Name: "AShr",
-					Desc: "an arithmetic shift right",
-				},
-				{
-					Name: "And",
-					Desc: "an AND",
-				},
-				{
-					Name: "Or",
-					Desc: "an OR",
-				},
-				{
-					Name: "Xor",
-					Desc: "an exclusive-OR",
-				},
-			},
+			Insts:    bitwiseInsts,
 		},
 		{
 			Template: "inst_conversion.tmpl",
 			Path:     "inst_conversion.go",
 			Desc:     "Conversion instructions",
 			URL:      "http://llvm.org/docs/LangRef.html#conversion-operations",
-			Insts: []*Instruction{
-				{
-					Name: "Trunc",
-					Desc: "a truncation",
-				},
-				{
-					Name: "ZExt",
-					Desc: "a zero extension",
-				},
-				{
-					Name: "SExt",
-					Desc: "a sign extension",
-				},
-				{
-					Name: "FPTrunc",
-					Desc: "a floating-point truncation",
-				},
-				{
-					Name: "FPExt",
-					Desc: "a floating-point extension",
-				},
-				{
-					Name: "FPToUI",
-					Desc: "a floating-point to unsigned integer conversion",
-				},
-				{
-					Name: "FPToSI",
-					Desc: "a floating-point to signed integer conversion",
-				},
-				{
-					Name: "UIToFP",
-					Desc: "an unsigned integer to floating-point conversion",
-				},
-				{
-					Name: "SIToFP",
-					Desc: "a signed integer to floating-point conversion",
-				},
-				{
-					Name: "PtrToInt",
-					Desc: "a pointer to integer conversion",
-				},
-				{
-					Name: "IntToPtr",
-					Desc: "an integer to pointer conversion",
-				},
-				{
-					Name: "BitCast",
-					Desc: "a bitcast",
-				},
-				{
-					Name: "AddrSpaceCast",
-					Desc: "an address space cast",
-				},
-			},
+			Insts:    conversionInsts,
+		},
+		// Constant expressions.
+		{
+			Template: "constant/expr_binary.tmpl",
+			Path:     "constant/expr_binary.go",
+			Desc:     "Binary expressions",
+			URL:      "http://llvm.org/docs/LangRef.html#binary-operations",
+			Insts:    binaryInsts,
+		},
+		{
+			Template: "constant/expr_binary.tmpl",
+			Path:     "constant/expr_bitwise.go",
+			Desc:     "Bitwise expressions",
+			URL:      "http://llvm.org/docs/LangRef.html#bitwise-binary-operations",
+			Insts:    bitwiseInsts,
+		},
+		{
+			Template: "constant/expr_conversion.tmpl",
+			Path:     "constant/expr_conversion.go",
+			Desc:     "Conversion expressions",
+			URL:      "http://llvm.org/docs/LangRef.html#conversion-operations",
+			Insts:    conversionInsts,
 		},
 	}
 	for _, file := range files {
@@ -200,7 +227,7 @@ type Instruction struct {
 // gen generates a source file containing the instructions of the given
 // category.
 func (f *File) gen() error {
-	t := template.New(f.Template)
+	t := template.New(filepath.Base(f.Template))
 	funcs := map[string]interface{}{
 		"lower": strings.ToLower,
 		"h1":    h1,

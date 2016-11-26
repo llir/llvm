@@ -72,7 +72,7 @@ func (c *Int) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *Int) Ident() string {
 	if c.typ.Size() == 1 {
 		switch c.Int64() {
@@ -137,7 +137,7 @@ func (c *Float) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *Float) Ident() string {
 	// Insert decimal point if not present.
 	//    3e4 -> 3.0e4
@@ -180,7 +180,7 @@ func (c *Null) Type() types.Type {
 	return c.typ
 }
 
-// Ident returns the value of the constant.
+// Ident returns the string representation of the constant.
 func (c *Null) Ident() string {
 	return "null"
 }

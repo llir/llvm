@@ -20,18 +20,18 @@ import (
 //
 // http://llvm.org/docs/LangRef.html#simple-constants
 //
-//    *constant.Int
-//    *constant.Float
-//    *constant.Null
+//    *constant.Int     (https://godoc.org/github.com/llir/llvm/ir/constant#Int)
+//    *constant.Float   (https://godoc.org/github.com/llir/llvm/ir/constant#Float)
+//    *constant.Null    (https://godoc.org/github.com/llir/llvm/ir/constant#Null)
 //
 // Complex constants
 //
 // http://llvm.org/docs/LangRef.html#complex-constants
 //
-//    *constant.Vector
-//    *constant.Array
-//    *constant.Struct
-//    *constant.ZeroInitializer
+//    *constant.Vector            (https://godoc.org/github.com/llir/llvm/ir/constant#Vector)
+//    *constant.Array             (https://godoc.org/github.com/llir/llvm/ir/constant#Array)
+//    *constant.Struct            (https://godoc.org/github.com/llir/llvm/ir/constant#Struct)
+//    *constant.ZeroInitializer   (https://godoc.org/github.com/llir/llvm/ir/constant#ZeroInitializer)
 //
 // Constant expressions
 //
