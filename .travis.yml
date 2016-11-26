@@ -1,6 +1,6 @@
 language: go
 go:
-  - 1.6
+  - 1.7
 
 notifications:
   email: false
@@ -16,7 +16,6 @@ before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/mattn/goveralls
   - go get github.com/goccmack/gocc
-  - make -C $HOME/gopath/src/github.com/llir/llvm/asm/internal gen
 
 install:
   - go get ./...
