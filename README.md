@@ -4,8 +4,8 @@ This project is a *work in progress*. The implementation is *incomplete* and sub
 
 # llvm
 
-[![Build Status](https://travis-ci.org/llir/llvm.svg?branch=dev)](https://travis-ci.org/llir/llvm)
-[![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=dev)](https://coveralls.io/github/llir/llvm?branch=dev)
+[![Build Status](https://travis-ci.org/llir/llvm.svg?branch=master)](https://travis-ci.org/llir/llvm)
+[![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=master)](https://coveralls.io/github/llir/llvm?branch=master)
 [![GoDoc](https://godoc.org/github.com/llir/llvm?status.svg)](https://godoc.org/github.com/llir/llvm)
 
 
