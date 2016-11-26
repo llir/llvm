@@ -32,6 +32,69 @@ func Equal(t, u Type) bool {
 	return t.Equal(u)
 }
 
+// IsVoid reports whether the given type is a void type.
+func IsVoid(t Type) bool {
+	_, ok := t.(*VoidType)
+	return ok
+}
+
+// IsLabel reports whether the given type is a label type.
+func IsLabel(t Type) bool {
+	_, ok := t.(*LabelType)
+	return ok
+}
+
+// IsBool reports whether the given type is a boolean type (i.e. an integer type
+// with bit size 1).
+func IsBool(t Type) bool {
+	if t, ok := t.(*IntType); ok {
+		return t.Size() == 1
+	}
+	return false
+}
+
+// IsInt reports whether the given type is an integer type.
+func IsInt(t Type) bool {
+	_, ok := t.(*IntType)
+	return ok
+}
+
+// IsFloat reports whether the given type is a floating-point type.
+func IsFloat(t Type) bool {
+	_, ok := t.(*FloatType)
+	return ok
+}
+
+// IsFunc reports whether the given type is a function type.
+func IsFunc(t Type) bool {
+	_, ok := t.(*FuncType)
+	return ok
+}
+
+// IsPointer reports whether the given type is a pointer type.
+func IsPointer(t Type) bool {
+	_, ok := t.(*PointerType)
+	return ok
+}
+
+// IsVector reports whether the given type is a vector type.
+func IsVector(t Type) bool {
+	_, ok := t.(*VectorType)
+	return ok
+}
+
+// IsArray reports whether the given type is an array type.
+func IsArray(t Type) bool {
+	_, ok := t.(*ArrayType)
+	return ok
+}
+
+// IsStruct reports whether the given type is a struct type.
+func IsStruct(t Type) bool {
+	_, ok := t.(*StructType)
+	return ok
+}
+
 // Convenience types.
 var (
 	// Void represents the `void` type.
