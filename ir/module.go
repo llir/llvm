@@ -19,10 +19,10 @@ import (
 // A Module represents an LLVM IR module, which consists of top-level type
 // definitions, global variables, functions, and metadata.
 type Module struct {
-	// Functions of the module.
-	funcs []*Function
 	// Global variables of the module.
 	globals []*Global
+	// Functions of the module.
+	funcs []*Function
 }
 
 // NewModule returns a new LLVM IR module.
@@ -33,18 +33,13 @@ func NewModule() *Module {
 // String returns the LLVM syntax representation of the module.
 func (m *Module) String() string {
 	buf := &bytes.Buffer{}
-	for _, f := range m.Funcs() {
-		fmt.Fprintln(buf, f)
-	}
 	for _, global := range m.Globals() {
 		fmt.Fprintln(buf, global)
 	}
+	for _, f := range m.Funcs() {
+		fmt.Fprintln(buf, f)
+	}
 	return buf.String()
-}
-
-// Funcs returns the functions of the module.
-func (m *Module) Funcs() []*Function {
-	return m.funcs
 }
 
 // Globals returns the global variables of the module.
@@ -52,10 +47,9 @@ func (m *Module) Globals() []*Global {
 	return m.globals
 }
 
-// AppendFunction appends the given function to the module.
-func (m *Module) AppendFunction(f *Function) {
-	f.SetParent(m)
-	m.funcs = append(m.funcs, f)
+// Funcs returns the functions of the module.
+func (m *Module) Funcs() []*Function {
+	return m.funcs
 }
 
 // AppendGlobal appends the given global variable to the module.
@@ -63,12 +57,10 @@ func (m *Module) AppendGlobal(global *Global) {
 	m.globals = append(m.globals, global)
 }
 
-// NewFunction appends a new function to the module based on the given function
-// name, return type and parameters.
-func (m *Module) NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
-	f := NewFunction(name, ret, params...)
-	m.AppendFunction(f)
-	return f
+// AppendFunction appends the given function to the module.
+func (m *Module) AppendFunction(f *Function) {
+	f.SetParent(m)
+	m.funcs = append(m.funcs, f)
 }
 
 // NewGlobalDecl appends a new external global variable declaration to the
@@ -85,4 +77,12 @@ func (m *Module) NewGlobalDef(name string, init constant.Constant) *Global {
 	global := NewGlobalDef(name, init)
 	m.AppendGlobal(global)
 	return global
+}
+
+// NewFunction appends a new function to the module based on the given function
+// name, return type and parameters.
+func (m *Module) NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
+	f := NewFunction(name, ret, params...)
+	m.AppendFunction(f)
+	return f
 }
