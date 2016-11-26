@@ -25,16 +25,19 @@ type Int struct {
 
 // NewInt returns a new integer constant based on the given integer value and
 // type.
-func NewInt(x int64, typ *types.IntType) *Int {
-	return &Int{x: big.NewInt(x), typ: typ}
+func NewInt(x int64, typ types.Type) *Int {
+	if typ, ok := typ.(*types.IntType); ok {
+		return &Int{x: big.NewInt(x), typ: typ}
+	}
+	panic(fmt.Sprintf("invalid integer constant type; expected *types.IntType, got %T", typ))
 }
 
 // NewInt returns a new integer constant based on the given integer string and
 // type.
-func NewIntFromString(s string, typ *types.IntType) *Int {
+func NewIntFromString(s string, typ types.Type) *Int {
 	// Parse boolean integer constants.
-	c := &Int{x: &big.Int{}, typ: typ}
-	if typ.Size() == 1 {
+	c := NewInt(0, typ)
+	if c.typ.Size() == 1 {
 		switch s {
 		case "0", "false":
 			c.x.SetInt64(0)
@@ -102,8 +105,11 @@ type Float struct {
 
 // NewFloat returns a new floating-point constant based on the given
 // floating-point value and type.
-func NewFloat(x float64, typ *types.FloatType) *Float {
-	return &Float{x: big.NewFloat(x), typ: typ}
+func NewFloat(x float64, typ types.Type) *Float {
+	if typ, ok := typ.(*types.FloatType); ok {
+		return &Float{x: big.NewFloat(x), typ: typ}
+	}
+	panic(fmt.Sprintf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
 }
 
 // NewFloatFromString returns a new floating-point constant based on the given
