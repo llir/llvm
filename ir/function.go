@@ -102,6 +102,11 @@ func (f *Function) SetParent(parent *Module) {
 	f.parent = parent
 }
 
+// Name returns the name of the function.
+func (f *Function) Name() string {
+	return f.name
+}
+
 // Sig returns the signature of the function.
 func (f *Function) Sig() *types.FuncType {
 	return f.sig
