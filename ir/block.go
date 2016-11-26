@@ -52,7 +52,12 @@ func (block *BasicBlock) SetIdent(ident string) {
 // String returns the LLVM syntax representation of the basic block.
 func (block *BasicBlock) String() string {
 	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s:\n", enc.Escape(block.name))
+	if isLocalID(block.Ident()) {
+
+		fmt.Fprintf(buf, "; <label>:%s\n", enc.Escape(block.name))
+	} else {
+		fmt.Fprintf(buf, "%s:\n", enc.Escape(block.name))
+	}
 	for _, inst := range block.Insts() {
 		fmt.Fprintf(buf, "\t%s\n", inst)
 	}
