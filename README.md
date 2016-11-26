@@ -4,16 +4,21 @@ This project is a *work in progress*. The implementation is *incomplete* and sub
 
 # llvm
 
-[![Build Status](https://travis-ci.org/llir/llvm.svg?branch=master)](https://travis-ci.org/llir/llvm)
-[![Coverage Status](https://img.shields.io/coveralls/llir/llvm.svg)](https://coveralls.io/r/llir/llvm?branch=master)
+[![Build Status](https://travis-ci.org/llir/llvm.svg?branch=dev)](https://travis-ci.org/llir/llvm)
+[![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=dev)](https://coveralls.io/github/llir/llvm?branch=dev)
 [![GoDoc](https://godoc.org/github.com/llir/llvm?status.svg)](https://godoc.org/github.com/llir/llvm)
 
-The aim of this project is to provide access to the various LLVM IR representations; which includes the [LLVM bitcode] file format, the [LLVM assembly] language, and an in-memory representation similar to that of [go/ssa]. It should be possible to convert between the various representations; possibly using the interfaces defined in the [encoding] package.
 
-[LLVM bitcode]: http://llvm.org/docs/BitCodeFormat.html
-[LLVM assembly]: http://llvm.org/docs/LangRef.html
-[go/ssa]: https://godoc.org/golang.org/x/tools/go/ssa
-[encoding]: http://golang.org/pkg/encoding/
+The aim of this project is to provide a pure Go library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html).
+
+## Status
+
+Updated: 2016-11-26
+
+- [x] Write support of LLVM IR assembly files.
+    - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#ex-package).
+- [ ] Read support of LLVM IR assmebly files.
+    - A lexer and parser for LLVM IR assembly will be generated from a [BNF grammar](https://sv.wikipedia.org/wiki/Backus-Naur-form) using [gocc](https://github.com/goccmack/gocc).
 
 ## Public domain
 
