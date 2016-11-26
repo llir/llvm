@@ -64,7 +64,7 @@ func (t *FuncType) Equal(u Type) bool {
 				return false
 			}
 		}
-		return true
+		return t.variadic == u.variadic
 	}
 	return false
 }
