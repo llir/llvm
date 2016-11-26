@@ -523,6 +523,222 @@ func TestIsStruct(t *testing.T) {
 	}
 }
 
+func TestVoidEqual(t *testing.T) {
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: true, t: types.Void, u: &types.VoidType{}},
+		{want: false, t: types.Void, u: &types.LabelType{}},
+		{want: false, t: types.Void, u: &types.IntType{}},
+		{want: false, t: types.Void, u: &types.FloatType{}},
+		{want: false, t: types.Void, u: &types.FuncType{}},
+		{want: false, t: types.Void, u: &types.PointerType{}},
+		{want: false, t: types.Void, u: &types.VectorType{}},
+		{want: false, t: types.Void, u: &types.ArrayType{}},
+		{want: false, t: types.Void, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestLabelEqual(t *testing.T) {
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: types.Label, u: &types.VoidType{}},
+		{want: true, t: types.Label, u: &types.LabelType{}},
+		{want: false, t: types.Label, u: &types.IntType{}},
+		{want: false, t: types.Label, u: &types.FloatType{}},
+		{want: false, t: types.Label, u: &types.FuncType{}},
+		{want: false, t: types.Label, u: &types.PointerType{}},
+		{want: false, t: types.Label, u: &types.VectorType{}},
+		{want: false, t: types.Label, u: &types.ArrayType{}},
+		{want: false, t: types.Label, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestIntEqual(t *testing.T) {
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.IntType{}, u: &types.VoidType{}},
+		{want: false, t: &types.IntType{}, u: &types.LabelType{}},
+		{want: true, t: types.I1, u: types.NewInt(1)},
+		{want: false, t: types.I1, u: types.I8},
+		{want: false, t: types.I1, u: types.I16},
+		{want: false, t: types.I1, u: types.I32},
+		{want: false, t: types.I1, u: types.I64},
+		{want: false, t: types.I1, u: types.I128},
+		{want: false, t: types.I8, u: types.I1},
+		{want: true, t: types.I8, u: types.NewInt(8)},
+		{want: false, t: types.I8, u: types.I16},
+		{want: false, t: types.I8, u: types.I32},
+		{want: false, t: types.I8, u: types.I64},
+		{want: false, t: types.I8, u: types.I128},
+		{want: false, t: types.I16, u: types.I1},
+		{want: false, t: types.I16, u: types.I8},
+		{want: true, t: types.I16, u: types.NewInt(16)},
+		{want: false, t: types.I16, u: types.I32},
+		{want: false, t: types.I16, u: types.I64},
+		{want: false, t: types.I16, u: types.I128},
+		{want: false, t: types.I32, u: types.I1},
+		{want: false, t: types.I32, u: types.I8},
+		{want: false, t: types.I32, u: types.I16},
+		{want: true, t: types.I32, u: types.NewInt(32)},
+		{want: false, t: types.I32, u: types.I64},
+		{want: false, t: types.I32, u: types.I128},
+		{want: false, t: types.I64, u: types.I1},
+		{want: false, t: types.I64, u: types.I8},
+		{want: false, t: types.I64, u: types.I16},
+		{want: false, t: types.I64, u: types.I32},
+		{want: true, t: types.I64, u: types.NewInt(64)},
+		{want: false, t: types.I64, u: types.I128},
+		{want: false, t: types.I128, u: types.I1},
+		{want: false, t: types.I128, u: types.I8},
+		{want: false, t: types.I128, u: types.I16},
+		{want: false, t: types.I128, u: types.I32},
+		{want: false, t: types.I128, u: types.I64},
+		{want: true, t: types.I128, u: types.NewInt(128)},
+		{want: false, t: &types.IntType{}, u: &types.FloatType{}},
+		{want: false, t: &types.IntType{}, u: &types.FuncType{}},
+		{want: false, t: &types.IntType{}, u: &types.PointerType{}},
+		{want: false, t: &types.IntType{}, u: &types.VectorType{}},
+		{want: false, t: &types.IntType{}, u: &types.ArrayType{}},
+		{want: false, t: &types.IntType{}, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestFloatEqual(t *testing.T) {
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.FloatType{}, u: &types.VoidType{}},
+		{want: false, t: &types.FloatType{}, u: &types.LabelType{}},
+		{want: false, t: &types.FloatType{}, u: &types.IntType{}},
+		{want: true, t: types.Half, u: types.Half},
+		{want: false, t: types.Half, u: types.Float},
+		{want: false, t: types.Half, u: types.Double},
+		{want: false, t: types.Half, u: types.FP128},
+		{want: false, t: types.Half, u: types.X86_FP80},
+		{want: false, t: types.Half, u: types.PPC_FP128},
+		{want: false, t: types.Float, u: types.Half},
+		{want: true, t: types.Float, u: types.Float},
+		{want: false, t: types.Float, u: types.Double},
+		{want: false, t: types.Float, u: types.FP128},
+		{want: false, t: types.Float, u: types.X86_FP80},
+		{want: false, t: types.Float, u: types.PPC_FP128},
+		{want: false, t: types.Double, u: types.Half},
+		{want: false, t: types.Double, u: types.Float},
+		{want: true, t: types.Double, u: types.Double},
+		{want: false, t: types.Double, u: types.FP128},
+		{want: false, t: types.Double, u: types.X86_FP80},
+		{want: false, t: types.Double, u: types.PPC_FP128},
+		{want: false, t: types.FP128, u: types.Half},
+		{want: false, t: types.FP128, u: types.Float},
+		{want: false, t: types.FP128, u: types.Double},
+		{want: true, t: types.FP128, u: types.FP128},
+		{want: false, t: types.FP128, u: types.X86_FP80},
+		{want: false, t: types.FP128, u: types.PPC_FP128},
+		{want: false, t: types.X86_FP80, u: types.Half},
+		{want: false, t: types.X86_FP80, u: types.Float},
+		{want: false, t: types.X86_FP80, u: types.Double},
+		{want: false, t: types.X86_FP80, u: types.FP128},
+		{want: true, t: types.X86_FP80, u: types.X86_FP80},
+		{want: false, t: types.X86_FP80, u: types.PPC_FP128},
+		{want: false, t: types.PPC_FP128, u: types.Half},
+		{want: false, t: types.PPC_FP128, u: types.Float},
+		{want: false, t: types.PPC_FP128, u: types.Double},
+		{want: false, t: types.PPC_FP128, u: types.FP128},
+		{want: false, t: types.PPC_FP128, u: types.X86_FP80},
+		{want: true, t: types.PPC_FP128, u: types.PPC_FP128},
+		{want: false, t: &types.FloatType{}, u: &types.FuncType{}},
+		{want: false, t: &types.FloatType{}, u: &types.PointerType{}},
+		{want: false, t: &types.FloatType{}, u: &types.VectorType{}},
+		{want: false, t: &types.FloatType{}, u: &types.ArrayType{}},
+		{want: false, t: &types.FloatType{}, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
+func TestFuncEqual(t *testing.T) {
+	i8, i32 := types.I8, types.I32
+	// void ()
+	voidSig := types.NewFunc(types.Void)
+	// i32 ()
+	i32Sig := types.NewFunc(i32)
+	// i32 (i32)
+	i32i32Sig := types.NewFunc(i32, types.NewParam("x", i32))
+	// i32 (i32, ...)
+	i32i32VariadicSig := types.NewFunc(i32, types.NewParam("x", i32))
+	i32i32VariadicSig.SetVariadic(true)
+	// i32 (i32, i32)
+	i32i32i32Sig := types.NewFunc(i32, types.NewParam("x", i32), types.NewParam("y", i32))
+	// i32 (i32, float)
+	i32i32FloatSig := types.NewFunc(i32, types.NewParam("x", i32), types.NewParam("y", types.Float))
+	// i32 (i8*, ...)
+	formatParam := types.NewParam("format", types.NewPointer(i8))
+	printfSig := types.NewFunc(i32, formatParam)
+	printfSig.SetVariadic(true)
+
+	golden := []struct {
+		want bool
+		t, u types.Type
+	}{
+		{want: false, t: &types.FuncType{}, u: &types.VoidType{}},
+		{want: false, t: &types.FuncType{}, u: &types.LabelType{}},
+		{want: false, t: &types.FuncType{}, u: &types.IntType{}},
+		{want: false, t: &types.FuncType{}, u: &types.FloatType{}},
+		{want: true, t: voidSig, u: voidSig},
+		{want: true, t: i32Sig, u: i32Sig},
+		{want: true, t: i32i32Sig, u: i32i32Sig},
+		{want: true, t: i32i32VariadicSig, u: i32i32VariadicSig},
+		{want: true, t: i32i32FloatSig, u: i32i32FloatSig},
+		{want: true, t: printfSig, u: printfSig},
+		{want: true, t: i32i32i32Sig, u: i32i32i32Sig},
+		{want: false, t: voidSig, u: i32Sig},
+		{want: false, t: i32Sig, u: i32i32Sig},
+		{want: false, t: i32i32Sig, u: i32i32VariadicSig},
+		{want: false, t: i32i32Sig, u: i32i32i32Sig},
+		{want: false, t: i32i32Sig, u: i32i32FloatSig},
+		{want: false, t: i32i32VariadicSig, u: printfSig},
+		{want: false, t: &types.FuncType{}, u: &types.PointerType{}},
+		{want: false, t: &types.FuncType{}, u: &types.VectorType{}},
+		{want: false, t: &types.FuncType{}, u: &types.ArrayType{}},
+		{want: false, t: &types.FuncType{}, u: &types.StructType{}},
+	}
+	for i, g := range golden {
+		got := g.t.Equal(g.u)
+		if got != g.want {
+			t.Errorf("i=%d; expected %v, got %v", i, g.want, got)
+		}
+	}
+}
+
 // Valutate that the relevant types satisfy the value.Value interface.
 var (
 	_ value.Value = &types.Param{}
