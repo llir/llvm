@@ -30,7 +30,7 @@ func Example() {
 	a := constant.NewInt(0x15A4E35, i32) // multiplier of the PRNG.
 	c := constant.NewInt(1, i32)         // increment of the PRNG.
 
-	// Create a new module.
+	// Create a new LLVM IR module.
 	m := ir.NewModule()
 
 	// Create an external function declaration and append it to the module.
@@ -41,7 +41,7 @@ func Example() {
 	// Create a global variable definition and append it to the module.
 	//
 	//    int seed = 0;
-	seedptr := m.NewGlobalDef("seed", zero)
+	seed := m.NewGlobalDef("seed", zero)
 
 	// Create a function definition and append it to the module.
 	//
@@ -52,12 +52,12 @@ func Example() {
 	entry := rand.NewBlock("")
 
 	// Create instructions and append them to the entry basic block.
-	seed := entry.NewLoad(seedptr)
-	tmp1 := entry.NewMul(seed, a)
-	tmp2 := entry.NewAdd(tmp1, c)
-	entry.NewStore(tmp2, seedptr)
-	tmp3 := entry.NewCall(abs, tmp2)
-	entry.NewRet(tmp3)
+	tmp1 := entry.NewLoad(seed)
+	tmp2 := entry.NewMul(tmp1, a)
+	tmp3 := entry.NewAdd(tmp2, c)
+	entry.NewStore(tmp3, seed)
+	tmp4 := entry.NewCall(abs, tmp3)
+	entry.NewRet(tmp4)
 
 	// Print the LLVM IR assembly of the module.
 	fmt.Println(m)
