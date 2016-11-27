@@ -16,7 +16,7 @@ The aim of this project is to provide a pure Go library for interacting with [LL
 Updated: 2016-11-26
 
 - [x] Write support of LLVM IR assembly files.
-    - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#ex-package).
+    - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package).
 - [ ] Read support of LLVM IR assmebly files.
     - A lexer and parser for LLVM IR assembly will be generated from a [BNF grammar](https://sv.wikipedia.org/wiki/Backus-Naur-form) using [gocc](https://github.com/goccmack/gocc).
 
