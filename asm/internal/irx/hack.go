@@ -79,7 +79,7 @@ type instCallDummy struct {
 }
 
 // newCallDummy returns a new dummy value for a given call instruction based on
-// the its callee and function arguments.
+// its return type, callee and function arguments.
 func newCallDummy(ret types.Type, callee string, args ...value.Value) *instCallDummy {
 	return &instCallDummy{callee: callee, args: args}
 }

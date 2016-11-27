@@ -76,7 +76,7 @@ func AppendTopLevelDecl(decls, decl interface{}) ([]TopLevelDecl, error) {
 func NewGlobalDecl(name, immutable, typ interface{}) (*ir.Global, error) {
 	n, ok := name.(*GlobalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid global name type; expected *GlobalIdent, got %T", name)
+		return nil, errors.Errorf("invalid global name type; expected *irx.GlobalIdent, got %T", name)
 	}
 	imm, ok := immutable.(bool)
 	if !ok {
@@ -96,7 +96,7 @@ func NewGlobalDecl(name, immutable, typ interface{}) (*ir.Global, error) {
 func NewGlobalDef(name, immutable, typ, val interface{}) (*ir.Global, error) {
 	n, ok := name.(*GlobalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid global name type; expected *GlobalIdent, got %T", name)
+		return nil, errors.Errorf("invalid global name type; expected *irx.GlobalIdent, got %T", name)
 	}
 	imm, ok := immutable.(bool)
 	if !ok {
@@ -122,7 +122,7 @@ func NewFunctionDecl(result, name, params interface{}) (*ir.Function, error) {
 	}
 	n, ok := name.(*GlobalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid function name type; expected *GlobalIdent, got %T", name)
+		return nil, errors.Errorf("invalid function name type; expected *irx.GlobalIdent, got %T", name)
 	}
 	f := ir.NewFunction(n.name, r)
 	switch ps := params.(type) {
@@ -464,7 +464,7 @@ func NewNamedInstruction(name, inst interface{}) (ir.Instruction, error) {
 	}
 	n, ok := name.(*LocalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid local variable name type; expected *LocalIdent, got %T", name)
+		return nil, errors.Errorf("invalid local variable name type; expected *irx.LocalIdent, got %T", name)
 	}
 	i, ok := inst.(namedInstruction)
 	if !ok {
@@ -553,7 +553,7 @@ func NewCallInst(retTyp, callee, args interface{}) (*instCallDummy, error) {
 	}
 	c, ok := callee.(*GlobalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid callee type; expected *GlobalIdent, got %T", callee)
+		return nil, errors.Errorf("invalid callee type; expected *irx.GlobalIdent, got %T", callee)
 	}
 	var as []value.Value
 	switch args := args.(type) {
