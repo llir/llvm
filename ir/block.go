@@ -80,6 +80,11 @@ func (block *BasicBlock) Insts() []Instruction {
 	return block.insts
 }
 
+// SetInsts sets the non-branching instructions of the basic block.
+func (block *BasicBlock) SetInsts(insts []Instruction) {
+	block.insts = insts
+}
+
 // Term returns the terminator of the basic block.
 func (block *BasicBlock) Term() Terminator {
 	return block.term
