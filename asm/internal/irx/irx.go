@@ -38,8 +38,7 @@ func NewModule(decls interface{}) (*ir.Module, error) {
 			dbg.Printf("support for %T not yet implemented", d)
 		}
 	}
-	// TODO: Replace dummy values with their real values.
-	return m, nil
+	return fixModule(m), nil
 }
 
 // TopLevelDecl represents a top-level declaration.
@@ -413,8 +412,13 @@ func NewBasicBlock(name, insts, term interface{}) (*ir.BasicBlock, error) {
 	default:
 		return nil, errors.Errorf("invalid label name type; expected *irx.LabelIdent or nil, got %T", name)
 	}
-	is, ok := insts.([]ir.Instruction)
-	if !ok {
+	var is []ir.Instruction
+	switch insts := insts.(type) {
+	case []ir.Instruction:
+		is = insts
+	case nil:
+		// no instructions.
+	default:
 		return nil, errors.Errorf("invalid instruction list type; expected []ir.Instruction, got %T", insts)
 	}
 	t, ok := term.(ir.Terminator)
