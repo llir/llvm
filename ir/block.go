@@ -93,6 +93,11 @@ func (block *BasicBlock) SetTerm(term Terminator) {
 	block.term = term
 }
 
+// Name returns the label name of the basic block.
+func (block *BasicBlock) Name() string {
+	return block.name
+}
+
 // AppendInst appends the given instruction to the basic block.
 func (block *BasicBlock) AppendInst(inst Instruction) {
 	if inst, ok := inst.(parentSetter); ok {

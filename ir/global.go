@@ -82,6 +82,11 @@ func (global *Global) String() string {
 		content)
 }
 
+// Name returns the name of the global variable.
+func (global *Global) Name() string {
+	return global.name
+}
+
 // ContentType returns the content type of the global variable.
 func (global *Global) ContentType() types.Type {
 	return global.content
