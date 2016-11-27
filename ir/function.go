@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llir/llvm/ir/internal/enc"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
