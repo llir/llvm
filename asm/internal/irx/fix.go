@@ -18,19 +18,6 @@ type fixer struct {
 	locals map[string]value.Value
 }
 
-// getFunc returns the function of the given function name.
-func (fix *fixer) getFunc(name string) *ir.Function {
-	global, ok := fix.globals[name]
-	if !ok {
-		panic(fmt.Sprintf("unable to locate function %q", name))
-	}
-	f, ok := global.(*ir.Function)
-	if !ok {
-		panic(fmt.Sprintf("invalid function type; expected *ir.Function, got %T", global))
-	}
-	return f
-}
-
 // getGlobal returns the global value of the given global identifier.
 func (fix *fixer) getGlobal(name string) value.Value {
 	global, ok := fix.globals[name]
@@ -40,6 +27,16 @@ func (fix *fixer) getGlobal(name string) value.Value {
 	return global
 }
 
+// getFunc returns the function of the given function name.
+func (fix *fixer) getFunc(name string) *ir.Function {
+	global := fix.getGlobal(name)
+	f, ok := global.(*ir.Function)
+	if !ok {
+		panic(fmt.Sprintf("invalid function type; expected *ir.Function, got %T", global))
+	}
+	return f
+}
+
 // getLocal returns the local value of the given local identifier.
 func (fix *fixer) getLocal(name string) value.Value {
 	local, ok := fix.locals[name]
@@ -47,6 +44,16 @@ func (fix *fixer) getLocal(name string) value.Value {
 		panic(fmt.Sprintf("unable to locate local identifier %q", name))
 	}
 	return local
+}
+
+// getBlock returns the basic block of the given label name.
+func (fix *fixer) getBloack(name string) *ir.BasicBlock {
+	local := fix.getLocal(name)
+	block, ok := local.(*ir.BasicBlock)
+	if !ok {
+		panic(fmt.Sprintf("invalid basic block type; expected *ir.BasicBlock, got %T", local))
+	}
+	return block
 }
 
 // === [ Modules ] =============================================================
@@ -102,7 +109,8 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 	_ = f.String()
 
 	// Index basic blocks.
-	for _, block := range f.Blocks() {
+	blocks := f.Blocks()
+	for _, block := range blocks {
 		name := block.Name()
 		if _, ok := fix.locals[name]; ok {
 			panic(fmt.Sprintf("basic block label %q already present; old `%v`, new `%v`", name, fix.locals[name], block))
@@ -112,8 +120,9 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		// Index instructions producing local variables.
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
-			// Fix call instructions before indexing local variables.
-			if old, ok := inst.(*instCallDummy); ok {
+			// Fix dummy instructions before indexing local variables.
+			switch old := inst.(type) {
+			case *instCallDummy:
 				inst = fix.fixCallInstDummy(old)
 			}
 			insts = append(insts, inst)
@@ -269,8 +278,8 @@ func (fix *fixer) fixCallInst(old *ir.InstCall) *ir.InstCall {
 	return old
 }
 
-// fixCallInstDummy replaces dummy values within the given call instruction with
-// their real values.
+// fixCallInstDummy replaces the given dummy call instruction with a real call
+// instruction, and replaces dummy the instruction with their real values.
 func (fix *fixer) fixCallInstDummy(old *instCallDummy) *ir.InstCall {
 	callee := fix.getFunc(old.callee)
 	var args []value.Value

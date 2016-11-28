@@ -1,3 +1,6 @@
+// Dummy values are used to allow for forward references, and are replaced by
+// their real values in later stages of parsing.
+
 package irx
 
 import (
@@ -11,8 +14,7 @@ import (
 )
 
 // globalDummy represents a dummy value for a given global identifier name and
-// type. Dummy values are used to allow for forward references, and are replaced
-// by their real values in later stages of parsing.
+// type.
 type globalDummy struct {
 	// Global name.
 	name string
@@ -37,8 +39,7 @@ func (g *globalDummy) Type() types.Type {
 }
 
 // localDummy represents a dummy value for a given local identifier name and
-// type. Dummy values are used to allow for forward references, and are replaced
-// by their real values in later stages of parsing.
+// type.
 type localDummy struct {
 	// Local name.
 	name string
@@ -62,9 +63,7 @@ func (g *localDummy) Type() types.Type {
 	return g.typ
 }
 
-// instCallDummy represents a dummy value for a call instruction. Dummy values
-// are used to allow for forward references, and are replaced by their real
-// values in later stages of parsing.
+// instCallDummy represents a dummy call instruction.
 type instCallDummy struct {
 	// Parent basic block.
 	parent *ir.BasicBlock
@@ -78,8 +77,8 @@ type instCallDummy struct {
 	ret types.Type
 }
 
-// newCallDummy returns a new dummy value for a given call instruction based on
-// its return type, callee and function arguments.
+// newCallDummy returns a new dummy call instruction based on the given callee
+// and function arguments.
 func newCallDummy(ret types.Type, callee string, args ...value.Value) *instCallDummy {
 	return &instCallDummy{callee: callee, args: args, ret: ret}
 }
