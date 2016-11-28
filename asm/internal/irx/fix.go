@@ -137,12 +137,22 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		block.SetInsts(insts)
 	}
 
+	// Fix dummy terminators.
+	for _, block := range blocks {
+		term := block.Term()
+		switch old := term.(type) {
+		case *termBrDummy:
+			term = fix.fixBrTermDummy(old)
+		}
+		block.SetTerm(term)
+	}
+
 	// TODO: Remove debug output.
 	//fmt.Printf("=== [ locals of %q ] ===\n", f.Name())
 	//pretty.Println(fix.locals)
 
 	// Fix basic blocks.
-	for _, block := range f.Blocks() {
+	for _, block := range blocks {
 		fix.fixBlock(block)
 	}
 }
@@ -301,6 +311,9 @@ func (fix *fixer) fixTerm(term ir.Terminator) ir.Terminator {
 	switch term := term.(type) {
 	case *ir.TermRet:
 		return fix.fixRetTerm(term)
+	case *ir.TermBr:
+		// nothing to do; contains no values.
+		return term
 	default:
 		panic(fmt.Sprintf("support for terminator type %T not yet implemented", term))
 	}
@@ -315,6 +328,15 @@ func (fix *fixer) fixRetTerm(old *ir.TermRet) *ir.TermRet {
 		}
 	}
 	return old
+}
+
+// fixBrTermDummy replaces the given dummy br terminator with a real br
+// terminator, and replaces dummy the terminator with their real values.
+func (fix *fixer) fixBrTermDummy(old *termBrDummy) *ir.TermBr {
+	target := fix.getBloack(old.target)
+	term := ir.NewBr(target)
+	term.SetParent(old.parent)
+	return term
 }
 
 // ### [ Helper functions ] ####################################################

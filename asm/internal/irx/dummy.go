@@ -129,3 +129,39 @@ func (inst *instCallDummy) Parent() *ir.BasicBlock {
 func (inst *instCallDummy) SetParent(parent *ir.BasicBlock) {
 	inst.parent = parent
 }
+
+// termBrDummy represents a dummy br terminator.
+type termBrDummy struct {
+	// Parent basic block.
+	parent *ir.BasicBlock
+	// Target branch.
+	target string
+	// Successors basic blocks.
+	successors []*ir.BasicBlock
+}
+
+// newBrDummy returns a new dummy unconditional br terminator based on the given
+// target branch.
+func newBrDummy(target string) *termBrDummy {
+	return &termBrDummy{target: target}
+}
+
+// String returns the LLVM syntax representation of the terminator.
+func (term *termBrDummy) String() string {
+	return fmt.Sprintf("br label %s", term.target)
+}
+
+// Parent returns the parent basic block of the terminator.
+func (term *termBrDummy) Parent() *ir.BasicBlock {
+	return term.parent
+}
+
+// SetParent sets the parent basic block of the terminator.
+func (term *termBrDummy) SetParent(parent *ir.BasicBlock) {
+	term.parent = parent
+}
+
+// Successors returns the successor basic blocks of the terminator.
+func (term *termBrDummy) Successors() []*ir.BasicBlock {
+	panic("dummy implementation")
+}

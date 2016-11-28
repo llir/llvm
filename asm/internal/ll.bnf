@@ -192,7 +192,8 @@ LabelIdent
 // === [ Types ] ===============================================================
 
 Type
-	: IntType
+	: LabelType
+	| IntType
 	| PointerType
 ;
 
@@ -203,6 +204,10 @@ ResultType
 
 VoidType
 	: "void"   << types.Void, nil >>
+;
+
+LabelType
+	: "label"   << types.Label, nil >>
 ;
 
 IntType
@@ -317,9 +322,14 @@ Arg
 
 Terminator
 	: RetTerm
+	| BrTerm
 ;
 
 RetTerm
 	: "ret" VoidType     << ir.NewRet(nil), nil >>
 	| "ret" Type Value   << irx.NewRetTerm($1, $2) >>
+;
+
+BrTerm
+	: "br" LabelType LocalIdent   << irx.NewBrTerm($2) >>
 ;

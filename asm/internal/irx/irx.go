@@ -583,6 +583,16 @@ func NewRetTerm(typ, val interface{}) (*ir.TermRet, error) {
 	return ir.NewRet(v), nil
 }
 
+// NewBrTerm returns a new br terminator based on the given return target
+// branch.
+func NewBrTerm(target interface{}) (*termBrDummy, error) {
+	t, ok := target.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
+	}
+	return newBrDummy(t.name), nil
+}
+
 // ### [ Helper functions ] ####################################################
 
 // getTokenString returns the string literal of the given token.
