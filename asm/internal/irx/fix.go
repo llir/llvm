@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -30,6 +31,24 @@ func (fix *fixer) getFunc(name string) *ir.Function {
 	return f
 }
 
+// getGlobal returns the global value of the given global identifier.
+func (fix *fixer) getGlobal(name string) value.Value {
+	global, ok := fix.globals[name]
+	if !ok {
+		panic(fmt.Sprintf("unable to locate global identifier %q", name))
+	}
+	return global
+}
+
+// getLocal returns the local value of the given local identifier.
+func (fix *fixer) getLocal(name string) value.Value {
+	local, ok := fix.locals[name]
+	if !ok {
+		panic(fmt.Sprintf("unable to locate local identifier %q", name))
+	}
+	return local
+}
+
 // === [ Modules ] =============================================================
 
 // fixModule replaces dummy values within the given module with their real
@@ -47,6 +66,10 @@ func fixModule(m *ir.Module) *ir.Module {
 		}
 		fix.globals[name] = global
 	}
+
+	// TODO: Remove debug output.
+	//fmt.Println("=== [ globals ] ===")
+	//pretty.Println(fix.globals)
 
 	// Index functions.
 	for _, f := range m.Funcs() {
@@ -87,7 +110,13 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		fix.locals[name] = block
 
 		// Index instructions producing local variables.
+		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
+			// Fix call instructions before indexing local variables.
+			if old, ok := inst.(*instCallDummy); ok {
+				inst = fix.fixCallInstDummy(old)
+			}
+			insts = append(insts, inst)
 			if inst, ok := inst.(value.Value); ok {
 				name := stripLocal(inst.Ident())
 				if _, ok := fix.locals[name]; ok {
@@ -96,7 +125,12 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 				fix.locals[name] = inst
 			}
 		}
+		block.SetInsts(insts)
 	}
+
+	// TODO: Remove debug output.
+	//fmt.Printf("=== [ locals of %q ] ===\n", f.Name())
+	//pretty.Println(fix.locals)
 
 	// Fix basic blocks.
 	for _, block := range f.Blocks() {
@@ -106,10 +140,22 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 
 // === [ Values ] ==============================================================
 
-// fixValue replaces dummy values within the given value with their real values.
-func (fix *fixer) fixValue(old value.Value) value.Value {
-	// TODO: Implement.
-	return old
+// fixValue replaces given dummy value with its real value. The boolean return
+// value indicates if a dummy value was replaced.
+func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
+	switch old := old.(type) {
+	case *globalDummy:
+		return fix.getGlobal(old.name), true
+	case *localDummy:
+		return fix.getLocal(old.name), true
+	case *constant.Int:
+		// nothing to do; valid value.
+	case *ir.InstAdd:
+		// nothing to do; valid value.
+	default:
+		panic(fmt.Sprintf("support for value type %T not yet implemented", old))
+	}
+	return old, false
 }
 
 // === [ Basic blocks ] ========================================================
@@ -149,8 +195,8 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 		return fix.fixStoreInst(inst)
 	// Conversion instructions
 	// Other instructions
-	case *instCallDummy:
-		return fix.fixCallInstDummy(inst)
+	case *ir.InstCall:
+		return fix.fixCallInst(inst)
 	default:
 		panic(fmt.Sprintf("support for instruction type %T not yet implemented", inst))
 	}
@@ -161,14 +207,24 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 // fixAddInst replaces dummy values within the given add instruction with their
 // real values.
 func (fix *fixer) fixAddInst(old *ir.InstAdd) *ir.InstAdd {
-	// TODO: Implement.
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
 	return old
 }
 
 // fixMulInst replaces dummy values within the given mul instruction with their
 // real values.
 func (fix *fixer) fixMulInst(old *ir.InstMul) *ir.InstMul {
-	// TODO: Implement.
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
 	return old
 }
 
@@ -179,14 +235,21 @@ func (fix *fixer) fixMulInst(old *ir.InstMul) *ir.InstMul {
 // fixLoadInst replaces dummy values within the given load instruction with
 // their real values.
 func (fix *fixer) fixLoadInst(old *ir.InstLoad) *ir.InstLoad {
-	// TODO: Implement.
+	if src, ok := fix.fixValue(old.Src()); ok {
+		old.SetSrc(src)
+	}
 	return old
 }
 
 // fixStoreInst replaces dummy values within the given store instruction with
 // their real values.
 func (fix *fixer) fixStoreInst(old *ir.InstStore) *ir.InstStore {
-	// TODO: Implement.
+	if src, ok := fix.fixValue(old.Src()); ok {
+		old.SetSrc(src)
+	}
+	if dst, ok := fix.fixValue(old.Dst()); ok {
+		old.SetDst(dst)
+	}
 	return old
 }
 
@@ -194,13 +257,25 @@ func (fix *fixer) fixStoreInst(old *ir.InstStore) *ir.InstStore {
 
 // --- [ Other instructions ] --------------------------------------------------
 
+// fixCallInst replaces dummy values within the given call instruction with
+// their real values.
+func (fix *fixer) fixCallInst(old *ir.InstCall) *ir.InstCall {
+	var args []value.Value
+	for _, arg := range old.Args() {
+		arg, _ = fix.fixValue(arg)
+		args = append(args, arg)
+	}
+	old.SetArgs(args)
+	return old
+}
+
 // fixCallInstDummy replaces dummy values within the given call instruction with
 // their real values.
 func (fix *fixer) fixCallInstDummy(old *instCallDummy) *ir.InstCall {
 	callee := fix.getFunc(old.callee)
 	var args []value.Value
 	for _, arg := range old.args {
-		arg = fix.fixValue(arg)
+		arg, _ = fix.fixValue(arg)
 		args = append(args, arg)
 	}
 	inst := ir.NewCall(callee, args...)
@@ -225,7 +300,11 @@ func (fix *fixer) fixTerm(term ir.Terminator) ir.Terminator {
 // fixRetTerm replaces dummy values within the given ret terminator with their
 // real values.
 func (fix *fixer) fixRetTerm(old *ir.TermRet) *ir.TermRet {
-	// TODO: Implement.
+	if x, ok := old.X(); ok {
+		if x, ok := fix.fixValue(x); ok {
+			old.SetX(x)
+		}
+	}
 	return old
 }
 
