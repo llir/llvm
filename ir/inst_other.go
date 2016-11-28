@@ -515,6 +515,11 @@ func (inst *InstCall) Args() []value.Value {
 	return inst.args
 }
 
+// SetArgs sets the function arguments of the call instruction.
+func (inst *InstCall) SetArgs(args []value.Value) {
+	inst.args = args
+}
+
 // --- [ va_arg ] --------------------------------------------------------------
 
 // --- [ landingpad ] ----------------------------------------------------------

@@ -75,8 +75,18 @@ func (inst *Inst{{ .Name }}) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the {{ lower .Name }} instruction.
+func (inst *Inst{{ .Name }}) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the {{ lower .Name }} instruction.
 func (inst *Inst{{ .Name }}) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the {{ lower .Name }} instruction.
+func (inst *Inst{{ .Name }}) SetY(y value.Value) {
+	inst.y = y
 }
 {{- end }}

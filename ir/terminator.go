@@ -86,6 +86,11 @@ func (term *TermRet) X() (value.Value, bool) {
 	return nil, false
 }
 
+// SetX sets the return value of the ret terminator.
+func (term *TermRet) SetX(x value.Value) {
+	term.x = x
+}
+
 // --- [ br ] ------------------------------------------------------------------
 
 // TermBr represents an unconditional br terminator.

@@ -74,9 +74,19 @@ func (inst *InstAdd) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the add instruction.
+func (inst *InstAdd) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the add instruction.
 func (inst *InstAdd) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the add instruction.
+func (inst *InstAdd) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -138,9 +148,19 @@ func (inst *InstFAdd) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the fadd instruction.
+func (inst *InstFAdd) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the fadd instruction.
 func (inst *InstFAdd) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the fadd instruction.
+func (inst *InstFAdd) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -202,9 +222,19 @@ func (inst *InstSub) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the sub instruction.
+func (inst *InstSub) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the sub instruction.
 func (inst *InstSub) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the sub instruction.
+func (inst *InstSub) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -266,9 +296,19 @@ func (inst *InstFSub) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the fsub instruction.
+func (inst *InstFSub) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the fsub instruction.
 func (inst *InstFSub) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the fsub instruction.
+func (inst *InstFSub) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -330,9 +370,19 @@ func (inst *InstMul) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the mul instruction.
+func (inst *InstMul) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the mul instruction.
 func (inst *InstMul) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the mul instruction.
+func (inst *InstMul) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -394,9 +444,19 @@ func (inst *InstFMul) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the fmul instruction.
+func (inst *InstFMul) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the fmul instruction.
 func (inst *InstFMul) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the fmul instruction.
+func (inst *InstFMul) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -458,9 +518,19 @@ func (inst *InstUDiv) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the udiv instruction.
+func (inst *InstUDiv) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the udiv instruction.
 func (inst *InstUDiv) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the udiv instruction.
+func (inst *InstUDiv) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -522,9 +592,19 @@ func (inst *InstSDiv) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the sdiv instruction.
+func (inst *InstSDiv) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the sdiv instruction.
 func (inst *InstSDiv) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the sdiv instruction.
+func (inst *InstSDiv) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -586,9 +666,19 @@ func (inst *InstFDiv) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the fdiv instruction.
+func (inst *InstFDiv) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the fdiv instruction.
 func (inst *InstFDiv) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the fdiv instruction.
+func (inst *InstFDiv) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -650,9 +740,19 @@ func (inst *InstURem) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the urem instruction.
+func (inst *InstURem) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the urem instruction.
 func (inst *InstURem) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the urem instruction.
+func (inst *InstURem) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -714,9 +814,19 @@ func (inst *InstSRem) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the srem instruction.
+func (inst *InstSRem) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the srem instruction.
 func (inst *InstSRem) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the srem instruction.
+func (inst *InstSRem) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -778,7 +888,17 @@ func (inst *InstFRem) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the frem instruction.
+func (inst *InstFRem) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the frem instruction.
 func (inst *InstFRem) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the frem instruction.
+func (inst *InstFRem) SetY(y value.Value) {
+	inst.y = y
 }
