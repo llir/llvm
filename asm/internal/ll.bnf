@@ -341,6 +341,7 @@ Arg
 Terminator
 	: RetTerm
 	| BrTerm
+	| CondBrTerm
 ;
 
 RetTerm
@@ -350,4 +351,8 @@ RetTerm
 
 BrTerm
 	: "br" LabelType LocalIdent   << irx.NewBrTerm($2) >>
+;
+
+CondBrTerm
+	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << irx.NewCondBrTerm($1, $2, $5, $8) >>
 ;

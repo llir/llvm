@@ -601,7 +601,7 @@ func NewRetTerm(typ, val interface{}) (*ir.TermRet, error) {
 	return ir.NewRet(v), nil
 }
 
-// NewBrTerm returns a new br terminator based on the given return target
+// NewBrTerm returns a new unconditional br terminator based on the given target
 // branch.
 func NewBrTerm(target interface{}) (*termBrDummy, error) {
 	t, ok := target.(*LocalIdent)
@@ -609,6 +609,24 @@ func NewBrTerm(target interface{}) (*termBrDummy, error) {
 		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
 	}
 	return newBrDummy(t.name), nil
+}
+
+// NewCondBrTerm returns a new conditional br terminator based on the given
+// branching condition type and value, and conditional target branches.
+func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*termCondBrDummy, error) {
+	cond, err := NewValue(condTyp, condVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	tTrue, ok := targetTrue.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetTrue)
+	}
+	tFalse, ok := targetFalse.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetFalse)
+	}
+	return newCondBrDummy(cond, tTrue.name, tFalse.name), nil
 }
 
 // ### [ Helper functions ] ####################################################

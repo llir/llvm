@@ -143,6 +143,8 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		switch old := term.(type) {
 		case *termBrDummy:
 			term = fix.fixBrTermDummy(old)
+		case *termCondBrDummy:
+			term = fix.fixCondBrTermDummy(old)
 		}
 		block.SetTerm(term)
 	}
@@ -169,7 +171,8 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 		return fix.getLocal(old.name), true
 	case *constant.Int:
 		// nothing to do; valid value.
-	case *ir.InstAdd:
+	// TODO: Add all instructions producing values.
+	case *ir.InstAdd, *ir.InstICmp:
 		// nothing to do; valid value.
 	default:
 		panic(fmt.Sprintf("support for value type %T not yet implemented", old))
@@ -328,6 +331,8 @@ func (fix *fixer) fixTerm(term ir.Terminator) ir.Terminator {
 	case *ir.TermBr:
 		// nothing to do; contains no values.
 		return term
+	case *ir.TermCondBr:
+		return fix.fixCondBrTerm(term)
 	default:
 		panic(fmt.Sprintf("support for terminator type %T not yet implemented", term))
 	}
@@ -344,11 +349,33 @@ func (fix *fixer) fixRetTerm(old *ir.TermRet) *ir.TermRet {
 	return old
 }
 
-// fixBrTermDummy replaces the given dummy br terminator with a real br
-// terminator, and replaces dummy the terminator with their real values.
+// fixBrTermDummy replaces the given dummy unconditional br terminator with a
+// real unconditional br terminator, and replaces dummy the terminator with
+// their real values.
 func (fix *fixer) fixBrTermDummy(old *termBrDummy) *ir.TermBr {
 	target := fix.getBloack(old.target)
 	term := ir.NewBr(target)
+	term.SetParent(old.parent)
+	return term
+}
+
+// fixCondBrTerm replaces dummy values within the given conditional br
+// terminator with their real values.
+func (fix *fixer) fixCondBrTerm(old *ir.TermCondBr) *ir.TermCondBr {
+	if cond, ok := fix.fixValue(old.Cond()); ok {
+		old.SetCond(cond)
+	}
+	return old
+}
+
+// fixCondBrTermDummy replaces the given dummy conditional br terminator with a
+// real conditional br terminator, and replaces dummy the terminator with their
+// real values.
+func (fix *fixer) fixCondBrTermDummy(old *termCondBrDummy) *ir.TermCondBr {
+	cond, _ := fix.fixValue(old.cond)
+	targetTrue := fix.getBloack(old.targetTrue)
+	targetFalse := fix.getBloack(old.targetFalse)
+	term := ir.NewCondBr(cond, targetTrue, targetFalse)
 	term.SetParent(old.parent)
 	return term
 }

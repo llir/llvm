@@ -192,6 +192,11 @@ func (term *TermCondBr) Cond() value.Value {
 	return term.cond
 }
 
+// SetCond sets the branching condition of the br terminator.
+func (term *TermCondBr) SetCond(cond value.Value) {
+	term.cond = cond
+}
+
 // TargetTrue returns the target branch when condition is true of the br
 // terminator.
 func (term *TermCondBr) TargetTrue() *BasicBlock {

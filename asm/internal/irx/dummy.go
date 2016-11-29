@@ -130,14 +130,12 @@ func (inst *instCallDummy) SetParent(parent *ir.BasicBlock) {
 	inst.parent = parent
 }
 
-// termBrDummy represents a dummy br terminator.
+// termBrDummy represents a dummy unconditional br terminator.
 type termBrDummy struct {
 	// Parent basic block.
 	parent *ir.BasicBlock
 	// Target branch.
 	target string
-	// Successors basic blocks.
-	successors []*ir.BasicBlock
 }
 
 // newBrDummy returns a new dummy unconditional br terminator based on the given
@@ -163,5 +161,46 @@ func (term *termBrDummy) SetParent(parent *ir.BasicBlock) {
 
 // Successors returns the successor basic blocks of the terminator.
 func (term *termBrDummy) Successors() []*ir.BasicBlock {
+	panic("dummy implementation")
+}
+
+// termCondBrDummy represents a dummy conditional br terminator.
+type termCondBrDummy struct {
+	// Parent basic block.
+	parent *ir.BasicBlock
+	// Branching condition.
+	cond value.Value
+	// Target branch when condition is true.
+	targetTrue string
+	// Target branch when condition is false.
+	targetFalse string
+}
+
+// NewCondBr returns a new dummy conditional br terminator based on the given
+// branching condition and conditional target branches.
+func newCondBrDummy(cond value.Value, targetTrue, targetFalse string) *termCondBrDummy {
+	return &termCondBrDummy{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse}
+}
+
+// String returns the LLVM syntax representation of the terminator.
+func (term *termCondBrDummy) String() string {
+	return fmt.Sprintf("br i1 %s, label %s, label %s",
+		term.cond.Ident(),
+		term.targetTrue,
+		term.targetFalse)
+}
+
+// Parent returns the parent basic block of the terminator.
+func (term *termCondBrDummy) Parent() *ir.BasicBlock {
+	return term.parent
+}
+
+// SetParent sets the parent basic block of the terminator.
+func (term *termCondBrDummy) SetParent(parent *ir.BasicBlock) {
+	term.parent = parent
+}
+
+// Successors returns the successor basic blocks of the terminator.
+func (term *termCondBrDummy) Successors() []*ir.BasicBlock {
 	panic("dummy implementation")
 }
