@@ -548,6 +548,24 @@ func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ir.InstStore, er
 
 // --- [ Other instructions ] --------------------------------------------------
 
+// NewICmpInst returns a new icmp instruction based on the given integer
+// condition code, type and operands.
+func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstICmp, error) {
+	c, ok := cond.(ir.IntPred)
+	if !ok {
+		return nil, errors.Errorf("invalid integer predicate type; expected ir.IntPred, got %T", cond)
+	}
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewICmp(c, x, y), nil
+}
+
 // NewCallInst returns a new call instruction based on the given return type,
 // callee name, and function arguments.
 func NewCallInst(retTyp, callee, args interface{}) (*instCallDummy, error) {

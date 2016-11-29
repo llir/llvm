@@ -14,6 +14,7 @@ func TestFix(t *testing.T) {
 		path string
 	}{
 		{path: "../testdata/rand.ll"},
+		{path: "../testdata/loop.ll"},
 	}
 	for i, g := range golden {
 		m, err := asm.ParseFile(g.path)

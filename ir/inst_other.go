@@ -89,9 +89,19 @@ func (inst *InstICmp) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the icmp instruction.
+func (inst *InstICmp) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the icmp instruction.
 func (inst *InstICmp) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the icmp instruction.
+func (inst *InstICmp) SetY(y value.Value) {
+	inst.y = y
 }
 
 // IntPred represents the set of condition codes of the icmp instruction.

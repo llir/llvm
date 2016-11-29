@@ -214,6 +214,8 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 		return fix.fixStoreInst(inst)
 	// Conversion instructions
 	// Other instructions
+	case *ir.InstICmp:
+		return fix.fixICmpInst(inst)
 	case *ir.InstCall:
 		return fix.fixCallInst(inst)
 	default:
@@ -275,6 +277,18 @@ func (fix *fixer) fixStoreInst(old *ir.InstStore) *ir.InstStore {
 // --- [ Conversion instructions ] ---------------------------------------------
 
 // --- [ Other instructions ] --------------------------------------------------
+
+// fixICmpInst replaces dummy values within the given icmp instruction with
+// their real values.
+func (fix *fixer) fixICmpInst(old *ir.InstICmp) *ir.InstICmp {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
 
 // fixCallInst replaces dummy values within the given call instruction with
 // their real values.

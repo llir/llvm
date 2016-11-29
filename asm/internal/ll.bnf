@@ -271,6 +271,7 @@ ValueInstruction
 	: AddInst
 	| MulInst
 	| LoadInst
+	| ICmpInst
 	| CallInst
 ;
 
@@ -299,6 +300,23 @@ StoreInst
 // --- [ Conversion instructions ] ---------------------------------------------
 
 // --- [ Other instructions ] --------------------------------------------------
+
+ICmpInst
+	: "icmp" IntPred Type Value "," Value   << irx.NewICmpInst($1, $2, $3, $5) >>
+;
+
+IntPred
+	: "eq"    << ir.IntEQ, nil >>
+	| "ne"    << ir.IntNE, nil >>
+	| "ugt"   << ir.IntUGT, nil >>
+	| "uge"   << ir.IntUGE, nil >>
+	| "ult"   << ir.IntULT, nil >>
+	| "ule"   << ir.IntULE, nil >>
+	| "sgt"   << ir.IntSGT, nil >>
+	| "sge"   << ir.IntSGE, nil >>
+	| "slt"   << ir.IntSLT, nil >>
+	| "sle"   << ir.IntSLE, nil >>
+;
 
 CallInst
 	: "call" ResultType GlobalIdent "(" Args ")"   << irx.NewCallInst($1, $2, $4) >>
