@@ -1,3 +1,24 @@
+// Fix dummy values as follows.
+//
+// Per module.
+//
+//    1. Index global variables.
+//    2. Index functions.
+//
+// Per function.
+//
+//    1. Force generate local IDs for unnamed basic blocks and instructions.
+//    2. Index basic blocks.
+//    3. Fix dummy instructions and terminators.
+//       - e.g. replace *ir.instCallDummy with *ir.InstCall
+//       - Replace function and label names with *ir.Function and *ir.BasicBlock
+//         values.
+//       - Leave dummy operands (e.g. *ir.localDummy, *ir.globalDummy,
+//         *ir.instPhiDummy and *ir.instCallDummy) as these will be replaced in
+//         a later stage.
+//    4. Index local variables produced by instructions.
+//    5. Replace dummy operands of instructions and terminators.
+
 package irx
 
 import (
@@ -116,29 +137,21 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 			panic(fmt.Sprintf("basic block label %q already present; old `%v`, new `%v`", name, fix.locals[name], block))
 		}
 		fix.locals[name] = block
+	}
 
-		// Index instructions producing local variables.
+	// Fix dummy instructions and terminators.
+	for _, block := range blocks {
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
-			// Fix dummy instructions before indexing local variables.
 			switch old := inst.(type) {
+			case *instPhiDummy:
+				inst = fix.fixPhiInstDummy(old)
 			case *instCallDummy:
 				inst = fix.fixCallInstDummy(old)
 			}
 			insts = append(insts, inst)
-			if inst, ok := inst.(value.Value); ok {
-				name := stripLocal(inst.Ident())
-				if _, ok := fix.locals[name]; ok {
-					panic(fmt.Sprintf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
-				}
-				fix.locals[name] = inst
-			}
 		}
 		block.SetInsts(insts)
-	}
-
-	// Fix dummy terminators.
-	for _, block := range blocks {
 		term := block.Term()
 		switch old := term.(type) {
 		case *termBrDummy:
@@ -147,6 +160,19 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 			term = fix.fixCondBrTermDummy(old)
 		}
 		block.SetTerm(term)
+	}
+
+	// Index local variables produced by instructions.
+	for _, block := range blocks {
+		for _, inst := range block.Insts() {
+			if inst, ok := inst.(value.Value); ok {
+				name := stripLocal(inst.Ident())
+				if _, ok := fix.locals[name]; ok {
+					panic(fmt.Sprintf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
+				}
+				fix.locals[name] = inst
+			}
+		}
 	}
 
 	// TODO: Remove debug output.
@@ -191,8 +217,8 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 func (fix *fixer) fixBlock(block *ir.BasicBlock) {
 	// Fix instructions.
 	var insts []ir.Instruction
-	for _, inst := range block.Insts() {
-		inst = fix.fixInst(inst)
+	for _, old := range block.Insts() {
+		inst := fix.fixInst(old)
 		insts = append(insts, inst)
 	}
 	block.SetInsts(insts)
@@ -255,6 +281,8 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 	// Other instructions
 	case *ir.InstICmp:
 		return fix.fixICmpInst(inst)
+	case *ir.InstPhi:
+		return fix.fixPhiInst(inst)
 	case *ir.InstCall:
 		return fix.fixCallInst(inst)
 	default:
@@ -521,6 +549,40 @@ func (fix *fixer) fixICmpInst(old *ir.InstICmp) *ir.InstICmp {
 	return old
 }
 
+// fixPhiInstDummy replaces the given dummy phi instruction with a real phi
+// instruction, and replaces dummy the instruction with their real values.
+func (fix *fixer) fixPhiInstDummy(old *instPhiDummy) *ir.InstPhi {
+	var incs []*ir.Incoming
+	for _, inc := range old.incs {
+		pred := fix.getBloack(inc.pred)
+		// Leave inc.x unchanged for now. It may contain dummy values. fixPhiInst
+		// will replace these later.
+		//
+		// We cannot replace them yet, as all local variables have not been
+		// indexed yet, as the time of the call to fixPhiInstDummy.
+		x, ok := inc.x.(value.Value)
+		if !ok {
+			panic(fmt.Sprintf("invalid x type; expected value.Value, got %T", inc.x))
+		}
+		incs = append(incs, ir.NewIncoming(x, pred))
+	}
+	inst := ir.NewPhi(incs...)
+	inst.SetParent(old.parent)
+	inst.SetIdent(stripLocal(old.Ident()))
+	return inst
+}
+
+// fixPhiInst replaces dummy values within the given phi instruction with their
+// real values.
+func (fix *fixer) fixPhiInst(old *ir.InstPhi) *ir.InstPhi {
+	for _, inc := range old.Incs() {
+		if x, ok := fix.fixValue(inc.X()); ok {
+			inc.SetX(x)
+		}
+	}
+	return old
+}
+
 // fixCallInst replaces dummy values within the given call instruction with
 // their real values.
 func (fix *fixer) fixCallInst(old *ir.InstCall) *ir.InstCall {
@@ -537,12 +599,15 @@ func (fix *fixer) fixCallInst(old *ir.InstCall) *ir.InstCall {
 // instruction, and replaces dummy the instruction with their real values.
 func (fix *fixer) fixCallInstDummy(old *instCallDummy) *ir.InstCall {
 	callee := fix.getFunc(old.callee)
-	var args []value.Value
-	for _, arg := range old.args {
-		arg, _ = fix.fixValue(arg)
-		args = append(args, arg)
+	if got, want := old.ret, callee.RetType(); !got.Equal(want) {
+		panic(fmt.Sprintf("return type mismatch; expected `%v`, got `%v`", want, got))
 	}
-	inst := ir.NewCall(callee, args...)
+	// Leave args unchanged for now. It may contain dummy values. fixCallInst
+	// will replace these later.
+	//
+	// We cannot replace them yet, as all local variables have not been indexed
+	// yet, as the time of the call to fixCallInstDummy.
+	inst := ir.NewCall(callee, old.args...)
 	inst.SetParent(old.parent)
 	inst.SetIdent(stripLocal(old.Ident()))
 	return inst
@@ -600,10 +665,14 @@ func (fix *fixer) fixCondBrTerm(old *ir.TermCondBr) *ir.TermCondBr {
 // real conditional br terminator, and replaces dummy the terminator with their
 // real values.
 func (fix *fixer) fixCondBrTermDummy(old *termCondBrDummy) *ir.TermCondBr {
-	cond, _ := fix.fixValue(old.cond)
 	targetTrue := fix.getBloack(old.targetTrue)
 	targetFalse := fix.getBloack(old.targetFalse)
-	term := ir.NewCondBr(cond, targetTrue, targetFalse)
+	// Leave old.cond unchanged for now. It may contain dummy values.
+	// fixCondBrTerm will replace these later.
+	//
+	// We cannot replace them yet, as all local variables have not been indexed
+	// yet, as the time of the call to fixCondBrTermDummy.
+	term := ir.NewCondBr(old.cond, targetTrue, targetFalse)
 	term.SetParent(old.parent)
 	return term
 }

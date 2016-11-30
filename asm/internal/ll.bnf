@@ -348,6 +348,7 @@ ValueInstruction
 	// Conversion instructions
 	// Other instructions
 	| ICmpInst
+	| PhiInst
 	| CallInst
 ;
 
@@ -456,6 +457,19 @@ IntPred
 	| "sge"   << ir.IntSGE, nil >>
 	| "slt"   << ir.IntSLT, nil >>
 	| "sle"   << ir.IntSLE, nil >>
+;
+
+PhiInst
+	: "phi" Type IncomingList   << irx.NewPhiInst($1, $2) >>
+;
+
+IncomingList
+	: Incoming                    << irx.NewIncomingList($0) >>
+	| IncomingList "," Incoming   << irx.AppendIncoming($0, $2) >>
+;
+
+Incoming
+	: "[" Value "," LocalIdent "]"   << irx.NewIncoming($1, $3) >>
 ;
 
 CallInst

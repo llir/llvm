@@ -14,7 +14,7 @@ func TestFix(t *testing.T) {
 		path string
 	}{
 		{path: "../testdata/rand.ll"},
-		//{path: "../testdata/loop.ll"},
+		{path: "../testdata/loop.ll"},
 		{path: "../testdata/frem.ll"},
 		{path: "../testdata/binary.ll"},
 		{path: "../testdata/bitwise.ll"},
@@ -26,16 +26,11 @@ func TestFix(t *testing.T) {
 			continue
 		}
 		// Hack :) Rather than using reflect, pretty-print the module and search
-		// for occurances of globalDummy, localDummy and instCallDummy.
+		// for occurances of globalDummy, localDummy, instPhiDummy, incomingDummy,
+		// instCallDummy, termBrDummy and termCondBrDummy.
 		s := pretty.Sprint(m)
-		if strings.Contains(s, "globalDummy") {
-			t.Errorf("i=%d: module contains dummy global identifiers; `%v`", i, s)
-		}
-		if strings.Contains(s, "localDummy") {
-			t.Errorf("i=%d: module contains dummy local identifiers; `%v`", i, s)
-		}
-		if strings.Contains(s, "instCallDummy") {
-			t.Errorf("i=%d: module contains dummy call instructions; `%v`", i, s)
+		if strings.Contains(s, "Dummy") {
+			t.Errorf("i=%d: module contains dummy value; `%v`", i, s)
 		}
 	}
 }

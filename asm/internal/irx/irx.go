@@ -794,6 +794,59 @@ func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ir.InstStore, er
 
 // --- [ Other instructions ] --------------------------------------------------
 
+// NewPhiInst returns a new phi instruction based on the given incoming values.
+func NewPhiInst(typ, incs interface{}) (*instPhiDummy, error) {
+	t, ok := typ.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
+	}
+	is, ok := incs.([]*incomingDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value list type; expected []*irx.incomingDummy, got %T", incs)
+	}
+	for _, inc := range is {
+		x, err := NewValue(typ, inc.x)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		inc.x = x
+	}
+	return newPhiDummy(t, is...), nil
+}
+
+// NewIncomingList returns a new incoming value list based on the given incoming
+// value.
+func NewIncomingList(inc interface{}) ([]*incomingDummy, error) {
+	i, ok := inc.(*incomingDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value type; expected *irx.incomingDummy, got %T", inc)
+	}
+	return []*incomingDummy{i}, nil
+}
+
+// AppendIncoming appends the given incoming value to the incoming value list.
+func AppendIncoming(incs, inc interface{}) ([]*incomingDummy, error) {
+	is, ok := incs.([]*incomingDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value list type; expected []*irx.incomingDummy, got %T", incs)
+	}
+	i, ok := inc.(*incomingDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value type; expected *irx.incomingDummy, got %T", inc)
+	}
+	return append(is, i), nil
+}
+
+// NewIncoming returns a new incoming value based on the given value and
+// predecessor basic block.
+func NewIncoming(x, pred interface{}) (*incomingDummy, error) {
+	p, ok := pred.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid predecessor type; expected *irx.LocalIdent, got %T", pred)
+	}
+	return newIncomingDummy(x, p.name), nil
+}
+
 // NewICmpInst returns a new icmp instruction based on the given integer
 // condition code, type and operands.
 func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstICmp, error) {

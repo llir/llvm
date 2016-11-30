@@ -364,6 +364,11 @@ func (inc *Incoming) X() value.Value {
 	return inc.x
 }
 
+// SetX sets the incoming value.
+func (inc *Incoming) SetX(x value.Value) {
+	inc.x = x
+}
+
 // Pred returns the predecessor basic block of the incoming value.
 func (inc *Incoming) Pred() *BasicBlock {
 	return inc.pred

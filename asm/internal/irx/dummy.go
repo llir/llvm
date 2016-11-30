@@ -63,6 +63,86 @@ func (g *localDummy) Type() types.Type {
 	return g.typ
 }
 
+// instPhiDummy represents a dummy phi instruction.
+type instPhiDummy struct {
+	// Parent basic block.
+	parent *ir.BasicBlock
+	// Identifier associated with the instruction.
+	ident string
+	// Incoming values.
+	incs []*incomingDummy
+	// Type of the instruction.
+	typ types.Type
+}
+
+// newPhiDummy returns a new dummy phi instruction based on the given incoming
+// values.
+func newPhiDummy(typ types.Type, incs ...*incomingDummy) *instPhiDummy {
+	return &instPhiDummy{incs: incs, typ: typ}
+}
+
+// Type returns the type of the instruction.
+func (inst *instPhiDummy) Type() types.Type {
+	return inst.typ
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *instPhiDummy) Ident() string {
+	return enc.Local(inst.ident)
+}
+
+// SetIdent sets the identifier associated with the instruction.
+func (inst *instPhiDummy) SetIdent(ident string) {
+	inst.ident = ident
+}
+
+// String returns the LLVM syntax representation of the instruction.
+func (inst *instPhiDummy) String() string {
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "%s = phi %s ",
+		inst.Ident(),
+		inst.Type())
+	for j, inc := range inst.incs {
+		if j != 0 {
+			buf.WriteString(", ")
+		}
+		x, ok := inc.x.(value.Value)
+		if !ok {
+			panic(fmt.Sprintf("invalid x type; expected value.Value, got %T", inc.x))
+		}
+		fmt.Fprintf(buf, "[ %s, %s ]",
+			x.Ident(),
+			inc.pred)
+	}
+	return buf.String()
+}
+
+// Parent returns the parent basic block of the instruction.
+func (inst *instPhiDummy) Parent() *ir.BasicBlock {
+	return inst.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (inst *instPhiDummy) SetParent(parent *ir.BasicBlock) {
+	inst.parent = parent
+}
+
+// incomingDummy represents a dummy incoming value of a phi instruction.
+type incomingDummy struct {
+	// Incoming value; holds *irx.IntLit, *irx.LocalIdent, ... initially, when
+	// created from using irx.NewIncoming since type is not known. irx.NewPhiInst
+	// later replaces with dummy values (e.g. *localDummy, ...).
+	x interface{}
+	// Predecessor basic block of the incoming value.
+	pred string
+}
+
+// newIncomingDummy returns a new dummy incoming value based on the given value
+// and predecessor basic block label name.
+func newIncomingDummy(x interface{}, pred string) *incomingDummy {
+	return &incomingDummy{x: x, pred: pred}
+}
+
 // instCallDummy represents a dummy call instruction.
 type instCallDummy struct {
 	// Parent basic block.

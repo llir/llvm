@@ -13,7 +13,7 @@ func TestParseFile(t *testing.T) {
 		path string
 	}{
 		{path: "../testdata/rand.ll"},
-		//{path: "../testdata/loop.ll"},
+		{path: "../testdata/loop.ll"},
 		{path: "../testdata/frem.ll"},
 		{path: "../testdata/binary.ll"},
 		{path: "../testdata/bitwise.ll"},
