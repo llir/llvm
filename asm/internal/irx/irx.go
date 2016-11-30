@@ -865,6 +865,24 @@ func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstICmp, error) {
 	return ir.NewICmp(c, x, y), nil
 }
 
+// NewFCmpInst returns a new fcmp instruction based on the given floating-point
+// condition code, type and operands.
+func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstFCmp, error) {
+	c, ok := cond.(ir.FloatPred)
+	if !ok {
+		return nil, errors.Errorf("invalid floating-point predicate type; expected ir.FloatPred, got %T", cond)
+	}
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFCmp(c, x, y), nil
+}
+
 // NewCallInst returns a new call instruction based on the given return type,
 // callee name, and function arguments.
 func NewCallInst(retTyp, callee, args interface{}) (*instCallDummy, error) {

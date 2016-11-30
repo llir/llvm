@@ -348,6 +348,7 @@ ValueInstruction
 	// Conversion instructions
 	// Other instructions
 	| ICmpInst
+	| FCmpInst
 	| PhiInst
 	| CallInst
 ;
@@ -457,6 +458,29 @@ IntPred
 	| "sge"   << ir.IntSGE, nil >>
 	| "slt"   << ir.IntSLT, nil >>
 	| "sle"   << ir.IntSLE, nil >>
+;
+
+FCmpInst
+	: "fcmp" FloatPred Type Value "," Value   << irx.NewFCmpInst($1, $2, $3, $5) >>
+;
+
+FloatPred
+	: "false"   << ir.FloatFalse, nil >>
+	| "oeq"     << ir.FloatOEQ, nil >>
+	| "ogt"     << ir.FloatOGT, nil >>
+	| "oge"     << ir.FloatOGE, nil >>
+	| "olt"     << ir.FloatOLT, nil >>
+	| "ole"     << ir.FloatOLE, nil >>
+	| "one"     << ir.FloatONE, nil >>
+	| "ord"     << ir.FloatORD, nil >>
+	| "ueq"     << ir.FloatUEQ, nil >>
+	| "ugt"     << ir.FloatUGT, nil >>
+	| "uge"     << ir.FloatUGE, nil >>
+	| "ult"     << ir.FloatULT, nil >>
+	| "ule"     << ir.FloatULE, nil >>
+	| "une"     << ir.FloatUNE, nil >>
+	| "uno"     << ir.FloatUNO, nil >>
+	| "true"    << ir.FloatTrue, nil >>
 ;
 
 PhiInst

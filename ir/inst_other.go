@@ -217,9 +217,19 @@ func (inst *InstFCmp) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the fcmp instruction.
+func (inst *InstFCmp) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the fcmp instruction.
 func (inst *InstFCmp) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the fcmp instruction.
+func (inst *InstFCmp) SetY(y value.Value) {
+	inst.y = y
 }
 
 // FloatPred represents the set of condition codes of the fcmp instruction.
