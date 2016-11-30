@@ -672,6 +672,90 @@ func NewFRemInst(typ, xVal, yVal interface{}) (*ir.InstFRem, error) {
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
+// NewShlInst returns a new shl instruction based on the given type and
+// operands.
+func NewShlInst(typ, xVal, yVal interface{}) (*ir.InstShl, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewShl(x, y), nil
+}
+
+// NewLShrInst returns a new lshr instruction based on the given type and
+// operands.
+func NewLShrInst(typ, xVal, yVal interface{}) (*ir.InstLShr, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewLShr(x, y), nil
+}
+
+// NewAShrInst returns a new ashr instruction based on the given type and
+// operands.
+func NewAShrInst(typ, xVal, yVal interface{}) (*ir.InstAShr, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewAShr(x, y), nil
+}
+
+// NewAndInst returns a new and instruction based on the given type and
+// operands.
+func NewAndInst(typ, xVal, yVal interface{}) (*ir.InstAnd, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewAnd(x, y), nil
+}
+
+// NewOrInst returns a new or instruction based on the given type and
+// operands.
+func NewOrInst(typ, xVal, yVal interface{}) (*ir.InstOr, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewOr(x, y), nil
+}
+
+// NewXorInst returns a new xor instruction based on the given type and
+// operands.
+func NewXorInst(typ, xVal, yVal interface{}) (*ir.InstXor, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewXor(x, y), nil
+}
+
 // --- [ Memory instructions ] -------------------------------------------------
 
 // NewLoadInst returns a new load instruction based on the given element type,

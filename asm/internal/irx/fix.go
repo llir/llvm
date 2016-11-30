@@ -234,6 +234,18 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 	case *ir.InstFRem:
 		return fix.fixFRemInst(inst)
 	// Bitwise instructions
+	case *ir.InstShl:
+		return fix.fixShlInst(inst)
+	case *ir.InstLShr:
+		return fix.fixLShrInst(inst)
+	case *ir.InstAShr:
+		return fix.fixAShrInst(inst)
+	case *ir.InstAnd:
+		return fix.fixAndInst(inst)
+	case *ir.InstOr:
+		return fix.fixOrInst(inst)
+	case *ir.InstXor:
+		return fix.fixXorInst(inst)
 	// Memory instructions
 	case *ir.InstLoad:
 		return fix.fixLoadInst(inst)
@@ -397,6 +409,78 @@ func (fix *fixer) fixFRemInst(old *ir.InstFRem) *ir.InstFRem {
 }
 
 // --- [ Bitwise instructions ] ------------------------------------------------
+
+// fixShlInst replaces dummy values within the given shl instruction with their
+// real values.
+func (fix *fixer) fixShlInst(old *ir.InstShl) *ir.InstShl {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixLShrInst replaces dummy values within the given lshr instruction with their
+// real values.
+func (fix *fixer) fixLShrInst(old *ir.InstLShr) *ir.InstLShr {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixAShrInst replaces dummy values within the given ashr instruction with their
+// real values.
+func (fix *fixer) fixAShrInst(old *ir.InstAShr) *ir.InstAShr {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixAndInst replaces dummy values within the given and instruction with their
+// real values.
+func (fix *fixer) fixAndInst(old *ir.InstAnd) *ir.InstAnd {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixOrInst replaces dummy values within the given or instruction with their
+// real values.
+func (fix *fixer) fixOrInst(old *ir.InstOr) *ir.InstOr {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixXorInst replaces dummy values within the given xor instruction with their
+// real values.
+func (fix *fixer) fixXorInst(old *ir.InstXor) *ir.InstXor {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
 
 // --- [ Memory instructions ] -------------------------------------------------
 

@@ -323,6 +323,7 @@ Instruction
 ;
 
 ValueInstruction
+	// Binary instructions
 	: AddInst
 	| FAddInst
 	| SubInst
@@ -335,7 +336,17 @@ ValueInstruction
 	| URemInst
 	| SRemInst
 	| FRemInst
+	// Bitwise instructions
+	| ShlInst
+	| LShrInst
+	| AShrInst
+	| AndInst
+	| OrInst
+	| XorInst
+	// Memory instructions
 	| LoadInst
+	// Conversion instructions
+	// Other instructions
 	| ICmpInst
 	| CallInst
 ;
@@ -391,6 +402,30 @@ FRemInst
 ;
 
 // --- [ Bitwise instructions ] ------------------------------------------------
+
+ShlInst
+	: "shl" Type Value "," Value   << irx.NewShlInst($1, $2, $4) >>
+;
+
+LShrInst
+	: "lshr" Type Value "," Value   << irx.NewLShrInst($1, $2, $4) >>
+;
+
+AShrInst
+	: "ashr" Type Value "," Value   << irx.NewAShrInst($1, $2, $4) >>
+;
+
+AndInst
+	: "and" Type Value "," Value   << irx.NewAndInst($1, $2, $4) >>
+;
+
+OrInst
+	: "or" Type Value "," Value   << irx.NewOrInst($1, $2, $4) >>
+;
+
+XorInst
+	: "xor" Type Value "," Value   << irx.NewXorInst($1, $2, $4) >>
+;
 
 // --- [ Memory instructions ] -------------------------------------------------
 
