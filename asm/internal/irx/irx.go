@@ -883,6 +883,24 @@ func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstFCmp, error) {
 	return ir.NewFCmp(c, x, y), nil
 }
 
+// NewSelect returns a new select instruction based on the given selection
+// condition type and value, and operands.
+func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ir.InstSelect, error) {
+	cond, err := NewValue(condTyp, condVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewSelect(cond, x, y), nil
+}
+
 // NewCallInst returns a new call instruction based on the given return type,
 // callee name, and function arguments.
 func NewCallInst(retTyp, callee, args interface{}) (*instCallDummy, error) {

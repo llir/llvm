@@ -450,14 +450,29 @@ func (inst *InstSelect) Cond() value.Value {
 	return inst.cond
 }
 
+// SetCond sets the selection condition of the select instruction.
+func (inst *InstSelect) SetCond(cond value.Value) {
+	inst.cond = cond
+}
+
 // X returns the x operand of the select instruction.
 func (inst *InstSelect) X() value.Value {
 	return inst.x
 }
 
+// SetX returns the x operand of the select instruction.
+func (inst *InstSelect) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the select instruction.
 func (inst *InstSelect) Y() value.Value {
 	return inst.y
+}
+
+// SetY returns the y operand of the select instruction.
+func (inst *InstSelect) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ call ] ----------------------------------------------------------------

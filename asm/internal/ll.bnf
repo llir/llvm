@@ -350,6 +350,7 @@ ValueInstruction
 	| ICmpInst
 	| FCmpInst
 	| PhiInst
+	| SelectInst
 	| CallInst
 ;
 
@@ -494,6 +495,10 @@ IncomingList
 
 Incoming
 	: "[" Value "," LocalIdent "]"   << irx.NewIncoming($1, $3) >>
+;
+
+SelectInst
+	: "select" Type Value "," Type Value "," Type Value   << irx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
 ;
 
 CallInst

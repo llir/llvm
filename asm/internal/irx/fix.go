@@ -285,6 +285,8 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 		return fix.fixFCmpInst(inst)
 	case *ir.InstPhi:
 		return fix.fixPhiInst(inst)
+	case *ir.InstSelect:
+		return fix.fixSelectInst(inst)
 	case *ir.InstCall:
 		return fix.fixCallInst(inst)
 	default:
@@ -593,6 +595,21 @@ func (fix *fixer) fixPhiInst(old *ir.InstPhi) *ir.InstPhi {
 		if x, ok := fix.fixValue(inc.X()); ok {
 			inc.SetX(x)
 		}
+	}
+	return old
+}
+
+// fixSelectInst replaces dummy values within the given select instruction with
+// their real values.
+func (fix *fixer) fixSelectInst(old *ir.InstSelect) *ir.InstSelect {
+	if cond, ok := fix.fixValue(old.Cond()); ok {
+		old.SetCond(cond)
+	}
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
 	}
 	return old
 }

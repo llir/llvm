@@ -6,7 +6,12 @@ all: sar $(LLFILES)
 
 %.ll: %.c
 	clang -S -emit-llvm -o $@ $<
-	opt -S --mem2reg -o $@ $@
+	opt -S -mem2reg -o $@ $@
+	./strip.sh $@
+
+select.ll: select.c
+	clang -S -emit-llvm -o $@ $<
+	opt -S -mem2reg -simplifycfg -o $@ $@
 	./strip.sh $@
 
 sar:
