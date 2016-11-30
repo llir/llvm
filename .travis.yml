@@ -19,7 +19,7 @@ before_install:
   - make -C $HOME/gopath/src/github.com/llir/llvm/asm/internal gen
 
 install:
-  - go get ./...
+  - go get -t ./...
 
 before_script:
   - export GOLINT_IGNORE="-not -wholename '*/internal/*' -not -name '*_string.go' -not -wholename '*/types/basic.go' -not -wholename '*/types/types.go'"
