@@ -13,7 +13,9 @@ func TestParseFile(t *testing.T) {
 		path string
 	}{
 		{path: "../testdata/rand.ll"},
-		{path: "../testdata/loop.ll"},
+		//{path: "../testdata/loop.ll"},
+		{path: "../testdata/frem.ll"},
+		{path: "../testdata/binary.ll"},
 	}
 	for i, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)

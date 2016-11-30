@@ -164,6 +164,7 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 // fixValue replaces given dummy value with its real value. The boolean return
 // value indicates if a dummy value was replaced.
 func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
+	// TODO: Add all instructions producing values.
 	switch old := old.(type) {
 	case *globalDummy:
 		return fix.getGlobal(old.name), true
@@ -171,8 +172,11 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 		return fix.getLocal(old.name), true
 	case *constant.Int:
 		// nothing to do; valid value.
-	// TODO: Add all instructions producing values.
-	case *ir.InstAdd, *ir.InstICmp:
+	case *constant.Float:
+		// nothing to do; valid value.
+	case *ir.InstAdd, *ir.InstFAdd, *ir.InstSub, *ir.InstFSub, *ir.InstMul, *ir.InstFMul, *ir.InstUDiv, *ir.InstSDiv, *ir.InstFDiv, *ir.InstURem, *ir.InstSRem, *ir.InstFRem:
+		// nothing to do; valid value.
+	case *ir.InstICmp:
 		// nothing to do; valid value.
 	default:
 		panic(fmt.Sprintf("support for value type %T not yet implemented", old))
@@ -207,8 +211,28 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 	// Binary instructions
 	case *ir.InstAdd:
 		return fix.fixAddInst(inst)
+	case *ir.InstFAdd:
+		return fix.fixFAddInst(inst)
+	case *ir.InstSub:
+		return fix.fixSubInst(inst)
+	case *ir.InstFSub:
+		return fix.fixFSubInst(inst)
 	case *ir.InstMul:
 		return fix.fixMulInst(inst)
+	case *ir.InstFMul:
+		return fix.fixFMulInst(inst)
+	case *ir.InstUDiv:
+		return fix.fixUDivInst(inst)
+	case *ir.InstSDiv:
+		return fix.fixSDivInst(inst)
+	case *ir.InstFDiv:
+		return fix.fixFDivInst(inst)
+	case *ir.InstURem:
+		return fix.fixURemInst(inst)
+	case *ir.InstSRem:
+		return fix.fixSRemInst(inst)
+	case *ir.InstFRem:
+		return fix.fixFRemInst(inst)
 	// Bitwise instructions
 	// Memory instructions
 	case *ir.InstLoad:
@@ -240,9 +264,129 @@ func (fix *fixer) fixAddInst(old *ir.InstAdd) *ir.InstAdd {
 	return old
 }
 
+// fixFAddInst replaces dummy values within the given fadd instruction with their
+// real values.
+func (fix *fixer) fixFAddInst(old *ir.InstFAdd) *ir.InstFAdd {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixSubInst replaces dummy values within the given sub instruction with their
+// real values.
+func (fix *fixer) fixSubInst(old *ir.InstSub) *ir.InstSub {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixFSubInst replaces dummy values within the given fsub instruction with their
+// real values.
+func (fix *fixer) fixFSubInst(old *ir.InstFSub) *ir.InstFSub {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
 // fixMulInst replaces dummy values within the given mul instruction with their
 // real values.
 func (fix *fixer) fixMulInst(old *ir.InstMul) *ir.InstMul {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixFMulInst replaces dummy values within the given fmul instruction with their
+// real values.
+func (fix *fixer) fixFMulInst(old *ir.InstFMul) *ir.InstFMul {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixUDivInst replaces dummy values within the given udiv instruction with their
+// real values.
+func (fix *fixer) fixUDivInst(old *ir.InstUDiv) *ir.InstUDiv {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixSDivInst replaces dummy values within the given sdiv instruction with their
+// real values.
+func (fix *fixer) fixSDivInst(old *ir.InstSDiv) *ir.InstSDiv {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixFDivInst replaces dummy values within the given fdiv instruction with their
+// real values.
+func (fix *fixer) fixFDivInst(old *ir.InstFDiv) *ir.InstFDiv {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixURemInst replaces dummy values within the given urem instruction with their
+// real values.
+func (fix *fixer) fixURemInst(old *ir.InstURem) *ir.InstURem {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixSRemInst replaces dummy values within the given srem instruction with their
+// real values.
+func (fix *fixer) fixSRemInst(old *ir.InstSRem) *ir.InstSRem {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	if y, ok := fix.fixValue(old.Y()); ok {
+		old.SetY(y)
+	}
+	return old
+}
+
+// fixFRemInst replaces dummy values within the given frem instruction with their
+// real values.
+func (fix *fixer) fixFRemInst(old *ir.InstFRem) *ir.InstFRem {
 	if x, ok := fix.fixValue(old.X()); ok {
 		old.SetX(x)
 	}

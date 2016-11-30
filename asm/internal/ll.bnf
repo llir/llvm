@@ -17,6 +17,12 @@ _decimal_digit
 	: '0' - '9'
 ;
 
+_hex_digit
+	: '0' - '9'
+	| 'A' - 'F'
+	| 'a' - 'f'
+;
+
 !comment : ';' { . } '\n' ;
 
 !whitespace : '\x00' | ' ' | '\t' | '\r' | '\n' ;
@@ -67,12 +73,16 @@ _local_id
 
 // --- [ Labels ] --------------------------------------------------------------
 
+//   Label             [-a-zA-Z$._0-9]+:
+
 label_ident
 	: ( _letter | _decimal_digit ) { _letter | _decimal_digit } ':'
 	| _quoted_string ':'
 ;
 
 // === [ Integer literals ] ====================================================
+
+//   Integer           [-]?[0-9]+
 
 int_lit
 	: _decimal_lit
@@ -84,6 +94,40 @@ _decimal_lit
 
 _decimals
 	: _decimal_digit { _decimal_digit }
+;
+
+// === [ Float literals ] ====================================================
+
+//   FPConstant        [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
+
+float_lit
+	: _frac_lit
+	| _sci_lit
+	| _float_hex_lit
+;
+
+_frac_lit
+	: ( '+' | '-' ) _decimals '.' _decimals
+	| _decimals '.' _decimals
+;
+
+_sci_lit
+	: _frac_lit ( 'e' | 'E' ) ( '+' | '-' ) _decimals
+	| _frac_lit ( 'e' | 'E' ) _decimals
+;
+
+//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
+//   HexFP80Constant   0xK[0-9A-Fa-f]+    // 20 hex digits
+//   HexFP128Constant  0xL[0-9A-Fa-f]+    // 32 hex digits
+//   HexPPC128Constant 0xM[0-9A-Fa-f]+    // 32 hex digits
+//   HexHalfConstant   0xH[0-9A-Fa-f]+    // 4 hex digits
+
+_float_hex_lit
+	:  '0' 'x'      _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'K'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'L'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'M'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'H'  _hex_digit _hex_digit _hex_digit _hex_digit
 ;
 
 // === [ String literals ] =====================================================
@@ -194,6 +238,7 @@ LabelIdent
 Type
 	: LabelType
 	| IntType
+	| FloatType
 	| PointerType
 ;
 
@@ -214,6 +259,15 @@ IntType
 	: int_type   << irx.NewIntType($0) >>
 ;
 
+FloatType
+	: "half"        << types.Half, nil >>
+	| "float"       << types.Float, nil >>
+	| "double"      << types.Double, nil >>
+	| "fp128"       << types.FP128, nil >>
+	| "x86_fp80"    << types.X86_FP80, nil >>
+	| "ppc_fp128"   << types.PPC_FP128, nil >>
+;
+
 PointerType
 	: Type "*"   << irx.NewPointerType($0) >>
 ;
@@ -229,7 +283,8 @@ Value
 // === [ Constants ] ===========================================================
 
 Constant
-	: int_lit   << irx.NewIntLit($0) >>
+	: int_lit     << irx.NewIntLit($0) >>
+	| float_lit   << irx.NewFloatLit($0) >>
 ;
 
 // === [ Basic blocks ] ========================================================
@@ -269,7 +324,17 @@ Instruction
 
 ValueInstruction
 	: AddInst
+	| FAddInst
+	| SubInst
+	| FSubInst
 	| MulInst
+	| FMulInst
+	| UDivInst
+	| SDivInst
+	| FDivInst
+	| URemInst
+	| SRemInst
+	| FRemInst
 	| LoadInst
 	| ICmpInst
 	| CallInst
@@ -281,8 +346,48 @@ AddInst
 	: "add" Type Value "," Value   << irx.NewAddInst($1, $2, $4) >>
 ;
 
+FAddInst
+	: "fadd" Type Value "," Value   << irx.NewFAddInst($1, $2, $4) >>
+;
+
+SubInst
+	: "sub" Type Value "," Value   << irx.NewSubInst($1, $2, $4) >>
+;
+
+FSubInst
+	: "fsub" Type Value "," Value   << irx.NewFSubInst($1, $2, $4) >>
+;
+
 MulInst
 	: "mul" Type Value "," Value   << irx.NewMulInst($1, $2, $4) >>
+;
+
+FMulInst
+	: "fmul" Type Value "," Value   << irx.NewFMulInst($1, $2, $4) >>
+;
+
+UDivInst
+	: "udiv" Type Value "," Value   << irx.NewUDivInst($1, $2, $4) >>
+;
+
+SDivInst
+	: "sdiv" Type Value "," Value   << irx.NewSDivInst($1, $2, $4) >>
+;
+
+FDivInst
+	: "fdiv" Type Value "," Value   << irx.NewFDivInst($1, $2, $4) >>
+;
+
+URemInst
+	: "urem" Type Value "," Value   << irx.NewURemInst($1, $2, $4) >>
+;
+
+SRemInst
+	: "srem" Type Value "," Value   << irx.NewSRemInst($1, $2, $4) >>
+;
+
+FRemInst
+	: "frem" Type Value "," Value   << irx.NewFRemInst($1, $2, $4) >>
 ;
 
 // --- [ Bitwise instructions ] ------------------------------------------------

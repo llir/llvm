@@ -353,6 +353,13 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 		default:
 			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
 		}
+	case *types.FloatType:
+		switch val := val.(type) {
+		case *FloatLit:
+			return constant.NewFloatFromString(val.lit, t), nil
+		default:
+			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
+		}
 	default:
 		panic(fmt.Sprintf("support for type %T not yet implemented", t))
 	}
@@ -373,6 +380,21 @@ func NewIntLit(tok interface{}) (*IntLit, error) {
 		return nil, errors.WithStack(err)
 	}
 	return &IntLit{lit: s}, nil
+}
+
+// FloatLit represents an floating-point literal.
+type FloatLit struct {
+	// Floating-point literal.
+	lit string
+}
+
+// NewFloatLit returns a new floating-point literal based on the given floating-point  token.
+func NewFloatLit(tok interface{}) (*FloatLit, error) {
+	s, err := getTokenString(tok)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &FloatLit{lit: s}, nil
 }
 
 // === [ Basic blocks ] ========================================================
@@ -494,6 +516,48 @@ func NewAddInst(typ, xVal, yVal interface{}) (*ir.InstAdd, error) {
 	return ir.NewAdd(x, y), nil
 }
 
+// NewFAddInst returns a new fadd instruction based on the given type and
+// operands.
+func NewFAddInst(typ, xVal, yVal interface{}) (*ir.InstFAdd, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFAdd(x, y), nil
+}
+
+// NewSubInst returns a new sub instruction based on the given type and
+// operands.
+func NewSubInst(typ, xVal, yVal interface{}) (*ir.InstSub, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewSub(x, y), nil
+}
+
+// NewFSubInst returns a new fsub instruction based on the given type and
+// operands.
+func NewFSubInst(typ, xVal, yVal interface{}) (*ir.InstFSub, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFSub(x, y), nil
+}
+
 // NewMulInst returns a new mul instruction based on the given type and
 // operands.
 func NewMulInst(typ, xVal, yVal interface{}) (*ir.InstMul, error) {
@@ -506,6 +570,104 @@ func NewMulInst(typ, xVal, yVal interface{}) (*ir.InstMul, error) {
 		return nil, errors.WithStack(err)
 	}
 	return ir.NewMul(x, y), nil
+}
+
+// NewFMulInst returns a new fmul instruction based on the given type and
+// operands.
+func NewFMulInst(typ, xVal, yVal interface{}) (*ir.InstFMul, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFMul(x, y), nil
+}
+
+// NewUDivInst returns a new udiv instruction based on the given type and
+// operands.
+func NewUDivInst(typ, xVal, yVal interface{}) (*ir.InstUDiv, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewUDiv(x, y), nil
+}
+
+// NewSDivInst returns a new sdiv instruction based on the given type and
+// operands.
+func NewSDivInst(typ, xVal, yVal interface{}) (*ir.InstSDiv, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewSDiv(x, y), nil
+}
+
+// NewFDivInst returns a new fdiv instruction based on the given type and
+// operands.
+func NewFDivInst(typ, xVal, yVal interface{}) (*ir.InstFDiv, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFDiv(x, y), nil
+}
+
+// NewURemInst returns a new urem instruction based on the given type and
+// operands.
+func NewURemInst(typ, xVal, yVal interface{}) (*ir.InstURem, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewURem(x, y), nil
+}
+
+// NewSRemInst returns a new srem instruction based on the given type and
+// operands.
+func NewSRemInst(typ, xVal, yVal interface{}) (*ir.InstSRem, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewSRem(x, y), nil
+}
+
+// NewFRemInst returns a new frem instruction based on the given type and
+// operands.
+func NewFRemInst(typ, xVal, yVal interface{}) (*ir.InstFRem, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFRem(x, y), nil
 }
 
 // --- [ Bitwise instructions ] ------------------------------------------------
