@@ -273,6 +273,8 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 	case *ir.InstXor:
 		return fix.fixXorInst(inst)
 	// Memory instructions
+	case *ir.InstAlloca:
+		return fix.fixAllocaInst(inst)
 	case *ir.InstLoad:
 		return fix.fixLoadInst(inst)
 	case *ir.InstStore:
@@ -515,6 +517,17 @@ func (fix *fixer) fixXorInst(old *ir.InstXor) *ir.InstXor {
 }
 
 // --- [ Memory instructions ] -------------------------------------------------
+
+// fixAllocaInst replaces dummy values within the given alloca instruction with
+// their real values.
+func (fix *fixer) fixAllocaInst(old *ir.InstAlloca) *ir.InstAlloca {
+	if nelems, ok := old.NElems(); ok {
+		if nelems, ok := fix.fixValue(nelems); ok {
+			old.SetNElems(nelems)
+		}
+	}
+	return old
+}
 
 // fixLoadInst replaces dummy values within the given load instruction with
 // their real values.

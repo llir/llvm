@@ -344,6 +344,7 @@ ValueInstruction
 	| OrInst
 	| XorInst
 	// Memory instructions
+	| AllocaInst
 	| LoadInst
 	// Conversion instructions
 	// Other instructions
@@ -431,6 +432,15 @@ XorInst
 ;
 
 // --- [ Memory instructions ] -------------------------------------------------
+
+AllocaInst
+	: "alloca" Type OptNElems   << irx.NewAllocaInst($1, $2) >>
+;
+
+OptNElems
+	: empty
+	| "," Type Value   << irx.NewValue($1, $2) >>
+;
 
 LoadInst
 	: "load" Type "," PointerType Value   << irx.NewLoadInst($1, $3, $4) >>

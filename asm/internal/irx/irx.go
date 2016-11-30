@@ -758,6 +758,25 @@ func NewXorInst(typ, xVal, yVal interface{}) (*ir.InstXor, error) {
 
 // --- [ Memory instructions ] -------------------------------------------------
 
+// NewAllocaInst returns a new alloca instruction based on the given element
+// type and number of elements.
+func NewAllocaInst(elem, nelems interface{}) (*ir.InstAlloca, error) {
+	e, ok := elem.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
+	}
+	inst := ir.NewAlloca(e)
+	switch nelems := nelems.(type) {
+	case value.Value:
+		inst.SetNElems(nelems)
+	case nil:
+		// nothing to do.
+	default:
+		return nil, errors.Errorf("invalid number of elements type; expected value.Value or nil, got %T", nelems)
+	}
+	return inst, nil
+}
+
 // NewLoadInst returns a new load instruction based on the given element type,
 // source address type and value.
 func NewLoadInst(elem, srcTyp, src interface{}) (*ir.InstLoad, error) {

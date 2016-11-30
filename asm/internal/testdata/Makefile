@@ -14,6 +14,10 @@ select.ll: select.c
 	opt -S -mem2reg -simplifycfg -o $@ $@
 	./strip.sh $@
 
+alloca.ll: alloca.c
+	clang -S -emit-llvm -o $@ $<
+	./strip.sh $@
+
 sar:
 	@if ! which $@ > /dev/null 2>&1 ; then \
 		echo "Please install the \"sar\" tool"; \

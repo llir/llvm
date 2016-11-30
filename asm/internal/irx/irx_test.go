@@ -20,6 +20,7 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/bitwise.ll"},
 		{path: "../testdata/fcmp.ll"},
 		{path: "../testdata/select.ll"},
+		{path: "../testdata/alloca.ll"},
 	}
 	for i, g := range golden {
 		m, err := asm.ParseFile(g.path)

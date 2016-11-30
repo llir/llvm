@@ -19,6 +19,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/bitwise.ll"},
 		{path: "../testdata/fcmp.ll"},
 		{path: "../testdata/select.ll"},
+		{path: "../testdata/alloca.ll"},
 	}
 	for i, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
