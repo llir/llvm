@@ -294,6 +294,8 @@ Constant
 
 IntConst
 	: int_lit   << irx.NewIntLit($0) >>
+	| "true"    << irx.NewIntLit($0) >>
+	| "false"   << irx.NewIntLit($0) >>
 ;
 
 FloatConst
@@ -567,6 +569,7 @@ Terminator
 	: RetTerm
 	| BrTerm
 	| CondBrTerm
+	| UnreachableTerm
 ;
 
 RetTerm
@@ -580,4 +583,8 @@ BrTerm
 
 CondBrTerm
 	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << irx.NewCondBrTerm($1, $2, $5, $8) >>
+;
+
+UnreachableTerm
+	: "unreachable"   << ir.NewUnreachable(), nil >>
 ;

@@ -687,6 +687,9 @@ func (fix *fixer) fixTerm(term ir.Terminator) ir.Terminator {
 		return term
 	case *ir.TermCondBr:
 		return fix.fixCondBrTerm(term)
+	case *ir.TermUnreachable:
+		// nothing to do; contains no values.
+		return term
 	default:
 		panic(fmt.Sprintf("support for terminator type %T not yet implemented", term))
 	}

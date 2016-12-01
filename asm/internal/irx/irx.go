@@ -1044,6 +1044,12 @@ func getInt64(lit interface{}) (int64, error) {
 	if !ok {
 		return 0, errors.Errorf("invalid array length type; expected *IntLit, got %T", lit)
 	}
+	switch l.lit {
+	case "true":
+		return 1, nil
+	case "false":
+		return 0, nil
+	}
 	n, err := strconv.ParseInt(l.lit, 10, 64)
 	if err != nil {
 		return 0, errors.WithStack(err)

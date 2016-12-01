@@ -22,6 +22,7 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/select.ll"},
 		{path: "../testdata/alloca.ll"},
 		{path: "../testdata/getelementptr.ll"},
+		{path: "../testdata/unreachable.ll"},
 	}
 	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)
