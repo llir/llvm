@@ -16,7 +16,7 @@ Updated: 2016-12-02
 
 - [x] Write support of LLVM IR assembly files.
     - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package).
-- [x] Preliminary read support of LLVM IR assmebly files.
+- [x] Preliminary read support of LLVM IR assmebly files (see issue [#15](https://github.com/llir/llvm/issues/15)).
     - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/asm#example-package).
 
 ## Public domain
