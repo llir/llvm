@@ -8,17 +8,16 @@ This project is a *work in progress*. The implementation is *incomplete* and sub
 [![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=master)](https://coveralls.io/github/llir/llvm?branch=master)
 [![GoDoc](https://godoc.org/github.com/llir/llvm?status.svg)](https://godoc.org/github.com/llir/llvm)
 
-
 The aim of this project is to provide a pure Go library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html).
 
 ## Status
 
-Updated: 2016-11-26
+Updated: 2016-12-02
 
 - [x] Write support of LLVM IR assembly files.
     - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package).
-- [ ] Read support of LLVM IR assmebly files.
-    - A lexer and parser for LLVM IR assembly will be generated from a [BNF grammar](https://sv.wikipedia.org/wiki/Backus-Naur-form) using [gocc](https://github.com/goccmack/gocc).
+- [x] Preliminary read support of LLVM IR assmebly files.
+    - A lexer and parser for LLVM IR assembly is generated from a [BNF grammar](https://github.com/llir/llvm/blob/master/asm/internal/ll.bnf) using [gocc](https://github.com/goccmack/gocc).
 
 ## Public domain
 
