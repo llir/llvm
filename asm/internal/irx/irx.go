@@ -332,6 +332,20 @@ func NewAddrSpace(space interface{}) (*addrSpace, error) {
 	return &addrSpace{space: s}, nil
 }
 
+// NewVectorType returns a new vector type based on the given vector length and
+// element type.
+func NewVectorType(len, elem interface{}) (*types.VectorType, error) {
+	e, ok := elem.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
+	}
+	l, err := getInt64(len)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return types.NewVector(e, l), nil
+}
+
 // NewArrayType returns a new array type based on the given array length and
 // element type.
 func NewArrayType(len, elem interface{}) (*types.ArrayType, error) {

@@ -240,6 +240,7 @@ Type
 	| IntType
 	| FloatType
 	| PointerType
+	| VectorType
 	| ArrayType
 ;
 
@@ -276,6 +277,10 @@ PointerType
 OptAddrSpace
 	: empty
 	| "addrspace" "(" IntConst ")"   << irx.NewAddrSpace($2) >>
+;
+
+VectorType
+	: "<" IntConst "x" Type ">"   << irx.NewVectorType($1, $3) >>
 ;
 
 ArrayType
