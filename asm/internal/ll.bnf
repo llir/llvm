@@ -569,6 +569,7 @@ Terminator
 	: RetTerm
 	| BrTerm
 	| CondBrTerm
+	| SwitchTerm
 	| UnreachableTerm
 ;
 
@@ -583,6 +584,24 @@ BrTerm
 
 CondBrTerm
 	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << irx.NewCondBrTerm($1, $2, $5, $8) >>
+;
+
+SwitchTerm
+	: "switch" IntType Value "," LabelType LocalIdent "[" Cases "]"   << irx.NewSwitchTerm($1, $2, $5, $7) >>
+;
+
+Cases
+	: empty
+	| CastList
+;
+
+CastList
+	: Case            << irx.NewCaseList($0) >>
+	| CastList Case   << irx.AppendCase($0, $1) >>
+;
+
+Case
+	: IntType Value "," LabelType LocalIdent   << irx.NewCase($0, $1, $4) >>
 ;
 
 UnreachableTerm

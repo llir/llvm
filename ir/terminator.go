@@ -228,6 +228,9 @@ type TermSwitch struct {
 	successors []*BasicBlock
 }
 
+// TODO: Consider renaming x to control to avoid confusion between term.X() and
+// case.X().
+
 // NewSwitch returns a new switch terminator based on the given control
 // variable, default target branch and switch cases.
 func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
@@ -242,21 +245,18 @@ func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSw
 func (term *TermSwitch) String() string {
 	buf := &bytes.Buffer{}
 	x := term.X()
-	fmt.Fprintf(buf, "switch %s %s, label %s [ ",
+	fmt.Fprintf(buf, "switch %s %s, label %s [\n",
 		x.Type(),
 		x.Ident(),
 		term.TargetDefault().Ident())
-	for i, c := range term.Cases() {
-		if i != 0 {
-			buf.WriteString("\n\t\t")
-		}
+	for _, c := range term.Cases() {
 		x := c.X()
-		fmt.Fprintf(buf, "%s %s, label %s",
+		fmt.Fprintf(buf, "\t\t%s %s, label %s\n",
 			x.Type(),
 			x.Ident(),
 			c.Target().Ident())
 	}
-	buf.WriteString(" ]")
+	buf.WriteString("\t]")
 	return buf.String()
 }
 
@@ -278,6 +278,11 @@ func (term *TermSwitch) Successors() []*BasicBlock {
 // X returns the control variable of the switch terminator.
 func (term *TermSwitch) X() value.Value {
 	return term.x
+}
+
+// SetX sets the control variable of the switch terminator.
+func (term *TermSwitch) SetX(x value.Value) {
+	term.x = x
 }
 
 // TargetDefault returns the default target branch of the switch terminator.
@@ -307,6 +312,11 @@ func NewCase(x *constant.Int, target *BasicBlock) *Case {
 // X returns the case comparand.
 func (c *Case) X() *constant.Int {
 	return c.x
+}
+
+// SetX sets the case comparand.
+func (c *Case) SetX(x *constant.Int) {
+	c.x = x
 }
 
 // Target returns the case target branch.

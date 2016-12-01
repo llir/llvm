@@ -68,7 +68,7 @@ func (fix *fixer) getLocal(name string) value.Value {
 }
 
 // getBlock returns the basic block of the given label name.
-func (fix *fixer) getBloack(name string) *ir.BasicBlock {
+func (fix *fixer) getBlock(name string) *ir.BasicBlock {
 	local := fix.getLocal(name)
 	block, ok := local.(*ir.BasicBlock)
 	if !ok {
@@ -158,6 +158,8 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 			term = fix.fixBrTermDummy(old)
 		case *termCondBrDummy:
 			term = fix.fixCondBrTermDummy(old)
+		case *termSwitchDummy:
+			term = fix.fixSwitchTermDummy(old)
 		}
 		block.SetTerm(term)
 	}
@@ -600,7 +602,7 @@ func (fix *fixer) fixFCmpInst(old *ir.InstFCmp) *ir.InstFCmp {
 func (fix *fixer) fixPhiInstDummy(old *instPhiDummy) *ir.InstPhi {
 	var incs []*ir.Incoming
 	for _, inc := range old.incs {
-		pred := fix.getBloack(inc.pred)
+		pred := fix.getBlock(inc.pred)
 		// Leave inc.x unchanged for now. It may contain dummy values. fixPhiInst
 		// will replace these later.
 		//
@@ -687,6 +689,8 @@ func (fix *fixer) fixTerm(term ir.Terminator) ir.Terminator {
 		return term
 	case *ir.TermCondBr:
 		return fix.fixCondBrTerm(term)
+	case *ir.TermSwitch:
+		return fix.fixSwitchTerm(term)
 	case *ir.TermUnreachable:
 		// nothing to do; contains no values.
 		return term
@@ -707,10 +711,10 @@ func (fix *fixer) fixRetTerm(old *ir.TermRet) *ir.TermRet {
 }
 
 // fixBrTermDummy replaces the given dummy unconditional br terminator with a
-// real unconditional br terminator, and replaces dummy the terminator with
-// their real values.
+// real unconditional br terminator, and replaces dummy values within the
+// terminator with their real values.
 func (fix *fixer) fixBrTermDummy(old *termBrDummy) *ir.TermBr {
-	target := fix.getBloack(old.target)
+	target := fix.getBlock(old.target)
 	term := ir.NewBr(target)
 	term.SetParent(old.parent)
 	return term
@@ -725,18 +729,56 @@ func (fix *fixer) fixCondBrTerm(old *ir.TermCondBr) *ir.TermCondBr {
 	return old
 }
 
+// fixSwitchTerm replaces dummy values within the given switch terminator with
+// their real values.
+func (fix *fixer) fixSwitchTerm(old *ir.TermSwitch) *ir.TermSwitch {
+	if x, ok := fix.fixValue(old.X()); ok {
+		old.SetX(x)
+	}
+	for _, c := range old.Cases() {
+		if xValue, ok := fix.fixValue(c.X()); ok {
+			x, ok := xValue.(*constant.Int)
+			if !ok {
+				panic(fmt.Sprintf("invalid x type; expected *constant.Int, got %T", xValue))
+			}
+			c.SetX(x)
+		}
+	}
+	return old
+}
+
 // fixCondBrTermDummy replaces the given dummy conditional br terminator with a
-// real conditional br terminator, and replaces dummy the terminator with their
-// real values.
+// real conditional br terminator, and replaces dummy values within the
+// terminator with their real values.
 func (fix *fixer) fixCondBrTermDummy(old *termCondBrDummy) *ir.TermCondBr {
-	targetTrue := fix.getBloack(old.targetTrue)
-	targetFalse := fix.getBloack(old.targetFalse)
+	targetTrue := fix.getBlock(old.targetTrue)
+	targetFalse := fix.getBlock(old.targetFalse)
 	// Leave old.cond unchanged for now. It may contain dummy values.
 	// fixCondBrTerm will replace these later.
 	//
 	// We cannot replace them yet, as all local variables have not been indexed
 	// yet, as the time of the call to fixCondBrTermDummy.
 	term := ir.NewCondBr(old.cond, targetTrue, targetFalse)
+	term.SetParent(old.parent)
+	return term
+}
+
+// fixSwitchTermDummy replaces the given dummy switch terminator with a real
+// switch terminator, and replaces dummy values within the terminator with their
+// real values.
+func (fix *fixer) fixSwitchTermDummy(old *termSwitchDummy) *ir.TermSwitch {
+	targetDefault := fix.getBlock(old.targetDefault)
+	// Leave old.x and c.x unchanged for now. They may contain dummy values.
+	// fixSwitchTerm will replace these later.
+	//
+	// We cannot replace them yet, as all local variables have not been indexed
+	// yet, as the time of the call to fixSwitchTermDummy.
+	var cases []*ir.Case
+	for _, c := range old.cases {
+		target := fix.getBlock(c.target)
+		cases = append(cases, ir.NewCase(c.x, target))
+	}
+	term := ir.NewSwitch(old.x, targetDefault, cases...)
 	term.SetParent(old.parent)
 	return term
 }

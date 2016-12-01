@@ -1027,6 +1027,69 @@ func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*term
 	return newCondBrDummy(cond, tTrue.name, tFalse.name), nil
 }
 
+// NewSwitchTerm returns a new switch terminator based on the given control
+// variable type and value, default target branch and switch cases.
+func NewSwitchTerm(xTyp, xVal, targetDefault, cases interface{}) (*termSwitchDummy, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	tDefault, ok := targetDefault.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid default target branch type; expected *irx.LocalIdent, got %T", targetDefault)
+	}
+	var cs []*caseDummy
+	switch cases := cases.(type) {
+	case []*caseDummy:
+		cs = cases
+	case nil:
+		// no cases.
+	default:
+		return nil, errors.Errorf("invalid switch cases type; expected []*irx.caseDummy or nil, got %T", cases)
+	}
+	return newSwitchDummy(x, tDefault.name, cs...), nil
+}
+
+// NewCaseList returns a new switch case list based on the given case.
+func NewCaseList(switchCase interface{}) ([]*caseDummy, error) {
+	c, ok := switchCase.(*caseDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid switch case type; expected *irx.caseDummy, got %T", switchCase)
+	}
+	return []*caseDummy{c}, nil
+}
+
+// AppendCase appends the given case to the switch case list.
+func AppendCase(cases, switchCase interface{}) ([]*caseDummy, error) {
+	cs, ok := cases.([]*caseDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid switch case list type; expected []*caseDummy, got %T", cases)
+	}
+	c, ok := switchCase.(*caseDummy)
+	if !ok {
+		return nil, errors.Errorf("invalid switch case type; expected *irx.caseDummy, got %T", switchCase)
+	}
+	return append(cs, c), nil
+}
+
+// NewCase returns a new switch case based on the given case comparand and
+// target branch.
+func NewCase(xTyp, xVal, target interface{}) (*caseDummy, error) {
+	xValue, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, ok := xValue.(*constant.Int)
+	if !ok {
+		return nil, errors.Errorf("invalid case comparand type; expected *constant.Int, got %T", xValue)
+	}
+	t, ok := target.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
+	}
+	return newCaseDummy(x, t.name), nil
+}
+
 // ### [ Helper functions ] ####################################################
 
 // getTokenString returns the string literal of the given token.
