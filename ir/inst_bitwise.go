@@ -74,9 +74,19 @@ func (inst *InstShl) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the shl instruction.
+func (inst *InstShl) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the shl instruction.
 func (inst *InstShl) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the shl instruction.
+func (inst *InstShl) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -138,9 +148,19 @@ func (inst *InstLShr) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the lshr instruction.
+func (inst *InstLShr) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the lshr instruction.
 func (inst *InstLShr) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the lshr instruction.
+func (inst *InstLShr) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -202,9 +222,19 @@ func (inst *InstAShr) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the ashr instruction.
+func (inst *InstAShr) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the ashr instruction.
 func (inst *InstAShr) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the ashr instruction.
+func (inst *InstAShr) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -266,9 +296,19 @@ func (inst *InstAnd) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the and instruction.
+func (inst *InstAnd) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the and instruction.
 func (inst *InstAnd) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the and instruction.
+func (inst *InstAnd) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -330,9 +370,19 @@ func (inst *InstOr) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the or instruction.
+func (inst *InstOr) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the or instruction.
 func (inst *InstOr) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the or instruction.
+func (inst *InstOr) SetY(y value.Value) {
+	inst.y = y
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -394,7 +444,17 @@ func (inst *InstXor) X() value.Value {
 	return inst.x
 }
 
+// SetX sets the x operand of the xor instruction.
+func (inst *InstXor) SetX(x value.Value) {
+	inst.x = x
+}
+
 // Y returns the y operand of the xor instruction.
 func (inst *InstXor) Y() value.Value {
 	return inst.y
+}
+
+// SetY sets the y operand of the xor instruction.
+func (inst *InstXor) SetY(y value.Value) {
+	inst.y = y
 }

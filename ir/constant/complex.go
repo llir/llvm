@@ -27,7 +27,7 @@ func NewVector(elems ...Constant) *Vector {
 	if len(elems) < 1 {
 		panic(fmt.Sprintf("invalid number of vector elements; expected > 0, got %d", len(elems)))
 	}
-	typ := types.NewVector(elems[0].Type(), len(elems))
+	typ := types.NewVector(elems[0].Type(), int64(len(elems)))
 	return &Vector{elems: elems, typ: typ}
 }
 
@@ -74,7 +74,7 @@ func NewArray(elems ...Constant) *Array {
 	if len(elems) < 1 {
 		panic(fmt.Sprintf("invalid number of array elements; expected > 0, got %d", len(elems)))
 	}
-	typ := types.NewArray(elems[0].Type(), len(elems))
+	typ := types.NewArray(elems[0].Type(), int64(len(elems)))
 	return &Array{elems: elems, typ: typ}
 }
 

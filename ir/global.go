@@ -82,6 +82,11 @@ func (global *Global) String() string {
 		content)
 }
 
+// Name returns the name of the global variable.
+func (global *Global) Name() string {
+	return global.name
+}
+
 // ContentType returns the content type of the global variable.
 func (global *Global) ContentType() types.Type {
 	return global.content
@@ -94,6 +99,11 @@ func (global *Global) Init() (constant.Constant, bool) {
 		return global.init, true
 	}
 	return nil, false
+}
+
+// SetInit sets the initial value of the global variable.
+func (global *Global) SetInit(init constant.Constant) {
+	global.init = init
 }
 
 // Immutable reports whether the global variable is immutable.

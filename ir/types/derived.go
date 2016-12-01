@@ -138,6 +138,8 @@ func (param *Param) Ident() string {
 type PointerType struct {
 	// Element type.
 	elem Type
+	// Address space.
+	space int64
 }
 
 // NewPointer returns a new pointer type based on the given element type.
@@ -147,6 +149,9 @@ func NewPointer(elem Type) *PointerType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *PointerType) String() string {
+	if t.space != 0 {
+		return fmt.Sprintf("%s addrspace(%d)*", t.Elem(), t.AddrSpace())
+	}
 	return fmt.Sprintf("%s*", t.Elem())
 }
 
@@ -163,6 +168,16 @@ func (t *PointerType) Elem() Type {
 	return t.elem
 }
 
+// AddrSpace returns the address space of the pointer type.
+func (t *PointerType) AddrSpace() int64 {
+	return t.space
+}
+
+// SetAddrSpace sets the address space of the pointer type.
+func (t *PointerType) SetAddrSpace(space int64) {
+	t.space = space
+}
+
 // --- [ vector ] --------------------------------------------------------------
 
 // VectorType represents a vector type.
@@ -173,12 +188,12 @@ type VectorType struct {
 	// Element type.
 	elem Type
 	// Vector length.
-	len int
+	len int64
 }
 
 // NewVector returns a new vector type based on the given element type and
 // vector length.
-func NewVector(elem Type, len int) *VectorType {
+func NewVector(elem Type, len int64) *VectorType {
 	return &VectorType{elem: elem, len: len}
 }
 
@@ -206,7 +221,7 @@ func (t *VectorType) Elem() Type {
 }
 
 // Len returns the length of the vector type.
-func (t *VectorType) Len() int {
+func (t *VectorType) Len() int64 {
 	return t.len
 }
 
@@ -220,12 +235,12 @@ type ArrayType struct {
 	// Element type.
 	elem Type
 	// Array length.
-	len int
+	len int64
 }
 
 // NewArray returns a new array type based on the given element type and array
 // length.
-func NewArray(elem Type, len int) *ArrayType {
+func NewArray(elem Type, len int64) *ArrayType {
 	return &ArrayType{elem: elem, len: len}
 }
 
@@ -253,7 +268,7 @@ func (t *ArrayType) Elem() Type {
 }
 
 // Len returns the length of the array type.
-func (t *ArrayType) Len() int {
+func (t *ArrayType) Len() int64 {
 	return t.len
 }
 

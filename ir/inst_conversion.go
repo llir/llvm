@@ -77,6 +77,11 @@ func (inst *InstTrunc) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the trunc instruction.
+func (inst *InstTrunc) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ zext ] ----------------------------------------------------------------
 
 // InstZExt represents a zero extension instruction.
@@ -137,6 +142,11 @@ func (inst *InstZExt) SetParent(parent *BasicBlock) {
 // From returns the value before conversion of the zext instruction.
 func (inst *InstZExt) From() value.Value {
 	return inst.from
+}
+
+// SetFrom sets the value before conversion of the zext instruction.
+func (inst *InstZExt) SetFrom(from value.Value) {
+	inst.from = from
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -201,6 +211,11 @@ func (inst *InstSExt) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the sext instruction.
+func (inst *InstSExt) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ fptrunc ] -------------------------------------------------------------
 
 // InstFPTrunc represents a floating-point truncation instruction.
@@ -261,6 +276,11 @@ func (inst *InstFPTrunc) SetParent(parent *BasicBlock) {
 // From returns the value before conversion of the fptrunc instruction.
 func (inst *InstFPTrunc) From() value.Value {
 	return inst.from
+}
+
+// SetFrom sets the value before conversion of the fptrunc instruction.
+func (inst *InstFPTrunc) SetFrom(from value.Value) {
+	inst.from = from
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -325,6 +345,11 @@ func (inst *InstFPExt) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the fpext instruction.
+func (inst *InstFPExt) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ fptoui ] --------------------------------------------------------------
 
 // InstFPToUI represents a floating-point to unsigned integer conversion instruction.
@@ -385,6 +410,11 @@ func (inst *InstFPToUI) SetParent(parent *BasicBlock) {
 // From returns the value before conversion of the fptoui instruction.
 func (inst *InstFPToUI) From() value.Value {
 	return inst.from
+}
+
+// SetFrom sets the value before conversion of the fptoui instruction.
+func (inst *InstFPToUI) SetFrom(from value.Value) {
+	inst.from = from
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -449,6 +479,11 @@ func (inst *InstFPToSI) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the fptosi instruction.
+func (inst *InstFPToSI) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ uitofp ] --------------------------------------------------------------
 
 // InstUIToFP represents an unsigned integer to floating-point conversion instruction.
@@ -509,6 +544,11 @@ func (inst *InstUIToFP) SetParent(parent *BasicBlock) {
 // From returns the value before conversion of the uitofp instruction.
 func (inst *InstUIToFP) From() value.Value {
 	return inst.from
+}
+
+// SetFrom sets the value before conversion of the uitofp instruction.
+func (inst *InstUIToFP) SetFrom(from value.Value) {
+	inst.from = from
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -573,6 +613,11 @@ func (inst *InstSIToFP) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the sitofp instruction.
+func (inst *InstSIToFP) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ ptrtoint ] ------------------------------------------------------------
 
 // InstPtrToInt represents a pointer to integer conversion instruction.
@@ -633,6 +678,11 @@ func (inst *InstPtrToInt) SetParent(parent *BasicBlock) {
 // From returns the value before conversion of the ptrtoint instruction.
 func (inst *InstPtrToInt) From() value.Value {
 	return inst.from
+}
+
+// SetFrom sets the value before conversion of the ptrtoint instruction.
+func (inst *InstPtrToInt) SetFrom(from value.Value) {
+	inst.from = from
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -697,6 +747,11 @@ func (inst *InstIntToPtr) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the inttoptr instruction.
+func (inst *InstIntToPtr) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ bitcast ] -------------------------------------------------------------
 
 // InstBitCast represents a bitcast instruction.
@@ -759,6 +814,11 @@ func (inst *InstBitCast) From() value.Value {
 	return inst.from
 }
 
+// SetFrom sets the value before conversion of the bitcast instruction.
+func (inst *InstBitCast) SetFrom(from value.Value) {
+	inst.from = from
+}
+
 // --- [ addrspacecast ] -------------------------------------------------------
 
 // InstAddrSpaceCast represents an address space cast instruction.
@@ -819,4 +879,9 @@ func (inst *InstAddrSpaceCast) SetParent(parent *BasicBlock) {
 // From returns the value before conversion of the addrspacecast instruction.
 func (inst *InstAddrSpaceCast) From() value.Value {
 	return inst.from
+}
+
+// SetFrom sets the value before conversion of the addrspacecast instruction.
+func (inst *InstAddrSpaceCast) SetFrom(from value.Value) {
+	inst.from = from
 }

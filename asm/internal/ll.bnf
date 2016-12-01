@@ -1,0 +1,689 @@
+// ### [ Lexical part ] ########################################################
+
+_ascii_letter
+	: 'A' - 'Z'
+	| 'a' - 'z'
+;
+
+_letter
+	: _ascii_letter
+	| '$'
+	| '-'
+	| '.'
+	| '_'
+;
+
+_decimal_digit
+	: '0' - '9'
+;
+
+_hex_digit
+	: '0' - '9'
+	| 'A' - 'F'
+	| 'a' - 'f'
+;
+
+!comment : ';' { . } '\n' ;
+
+!whitespace : '\x00' | ' ' | '\t' | '\r' | '\n' ;
+
+// === [ Identifiers ] =========================================================
+
+_name
+	: _letter { _letter | _decimal_digit }
+;
+
+_quoted_name
+	: _quoted_string
+;
+
+_id
+	: _decimals
+;
+
+// --- [ Global identifiers ] --------------------------------------------------
+
+global_ident
+	: _global_name
+	| _global_id
+;
+
+_global_name
+	: '@' ( _name | _quoted_name )
+;
+
+_global_id
+	: '@' _id
+;
+
+// --- [ Local identifiers ] ---------------------------------------------------
+
+local_ident
+	: _local_name
+	| _local_id
+;
+
+_local_name
+	: '%' ( _name | _quoted_name )
+;
+
+_local_id
+	: '%' _id
+;
+
+// --- [ Labels ] --------------------------------------------------------------
+
+//   Label             [-a-zA-Z$._0-9]+:
+
+label_ident
+	: ( _letter | _decimal_digit ) { _letter | _decimal_digit } ':'
+	| _quoted_string ':'
+;
+
+// === [ Integer literals ] ====================================================
+
+//   Integer           [-]?[0-9]+
+
+int_lit
+	: _decimal_lit
+;
+
+_decimal_lit
+	: [ '-' ] _decimals
+;
+
+_decimals
+	: _decimal_digit { _decimal_digit }
+;
+
+// === [ Float literals ] ====================================================
+
+//   FPConstant        [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
+
+float_lit
+	: _frac_lit
+	| _sci_lit
+	| _float_hex_lit
+;
+
+_frac_lit
+	: ( '+' | '-' ) _decimals '.' _decimals
+	| _decimals '.' _decimals
+;
+
+_sci_lit
+	: _frac_lit ( 'e' | 'E' ) ( '+' | '-' ) _decimals
+	| _frac_lit ( 'e' | 'E' ) _decimals
+;
+
+//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
+//   HexFP80Constant   0xK[0-9A-Fa-f]+    // 20 hex digits
+//   HexFP128Constant  0xL[0-9A-Fa-f]+    // 32 hex digits
+//   HexPPC128Constant 0xM[0-9A-Fa-f]+    // 32 hex digits
+//   HexHalfConstant   0xH[0-9A-Fa-f]+    // 4 hex digits
+
+_float_hex_lit
+	:  '0' 'x'      _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'K'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'L'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'M'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	|  '0' 'x' 'H'  _hex_digit _hex_digit _hex_digit _hex_digit
+;
+
+// === [ String literals ] =====================================================
+
+_quoted_string
+	: '"' { . } '"'
+;
+
+// === [ Types ] ===============================================================
+
+int_type
+	: 'i' _decimals
+;
+
+// ### [ Syntactic part ] ######################################################
+
+<< import (
+	"github.com/llir/llvm/asm/internal/irx"
+	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/types"
+) >>
+
+// === [ Modules ] =============================================================
+
+Module
+	: TopLevelDecls   << irx.NewModule($0) >>
+;
+
+TopLevelDecls
+	: empty
+	| TopLevelDeclList
+;
+
+TopLevelDeclList
+	: TopLevelDecl                    << irx.NewTopLevelDeclList($0) >>
+	| TopLevelDeclList TopLevelDecl   << irx.AppendTopLevelDecl($0, $1) >>
+;
+
+TopLevelDecl
+	: Global
+	| FunctionDecl
+	| FunctionDef
+;
+
+// === [ Global variables ] ====================================================
+
+Global
+	: GlobalIdent "=" "external" Immutable Type   << irx.NewGlobalDecl($0, $3, $4) >>
+	| GlobalIdent "=" Immutable Type Constant     << irx.NewGlobalDef($0, $2, $3, $4) >>
+;
+
+Immutable
+	: "constant"   << true, nil >>
+	| "global"     << false, nil >>
+;
+
+// === [ Functions ] ===========================================================
+
+FunctionDecl
+	: "declare" FunctionHeader   << $1, nil >>
+;
+
+FunctionDef
+	: "define" FunctionHeader FunctionBody   << irx.NewFunctionDef($1, $2) >>
+;
+
+FunctionHeader
+	: ResultType GlobalIdent "(" Params ")"   << irx.NewFunctionDecl($0, $1, $3) >>
+;
+
+Params
+	: empty
+	| "..."                 << irx.NewParams(nil, true) >>
+	| ParamList             << irx.NewParams($0, false) >>
+	| ParamList "," "..."   << irx.NewParams($0, true) >>
+;
+
+ParamList
+	: Param                 << irx.NewParamList($0) >>
+	| ParamList "," Param   << irx.AppendParam($0, $2) >>
+;
+
+Param
+	: Type              << irx.NewParam($0, nil) >>
+	| Type LocalIdent   << irx.NewParam($0, $1) >>
+;
+
+FunctionBody
+	: "{" BasicBlocks "}"   << $1, nil >>
+;
+
+// === [ Identifiers ] =========================================================
+
+GlobalIdent
+	: global_ident   << irx.NewGlobalIdent($0) >>
+;
+
+LocalIdent
+	: local_ident   << irx.NewLocalIdent($0) >>
+;
+
+LabelIdent
+	: label_ident   << irx.NewLabelIdent($0) >>
+;
+
+// === [ Types ] ===============================================================
+
+Type
+	: LabelType
+	| IntType
+	| FloatType
+	| PointerType
+	| VectorType
+	| ArrayType
+;
+
+ResultType
+	: VoidType
+	| Type
+;
+
+VoidType
+	: "void"   << types.Void, nil >>
+;
+
+LabelType
+	: "label"   << types.Label, nil >>
+;
+
+IntType
+	: int_type   << irx.NewIntType($0) >>
+;
+
+FloatType
+	: "half"        << types.Half, nil >>
+	| "float"       << types.Float, nil >>
+	| "double"      << types.Double, nil >>
+	| "fp128"       << types.FP128, nil >>
+	| "x86_fp80"    << types.X86_FP80, nil >>
+	| "ppc_fp128"   << types.PPC_FP128, nil >>
+;
+
+PointerType
+	: Type OptAddrSpace "*"   << irx.NewPointerType($0, $1) >>
+;
+
+OptAddrSpace
+	: empty
+	| "addrspace" "(" IntConst ")"   << irx.NewAddrSpace($2) >>
+;
+
+VectorType
+	: "<" IntConst "x" Type ">"   << irx.NewVectorType($1, $3) >>
+;
+
+ArrayType
+	: "[" IntConst "x" Type "]"   << irx.NewArrayType($1, $3) >>
+;
+
+// === [ Values ] ==============================================================
+
+Value
+	: LocalIdent
+	| GlobalIdent
+	| Constant
+;
+
+// === [ Constants ] ===========================================================
+
+Constant
+	: IntConst
+	| FloatConst
+	| NullConst
+;
+
+IntConst
+	: int_lit   << irx.NewIntLit($0) >>
+	| "true"    << irx.NewIntLit($0) >>
+	| "false"   << irx.NewIntLit($0) >>
+;
+
+FloatConst
+	: float_lit   << irx.NewFloatLit($0) >>
+;
+
+NullConst
+	: "null"   << &irx.NullLit{}, nil >>
+;
+
+// === [ Basic blocks ] ========================================================
+
+BasicBlocks
+	: empty
+	| BasicBlockList
+;
+
+BasicBlockList
+	: BasicBlock                  << irx.NewBasicBlockList($0) >>
+	| BasicBlockList BasicBlock   << irx.AppendBasicBlock($0, $1) >>
+;
+
+BasicBlock
+	: Instructions Terminator              << irx.NewBasicBlock(nil, $0, $1) >>
+	| LabelIdent Instructions Terminator   << irx.NewBasicBlock($0, $1, $2) >>
+;
+
+// === [ Instructions ] ========================================================
+
+Instructions
+	: empty
+	| InstructionList
+;
+
+InstructionList
+	: Instruction                   << irx.NewInstructionList($0) >>
+	| InstructionList Instruction   << irx.AppendInstruction($0, $1) >>
+;
+
+Instruction
+	: StoreInst
+	| LocalIdent "=" ValueInstruction   << irx.NewNamedInstruction($0, $2) >>
+	| ValueInstruction
+;
+
+ValueInstruction
+	// Binary instructions
+	: AddInst
+	| FAddInst
+	| SubInst
+	| FSubInst
+	| MulInst
+	| FMulInst
+	| UDivInst
+	| SDivInst
+	| FDivInst
+	| URemInst
+	| SRemInst
+	| FRemInst
+	// Bitwise instructions
+	| ShlInst
+	| LShrInst
+	| AShrInst
+	| AndInst
+	| OrInst
+	| XorInst
+	// Memory instructions
+	| AllocaInst
+	| LoadInst
+	| GetElementPtrInst
+	// Conversion instructions
+	| TruncInst
+	| ZExtInst
+	| SExtInst
+	| FPTruncInst
+	| FPExtInst
+	| FPToUIInst
+	| FPToSIInst
+	| UIToFPInst
+	| SIToFPInst
+	| PtrToIntInst
+	| IntToPtrInst
+	| BitCastInst
+	| AddrSpaceCastInst
+	// Other instructions
+	| ICmpInst
+	| FCmpInst
+	| PhiInst
+	| SelectInst
+	| CallInst
+;
+
+// --- [ Binary instructions ] -------------------------------------------------
+
+AddInst
+	: "add" Type Value "," Value   << irx.NewAddInst($1, $2, $4) >>
+;
+
+FAddInst
+	: "fadd" Type Value "," Value   << irx.NewFAddInst($1, $2, $4) >>
+;
+
+SubInst
+	: "sub" Type Value "," Value   << irx.NewSubInst($1, $2, $4) >>
+;
+
+FSubInst
+	: "fsub" Type Value "," Value   << irx.NewFSubInst($1, $2, $4) >>
+;
+
+MulInst
+	: "mul" Type Value "," Value   << irx.NewMulInst($1, $2, $4) >>
+;
+
+FMulInst
+	: "fmul" Type Value "," Value   << irx.NewFMulInst($1, $2, $4) >>
+;
+
+UDivInst
+	: "udiv" Type Value "," Value   << irx.NewUDivInst($1, $2, $4) >>
+;
+
+SDivInst
+	: "sdiv" Type Value "," Value   << irx.NewSDivInst($1, $2, $4) >>
+;
+
+FDivInst
+	: "fdiv" Type Value "," Value   << irx.NewFDivInst($1, $2, $4) >>
+;
+
+URemInst
+	: "urem" Type Value "," Value   << irx.NewURemInst($1, $2, $4) >>
+;
+
+SRemInst
+	: "srem" Type Value "," Value   << irx.NewSRemInst($1, $2, $4) >>
+;
+
+FRemInst
+	: "frem" Type Value "," Value   << irx.NewFRemInst($1, $2, $4) >>
+;
+
+// --- [ Bitwise instructions ] ------------------------------------------------
+
+ShlInst
+	: "shl" Type Value "," Value   << irx.NewShlInst($1, $2, $4) >>
+;
+
+LShrInst
+	: "lshr" Type Value "," Value   << irx.NewLShrInst($1, $2, $4) >>
+;
+
+AShrInst
+	: "ashr" Type Value "," Value   << irx.NewAShrInst($1, $2, $4) >>
+;
+
+AndInst
+	: "and" Type Value "," Value   << irx.NewAndInst($1, $2, $4) >>
+;
+
+OrInst
+	: "or" Type Value "," Value   << irx.NewOrInst($1, $2, $4) >>
+;
+
+XorInst
+	: "xor" Type Value "," Value   << irx.NewXorInst($1, $2, $4) >>
+;
+
+// --- [ Memory instructions ] -------------------------------------------------
+
+AllocaInst
+	: "alloca" Type OptNElems   << irx.NewAllocaInst($1, $2) >>
+;
+
+OptNElems
+	: empty
+	| "," Type Value   << irx.NewValue($1, $2) >>
+;
+
+LoadInst
+	: "load" Type "," PointerType Value   << irx.NewLoadInst($1, $3, $4) >>
+;
+
+GetElementPtrInst
+	: "getelementptr" Type "," Type Value Indices   << irx.NewGetElementPtrInst($1, $3, $4, $5) >>
+;
+
+Indices
+	: empty
+	| "," IndexList   << $1, nil >>
+;
+
+IndexList
+	: Index                 << irx.NewValueList($0) >>
+	| IndexList "," Index   << irx.AppendValue($0, $2) >>
+;
+
+Index
+	: Type Value   << irx.NewValue($0, $1) >>
+;
+
+StoreInst
+	: "store" Type Value "," PointerType Value   << irx.NewStoreInst($1, $2, $4, $5) >>
+;
+
+// --- [ Conversion instructions ] ---------------------------------------------
+
+TruncInst
+	: "trunc" Type Value "to" Type   << irx.NewTruncInst($1, $2, $4) >>
+;
+
+ZExtInst
+	: "zext" Type Value "to" Type   << irx.NewZExtInst($1, $2, $4) >>
+;
+
+SExtInst
+	: "sext" Type Value "to" Type   << irx.NewSExtInst($1, $2, $4) >>
+;
+
+FPTruncInst
+	: "fptrunc" Type Value "to" Type   << irx.NewFPTruncInst($1, $2, $4) >>
+;
+
+FPExtInst
+	: "fpext" Type Value "to" Type   << irx.NewFPExtInst($1, $2, $4) >>
+;
+
+FPToUIInst
+	: "fptoui" Type Value "to" Type   << irx.NewFPToUIInst($1, $2, $4) >>
+;
+
+FPToSIInst
+	: "fptosi" Type Value "to" Type   << irx.NewFPToSIInst($1, $2, $4) >>
+;
+
+UIToFPInst
+	: "uitofp" Type Value "to" Type   << irx.NewUIToFPInst($1, $2, $4) >>
+;
+
+SIToFPInst
+	: "sitofp" Type Value "to" Type   << irx.NewSIToFPInst($1, $2, $4) >>
+;
+
+PtrToIntInst
+	: "ptrtoint" Type Value "to" Type   << irx.NewPtrToIntInst($1, $2, $4) >>
+;
+
+IntToPtrInst
+	: "inttoptr" Type Value "to" Type   << irx.NewIntToPtrInst($1, $2, $4) >>
+;
+
+BitCastInst
+	: "bitcast" Type Value "to" Type   << irx.NewBitCastInst($1, $2, $4) >>
+;
+
+AddrSpaceCastInst
+	: "addrspacecast" Type Value "to" Type   << irx.NewAddrSpaceCastInst($1, $2, $4) >>
+;
+
+// --- [ Other instructions ] --------------------------------------------------
+
+ICmpInst
+	: "icmp" IntPred Type Value "," Value   << irx.NewICmpInst($1, $2, $3, $5) >>
+;
+
+IntPred
+	: "eq"    << ir.IntEQ, nil >>
+	| "ne"    << ir.IntNE, nil >>
+	| "ugt"   << ir.IntUGT, nil >>
+	| "uge"   << ir.IntUGE, nil >>
+	| "ult"   << ir.IntULT, nil >>
+	| "ule"   << ir.IntULE, nil >>
+	| "sgt"   << ir.IntSGT, nil >>
+	| "sge"   << ir.IntSGE, nil >>
+	| "slt"   << ir.IntSLT, nil >>
+	| "sle"   << ir.IntSLE, nil >>
+;
+
+FCmpInst
+	: "fcmp" FloatPred Type Value "," Value   << irx.NewFCmpInst($1, $2, $3, $5) >>
+;
+
+FloatPred
+	: "false"   << ir.FloatFalse, nil >>
+	| "oeq"     << ir.FloatOEQ, nil >>
+	| "ogt"     << ir.FloatOGT, nil >>
+	| "oge"     << ir.FloatOGE, nil >>
+	| "olt"     << ir.FloatOLT, nil >>
+	| "ole"     << ir.FloatOLE, nil >>
+	| "one"     << ir.FloatONE, nil >>
+	| "ord"     << ir.FloatORD, nil >>
+	| "ueq"     << ir.FloatUEQ, nil >>
+	| "ugt"     << ir.FloatUGT, nil >>
+	| "uge"     << ir.FloatUGE, nil >>
+	| "ult"     << ir.FloatULT, nil >>
+	| "ule"     << ir.FloatULE, nil >>
+	| "une"     << ir.FloatUNE, nil >>
+	| "uno"     << ir.FloatUNO, nil >>
+	| "true"    << ir.FloatTrue, nil >>
+;
+
+PhiInst
+	: "phi" Type IncomingList   << irx.NewPhiInst($1, $2) >>
+;
+
+IncomingList
+	: Incoming                    << irx.NewIncomingList($0) >>
+	| IncomingList "," Incoming   << irx.AppendIncoming($0, $2) >>
+;
+
+Incoming
+	: "[" Value "," LocalIdent "]"   << irx.NewIncoming($1, $3) >>
+;
+
+SelectInst
+	: "select" Type Value "," Type Value "," Type Value   << irx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
+;
+
+CallInst
+	: "call" ResultType GlobalIdent "(" Args ")"   << irx.NewCallInst($1, $2, $4) >>
+;
+
+Args
+	: empty
+	| ArgList
+;
+
+ArgList
+	: Arg               << irx.NewValueList($0) >>
+	| ArgList "," Arg   << irx.AppendValue($0, $2) >>
+;
+
+Arg
+	: Type Value   << irx.NewValue($0, $1) >>
+;
+
+// === [ Terminators ] =========================================================
+
+Terminator
+	: RetTerm
+	| BrTerm
+	| CondBrTerm
+	| SwitchTerm
+	| UnreachableTerm
+;
+
+RetTerm
+	: "ret" VoidType     << ir.NewRet(nil), nil >>
+	| "ret" Type Value   << irx.NewRetTerm($1, $2) >>
+;
+
+BrTerm
+	: "br" LabelType LocalIdent   << irx.NewBrTerm($2) >>
+;
+
+CondBrTerm
+	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << irx.NewCondBrTerm($1, $2, $5, $8) >>
+;
+
+SwitchTerm
+	: "switch" IntType Value "," LabelType LocalIdent "[" Cases "]"   << irx.NewSwitchTerm($1, $2, $5, $7) >>
+;
+
+Cases
+	: empty
+	| CastList
+;
+
+CastList
+	: Case            << irx.NewCaseList($0) >>
+	| CastList Case   << irx.AppendCase($0, $1) >>
+;
+
+Case
+	: IntType Value "," LabelType LocalIdent   << irx.NewCase($0, $1, $4) >>
+;
+
+UnreachableTerm
+	: "unreachable"   << ir.NewUnreachable(), nil >>
+;

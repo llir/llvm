@@ -163,6 +163,11 @@ func (inst *InstLoad) Src() value.Value {
 	return inst.src
 }
 
+// SetSrc sets the source address of the load instruction.
+func (inst *InstLoad) SetSrc(src value.Value) {
+	inst.src = src
+}
+
 // --- [ store ] ---------------------------------------------------------------
 
 // InstStore represents a store instruction.
@@ -209,9 +214,19 @@ func (inst *InstStore) Src() value.Value {
 	return inst.src
 }
 
+// SetSrc sets the source value of the store instruction.
+func (inst *InstStore) SetSrc(src value.Value) {
+	inst.src = src
+}
+
 // Dst returns the destination address of the store instruction.
 func (inst *InstStore) Dst() value.Value {
 	return inst.dst
+}
+
+// SetDst sets the destination address of the store instruction.
+func (inst *InstStore) SetDst(dst value.Value) {
+	inst.dst = dst
 }
 
 // --- [ fence ] ---------------------------------------------------------------
@@ -325,7 +340,17 @@ func (inst *InstGetElementPtr) Src() value.Value {
 	return inst.src
 }
 
+// SetSrc sets the source address of the getelementptr instruction.
+func (inst *InstGetElementPtr) SetSrc(src value.Value) {
+	inst.src = src
+}
+
 // Indices returns the element indices of the getelementptr instruction.
 func (inst *InstGetElementPtr) Indices() []value.Value {
 	return inst.indices
+}
+
+// SetIndices sets the element indices of the getelementptr instruction.
+func (inst *InstGetElementPtr) SetIndices(indices []value.Value) {
+	inst.indices = indices
 }
