@@ -87,7 +87,8 @@ func fixModule(m *ir.Module) *ir.Module {
 	}
 
 	// Index global variables.
-	for _, global := range m.Globals() {
+	globals := m.Globals()
+	for _, global := range globals {
 		name := global.Name()
 		if _, ok := fix.globals[name]; ok {
 			panic(fmt.Sprintf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], global))
@@ -100,7 +101,8 @@ func fixModule(m *ir.Module) *ir.Module {
 	//pretty.Println(fix.globals)
 
 	// Index functions.
-	for _, f := range m.Funcs() {
+	funcs := m.Funcs()
+	for _, f := range funcs {
 		name := f.Name()
 		if _, ok := fix.globals[name]; ok {
 			panic(fmt.Sprintf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], f))
@@ -108,14 +110,29 @@ func fixModule(m *ir.Module) *ir.Module {
 		fix.globals[name] = f
 	}
 
-	// TODO: Figure out if global variables ever may contain dummy values.
+	// Fix globals.
+	for _, global := range globals {
+		fix.fixGlobal(global)
+	}
 
 	// Fix functions.
-	for _, f := range m.Funcs() {
+	for _, f := range funcs {
 		fix.fixFunction(f)
 	}
 
 	return m
+}
+
+// === [ Global variables ] ====================================================
+
+// fixGlobal replaces dummy values within the given global variable with their
+// real values.
+func (fix *fixer) fixGlobal(old *ir.Global) {
+	if init, ok := old.Init(); ok {
+		if init, ok := fix.fixValue(init); ok {
+			old.SetInit(init)
+		}
+	}
 }
 
 // === [ Functions ] ===========================================================
@@ -202,6 +219,8 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 		// nothing to do; valid value.
 	case *constant.Float:
 		// nothing to do; valid value.
+	case *constant.Null:
+		// nothing to do; valid value.
 	case *ir.InstAdd, *ir.InstFAdd, *ir.InstSub, *ir.InstFSub, *ir.InstMul, *ir.InstFMul, *ir.InstUDiv, *ir.InstSDiv, *ir.InstFDiv, *ir.InstURem, *ir.InstSRem, *ir.InstFRem:
 		// nothing to do; valid value.
 	case *ir.InstICmp:
@@ -284,6 +303,32 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 	case *ir.InstGetElementPtr:
 		return fix.fixGetElementPtrInst(inst)
 	// Conversion instructions
+	case *ir.InstTrunc:
+		return fix.fixTruncInst(inst)
+	case *ir.InstZExt:
+		return fix.fixZExtInst(inst)
+	case *ir.InstSExt:
+		return fix.fixSExtInst(inst)
+	case *ir.InstFPTrunc:
+		return fix.fixFPTruncInst(inst)
+	case *ir.InstFPExt:
+		return fix.fixFPExtInst(inst)
+	case *ir.InstFPToUI:
+		return fix.fixFPToUIInst(inst)
+	case *ir.InstFPToSI:
+		return fix.fixFPToSIInst(inst)
+	case *ir.InstUIToFP:
+		return fix.fixUIToFPInst(inst)
+	case *ir.InstSIToFP:
+		return fix.fixSIToFPInst(inst)
+	case *ir.InstPtrToInt:
+		return fix.fixPtrToIntInst(inst)
+	case *ir.InstIntToPtr:
+		return fix.fixIntToPtrInst(inst)
+	case *ir.InstBitCast:
+		return fix.fixBitCastInst(inst)
+	case *ir.InstAddrSpaceCast:
+		return fix.fixAddrSpaceCastInst(inst)
 	// Other instructions
 	case *ir.InstICmp:
 		return fix.fixICmpInst(inst)
@@ -570,6 +615,123 @@ func (fix *fixer) fixGetElementPtrInst(old *ir.InstGetElementPtr) *ir.InstGetEle
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------
+
+// fixTruncInst replaces dummy values within the given trunc instruction with
+// their real values.
+func (fix *fixer) fixTruncInst(old *ir.InstTrunc) *ir.InstTrunc {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixZExtInst replaces dummy values within the given zext instruction with
+// their real values.
+func (fix *fixer) fixZExtInst(old *ir.InstZExt) *ir.InstZExt {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixSExtInst replaces dummy values within the given sext instruction with
+// their real values.
+func (fix *fixer) fixSExtInst(old *ir.InstSExt) *ir.InstSExt {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixFPTruncInst replaces dummy values within the given fptrunc instruction
+// with their real values.
+func (fix *fixer) fixFPTruncInst(old *ir.InstFPTrunc) *ir.InstFPTrunc {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixFPExtInst replaces dummy values within the given fpext instruction with
+// their real values.
+func (fix *fixer) fixFPExtInst(old *ir.InstFPExt) *ir.InstFPExt {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixFPToUIInst replaces dummy values within the given fptoui instruction with
+// their real values.
+func (fix *fixer) fixFPToUIInst(old *ir.InstFPToUI) *ir.InstFPToUI {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixFPToSIInst replaces dummy values within the given fptosi instruction with
+// their real values.
+func (fix *fixer) fixFPToSIInst(old *ir.InstFPToSI) *ir.InstFPToSI {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixUIToFPInst replaces dummy values within the given uitofp instruction with
+// their real values.
+func (fix *fixer) fixUIToFPInst(old *ir.InstUIToFP) *ir.InstUIToFP {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixSIToFPInst replaces dummy values within the given sitofp instruction with
+// their real values.
+func (fix *fixer) fixSIToFPInst(old *ir.InstSIToFP) *ir.InstSIToFP {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixPtrToIntInst replaces dummy values within the given ptrtoint instruction
+// with their real values.
+func (fix *fixer) fixPtrToIntInst(old *ir.InstPtrToInt) *ir.InstPtrToInt {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixIntToPtrInst replaces dummy values within the given inttoptr instruction
+// with their real values.
+func (fix *fixer) fixIntToPtrInst(old *ir.InstIntToPtr) *ir.InstIntToPtr {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixBitCastInst replaces dummy values within the given bitcast instruction
+// with their real values.
+func (fix *fixer) fixBitCastInst(old *ir.InstBitCast) *ir.InstBitCast {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
+
+// fixAddrSpaceCastInst replaces dummy values within the given addrspacecast
+// instruction with their real values.
+func (fix *fixer) fixAddrSpaceCastInst(old *ir.InstAddrSpaceCast) *ir.InstAddrSpaceCast {
+	if from, ok := fix.fixValue(old.From()); ok {
+		old.SetFrom(from)
+	}
+	return old
+}
 
 // --- [ Other instructions ] --------------------------------------------------
 

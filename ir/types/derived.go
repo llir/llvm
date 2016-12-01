@@ -138,6 +138,8 @@ func (param *Param) Ident() string {
 type PointerType struct {
 	// Element type.
 	elem Type
+	// Address space.
+	space int64
 }
 
 // NewPointer returns a new pointer type based on the given element type.
@@ -147,6 +149,9 @@ func NewPointer(elem Type) *PointerType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *PointerType) String() string {
+	if t.space != 0 {
+		return fmt.Sprintf("%s addrspace(%d)*", t.Elem(), t.AddrSpace())
+	}
 	return fmt.Sprintf("%s*", t.Elem())
 }
 
@@ -161,6 +166,16 @@ func (t *PointerType) Equal(u Type) bool {
 // Elem returns the element type of the pointer type.
 func (t *PointerType) Elem() Type {
 	return t.elem
+}
+
+// AddrSpace returns the address space of the pointer type.
+func (t *PointerType) AddrSpace() int64 {
+	return t.space
+}
+
+// SetAddrSpace sets the address space of the pointer type.
+func (t *PointerType) SetAddrSpace(space int64) {
+	t.space = space
 }
 
 // --- [ vector ] --------------------------------------------------------------

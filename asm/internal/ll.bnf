@@ -270,7 +270,12 @@ FloatType
 ;
 
 PointerType
-	: Type "*"   << irx.NewPointerType($0) >>
+	: Type OptAddrSpace "*"   << irx.NewPointerType($0, $1) >>
+;
+
+OptAddrSpace
+	: empty
+	| "addrspace" "(" IntConst ")"   << irx.NewAddrSpace($2) >>
 ;
 
 ArrayType
@@ -290,6 +295,7 @@ Value
 Constant
 	: IntConst
 	| FloatConst
+	| NullConst
 ;
 
 IntConst
@@ -300,6 +306,10 @@ IntConst
 
 FloatConst
 	: float_lit   << irx.NewFloatLit($0) >>
+;
+
+NullConst
+	: "null"   << &irx.NullLit{}, nil >>
 ;
 
 // === [ Basic blocks ] ========================================================
@@ -363,6 +373,19 @@ ValueInstruction
 	| LoadInst
 	| GetElementPtrInst
 	// Conversion instructions
+	| TruncInst
+	| ZExtInst
+	| SExtInst
+	| FPTruncInst
+	| FPExtInst
+	| FPToUIInst
+	| FPToSIInst
+	| UIToFPInst
+	| SIToFPInst
+	| PtrToIntInst
+	| IntToPtrInst
+	| BitCastInst
+	| AddrSpaceCastInst
 	// Other instructions
 	| ICmpInst
 	| FCmpInst
@@ -485,6 +508,58 @@ StoreInst
 ;
 
 // --- [ Conversion instructions ] ---------------------------------------------
+
+TruncInst
+	: "trunc" Type Value "to" Type   << irx.NewTruncInst($1, $2, $4) >>
+;
+
+ZExtInst
+	: "zext" Type Value "to" Type   << irx.NewZExtInst($1, $2, $4) >>
+;
+
+SExtInst
+	: "sext" Type Value "to" Type   << irx.NewSExtInst($1, $2, $4) >>
+;
+
+FPTruncInst
+	: "fptrunc" Type Value "to" Type   << irx.NewFPTruncInst($1, $2, $4) >>
+;
+
+FPExtInst
+	: "fpext" Type Value "to" Type   << irx.NewFPExtInst($1, $2, $4) >>
+;
+
+FPToUIInst
+	: "fptoui" Type Value "to" Type   << irx.NewFPToUIInst($1, $2, $4) >>
+;
+
+FPToSIInst
+	: "fptosi" Type Value "to" Type   << irx.NewFPToSIInst($1, $2, $4) >>
+;
+
+UIToFPInst
+	: "uitofp" Type Value "to" Type   << irx.NewUIToFPInst($1, $2, $4) >>
+;
+
+SIToFPInst
+	: "sitofp" Type Value "to" Type   << irx.NewSIToFPInst($1, $2, $4) >>
+;
+
+PtrToIntInst
+	: "ptrtoint" Type Value "to" Type   << irx.NewPtrToIntInst($1, $2, $4) >>
+;
+
+IntToPtrInst
+	: "inttoptr" Type Value "to" Type   << irx.NewIntToPtrInst($1, $2, $4) >>
+;
+
+BitCastInst
+	: "bitcast" Type Value "to" Type   << irx.NewBitCastInst($1, $2, $4) >>
+;
+
+AddrSpaceCastInst
+	: "addrspacecast" Type Value "to" Type   << irx.NewAddrSpaceCastInst($1, $2, $4) >>
+;
 
 // --- [ Other instructions ] --------------------------------------------------
 

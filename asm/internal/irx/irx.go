@@ -300,12 +300,36 @@ func NewIntType(typeTok interface{}) (*types.IntType, error) {
 }
 
 // NewPointerType returns a new pointer type based on the given element type.
-func NewPointerType(elem interface{}) (*types.PointerType, error) {
+func NewPointerType(elem, space interface{}) (*types.PointerType, error) {
 	e, ok := elem.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
 	}
-	return types.NewPointer(e), nil
+	t := types.NewPointer(e)
+	switch space := space.(type) {
+	case *addrSpace:
+		t.SetAddrSpace(space.space)
+	case nil:
+		// no address space.
+	default:
+		return nil, errors.Errorf("invalid address space type; expected *irx.addrSpace or nil, got %T", space)
+	}
+	return t, nil
+}
+
+// addrSpace represents the address space of a pointer type.
+type addrSpace struct {
+	// Address space.
+	space int64
+}
+
+// NewAddrSpace returns a new address space pointer based on the given space.
+func NewAddrSpace(space interface{}) (*addrSpace, error) {
+	s, err := getInt64(space)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &addrSpace{space: s}, nil
 }
 
 // NewArrayType returns a new array type based on the given array length and
@@ -374,6 +398,13 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 		default:
 			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
 		}
+	case *types.PointerType:
+		switch val := val.(type) {
+		case *NullLit:
+			return constant.NewNull(t), nil
+		default:
+			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
+		}
 	default:
 		panic(fmt.Sprintf("support for type %T not yet implemented", t))
 	}
@@ -409,6 +440,10 @@ func NewFloatLit(tok interface{}) (*FloatLit, error) {
 		return nil, errors.WithStack(err)
 	}
 	return &FloatLit{lit: s}, nil
+}
+
+// NullLit represents a null literal.
+type NullLit struct {
 }
 
 // === [ Basic blocks ] ========================================================
@@ -854,6 +889,188 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ir.InstGe
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------
+
+// NewTruncInst returns a new trunc instruction based on the given source value
+// and target type.
+func NewTruncInst(fromTyp, fromVal, to interface{}) (*ir.InstTrunc, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewTrunc(from, t), nil
+}
+
+// NewZExtInst returns a new zext instruction based on the given source value
+// and target type.
+func NewZExtInst(fromTyp, fromVal, to interface{}) (*ir.InstZExt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewZExt(from, t), nil
+}
+
+// NewSExtInst returns a new sext instruction based on the given source value
+// and target type.
+func NewSExtInst(fromTyp, fromVal, to interface{}) (*ir.InstSExt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewSExt(from, t), nil
+}
+
+// NewFPTruncInst returns a new fptrunc instruction based on the given source value
+// and target type.
+func NewFPTruncInst(fromTyp, fromVal, to interface{}) (*ir.InstFPTrunc, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewFPTrunc(from, t), nil
+}
+
+// NewFPExtInst returns a new fpext instruction based on the given source value
+// and target type.
+func NewFPExtInst(fromTyp, fromVal, to interface{}) (*ir.InstFPExt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewFPExt(from, t), nil
+}
+
+// NewFPToUIInst returns a new fptoui instruction based on the given source value
+// and target type.
+func NewFPToUIInst(fromTyp, fromVal, to interface{}) (*ir.InstFPToUI, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewFPToUI(from, t), nil
+}
+
+// NewFPToSIInst returns a new fptosi instruction based on the given source value
+// and target type.
+func NewFPToSIInst(fromTyp, fromVal, to interface{}) (*ir.InstFPToSI, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewFPToSI(from, t), nil
+}
+
+// NewUIToFPInst returns a new uitofp instruction based on the given source value
+// and target type.
+func NewUIToFPInst(fromTyp, fromVal, to interface{}) (*ir.InstUIToFP, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewUIToFP(from, t), nil
+}
+
+// NewSIToFPInst returns a new sitofp instruction based on the given source value
+// and target type.
+func NewSIToFPInst(fromTyp, fromVal, to interface{}) (*ir.InstSIToFP, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewSIToFP(from, t), nil
+}
+
+// NewPtrToIntInst returns a new ptrtoint instruction based on the given source value
+// and target type.
+func NewPtrToIntInst(fromTyp, fromVal, to interface{}) (*ir.InstPtrToInt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewPtrToInt(from, t), nil
+}
+
+// NewIntToPtrInst returns a new inttoptr instruction based on the given source value
+// and target type.
+func NewIntToPtrInst(fromTyp, fromVal, to interface{}) (*ir.InstIntToPtr, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewIntToPtr(from, t), nil
+}
+
+// NewBitCastInst returns a new bitcast instruction based on the given source value
+// and target type.
+func NewBitCastInst(fromTyp, fromVal, to interface{}) (*ir.InstBitCast, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewBitCast(from, t), nil
+}
+
+// NewAddrSpaceCastInst returns a new addrspacecast instruction based on the given source value
+// and target type.
+func NewAddrSpaceCastInst(fromTyp, fromVal, to interface{}) (*ir.InstAddrSpaceCast, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return ir.NewAddrSpaceCast(from, t), nil
+}
 
 // --- [ Other instructions ] --------------------------------------------------
 

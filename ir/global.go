@@ -101,6 +101,11 @@ func (global *Global) Init() (constant.Constant, bool) {
 	return nil, false
 }
 
+// SetInit sets the initial value of the global variable.
+func (global *Global) SetInit(init constant.Constant) {
+	global.init = init
+}
+
 // Immutable reports whether the global variable is immutable.
 func (global *Global) Immutable() bool {
 	return global.immutable
