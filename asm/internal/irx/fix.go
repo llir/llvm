@@ -279,6 +279,8 @@ func (fix *fixer) fixInst(inst ir.Instruction) ir.Instruction {
 		return fix.fixLoadInst(inst)
 	case *ir.InstStore:
 		return fix.fixStoreInst(inst)
+	case *ir.InstGetElementPtr:
+		return fix.fixGetElementPtrInst(inst)
 	// Conversion instructions
 	// Other instructions
 	case *ir.InstICmp:
@@ -547,6 +549,21 @@ func (fix *fixer) fixStoreInst(old *ir.InstStore) *ir.InstStore {
 	if dst, ok := fix.fixValue(old.Dst()); ok {
 		old.SetDst(dst)
 	}
+	return old
+}
+
+// fixGetElementPtrInst replaces dummy values within the given getelementptr
+// instruction with their real values.
+func (fix *fixer) fixGetElementPtrInst(old *ir.InstGetElementPtr) *ir.InstGetElementPtr {
+	if src, ok := fix.fixValue(old.Src()); ok {
+		old.SetSrc(src)
+	}
+	var indices []value.Value
+	for _, index := range old.Indices() {
+		index, _ = fix.fixValue(index)
+		indices = append(indices, index)
+	}
+	old.SetIndices(indices)
 	return old
 }
 

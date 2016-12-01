@@ -340,7 +340,17 @@ func (inst *InstGetElementPtr) Src() value.Value {
 	return inst.src
 }
 
+// SetSrc sets the source address of the getelementptr instruction.
+func (inst *InstGetElementPtr) SetSrc(src value.Value) {
+	inst.src = src
+}
+
 // Indices returns the element indices of the getelementptr instruction.
 func (inst *InstGetElementPtr) Indices() []value.Value {
 	return inst.indices
+}
+
+// SetIndices sets the element indices of the getelementptr instruction.
+func (inst *InstGetElementPtr) SetIndices(indices []value.Value) {
+	inst.indices = indices
 }

@@ -20,22 +20,23 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/fcmp.ll"},
 		{path: "../testdata/select.ll"},
 		{path: "../testdata/alloca.ll"},
+		{path: "../testdata/getelementptr.ll"},
 	}
-	for i, g := range golden {
+	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
 		if err != nil {
-			t.Errorf("i=%d: unable to read file; %v", i, err)
+			t.Errorf("%q: unable to read file; %v", g.path, err)
 			continue
 		}
 		want := string(buf)
 		m, err := asm.ParseString(want)
 		if err != nil {
-			t.Errorf("i=%d: unable to parse file; %v", i, err)
+			t.Errorf("%q: unable to parse file; %v", g.path, err)
 			continue
 		}
 		got := m.String()
 		if want != got {
-			t.Errorf("i=%d: module mismatch; expected `%v`, got `%v`", i, want, got)
+			t.Errorf("%q: module mismatch; expected `%v`, got `%v`", g.path, want, got)
 		}
 	}
 }

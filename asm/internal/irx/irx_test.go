@@ -21,11 +21,12 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/fcmp.ll"},
 		{path: "../testdata/select.ll"},
 		{path: "../testdata/alloca.ll"},
+		{path: "../testdata/getelementptr.ll"},
 	}
-	for i, g := range golden {
+	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)
 		if err != nil {
-			t.Errorf("i=%d: unable to parse file; %v", i, err)
+			t.Errorf("%q: unable to parse file; %v", g.path, err)
 			continue
 		}
 		// Hack :) Rather than using reflect, pretty-print the module and search
@@ -33,7 +34,7 @@ func TestFix(t *testing.T) {
 		// instCallDummy, termBrDummy and termCondBrDummy.
 		s := pretty.Sprint(m)
 		if strings.Contains(s, "Dummy") {
-			t.Errorf("i=%d: module contains dummy value; `%v`", i, s)
+			t.Errorf("%q: module contains dummy value; `%v`", g.path, s)
 		}
 	}
 }

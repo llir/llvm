@@ -308,6 +308,20 @@ func NewPointerType(elem interface{}) (*types.PointerType, error) {
 	return types.NewPointer(e), nil
 }
 
+// NewArrayType returns a new array type based on the given array length and
+// element type.
+func NewArrayType(len, elem interface{}) (*types.ArrayType, error) {
+	e, ok := elem.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
+	}
+	l, err := getInt64(len)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return types.NewArray(e, l), nil
+}
+
 // === [ Values ] ==============================================================
 
 // NewValueList returns a new value list based on the given
@@ -770,7 +784,7 @@ func NewAllocaInst(elem, nelems interface{}) (*ir.InstAlloca, error) {
 	case value.Value:
 		inst.SetNElems(nelems)
 	case nil:
-		// nothing to do.
+		// no nelems.
 	default:
 		return nil, errors.Errorf("invalid number of elements type; expected value.Value or nil, got %T", nelems)
 	}
@@ -807,6 +821,36 @@ func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ir.InstStore, er
 		return nil, errors.WithStack(err)
 	}
 	return ir.NewStore(src, dst), nil
+}
+
+// NewGetElementPtrInst returns a new getelementptr instruction based on the
+// given element type, source address type and value, and element indices.
+func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ir.InstGetElementPtr, error) {
+	e, ok := elem.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
+	}
+	st, ok := srcTyp.(*types.PointerType)
+	if !ok {
+		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
+	}
+	if !e.Equal(st.Elem()) {
+		return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
+	}
+	src, err := NewValue(srcTyp, srcVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	var is []value.Value
+	switch indices := indices.(type) {
+	case []value.Value:
+		is = indices
+	case nil:
+		// no indices.
+	default:
+		return nil, errors.Errorf("invalid indices type; expected []value.Value or nil, got %T", indices)
+	}
+	return ir.NewGetElementPtr(src, is...), nil
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------
@@ -992,4 +1036,17 @@ func getTokenString(tok interface{}) (string, error) {
 		return "", errors.Errorf("invalid token type; expected *token.Token, got %T", tok)
 	}
 	return string(t.Lit), nil
+}
+
+// getInt64 returns the int64 representation of the given integer literal.
+func getInt64(lit interface{}) (int64, error) {
+	l, ok := lit.(*IntLit)
+	if !ok {
+		return 0, errors.Errorf("invalid array length type; expected *IntLit, got %T", lit)
+	}
+	n, err := strconv.ParseInt(l.lit, 10, 64)
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+	return n, nil
 }

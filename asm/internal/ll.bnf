@@ -240,6 +240,7 @@ Type
 	| IntType
 	| FloatType
 	| PointerType
+	| ArrayType
 ;
 
 ResultType
@@ -272,6 +273,10 @@ PointerType
 	: Type "*"   << irx.NewPointerType($0) >>
 ;
 
+ArrayType
+	: "[" IntConst "x" Type "]"   << irx.NewArrayType($1, $3) >>
+;
+
 // === [ Values ] ==============================================================
 
 Value
@@ -283,8 +288,16 @@ Value
 // === [ Constants ] ===========================================================
 
 Constant
-	: int_lit     << irx.NewIntLit($0) >>
-	| float_lit   << irx.NewFloatLit($0) >>
+	: IntConst
+	| FloatConst
+;
+
+IntConst
+	: int_lit   << irx.NewIntLit($0) >>
+;
+
+FloatConst
+	: float_lit   << irx.NewFloatLit($0) >>
 ;
 
 // === [ Basic blocks ] ========================================================
@@ -346,6 +359,7 @@ ValueInstruction
 	// Memory instructions
 	| AllocaInst
 	| LoadInst
+	| GetElementPtrInst
 	// Conversion instructions
 	// Other instructions
 	| ICmpInst
@@ -444,6 +458,24 @@ OptNElems
 
 LoadInst
 	: "load" Type "," PointerType Value   << irx.NewLoadInst($1, $3, $4) >>
+;
+
+GetElementPtrInst
+	: "getelementptr" Type "," Type Value Indices   << irx.NewGetElementPtrInst($1, $3, $4, $5) >>
+;
+
+Indices
+	: empty
+	| "," IndexList   << $1, nil >>
+;
+
+IndexList
+	: Index                 << irx.NewValueList($0) >>
+	| IndexList "," Index   << irx.AppendValue($0, $2) >>
+;
+
+Index
+	: Type Value   << irx.NewValue($0, $1) >>
 ;
 
 StoreInst
