@@ -17,7 +17,7 @@ Updated: 2016-12-02
 - [x] Write support of LLVM IR assembly files.
     - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package).
 - [x] Preliminary read support of LLVM IR assmebly files.
-    - A lexer and parser for LLVM IR assembly is generated from a [BNF grammar](https://github.com/llir/llvm/blob/master/asm/internal/ll.bnf) using [gocc](https://github.com/goccmack/gocc).
+    - [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/asm#example-package).
 
 ## Public domain
 
