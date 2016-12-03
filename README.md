@@ -13,7 +13,6 @@ The aim of this project is to provide a pure Go library for interacting with [LL
 ## Installation
 
 ```bash
-go get golang.org/x/tools/cmd/goimports
 go get github.com/goccmack/gocc
 go get -d github.com/llir/llvm
 make -C $GOPATH/src/github.com/llir/llvm/asm/internal
