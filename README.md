@@ -10,6 +10,16 @@ This project is a *work in progress*. The implementation is *incomplete* and sub
 
 The aim of this project is to provide a pure Go library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html).
 
+## Installation
+
+```bash
+go get golang.org/x/tools/cmd/goimports
+go get github.com/goccmack/gocc
+go get -d github.com/llir/llvm
+make -C $GOPATH/src/github.com/llir/llvm/asm/internal
+go get -t github.com/llir/llvm/...
+```
+
 ## Status
 
 Updated: 2016-12-02
