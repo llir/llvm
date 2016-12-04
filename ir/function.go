@@ -67,9 +67,13 @@ func (f *Function) String() string {
 		if i != 0 {
 			sig.WriteString(", ")
 		}
-		fmt.Fprintf(sig, "%s %s",
-			param.Type(),
-			param.Ident())
+		if len(param.Name()) > 0 {
+			fmt.Fprintf(sig, "%s %s",
+				param.Type(),
+				param.Ident())
+		} else {
+			sig.WriteString(param.Type().String())
+		}
 	}
 	if f.Variadic() {
 		if len(params) > 0 {

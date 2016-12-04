@@ -129,6 +129,11 @@ func (param *Param) Ident() string {
 	return enc.Local(param.name)
 }
 
+// Name returns the name of the function parameter.
+func (param *Param) Name() string {
+	return param.name
+}
+
 // --- [ pointer ] -------------------------------------------------------------
 
 // PointerType represents a pointer type.
