@@ -27,6 +27,9 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/conversion.ll"},
 		{path: "../testdata/bitcast.ll"},
 		{path: "../testdata/addrspacecast.ll"},
+		{path: "../testdata/extern.ll"},
+		{path: "../testdata/const.ll"},
+		{path: "../testdata/va_args.ll"},
 	}
 	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)
