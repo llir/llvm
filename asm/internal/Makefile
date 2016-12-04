@@ -1,7 +1,7 @@
 all: gen
 
 gen: ll.bnf
-	gocc -zip $<
+	gocc $<
 
 debug_lexer: ll.bnf
 	gocc -debug_lexer -v $<
