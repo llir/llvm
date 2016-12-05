@@ -130,7 +130,11 @@ func fixModule(m *ir.Module) *ir.Module {
 func (fix *fixer) fixGlobal(old *ir.Global) {
 	if init, ok := old.Init(); ok {
 		if init, ok := fix.fixValue(init); ok {
-			old.SetInit(init)
+			i, ok := init.(constant.Constant)
+			if !ok {
+				panic(fmt.Sprintf("invalid init type; expected constant.Constant, got %T", init))
+			}
+			old.SetInit(i)
 		}
 	}
 }

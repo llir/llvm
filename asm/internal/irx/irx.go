@@ -86,7 +86,7 @@ func NewGlobalDecl(name, immutable, typ interface{}) (*ir.Global, error) {
 		return nil, errors.Errorf("invalid content type; expected types.Type, got %T", typ)
 	}
 	global := ir.NewGlobalDecl(n.name, t)
-	global.SetImmutable(imm)
+	global.SetConst(imm)
 	return global, nil
 }
 
@@ -105,8 +105,12 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ir.Global, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	global := ir.NewGlobalDef(n.name, init)
-	global.SetImmutable(imm)
+	i, ok := init.(constant.Constant)
+	if !ok {
+		panic(fmt.Sprintf("invalid init type; expected constant.Constant, got %T", init))
+	}
+	global := ir.NewGlobalDef(n.name, i)
+	global.SetConst(imm)
 	return global, nil
 }
 
