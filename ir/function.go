@@ -53,6 +53,10 @@ func (f *Function) Ident() string {
 	return enc.Global(f.name)
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*Function) Immutable() {}
+
 // String returns the LLVM syntax representation of the function.
 func (f *Function) String() string {
 	// Assign unique local IDs to unnamed basic blocks and local variables.

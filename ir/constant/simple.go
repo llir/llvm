@@ -88,6 +88,10 @@ func (c *Int) Ident() string {
 	return c.x.String()
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*Int) Immutable() {}
+
 // Int64 returns the int64 representation of the integer constant.
 func (c *Int) Int64() int64 {
 	return c.x.Int64()
@@ -162,6 +166,10 @@ func (c *Float) Ident() string {
 	return strings.Replace(s, "e+", "e", -1)
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*Float) Immutable() {}
+
 // Float64 returns the float64 representation of the floating-point constant.
 func (c *Float) Float64() float64 {
 	x, _ := c.x.Float64()
@@ -190,3 +198,7 @@ func (c *Null) Type() types.Type {
 func (c *Null) Ident() string {
 	return "null"
 }
+
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*Null) Immutable() {}

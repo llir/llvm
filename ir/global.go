@@ -32,7 +32,7 @@ type Global struct {
 	// Global variable type.
 	typ *types.PointerType
 	// Immutability of the global variable.
-	immutable bool
+	isConst bool
 }
 
 // NewGlobalDecl returns a new external global variable declaration based on the
@@ -60,10 +60,14 @@ func (global *Global) Ident() string {
 	return enc.Global(global.name)
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*Global) Immutable() {}
+
 // String returns the LLVM syntax representation of the global variable.
 func (global *Global) String() string {
 	imm := "global"
-	if global.Immutable() {
+	if global.Const() {
 		imm = "constant"
 	}
 	content := global.ContentType()
@@ -106,12 +110,12 @@ func (global *Global) SetInit(init constant.Constant) {
 	global.init = init
 }
 
-// Immutable reports whether the global variable is immutable.
-func (global *Global) Immutable() bool {
-	return global.immutable
+// Const reports whether the global variable is a constant.
+func (global *Global) Const() bool {
+	return global.isConst
 }
 
-// SetImmutable sets the immutability of the global variable.
-func (global *Global) SetImmutable(immutable bool) {
-	global.immutable = immutable
+// SetConst sets the immutability of the global variable.
+func (global *Global) SetConst(isConst bool) {
+	global.isConst = isConst
 }

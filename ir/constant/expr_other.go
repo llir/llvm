@@ -52,6 +52,10 @@ func (expr *ExprICmp) Ident() string {
 		y.Ident())
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprICmp) Immutable() {}
+
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprICmp) Simplify() Constant {
 	panic("not yet implemented")
@@ -150,6 +154,10 @@ func (expr *ExprFCmp) Ident() string {
 		y.Type(),
 		y.Ident())
 }
+
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprFCmp) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprFCmp) Simplify() Constant {
@@ -256,6 +264,10 @@ func (expr *ExprSelect) Ident() string {
 		y.Type(),
 		y.Ident())
 }
+
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprSelect) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprSelect) Simplify() Constant {

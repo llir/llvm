@@ -44,6 +44,10 @@ func (expr *ExprShl) Ident() string {
 		y.Ident())
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprShl) Immutable() {}
+
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprShl) Simplify() Constant {
 	panic("not yet implemented")
@@ -89,6 +93,10 @@ func (expr *ExprLShr) Ident() string {
 		y.Type(),
 		y.Ident())
 }
+
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprLShr) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprLShr) Simplify() Constant {
@@ -136,6 +144,10 @@ func (expr *ExprAShr) Ident() string {
 		y.Ident())
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprAShr) Immutable() {}
+
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprAShr) Simplify() Constant {
 	panic("not yet implemented")
@@ -181,6 +193,10 @@ func (expr *ExprAnd) Ident() string {
 		y.Type(),
 		y.Ident())
 }
+
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprAnd) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprAnd) Simplify() Constant {
@@ -228,6 +244,10 @@ func (expr *ExprOr) Ident() string {
 		y.Ident())
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprOr) Immutable() {}
+
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprOr) Simplify() Constant {
 	panic("not yet implemented")
@@ -273,6 +293,10 @@ func (expr *ExprXor) Ident() string {
 		y.Type(),
 		y.Ident())
 }
+
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprXor) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprXor) Simplify() Constant {

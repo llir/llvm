@@ -88,6 +88,10 @@ func (expr *ExprGetElementPtr) Ident() string {
 	return buf.String()
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*ExprGetElementPtr) Immutable() {}
+
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprGetElementPtr) Simplify() Constant {
 	panic("not yet implemented")

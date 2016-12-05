@@ -2,7 +2,14 @@ package ir_test
 
 import (
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
+)
+
+// Valutate that the relevant types satisfy the constant.Constant interface.
+var (
+	_ constant.Constant = &ir.Function{}
+	_ constant.Constant = &ir.Global{}
 )
 
 // Valutate that the relevant types satisfy the ir.Instruction interface.
@@ -69,8 +76,6 @@ var (
 // Valutate that the relevant types satisfy the value.Value interface.
 var (
 	_ value.Value = &ir.BasicBlock{}
-	_ value.Value = &ir.Function{}
-	_ value.Value = &ir.Global{}
 	// Binary instructions
 	_ value.Value = &ir.InstAdd{}
 	_ value.Value = &ir.InstFAdd{}

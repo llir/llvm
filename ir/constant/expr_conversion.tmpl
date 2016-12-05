@@ -46,6 +46,10 @@ func (expr *Expr{{ .Name }}) Ident() string {
 		expr.Type())
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*Expr{{ .Name }}) Immutable() {}
+
 // Simplify returns a simplified version of the constant expression.
 func (expr *Expr{{ .Name }}) Simplify() Constant {
 	panic("not yet implemented")
