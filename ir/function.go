@@ -194,6 +194,12 @@ func assignIDs(f *Function) {
 			id++
 		}
 	}
+	for _, param := range f.Params() {
+		// Assign local IDs to unnamed parameters of function definitions.
+		if len(f.blocks) > 0 {
+			setName(param)
+		}
+	}
 	for _, block := range f.blocks {
 		setName(block)
 		for _, inst := range block.insts {
