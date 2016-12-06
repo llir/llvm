@@ -26,8 +26,13 @@ var dbg = log.New(os.Stdout, "", log.Lshortfile)
 
 // NewModule returns a new module based on the given top-level declarations.
 func NewModule(decls interface{}) (*ir.Module, error) {
-	ds, ok := decls.([]TopLevelDecl)
-	if !ok {
+	var ds []TopLevelDecl
+	switch decls := decls.(type) {
+	case []TopLevelDecl:
+		ds = decls
+	case nil:
+		// no top-level declarations.
+	default:
 		return nil, errors.Errorf("invalid top-level declaration list type; expected []irx.TopLevelDecl, got %T", decls)
 	}
 	m := ir.NewModule()

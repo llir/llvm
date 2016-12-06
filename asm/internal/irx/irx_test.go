@@ -32,6 +32,7 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/va_args.ll"},
 		{path: "../testdata/array.ll"},
 		{path: "../testdata/hello.ll"},
+		{path: "../testdata/empty.ll"},
 	}
 	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)
