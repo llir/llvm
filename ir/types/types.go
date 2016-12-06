@@ -12,15 +12,15 @@ import "fmt"
 //
 // Type may have one of the following underlying types.
 //
-//    *types.VoidType
-//    *types.LabelType
-//    *types.IntType
-//    *types.FloatType
-//    *types.FuncType
-//    *types.PointerType
-//    *types.VectorType
-//    *types.ArrayType
-//    *types.StructType
+//    *types.VoidType      (https://godoc.org/github.com/llir/llvm/ir/types#VoidType)
+//    *types.LabelType     (https://godoc.org/github.com/llir/llvm/ir/types#LabelType)
+//    *types.IntType       (https://godoc.org/github.com/llir/llvm/ir/types#IntType)
+//    *types.FloatType     (https://godoc.org/github.com/llir/llvm/ir/types#FloatType)
+//    *types.FuncType      (https://godoc.org/github.com/llir/llvm/ir/types#FuncType)
+//    *types.PointerType   (https://godoc.org/github.com/llir/llvm/ir/types#PointerType)
+//    *types.VectorType    (https://godoc.org/github.com/llir/llvm/ir/types#VectorType)
+//    *types.ArrayType     (https://godoc.org/github.com/llir/llvm/ir/types#ArrayType)
+//    *types.StructType    (https://godoc.org/github.com/llir/llvm/ir/types#StructType)
 type Type interface {
 	fmt.Stringer
 	// Equal reports whether t and u are of equal type.

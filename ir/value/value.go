@@ -8,8 +8,8 @@ import "github.com/llir/llvm/ir/types"
 //
 // Value may have one of the following underlying types.
 //
-//    constant.Constant
-//    value.Named
+//    constant.Constant   (https://godoc.org/github.com/llir/llvm/ir/constant#Constant)
+//    value.Named         (https://godoc.org/github.com/llir/llvm/ir/value#Named)
 type Value interface {
 	// Type returns the type of the value.
 	Type() types.Type
@@ -21,11 +21,11 @@ type Value interface {
 //
 // Named may have one of the following underlying types.
 //
-//    *ir.BasicBlock
-//    *ir.Function
-//    *ir.Global
-//    *types.Param
-//    ir.Instruction
+//    *ir.BasicBlock   (https://godoc.org/github.com/llir/llvm/ir#BasicBlock)
+//    *ir.Function     (https://godoc.org/github.com/llir/llvm/ir#Function)
+//    *ir.Global       (https://godoc.org/github.com/llir/llvm/ir#Global)
+//    *types.Param     (https://godoc.org/github.com/llir/llvm/ir/types#Param)
+//    ir.Instruction   (https://godoc.org/github.com/llir/llvm/ir#Instruction)
 type Named interface {
 	Value
 	// Name returns the name of the value.

@@ -37,7 +37,7 @@ import (
 //
 // http://llvm.org/docs/LangRef.html#constant-expressions
 //
-//    constant.Expr
+//    constant.Expr   (https://godoc.org/github.com/llir/llvm/ir/constant#Expr)
 type Constant interface {
 	value.Value
 	// Immutable ensures that only constants can be assigned to the
