@@ -34,13 +34,13 @@ import (
 // with their real values.
 type fixer struct {
 	// globals maps global identifiers to their real values.
-	globals map[string]value.Value
+	globals map[string]constant.Constant
 	// locals maps local identifiers to their real values.
 	locals map[string]value.Value
 }
 
 // getGlobal returns the global value of the given global identifier.
-func (fix *fixer) getGlobal(name string) value.Value {
+func (fix *fixer) getGlobal(name string) constant.Constant {
 	global, ok := fix.globals[name]
 	if !ok {
 		panic(fmt.Sprintf("unable to locate global identifier %q", name))
@@ -83,7 +83,7 @@ func (fix *fixer) getBlock(name string) *ir.BasicBlock {
 // values.
 func fixModule(m *ir.Module) *ir.Module {
 	fix := &fixer{
-		globals: make(map[string]value.Value),
+		globals: make(map[string]constant.Constant),
 	}
 
 	// Index global variables.
@@ -129,12 +129,8 @@ func fixModule(m *ir.Module) *ir.Module {
 // real values.
 func (fix *fixer) fixGlobal(old *ir.Global) {
 	if init, ok := old.Init(); ok {
-		if init, ok := fix.fixValue(init); ok {
-			i, ok := init.(constant.Constant)
-			if !ok {
-				panic(fmt.Sprintf("invalid init type; expected constant.Constant, got %T", init))
-			}
-			old.SetInit(i)
+		if init, ok := fix.fixConstant(init); ok {
+			old.SetInit(init)
 		}
 	}
 }
@@ -215,16 +211,10 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 	// TODO: Add all instructions producing values.
 	switch old := old.(type) {
-	case *globalDummy:
-		return fix.getGlobal(old.name), true
+	case constant.Constant:
+		return fix.fixConstant(old)
 	case *localDummy:
 		return fix.getLocal(old.name), true
-	case *constant.Int:
-		// nothing to do; valid value.
-	case *constant.Float:
-		// nothing to do; valid value.
-	case *constant.Null:
-		// nothing to do; valid value.
 	case *ir.InstAdd, *ir.InstFAdd, *ir.InstSub, *ir.InstFSub, *ir.InstMul, *ir.InstFMul, *ir.InstUDiv, *ir.InstSDiv, *ir.InstFDiv, *ir.InstURem, *ir.InstSRem, *ir.InstFRem:
 		// nothing to do; valid value.
 	case *ir.InstICmp:
@@ -233,6 +223,50 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 		panic(fmt.Sprintf("support for value type %T not yet implemented", old))
 	}
 	return old, false
+}
+
+// === [ Constants ] ===========================================================
+
+// fixConstant replaces given dummy value with its real value. The boolean
+// return value indicates if a dummy value was replaced.
+func (fix *fixer) fixConstant(old constant.Constant) (constant.Constant, bool) {
+	// TODO: Add all constant expressions.
+	switch old := old.(type) {
+	case *globalDummy:
+		return fix.getGlobal(old.name), true
+	case *constant.Int:
+		// nothing to do; valid value.
+	case *constant.Float:
+		// nothing to do; valid value.
+	case *constant.Null:
+		// nothing to do; valid value.
+	case *constant.Vector:
+		// nothing to do; valid value.
+	case *constant.Array:
+		// nothing to do; valid value.
+	case *constant.ExprGetElementPtr:
+		return fix.fixGetElementPtrExpr(old), true
+	default:
+		panic(fmt.Sprintf("support for constant type %T not yet implemented", old))
+	}
+	return old, false
+}
+
+// --- [ Memory expressions ] --------------------------------------------------
+
+// fixGetElementPtrExpr replaces dummy values within the given getelementptr
+// expression with their real values.
+func (fix *fixer) fixGetElementPtrExpr(old *constant.ExprGetElementPtr) *constant.ExprGetElementPtr {
+	if src, ok := fix.fixConstant(old.Src()); ok {
+		old.SetSrc(src)
+	}
+	var indices []constant.Constant
+	for _, index := range old.Indices() {
+		index, _ = fix.fixConstant(index)
+		indices = append(indices, index)
+	}
+	old.SetIndices(indices)
+	return old
 }
 
 // === [ Basic blocks ] ========================================================

@@ -1,3 +1,5 @@
+// TODO: Print value in generic error string.
+
 package irx
 
 import (
@@ -420,6 +422,34 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 		switch val := val.(type) {
 		case *NullLit:
 			return constant.NewNull(t), nil
+		case *constant.ExprGetElementPtr:
+			return val, nil
+		default:
+			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
+		}
+	case *types.VectorType:
+		switch val := val.(type) {
+		case *constant.Vector:
+			// TODO: Add flag to disable expensive sanity checks.
+			for _, elem := range val.Elems() {
+				if want, got := t.Elem(), elem.Type(); !got.Equal(want) {
+					return nil, errors.Errorf("vector type mismatch; expected `%s`, got `%s`", want, got)
+				}
+			}
+			return val, nil
+		default:
+			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
+		}
+	case *types.ArrayType:
+		switch val := val.(type) {
+		case *constant.Array:
+			// TODO: Add flag to disable expensive sanity checks.
+			for _, elem := range val.Elems() {
+				if want, got := t.Elem(), elem.Type(); !got.Equal(want) {
+					return nil, errors.Errorf("array type mismatch; expected `%s`, got `%s`", want, got)
+				}
+			}
+			return val, nil
 		default:
 			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
 		}
@@ -429,6 +459,41 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 }
 
 // === [ Constants ] ===========================================================
+
+// NewConstantList returns a new constant list based on the given constant.
+func NewConstantList(x interface{}) ([]constant.Constant, error) {
+	c, ok := x.(constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant type; expected constant.Constant, got %T", x)
+	}
+	return []constant.Constant{c}, nil
+}
+
+// AppendConstant appends the given constant to the constant list.
+func AppendConstant(xs, x interface{}) ([]constant.Constant, error) {
+	cs, ok := xs.([]constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant list type; expected []constant.Constant, got %T", xs)
+	}
+	c, ok := x.(constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant type; expected constant.Constant, got %T", x)
+	}
+	return append(cs, c), nil
+}
+
+// NewConstant returns a constant based on the given type and value.
+func NewConstant(typ, val interface{}) (constant.Constant, error) {
+	v, err := NewValue(typ, val)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	c, ok := v.(constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant type; expected constant.Constant, got %T", v)
+	}
+	return c, nil
+}
 
 // IntLit represents an integer literal.
 type IntLit struct {
@@ -462,6 +527,545 @@ func NewFloatLit(tok interface{}) (*FloatLit, error) {
 
 // NullLit represents a null literal.
 type NullLit struct {
+}
+
+// NewVectorConst returns a new vector constant based on the given elements.
+func NewVectorConst(elems interface{}) (*constant.Vector, error) {
+	es, ok := elems.([]constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid vector elements type; expected []constant.Constant, got %T", elems)
+	}
+	return constant.NewVector(es...), nil
+}
+
+// NewArrayConst returns a new array constant based on the given elements.
+func NewArrayConst(elems interface{}) (*constant.Array, error) {
+	es, ok := elems.([]constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid array elements type; expected []constant.Constant, got %T", elems)
+	}
+	return constant.NewArray(es...), nil
+}
+
+// --- [ Binary expressions ] --------------------------------------------------
+
+// NewAddExpr returns a new add expression based on the given type and operands.
+func NewAddExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprAdd, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewAdd(x, y), nil
+}
+
+// NewFAddExpr returns a new fadd expression based on the given type and
+// operands.
+func NewFAddExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprFAdd, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewFAdd(x, y), nil
+}
+
+// NewSubExpr returns a new sub expression based on the given type and operands.
+func NewSubExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprSub, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewSub(x, y), nil
+}
+
+// NewFSubExpr returns a new fsub expression based on the given type and
+// operands.
+func NewFSubExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprFSub, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewFSub(x, y), nil
+}
+
+// NewMulExpr returns a new mul expression based on the given type and operands.
+func NewMulExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprMul, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewMul(x, y), nil
+}
+
+// NewFMulExpr returns a new fmul expression based on the given type and
+// operands.
+func NewFMulExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprFMul, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewFMul(x, y), nil
+}
+
+// NewUDivExpr returns a new udiv expression based on the given type and
+// operands.
+func NewUDivExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprUDiv, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewUDiv(x, y), nil
+}
+
+// NewSDivExpr returns a new sdiv expression based on the given type and
+// operands.
+func NewSDivExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprSDiv, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewSDiv(x, y), nil
+}
+
+// NewFDivExpr returns a new fdiv expression based on the given type and
+// operands.
+func NewFDivExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprFDiv, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewFDiv(x, y), nil
+}
+
+// NewURemExpr returns a new urem expression based on the given type and
+// operands.
+func NewURemExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprURem, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewURem(x, y), nil
+}
+
+// NewSRemExpr returns a new srem expression based on the given type and
+// operands.
+func NewSRemExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprSRem, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewSRem(x, y), nil
+}
+
+// NewFRemExpr returns a new frem expression based on the given type and
+// operands.
+func NewFRemExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprFRem, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewFRem(x, y), nil
+}
+
+// --- [ Bitwise expressions ] -------------------------------------------------
+
+// NewShlExpr returns a new shl expression based on the given type and operands.
+func NewShlExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprShl, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewShl(x, y), nil
+}
+
+// NewLShrExpr returns a new lshr expression based on the given type and
+// operands.
+func NewLShrExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprLShr, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewLShr(x, y), nil
+}
+
+// NewAShrExpr returns a new ashr expression based on the given type and
+// operands.
+func NewAShrExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprAShr, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewAShr(x, y), nil
+}
+
+// NewAndExpr returns a new and expression based on the given type and operands.
+func NewAndExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprAnd, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewAnd(x, y), nil
+}
+
+// NewOrExpr returns a new or expression based on the given type and operands.
+func NewOrExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprOr, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewOr(x, y), nil
+}
+
+// NewXorExpr returns a new xor expression based on the given type and operands.
+func NewXorExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprXor, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewXor(x, y), nil
+}
+
+// --- [ Memory expressions ] --------------------------------------------------
+
+// NewGetElementPtrExpr returns a new getelementptr expression based on the
+// given element type, source address type and value, and element indices.
+func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.ExprGetElementPtr, error) {
+	e, ok := elem.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
+	}
+	st, ok := srcTyp.(*types.PointerType)
+	if !ok {
+		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
+	}
+	if !e.Equal(st.Elem()) {
+		return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
+	}
+	src, err := NewConstant(srcTyp, srcVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	var is []constant.Constant
+	switch indices := indices.(type) {
+	case []constant.Constant:
+		is = indices
+	case nil:
+		// no indices.
+	default:
+		return nil, errors.Errorf("invalid indices type; expected []constant.Constant or nil, got %T", indices)
+	}
+	return constant.NewGetElementPtr(src, is...), nil
+}
+
+// --- [ Conversion expressions ] ----------------------------------------------
+
+// NewTruncExpr returns a new trunc expression based on the given source value
+// and target type.
+func NewTruncExpr(fromTyp, fromVal, to interface{}) (*constant.ExprTrunc, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewTrunc(from, t), nil
+}
+
+// NewZExtExpr returns a new zext expression based on the given source value and
+// target type.
+func NewZExtExpr(fromTyp, fromVal, to interface{}) (*constant.ExprZExt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewZExt(from, t), nil
+}
+
+// NewSExtExpr returns a new sext expression based on the given source value and
+// target type.
+func NewSExtExpr(fromTyp, fromVal, to interface{}) (*constant.ExprSExt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewSExt(from, t), nil
+}
+
+// NewFPTruncExpr returns a new fptrunc expression based on the given source
+// value and target type.
+func NewFPTruncExpr(fromTyp, fromVal, to interface{}) (*constant.ExprFPTrunc, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewFPTrunc(from, t), nil
+}
+
+// NewFPExtExpr returns a new fpext expression based on the given source value
+// and target type.
+func NewFPExtExpr(fromTyp, fromVal, to interface{}) (*constant.ExprFPExt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewFPExt(from, t), nil
+}
+
+// NewFPToUIExpr returns a new fptoui expression based on the given source value
+// and target type.
+func NewFPToUIExpr(fromTyp, fromVal, to interface{}) (*constant.ExprFPToUI, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewFPToUI(from, t), nil
+}
+
+// NewFPToSIExpr returns a new fptosi expression based on the given source value
+// and target type.
+func NewFPToSIExpr(fromTyp, fromVal, to interface{}) (*constant.ExprFPToSI, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewFPToSI(from, t), nil
+}
+
+// NewUIToFPExpr returns a new uitofp expression based on the given source value
+// and target type.
+func NewUIToFPExpr(fromTyp, fromVal, to interface{}) (*constant.ExprUIToFP, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewUIToFP(from, t), nil
+}
+
+// NewSIToFPExpr returns a new sitofp expression based on the given source value
+// and target type.
+func NewSIToFPExpr(fromTyp, fromVal, to interface{}) (*constant.ExprSIToFP, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewSIToFP(from, t), nil
+}
+
+// NewPtrToIntExpr returns a new ptrtoint expression based on the given source
+// value and target type.
+func NewPtrToIntExpr(fromTyp, fromVal, to interface{}) (*constant.ExprPtrToInt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewPtrToInt(from, t), nil
+}
+
+// NewIntToPtrExpr returns a new inttoptr expression based on the given source
+// value and target type.
+func NewIntToPtrExpr(fromTyp, fromVal, to interface{}) (*constant.ExprIntToPtr, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewIntToPtr(from, t), nil
+}
+
+// NewBitCastExpr returns a new bitcast expression based on the given source
+// value and target type.
+func NewBitCastExpr(fromTyp, fromVal, to interface{}) (*constant.ExprBitCast, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewBitCast(from, t), nil
+}
+
+// NewAddrSpaceCastExpr returns a new addrspacecast expression based on the
+// given source value and target type.
+func NewAddrSpaceCastExpr(fromTyp, fromVal, to interface{}) (*constant.ExprAddrSpaceCast, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", to)
+	}
+	return constant.NewAddrSpaceCast(from, t), nil
+}
+
+// --- [ Other expressions ] ---------------------------------------------------
+
+// NewICmpExpr returns a new icmp expression based on the given integer
+// condition code, type and operands.
+func NewICmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprICmp, error) {
+	c, ok := cond.(constant.IntPred)
+	if !ok {
+		return nil, errors.Errorf("invalid integer predicate type; expected constant.IntPred, got %T", cond)
+	}
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewICmp(c, x, y), nil
+}
+
+// NewFCmpExpr returns a new fcmp expression based on the given floating-point
+// condition code, type and operands.
+func NewFCmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprFCmp, error) {
+	c, ok := cond.(constant.FloatPred)
+	if !ok {
+		return nil, errors.Errorf("invalid floating-point predicate type; expected constant.FloatPred, got %T", cond)
+	}
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewFCmp(c, x, y), nil
+}
+
+// NewSeExpr returns a new select expression based on the given selection
+// condition type and value, and operands.
+func NewSelectExpr(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprSelect, error) {
+	cond, err := NewConstant(condTyp, condVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return constant.NewSelect(cond, x, y), nil
 }
 
 // === [ Basic blocks ] ========================================================
@@ -1092,6 +1696,42 @@ func NewAddrSpaceCastInst(fromTyp, fromVal, to interface{}) (*ir.InstAddrSpaceCa
 
 // --- [ Other instructions ] --------------------------------------------------
 
+// NewICmpInst returns a new icmp instruction based on the given integer
+// condition code, type and operands.
+func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstICmp, error) {
+	c, ok := cond.(ir.IntPred)
+	if !ok {
+		return nil, errors.Errorf("invalid integer predicate type; expected ir.IntPred, got %T", cond)
+	}
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewICmp(c, x, y), nil
+}
+
+// NewFCmpInst returns a new fcmp instruction based on the given floating-point
+// condition code, type and operands.
+func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstFCmp, error) {
+	c, ok := cond.(ir.FloatPred)
+	if !ok {
+		return nil, errors.Errorf("invalid floating-point predicate type; expected ir.FloatPred, got %T", cond)
+	}
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewFCmp(c, x, y), nil
+}
+
 // NewPhiInst returns a new phi instruction based on the given incoming values.
 func NewPhiInst(typ, incs interface{}) (*instPhiDummy, error) {
 	t, ok := typ.(types.Type)
@@ -1143,42 +1783,6 @@ func NewIncoming(x, pred interface{}) (*incomingDummy, error) {
 		return nil, errors.Errorf("invalid predecessor type; expected *irx.LocalIdent, got %T", pred)
 	}
 	return newIncomingDummy(x, p.name), nil
-}
-
-// NewICmpInst returns a new icmp instruction based on the given integer
-// condition code, type and operands.
-func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstICmp, error) {
-	c, ok := cond.(ir.IntPred)
-	if !ok {
-		return nil, errors.Errorf("invalid integer predicate type; expected ir.IntPred, got %T", cond)
-	}
-	x, err := NewValue(typ, xVal)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	y, err := NewValue(typ, yVal)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return ir.NewICmp(c, x, y), nil
-}
-
-// NewFCmpInst returns a new fcmp instruction based on the given floating-point
-// condition code, type and operands.
-func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstFCmp, error) {
-	c, ok := cond.(ir.FloatPred)
-	if !ok {
-		return nil, errors.Errorf("invalid floating-point predicate type; expected ir.FloatPred, got %T", cond)
-	}
-	x, err := NewValue(typ, xVal)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	y, err := NewValue(typ, yVal)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return ir.NewFCmp(c, x, y), nil
 }
 
 // NewSelect returns a new select instruction based on the given selection

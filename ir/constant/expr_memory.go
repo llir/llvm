@@ -102,7 +102,17 @@ func (expr *ExprGetElementPtr) Src() Constant {
 	return expr.src
 }
 
+// SetSrc sets the source address of the getelementptr expression.
+func (expr *ExprGetElementPtr) SetSrc(src Constant) {
+	expr.src = src
+}
+
 // Indices returns the element indices of the getelementptr expression.
 func (expr *ExprGetElementPtr) Indices() []Constant {
 	return expr.indices
+}
+
+// SetIndices sets the element indices of the getelementptr expression.
+func (expr *ExprGetElementPtr) SetIndices(indices []Constant) {
+	expr.indices = indices
 }

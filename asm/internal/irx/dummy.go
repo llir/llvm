@@ -39,6 +39,10 @@ func (g *globalDummy) Type() types.Type {
 	return g.typ
 }
 
+// Immutable ensures that only constants can be assigned to the Constant
+// interface.
+func (*globalDummy) Immutable() {}
+
 // localDummy represents a dummy value for a given local identifier name and
 // type.
 type localDummy struct {

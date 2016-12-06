@@ -147,6 +147,7 @@ int_type
 << import (
 	"github.com/llir/llvm/asm/internal/irx"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 ) >>
 
@@ -291,7 +292,6 @@ ArrayType
 
 Value
 	: LocalIdent
-	| GlobalIdent
 	| Constant
 ;
 
@@ -301,6 +301,10 @@ Constant
 	: IntConst
 	| FloatConst
 	| NullConst
+	| ArrayConst
+	| VectorConst
+	| GlobalIdent
+	| ConstExpr
 ;
 
 IntConst
@@ -315,6 +319,270 @@ FloatConst
 
 NullConst
 	: "null"   << &irx.NullLit{}, nil >>
+;
+
+ArrayConst
+	: "[" Elems "]"   << irx.NewArrayConst($1) >>
+;
+
+VectorConst
+	: "<" Elems ">"   << irx.NewVectorConst($1) >>
+;
+
+Elems
+	: empty
+	| ElemList
+;
+
+ElemList
+	: Elem                << irx.NewConstantList($0) >>
+	| ElemList "," Elem   << irx.AppendConstant($0, $2) >>
+;
+
+Elem
+	: Type Value   << irx.NewConstant($0, $1) >>
+;
+
+ConstExpr
+	// Binary expressions
+	: AddExpr
+	| FAddExpr
+	| SubExpr
+	| FSubExpr
+	| MulExpr
+	| FMulExpr
+	| UDivExpr
+	| SDivExpr
+	| FDivExpr
+	| URemExpr
+	| SRemExpr
+	| FRemExpr
+	// Bitwise expressions
+	| ShlExpr
+	| LShrExpr
+	| AShrExpr
+	| AndExpr
+	| OrExpr
+	| XorExpr
+	// Memory expressions
+	| GetElementPtrExpr
+	// Conversion expressions
+	| TruncExpr
+	| ZExtExpr
+	| SExtExpr
+	| FPTruncExpr
+	| FPExtExpr
+	| FPToUIExpr
+	| FPToSIExpr
+	| UIToFPExpr
+	| SIToFPExpr
+	| PtrToIntExpr
+	| IntToPtrExpr
+	| BitCastExpr
+	| AddrSpaceCastExpr
+	// Other expressions
+	| ICmpExpr
+	| FCmpExpr
+	| SelectExpr
+;
+
+// --- [ Binary expressions ] --------------------------------------------------
+
+AddExpr
+	: "add" "(" Type Constant "," Type Constant ")"   << irx.NewAddExpr($2, $3, $5, $6) >>
+;
+
+FAddExpr
+	: "fadd" "(" Type Constant "," Type Constant ")"   << irx.NewFAddExpr($2, $3, $5, $6) >>
+;
+
+SubExpr
+	: "sub" "(" Type Constant "," Type Constant ")"   << irx.NewSubExpr($2, $3, $5, $6) >>
+;
+
+FSubExpr
+	: "fsub" "(" Type Constant "," Type Constant ")"   << irx.NewFSubExpr($2, $3, $5, $6) >>
+;
+
+MulExpr
+	: "mul" "(" Type Constant "," Type Constant ")"   << irx.NewMulExpr($2, $3, $5, $6) >>
+;
+
+FMulExpr
+	: "fmul" "(" Type Constant "," Type Constant ")"   << irx.NewFMulExpr($2, $3, $5, $6) >>
+;
+
+UDivExpr
+	: "udiv" "(" Type Constant "," Type Constant ")"   << irx.NewUDivExpr($2, $3, $5, $6) >>
+;
+
+SDivExpr
+	: "sdiv" "(" Type Constant "," Type Constant ")"   << irx.NewSDivExpr($2, $3, $5, $6) >>
+;
+
+FDivExpr
+	: "fdiv" "(" Type Constant "," Type Constant ")"   << irx.NewFDivExpr($2, $3, $5, $6) >>
+;
+
+URemExpr
+	: "urem" "(" Type Constant "," Type Constant ")"   << irx.NewURemExpr($2, $3, $5, $6) >>
+;
+
+SRemExpr
+	: "srem" "(" Type Constant "," Type Constant ")"   << irx.NewSRemExpr($2, $3, $5, $6) >>
+;
+
+FRemExpr
+	: "frem" "(" Type Constant "," Type Constant ")"   << irx.NewFRemExpr($2, $3, $5, $6) >>
+;
+
+// --- [ Bitwise expressions ] -------------------------------------------------
+
+ShlExpr
+	: "shl" "(" Type Constant "," Type Constant ")"   << irx.NewShlExpr($2, $3, $5, $6) >>
+;
+
+LShrExpr
+	: "lshr" "(" Type Constant "," Type Constant ")"   << irx.NewLShrExpr($2, $3, $5, $6) >>
+;
+
+AShrExpr
+	: "ashr" "(" Type Constant "," Type Constant ")"   << irx.NewAShrExpr($2, $3, $5, $6) >>
+;
+
+AndExpr
+	: "and" "(" Type Constant "," Type Constant ")"   << irx.NewAndExpr($2, $3, $5, $6) >>
+;
+
+OrExpr
+	: "or" "(" Type Constant "," Type Constant ")"   << irx.NewOrExpr($2, $3, $5, $6) >>
+;
+
+XorExpr
+	: "xor" "(" Type Constant "," Type Constant ")"   << irx.NewXorExpr($2, $3, $5, $6) >>
+;
+
+// --- [ Memory expressions ] --------------------------------------------------
+
+GetElementPtrExpr
+	: "getelementptr" "(" Type "," Type Constant ConstIndices ")"   << irx.NewGetElementPtrExpr($2, $4, $5, $6) >>
+;
+
+ConstIndices
+	: empty
+	| "," ConstIndexList   << $1, nil >>
+;
+
+ConstIndexList
+	: ConstIndex                      << irx.NewConstantList($0) >>
+	| ConstIndexList "," ConstIndex   << irx.AppendConstant($0, $2) >>
+;
+
+ConstIndex
+	: IntType Constant   << irx.NewConstant($0, $1) >>
+;
+
+// --- [ Conversion expressions ] ----------------------------------------------
+
+TruncExpr
+	: "trunc" "(" Type Constant "to" Type ")"   << irx.NewTruncExpr($2, $3, $5) >>
+;
+
+ZExtExpr
+	: "zext" "(" Type Constant "to" Type ")"   << irx.NewZExtExpr($2, $3, $5) >>
+;
+
+SExtExpr
+	: "sext" "(" Type Constant "to" Type ")"   << irx.NewSExtExpr($2, $3, $5) >>
+;
+
+FPTruncExpr
+	: "fptrunc" "(" Type Constant "to" Type ")"   << irx.NewFPTruncExpr($2, $3, $5) >>
+;
+
+FPExtExpr
+	: "fpext" "(" Type Constant "to" Type ")"   << irx.NewFPExtExpr($2, $3, $5) >>
+;
+
+FPToUIExpr
+	: "fptoui" "(" Type Constant "to" Type ")"   << irx.NewFPToUIExpr($2, $3, $5) >>
+;
+
+FPToSIExpr
+	: "fptosi" "(" Type Constant "to" Type ")"   << irx.NewFPToSIExpr($2, $3, $5) >>
+;
+
+UIToFPExpr
+	: "uitofp" "(" Type Constant "to" Type ")"   << irx.NewUIToFPExpr($2, $3, $5) >>
+;
+
+SIToFPExpr
+	: "sitofp" "(" Type Constant "to" Type ")"   << irx.NewSIToFPExpr($2, $3, $5) >>
+;
+
+PtrToIntExpr
+	: "ptrtoint" "(" Type Constant "to" Type ")"   << irx.NewPtrToIntExpr($2, $3, $5) >>
+;
+
+IntToPtrExpr
+	: "inttoptr" "(" Type Constant "to" Type ")"   << irx.NewIntToPtrExpr($2, $3, $5) >>
+;
+
+BitCastExpr
+	: "bitcast" "(" Type Constant "to" Type ")"   << irx.NewBitCastExpr($2, $3, $5) >>
+;
+
+AddrSpaceCastExpr
+	: "addrspacecast" "(" Type Constant "to" Type ")"   << irx.NewAddrSpaceCastExpr($2, $3, $5) >>
+;
+
+// --- [ Other expressions ] ---------------------------------------------------
+
+ICmpExpr
+	: "icmp" ConstIntPred "(" Type Constant "," Type Constant ")"   << irx.NewICmpExpr($1, $3, $4, $6, $7) >>
+;
+
+// TODO: Figure out a way to unify ConstIntPred and ConstFloatPred with IntPred
+// and FloatPred, respectively.
+
+ConstIntPred
+	: "eq"    << constant.IntEQ, nil >>
+	| "ne"    << constant.IntNE, nil >>
+	| "ugt"   << constant.IntUGT, nil >>
+	| "uge"   << constant.IntUGE, nil >>
+	| "ult"   << constant.IntULT, nil >>
+	| "ule"   << constant.IntULE, nil >>
+	| "sgt"   << constant.IntSGT, nil >>
+	| "sge"   << constant.IntSGE, nil >>
+	| "slt"   << constant.IntSLT, nil >>
+	| "sle"   << constant.IntSLE, nil >>
+;
+
+FCmpExpr
+	: "fcmp" ConstFloatPred "(" Type Constant "," Type Constant ")"   << irx.NewFCmpExpr($1, $3, $4, $6, $7) >>
+;
+
+ConstFloatPred
+	: "false"   << constant.FloatFalse, nil >>
+	| "oeq"     << constant.FloatOEQ, nil >>
+	| "ogt"     << constant.FloatOGT, nil >>
+	| "oge"     << constant.FloatOGE, nil >>
+	| "olt"     << constant.FloatOLT, nil >>
+	| "ole"     << constant.FloatOLE, nil >>
+	| "one"     << constant.FloatONE, nil >>
+	| "ord"     << constant.FloatORD, nil >>
+	| "ueq"     << constant.FloatUEQ, nil >>
+	| "ugt"     << constant.FloatUGT, nil >>
+	| "uge"     << constant.FloatUGE, nil >>
+	| "ult"     << constant.FloatULT, nil >>
+	| "ule"     << constant.FloatULE, nil >>
+	| "une"     << constant.FloatUNE, nil >>
+	| "uno"     << constant.FloatUNO, nil >>
+	| "true"    << constant.FloatTrue, nil >>
+;
+
+SelectExpr
+	: "select" "(" Type Constant "," Type Constant "," Type Constant ")"   << irx.NewSelectExpr($2, $3, $5, $6, $8, $9) >>
 ;
 
 // === [ Basic blocks ] ========================================================
