@@ -23,7 +23,6 @@ package irx
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -184,8 +183,8 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 	// Index local variables produced by instructions.
 	for _, block := range blocks {
 		for _, inst := range block.Insts() {
-			if inst, ok := inst.(value.Value); ok {
-				name := stripLocal(inst.Ident())
+			if inst, ok := inst.(value.Named); ok {
+				name := inst.Name()
 				if _, ok := fix.locals[name]; ok {
 					panic(fmt.Sprintf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
 				}
@@ -816,7 +815,7 @@ func (fix *fixer) fixPhiInstDummy(old *instPhiDummy) *ir.InstPhi {
 	}
 	inst := ir.NewPhi(incs...)
 	inst.SetParent(old.parent)
-	inst.SetIdent(stripLocal(old.Ident()))
+	inst.SetName(old.Name())
 	return inst
 }
 
@@ -872,7 +871,7 @@ func (fix *fixer) fixCallInstDummy(old *instCallDummy) *ir.InstCall {
 	// yet, as the time of the call to fixCallInstDummy.
 	inst := ir.NewCall(callee, old.args...)
 	inst.SetParent(old.parent)
-	inst.SetIdent(stripLocal(old.Ident()))
+	inst.SetName(old.Name())
 	return inst
 }
 
@@ -981,14 +980,4 @@ func (fix *fixer) fixSwitchTermDummy(old *termSwitchDummy) *ir.TermSwitch {
 	term := ir.NewSwitch(old.x, targetDefault, cases...)
 	term.SetParent(old.parent)
 	return term
-}
-
-// ### [ Helper functions ] ####################################################
-
-// stripLocal strips the "%" prefix of the given local identifier.
-func stripLocal(s string) string {
-	if !strings.HasPrefix(s, "%") {
-		panic(fmt.Sprintf(`invalid local identifier %q; missing "%%" prefix`, s))
-	}
-	return s[1:]
 }

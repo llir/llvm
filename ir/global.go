@@ -60,8 +60,18 @@ func (global *Global) Ident() string {
 	return enc.Global(global.name)
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Name returns the name of the global variable.
+func (global *Global) Name() string {
+	return global.name
+}
+
+// SetName sets the name of the global variable.
+func (global *Global) SetName(name string) {
+	global.name = name
+}
+
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*Global) Immutable() {}
 
 // String returns the LLVM syntax representation of the global variable.
@@ -84,11 +94,6 @@ func (global *Global) String() string {
 		global.Ident(),
 		imm,
 		content)
-}
-
-// Name returns the name of the global variable.
-func (global *Global) Name() string {
-	return global.name
 }
 
 // ContentType returns the content type of the global variable.

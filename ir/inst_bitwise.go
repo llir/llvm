@@ -24,8 +24,8 @@ import (
 type InstShl struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Operands.
 	x, y value.Value
 }
@@ -42,12 +42,17 @@ func (inst *InstShl) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstShl) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstShl) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstShl) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstShl) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -98,8 +103,8 @@ func (inst *InstShl) SetY(y value.Value) {
 type InstLShr struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Operands.
 	x, y value.Value
 }
@@ -116,12 +121,17 @@ func (inst *InstLShr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstLShr) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstLShr) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstLShr) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstLShr) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -172,8 +182,8 @@ func (inst *InstLShr) SetY(y value.Value) {
 type InstAShr struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Operands.
 	x, y value.Value
 }
@@ -190,12 +200,17 @@ func (inst *InstAShr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAShr) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstAShr) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstAShr) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstAShr) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -246,8 +261,8 @@ func (inst *InstAShr) SetY(y value.Value) {
 type InstAnd struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Operands.
 	x, y value.Value
 }
@@ -264,12 +279,17 @@ func (inst *InstAnd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAnd) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstAnd) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstAnd) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstAnd) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -320,8 +340,8 @@ func (inst *InstAnd) SetY(y value.Value) {
 type InstOr struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Operands.
 	x, y value.Value
 }
@@ -338,12 +358,17 @@ func (inst *InstOr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstOr) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstOr) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstOr) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstOr) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -394,8 +419,8 @@ func (inst *InstOr) SetY(y value.Value) {
 type InstXor struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Operands.
 	x, y value.Value
 }
@@ -412,12 +437,17 @@ func (inst *InstXor) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstXor) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstXor) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstXor) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstXor) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.

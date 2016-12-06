@@ -53,14 +53,26 @@ func (f *Function) Ident() string {
 	return enc.Global(f.name)
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Name returns the name of the function.
+func (f *Function) Name() string {
+	return f.name
+}
+
+// SetName sets the name of the function.
+func (f *Function) SetName(name string) {
+	f.name = name
+}
+
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*Function) Immutable() {}
 
 // String returns the LLVM syntax representation of the function.
 func (f *Function) String() string {
-	// Assign unique local IDs to unnamed basic blocks and local variables.
+	// Assign unique local IDs to unnamed function parameters, basic blocks and
+	// local variables.
 	assignIDs(f)
+
 	// Function signature.
 	sig := &bytes.Buffer{}
 	fmt.Fprintf(sig, "%s %s(",
@@ -86,8 +98,9 @@ func (f *Function) String() string {
 		sig.WriteString("...")
 	}
 	sig.WriteString(")")
+
+	// Function definition.
 	if blocks := f.Blocks(); len(blocks) > 0 {
-		// Function definition.
 		buf := &bytes.Buffer{}
 		fmt.Fprintf(buf, "define %s {\n", sig)
 		for _, block := range blocks {
@@ -96,6 +109,7 @@ func (f *Function) String() string {
 		buf.WriteString("}")
 		return buf.String()
 	}
+
 	// External function declaration.
 	return fmt.Sprintf("declare %s", sig)
 }
@@ -108,11 +122,6 @@ func (f *Function) Parent() *Module {
 // SetParent sets the parent module of the function.
 func (f *Function) SetParent(parent *Module) {
 	f.parent = parent
-}
-
-// Name returns the name of the function.
-func (f *Function) Name() string {
-	return f.name
 }
 
 // Sig returns the signature of the function.
@@ -173,23 +182,17 @@ func (f *Function) NewBlock(name string) *BasicBlock {
 // assignIDs assigns unique local IDs to unnamed basic blocks and local
 // variables of the function.
 func assignIDs(f *Function) {
-	// identifiable represents a basic block or local variable.
-	type identifiable interface {
-		value.Value
-		// SetIdent sets the identifier associated with the value.
-		SetIdent(ident string)
-	}
 	id := 0
-	setName := func(n identifiable) {
-		got := n.Ident()
+	setName := func(n value.Named) {
+		name := n.Name()
 		switch {
-		case isUnnamed(got):
-			n.SetIdent(strconv.Itoa(id))
+		case isUnnamed(name):
+			n.SetName(strconv.Itoa(id))
 			id++
-		case isLocalID(got):
-			want := enc.Local(strconv.Itoa(id))
-			if got != want {
-				panic(fmt.Sprintf("invalid local ID; expected %s, got %s", want, got))
+		case isLocalID(name):
+			want := strconv.Itoa(id)
+			if name != want {
+				panic(fmt.Sprintf("invalid local ID; expected %s, got %s", enc.Local(want), enc.Local(name)))
 			}
 			id++
 		}
@@ -201,37 +204,35 @@ func assignIDs(f *Function) {
 		}
 	}
 	for _, block := range f.blocks {
+		// Assign local IDs to unnamed basic blocks.
 		setName(block)
 		for _, inst := range block.insts {
-			n, ok := inst.(identifiable)
+			n, ok := inst.(value.Named)
 			if !ok {
 				continue
 			}
 			if n.Type().Equal(types.Void) {
 				continue
 			}
+			// Assign local IDs to unnamed local variables.
 			setName(n)
 		}
 	}
 }
 
 // isUnnamed reports whether the given identifier is unnamed.
-func isUnnamed(ident string) bool {
-	return len(ident) == 0 || ident == "%" || ident == "@"
+func isUnnamed(name string) bool {
+	return len(name) == 0
 }
 
 // isLocalID reports whether the given identifier is a local ID (e.g. "%42").
-func isLocalID(ident string) bool {
-	if !strings.HasPrefix(ident, "%") {
-		return false
-	}
-	ident = ident[1:]
-	for _, r := range ident {
+func isLocalID(name string) bool {
+	for _, r := range name {
 		if strings.IndexRune("0123456789", r) == -1 {
 			return false
 		}
 	}
-	return len(ident) > 0
+	return len(name) > 0
 }
 
 // NewParam returns a new function parameter based on the given parameter name

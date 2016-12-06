@@ -129,14 +129,14 @@ func (param *Param) Ident() string {
 	return enc.Local(param.name)
 }
 
-// SetIdent sets the identifier associated with the function parameter.
-func (param *Param) SetIdent(ident string) {
-	param.name = ident
-}
-
 // Name returns the name of the function parameter.
 func (param *Param) Name() string {
 	return param.name
+}
+
+// SetName sets the name of the function parameter.
+func (param *Param) SetName(name string) {
+	param.name = name
 }
 
 // --- [ pointer ] -------------------------------------------------------------

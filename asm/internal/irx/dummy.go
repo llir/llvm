@@ -29,14 +29,24 @@ func newGlobalDummy(name string, typ types.Type) *globalDummy {
 	return &globalDummy{name: name, typ: typ}
 }
 
-// Ident returns the identifier associated with the global.
-func (g *globalDummy) Ident() string {
-	return enc.Global(g.name)
+// Type returns the type associated with the global identifier.
+func (global *globalDummy) Type() types.Type {
+	return global.typ
 }
 
-// Type returns the type associated with the global identifier.
-func (g *globalDummy) Type() types.Type {
-	return g.typ
+// Ident returns the identifier associated with the global.
+func (global *globalDummy) Ident() string {
+	return enc.Global(global.name)
+}
+
+// Name returns the name of the global.
+func (global *globalDummy) Name() string {
+	return global.name
+}
+
+// SetName sets the name of the global.
+func (global *globalDummy) SetName(name string) {
+	global.name = name
 }
 
 // Immutable ensures that only constants can be assigned to the Constant
@@ -58,22 +68,32 @@ func newLocalDummy(name string, typ types.Type) *localDummy {
 	return &localDummy{name: name, typ: typ}
 }
 
-// Ident returns the identifier associated with the local.
-func (g *localDummy) Ident() string {
-	return enc.Local(g.name)
+// Type returns the type associated with the local identifier.
+func (local *localDummy) Type() types.Type {
+	return local.typ
 }
 
-// Type returns the type associated with the local identifier.
-func (g *localDummy) Type() types.Type {
-	return g.typ
+// Ident returns the identifier associated with the local.
+func (local *localDummy) Ident() string {
+	return enc.Local(local.name)
+}
+
+// Name returns the name of the local.
+func (local *localDummy) Name() string {
+	return local.name
+}
+
+// SetName sets the name of the local.
+func (local *localDummy) SetName(name string) {
+	local.name = name
 }
 
 // instPhiDummy represents a dummy phi instruction.
 type instPhiDummy struct {
 	// Parent basic block.
 	parent *ir.BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Incoming values.
 	incs []*incomingDummy
 	// Type of the instruction.
@@ -93,12 +113,17 @@ func (inst *instPhiDummy) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *instPhiDummy) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *instPhiDummy) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *instPhiDummy) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *instPhiDummy) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -152,8 +177,8 @@ func newIncomingDummy(x interface{}, pred string) *incomingDummy {
 type instCallDummy struct {
 	// Parent basic block.
 	parent *ir.BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Callee.
 	callee string
 	// Function arguments.
@@ -175,12 +200,17 @@ func (inst *instCallDummy) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *instCallDummy) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *instCallDummy) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *instCallDummy) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *instCallDummy) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.

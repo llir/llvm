@@ -44,8 +44,8 @@ func (expr *ExprShl) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprShl) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -94,8 +94,8 @@ func (expr *ExprLShr) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprLShr) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -144,8 +144,8 @@ func (expr *ExprAShr) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprAShr) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -194,8 +194,8 @@ func (expr *ExprAnd) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprAnd) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -244,8 +244,8 @@ func (expr *ExprOr) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprOr) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -294,8 +294,8 @@ func (expr *ExprXor) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprXor) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.

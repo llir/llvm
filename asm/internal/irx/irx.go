@@ -1125,7 +1125,7 @@ func NewBasicBlock(name, insts, term interface{}) (*ir.BasicBlock, error) {
 	block := ir.NewBlock("")
 	switch name := name.(type) {
 	case *LabelIdent:
-		block.SetIdent(name.name)
+		block.SetName(name.name)
 	case nil:
 		// unnamed basic block.
 	default:
@@ -1182,8 +1182,7 @@ func NewNamedInstruction(name, inst interface{}) (ir.Instruction, error) {
 	// namedInstruction represents a namedInstruction instruction.
 	type namedInstruction interface {
 		ir.Instruction
-		// SetIdent sets the identifier associated with the value.
-		SetIdent(ident string)
+		value.Named
 	}
 	n, ok := name.(*LocalIdent)
 	if !ok {
@@ -1193,7 +1192,7 @@ func NewNamedInstruction(name, inst interface{}) (ir.Instruction, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid instruction type; expected namedInstruction, got %T", inst)
 	}
-	i.SetIdent(n.name)
+	i.SetName(n.name)
 	return i, nil
 }
 

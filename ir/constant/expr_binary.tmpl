@@ -45,8 +45,8 @@ func (expr *Expr{{ .Name }}) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*Expr{{ .Name }}) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.

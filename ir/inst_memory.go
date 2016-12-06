@@ -24,8 +24,8 @@ import (
 type InstAlloca struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Element type.
 	elem types.Type
 	// Type of the instruction.
@@ -47,12 +47,17 @@ func (inst *InstAlloca) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAlloca) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstAlloca) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstAlloca) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstAlloca) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -107,8 +112,8 @@ func (inst *InstAlloca) SetNElems(nelems value.Value) {
 type InstLoad struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Source address.
 	src value.Value
 	// Type of the instruction.
@@ -130,12 +135,17 @@ func (inst *InstLoad) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstLoad) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstLoad) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstLoad) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstLoad) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -244,8 +254,8 @@ func (inst *InstStore) SetDst(dst value.Value) {
 type InstGetElementPtr struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Source address.
 	src value.Value
 	// Element indices.
@@ -300,12 +310,17 @@ func (inst *InstGetElementPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstGetElementPtr) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstGetElementPtr) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstGetElementPtr) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstGetElementPtr) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.

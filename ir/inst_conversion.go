@@ -24,8 +24,8 @@ import (
 type InstTrunc struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -44,12 +44,17 @@ func (inst *InstTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstTrunc) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstTrunc) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstTrunc) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstTrunc) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -91,8 +96,8 @@ func (inst *InstTrunc) SetFrom(from value.Value) {
 type InstZExt struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -111,12 +116,17 @@ func (inst *InstZExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstZExt) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstZExt) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstZExt) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstZExt) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -158,8 +168,8 @@ func (inst *InstZExt) SetFrom(from value.Value) {
 type InstSExt struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -178,12 +188,17 @@ func (inst *InstSExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSExt) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstSExt) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstSExt) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstSExt) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -225,8 +240,8 @@ func (inst *InstSExt) SetFrom(from value.Value) {
 type InstFPTrunc struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -245,12 +260,17 @@ func (inst *InstFPTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPTrunc) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstFPTrunc) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstFPTrunc) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstFPTrunc) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -292,8 +312,8 @@ func (inst *InstFPTrunc) SetFrom(from value.Value) {
 type InstFPExt struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -312,12 +332,17 @@ func (inst *InstFPExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPExt) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstFPExt) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstFPExt) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstFPExt) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -359,8 +384,8 @@ func (inst *InstFPExt) SetFrom(from value.Value) {
 type InstFPToUI struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -379,12 +404,17 @@ func (inst *InstFPToUI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPToUI) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstFPToUI) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstFPToUI) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstFPToUI) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -426,8 +456,8 @@ func (inst *InstFPToUI) SetFrom(from value.Value) {
 type InstFPToSI struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -446,12 +476,17 @@ func (inst *InstFPToSI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPToSI) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstFPToSI) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstFPToSI) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstFPToSI) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -493,8 +528,8 @@ func (inst *InstFPToSI) SetFrom(from value.Value) {
 type InstUIToFP struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -513,12 +548,17 @@ func (inst *InstUIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstUIToFP) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstUIToFP) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstUIToFP) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstUIToFP) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -560,8 +600,8 @@ func (inst *InstUIToFP) SetFrom(from value.Value) {
 type InstSIToFP struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -580,12 +620,17 @@ func (inst *InstSIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSIToFP) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstSIToFP) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstSIToFP) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstSIToFP) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -627,8 +672,8 @@ func (inst *InstSIToFP) SetFrom(from value.Value) {
 type InstPtrToInt struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -647,12 +692,17 @@ func (inst *InstPtrToInt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstPtrToInt) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstPtrToInt) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstPtrToInt) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstPtrToInt) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -694,8 +744,8 @@ func (inst *InstPtrToInt) SetFrom(from value.Value) {
 type InstIntToPtr struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -714,12 +764,17 @@ func (inst *InstIntToPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstIntToPtr) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstIntToPtr) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstIntToPtr) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstIntToPtr) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -761,8 +816,8 @@ func (inst *InstIntToPtr) SetFrom(from value.Value) {
 type InstBitCast struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -781,12 +836,17 @@ func (inst *InstBitCast) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstBitCast) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstBitCast) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstBitCast) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstBitCast) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -828,8 +888,8 @@ func (inst *InstBitCast) SetFrom(from value.Value) {
 type InstAddrSpaceCast struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -848,12 +908,17 @@ func (inst *InstAddrSpaceCast) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAddrSpaceCast) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstAddrSpaceCast) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstAddrSpaceCast) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstAddrSpaceCast) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.

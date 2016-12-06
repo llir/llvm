@@ -45,8 +45,8 @@ func (expr *ExprTrunc) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprTrunc) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -91,8 +91,8 @@ func (expr *ExprZExt) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprZExt) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -137,8 +137,8 @@ func (expr *ExprSExt) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprSExt) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -183,8 +183,8 @@ func (expr *ExprFPTrunc) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFPTrunc) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -229,8 +229,8 @@ func (expr *ExprFPExt) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFPExt) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -275,8 +275,8 @@ func (expr *ExprFPToUI) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFPToUI) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -321,8 +321,8 @@ func (expr *ExprFPToSI) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFPToSI) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -367,8 +367,8 @@ func (expr *ExprUIToFP) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprUIToFP) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -413,8 +413,8 @@ func (expr *ExprSIToFP) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprSIToFP) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -459,8 +459,8 @@ func (expr *ExprPtrToInt) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprPtrToInt) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -505,8 +505,8 @@ func (expr *ExprIntToPtr) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprIntToPtr) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -551,8 +551,8 @@ func (expr *ExprBitCast) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprBitCast) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -597,8 +597,8 @@ func (expr *ExprAddrSpaceCast) Ident() string {
 		expr.Type())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprAddrSpaceCast) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.

@@ -8,8 +8,8 @@ import (
 
 // Valutate that the relevant types satisfy the constant.Constant interface.
 var (
-	_ constant.Constant = &ir.Function{}
 	_ constant.Constant = &ir.Global{}
+	_ constant.Constant = &ir.Function{}
 )
 
 // Valutate that the relevant types satisfy the ir.Instruction interface.
@@ -73,53 +73,55 @@ var (
 	_ ir.Terminator = &ir.TermUnreachable{}
 )
 
-// Valutate that the relevant types satisfy the value.Value interface.
+// Valutate that the relevant types satisfy the value.Named interface.
 var (
-	_ value.Value = &ir.BasicBlock{}
+	_ value.Named = &ir.Global{}
+	_ value.Named = &ir.Function{}
+	_ value.Named = &ir.BasicBlock{}
 	// Binary instructions
-	_ value.Value = &ir.InstAdd{}
-	_ value.Value = &ir.InstFAdd{}
-	_ value.Value = &ir.InstSub{}
-	_ value.Value = &ir.InstFSub{}
-	_ value.Value = &ir.InstMul{}
-	_ value.Value = &ir.InstFMul{}
-	_ value.Value = &ir.InstUDiv{}
-	_ value.Value = &ir.InstSDiv{}
-	_ value.Value = &ir.InstFDiv{}
-	_ value.Value = &ir.InstURem{}
-	_ value.Value = &ir.InstSRem{}
-	_ value.Value = &ir.InstFRem{}
+	_ value.Named = &ir.InstAdd{}
+	_ value.Named = &ir.InstFAdd{}
+	_ value.Named = &ir.InstSub{}
+	_ value.Named = &ir.InstFSub{}
+	_ value.Named = &ir.InstMul{}
+	_ value.Named = &ir.InstFMul{}
+	_ value.Named = &ir.InstUDiv{}
+	_ value.Named = &ir.InstSDiv{}
+	_ value.Named = &ir.InstFDiv{}
+	_ value.Named = &ir.InstURem{}
+	_ value.Named = &ir.InstSRem{}
+	_ value.Named = &ir.InstFRem{}
 	// Bitwise instructions
-	_ value.Value = &ir.InstShl{}
-	_ value.Value = &ir.InstLShr{}
-	_ value.Value = &ir.InstAShr{}
-	_ value.Value = &ir.InstAnd{}
-	_ value.Value = &ir.InstOr{}
-	_ value.Value = &ir.InstXor{}
+	_ value.Named = &ir.InstShl{}
+	_ value.Named = &ir.InstLShr{}
+	_ value.Named = &ir.InstAShr{}
+	_ value.Named = &ir.InstAnd{}
+	_ value.Named = &ir.InstOr{}
+	_ value.Named = &ir.InstXor{}
 	// Vector instructions
 	// Aggregate instructions
 	// Memory instructions
-	_ value.Value = &ir.InstAlloca{}
-	_ value.Value = &ir.InstLoad{}
-	_ value.Value = &ir.InstGetElementPtr{}
+	_ value.Named = &ir.InstAlloca{}
+	_ value.Named = &ir.InstLoad{}
+	_ value.Named = &ir.InstGetElementPtr{}
 	// Conversion instructions
-	_ value.Value = &ir.InstTrunc{}
-	_ value.Value = &ir.InstZExt{}
-	_ value.Value = &ir.InstSExt{}
-	_ value.Value = &ir.InstFPTrunc{}
-	_ value.Value = &ir.InstFPExt{}
-	_ value.Value = &ir.InstFPToUI{}
-	_ value.Value = &ir.InstFPToSI{}
-	_ value.Value = &ir.InstUIToFP{}
-	_ value.Value = &ir.InstSIToFP{}
-	_ value.Value = &ir.InstPtrToInt{}
-	_ value.Value = &ir.InstIntToPtr{}
-	_ value.Value = &ir.InstBitCast{}
-	_ value.Value = &ir.InstAddrSpaceCast{}
+	_ value.Named = &ir.InstTrunc{}
+	_ value.Named = &ir.InstZExt{}
+	_ value.Named = &ir.InstSExt{}
+	_ value.Named = &ir.InstFPTrunc{}
+	_ value.Named = &ir.InstFPExt{}
+	_ value.Named = &ir.InstFPToUI{}
+	_ value.Named = &ir.InstFPToSI{}
+	_ value.Named = &ir.InstUIToFP{}
+	_ value.Named = &ir.InstSIToFP{}
+	_ value.Named = &ir.InstPtrToInt{}
+	_ value.Named = &ir.InstIntToPtr{}
+	_ value.Named = &ir.InstBitCast{}
+	_ value.Named = &ir.InstAddrSpaceCast{}
 	// Other instructions
-	_ value.Value = &ir.InstICmp{}
-	_ value.Value = &ir.InstFCmp{}
-	_ value.Value = &ir.InstPhi{}
-	_ value.Value = &ir.InstSelect{}
-	_ value.Value = &ir.InstCall{}
+	_ value.Named = &ir.InstICmp{}
+	_ value.Named = &ir.InstFCmp{}
+	_ value.Named = &ir.InstPhi{}
+	_ value.Named = &ir.InstSelect{}
+	_ value.Named = &ir.InstCall{}
 )

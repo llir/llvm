@@ -53,8 +53,8 @@ func (c *Vector) Ident() string {
 	return buf.String()
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*Vector) Immutable() {}
 
 // Elems returns the elements of the vector constant.
@@ -118,8 +118,8 @@ func (c *Array) Ident() string {
 	return buf.String()
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*Array) Immutable() {}
 
 // Elems returns the elements of the array constant.
@@ -178,8 +178,8 @@ func (c *Struct) Ident() string {
 	return buf.String()
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*Struct) Immutable() {}
 
 // Fields returns the struct fields of the struct constant.
@@ -211,6 +211,6 @@ func (c *ZeroInitializer) Ident() string {
 	return "zeroinitializer"
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ZeroInitializer) Immutable() {}

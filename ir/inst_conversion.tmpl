@@ -25,8 +25,8 @@ import (
 type Inst{{ .Name }} struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Value before conversion.
 	from value.Value
 	// Type after conversion.
@@ -45,12 +45,17 @@ func (inst *Inst{{ .Name }}) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *Inst{{ .Name }}) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *Inst{{ .Name }}) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *Inst{{ .Name }}) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *Inst{{ .Name }}) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.

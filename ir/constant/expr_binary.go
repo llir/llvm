@@ -44,8 +44,8 @@ func (expr *ExprAdd) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprAdd) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -94,8 +94,8 @@ func (expr *ExprFAdd) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFAdd) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -144,8 +144,8 @@ func (expr *ExprSub) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprSub) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -194,8 +194,8 @@ func (expr *ExprFSub) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFSub) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -244,8 +244,8 @@ func (expr *ExprMul) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprMul) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -294,8 +294,8 @@ func (expr *ExprFMul) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFMul) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -344,8 +344,8 @@ func (expr *ExprUDiv) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprUDiv) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -394,8 +394,8 @@ func (expr *ExprSDiv) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprSDiv) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -444,8 +444,8 @@ func (expr *ExprFDiv) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFDiv) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -494,8 +494,8 @@ func (expr *ExprURem) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprURem) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -544,8 +544,8 @@ func (expr *ExprSRem) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprSRem) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.
@@ -594,8 +594,8 @@ func (expr *ExprFRem) Ident() string {
 		y.Ident())
 }
 
-// Immutable ensures that only constants can be assigned to the Constant
-// interface.
+// Immutable ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*ExprFRem) Immutable() {}
 
 // Simplify returns a simplified version of the constant expression.

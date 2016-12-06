@@ -1048,9 +1048,9 @@ func TestParamIdent(t *testing.T) {
 	}
 }
 
-// Valutate that the relevant types satisfy the value.Value interface.
+// Valutate that the relevant types satisfy the value.Named interface.
 var (
-	_ value.Value = &types.Param{}
+	_ value.Named = &types.Param{}
 )
 
 // Valutate that the relevant types satisfy the types.Type interface.

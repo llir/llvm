@@ -8,15 +8,28 @@ import "github.com/llir/llvm/ir/types"
 //
 // Value may have one of the following underlying types.
 //
-//    *ir.BasicBlock
-//    *ir.Function
-//    *ir.Global
-//    *types.Param
 //    constant.Constant
-//    ir.Instruction
+//    value.Named
 type Value interface {
 	// Type returns the type of the value.
 	Type() types.Type
 	// Ident returns the identifier associated with the value.
 	Ident() string
+}
+
+// Named represents a named LLVM IR value.
+//
+// Named may have one of the following underlying types.
+//
+//    *ir.BasicBlock
+//    *ir.Function
+//    *ir.Global
+//    *types.Param
+//    ir.Instruction
+type Named interface {
+	Value
+	// Name returns the name of the value.
+	Name() string
+	// SetName sets the name of the value.
+	SetName(name string)
 }

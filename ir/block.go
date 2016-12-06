@@ -44,15 +44,20 @@ func (block *BasicBlock) Ident() string {
 	return enc.Local(block.name)
 }
 
-// SetIdent sets the identifier associated with the basic block.
-func (block *BasicBlock) SetIdent(ident string) {
-	block.name = ident
+// Name returns the label name of the basic block.
+func (block *BasicBlock) Name() string {
+	return block.name
+}
+
+// SetName sets the label name of the basic block.
+func (block *BasicBlock) SetName(name string) {
+	block.name = name
 }
 
 // String returns the LLVM syntax representation of the basic block.
 func (block *BasicBlock) String() string {
 	buf := &bytes.Buffer{}
-	if isLocalID(block.Ident()) {
+	if isLocalID(block.Name()) {
 
 		fmt.Fprintf(buf, "; <label>:%s\n", enc.EscapeIdent(block.name))
 	} else {
@@ -96,11 +101,6 @@ func (block *BasicBlock) SetTerm(term Terminator) {
 		term.SetParent(block)
 	}
 	block.term = term
-}
-
-// Name returns the label name of the basic block.
-func (block *BasicBlock) Name() string {
-	return block.name
 }
 
 // AppendInst appends the given instruction to the basic block.

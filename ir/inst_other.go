@@ -23,8 +23,8 @@ import (
 type InstICmp struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Integer condition code.
 	cond IntPred
 	// Operands.
@@ -50,12 +50,17 @@ func (inst *InstICmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstICmp) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstICmp) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstICmp) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstICmp) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -151,8 +156,8 @@ func (cond IntPred) String() string {
 type InstFCmp struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Floating-point condition code.
 	cond FloatPred
 	// Operands.
@@ -178,12 +183,17 @@ func (inst *InstFCmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFCmp) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstFCmp) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstFCmp) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstFCmp) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -291,8 +301,8 @@ func (cond FloatPred) String() string {
 type InstPhi struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Incoming values.
 	incs []*Incoming
 	// Type of the instruction.
@@ -315,12 +325,17 @@ func (inst *InstPhi) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstPhi) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstPhi) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstPhi) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstPhi) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -393,8 +408,8 @@ func (inc *Incoming) Pred() *BasicBlock {
 type InstSelect struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Selection condition.
 	cond value.Value
 	// Operands.
@@ -414,12 +429,17 @@ func (inst *InstSelect) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSelect) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstSelect) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstSelect) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstSelect) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -484,8 +504,8 @@ func (inst *InstSelect) SetY(y value.Value) {
 type InstCall struct {
 	// Parent basic block.
 	parent *BasicBlock
-	// Identifier associated with the instruction.
-	ident string
+	// Name of the local variable associated with the instruction.
+	name string
 	// Callee.
 	callee *Function
 	// Function arguments.
@@ -505,12 +525,17 @@ func (inst *InstCall) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstCall) Ident() string {
-	return enc.Local(inst.ident)
+	return enc.Local(inst.name)
 }
 
-// SetIdent sets the identifier associated with the instruction.
-func (inst *InstCall) SetIdent(ident string) {
-	inst.ident = ident
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstCall) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstCall) SetName(name string) {
+	inst.name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
