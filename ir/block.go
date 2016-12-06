@@ -54,9 +54,9 @@ func (block *BasicBlock) String() string {
 	buf := &bytes.Buffer{}
 	if isLocalID(block.Ident()) {
 
-		fmt.Fprintf(buf, "; <label>:%s\n", enc.Escape(block.name))
+		fmt.Fprintf(buf, "; <label>:%s\n", enc.EscapeIdent(block.name))
 	} else {
-		fmt.Fprintf(buf, "%s:\n", enc.Escape(block.name))
+		fmt.Fprintf(buf, "%s:\n", enc.EscapeIdent(block.name))
 	}
 	for _, inst := range block.Insts() {
 		fmt.Fprintf(buf, "\t%s\n", inst)

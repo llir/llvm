@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -63,14 +64,14 @@ func (c *Vector) Elems() []Constant {
 
 // --- [ array ] ---------------------------------------------------------------
 
-// TODO: Add support for character arrays.
-
 // Array represents an array constant.
 type Array struct {
 	// Array elements.
 	elems []Constant
 	// Array type.
 	typ *types.ArrayType
+	// Pretty-print as character array.
+	charArray bool
 }
 
 // NewArray returns a new array constant based on the given elements.
@@ -89,6 +90,20 @@ func (c *Array) Type() types.Type {
 
 // Ident returns the string representation of the constant.
 func (c *Array) Ident() string {
+	// Pretty-print character arrays.
+	if c.CharArray() {
+		buf := make([]byte, 0, len(c.elems))
+		for _, elem := range c.Elems() {
+			e, ok := elem.(*Int)
+			if !ok {
+				panic(fmt.Sprintf("invalid array element type; expected *constant.Int, got %T", elem))
+			}
+			b := byte(e.Int64())
+			buf = append(buf, b)
+		}
+		return fmt.Sprintf(`c"%s"`, enc.Escape(string(buf)))
+	}
+	// Print regular arrays.
 	buf := &bytes.Buffer{}
 	buf.WriteString("[")
 	for i, elem := range c.Elems() {
@@ -110,6 +125,16 @@ func (*Array) Immutable() {}
 // Elems returns the elements of the array constant.
 func (c *Array) Elems() []Constant {
 	return c.elems
+}
+
+// CharArray reports whether the given array is a character array.
+func (c *Array) CharArray() bool {
+	return c.charArray
+}
+
+// SetCharArray sets the given array to a character array.
+func (c *Array) SetCharArray(charArray bool) {
+	c.charArray = charArray
 }
 
 // --- [ struct ] --------------------------------------------------------------

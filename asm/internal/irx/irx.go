@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/asm/internal/token"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
@@ -545,6 +546,26 @@ func NewArrayConst(elems interface{}) (*constant.Array, error) {
 		return nil, errors.Errorf("invalid array elements type; expected []constant.Constant, got %T", elems)
 	}
 	return constant.NewArray(es...), nil
+}
+
+// NewCharArrayConst returns a new character array constant based on the given
+// string.
+func NewCharArrayConst(str interface{}) (*constant.Array, error) {
+	s, err := getTokenString(str)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Skip double-quotes.
+	s = s[1 : len(s)-1]
+	s = enc.Unescape(s)
+	var elems []constant.Constant
+	for i := 0; i < len(s); i++ {
+		elem := constant.NewInt(int64(s[i]), types.I8)
+		elems = append(elems, elem)
+	}
+	c := constant.NewArray(elems...)
+	c.SetCharArray(true)
+	return c, nil
 }
 
 // --- [ Binary expressions ] --------------------------------------------------

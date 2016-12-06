@@ -136,6 +136,10 @@ _quoted_string
 	: '"' { . } '"'
 ;
 
+string_lit
+	: _quoted_string
+;
+
 // === [ Types ] ===============================================================
 
 int_type
@@ -301,8 +305,9 @@ Constant
 	: IntConst
 	| FloatConst
 	| NullConst
-	| ArrayConst
 	| VectorConst
+	| ArrayConst
+	| CharArrayConst
 	| GlobalIdent
 	| ConstExpr
 ;
@@ -321,12 +326,16 @@ NullConst
 	: "null"   << &irx.NullLit{}, nil >>
 ;
 
+VectorConst
+	: "<" Elems ">"   << irx.NewVectorConst($1) >>
+;
+
 ArrayConst
 	: "[" Elems "]"   << irx.NewArrayConst($1) >>
 ;
 
-VectorConst
-	: "<" Elems ">"   << irx.NewVectorConst($1) >>
+CharArrayConst
+	: "c" string_lit   << irx.NewCharArrayConst($1) >>
 ;
 
 Elems

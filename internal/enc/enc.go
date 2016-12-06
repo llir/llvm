@@ -12,7 +12,7 @@ import "strings"
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func Global(name string) string {
-	return "@" + Escape(name)
+	return "@" + EscapeIdent(name)
 }
 
 // Local encodes a local name to its LLVM IR assembly representation.
@@ -25,7 +25,7 @@ func Global(name string) string {
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func Local(name string) string {
-	return "%" + Escape(name)
+	return "%" + EscapeIdent(name)
 }
 
 const (
@@ -46,9 +46,9 @@ const (
 	tail = head + decimal
 )
 
-// Escape replaces any characters which are not valid in identifiers with
+// EscapeIdent replaces any characters which are not valid in identifiers with
 // corresponding hexadecimal escape sequence (\XX).
-func Escape(s string) string {
+func EscapeIdent(s string) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -83,6 +83,60 @@ func Escape(s string) string {
 	return `"` + string(buf) + `"`
 }
 
+// Escape replaces hexadecimal escape sequences (\xx) in s with their
+// corresponding characters.
+func Escape(s string) string {
+	// Check if a replacement is required.
+	extra := 0
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		switch {
+		case b == '\\':
+			// Escape backslash characters.
+			//    `\` -> `\\`
+			extra++
+		case !isPrint(b):
+			// Two extra bytes are required for each invalid byte; e.g.
+			//    "#" -> `\23`
+			//    "世" -> `\E4\B8\96`
+			extra += 2
+		default:
+			// no extra bytes required.
+		}
+	}
+	if extra == 0 {
+		return s
+	}
+
+	// Replace invalid characters.
+	const hextable = "0123456789ABCDEF"
+	buf := make([]byte, len(s)+extra)
+	j := 0
+	for i := 0; i < len(s); i++ {
+		b := s[i]
+		switch {
+		case b == '\\':
+			buf[j] = '\\'
+			buf[j+1] = '\\'
+			j += 2
+		case !isPrint(b):
+			buf[j] = '\\'
+			buf[j+1] = hextable[b>>4]
+			buf[j+2] = hextable[b&0x0F]
+			j += 3
+		default:
+			buf[j] = b
+			j++
+		}
+	}
+	return string(buf)
+}
+
+// isPrint reports whether the given byte is printable.
+func isPrint(b byte) bool {
+	return ' ' <= b && b <= '~'
+}
+
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their
 // corresponding characters.
 func Unescape(s string) string {
@@ -94,12 +148,17 @@ func Unescape(s string) string {
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 		if b == '\\' && i+2 < len(s) {
-			x1, ok := unhex(s[i+1])
-			if ok {
-				x2, ok := unhex(s[i+2])
+			if s[i+1] == '\\' {
+				b = '\\'
+				i++
+			} else {
+				x1, ok := unhex(s[i+1])
 				if ok {
-					b = x1<<4 | x2
-					i += 2
+					x2, ok := unhex(s[i+2])
+					if ok {
+						b = x1<<4 | x2
+						i += 2
+					}
 				}
 			}
 		}
