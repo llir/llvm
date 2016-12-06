@@ -51,3 +51,21 @@ func TestParseFile(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkParseFile(b *testing.B) {
+	const path = "../testdata/sqlite/sqlite.ll"
+	buf, err := ioutil.ReadFile(path)
+	if err != nil {
+		b.Errorf("%q: unable to read file; %v", path, err)
+		return
+	}
+	input := string(buf)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := asm.ParseString(input)
+		if err != nil {
+			b.Errorf("%q: unable to parse file; %v", path, err)
+			return
+		}
+	}
+}
