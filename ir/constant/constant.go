@@ -33,6 +33,11 @@ import (
 //    *constant.Struct            (https://godoc.org/github.com/llir/llvm/ir/constant#Struct)
 //    *constant.ZeroInitializer   (https://godoc.org/github.com/llir/llvm/ir/constant#ZeroInitializer)
 //
+// Global variable and function addresses
+//
+//    *ir.Global     (https://godoc.org/github.com/llir/llvm/ir#Global)
+//    *ir.Function   (https://godoc.org/github.com/llir/llvm/ir#Function)
+//
 // Constant expressions
 //
 // http://llvm.org/docs/LangRef.html#constant-expressions

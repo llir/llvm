@@ -4,6 +4,7 @@ package irutil
 import (
 	"fmt"
 
+	"github.com/llir/llvm/internal/dummy"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
@@ -70,18 +71,6 @@ func WalkValue(v value.Value, visit func(node interface{})) {
 	switch v := v.(type) {
 	case constant.Constant:
 		WalkConstant(v, visit)
-	case *ir.Global:
-		WalkType(v.Type(), visit)
-		WalkType(v.ContentType(), visit)
-		if init, ok := v.Init(); ok {
-			WalkConstant(init, visit)
-		}
-	case *ir.Function:
-		WalkType(v.Type(), visit)
-		WalkType(v.Sig(), visit)
-		for _, block := range v.Blocks() {
-			WalkValue(block, visit)
-		}
 	case *types.Param:
 		WalkType(v.Type(), visit)
 	case *ir.BasicBlock:
@@ -91,6 +80,9 @@ func WalkValue(v value.Value, visit func(node interface{})) {
 		WalkTerm(v.Term(), visit)
 	case ir.Instruction:
 		WalkInst(v, visit)
+	// Dummy values.
+	case *dummy.Local:
+		WalkType(v.Type(), visit)
 	default:
 		panic(fmt.Sprintf("support for walking value %T not yet implemented", v))
 	}
@@ -101,12 +93,15 @@ func WalkValue(v value.Value, visit func(node interface{})) {
 func WalkConstant(c constant.Constant, visit func(node interface{})) {
 	visit(c)
 	switch c := c.(type) {
+	// Simple constants
 	case *constant.Int:
 		WalkType(c.Type(), visit)
 	case *constant.Float:
 		WalkType(c.Type(), visit)
 	case *constant.Null:
 		WalkType(c.Type(), visit)
+
+	// Complex constants
 	case *constant.Vector:
 		WalkType(c.Type(), visit)
 		for _, elem := range c.Elems() {
@@ -124,8 +119,28 @@ func WalkConstant(c constant.Constant, visit func(node interface{})) {
 		}
 	case *constant.ZeroInitializer:
 		WalkType(c.Type(), visit)
+
+	// Global variable and function addresses
+	case *ir.Global:
+		WalkType(c.Type(), visit)
+		WalkType(c.ContentType(), visit)
+		if init, ok := c.Init(); ok {
+			WalkConstant(init, visit)
+		}
+	case *ir.Function:
+		WalkType(c.Type(), visit)
+		WalkType(c.Sig(), visit)
+		for _, block := range c.Blocks() {
+			WalkValue(block, visit)
+		}
+
+	// Constant expressions
 	case constant.Expr:
 		WalkExpr(c, visit)
+
+	// Dummy constants.
+	case *dummy.Global:
+		WalkType(c.Type(), visit)
 	default:
 		panic(fmt.Sprintf("support for walking constant %T not yet implemented", c))
 	}
@@ -445,6 +460,13 @@ func WalkInst(inst ir.Instruction, visit func(node interface{})) {
 	case *ir.InstCall:
 		WalkType(inst.Type(), visit)
 		WalkValue(inst.Callee(), visit)
+		for _, arg := range inst.Args() {
+			WalkValue(arg, visit)
+		}
+
+	// Dummy instructions
+	case *dummy.InstCall:
+		WalkType(inst.Type(), visit)
 		for _, arg := range inst.Args() {
 			WalkValue(arg, visit)
 		}

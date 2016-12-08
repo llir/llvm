@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/asm/internal/token"
+	"github.com/llir/llvm/internal/dummy"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -468,9 +469,9 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 	}
 	switch val := val.(type) {
 	case *LocalIdent:
-		return newLocalDummy(val.name, t), nil
+		return dummy.NewLocal(val.name, t), nil
 	case *GlobalIdent:
-		return newGlobalDummy(val.name, t), nil
+		return dummy.NewGlobal(val.name, t), nil
 	}
 	switch t := t.(type) {
 	case *types.IntType:
@@ -1901,7 +1902,7 @@ func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ir.In
 
 // NewCallInst returns a new call instruction based on the given return type,
 // callee name, and function arguments.
-func NewCallInst(retTyp, callee, args interface{}) (*instCallDummy, error) {
+func NewCallInst(retTyp, callee, args interface{}) (*dummy.InstCall, error) {
 	r, ok := retTyp.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid return type; expected types.Type, got %T", retTyp)
@@ -1919,7 +1920,7 @@ func NewCallInst(retTyp, callee, args interface{}) (*instCallDummy, error) {
 	default:
 		return nil, errors.Errorf("invalid function arguments type; expected []value.Value or nil, got %T", args)
 	}
-	return newCallDummy(r, c.name, as...), nil
+	return dummy.NewCall(r, c.name, as...), nil
 }
 
 // === [ Terminators ] =========================================================

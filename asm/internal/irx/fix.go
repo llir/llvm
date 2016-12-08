@@ -10,8 +10,8 @@
 //
 //    1. Fix dummy types.
 //       - e.g. replace *irx.namedTypeDummy with *types.NamedType
-//    2. Replace dummy instructions with dummy Type method implementations; e.g.
-//       *irx.instGetElementPtrDummy.
+//    2. Replace dummy instructions containing dummy Type method
+//       implementations; e.g. *irx.instGetElementPtrDummy.
 //    3. Force generate local IDs for unnamed basic blocks and instructions.
 //    4. Index basic blocks.
 //    5. Fix dummy instructions and terminators.
@@ -29,8 +29,10 @@ package irx
 import (
 	"fmt"
 
+	"github.com/llir/llvm/internal/dummy"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/irutil"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -141,6 +143,37 @@ func fixModule(m *ir.Module) *ir.Module {
 		fix.fixType(typ)
 	}
 
+	// Fix types.
+	// TOOD: Implement.
+	//irutil.Walk(m, visit)
+
+	// Replace dummy instructions containing dummy Type method implementations;
+	// e.g. *irx.instGetElementPtrDummy.
+	visit := func(node interface{}) {
+		block, ok := node.(*ir.BasicBlock)
+		if !ok {
+			return
+		}
+		var insts []ir.Instruction
+		for _, inst := range block.Insts() {
+			if old, ok := inst.(*instGetElementPtrDummy); ok {
+				// Validate elem against src.Type().Elem().
+				st, ok := old.src.Type().(*types.PointerType)
+				if !ok {
+					panic(fmt.Sprintf("invalid source type; expected *types.Pointer, got %T", old.src.Type()))
+				}
+				if !old.elem.Equal(st.Elem()) {
+					panic(fmt.Sprintf("type mismatch between element type `%v` and source element type `%v`", old.elem, st.Elem()))
+				}
+				// Replace dummy getelementptr instruction with real instruction.
+				inst = ir.NewGetElementPtr(old.src, old.indices...)
+			}
+			insts = append(insts, inst)
+		}
+		block.SetInsts(insts)
+	}
+	irutil.Walk(m, visit)
+
 	// Fix globals.
 	for _, global := range globals {
 		fix.fixGlobal(global)
@@ -232,7 +265,7 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 			switch old := inst.(type) {
 			case *instPhiDummy:
 				inst = fix.fixPhiInstDummy(old)
-			case *instCallDummy:
+			case *dummy.InstCall:
 				inst = fix.fixCallInstDummy(old)
 			}
 			insts = append(insts, inst)
@@ -282,8 +315,8 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 	switch old := old.(type) {
 	case constant.Constant:
 		return fix.fixConstant(old)
-	case *localDummy:
-		return fix.getLocal(old.name), true
+	case *dummy.Local:
+		return fix.getLocal(old.Name()), true
 	case *ir.InstAdd, *ir.InstFAdd, *ir.InstSub, *ir.InstFSub, *ir.InstMul, *ir.InstFMul, *ir.InstUDiv, *ir.InstSDiv, *ir.InstFDiv, *ir.InstURem, *ir.InstSRem, *ir.InstFRem:
 		// nothing to do; valid value.
 	case *ir.InstICmp:
@@ -301,8 +334,8 @@ func (fix *fixer) fixValue(old value.Value) (value.Value, bool) {
 func (fix *fixer) fixConstant(old constant.Constant) (constant.Constant, bool) {
 	// TODO: Add all constant expressions.
 	switch old := old.(type) {
-	case *globalDummy:
-		return fix.getGlobal(old.name), true
+	case *dummy.Global:
+		return fix.getGlobal(old.Name()), true
 	case *constant.Int:
 		// nothing to do; valid value.
 	case *constant.Float:
@@ -929,9 +962,9 @@ func (fix *fixer) fixCallInst(old *ir.InstCall) *ir.InstCall {
 
 // fixCallInstDummy replaces the given dummy call instruction with a real call
 // instruction, and replaces dummy the instruction with their real values.
-func (fix *fixer) fixCallInstDummy(old *instCallDummy) *ir.InstCall {
-	callee := fix.getFunc(old.callee)
-	if got, want := old.ret, callee.RetType(); !got.Equal(want) {
+func (fix *fixer) fixCallInstDummy(old *dummy.InstCall) *ir.InstCall {
+	callee := fix.getFunc(old.Callee())
+	if got, want := old.Type(), callee.RetType(); !got.Equal(want) {
 		panic(fmt.Sprintf("return type mismatch; expected `%v`, got `%v`", want, got))
 	}
 	// Leave args unchanged for now. It may contain dummy values. fixCallInst
@@ -939,8 +972,8 @@ func (fix *fixer) fixCallInstDummy(old *instCallDummy) *ir.InstCall {
 	//
 	// We cannot replace them yet, as all local variables have not been indexed
 	// yet, as the time of the call to fixCallInstDummy.
-	inst := ir.NewCall(callee, old.args...)
-	inst.SetParent(old.parent)
+	inst := ir.NewCall(callee, old.Args()...)
+	inst.SetParent(old.Parent())
 	inst.SetName(old.Name())
 	return inst
 }
