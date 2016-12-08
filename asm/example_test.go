@@ -18,17 +18,18 @@ func Example() {
 	// Output:
 	//
 	// &ir.Module{
+	//     types:   nil,
 	//     globals: {
 	//         &ir.Global{
-	//             name:    "seed",
+	//             name: "seed",
+	//             typ:  &types.PointerType{
+	//                 elem:  &types.IntType{size:32},
+	//                 space: 0,
+	//             },
 	//             content: &types.IntType{size:32},
 	//             init:    &constant.Int{
-	//                 x:   &big.Int{},
 	//                 typ: &types.IntType{(CYCLIC REFERENCE)},
-	//             },
-	//             typ: &types.PointerType{
-	//                 elem:  &types.IntType{(CYCLIC REFERENCE)},
-	//                 space: 0,
+	//                 x:   &big.Int{},
 	//             },
 	//             isConst: false,
 	//         },
@@ -37,7 +38,20 @@ func Example() {
 	//         &ir.Function{
 	//             parent: &ir.Module{(CYCLIC REFERENCE)},
 	//             name:   "abs",
-	//             sig:    &types.FuncType{
+	//             typ:    &types.PointerType{
+	//                 elem: &types.FuncType{
+	//                     ret:    &types.IntType{size:32},
+	//                     params: {
+	//                         &types.Param{
+	//                             name: "x",
+	//                             typ:  &types.IntType{size:32},
+	//                         },
+	//                     },
+	//                     variadic: false,
+	//                 },
+	//                 space: 0,
+	//             },
+	//             sig: &types.FuncType{
 	//                 ret:    &types.IntType{size:32},
 	//                 params: {
 	//                     &types.Param{
@@ -48,15 +62,19 @@ func Example() {
 	//                 variadic: false,
 	//             },
 	//             blocks: nil,
-	//             typ:    &types.PointerType{
-	//                 elem:  &types.FuncType{(CYCLIC REFERENCE)},
-	//                 space: 0,
-	//             },
 	//         },
 	//         &ir.Function{
 	//             parent: &ir.Module{(CYCLIC REFERENCE)},
 	//             name:   "rand",
-	//             sig:    &types.FuncType{
+	//             typ:    &types.PointerType{
+	//                 elem: &types.FuncType{
+	//                     ret:      &types.IntType{size:32},
+	//                     params:   nil,
+	//                     variadic: false,
+	//                 },
+	//                 space: 0,
+	//             },
+	//             sig: &types.FuncType{
 	//                 ret:      &types.IntType{size:32},
 	//                 params:   nil,
 	//                 variadic: false,
@@ -69,19 +87,19 @@ func Example() {
 	//                         &ir.InstLoad{
 	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
 	//                             name:   "1",
-	//                             src:    &ir.Global{(CYCLIC REFERENCE)},
 	//                             typ:    &types.IntType{size:32},
+	//                             src:    &ir.Global{(CYCLIC REFERENCE)},
 	//                         },
 	//                         &ir.InstMul{
 	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
 	//                             name:   "2",
 	//                             x:      &ir.InstLoad{(CYCLIC REFERENCE)},
 	//                             y:      &constant.Int{
-	//                                 x:  &big.Int{
+	//                                 typ: &types.IntType{size:32},
+	//                                 x:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x15a4e35},
 	//                                 },
-	//                                 typ: &types.IntType{size:32},
 	//                             },
 	//                         },
 	//                         &ir.InstAdd{
@@ -89,11 +107,11 @@ func Example() {
 	//                             name:   "3",
 	//                             x:      &ir.InstMul{(CYCLIC REFERENCE)},
 	//                             y:      &constant.Int{
-	//                                 x:  &big.Int{
+	//                                 typ: &types.IntType{size:32},
+	//                                 x:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x1},
 	//                                 },
-	//                                 typ: &types.IntType{size:32},
 	//                             },
 	//                         },
 	//                         &ir.InstStore{
@@ -123,11 +141,8 @@ func Example() {
 	//                     },
 	//                 },
 	//             },
-	//             typ: &types.PointerType{
-	//                 elem:  &types.FuncType{(CYCLIC REFERENCE)},
-	//                 space: 0,
-	//             },
 	//         },
 	//     },
 	// }
+
 }
