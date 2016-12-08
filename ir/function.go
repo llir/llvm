@@ -45,7 +45,7 @@ func NewFunction(name string, ret types.Type, params ...*types.Param) *Function 
 
 // Type returns the type of the function.
 func (f *Function) Type() types.Type {
-	return f.sig
+	return f.typ
 }
 
 // Ident returns the identifier associated with the function.
