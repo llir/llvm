@@ -21,10 +21,10 @@ type Value interface {
 //
 // Named may have one of the following underlying types.
 //
-//    *ir.BasicBlock   (https://godoc.org/github.com/llir/llvm/ir#BasicBlock)
-//    *ir.Function     (https://godoc.org/github.com/llir/llvm/ir#Function)
 //    *ir.Global       (https://godoc.org/github.com/llir/llvm/ir#Global)
+//    *ir.Function     (https://godoc.org/github.com/llir/llvm/ir#Function)
 //    *types.Param     (https://godoc.org/github.com/llir/llvm/ir/types#Param)
+//    *ir.BasicBlock   (https://godoc.org/github.com/llir/llvm/ir#BasicBlock)
 //    ir.Instruction   (https://godoc.org/github.com/llir/llvm/ir#Instruction)
 type Named interface {
 	Value

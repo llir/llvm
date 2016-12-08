@@ -38,6 +38,8 @@ func NewModule(decls interface{}) (*ir.Module, error) {
 	m := ir.NewModule()
 	for _, d := range ds {
 		switch d := d.(type) {
+		case *types.NamedType:
+			m.AppendType(d)
 		case *ir.Global:
 			m.AppendGlobal(d)
 		case *ir.Function:
@@ -74,6 +76,22 @@ func AppendTopLevelDecl(decls, decl interface{}) ([]TopLevelDecl, error) {
 		return nil, errors.Errorf("invalid top-level declaration type; expected irx.TopLevelDecl, got %T", decl)
 	}
 	return append(ds, d), nil
+}
+
+// === [ Type definitions ] ====================================================
+
+// NewTypeDef returns a new type definition based on the given type name and
+// definition.
+func NewTypeDef(name, typ interface{}) (*types.NamedType, error) {
+	n, ok := name.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid type name type; expected *LocalIdent, got %T", name)
+	}
+	t, ok := typ.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
+	}
+	return types.NewNamed(n.name, t), nil
 }
 
 // === [ Global variables ] ====================================================
@@ -294,6 +312,28 @@ func NewLabelIdent(ident interface{}) (*LabelIdent, error) {
 
 // === [ Types ] ===============================================================
 
+// NewTypeList returns a new type list based on the given type.
+func NewTypeList(typ interface{}) ([]types.Type, error) {
+	t, ok := typ.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
+	}
+	return []types.Type{t}, nil
+}
+
+// AppendType appends the given type to the type list.
+func AppendType(typs, typ interface{}) ([]types.Type, error) {
+	ts, ok := typs.([]types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type list type; expected []types.Type, got %T", typs)
+	}
+	t, ok := typ.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
+	}
+	return append(ts, t), nil
+}
+
 // NewIntType returns a new integer type based on the given integer type token.
 func NewIntType(typeTok interface{}) (*types.IntType, error) {
 	s, err := getTokenString(typeTok)
@@ -370,6 +410,29 @@ func NewArrayType(len, elem interface{}) (*types.ArrayType, error) {
 		return nil, errors.WithStack(err)
 	}
 	return types.NewArray(e, l), nil
+}
+
+// NewStructType returns a new struct type based on the given struct fields.
+func NewStructType(fields interface{}) (*types.StructType, error) {
+	var fs []types.Type
+	switch fields := fields.(type) {
+	case []types.Type:
+		fs = fields
+	case nil:
+		// no struct fields.
+	default:
+		return nil, errors.Errorf("invalid struct fields type; expected []types.Type, got %T", fields)
+	}
+	return types.NewStruct(fs...), nil
+}
+
+// NewNamedType returns a new named type based on the given local identifier.
+func NewNamedType(name interface{}) (*namedTypeDummy, error) {
+	n, ok := name.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid type name type; expected *irx.LocalIdent, got %T", name)
+	}
+	return newNamedTypeDummy(n.name), nil
 }
 
 // === [ Values ] ==============================================================
@@ -835,10 +898,14 @@ func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.
 	if !ok {
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
-	if !e.Equal(st.Elem()) {
-		return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
-	}
-	src, err := NewConstant(srcTyp, srcVal)
+	// TODO: Check e against st.Elem() before losing access to it, possibly using
+	// a instGetElementPtrDummy which stores e until type resolution.
+
+	_ = e
+	//if !e.Equal(st.Elem()) {
+	//	return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
+	//}
+	src, err := NewConstant(st, srcVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -1507,7 +1574,7 @@ func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ir.InstStore, er
 
 // NewGetElementPtrInst returns a new getelementptr instruction based on the
 // given element type, source address type and value, and element indices.
-func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ir.InstGetElementPtr, error) {
+func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*instGetElementPtrDummy, error) {
 	e, ok := elem.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
@@ -1516,10 +1583,14 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ir.InstGe
 	if !ok {
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
-	if !e.Equal(st.Elem()) {
-		return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
-	}
-	src, err := NewValue(srcTyp, srcVal)
+	// TODO: Check e against st.Elem() before losing access to it, possibly using
+	// a instGetElementPtrDummy which stores e until type resolution.
+
+	_ = e
+	//if !e.Equal(st.Elem()) {
+	//	return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
+	//}
+	src, err := NewValue(st, srcVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -1532,7 +1603,7 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ir.InstGe
 	default:
 		return nil, errors.Errorf("invalid indices type; expected []value.Value or nil, got %T", indices)
 	}
-	return ir.NewGetElementPtr(src, is...), nil
+	return newGetElementPtrDummy(e, src, is...), nil
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------

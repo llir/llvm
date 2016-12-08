@@ -17,17 +17,17 @@ import (
 
 // Int represents an integer constant.
 type Int struct {
-	// Constant value.
-	x *big.Int
 	// Constant type.
 	typ *types.IntType
+	// Constant value.
+	x *big.Int
 }
 
 // NewInt returns a new integer constant based on the given integer value and
 // type.
 func NewInt(x int64, typ types.Type) *Int {
 	if typ, ok := typ.(*types.IntType); ok {
-		return &Int{x: big.NewInt(x), typ: typ}
+		return &Int{typ: typ, x: big.NewInt(x)}
 	}
 	panic(fmt.Sprintf("invalid integer constant type; expected *types.IntType, got %T", typ))
 }
@@ -101,17 +101,17 @@ func (c *Int) Int64() int64 {
 
 // Float represents a floating-point constant.
 type Float struct {
-	// Constant value.
-	x *big.Float
 	// Constant type.
 	typ *types.FloatType
+	// Constant value.
+	x *big.Float
 }
 
 // NewFloat returns a new floating-point constant based on the given
 // floating-point value and type.
 func NewFloat(x float64, typ types.Type) *Float {
 	if typ, ok := typ.(*types.FloatType); ok {
-		return &Float{x: big.NewFloat(x), typ: typ}
+		return &Float{typ: typ, x: big.NewFloat(x)}
 	}
 	panic(fmt.Sprintf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
 }

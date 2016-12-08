@@ -19,6 +19,8 @@ import (
 // A Module represents an LLVM IR module, which consists of top-level type
 // definitions, global variables, functions, and metadata.
 type Module struct {
+	// Type definitions.
+	types []*types.NamedType
 	// Global variables of the module.
 	globals []*Global
 	// Functions of the module.
@@ -33,6 +35,13 @@ func NewModule() *Module {
 // String returns the LLVM syntax representation of the module.
 func (m *Module) String() string {
 	buf := &bytes.Buffer{}
+	for _, typ := range m.Types() {
+		def, ok := typ.Def()
+		if !ok {
+			panic(fmt.Sprintf("invalid type definition %q; expected underlying type definition, got nil", typ))
+		}
+		fmt.Fprintf(buf, "%s = type %s\n", typ, def)
+	}
 	for _, global := range m.Globals() {
 		fmt.Fprintln(buf, global)
 	}
@@ -40,6 +49,11 @@ func (m *Module) String() string {
 		fmt.Fprintln(buf, f)
 	}
 	return buf.String()
+}
+
+// Types returns the type definitions of the module.
+func (m *Module) Types() []*types.NamedType {
+	return m.types
 }
 
 // Globals returns the global variables of the module.
@@ -52,6 +66,11 @@ func (m *Module) Funcs() []*Function {
 	return m.funcs
 }
 
+// AppendType appends the given type definition to the module.
+func (m *Module) AppendType(typ *types.NamedType) {
+	m.types = append(m.types, typ)
+}
+
 // AppendGlobal appends the given global variable to the module.
 func (m *Module) AppendGlobal(global *Global) {
 	m.globals = append(m.globals, global)
@@ -61,6 +80,17 @@ func (m *Module) AppendGlobal(global *Global) {
 func (m *Module) AppendFunction(f *Function) {
 	f.SetParent(m)
 	m.funcs = append(m.funcs, f)
+}
+
+// NewType appends a new type definition to the module based on the given type
+// name and underlying type definition.
+//
+// A nil underlying type definition may be used to specify an opaque struct
+// type, the body of which may later be specified using the SetDef method.
+func (m *Module) NewType(name string, def types.Type) *types.NamedType {
+	typ := types.NewNamed(name, def)
+	m.AppendType(typ)
+	return typ
 }
 
 // NewGlobalDecl appends a new external global variable declaration to the

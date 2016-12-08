@@ -172,9 +172,16 @@ TopLevelDeclList
 ;
 
 TopLevelDecl
-	: Global
+	: TypeDef
+	| Global
 	| FunctionDecl
 	| FunctionDef
+;
+
+// === [ Type definitions ] ====================================================
+
+TypeDef
+	: LocalIdent "=" "type" Type   << irx.NewTypeDef($0, $3) >>
 ;
 
 // === [ Global variables ] ====================================================
@@ -247,6 +254,8 @@ Type
 	| PointerType
 	| VectorType
 	| ArrayType
+	| StructType
+	| NamedType
 ;
 
 ResultType
@@ -290,6 +299,24 @@ VectorType
 
 ArrayType
 	: "[" IntConst "x" Type "]"   << irx.NewArrayType($1, $3) >>
+;
+
+StructType
+	: "{" Fields "}"   << irx.NewStructType($1) >>
+;
+
+Fields
+	: empty
+	| FieldList
+;
+
+FieldList
+	: Type                 << irx.NewTypeList($0) >>
+	| FieldList "," Type   << irx.AppendType($0, $2) >>
+;
+
+NamedType
+	: LocalIdent   << irx.NewNamedType($0) >>
 ;
 
 // === [ Values ] ==============================================================

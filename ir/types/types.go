@@ -21,6 +21,7 @@ import "fmt"
 //    *types.VectorType    (https://godoc.org/github.com/llir/llvm/ir/types#VectorType)
 //    *types.ArrayType     (https://godoc.org/github.com/llir/llvm/ir/types#ArrayType)
 //    *types.StructType    (https://godoc.org/github.com/llir/llvm/ir/types#StructType)
+//    *types.NamedType     (https://godoc.org/github.com/llir/llvm/ir/types#NamedType)
 type Type interface {
 	fmt.Stringer
 	// Equal reports whether t and u are of equal type.

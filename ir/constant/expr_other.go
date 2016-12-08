@@ -18,12 +18,12 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#icmp-instruction
 type ExprICmp struct {
+	// Type of the constant expression.
+	typ types.Type
 	// Integer condition code.
 	cond IntPred
 	// Operands.
 	x, y Constant
-	// Type of the constant expression.
-	typ types.Type
 }
 
 // NewICmp returns a new icmp expression based on the given integer condition
@@ -33,7 +33,7 @@ func NewICmp(cond IntPred, x, y Constant) *ExprICmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &ExprICmp{cond: cond, x: x, y: y, typ: typ}
+	return &ExprICmp{typ: typ, cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -121,12 +121,12 @@ func (cond IntPred) String() string {
 // References:
 //    http://llvm.org/docs/LangRef.html#fcmp-instruction
 type ExprFCmp struct {
+	// Type of the constant expression.
+	typ types.Type
 	// Floating-point condition code.
 	cond FloatPred
 	// Operands.
 	x, y Constant
-	// Type of the constant expression.
-	typ types.Type
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
@@ -136,7 +136,7 @@ func NewFCmp(cond FloatPred, x, y Constant) *ExprFCmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &ExprFCmp{cond: cond, x: x, y: y, typ: typ}
+	return &ExprFCmp{typ: typ, cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the constant expression.

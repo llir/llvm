@@ -2,22 +2,27 @@
 //
 // Per module.
 //
-//    1. Index global variables.
-//    2. Index functions.
+//    1. Index type definitions.
+//    2. Index global variables.
+//    3. Index functions.
 //
 // Per function.
 //
-//    1. Force generate local IDs for unnamed basic blocks and instructions.
-//    2. Index basic blocks.
-//    3. Fix dummy instructions and terminators.
-//       - e.g. replace *ir.instCallDummy with *ir.InstCall
+//    1. Fix dummy types.
+//       - e.g. replace *irx.namedTypeDummy with *types.NamedType
+//    2. Replace dummy instructions with dummy Type method implementations; e.g.
+//       *irx.instGetElementPtrDummy.
+//    3. Force generate local IDs for unnamed basic blocks and instructions.
+//    4. Index basic blocks.
+//    5. Fix dummy instructions and terminators.
+//       - e.g. replace *irx.instCallDummy with *ir.InstCall
 //       - Replace function and label names with *ir.Function and *ir.BasicBlock
 //         values.
-//       - Leave dummy operands (e.g. *ir.localDummy, *ir.globalDummy,
-//         *ir.instPhiDummy and *ir.instCallDummy) as these will be replaced in
-//         a later stage.
-//    4. Index local variables produced by instructions.
-//    5. Replace dummy operands of instructions and terminators.
+//       - Leave dummy operands (e.g. *irx.localDummy, *irx.globalDummy,
+//         *irx.instPhiDummy and *irx.instCallDummy) as these will be replaced
+//         in a later stage.
+//    6. Index local variables produced by instructions.
+//    7. Replace dummy operands of instructions and terminators.
 
 package irx
 
@@ -26,16 +31,28 @@ import (
 
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
 
 // A fixer keeps track of global and local identifiers to replace dummy values
 // with their real values.
 type fixer struct {
+	// types maps type identifiers to their real types.
+	types map[string]*types.NamedType
 	// globals maps global identifiers to their real values.
 	globals map[string]constant.Constant
 	// locals maps local identifiers to their real values.
 	locals map[string]value.Value
+}
+
+// getType returns the type of the given type name.
+func (fix *fixer) getType(name string) *types.NamedType {
+	typ, ok := fix.types[name]
+	if !ok {
+		panic(fmt.Sprintf("unable to locate type name %q", name))
+	}
+	return typ
 }
 
 // getGlobal returns the global value of the given global identifier.
@@ -83,6 +100,16 @@ func (fix *fixer) getBlock(name string) *ir.BasicBlock {
 func fixModule(m *ir.Module) *ir.Module {
 	fix := &fixer{
 		globals: make(map[string]constant.Constant),
+		types:   make(map[string]*types.NamedType),
+	}
+
+	// Index type definitions.
+	for _, typ := range m.Types() {
+		name := typ.Name()
+		if _, ok := fix.types[name]; ok {
+			panic(fmt.Sprintf("type name %q already present; old `%v`, new `%v`", name, fix.types[name], typ))
+		}
+		fix.types[name] = typ
 	}
 
 	// Index global variables.
@@ -109,6 +136,11 @@ func fixModule(m *ir.Module) *ir.Module {
 		fix.globals[name] = f
 	}
 
+	// Fix type definitions.
+	for _, typ := range m.Types() {
+		fix.fixType(typ)
+	}
+
 	// Fix globals.
 	for _, global := range globals {
 		fix.fixGlobal(global)
@@ -120,6 +152,44 @@ func fixModule(m *ir.Module) *ir.Module {
 	}
 
 	return m
+}
+
+// === [ Type definitions ] ====================================================
+
+// fixType replaces dummy types within the given type with their real types.
+func (fix *fixer) fixType(old types.Type) {
+	switch old := old.(type) {
+	case *types.VoidType:
+		// nothing to do.
+	case *types.LabelType:
+		// nothing to do.
+	case *types.IntType:
+		// nothing to do.
+	case *types.FloatType:
+		// nothing to do.
+	case *types.FuncType:
+		fix.fixType(old.RetType())
+		for _, param := range old.Params() {
+			fix.fixType(param.Type())
+		}
+	case *types.PointerType:
+		fix.fixType(old.Elem())
+	case *types.VectorType:
+		fix.fixType(old.Elem())
+	case *types.ArrayType:
+		fix.fixType(old.Elem())
+	case *types.StructType:
+		for _, field := range old.Fields() {
+			fix.fixType(field)
+		}
+	case *types.NamedType:
+		if _, ok := old.Def(); !ok {
+			def := fix.getType(old.Name())
+			old.SetDef(def)
+		}
+	default:
+		panic(fmt.Sprintf("support for type %T not yet implemented", old))
+	}
 }
 
 // === [ Global variables ] ====================================================

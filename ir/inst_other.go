@@ -25,12 +25,12 @@ type InstICmp struct {
 	parent *BasicBlock
 	// Name of the local variable associated with the instruction.
 	name string
+	// Type of the instruction.
+	typ types.Type
 	// Integer condition code.
 	cond IntPred
 	// Operands.
 	x, y value.Value
-	// Type of the instruction.
-	typ types.Type
 }
 
 // NewICmp returns a new icmp instruction based on the given integer condition
@@ -40,7 +40,7 @@ func NewICmp(cond IntPred, x, y value.Value) *InstICmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &InstICmp{cond: cond, x: x, y: y, typ: typ}
+	return &InstICmp{typ: typ, cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the instruction.
@@ -158,12 +158,12 @@ type InstFCmp struct {
 	parent *BasicBlock
 	// Name of the local variable associated with the instruction.
 	name string
+	// Type of the instruction.
+	typ types.Type
 	// Floating-point condition code.
 	cond FloatPred
 	// Operands.
 	x, y value.Value
-	// Type of the instruction.
-	typ types.Type
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -173,7 +173,7 @@ func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &InstFCmp{cond: cond, x: x, y: y, typ: typ}
+	return &InstFCmp{typ: typ, cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the instruction.
@@ -303,10 +303,10 @@ type InstPhi struct {
 	parent *BasicBlock
 	// Name of the local variable associated with the instruction.
 	name string
-	// Incoming values.
-	incs []*Incoming
 	// Type of the instruction.
 	typ types.Type
+	// Incoming values.
+	incs []*Incoming
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -315,7 +315,7 @@ func NewPhi(incs ...*Incoming) *InstPhi {
 		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
 	}
 	typ := incs[0].x.Type()
-	return &InstPhi{incs: incs, typ: typ}
+	return &InstPhi{typ: typ, incs: incs}
 }
 
 // Type returns the type of the instruction.

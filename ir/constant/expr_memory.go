@@ -19,14 +19,14 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#getelementptr-instruction
 type ExprGetElementPtr struct {
-	// Source address.
-	src Constant
-	// Element indices.
-	indices []Constant
 	// Type of the constant expression.
 	typ types.Type
 	// Source address element type.
 	elem types.Type
+	// Source address.
+	src Constant
+	// Element indices.
+	indices []Constant
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
@@ -63,7 +63,7 @@ func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
 		}
 	}
 	typ := types.NewPointer(e)
-	return &ExprGetElementPtr{src: src, indices: indices, typ: typ, elem: elem}
+	return &ExprGetElementPtr{typ: typ, elem: elem, src: src, indices: indices}
 }
 
 // Type returns the type of the constant expression.

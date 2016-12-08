@@ -17,10 +17,10 @@ import (
 
 // Vector represents a vector constant.
 type Vector struct {
-	// Vector elements.
-	elems []Constant
 	// Vector type.
 	typ *types.VectorType
+	// Vector elements.
+	elems []Constant
 }
 
 // NewVector returns a new vector constant based on the given elements.
@@ -29,7 +29,7 @@ func NewVector(elems ...Constant) *Vector {
 		panic(fmt.Sprintf("invalid number of vector elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewVector(elems[0].Type(), int64(len(elems)))
-	return &Vector{elems: elems, typ: typ}
+	return &Vector{typ: typ, elems: elems}
 }
 
 // Type returns the type of the constant.
@@ -66,10 +66,10 @@ func (c *Vector) Elems() []Constant {
 
 // Array represents an array constant.
 type Array struct {
-	// Array elements.
-	elems []Constant
 	// Array type.
 	typ *types.ArrayType
+	// Array elements.
+	elems []Constant
 	// Pretty-print as character array.
 	charArray bool
 }
@@ -80,7 +80,7 @@ func NewArray(elems ...Constant) *Array {
 		panic(fmt.Sprintf("invalid number of array elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewArray(elems[0].Type(), int64(len(elems)))
-	return &Array{elems: elems, typ: typ}
+	return &Array{typ: typ, elems: elems}
 }
 
 // Type returns the type of the constant.
@@ -141,10 +141,10 @@ func (c *Array) SetCharArray(charArray bool) {
 
 // Struct represents a struct constant.
 type Struct struct {
-	// Struct fields.
-	fields []Constant
 	// Struct type.
 	typ *types.StructType
+	// Struct fields.
+	fields []Constant
 }
 
 // NewStruct returns a new struct constant based on the given struct fields.
@@ -154,7 +154,7 @@ func NewStruct(fields ...Constant) *Struct {
 		fieldTypes = append(fieldTypes, field.Type())
 	}
 	typ := types.NewStruct(fieldTypes...)
-	return &Struct{fields: fields, typ: typ}
+	return &Struct{typ: typ, fields: fields}
 }
 
 // Type returns the type of the constant.

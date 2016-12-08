@@ -28,11 +28,11 @@ type Function struct {
 	// Function name.
 	name string
 	// Function type.
+	typ *types.PointerType
+	// Function type.
 	sig *types.FuncType
 	// Basic blocks of the function; or nil if external function declaration.
 	blocks []*BasicBlock
-	// Function type.
-	typ *types.PointerType
 }
 
 // NewFunction returns a new function based on the given function name, return
@@ -40,7 +40,7 @@ type Function struct {
 func NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
 	sig := types.NewFunc(ret, params...)
 	typ := types.NewPointer(sig)
-	return &Function{name: name, sig: sig, typ: typ}
+	return &Function{name: name, typ: typ, sig: sig}
 }
 
 // Type returns the type of the function.

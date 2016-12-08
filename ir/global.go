@@ -25,12 +25,12 @@ import (
 type Global struct {
 	// Global variable name.
 	name string
+	// Global variable type.
+	typ *types.PointerType
 	// Content type.
 	content types.Type
 	// Initial value; or nil if defined externally.
 	init constant.Constant
-	// Global variable type.
-	typ *types.PointerType
 	// Immutability of the global variable.
 	isConst bool
 }
@@ -39,7 +39,7 @@ type Global struct {
 // given global variable name and content type.
 func NewGlobalDecl(name string, content types.Type) *Global {
 	typ := types.NewPointer(content)
-	return &Global{name: name, content: content, typ: typ}
+	return &Global{name: name, typ: typ, content: content}
 }
 
 // NewGlobalDef returns a new global variable definition based on the given
@@ -47,7 +47,7 @@ func NewGlobalDecl(name string, content types.Type) *Global {
 func NewGlobalDef(name string, init constant.Constant) *Global {
 	content := init.Type()
 	typ := types.NewPointer(content)
-	return &Global{name: name, content: content, init: init, typ: typ}
+	return &Global{name: name, typ: typ, content: content, init: init}
 }
 
 // Type returns the type of the global variable.
