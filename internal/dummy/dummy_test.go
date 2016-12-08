@@ -14,6 +14,8 @@ var (
 
 // Valutate that the relevant types satisfy the ir.Instruction interface.
 var (
+	// Memory instructions
+	_ ir.Instruction = &dummy.InstGetElementPtr{}
 	// Other instructions
 	_ ir.Instruction = &dummy.InstPhi{}
 	_ ir.Instruction = &dummy.InstCall{}
@@ -31,6 +33,8 @@ var (
 var (
 	_ value.Named = &dummy.Global{}
 	_ value.Named = &dummy.Local{}
+	// Memory instructions
+	_ value.Named = &dummy.InstGetElementPtr{}
 	// Other instructions
 	_ value.Named = &dummy.InstPhi{}
 	_ value.Named = &dummy.InstCall{}

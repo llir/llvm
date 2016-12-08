@@ -1,5 +1,10 @@
 // === [ Global identifiers ] ==================================================
 
+// Package dummy provides a set of LLVM IR dummy types, values, instructions and
+// terminators.
+//
+// Dummy values are used to allow for forward references, and are replaced by
+// their real values in later stages of parsing.
 package dummy
 
 import (

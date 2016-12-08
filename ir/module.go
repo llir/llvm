@@ -40,7 +40,18 @@ func (m *Module) String() string {
 		if !ok {
 			panic(fmt.Sprintf("invalid type definition %q; expected underlying type definition, got nil", typ))
 		}
-		fmt.Fprintf(buf, "%s = type %s\n", typ, def)
+		if def, ok := def.(*types.StructType); ok {
+			fmt.Fprintf(buf, "%s = type { ", typ)
+			for i, field := range def.Fields() {
+				if i != 0 {
+					buf.WriteString(", ")
+				}
+				buf.WriteString(field.String())
+			}
+			buf.WriteString(" }\n")
+		} else {
+			fmt.Fprintf(buf, "%s = type %s\n", typ, def)
+		}
 	}
 	for _, global := range m.Globals() {
 		fmt.Fprintln(buf, global)

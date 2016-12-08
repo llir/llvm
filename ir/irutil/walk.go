@@ -470,6 +470,12 @@ func WalkInst(inst ir.Instruction, visit func(node interface{})) {
 		}
 
 	// Dummy instructions
+	case *dummy.InstGetElementPtr:
+		WalkType(inst.ElemType(), visit)
+		WalkValue(inst.Src(), visit)
+		for _, index := range inst.Indices() {
+			WalkValue(index, visit)
+		}
 	case *dummy.InstPhi:
 		WalkType(inst.Type(), visit)
 		for _, inc := range inst.Incs() {

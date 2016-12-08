@@ -902,7 +902,7 @@ func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
 	// TODO: Check e against st.Elem() before losing access to it, possibly using
-	// a instGetElementPtrDummy which stores e until type resolution.
+	// a *dummy.InstGetElementPtr which stores e until type resolution.
 
 	_ = e
 	//if !e.Equal(st.Elem()) {
@@ -1577,7 +1577,7 @@ func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ir.InstStore, er
 
 // NewGetElementPtrInst returns a new getelementptr instruction based on the
 // given element type, source address type and value, and element indices.
-func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*instGetElementPtrDummy, error) {
+func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*dummy.InstGetElementPtr, error) {
 	e, ok := elem.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
@@ -1587,7 +1587,7 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*instGetEl
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
 	// TODO: Check e against st.Elem() before losing access to it, possibly using
-	// a instGetElementPtrDummy which stores e until type resolution.
+	// a *dummy.InstGetElementPtr which stores e until type resolution.
 
 	_ = e
 	//if !e.Equal(st.Elem()) {
@@ -1606,7 +1606,7 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*instGetEl
 	default:
 		return nil, errors.Errorf("invalid indices type; expected []value.Value or nil, got %T", indices)
 	}
-	return newGetElementPtrDummy(e, src, is...), nil
+	return dummy.NewGetElementPtr(e, src, is...), nil
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------
