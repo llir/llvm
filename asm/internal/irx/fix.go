@@ -263,7 +263,7 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
 			switch old := inst.(type) {
-			case *instPhiDummy:
+			case *dummy.InstPhi:
 				inst = fix.fixPhiInstDummy(old)
 			case *dummy.InstCall:
 				inst = fix.fixCallInstDummy(old)
@@ -273,9 +273,9 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		block.SetInsts(insts)
 		term := block.Term()
 		switch old := term.(type) {
-		case *termBrDummy:
+		case *dummy.TermBr:
 			term = fix.fixBrTermDummy(old)
-		case *termCondBrDummy:
+		case *dummy.TermCondBr:
 			term = fix.fixCondBrTermDummy(old)
 		case *termSwitchDummy:
 			term = fix.fixSwitchTermDummy(old)
@@ -901,23 +901,23 @@ func (fix *fixer) fixFCmpInst(old *ir.InstFCmp) *ir.InstFCmp {
 
 // fixPhiInstDummy replaces the given dummy phi instruction with a real phi
 // instruction, and replaces dummy the instruction with their real values.
-func (fix *fixer) fixPhiInstDummy(old *instPhiDummy) *ir.InstPhi {
+func (fix *fixer) fixPhiInstDummy(old *dummy.InstPhi) *ir.InstPhi {
 	var incs []*ir.Incoming
-	for _, inc := range old.incs {
-		pred := fix.getBlock(inc.pred)
+	for _, inc := range old.Incs() {
+		pred := fix.getBlock(inc.Pred())
 		// Leave inc.x unchanged for now. It may contain dummy values. fixPhiInst
 		// will replace these later.
 		//
 		// We cannot replace them yet, as all local variables have not been
 		// indexed yet, as the time of the call to fixPhiInstDummy.
-		x, ok := inc.x.(value.Value)
+		x, ok := inc.X().(value.Value)
 		if !ok {
-			panic(fmt.Sprintf("invalid x type; expected value.Value, got %T", inc.x))
+			panic(fmt.Sprintf("invalid x type; expected value.Value, got %T", inc.X()))
 		}
 		incs = append(incs, ir.NewIncoming(x, pred))
 	}
 	inst := ir.NewPhi(incs...)
-	inst.SetParent(old.parent)
+	inst.SetParent(old.Parent())
 	inst.SetName(old.Name())
 	return inst
 }
@@ -1015,10 +1015,10 @@ func (fix *fixer) fixRetTerm(old *ir.TermRet) *ir.TermRet {
 // fixBrTermDummy replaces the given dummy unconditional br terminator with a
 // real unconditional br terminator, and replaces dummy values within the
 // terminator with their real values.
-func (fix *fixer) fixBrTermDummy(old *termBrDummy) *ir.TermBr {
-	target := fix.getBlock(old.target)
+func (fix *fixer) fixBrTermDummy(old *dummy.TermBr) *ir.TermBr {
+	target := fix.getBlock(old.Target())
 	term := ir.NewBr(target)
-	term.SetParent(old.parent)
+	term.SetParent(old.Parent())
 	return term
 }
 
@@ -1052,16 +1052,16 @@ func (fix *fixer) fixSwitchTerm(old *ir.TermSwitch) *ir.TermSwitch {
 // fixCondBrTermDummy replaces the given dummy conditional br terminator with a
 // real conditional br terminator, and replaces dummy values within the
 // terminator with their real values.
-func (fix *fixer) fixCondBrTermDummy(old *termCondBrDummy) *ir.TermCondBr {
-	targetTrue := fix.getBlock(old.targetTrue)
-	targetFalse := fix.getBlock(old.targetFalse)
+func (fix *fixer) fixCondBrTermDummy(old *dummy.TermCondBr) *ir.TermCondBr {
+	targetTrue := fix.getBlock(old.TargetTrue())
+	targetFalse := fix.getBlock(old.TargetFalse())
 	// Leave old.cond unchanged for now. It may contain dummy values.
 	// fixCondBrTerm will replace these later.
 	//
 	// We cannot replace them yet, as all local variables have not been indexed
 	// yet, as the time of the call to fixCondBrTermDummy.
-	term := ir.NewCondBr(old.cond, targetTrue, targetFalse)
-	term.SetParent(old.parent)
+	term := ir.NewCondBr(old.Cond(), targetTrue, targetFalse)
+	term.SetParent(old.Parent())
 	return term
 }
 

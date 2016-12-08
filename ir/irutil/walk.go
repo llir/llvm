@@ -465,6 +465,15 @@ func WalkInst(inst ir.Instruction, visit func(node interface{})) {
 		}
 
 	// Dummy instructions
+	case *dummy.InstPhi:
+		WalkType(inst.Type(), visit)
+		for _, inc := range inst.Incs() {
+			x, ok := inc.X().(value.Value)
+			if !ok {
+				panic(fmt.Sprintf("invalid x type, expected value.Value, got %T", inc.X()))
+			}
+			WalkValue(x, visit)
+		}
 	case *dummy.InstCall:
 		WalkType(inst.Type(), visit)
 		for _, arg := range inst.Args() {
@@ -480,6 +489,7 @@ func WalkInst(inst ir.Instruction, visit func(node interface{})) {
 func WalkTerm(term ir.Terminator, visit func(node interface{})) {
 	visit(term)
 	switch term := term.(type) {
+	// Terminators.
 	case *ir.TermRet:
 		if x, ok := term.X(); ok {
 			WalkValue(x, visit)
@@ -499,6 +509,12 @@ func WalkTerm(term ir.Terminator, visit func(node interface{})) {
 		}
 	case *ir.TermUnreachable:
 		// nothing to do; no child nodes.
+
+	// Dummy terminators
+	case *dummy.TermBr:
+		// nothing to do; no child nodes.
+	case *dummy.TermCondBr:
+		WalkValue(term.Cond(), visit)
 	default:
 		panic(fmt.Sprintf("support for walking terminator %T not yet implemented", term))
 	}

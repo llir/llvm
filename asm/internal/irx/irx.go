@@ -1830,56 +1830,56 @@ func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ir.InstFCmp, error) {
 }
 
 // NewPhiInst returns a new phi instruction based on the given incoming values.
-func NewPhiInst(typ, incs interface{}) (*instPhiDummy, error) {
+func NewPhiInst(typ, incs interface{}) (*dummy.InstPhi, error) {
 	t, ok := typ.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
 	}
-	is, ok := incs.([]*incomingDummy)
+	is, ok := incs.([]*dummy.Incoming)
 	if !ok {
-		return nil, errors.Errorf("invalid incoming value list type; expected []*irx.incomingDummy, got %T", incs)
+		return nil, errors.Errorf("invalid incoming value list type; expected []*dummy.Incoming, got %T", incs)
 	}
 	for _, inc := range is {
-		x, err := NewValue(typ, inc.x)
+		x, err := NewValue(typ, inc.X())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		inc.x = x
+		inc.SetX(x)
 	}
-	return newPhiDummy(t, is...), nil
+	return dummy.NewPhi(t, is...), nil
 }
 
 // NewIncomingList returns a new incoming value list based on the given incoming
 // value.
-func NewIncomingList(inc interface{}) ([]*incomingDummy, error) {
-	i, ok := inc.(*incomingDummy)
+func NewIncomingList(inc interface{}) ([]*dummy.Incoming, error) {
+	i, ok := inc.(*dummy.Incoming)
 	if !ok {
-		return nil, errors.Errorf("invalid incoming value type; expected *irx.incomingDummy, got %T", inc)
+		return nil, errors.Errorf("invalid incoming value type; expected *dummy.Incoming, got %T", inc)
 	}
-	return []*incomingDummy{i}, nil
+	return []*dummy.Incoming{i}, nil
 }
 
 // AppendIncoming appends the given incoming value to the incoming value list.
-func AppendIncoming(incs, inc interface{}) ([]*incomingDummy, error) {
-	is, ok := incs.([]*incomingDummy)
+func AppendIncoming(incs, inc interface{}) ([]*dummy.Incoming, error) {
+	is, ok := incs.([]*dummy.Incoming)
 	if !ok {
-		return nil, errors.Errorf("invalid incoming value list type; expected []*irx.incomingDummy, got %T", incs)
+		return nil, errors.Errorf("invalid incoming value list type; expected []*dummy.Incoming, got %T", incs)
 	}
-	i, ok := inc.(*incomingDummy)
+	i, ok := inc.(*dummy.Incoming)
 	if !ok {
-		return nil, errors.Errorf("invalid incoming value type; expected *irx.incomingDummy, got %T", inc)
+		return nil, errors.Errorf("invalid incoming value type; expected *dummy.Incoming, got %T", inc)
 	}
 	return append(is, i), nil
 }
 
 // NewIncoming returns a new incoming value based on the given value and
 // predecessor basic block.
-func NewIncoming(x, pred interface{}) (*incomingDummy, error) {
+func NewIncoming(x, pred interface{}) (*dummy.Incoming, error) {
 	p, ok := pred.(*LocalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid predecessor type; expected *irx.LocalIdent, got %T", pred)
 	}
-	return newIncomingDummy(x, p.name), nil
+	return dummy.NewIncoming(x, p.name), nil
 }
 
 // NewSelect returns a new select instruction based on the given selection
@@ -1937,17 +1937,17 @@ func NewRetTerm(typ, val interface{}) (*ir.TermRet, error) {
 
 // NewBrTerm returns a new unconditional br terminator based on the given target
 // branch.
-func NewBrTerm(target interface{}) (*termBrDummy, error) {
+func NewBrTerm(target interface{}) (*dummy.TermBr, error) {
 	t, ok := target.(*LocalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
 	}
-	return newBrDummy(t.name), nil
+	return dummy.NewBr(t.name), nil
 }
 
 // NewCondBrTerm returns a new conditional br terminator based on the given
 // branching condition type and value, and conditional target branches.
-func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*termCondBrDummy, error) {
+func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*dummy.TermCondBr, error) {
 	cond, err := NewValue(condTyp, condVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -1960,7 +1960,7 @@ func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*term
 	if !ok {
 		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetFalse)
 	}
-	return newCondBrDummy(cond, tTrue.name, tFalse.name), nil
+	return dummy.NewCondBr(cond, tTrue.name, tFalse.name), nil
 }
 
 // NewSwitchTerm returns a new switch terminator based on the given control

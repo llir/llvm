@@ -12,6 +12,115 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+// --- [ phi ] -----------------------------------------------------------------
+
+// InstPhi represents a dummy phi instruction.
+type InstPhi struct {
+	// Parent basic block.
+	parent *ir.BasicBlock
+	// Name of the local variable associated with the instruction.
+	name string
+	// Type of the instruction.
+	typ types.Type
+	// Incoming values.
+	incs []*Incoming
+}
+
+// NewPhi returns a new dummy phi instruction based on the given type and
+// incoming values.
+func NewPhi(typ types.Type, incs ...*Incoming) *InstPhi {
+	return &InstPhi{typ: typ, incs: incs}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstPhi) Type() types.Type {
+	return inst.typ
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstPhi) Ident() string {
+	return enc.Local(inst.name)
+}
+
+// Name returns the name of the local variable associated with the instruction.
+func (inst *InstPhi) Name() string {
+	return inst.name
+}
+
+// SetName sets the name of the local variable associated with the instruction.
+func (inst *InstPhi) SetName(name string) {
+	inst.name = name
+}
+
+// String returns the LLVM syntax representation of the instruction.
+func (inst *InstPhi) String() string {
+	buf := &bytes.Buffer{}
+	fmt.Fprintf(buf, "%s = phi %s ",
+		inst.Ident(),
+		inst.Type())
+	for i, inc := range inst.Incs() {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		x, ok := inc.X().(value.Value)
+		if !ok {
+			panic(fmt.Sprintf("invalid x type; expected value.Value, got %T", inc.X()))
+		}
+		fmt.Fprintf(buf, "[ %s, %s ]",
+			x,
+			inc.Pred())
+	}
+	return buf.String()
+}
+
+// Parent returns the parent basic block of the instruction.
+func (inst *InstPhi) Parent() *ir.BasicBlock {
+	return inst.parent
+}
+
+// SetParent sets the parent basic block of the instruction.
+func (inst *InstPhi) SetParent(parent *ir.BasicBlock) {
+	inst.parent = parent
+}
+
+// Incs returns the incoming values of the phi instruction.
+func (inst *InstPhi) Incs() []*Incoming {
+	return inst.incs
+}
+
+// Incoming represents a dummy incoming value of a phi instruction.
+type Incoming struct {
+	// Incoming value.
+	//
+	// Initially holds *irx.IntLit, *irx.LocalIdent, ... when created from
+	// irx.NewIncoming since the type is not yet known. The irx.NewPhiInst later
+	// replaces this with a value (e.g. *constant.Int, *dummy.Local, ...).
+	x interface{}
+	// Predecessor basic block of the incoming value.
+	pred string
+}
+
+// NewIncoming returns a new dummy incoming value based on the given value and
+// predecessor basic block.
+func NewIncoming(x interface{}, pred string) *Incoming {
+	return &Incoming{x: x, pred: pred}
+}
+
+// X returns the incoming value.
+func (inc *Incoming) X() interface{} {
+	return inc.x
+}
+
+// SetX sets the incoming value.
+func (inc *Incoming) SetX(x value.Value) {
+	inc.x = x
+}
+
+// Pred returns the predecessor basic block of the incoming value.
+func (inc *Incoming) Pred() string {
+	return inc.pred
+}
+
 // --- [ call ] ----------------------------------------------------------------
 
 // InstCall represents a dummy call instruction.
@@ -63,7 +172,7 @@ func (inst *InstCall) String() string {
 	}
 	fmt.Fprintf(buf, "call %s %s(",
 		typ,
-		inst.callee)
+		inst.Callee())
 	for i, arg := range inst.args {
 		if i != 0 {
 			buf.WriteString(", ")

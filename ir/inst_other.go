@@ -344,8 +344,8 @@ func (inst *InstPhi) String() string {
 	fmt.Fprintf(buf, "%s = phi %s ",
 		inst.Ident(),
 		inst.Type())
-	for j, inc := range inst.Incs() {
-		if j != 0 {
+	for i, inc := range inst.Incs() {
+		if i != 0 {
 			buf.WriteString(", ")
 		}
 		fmt.Fprintf(buf, "[ %s, %s ]",

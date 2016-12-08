@@ -15,7 +15,15 @@ var (
 // Valutate that the relevant types satisfy the ir.Instruction interface.
 var (
 	// Other instructions
+	_ ir.Instruction = &dummy.InstPhi{}
 	_ ir.Instruction = &dummy.InstCall{}
+)
+
+// Valutate that the relevant types satisfy the ir.Terminator interface.
+var (
+	// Terminators
+	_ ir.Terminator = &dummy.TermBr{}
+	_ ir.Terminator = &dummy.TermCondBr{}
 )
 
 // Valutate that the relevant types satisfy the value.Named interface.
@@ -23,5 +31,6 @@ var (
 	_ value.Named = &dummy.Global{}
 	_ value.Named = &dummy.Local{}
 	// Other instructions
+	_ value.Named = &dummy.InstPhi{}
 	_ value.Named = &dummy.InstCall{}
 )
