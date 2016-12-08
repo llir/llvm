@@ -9,7 +9,6 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
-	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -101,70 +100,4 @@ func (inst *instGetElementPtrDummy) Parent() *ir.BasicBlock {
 // SetParent sets the parent basic block of the instruction.
 func (inst *instGetElementPtrDummy) SetParent(parent *ir.BasicBlock) {
 	inst.parent = parent
-}
-
-// termSwitchDummy represents a dummy switch terminator.
-type termSwitchDummy struct {
-	// Parent basic block.
-	parent *ir.BasicBlock
-	// Control variable.
-	x value.Value
-	// Default target branch.
-	targetDefault string
-	// Switch cases.
-	cases []*caseDummy
-}
-
-// newSwitchDummy returns a new dummy switch terminator based on the given
-// control variable, default target branch and switch cases.
-func newSwitchDummy(x value.Value, targetDefault string, cases ...*caseDummy) *termSwitchDummy {
-	return &termSwitchDummy{x: x, targetDefault: targetDefault, cases: cases}
-}
-
-// String returns the LLVM syntax representation of the terminator.
-func (term *termSwitchDummy) String() string {
-	buf := &bytes.Buffer{}
-	x := term.x
-	fmt.Fprintf(buf, "switch %s %s, label %s [\n",
-		x.Type(),
-		x.Ident(),
-		term.targetDefault)
-	for _, c := range term.cases {
-		x := c.x
-		fmt.Fprintf(buf, "\t\t%s %s, label %s\n",
-			x.Type(),
-			x.Ident(),
-			c.target)
-	}
-	buf.WriteString("\t]")
-	return buf.String()
-}
-
-// Parent returns the parent basic block of the terminator.
-func (term *termSwitchDummy) Parent() *ir.BasicBlock {
-	return term.parent
-}
-
-// SetParent sets the parent basic block of the terminator.
-func (term *termSwitchDummy) SetParent(parent *ir.BasicBlock) {
-	term.parent = parent
-}
-
-// Successors returns the successor basic blocks of the terminator.
-func (term *termSwitchDummy) Successors() []*ir.BasicBlock {
-	panic("dummy implementation")
-}
-
-// caseDummy represents a dummy case value of a switch terminator.
-type caseDummy struct {
-	// Case comparand.
-	x *constant.Int
-	// Case target branch.
-	target string
-}
-
-// newCaseDummy returns a new dummy switch case based on the given case
-// comparand and target branch.
-func newCaseDummy(x *constant.Int, target string) *caseDummy {
-	return &caseDummy{x: x, target: target}
 }

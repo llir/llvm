@@ -515,6 +515,11 @@ func WalkTerm(term ir.Terminator, visit func(node interface{})) {
 		// nothing to do; no child nodes.
 	case *dummy.TermCondBr:
 		WalkValue(term.Cond(), visit)
+	case *dummy.TermSwitch:
+		WalkValue(term.X(), visit)
+		for _, c := range term.Cases() {
+			WalkValue(c.X(), visit)
+		}
 	default:
 		panic(fmt.Sprintf("support for walking terminator %T not yet implemented", term))
 	}

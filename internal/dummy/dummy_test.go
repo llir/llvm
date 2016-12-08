@@ -24,6 +24,7 @@ var (
 	// Terminators
 	_ ir.Terminator = &dummy.TermBr{}
 	_ ir.Terminator = &dummy.TermCondBr{}
+	_ ir.Terminator = &dummy.TermSwitch{}
 )
 
 // Valutate that the relevant types satisfy the value.Named interface.

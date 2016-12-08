@@ -1965,7 +1965,7 @@ func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*dumm
 
 // NewSwitchTerm returns a new switch terminator based on the given control
 // variable type and value, default target branch and switch cases.
-func NewSwitchTerm(xTyp, xVal, targetDefault, cases interface{}) (*termSwitchDummy, error) {
+func NewSwitchTerm(xTyp, xVal, targetDefault, cases interface{}) (*dummy.TermSwitch, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -1974,43 +1974,43 @@ func NewSwitchTerm(xTyp, xVal, targetDefault, cases interface{}) (*termSwitchDum
 	if !ok {
 		return nil, errors.Errorf("invalid default target branch type; expected *irx.LocalIdent, got %T", targetDefault)
 	}
-	var cs []*caseDummy
+	var cs []*dummy.Case
 	switch cases := cases.(type) {
-	case []*caseDummy:
+	case []*dummy.Case:
 		cs = cases
 	case nil:
 		// no cases.
 	default:
-		return nil, errors.Errorf("invalid switch cases type; expected []*irx.caseDummy or nil, got %T", cases)
+		return nil, errors.Errorf("invalid switch cases type; expected []*dummy.Case or nil, got %T", cases)
 	}
-	return newSwitchDummy(x, tDefault.name, cs...), nil
+	return dummy.NewSwitch(x, tDefault.name, cs...), nil
 }
 
 // NewCaseList returns a new switch case list based on the given case.
-func NewCaseList(switchCase interface{}) ([]*caseDummy, error) {
-	c, ok := switchCase.(*caseDummy)
+func NewCaseList(switchCase interface{}) ([]*dummy.Case, error) {
+	c, ok := switchCase.(*dummy.Case)
 	if !ok {
-		return nil, errors.Errorf("invalid switch case type; expected *irx.caseDummy, got %T", switchCase)
+		return nil, errors.Errorf("invalid switch case type; expected *dummy.Case, got %T", switchCase)
 	}
-	return []*caseDummy{c}, nil
+	return []*dummy.Case{c}, nil
 }
 
 // AppendCase appends the given case to the switch case list.
-func AppendCase(cases, switchCase interface{}) ([]*caseDummy, error) {
-	cs, ok := cases.([]*caseDummy)
+func AppendCase(cases, switchCase interface{}) ([]*dummy.Case, error) {
+	cs, ok := cases.([]*dummy.Case)
 	if !ok {
-		return nil, errors.Errorf("invalid switch case list type; expected []*caseDummy, got %T", cases)
+		return nil, errors.Errorf("invalid switch case list type; expected []*dummy.Case, got %T", cases)
 	}
-	c, ok := switchCase.(*caseDummy)
+	c, ok := switchCase.(*dummy.Case)
 	if !ok {
-		return nil, errors.Errorf("invalid switch case type; expected *irx.caseDummy, got %T", switchCase)
+		return nil, errors.Errorf("invalid switch case type; expected *dummy.Case, got %T", switchCase)
 	}
 	return append(cs, c), nil
 }
 
 // NewCase returns a new switch case based on the given case comparand and
 // target branch.
-func NewCase(xTyp, xVal, target interface{}) (*caseDummy, error) {
+func NewCase(xTyp, xVal, target interface{}) (*dummy.Case, error) {
 	xValue, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2023,7 +2023,7 @@ func NewCase(xTyp, xVal, target interface{}) (*caseDummy, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
 	}
-	return newCaseDummy(x, t.name), nil
+	return dummy.NewCase(x, t.name), nil
 }
 
 // ### [ Helper functions ] ####################################################

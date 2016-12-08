@@ -277,7 +277,7 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 			term = fix.fixBrTermDummy(old)
 		case *dummy.TermCondBr:
 			term = fix.fixCondBrTermDummy(old)
-		case *termSwitchDummy:
+		case *dummy.TermSwitch:
 			term = fix.fixSwitchTermDummy(old)
 		}
 		block.SetTerm(term)
@@ -1068,19 +1068,19 @@ func (fix *fixer) fixCondBrTermDummy(old *dummy.TermCondBr) *ir.TermCondBr {
 // fixSwitchTermDummy replaces the given dummy switch terminator with a real
 // switch terminator, and replaces dummy values within the terminator with their
 // real values.
-func (fix *fixer) fixSwitchTermDummy(old *termSwitchDummy) *ir.TermSwitch {
-	targetDefault := fix.getBlock(old.targetDefault)
+func (fix *fixer) fixSwitchTermDummy(old *dummy.TermSwitch) *ir.TermSwitch {
+	targetDefault := fix.getBlock(old.TargetDefault())
 	// Leave old.x and c.x unchanged for now. They may contain dummy values.
 	// fixSwitchTerm will replace these later.
 	//
 	// We cannot replace them yet, as all local variables have not been indexed
 	// yet, as the time of the call to fixSwitchTermDummy.
 	var cases []*ir.Case
-	for _, c := range old.cases {
-		target := fix.getBlock(c.target)
-		cases = append(cases, ir.NewCase(c.x, target))
+	for _, c := range old.Cases() {
+		target := fix.getBlock(c.Target())
+		cases = append(cases, ir.NewCase(c.X(), target))
 	}
-	term := ir.NewSwitch(old.x, targetDefault, cases...)
-	term.SetParent(old.parent)
+	term := ir.NewSwitch(old.X(), targetDefault, cases...)
+	term.SetParent(old.Parent())
 	return term
 }
