@@ -428,12 +428,14 @@ func NewStructType(fields interface{}) (*types.StructType, error) {
 }
 
 // NewNamedType returns a new named type based on the given local identifier.
-func NewNamedType(name interface{}) (*namedTypeDummy, error) {
+func NewNamedType(name interface{}) (*types.NamedType, error) {
 	n, ok := name.(*LocalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid type name type; expected *irx.LocalIdent, got %T", name)
 	}
-	return newNamedTypeDummy(n.name), nil
+	// NOTE: The definition of the named type is later set using SetDef from
+	// fix.go.
+	return types.NewNamed(n.name, nil), nil
 }
 
 // === [ Values ] ==============================================================

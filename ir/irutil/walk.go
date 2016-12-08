@@ -30,6 +30,7 @@ func Walk(m *ir.Module, visit func(node interface{})) {
 func WalkType(t types.Type, visit func(node interface{})) {
 	visit(t)
 	switch t := t.(type) {
+	// Basic types.
 	case *types.VoidType:
 		// nothing to do; no child nodes.
 	case *types.LabelType:
@@ -38,6 +39,8 @@ func WalkType(t types.Type, visit func(node interface{})) {
 		// nothing to do; no child nodes.
 	case *types.FloatType:
 		// nothing to do; no child nodes.
+
+	// Derived types.
 	case *types.FuncType:
 		WalkType(t.RetType(), visit)
 		for _, param := range t.Params() {
@@ -53,6 +56,8 @@ func WalkType(t types.Type, visit func(node interface{})) {
 		for _, field := range t.Fields() {
 			WalkType(field, visit)
 		}
+
+	// Named types.
 	case *types.NamedType:
 		// TODO: Figure out how to prevent loops in recursive named type
 		// defintions.

@@ -13,28 +13,6 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// namedTypeDummy represents a dummy named type.
-type namedTypeDummy struct {
-	// Type name.
-	name string
-}
-
-// String returns the LLVM syntax representation of the type.
-func (t *namedTypeDummy) String() string {
-	return enc.Local(t.name)
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *namedTypeDummy) Equal(u types.Type) bool {
-	panic("dummy implementation")
-}
-
-// newNamedTypeDummy returns a new dummy named type based on the given type
-// name.
-func newNamedTypeDummy(name string) *namedTypeDummy {
-	return &namedTypeDummy{name: name}
-}
-
 // instGetElementPtrDummy represents a dummy getelementptr instruction.
 type instGetElementPtrDummy struct {
 	// Parent basic block.

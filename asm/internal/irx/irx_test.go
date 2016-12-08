@@ -34,6 +34,7 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/hello.ll"},
 		{path: "../testdata/empty.ll"},
 		//{path: "../testdata/struct.ll"},
+		{path: "../testdata/b.ll"}, // TODO: Remove.
 	}
 	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)
@@ -45,7 +46,7 @@ func TestFix(t *testing.T) {
 		// for occurances of globalDummy, localDummy, instPhiDummy, incomingDummy,
 		// instCallDummy, termBrDummy and termCondBrDummy.
 		s := pretty.Sprint(m)
-		if strings.Contains(s, "Dummy") {
+		if strings.Contains(s, "Dummy") || strings.Contains(s, "dummy") {
 			t.Errorf("%q: module contains dummy value; `%v`", g.path, s)
 		}
 	}
