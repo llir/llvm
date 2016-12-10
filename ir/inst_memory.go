@@ -122,10 +122,11 @@ type InstLoad struct {
 
 // NewLoad returns a new load instruction based on the given source address.
 func NewLoad(src value.Value) *InstLoad {
-	if t, ok := src.Type().(*types.PointerType); ok {
-		return &InstLoad{typ: t.Elem(), src: src}
+	t, ok := src.Type().(*types.PointerType)
+	if !ok {
+		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
-	panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
+	return &InstLoad{typ: t.Elem(), src: src}
 }
 
 // Type returns the type of the instruction.

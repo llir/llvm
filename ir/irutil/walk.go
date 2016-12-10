@@ -570,6 +570,10 @@ func (w *walker) walkInst(inst ir.Instruction, visit func(node interface{})) {
 		}
 
 	// Dummy instructions
+	case *dummy.InstLoad:
+		w.walkType(inst.Type(), visit)
+		w.walkType(inst.ElemType(), visit)
+		w.walkValue(inst.Src(), visit)
 	case *dummy.InstGetElementPtr:
 		w.walkType(inst.ElemType(), visit)
 		w.walkValue(inst.Src(), visit)

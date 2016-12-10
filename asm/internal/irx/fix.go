@@ -161,7 +161,7 @@ func fixModule(m *ir.Module) *ir.Module {
 	irutil.Walk(m, visit)
 
 	// Replace dummy instructions containing dummy Type method implementations;
-	// e.g. *dummy.InstGetElementPtr.
+	// e.g. *dummy.InstLoad, *dummy.InstGetElementPtr.
 	visit = func(node interface{}) {
 		block, ok := node.(*ir.BasicBlock)
 		if !ok {
@@ -169,18 +169,30 @@ func fixModule(m *ir.Module) *ir.Module {
 		}
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
-			if old, ok := inst.(*dummy.InstGetElementPtr); ok {
-				// Validate elem against src.Type().Elem().
+			switch old := inst.(type) {
+			case *dummy.InstLoad:
+				// Validate elem against old.Type().
+				if !old.ElemType().Equal(old.Type()) {
+					panic(fmt.Sprintf("type mismatch between element type `%v` and source address element type `%v`", old.ElemType(), old.Type()))
+				}
+				// Replace dummy load instruction with real instruction.
+				new := ir.NewLoad(old.Src())
+				new.SetParent(old.Parent())
+				inst = new
+			case *dummy.InstGetElementPtr:
+				// Validate elem against old.Src().Type().Elem().
 				src := old.Src()
 				st, ok := src.Type().(*types.PointerType)
 				if !ok {
 					panic(fmt.Sprintf("invalid source type; expected *types.Pointer, got %T", src.Type()))
 				}
 				if !old.ElemType().Equal(st.Elem()) {
-					panic(fmt.Sprintf("type mismatch between element type `%v` and source element type `%v`", old.ElemType(), st.Elem()))
+					panic(fmt.Sprintf("type mismatch between element type `%v` and source address element type `%v`", old.ElemType(), st.Elem()))
 				}
 				// Replace dummy getelementptr instruction with real instruction.
-				inst = ir.NewGetElementPtr(src, old.Indices()...)
+				new := ir.NewGetElementPtr(src, old.Indices()...)
+				new.SetParent(old.Parent())
+				inst = new
 			}
 			insts = append(insts, inst)
 		}

@@ -1545,7 +1545,7 @@ func NewAllocaInst(elem, nelems interface{}) (*ir.InstAlloca, error) {
 
 // NewLoadInst returns a new load instruction based on the given element type,
 // source address type and value.
-func NewLoadInst(elem, srcTyp, src interface{}) (*ir.InstLoad, error) {
+func NewLoadInst(elem, srcTyp, src interface{}) (*dummy.InstLoad, error) {
 	e, ok := elem.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
@@ -1554,11 +1554,9 @@ func NewLoadInst(elem, srcTyp, src interface{}) (*ir.InstLoad, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	inst := ir.NewLoad(s)
-	if !types.Equal(inst.Type(), e) {
-		return nil, errors.Errorf("element type mismatch; expected %v, got %v", inst.Type(), e)
-	}
-	return inst, nil
+	// Store e in *dummy.InstLoad, so that it may be evaluated against
+	// inst.Type() after type resolution.
+	return dummy.NewLoad(e, s), nil
 }
 
 // NewStoreInst returns a new store instruction based on the given element type,
@@ -1586,13 +1584,6 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*dummy.Ins
 	if !ok {
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
-	// TODO: Check e against st.Elem() before losing access to it, possibly using
-	// a *dummy.InstGetElementPtr which stores e until type resolution.
-
-	_ = e
-	//if !e.Equal(st.Elem()) {
-	//	return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
-	//}
 	src, err := NewValue(st, srcVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -1606,6 +1597,8 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*dummy.Ins
 	default:
 		return nil, errors.Errorf("invalid indices type; expected []value.Value or nil, got %T", indices)
 	}
+	// Store e in *dummy.InstGetElementPtr, so that it may be evaluated against
+	// st.Elem() after type resolution.
 	return dummy.NewGetElementPtr(e, src, is...), nil
 }
 
