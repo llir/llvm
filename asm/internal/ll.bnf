@@ -181,7 +181,8 @@ TopLevelDecl
 // === [ Type definitions ] ====================================================
 
 TypeDef
-	: LocalIdent "=" "type" Type   << irx.NewTypeDef($0, $3) >>
+	: LocalIdent "=" "type" Type       << irx.NewTypeDef($0, $3) >>
+	| LocalIdent "=" "type" "opaque"   << irx.NewTypeDef($0, nil) >>
 ;
 
 // === [ Global variables ] ====================================================

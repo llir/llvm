@@ -44,8 +44,8 @@ func TestFix(t *testing.T) {
 			continue
 		}
 		// Hack :) Rather than using reflect, pretty-print the module and search
-		// for occurances of globalDummy, localDummy, instPhiDummy, incomingDummy,
-		// instCallDummy, termBrDummy and termCondBrDummy.
+		// for occurances of *dummy.Global, *dummy.Local, *dummy.InstPhi,
+		// *dummy.Incoming, *dummy.InstCall, *dummy.TermBr and *dummy.TermCondBr.
 		s := pretty.Sprint(m)
 		if strings.Contains(s, "dummy") {
 			t.Errorf("%q: module contains dummy value; `%v`", g.path, s)

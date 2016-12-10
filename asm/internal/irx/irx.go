@@ -88,8 +88,13 @@ func NewTypeDef(name, typ interface{}) (*types.NamedType, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type name type; expected *LocalIdent, got %T", name)
 	}
-	t, ok := typ.(types.Type)
-	if !ok {
+	var t types.Type
+	switch typ := typ.(type) {
+	case types.Type:
+		t = typ
+	case nil:
+		// opaque identified struct type.
+	default:
 		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
 	}
 	return types.NewNamed(n.name, t), nil
