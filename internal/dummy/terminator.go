@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
@@ -27,7 +28,7 @@ func NewBr(target string) *TermBr {
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermBr) String() string {
-	return fmt.Sprintf("br label %s", term.Target())
+	return fmt.Sprintf("br label %s", enc.Local(term.Target()))
 }
 
 // Parent returns the parent basic block of the terminator.
@@ -74,8 +75,8 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse string) *TermCondBr {
 func (term *TermCondBr) String() string {
 	return fmt.Sprintf("br i1 %s, label %s, label %s",
 		term.Cond().Ident(),
-		term.TargetTrue(),
-		term.TargetFalse())
+		enc.Local(term.TargetTrue()),
+		enc.Local(term.TargetFalse()))
 }
 
 // Parent returns the parent basic block of the terminator.
@@ -140,13 +141,13 @@ func (term *TermSwitch) String() string {
 	fmt.Fprintf(buf, "switch %s %s, label %s [\n",
 		x.Type(),
 		x.Ident(),
-		term.TargetDefault())
+		enc.Local(term.TargetDefault()))
 	for _, c := range term.Cases() {
 		x := c.X()
 		fmt.Fprintf(buf, "\t\t%s %s, label %s\n",
 			x.Type(),
 			x.Ident(),
-			c.Target())
+			enc.Local(c.Target()))
 	}
 	buf.WriteString("\t]")
 	return buf.String()
