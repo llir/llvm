@@ -5,24 +5,25 @@
 //    1. Index type definitions.
 //    2. Index global variables.
 //    3. Index functions.
+//    4. Fix body of named types.
+//       - i.e. look up and set Def for each *types.NamedType.
+//    6. Replace dummy instructions containing dummy Type method
+//       implementations; e.g. *dummy.InstGetElementPtr.
 //
 // Per function.
 //
-//    1. Fix dummy types.
-//       - e.g. replace *irx.namedTypeDummy with *types.NamedType
-//    2. Replace dummy instructions containing dummy Type method
-//       implementations; e.g. *dummy.InstGetElementPtr.
-//    3. Force generate local IDs for unnamed basic blocks and instructions.
-//    4. Index basic blocks.
-//    5. Fix dummy instructions and terminators.
-//       - e.g. replace *irx.instCallDummy with *ir.InstCall
+//    1. Force generate local IDs for unnamed basic blocks and instructions.
+//    2. Index basic blocks.
+//    3. Index function parameters.
+//    4. Fix dummy instructions and terminators.
+//       - e.g. replace *dummy.InstCall with *ir.InstCall
 //       - Replace function and label names with *ir.Function and *ir.BasicBlock
 //         values.
-//       - Leave dummy operands (e.g. *irx.localDummy, *irx.globalDummy,
-//         *irx.instPhiDummy and *irx.instCallDummy) as these will be replaced
+//       - Leave dummy operands (e.g. *dummy.Local, *dummy.Global,
+//         *dummy.InstPhi and *dummy.InstCall) as these will be replaced
 //         in a later stage.
-//    6. Index local variables produced by instructions.
-//    7. Replace dummy operands of instructions and terminators.
+//    5. Index local variables produced by instructions.
+//    6. Replace dummy operands of instructions and terminators.
 
 package irx
 
@@ -43,9 +44,9 @@ type fixer struct {
 	// types maps type identifiers to their real types.
 	types map[string]*types.NamedType
 	// globals maps global identifiers to their real values.
-	globals map[string]constant.Constant
+	globals map[string]value.Named
 	// locals maps local identifiers to their real values.
-	locals map[string]value.Value
+	locals map[string]value.Named
 }
 
 // getType returns the type of the given type name.
@@ -58,7 +59,7 @@ func (fix *fixer) getType(name string) *types.NamedType {
 }
 
 // getGlobal returns the global value of the given global identifier.
-func (fix *fixer) getGlobal(name string) constant.Constant {
+func (fix *fixer) getGlobal(name string) value.Named {
 	global, ok := fix.globals[name]
 	if !ok {
 		panic(fmt.Sprintf("unable to locate global identifier %q", name))
@@ -66,18 +67,8 @@ func (fix *fixer) getGlobal(name string) constant.Constant {
 	return global
 }
 
-// getFunc returns the function of the given function name.
-func (fix *fixer) getFunc(name string) *ir.Function {
-	global := fix.getGlobal(name)
-	f, ok := global.(*ir.Function)
-	if !ok {
-		panic(fmt.Sprintf("invalid function type; expected *ir.Function, got %T", global))
-	}
-	return f
-}
-
 // getLocal returns the local value of the given local identifier.
-func (fix *fixer) getLocal(name string) value.Value {
+func (fix *fixer) getLocal(name string) value.Named {
 	local, ok := fix.locals[name]
 	if !ok {
 		panic(fmt.Sprintf("unable to locate local identifier %q", name))
@@ -101,7 +92,7 @@ func (fix *fixer) getBlock(name string) *ir.BasicBlock {
 // values.
 func fixModule(m *ir.Module) *ir.Module {
 	fix := &fixer{
-		globals: make(map[string]constant.Constant),
+		globals: make(map[string]value.Named),
 		types:   make(map[string]*types.NamedType),
 	}
 
@@ -161,7 +152,7 @@ func fixModule(m *ir.Module) *ir.Module {
 	irutil.Walk(m, visit)
 
 	// Replace dummy instructions containing dummy Type method implementations;
-	// e.g. *dummy.InstLoad, *dummy.InstGetElementPtr.
+	// e.g. *dummy.InstGetElementPtr.
 	visit = func(node interface{}) {
 		block, ok := node.(*ir.BasicBlock)
 		if !ok {
@@ -170,15 +161,6 @@ func fixModule(m *ir.Module) *ir.Module {
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
 			switch old := inst.(type) {
-			case *dummy.InstLoad:
-				// Validate elem against old.Type().
-				if !old.ElemType().Equal(old.Type()) {
-					panic(fmt.Sprintf("type mismatch between element type `%v` and source address element type `%v`", old.ElemType(), old.Type()))
-				}
-				// Replace dummy load instruction with real instruction.
-				new := ir.NewLoad(old.Src())
-				new.SetParent(old.Parent())
-				inst = new
 			case *dummy.InstGetElementPtr:
 				// Validate elem against old.Src().Type().Elem().
 				src := old.Src()
@@ -192,6 +174,7 @@ func fixModule(m *ir.Module) *ir.Module {
 				// Replace dummy getelementptr instruction with real instruction.
 				new := ir.NewGetElementPtr(src, old.Indices()...)
 				new.SetParent(old.Parent())
+				new.SetName(old.Name())
 				inst = new
 			}
 			insts = append(insts, inst)
@@ -269,7 +252,7 @@ func (fix *fixer) fixGlobal(old *ir.Global) {
 // values.
 func (fix *fixer) fixFunction(f *ir.Function) {
 	// Reset locals.
-	fix.locals = make(map[string]value.Value)
+	fix.locals = make(map[string]value.Named)
 
 	// Force generate local IDs.
 	_ = f.String()
@@ -284,11 +267,22 @@ func (fix *fixer) fixFunction(f *ir.Function) {
 		fix.locals[name] = block
 	}
 
+	// Index function parameters.
+	for _, param := range f.Params() {
+		name := param.Name()
+		if _, ok := fix.locals[name]; ok {
+			panic(fmt.Sprintf("function parameter name %q already present; old `%v`, new `%v`", name, fix.locals[name], param))
+		}
+		fix.locals[name] = param
+	}
+
 	// Fix dummy instructions and terminators.
 	for _, block := range blocks {
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
 			switch old := inst.(type) {
+			case *dummy.InstLoad:
+				inst = fix.fixLoadInstDummy(old)
 			case *dummy.InstPhi:
 				inst = fix.fixPhiInstDummy(old)
 			case *dummy.InstCall:
@@ -361,7 +355,12 @@ func (fix *fixer) fixConstant(old constant.Constant) (constant.Constant, bool) {
 	// TODO: Add all constant expressions.
 	switch old := old.(type) {
 	case *dummy.Global:
-		return fix.getGlobal(old.Name()), true
+		global := fix.getGlobal(old.Name())
+		g, ok := global.(constant.Constant)
+		if !ok {
+			panic(fmt.Sprintf("invalid global type; expected constant.Constant, got %T", global))
+		}
+		return g, true
 	case *constant.Int:
 		// nothing to do; valid value.
 	case *constant.Float:
@@ -753,6 +752,20 @@ func (fix *fixer) fixLoadInst(old *ir.InstLoad) *ir.InstLoad {
 	return old
 }
 
+// fixLoadInstDummy replaces dummy values within the given load instruction with
+// their real values.
+func (fix *fixer) fixLoadInstDummy(old *dummy.InstLoad) *ir.InstLoad {
+	// Validate elem against old.Type().
+	if !old.ElemType().Equal(old.Type()) {
+		panic(fmt.Sprintf("type mismatch between element type `%v` and source address element type `%v`", old.ElemType(), old.Type()))
+	}
+	// Replace dummy load instruction with real instruction.
+	inst := ir.NewLoad(old.Src())
+	inst.SetParent(old.Parent())
+	inst.SetName(old.Name())
+	return inst
+}
+
 // fixStoreInst replaces dummy values within the given store instruction with
 // their real values.
 func (fix *fixer) fixStoreInst(old *ir.InstStore) *ir.InstStore {
@@ -989,9 +1002,16 @@ func (fix *fixer) fixCallInst(old *ir.InstCall) *ir.InstCall {
 // fixCallInstDummy replaces the given dummy call instruction with a real call
 // instruction, and replaces dummy the instruction with their real values.
 func (fix *fixer) fixCallInstDummy(old *dummy.InstCall) *ir.InstCall {
-	callee := fix.getFunc(old.Callee())
-	if got, want := old.Type(), callee.RetType(); !got.Equal(want) {
-		panic(fmt.Sprintf("return type mismatch; expected `%v`, got `%v`", want, got))
+	var callee value.Named
+	if old.CalleeLocal() {
+		callee = fix.getLocal(old.Callee())
+	} else {
+		callee = fix.getGlobal(old.Callee())
+		if callee, ok := callee.(*ir.Function); ok {
+			if got, want := old.Type(), callee.RetType(); !got.Equal(want) {
+				panic(fmt.Sprintf("return type mismatch; expected `%v`, got `%v`", want, got))
+			}
+		}
 	}
 	// Leave args unchanged for now. It may contain dummy values. fixCallInst
 	// will replace these later.

@@ -251,6 +251,7 @@ Type
 	: LabelType
 	| IntType
 	| FloatType
+	| FuncType
 	| PointerType
 	| VectorType
 	| ArrayType
@@ -282,6 +283,10 @@ FloatType
 	| "fp128"       << types.FP128, nil >>
 	| "x86_fp80"    << types.X86_FP80, nil >>
 	| "ppc_fp128"   << types.PPC_FP128, nil >>
+;
+
+FuncType
+	: ResultType "(" Params ")"   << irx.NewFuncType($0, $2) >>
 ;
 
 PointerType
@@ -931,6 +936,7 @@ SelectInst
 
 CallInst
 	: "call" ResultType GlobalIdent "(" Args ")"   << irx.NewCallInst($1, $2, $4) >>
+	| "call" ResultType LocalIdent "(" Args ")"   << irx.NewCallInst($1, $2, $4) >>
 ;
 
 Args

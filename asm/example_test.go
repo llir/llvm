@@ -123,6 +123,7 @@ func Example() {
 	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
 	//                             name:   "4",
 	//                             callee: &ir.Function{(CYCLIC REFERENCE)},
+	//                             sig:    &types.FuncType{(CYCLIC REFERENCE)},
 	//                             args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
@@ -134,6 +135,7 @@ func Example() {
 	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
 	//                             name:   "4",
 	//                             callee: &ir.Function{(CYCLIC REFERENCE)},
+	//                             sig:    &types.FuncType{(CYCLIC REFERENCE)},
 	//                             args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
@@ -144,5 +146,4 @@ func Example() {
 	//         },
 	//     },
 	// }
-
 }

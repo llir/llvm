@@ -446,7 +446,12 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
-func (block *BasicBlock) NewCall(callee *Function, args ...value.Value) *InstCall {
+//
+// The callee value may have one of the following underlying types.
+//
+//    *ir.Function
+//    *types.Param
+func (block *BasicBlock) NewCall(callee value.Named, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	block.AppendInst(inst)
 	return inst

@@ -144,11 +144,11 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ir.Global, error) {
 // === [ Functions ] ===========================================================
 
 // NewFunctionDecl returns a new function declaration based on the given
-// function header and body.
-func NewFunctionDecl(result, name, params interface{}) (*ir.Function, error) {
-	r, ok := result.(types.Type)
+// return type, function name and parameters.
+func NewFunctionDecl(ret, name, params interface{}) (*ir.Function, error) {
+	r, ok := ret.(types.Type)
 	if !ok {
-		return nil, errors.Errorf("invalid function return type; expected types.Type, got %T", result)
+		return nil, errors.Errorf("invalid function return type; expected types.Type, got %T", ret)
 	}
 	n, ok := name.(*GlobalIdent)
 	if !ok {
@@ -350,6 +350,28 @@ func NewIntType(typeTok interface{}) (*types.IntType, error) {
 		return nil, errors.WithStack(err)
 	}
 	return types.NewInt(size), nil
+}
+
+// NewFuncType returns a new function type based on the given return type and
+// function parameters.
+func NewFuncType(ret, params interface{}) (*types.FuncType, error) {
+	r, ok := ret.(types.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid function return type; expected types.Type, got %T", ret)
+	}
+	sig := types.NewFunc(r)
+	switch ps := params.(type) {
+	case *Params:
+		for _, param := range ps.params {
+			sig.AppendParam(param)
+		}
+		sig.SetVariadic(ps.variadic)
+	case nil:
+		// no parameters.
+	default:
+		return nil, errors.Errorf("invalid function parameters type; expected *irx.Params or nil, got %T", params)
+	}
+	return sig, nil
 }
 
 // NewPointerType returns a new pointer type based on the given element type.
@@ -1902,8 +1924,15 @@ func NewCallInst(retTyp, callee, args interface{}) (*dummy.InstCall, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid return type; expected types.Type, got %T", retTyp)
 	}
-	c, ok := callee.(*GlobalIdent)
-	if !ok {
+	var name string
+	var calleeLocal bool
+	switch callee := callee.(type) {
+	case *GlobalIdent:
+		name = callee.name
+	case *LocalIdent:
+		name = callee.name
+		calleeLocal = true
+	default:
 		return nil, errors.Errorf("invalid callee type; expected *irx.GlobalIdent, got %T", callee)
 	}
 	var as []value.Value
@@ -1915,7 +1944,7 @@ func NewCallInst(retTyp, callee, args interface{}) (*dummy.InstCall, error) {
 	default:
 		return nil, errors.Errorf("invalid function arguments type; expected []value.Value or nil, got %T", args)
 	}
-	return dummy.NewCall(r, c.name, as...), nil
+	return dummy.NewCall(r, name, calleeLocal, as...), nil
 }
 
 // === [ Terminators ] =========================================================

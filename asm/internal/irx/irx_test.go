@@ -35,6 +35,7 @@ func TestFix(t *testing.T) {
 		{path: "../testdata/empty.ll"},
 		{path: "../testdata/struct.ll"},
 		{path: "../testdata/recursive_types.ll"},
+		{path: "../testdata/call_local_func.ll"},
 	}
 	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)

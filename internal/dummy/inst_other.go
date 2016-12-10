@@ -68,7 +68,7 @@ func (inst *InstPhi) String() string {
 		}
 		fmt.Fprintf(buf, "[ %s, %s ]",
 			x,
-			inc.Pred())
+			enc.Local(inc.Pred()))
 	}
 	return buf.String()
 }
@@ -133,14 +133,16 @@ type InstCall struct {
 	ret types.Type
 	// Callee.
 	callee string
+	// Specifies whether the callee is a local identifier.
+	calleeLocal bool
 	// Function arguments.
 	args []value.Value
 }
 
 // NewCall returns a new dummy call instruction based on the given return type,
 // callee and function arguments.
-func NewCall(ret types.Type, callee string, args ...value.Value) *InstCall {
-	return &InstCall{ret: ret, callee: callee, args: args}
+func NewCall(ret types.Type, callee string, calleeLocal bool, args ...value.Value) *InstCall {
+	return &InstCall{ret: ret, callee: callee, calleeLocal: calleeLocal, args: args}
 }
 
 // Type returns the type of the instruction.
@@ -170,9 +172,13 @@ func (inst *InstCall) String() string {
 	if !typ.Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", inst.Ident())
 	}
+	callee := enc.Global(inst.Callee())
+	if inst.calleeLocal {
+		callee = enc.Local(inst.Callee())
+	}
 	fmt.Fprintf(buf, "call %s %s(",
 		typ,
-		inst.Callee())
+		callee)
 	for i, arg := range inst.args {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -198,6 +204,11 @@ func (inst *InstCall) SetParent(parent *ir.BasicBlock) {
 // Callee returns the callee of the call instruction.
 func (inst *InstCall) Callee() string {
 	return inst.callee
+}
+
+// CalleeLocal reports whether the callee is a local identifier.
+func (inst *InstCall) CalleeLocal() bool {
+	return inst.calleeLocal
 }
 
 // Args returns the function arguments of the call instruction.

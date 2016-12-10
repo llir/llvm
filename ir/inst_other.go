@@ -507,20 +507,40 @@ type InstCall struct {
 	// Name of the local variable associated with the instruction.
 	name string
 	// Callee.
-	callee *Function
+	//
+	// Callee may have one of the following underlying types.
+	//
+	//    *ir.Function
+	//    *types.Param
+	callee value.Named
+	// Callee signature.
+	sig *types.FuncType
 	// Function arguments.
 	args []value.Value
 }
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
-func NewCall(callee *Function, args ...value.Value) *InstCall {
-	return &InstCall{callee: callee, args: args}
+//
+// The callee value may have one of the following underlying types.
+//
+//    *ir.Function
+//    *types.Param
+func NewCall(callee value.Named, args ...value.Value) *InstCall {
+	typ, ok := callee.Type().(*types.PointerType)
+	if !ok {
+		panic(fmt.Sprintf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+	}
+	sig, ok := typ.Elem().(*types.FuncType)
+	if !ok {
+		panic(fmt.Sprintf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem()))
+	}
+	return &InstCall{callee: callee, sig: sig, args: args}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstCall) Type() types.Type {
-	return inst.callee.sig.RetType()
+	return inst.sig.RetType()
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -571,7 +591,12 @@ func (inst *InstCall) SetParent(parent *BasicBlock) {
 }
 
 // Callee returns the callee of the call instruction.
-func (inst *InstCall) Callee() *Function {
+//
+// The returned callee value may have one of the following underlying types.
+//
+//    *ir.Function
+//    *types.Param
+func (inst *InstCall) Callee() value.Named {
 	return inst.callee
 }
 
