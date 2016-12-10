@@ -49,7 +49,7 @@ func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
 		if t, ok := e.(*types.NamedType); ok {
 			e, ok = t.Def()
 			if !ok {
-				panic(fmt.Sprintf("invalid named type %q; expected underlying type definition, got nil", t.Name()))
+				panic(fmt.Sprintf("invalid named type %q; expected underlying type definition, got nil", t))
 			}
 		}
 		switch t := e.(type) {
