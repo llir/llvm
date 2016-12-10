@@ -341,7 +341,8 @@ Constant
 	| VectorConst
 	| ArrayConst
 	| CharArrayConst
-	| ZeroInitializer
+	| StructConst
+	| ZeroInitializerConst
 	| GlobalIdent
 	| ConstExpr
 ;
@@ -386,7 +387,11 @@ CharArrayConst
 	: "c" string_lit   << irx.NewCharArrayConst($1) >>
 ;
 
-ZeroInitializer
+StructConst
+	: "{" Elems "}"   << irx.NewStructConst($1) >>
+;
+
+ZeroInitializerConst
 	: "zeroinitializer"   << &irx.ZeroInitializerLit{}, nil >>
 ;
 

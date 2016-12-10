@@ -501,61 +501,39 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 		return dummy.NewLocal(val.name, t), nil
 	case *GlobalIdent:
 		return dummy.NewGlobal(val.name, t), nil
+	case *IntLit:
+		t, ok := t.(*types.IntType)
+		if !ok {
+			return nil, errors.Errorf("invalid integer constant type; expected *types.IntType, got %T", t)
+		}
+		return constant.NewIntFromString(val.lit, t), nil
+	case *FloatLit:
+		t, ok := t.(*types.FloatType)
+		if !ok {
+			return nil, errors.Errorf("invalid floating-point constant type; expected *types.FloatType, got %T", t)
+		}
+		return constant.NewFloatFromString(val.lit, t), nil
+	case *NullLit:
+		t, ok := t.(*types.PointerType)
+		if !ok {
+			return nil, errors.Errorf("invalid null constant type; expected *types.PointerType, got %T", t)
+		}
+		return constant.NewNull(t), nil
+	// TODO: Add dummy/dummyconstant package for Vector, Array and Struct,
+	// ExprGetElementPtr, so that typ may be stored and evaluated after type
+	// resolution.
 	case *ZeroInitializerLit:
 		return constant.NewZeroInitializer(t), nil
-	}
-	switch t := t.(type) {
-	case *types.IntType:
-		switch val := val.(type) {
-		case *IntLit:
-			return constant.NewIntFromString(val.lit, t), nil
-		default:
-			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
-		}
-	case *types.FloatType:
-		switch val := val.(type) {
-		case *FloatLit:
-			return constant.NewFloatFromString(val.lit, t), nil
-		default:
-			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
-		}
-	case *types.PointerType:
-		switch val := val.(type) {
-		case *NullLit:
-			return constant.NewNull(t), nil
-		case *constant.ExprGetElementPtr:
-			return val, nil
-		default:
-			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
-		}
-	case *types.VectorType:
-		switch val := val.(type) {
-		case *constant.Vector:
-			// TODO: Add flag to disable expensive sanity checks.
-			for _, elem := range val.Elems() {
-				if want, got := t.Elem(), elem.Type(); !got.Equal(want) {
-					return nil, errors.Errorf("vector type mismatch; expected `%s`, got `%s`", want, got)
-				}
-			}
-			return val, nil
-		default:
-			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
-		}
-	case *types.ArrayType:
-		switch val := val.(type) {
-		case *constant.Array:
-			// TODO: Add flag to disable expensive sanity checks.
-			for _, elem := range val.Elems() {
-				if want, got := t.Elem(), elem.Type(); !got.Equal(want) {
-					return nil, errors.Errorf("array type mismatch; expected `%s`, got `%s`", want, got)
-				}
-			}
-			return val, nil
-		default:
-			panic(fmt.Sprintf("support for value type %T not yet implemented", val))
-		}
+	case *constant.Vector:
+		return val, nil
+	case *constant.Array:
+		return val, nil
+	case *constant.Struct:
+		return val, nil
+	case constant.Expr:
+		return val, nil
 	default:
-		panic(fmt.Sprintf("support for type %T not yet implemented", t))
+		panic(fmt.Sprintf("support for value type %T not yet implemented", val))
 	}
 }
 
@@ -666,6 +644,15 @@ func NewCharArrayConst(str interface{}) (*constant.Array, error) {
 	c := constant.NewArray(elems...)
 	c.SetCharArray(true)
 	return c, nil
+}
+
+// NewStructConst returns a new struct constant based on the given fields.
+func NewStructConst(fields interface{}) (*constant.Struct, error) {
+	fs, ok := fields.([]constant.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid struct fields type; expected []constant.Constant, got %T", fields)
+	}
+	return constant.NewStruct(fs...), nil
 }
 
 // ZeroInitializerLit represents a zeroinitializer literal.
