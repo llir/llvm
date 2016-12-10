@@ -501,6 +501,8 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 		return dummy.NewLocal(val.name, t), nil
 	case *GlobalIdent:
 		return dummy.NewGlobal(val.name, t), nil
+	case *ZeroInitializerLit:
+		return constant.NewZeroInitializer(t), nil
 	}
 	switch t := t.(type) {
 	case *types.IntType:
@@ -664,6 +666,10 @@ func NewCharArrayConst(str interface{}) (*constant.Array, error) {
 	c := constant.NewArray(elems...)
 	c.SetCharArray(true)
 	return c, nil
+}
+
+// ZeroInitializerLit represents a zeroinitializer literal.
+type ZeroInitializerLit struct {
 }
 
 // --- [ Binary expressions ] --------------------------------------------------
