@@ -166,7 +166,7 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondB
 		replace := func(v value.Value) {
 			term.cond = v
 		}
-		use := value.NewUse(replace)
+		use := newUse(replace)
 		cond.AppendUse(use)
 	}
 	return term
@@ -208,7 +208,7 @@ func (term *TermCondBr) SetCond(cond value.Value) {
 			term.cond = v
 		}
 		fmt.Println("replace")
-		use := value.NewUse(replace)
+		use := newUse(replace)
 		cond.AppendUse(use)
 	}
 	fmt.Printf("t: %T\n", cond)
