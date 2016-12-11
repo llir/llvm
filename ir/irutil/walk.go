@@ -13,49 +13,49 @@ import (
 
 // Walk traverses the given LLVM IR module in depth-first order, calling visit
 // for each type, value, instruction and terminator of the module.
-func Walk(m *ir.Module, visit func(node interface{})) {
+func Walk(m *ir.Module, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walk(m, visit)
 }
 
 // WalkType traverses the given LLVM IR type in depth-first order, calling visit
 // for each type and value of the type.
-func WalkType(t types.Type, visit func(node interface{})) {
+func WalkType(t types.Type, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walkType(t, visit)
 }
 
 // WalkValue traverses the given LLVM IR value in depth-first order, calling
 // visit for each type, value, instruction and terminator of the value.
-func WalkValue(v value.Value, visit func(node interface{})) {
+func WalkValue(v value.Value, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walkValue(v, visit)
 }
 
 // WalkConstant traverses the given LLVM IR constant in depth-first order,
 // calling visit for each type and constant of the constant.
-func WalkConstant(c constant.Constant, visit func(node interface{})) {
+func WalkConstant(c constant.Constant, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walkConstant(c, visit)
 }
 
 // WalkExpr traverses the given LLVM IR constant expression in depth-first
 // order, calling visit for each type and constant of the constant expression.
-func WalkExpr(expr constant.Expr, visit func(node interface{})) {
+func WalkExpr(expr constant.Expr, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walkExpr(expr, visit)
 }
 
 // WalkInst traverses the given LLVM IR instruction in depth-first order,
 // calling visit for each type, value and instruction of the instruction.
-func WalkInst(inst ir.Instruction, visit func(node interface{})) {
+func WalkInst(inst ir.Instruction, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walkInst(inst, visit)
 }
 
 // WalkTerm traverses the given LLVM IR terminator in depth-first order, calling
 // visit for each type, value and instruction of the terminator.
-func WalkTerm(term ir.Terminator, visit func(node interface{})) {
+func WalkTerm(term ir.Terminator, visit func(node interface{}) bool) {
 	w := newWalker()
 	w.walkTerm(term, visit)
 }
@@ -76,7 +76,7 @@ func newWalker() *walker {
 
 // walk traverses the given LLVM IR module in depth-first order, calling visit
 // for each type, value, instruction and terminator of the module.
-func (w *walker) walk(m *ir.Module, visit func(node interface{})) {
+func (w *walker) walk(m *ir.Module, visit func(node interface{}) bool) {
 	for _, typ := range m.Types() {
 		w.walkType(typ, visit)
 	}
@@ -90,14 +90,18 @@ func (w *walker) walk(m *ir.Module, visit func(node interface{})) {
 
 // walkType traverses the given LLVM IR type in depth-first order, calling visit
 // for each type and value of the type.
-func (w *walker) walkType(t types.Type, visit func(node interface{})) {
+func (w *walker) walkType(t types.Type, visit func(node interface{}) bool) {
 	// Prevent infinite loops.
 	if w.visited[t] {
 		return
 	}
 	w.visited[t] = true
 
-	visit(t)
+	// Visit node and exit early if requested.
+	if !visit(t) {
+		return
+	}
+
 	switch t := t.(type) {
 	// Basic types.
 	case *types.VoidType:
@@ -138,14 +142,18 @@ func (w *walker) walkType(t types.Type, visit func(node interface{})) {
 
 // walkValue traverses the given LLVM IR value in depth-first order, calling
 // visit for each type, value, instruction and terminator of the value.
-func (w *walker) walkValue(v value.Value, visit func(node interface{})) {
+func (w *walker) walkValue(v value.Value, visit func(node interface{}) bool) {
 	// Prevent infinite loops.
 	if w.visited[v] {
 		return
 	}
 	w.visited[v] = true
 
-	visit(v)
+	// Visit node and exit early if requested.
+	if !visit(v) {
+		return
+	}
+
 	switch v := v.(type) {
 	case constant.Constant:
 		// Let walkConstant handle the subset of constant values. Mark visited as
@@ -174,14 +182,18 @@ func (w *walker) walkValue(v value.Value, visit func(node interface{})) {
 
 // walkConstant traverses the given LLVM IR constant in depth-first order,
 // calling visit for each type and constant of the constant.
-func (w *walker) walkConstant(c constant.Constant, visit func(node interface{})) {
+func (w *walker) walkConstant(c constant.Constant, visit func(node interface{}) bool) {
 	// Prevent infinite loops.
 	if w.visited[c] {
 		return
 	}
 	w.visited[c] = true
 
-	visit(c)
+	// Visit node and exit early if requested.
+	if !visit(c) {
+		return
+	}
+
 	switch c := c.(type) {
 	// Simple constants
 	case *constant.Int:
@@ -241,14 +253,18 @@ func (w *walker) walkConstant(c constant.Constant, visit func(node interface{}))
 
 // walkExpr traverses the given LLVM IR constant expression in depth-first
 // order, calling visit for each type and constant of the constant expression.
-func (w *walker) walkExpr(expr constant.Expr, visit func(node interface{})) {
+func (w *walker) walkExpr(expr constant.Expr, visit func(node interface{}) bool) {
 	// Prevent infinite loops.
 	if w.visited[expr] {
 		return
 	}
 	w.visited[expr] = true
 
-	visit(expr)
+	// Visit node and exit early if requested.
+	if !visit(expr) {
+		return
+	}
+
 	switch expr := expr.(type) {
 	// Binary instructions
 	case *constant.ExprAdd:
@@ -396,14 +412,18 @@ func (w *walker) walkExpr(expr constant.Expr, visit func(node interface{})) {
 
 // walkInst traverses the given LLVM IR instruction in depth-first order,
 // calling visit for each type, value and instruction of the instruction.
-func (w *walker) walkInst(inst ir.Instruction, visit func(node interface{})) {
+func (w *walker) walkInst(inst ir.Instruction, visit func(node interface{}) bool) {
 	// Prevent infinite loops.
 	if w.visited[inst] {
 		return
 	}
 	w.visited[inst] = true
 
-	visit(inst)
+	// Visit node and exit early if requested.
+	if !visit(inst) {
+		return
+	}
+
 	switch inst := inst.(type) {
 	// Binary instructions
 	case *ir.InstAdd:
@@ -601,14 +621,18 @@ func (w *walker) walkInst(inst ir.Instruction, visit func(node interface{})) {
 
 // walkTerm traverses the given LLVM IR terminator in depth-first order, calling
 // visit for each type, value and instruction of the terminator.
-func (w *walker) walkTerm(term ir.Terminator, visit func(node interface{})) {
+func (w *walker) walkTerm(term ir.Terminator, visit func(node interface{}) bool) {
 	// Prevent infinite loops.
 	if w.visited[term] {
 		return
 	}
 	w.visited[term] = true
 
-	visit(term)
+	// Visit node and exit early if requested.
+	if !visit(term) {
+		return
+	}
+
 	switch term := term.(type) {
 	// Terminators.
 	case *ir.TermRet:

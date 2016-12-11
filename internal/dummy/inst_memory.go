@@ -139,7 +139,7 @@ func (inst *InstGetElementPtr) String() string {
 	src := inst.Src()
 	fmt.Fprintf(buf, "%s = getelementptr %s, %s %s",
 		inst.Ident(),
-		inst.elem,
+		inst.ElemType(),
 		src.Type(),
 		src.Ident())
 	for _, index := range inst.Indices() {

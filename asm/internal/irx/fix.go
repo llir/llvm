@@ -135,10 +135,10 @@ func fixModule(m *ir.Module) *ir.Module {
 	}
 
 	// Fix body of named types.
-	visit := func(node interface{}) {
+	visit := func(node interface{}) bool {
 		old, ok := node.(*types.NamedType)
 		if !ok {
-			return
+			return true
 		}
 		if _, ok := old.Def(); !ok {
 			typ := fix.getType(old.Name())
@@ -148,15 +148,16 @@ func fixModule(m *ir.Module) *ir.Module {
 			}
 			old.SetDef(def)
 		}
+		return true
 	}
 	irutil.Walk(m, visit)
 
 	// Replace dummy instructions containing dummy Type method implementations;
 	// e.g. *dummy.InstGetElementPtr.
-	visit = func(node interface{}) {
+	visit = func(node interface{}) bool {
 		block, ok := node.(*ir.BasicBlock)
 		if !ok {
-			return
+			return true
 		}
 		var insts []ir.Instruction
 		for _, inst := range block.Insts() {
@@ -180,6 +181,7 @@ func fixModule(m *ir.Module) *ir.Module {
 			insts = append(insts, inst)
 		}
 		block.SetInsts(insts)
+		return true
 	}
 	irutil.Walk(m, visit)
 

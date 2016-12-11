@@ -11,6 +11,7 @@ import (
 
 	"github.com/llir/llvm/asm/internal/token"
 	"github.com/llir/llvm/internal/dummy"
+	"github.com/llir/llvm/internal/dummy/dummyconstant"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -524,13 +525,7 @@ func NewValue(typ, val interface{}) (value.Value, error) {
 	// resolution.
 	case *ZeroInitializerLit:
 		return constant.NewZeroInitializer(t), nil
-	case *constant.Vector:
-		return val, nil
-	case *constant.Array:
-		return val, nil
-	case *constant.Struct:
-		return val, nil
-	case constant.Expr:
+	case constant.Constant:
 		return val, nil
 	default:
 		panic(fmt.Sprintf("support for value type %T not yet implemented", val))
@@ -912,7 +907,7 @@ func NewXorExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprXor, error) {
 
 // NewGetElementPtrExpr returns a new getelementptr expression based on the
 // given element type, source address type and value, and element indices.
-func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.ExprGetElementPtr, error) {
+func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*dummyconstant.ExprGetElementPtr, error) {
 	e, ok := elem.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
@@ -921,13 +916,6 @@ func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.
 	if !ok {
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
-	// TODO: Check e against st.Elem() before losing access to it, possibly using
-	// a *dummy.InstGetElementPtr which stores e until type resolution.
-
-	_ = e
-	//if !e.Equal(st.Elem()) {
-	//	return nil, errors.Errorf("type mismatch between element type `%v` and source element type `%v`", e, st)
-	//}
 	src, err := NewConstant(st, srcVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -941,7 +929,9 @@ func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.
 	default:
 		return nil, errors.Errorf("invalid indices type; expected []constant.Constant or nil, got %T", indices)
 	}
-	return constant.NewGetElementPtr(src, is...), nil
+	// Store e in *dummyconstant.InstGetElementPtr, so that it may be evaluated
+	// against st.Elem() after type resolution.
+	return dummyconstant.NewGetElementPtr(e, src, is...), nil
 }
 
 // --- [ Conversion expressions ] ----------------------------------------------
