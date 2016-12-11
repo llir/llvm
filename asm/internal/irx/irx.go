@@ -11,7 +11,6 @@ import (
 
 	"github.com/llir/llvm/asm/internal/token"
 	"github.com/llir/llvm/internal/dummy"
-	"github.com/llir/llvm/internal/dummy/dummyconstant"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -907,7 +906,7 @@ func NewXorExpr(xTyp, xVal, yTyp, yVal interface{}) (*constant.ExprXor, error) {
 
 // NewGetElementPtrExpr returns a new getelementptr expression based on the
 // given element type, source address type and value, and element indices.
-func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*dummyconstant.ExprGetElementPtr, error) {
+func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*constant.ExprGetElementPtr, error) {
 	e, ok := elem.(types.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
@@ -916,6 +915,8 @@ func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*dummycons
 	if !ok {
 		return nil, errors.Errorf("invalid source type; expected *types.Pointer, got %T", srcTyp)
 	}
+	_ = e
+	// TODO: Validate e against st.Elem().
 	src, err := NewConstant(st, srcVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -931,7 +932,8 @@ func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*dummycons
 	}
 	// Store e in *dummyconstant.InstGetElementPtr, so that it may be evaluated
 	// against st.Elem() after type resolution.
-	return dummyconstant.NewGetElementPtr(e, src, is...), nil
+	//return dummyconstant.NewGetElementPtr(e, src, is...), nil
+	return constant.NewGetElementPtr(src, is...), nil
 }
 
 // --- [ Conversion expressions ] ----------------------------------------------

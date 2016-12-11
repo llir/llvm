@@ -31,6 +31,8 @@ type InstICmp struct {
 	cond IntPred
 	// Operands.
 	x, y value.Value
+	// Uses of the local variable associated with the instruction.
+	uses []value.Use
 }
 
 // NewICmp returns a new icmp instruction based on the given integer condition
@@ -107,6 +109,21 @@ func (inst *InstICmp) Y() value.Value {
 // SetY sets the y operand of the icmp instruction.
 func (inst *InstICmp) SetY(y value.Value) {
 	inst.y = y
+}
+
+// Uses returns the uses of the used value.
+func (inst *InstICmp) Uses() []value.Use {
+	return inst.uses
+}
+
+// AppendUse appends the given use to the used value.
+func (inst *InstICmp) AppendUse(use value.Use) {
+	inst.uses = append(inst.uses, use)
+}
+
+// SetUses sets the uses of the used value.
+func (inst *InstICmp) SetUses(uses []value.Use) {
+	inst.uses = uses
 }
 
 // IntPred represents the set of condition codes of the icmp instruction.

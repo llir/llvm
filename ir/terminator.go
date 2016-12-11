@@ -161,7 +161,15 @@ type TermCondBr struct {
 // branching condition and conditional target branches.
 func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
 	successors := []*BasicBlock{targetTrue, targetFalse}
-	return &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
+	term := &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
+	if cond, ok := cond.(value.Used); ok {
+		replace := func(v value.Value) {
+			term.cond = v
+		}
+		use := value.NewUse(replace)
+		cond.AppendUse(use)
+	}
+	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -195,6 +203,15 @@ func (term *TermCondBr) Cond() value.Value {
 // SetCond sets the branching condition of the br terminator.
 func (term *TermCondBr) SetCond(cond value.Value) {
 	term.cond = cond
+	if cond, ok := cond.(value.Used); ok {
+		replace := func(v value.Value) {
+			term.cond = v
+		}
+		fmt.Println("replace")
+		use := value.NewUse(replace)
+		cond.AppendUse(use)
+	}
+	fmt.Printf("t: %T\n", cond)
 }
 
 // TargetTrue returns the target branch when condition is true of the br
