@@ -28,11 +28,16 @@ type InstShl struct {
 	name string
 	// Operands.
 	x, y value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
-	return &InstShl{x: x, y: y}
+	inst := &InstShl{x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -107,11 +112,16 @@ type InstLShr struct {
 	name string
 	// Operands.
 	x, y value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
 func NewLShr(x, y value.Value) *InstLShr {
-	return &InstLShr{x: x, y: y}
+	inst := &InstLShr{x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -186,11 +196,16 @@ type InstAShr struct {
 	name string
 	// Operands.
 	x, y value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
-	return &InstAShr{x: x, y: y}
+	inst := &InstAShr{x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -265,11 +280,16 @@ type InstAnd struct {
 	name string
 	// Operands.
 	x, y value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewAnd returns a new and instruction based on the given operands.
 func NewAnd(x, y value.Value) *InstAnd {
-	return &InstAnd{x: x, y: y}
+	inst := &InstAnd{x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -344,11 +364,16 @@ type InstOr struct {
 	name string
 	// Operands.
 	x, y value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewOr returns a new or instruction based on the given operands.
 func NewOr(x, y value.Value) *InstOr {
-	return &InstOr{x: x, y: y}
+	inst := &InstOr{x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -423,11 +448,16 @@ type InstXor struct {
 	name string
 	// Operands.
 	x, y value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewXor returns a new xor instruction based on the given operands.
 func NewXor(x, y value.Value) *InstXor {
-	return &InstXor{x: x, y: y}
+	inst := &InstXor{x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.

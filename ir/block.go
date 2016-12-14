@@ -26,6 +26,8 @@ type BasicBlock struct {
 	insts []Instruction
 	// Terminator of the basic block.
 	term Terminator
+	// Track uses of the value.
+	used
 }
 
 // NewBlock returns a new basic block based on the given label name. An empty

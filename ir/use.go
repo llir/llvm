@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/llvm/ir/value"
+import (
+	"fmt"
+
+	"github.com/llir/llvm/ir/value"
+)
 
 // used represents a used value; e.g. a value used as an operand to an
 // instruction.
@@ -40,4 +44,45 @@ func newUse(replace func(v value.Value)) value.Use {
 // Replace replaces the used value with the given value.
 func (use *use) Replace(v value.Value) {
 	use.replace(v)
+}
+
+// valueTracker tracks the use of a value.
+type valueTracker struct {
+	// Original value.
+	orig *value.Value
+}
+
+// trackValue tracks the use of the given value.
+func trackValue(orig *value.Value) {
+	use := &valueTracker{orig: orig}
+	used, ok := (*orig).(value.Used)
+	if !ok {
+		panic(fmt.Sprintf("invalid used value type; expected value.Used, got %T", *orig))
+	}
+	used.AppendUse(use)
+}
+
+// Replace replaces the used value with the given value.
+func (use *valueTracker) Replace(v value.Value) {
+	*use.orig = v
+}
+
+// blockTracker tracks the use of a basic block.
+type blockTracker struct {
+	// Original basic block.
+	orig **BasicBlock
+}
+
+func trackBlock(orig **BasicBlock) {
+	use := &blockTracker{orig: orig}
+	(*orig).AppendUse(use)
+}
+
+// Replace replaces the used value with the given value.
+func (use *blockTracker) Replace(v value.Value) {
+	block, ok := v.(*BasicBlock)
+	if !ok {
+		panic(fmt.Sprintf("invalid basic block type; expected *ir.BasicBlock, got %T", v))
+	}
+	*use.orig = block
 }

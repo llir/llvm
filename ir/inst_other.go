@@ -42,7 +42,10 @@ func NewICmp(cond IntPred, x, y value.Value) *InstICmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &InstICmp{typ: typ, cond: cond, x: x, y: y}
+	inst := &InstICmp{typ: typ, cond: cond, x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -177,7 +180,10 @@ func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &InstFCmp{typ: typ, cond: cond, x: x, y: y}
+	inst := &InstFCmp{typ: typ, cond: cond, x: x, y: y}
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -321,7 +327,12 @@ func NewPhi(incs ...*Incoming) *InstPhi {
 		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
 	}
 	typ := incs[0].x.Type()
-	return &InstPhi{typ: typ, incs: incs}
+	inst := &InstPhi{typ: typ, incs: incs}
+	for _, inc := range incs {
+		trackValue(&inc.x)
+		trackBlock(&inc.pred)
+	}
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -427,7 +438,11 @@ type InstSelect struct {
 // NewSelect returns a new select instruction based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y value.Value) *InstSelect {
-	return &InstSelect{cond: cond, x: x, y: y}
+	inst := &InstSelect{cond: cond, x: x, y: y}
+	trackValue(&inst.cond)
+	trackValue(&inst.x)
+	trackValue(&inst.y)
+	return inst
 }
 
 // Type returns the type of the instruction.
