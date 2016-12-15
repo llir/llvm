@@ -24,6 +24,8 @@ type InstPhi struct {
 	typ types.Type
 	// Incoming values.
 	incs []*Incoming
+	// Track uses of the value.
+	used
 }
 
 // NewPhi returns a new dummy phi instruction based on the given type and
@@ -137,6 +139,8 @@ type InstCall struct {
 	calleeLocal bool
 	// Function arguments.
 	args []value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewCall returns a new dummy call instruction based on the given return type,

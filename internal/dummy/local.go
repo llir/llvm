@@ -13,6 +13,8 @@ type Local struct {
 	name string
 	// Type associated with the local.
 	typ types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewLocal returns a new dummy local identifier based on the given local name

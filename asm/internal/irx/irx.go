@@ -163,7 +163,7 @@ func NewFunctionDecl(ret, name, params interface{}) (*ir.Function, error) {
 	switch ps := params.(type) {
 	case *Params:
 		for _, param := range ps.params {
-			f.AppendParam(param)
+			f.NewParam(param.Name(), param.Type())
 		}
 		f.SetVariadic(ps.variadic)
 	case nil:

@@ -32,6 +32,8 @@ type InstAlloca struct {
 	elem types.Type
 	// Number of elements; or nil if one element.
 	nelems value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -101,6 +103,8 @@ func (inst *InstAlloca) NElems() (value.Value, bool) {
 // SetNElems sets the number of elements of the alloca instruction.
 func (inst *InstAlloca) SetNElems(nelems value.Value) {
 	inst.nelems = nelems
+	// TODO: Remove use of old nelems value.
+	trackValue(&inst.nelems, inst)
 }
 
 // --- [ load ] ----------------------------------------------------------------
@@ -118,6 +122,8 @@ type InstLoad struct {
 	typ types.Type
 	// Source address.
 	src value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -126,7 +132,9 @@ func NewLoad(src value.Value) *InstLoad {
 	if !ok {
 		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
-	return &InstLoad{typ: t.Elem(), src: src}
+	inst := &InstLoad{typ: t.Elem(), src: src}
+	trackValue(&inst.src, inst)
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -177,6 +185,8 @@ func (inst *InstLoad) Src() value.Value {
 // SetSrc sets the source address of the load instruction.
 func (inst *InstLoad) SetSrc(src value.Value) {
 	inst.src = src
+	// TODO: Remove use of old src value.
+	trackValue(&inst.src, inst)
 }
 
 // --- [ store ] ---------------------------------------------------------------
@@ -197,7 +207,10 @@ type InstStore struct {
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
 func NewStore(src, dst value.Value) *InstStore {
-	return &InstStore{src: src, dst: dst}
+	inst := &InstStore{src: src, dst: dst}
+	trackValue(&inst.src, inst)
+	trackValue(&inst.dst, inst)
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -228,6 +241,8 @@ func (inst *InstStore) Src() value.Value {
 // SetSrc sets the source value of the store instruction.
 func (inst *InstStore) SetSrc(src value.Value) {
 	inst.src = src
+	// TODO: Remove use of old src value.
+	trackValue(&inst.src, inst)
 }
 
 // Dst returns the destination address of the store instruction.
@@ -238,6 +253,8 @@ func (inst *InstStore) Dst() value.Value {
 // SetDst sets the destination address of the store instruction.
 func (inst *InstStore) SetDst(dst value.Value) {
 	inst.dst = dst
+	// TODO: Remove use of old dst value.
+	trackValue(&inst.dst, inst)
 }
 
 // --- [ fence ] ---------------------------------------------------------------
@@ -265,6 +282,8 @@ type InstGetElementPtr struct {
 	src value.Value
 	// Element indices.
 	indices []value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
@@ -307,7 +326,12 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 		}
 	}
 	typ := types.NewPointer(e)
-	return &InstGetElementPtr{typ: typ, elem: elem, src: src, indices: indices}
+	inst := &InstGetElementPtr{typ: typ, elem: elem, src: src, indices: indices}
+	trackValue(&inst.src, inst)
+	for i := range inst.indices {
+		trackValue(&inst.indices[i], inst)
+	}
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -365,6 +389,8 @@ func (inst *InstGetElementPtr) Src() value.Value {
 // SetSrc sets the source address of the getelementptr instruction.
 func (inst *InstGetElementPtr) SetSrc(src value.Value) {
 	inst.src = src
+	// TODO: Remove use of old src value.
+	trackValue(&inst.src, inst)
 }
 
 // Indices returns the element indices of the getelementptr instruction.
@@ -375,4 +401,8 @@ func (inst *InstGetElementPtr) Indices() []value.Value {
 // SetIndices sets the element indices of the getelementptr instruction.
 func (inst *InstGetElementPtr) SetIndices(indices []value.Value) {
 	inst.indices = indices
+	// TODO: Remove use of old indices value.
+	for i := range inst.indices {
+		trackValue(&inst.indices[i], inst)
+	}
 }

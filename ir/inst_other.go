@@ -102,6 +102,8 @@ func (inst *InstICmp) X() value.Value {
 // SetX sets the x operand of the icmp instruction.
 func (inst *InstICmp) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the icmp instruction.
@@ -112,6 +114,8 @@ func (inst *InstICmp) Y() value.Value {
 // SetY sets the y operand of the icmp instruction.
 func (inst *InstICmp) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // IntPred represents the set of condition codes of the icmp instruction.
@@ -240,6 +244,8 @@ func (inst *InstFCmp) X() value.Value {
 // SetX sets the x operand of the fcmp instruction.
 func (inst *InstFCmp) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the fcmp instruction.
@@ -250,6 +256,8 @@ func (inst *InstFCmp) Y() value.Value {
 // SetY sets the y operand of the fcmp instruction.
 func (inst *InstFCmp) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // FloatPred represents the set of condition codes of the fcmp instruction.
@@ -406,6 +414,11 @@ func (inc *Incoming) X() value.Value {
 	return inc.x
 }
 
+// TODO: Figure out how to track use of x when user (i.e. parent phi
+// instruction) is not known in SetX. Remove SetX entirely in favour of
+// Use.Replace? Evaluate the uses of SetX, should only be during parsing (in
+// dummy translation).
+
 // SetX sets the incoming value.
 func (inc *Incoming) SetX(x value.Value) {
 	inc.x = x
@@ -496,6 +509,8 @@ func (inst *InstSelect) Cond() value.Value {
 // SetCond sets the selection condition of the select instruction.
 func (inst *InstSelect) SetCond(cond value.Value) {
 	inst.cond = cond
+	// TODO: Remove use of old cond value.
+	trackValue(&inst.cond, inst)
 }
 
 // X returns the x operand of the select instruction.
@@ -506,6 +521,8 @@ func (inst *InstSelect) X() value.Value {
 // SetX returns the x operand of the select instruction.
 func (inst *InstSelect) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the select instruction.
@@ -516,6 +533,8 @@ func (inst *InstSelect) Y() value.Value {
 // SetY returns the y operand of the select instruction.
 func (inst *InstSelect) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ call ] ----------------------------------------------------------------
@@ -534,7 +553,7 @@ type InstCall struct {
 	// Callee may have one of the following underlying types.
 	//
 	//    *ir.Function
-	//    *types.Param
+	//    *ir.Param
 	callee value.Named
 	// Callee signature.
 	sig *types.FuncType
@@ -550,7 +569,7 @@ type InstCall struct {
 // The callee value may have one of the following underlying types.
 //
 //    *ir.Function
-//    *types.Param
+//    *ir.Param
 func NewCall(callee value.Named, args ...value.Value) *InstCall {
 	typ, ok := callee.Type().(*types.PointerType)
 	if !ok {
@@ -560,7 +579,12 @@ func NewCall(callee value.Named, args ...value.Value) *InstCall {
 	if !ok {
 		panic(fmt.Sprintf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem()))
 	}
-	return &InstCall{callee: callee, sig: sig, args: args}
+	inst := &InstCall{callee: callee, sig: sig, args: args}
+	trackNamed(&inst.callee, inst)
+	for i := range inst.args {
+		trackValue(&inst.args[i], inst)
+	}
+	return inst
 }
 
 // Type returns the type of the instruction.
@@ -620,7 +644,7 @@ func (inst *InstCall) SetParent(parent *BasicBlock) {
 // The returned callee value may have one of the following underlying types.
 //
 //    *ir.Function
-//    *types.Param
+//    *ir.Param
 func (inst *InstCall) Callee() value.Named {
 	return inst.callee
 }
@@ -633,6 +657,10 @@ func (inst *InstCall) Args() []value.Value {
 // SetArgs sets the function arguments of the call instruction.
 func (inst *InstCall) SetArgs(args []value.Value) {
 	inst.args = args
+	// TODO: Remove use of old args value.
+	for i := range inst.args {
+		trackValue(&inst.args[i], inst)
+	}
 }
 
 // --- [ va_arg ] --------------------------------------------------------------

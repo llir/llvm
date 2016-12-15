@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/llir/llvm/ir/types"
-	"github.com/llir/llvm/ir/value"
 )
 
 func TestVoidTypeString(t *testing.T) {
@@ -1038,20 +1037,6 @@ func TestStructEqual(t *testing.T) {
 		}
 	}
 }
-
-func TestParamIdent(t *testing.T) {
-	const want = "%x"
-	param := types.NewParam("x", types.I32)
-	got := param.Ident()
-	if got != want {
-		t.Errorf("expected %q, got %q", want, got)
-	}
-}
-
-// Valutate that the relevant types satisfy the value.Named interface.
-var (
-	_ value.Named = &types.Param{}
-)
 
 // Valutate that the relevant types satisfy the types.Type interface.
 var (

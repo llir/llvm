@@ -22,6 +22,8 @@ import (
 type ExprShl struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewShl returns a new shl expression based on the given operands.
@@ -72,6 +74,8 @@ func (expr *ExprShl) Y() Constant {
 type ExprLShr struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewLShr returns a new lshr expression based on the given operands.
@@ -122,6 +126,8 @@ func (expr *ExprLShr) Y() Constant {
 type ExprAShr struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewAShr returns a new ashr expression based on the given operands.
@@ -172,6 +178,8 @@ func (expr *ExprAShr) Y() Constant {
 type ExprAnd struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewAnd returns a new and expression based on the given operands.
@@ -222,6 +230,8 @@ func (expr *ExprAnd) Y() Constant {
 type ExprOr struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewOr returns a new or expression based on the given operands.
@@ -272,6 +282,8 @@ func (expr *ExprOr) Y() Constant {
 type ExprXor struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewXor returns a new xor expression based on the given operands.

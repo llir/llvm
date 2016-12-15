@@ -122,7 +122,7 @@ func (m *Module) NewGlobalDef(name string, init constant.Constant) *Global {
 
 // NewFunction appends a new function to the module based on the given function
 // name, return type and parameters.
-func (m *Module) NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
+func (m *Module) NewFunction(name string, ret types.Type, params ...*Param) *Function {
 	f := NewFunction(name, ret, params...)
 	m.AppendFunction(f)
 	return f

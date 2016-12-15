@@ -1,3 +1,5 @@
+// TODO: Track use of instructions in basic blocks?
+
 // === [ Basic blocks ] ========================================================
 
 package ir
@@ -452,7 +454,7 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 // The callee value may have one of the following underlying types.
 //
 //    *ir.Function
-//    *types.Param
+//    *ir.Param
 func (block *BasicBlock) NewCall(callee value.Named, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	block.AppendInst(inst)

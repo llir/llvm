@@ -24,6 +24,8 @@ type InstLoad struct {
 	elem types.Type
 	// Source address.
 	src value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewLoad returns a new dummy load instruction based on the given element type
@@ -105,6 +107,8 @@ type InstGetElementPtr struct {
 	src value.Value
 	// Element indices.
 	indices []value.Value
+	// Track uses of the value.
+	used
 }
 
 // NewGetElementPtr returns a new dummy getelementptr instruction based on the

@@ -33,6 +33,8 @@ type Global struct {
 	init constant.Constant
 	// Immutability of the global variable.
 	isConst bool
+	// Track uses of the value.
+	used
 }
 
 // NewGlobalDecl returns a new external global variable declaration based on the
@@ -47,7 +49,9 @@ func NewGlobalDecl(name string, content types.Type) *Global {
 func NewGlobalDef(name string, init constant.Constant) *Global {
 	content := init.Type()
 	typ := types.NewPointer(content)
-	return &Global{name: name, typ: typ, content: content, init: init}
+	global := &Global{name: name, typ: typ, content: content, init: init}
+	trackConstant(&global.init, global)
+	return global
 }
 
 // Type returns the type of the global variable.
@@ -113,6 +117,8 @@ func (global *Global) Init() (constant.Constant, bool) {
 // SetInit sets the initial value of the global variable.
 func (global *Global) SetInit(init constant.Constant) {
 	global.init = init
+	// TODO: Remove use of old init value.
+	trackConstant(&global.init, global)
 }
 
 // Const reports whether the global variable is a constant.

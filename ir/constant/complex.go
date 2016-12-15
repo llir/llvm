@@ -21,6 +21,8 @@ type Vector struct {
 	typ *types.VectorType
 	// Vector elements.
 	elems []Constant
+	// Track uses of the value.
+	used
 }
 
 // NewVector returns a new vector constant based on the given elements.
@@ -29,7 +31,11 @@ func NewVector(elems ...Constant) *Vector {
 		panic(fmt.Sprintf("invalid number of vector elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewVector(elems[0].Type(), int64(len(elems)))
-	return &Vector{typ: typ, elems: elems}
+	c := &Vector{typ: typ, elems: elems}
+	for i := range elems {
+		trackConstant(&c.elems[i], c)
+	}
+	return c
 }
 
 // Type returns the type of the constant.
@@ -72,6 +78,8 @@ type Array struct {
 	elems []Constant
 	// Pretty-print as character array.
 	charArray bool
+	// Track uses of the value.
+	used
 }
 
 // NewArray returns a new array constant based on the given elements.
@@ -80,7 +88,11 @@ func NewArray(elems ...Constant) *Array {
 		panic(fmt.Sprintf("invalid number of array elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewArray(elems[0].Type(), int64(len(elems)))
-	return &Array{typ: typ, elems: elems}
+	c := &Array{typ: typ, elems: elems}
+	for i := range elems {
+		trackConstant(&c.elems[i], c)
+	}
+	return c
 }
 
 // Type returns the type of the constant.
@@ -145,6 +157,8 @@ type Struct struct {
 	typ *types.StructType
 	// Struct fields.
 	fields []Constant
+	// Track uses of the value.
+	used
 }
 
 // NewStruct returns a new struct constant based on the given struct fields.
@@ -154,7 +168,11 @@ func NewStruct(fields ...Constant) *Struct {
 		fieldTypes = append(fieldTypes, field.Type())
 	}
 	typ := types.NewStruct(fieldTypes...)
-	return &Struct{typ: typ, fields: fields}
+	c := &Struct{typ: typ, fields: fields}
+	for i := range fields {
+		trackConstant(&c.fields[i], c)
+	}
+	return c
 }
 
 // Type returns the type of the constant.
@@ -193,6 +211,8 @@ func (c *Struct) Fields() []Constant {
 type ZeroInitializer struct {
 	// Constant type.
 	typ types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewZeroInitializer returns a new zeroinitializer constant based on the given

@@ -89,6 +89,8 @@ func (inst *Inst{{ .Name }}) X() value.Value {
 // SetX sets the x operand of the {{ lower .Name }} instruction.
 func (inst *Inst{{ .Name }}) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the {{ lower .Name }} instruction.
@@ -99,5 +101,7 @@ func (inst *Inst{{ .Name }}) Y() value.Value {
 // SetY sets the y operand of the {{ lower .Name }} instruction.
 func (inst *Inst{{ .Name }}) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 {{- end }}

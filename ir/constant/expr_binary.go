@@ -22,6 +22,8 @@ import (
 type ExprAdd struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewAdd returns a new add expression based on the given operands.
@@ -72,6 +74,8 @@ func (expr *ExprAdd) Y() Constant {
 type ExprFAdd struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewFAdd returns a new fadd expression based on the given operands.
@@ -122,6 +126,8 @@ func (expr *ExprFAdd) Y() Constant {
 type ExprSub struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewSub returns a new sub expression based on the given operands.
@@ -172,6 +178,8 @@ func (expr *ExprSub) Y() Constant {
 type ExprFSub struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewFSub returns a new fsub expression based on the given operands.
@@ -222,6 +230,8 @@ func (expr *ExprFSub) Y() Constant {
 type ExprMul struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewMul returns a new mul expression based on the given operands.
@@ -272,6 +282,8 @@ func (expr *ExprMul) Y() Constant {
 type ExprFMul struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewFMul returns a new fmul expression based on the given operands.
@@ -322,6 +334,8 @@ func (expr *ExprFMul) Y() Constant {
 type ExprUDiv struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewUDiv returns a new udiv expression based on the given operands.
@@ -372,6 +386,8 @@ func (expr *ExprUDiv) Y() Constant {
 type ExprSDiv struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewSDiv returns a new sdiv expression based on the given operands.
@@ -422,6 +438,8 @@ func (expr *ExprSDiv) Y() Constant {
 type ExprFDiv struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewFDiv returns a new fdiv expression based on the given operands.
@@ -472,6 +490,8 @@ func (expr *ExprFDiv) Y() Constant {
 type ExprURem struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewURem returns a new urem expression based on the given operands.
@@ -522,6 +542,8 @@ func (expr *ExprURem) Y() Constant {
 type ExprSRem struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewSRem returns a new srem expression based on the given operands.
@@ -572,6 +594,8 @@ func (expr *ExprSRem) Y() Constant {
 type ExprFRem struct {
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewFRem returns a new frem expression based on the given operands.

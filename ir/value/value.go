@@ -23,7 +23,7 @@ type Value interface {
 //
 //    *ir.Global       (https://godoc.org/github.com/llir/llvm/ir#Global)
 //    *ir.Function     (https://godoc.org/github.com/llir/llvm/ir#Function)
-//    *types.Param     (https://godoc.org/github.com/llir/llvm/ir/types#Param)
+//    *ir.Param        (https://godoc.org/github.com/llir/llvm/ir#Param)
 //    *ir.BasicBlock   (https://godoc.org/github.com/llir/llvm/ir#BasicBlock)
 //    ir.Instruction   (https://godoc.org/github.com/llir/llvm/ir#Instruction)
 type Named interface {
@@ -55,6 +55,7 @@ type Use interface {
 	//
 	// The returned user may have one of the following underlying types.
 	//
+	//    constant.Constant
 	//    *ir.Global
 	//    ir.Instruction
 	//    ir.Terminator

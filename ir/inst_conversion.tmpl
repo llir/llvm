@@ -90,5 +90,7 @@ func (inst *Inst{{ .Name }}) From() value.Value {
 // SetFrom sets the value before conversion of the {{ lower .Name }} instruction.
 func (inst *Inst{{ .Name }}) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 {{- end }}

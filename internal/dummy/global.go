@@ -18,6 +18,8 @@ type Global struct {
 	name string
 	// Type associated with the global.
 	typ types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewGlobal returns a new dummy global identifier based on the given global name

@@ -20,6 +20,8 @@ type ExprGetElementPtr struct {
 	src constant.Constant
 	// Element indices.
 	indices []constant.Constant
+	// Track uses of the value.
+	used
 }
 
 // NewGetElementPtr returns a dummy new getelementptr expression based on the

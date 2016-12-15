@@ -117,7 +117,7 @@ func (w *walker) walkType(t types.Type, visit func(node interface{}) bool) {
 	case *types.FuncType:
 		w.walkType(t.RetType(), visit)
 		for _, param := range t.Params() {
-			w.walkValue(param, visit)
+			w.walkType(param.Type(), visit)
 		}
 	case *types.PointerType:
 		w.walkType(t.Elem(), visit)
@@ -160,7 +160,7 @@ func (w *walker) walkValue(v value.Value, visit func(node interface{}) bool) {
 		// false for now.
 		w.visited[v] = false
 		w.walkConstant(v, visit)
-	case *types.Param:
+	case *ir.Param:
 		w.walkType(v.Type(), visit)
 	case *ir.BasicBlock:
 		for _, inst := range v.Insts() {
@@ -232,6 +232,9 @@ func (w *walker) walkConstant(c constant.Constant, visit func(node interface{}) 
 	case *ir.Function:
 		w.walkType(c.Type(), visit)
 		w.walkType(c.Sig(), visit)
+		for _, param := range c.Params() {
+			w.walkValue(param, visit)
+		}
 		for _, block := range c.Blocks() {
 			w.walkValue(block, visit)
 		}

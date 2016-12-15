@@ -48,7 +48,11 @@ type TermRet struct {
 // NewRet returns a new ret terminator based on the given return value. A nil
 // return value indicates a "void" return.
 func NewRet(x value.Value) *TermRet {
-	return &TermRet{x: x}
+	term := &TermRet{x: x}
+	if term.x != nil {
+		trackValue(&term.x, term)
+	}
+	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -86,9 +90,14 @@ func (term *TermRet) X() (value.Value, bool) {
 	return nil, false
 }
 
-// SetX sets the return value of the ret terminator.
+// SetX sets the return value of the ret terminator. A nil return value
+// indicates a "void" return.
 func (term *TermRet) SetX(x value.Value) {
 	term.x = x
+	if term.x != nil {
+		// TODO: Remove use of old x value.
+		trackValue(&term.x, term)
+	}
 }
 
 // --- [ br ] ------------------------------------------------------------------
@@ -110,7 +119,9 @@ type TermBr struct {
 // branch.
 func NewBr(target *BasicBlock) *TermBr {
 	successors := []*BasicBlock{target}
-	return &TermBr{target: target, successors: successors}
+	term := &TermBr{target: target, successors: successors}
+	trackBlock(&term.target, term)
+	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -163,6 +174,8 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondB
 	successors := []*BasicBlock{targetTrue, targetFalse}
 	term := &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
 	trackValue(&term.cond, term)
+	trackBlock(&term.targetTrue, term)
+	trackBlock(&term.targetFalse, term)
 	return term
 }
 
@@ -242,7 +255,14 @@ func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSw
 	for _, c := range cases {
 		successors = append(successors, c.target)
 	}
-	return &TermSwitch{x: x, targetDefault: targetDefault, cases: cases, successors: successors}
+	term := &TermSwitch{x: x, targetDefault: targetDefault, cases: cases, successors: successors}
+	trackValue(&term.x, term)
+	trackBlock(&term.targetDefault, term)
+	for i := range term.cases {
+		trackIntConst(&term.cases[i].x, term)
+		trackBlock(&term.cases[i].target, term)
+	}
+	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -287,6 +307,8 @@ func (term *TermSwitch) X() value.Value {
 // SetX sets the control variable of the switch terminator.
 func (term *TermSwitch) SetX(x value.Value) {
 	term.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&term.x, term)
 }
 
 // TargetDefault returns the default target branch of the switch terminator.
@@ -317,6 +339,11 @@ func NewCase(x *constant.Int, target *BasicBlock) *Case {
 func (c *Case) X() *constant.Int {
 	return c.x
 }
+
+// TODO: Figure out how to track use of x when user (i.e. parent switch
+// terminator) is not known in SetX. Remove SetX entirely in favour of
+// Use.Replace? Evaluate the uses of SetX, should only be during parsing (in
+// dummy translation).
 
 // SetX sets the case comparand.
 func (c *Case) SetX(x *constant.Int) {

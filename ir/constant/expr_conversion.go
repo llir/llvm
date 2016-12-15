@@ -24,6 +24,8 @@ type ExprTrunc struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewTrunc returns a new trunc expression based on the given source constant and target type.
@@ -70,6 +72,8 @@ type ExprZExt struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewZExt returns a new zext expression based on the given source constant and target type.
@@ -116,6 +120,8 @@ type ExprSExt struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewSExt returns a new sext expression based on the given source constant and target type.
@@ -162,6 +168,8 @@ type ExprFPTrunc struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewFPTrunc returns a new fptrunc expression based on the given source constant and target type.
@@ -208,6 +216,8 @@ type ExprFPExt struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewFPExt returns a new fpext expression based on the given source constant and target type.
@@ -254,6 +264,8 @@ type ExprFPToUI struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewFPToUI returns a new fptoui expression based on the given source constant and target type.
@@ -300,6 +312,8 @@ type ExprFPToSI struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewFPToSI returns a new fptosi expression based on the given source constant and target type.
@@ -346,6 +360,8 @@ type ExprUIToFP struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewUIToFP returns a new uitofp expression based on the given source constant and target type.
@@ -392,6 +408,8 @@ type ExprSIToFP struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewSIToFP returns a new sitofp expression based on the given source constant and target type.
@@ -438,6 +456,8 @@ type ExprPtrToInt struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewPtrToInt returns a new ptrtoint expression based on the given source constant and target type.
@@ -484,6 +504,8 @@ type ExprIntToPtr struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewIntToPtr returns a new inttoptr expression based on the given source constant and target type.
@@ -530,6 +552,8 @@ type ExprBitCast struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewBitCast returns a new bitcast expression based on the given source constant and target type.
@@ -576,6 +600,8 @@ type ExprAddrSpaceCast struct {
 	from Constant
 	// Type after conversion.
 	to types.Type
+	// Track uses of the value.
+	used
 }
 
 // NewAddrSpaceCast returns a new addrspacecast expression based on the given source constant and target type.

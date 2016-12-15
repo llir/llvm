@@ -24,6 +24,8 @@ type ExprICmp struct {
 	cond IntPred
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewICmp returns a new icmp expression based on the given integer condition
@@ -33,7 +35,10 @@ func NewICmp(cond IntPred, x, y Constant) *ExprICmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &ExprICmp{typ: typ, cond: cond, x: x, y: y}
+	expr := &ExprICmp{typ: typ, cond: cond, x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -127,6 +132,8 @@ type ExprFCmp struct {
 	cond FloatPred
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
@@ -136,7 +143,10 @@ func NewFCmp(cond FloatPred, x, y Constant) *ExprFCmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	return &ExprFCmp{typ: typ, cond: cond, x: x, y: y}
+	expr := &ExprFCmp{typ: typ, cond: cond, x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -240,12 +250,18 @@ type ExprSelect struct {
 	cond Constant
 	// Operands.
 	x, y Constant
+	// Track uses of the value.
+	used
 }
 
 // NewSelect returns a new select expression based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y Constant) *ExprSelect {
-	return &ExprSelect{cond: cond, x: x, y: y}
+	expr := &ExprSelect{cond: cond, x: x, y: y}
+	trackConstant(&expr.cond, expr)
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.

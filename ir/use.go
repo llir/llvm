@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -34,6 +35,12 @@ type use struct {
 	// replace replaces the used value with the given value.
 	replace func(v value.Value)
 	// User of the value.
+	//
+	// User may have one of the following underlying types.
+	//
+	//    *ir.Global
+	//    ir.Instruction
+	//    ir.Terminator
 	user interface{}
 }
 
@@ -101,6 +108,7 @@ type blockTracker struct {
 	user interface{}
 }
 
+// trackBlock tracks the use of the given basic block.
 func trackBlock(orig **BasicBlock, user interface{}) {
 	use := &blockTracker{orig: orig, user: user}
 	(*orig).AppendUse(use)
@@ -123,5 +131,131 @@ func (use *blockTracker) Replace(v value.Value) {
 //    ir.Instruction
 //    ir.Terminator
 func (use *blockTracker) User() interface{} {
+	return use.user
+}
+
+// namedTracker tracks the use of a named value.
+type namedTracker struct {
+	// Original named value.
+	orig *value.Named
+	// User of the value.
+	user interface{}
+}
+
+// trackNamed tracks the use of the given named value.
+func trackNamed(orig *value.Named, user interface{}) {
+	use := &namedTracker{orig: orig, user: user}
+	used, ok := (*orig).(value.Used)
+	if !ok {
+		panic(fmt.Sprintf("invalid used value type; expected value.Used, got %T", *orig))
+	}
+	used.AppendUse(use)
+}
+
+// Replace replaces the used value with the given value.
+func (use *namedTracker) Replace(v value.Value) {
+	n, ok := v.(value.Named)
+	if !ok {
+		panic(fmt.Sprintf("invalid named value type; expected value.Named, got %T", v))
+	}
+	*use.orig = n
+}
+
+// User returns the user of the value.
+//
+// The returned user may have one of the following underlying types.
+//
+//    *ir.Global
+//    ir.Instruction
+//    ir.Terminator
+func (use *namedTracker) User() interface{} {
+	return use.user
+}
+
+// constantTracker tracks the use of a value.
+type constantTracker struct {
+	// Original value.
+	orig *constant.Constant
+	// User of the value.
+	//
+	// User may have one of the following underlying types.
+	//
+	//    constant.Constant
+	//    *ir.Global
+	//    ir.Instruction
+	//    ir.Terminator
+	user interface{}
+}
+
+// trackConstant tracks the use of the given constant.
+func trackConstant(orig *constant.Constant, user interface{}) {
+	use := &constantTracker{orig: orig, user: user}
+	used, ok := (*orig).(value.Used)
+	if !ok {
+		panic(fmt.Sprintf("invalid used value type; expected value.Used, got %T", *orig))
+	}
+	used.AppendUse(use)
+}
+
+// Replace replaces the used value with the given value.
+func (use *constantTracker) Replace(v value.Value) {
+	c, ok := v.(constant.Constant)
+	if !ok {
+		panic(fmt.Sprintf("invalid constant type; expected constant.Constant, got %T", v))
+	}
+	*use.orig = c
+}
+
+// User returns the user of the value.
+//
+// The returned user may have one of the following underlying types.
+//
+//    constant.Constant
+//    *ir.Global
+//    ir.Instruction
+//    ir.Terminator
+func (use *constantTracker) User() interface{} {
+	return use.user
+}
+
+// intConstTracker tracks the use of a value.
+type intConstTracker struct {
+	// Original value.
+	orig **constant.Int
+	// User of the value.
+	//
+	// User may have one of the following underlying types.
+	//
+	//    constant.Constant
+	//    *ir.Global
+	//    ir.Instruction
+	//    ir.Terminator
+	user interface{}
+}
+
+// trackIntConst tracks the use of the given integer constant.
+func trackIntConst(orig **constant.Int, user interface{}) {
+	use := &intConstTracker{orig: orig, user: user}
+	(*orig).AppendUse(use)
+}
+
+// Replace replaces the used value with the given value.
+func (use *intConstTracker) Replace(v value.Value) {
+	c, ok := v.(*constant.Int)
+	if !ok {
+		panic(fmt.Sprintf("invalid integer constant type; expected *constant.Int, got %T", v))
+	}
+	*use.orig = c
+}
+
+// User returns the user of the value.
+//
+// The returned user may have one of the following underlying types.
+//
+//    constant.Constant
+//    *ir.Global
+//    ir.Instruction
+//    ir.Terminator
+func (use *intConstTracker) User() interface{} {
 	return use.user
 }
