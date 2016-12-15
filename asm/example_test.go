@@ -87,7 +87,14 @@ func Example() {
 	//                                                 },
 	//                                             },
 	//                                         },
-	//                                         used: ir.used{},
+	//                                         used: ir.used{
+	//                                             uses: {
+	//                                                 &ir.valueTracker{
+	//                                                     orig: &!%v(DEPTH EXCEEDED),
+	//                                                     user: &!%v(DEPTH EXCEEDED),
+	//                                                 },
+	//                                             },
+	//                                         },
 	//                                     },
 	//                                     &ir.InstAdd{
 	//                                         parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
@@ -230,7 +237,38 @@ func Example() {
 	//                             name: "1",
 	//                             typ:  &types.IntType{size:32},
 	//                             src:  &ir.Global{(CYCLIC REFERENCE)},
-	//                             used: ir.used{},
+	//                             used: ir.used{
+	//                                 uses: {
+	//                                     &ir.valueTracker{
+	//                                         orig: &&ir.InstLoad{(CYCLIC REFERENCE)},
+	//                                         user: &ir.InstMul{
+	//                                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                                             name:   "2",
+	//                                             x:      &ir.InstLoad{(CYCLIC REFERENCE)},
+	//                                             y:      &constant.Int{
+	//                                                 typ: &types.IntType{size:32},
+	//                                                 x:   &big.Int{
+	//                                                     neg: false,
+	//                                                     abs: {0x15a4e35},
+	//                                                 },
+	//                                                 used: constant.used{
+	//                                                     uses: {
+	//                                                         &!%v(DEPTH EXCEEDED),
+	//                                                     },
+	//                                                 },
+	//                                             },
+	//                                             used: ir.used{
+	//                                                 uses: {
+	//                                                     &ir.valueTracker{
+	//                                                         orig: &!%v(DEPTH EXCEEDED),
+	//                                                         user: &!%v(DEPTH EXCEEDED),
+	//                                                     },
+	//                                                 },
+	//                                             },
+	//                                         },
+	//                                     },
+	//                                 },
+	//                             },
 	//                         },
 	//                     },
 	//                     &ir.valueTracker{
@@ -274,7 +312,14 @@ func Example() {
 	//                                                 },
 	//                                             },
 	//                                         },
-	//                                         used: ir.used{},
+	//                                         used: ir.used{
+	//                                             uses: {
+	//                                                 &ir.valueTracker{
+	//                                                     orig: &!%v(DEPTH EXCEEDED),
+	//                                                     user: &!%v(DEPTH EXCEEDED),
+	//                                                 },
+	//                                             },
+	//                                         },
 	//                                     },
 	//                                     &ir.InstAdd{
 	//                                         parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
@@ -426,7 +471,14 @@ func Example() {
 	//                                             },
 	//                                         },
 	//                                     },
-	//                                     used: ir.used{},
+	//                                     used: ir.used{
+	//                                         uses: {
+	//                                             &ir.valueTracker{
+	//                                                 orig: &!%v(DEPTH EXCEEDED),
+	//                                                 user: &ir.InstAdd{(CYCLIC REFERENCE)},
+	//                                             },
+	//                                         },
+	//                                     },
 	//                                 },
 	//                                 y:  &constant.Int{
 	//                                     typ: &types.IntType{size:32},
@@ -584,7 +636,14 @@ func Example() {
 	//                             name:   "1",
 	//                             typ:    &types.IntType{size:32},
 	//                             src:    &ir.Global{(CYCLIC REFERENCE)},
-	//                             used:   ir.used{},
+	//                             used:   ir.used{
+	//                                 uses: {
+	//                                     &ir.valueTracker{
+	//                                         orig: &&ir.InstLoad{(CYCLIC REFERENCE)},
+	//                                         user: &ir.InstMul{(CYCLIC REFERENCE)},
+	//                                     },
+	//                                 },
+	//                             },
 	//                         },
 	//                         &ir.InstMul{
 	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
@@ -605,7 +664,14 @@ func Example() {
 	//                                     },
 	//                                 },
 	//                             },
-	//                             used: ir.used{},
+	//                             used: ir.used{
+	//                                 uses: {
+	//                                     &ir.valueTracker{
+	//                                         orig: &&ir.InstMul{(CYCLIC REFERENCE)},
+	//                                         user: &ir.InstAdd{(CYCLIC REFERENCE)},
+	//                                     },
+	//                                 },
+	//                             },
 	//                         },
 	//                         &ir.InstAdd{
 	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},

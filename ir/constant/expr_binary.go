@@ -28,7 +28,10 @@ type ExprAdd struct {
 
 // NewAdd returns a new add expression based on the given operands.
 func NewAdd(x, y Constant) *ExprAdd {
-	return &ExprAdd{x: x, y: y}
+	expr := &ExprAdd{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -80,7 +83,10 @@ type ExprFAdd struct {
 
 // NewFAdd returns a new fadd expression based on the given operands.
 func NewFAdd(x, y Constant) *ExprFAdd {
-	return &ExprFAdd{x: x, y: y}
+	expr := &ExprFAdd{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -132,7 +138,10 @@ type ExprSub struct {
 
 // NewSub returns a new sub expression based on the given operands.
 func NewSub(x, y Constant) *ExprSub {
-	return &ExprSub{x: x, y: y}
+	expr := &ExprSub{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -184,7 +193,10 @@ type ExprFSub struct {
 
 // NewFSub returns a new fsub expression based on the given operands.
 func NewFSub(x, y Constant) *ExprFSub {
-	return &ExprFSub{x: x, y: y}
+	expr := &ExprFSub{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -236,7 +248,10 @@ type ExprMul struct {
 
 // NewMul returns a new mul expression based on the given operands.
 func NewMul(x, y Constant) *ExprMul {
-	return &ExprMul{x: x, y: y}
+	expr := &ExprMul{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -288,7 +303,10 @@ type ExprFMul struct {
 
 // NewFMul returns a new fmul expression based on the given operands.
 func NewFMul(x, y Constant) *ExprFMul {
-	return &ExprFMul{x: x, y: y}
+	expr := &ExprFMul{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -340,7 +358,10 @@ type ExprUDiv struct {
 
 // NewUDiv returns a new udiv expression based on the given operands.
 func NewUDiv(x, y Constant) *ExprUDiv {
-	return &ExprUDiv{x: x, y: y}
+	expr := &ExprUDiv{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -392,7 +413,10 @@ type ExprSDiv struct {
 
 // NewSDiv returns a new sdiv expression based on the given operands.
 func NewSDiv(x, y Constant) *ExprSDiv {
-	return &ExprSDiv{x: x, y: y}
+	expr := &ExprSDiv{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -444,7 +468,10 @@ type ExprFDiv struct {
 
 // NewFDiv returns a new fdiv expression based on the given operands.
 func NewFDiv(x, y Constant) *ExprFDiv {
-	return &ExprFDiv{x: x, y: y}
+	expr := &ExprFDiv{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -496,7 +523,10 @@ type ExprURem struct {
 
 // NewURem returns a new urem expression based on the given operands.
 func NewURem(x, y Constant) *ExprURem {
-	return &ExprURem{x: x, y: y}
+	expr := &ExprURem{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -548,7 +578,10 @@ type ExprSRem struct {
 
 // NewSRem returns a new srem expression based on the given operands.
 func NewSRem(x, y Constant) *ExprSRem {
-	return &ExprSRem{x: x, y: y}
+	expr := &ExprSRem{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.
@@ -600,7 +633,10 @@ type ExprFRem struct {
 
 // NewFRem returns a new frem expression based on the given operands.
 func NewFRem(x, y Constant) *ExprFRem {
-	return &ExprFRem{x: x, y: y}
+	expr := &ExprFRem{x: x, y: y}
+	trackConstant(&expr.x, expr)
+	trackConstant(&expr.y, expr)
+	return expr
 }
 
 // Type returns the type of the constant expression.

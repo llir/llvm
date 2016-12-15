@@ -87,6 +87,8 @@ func (inst *InstShl) X() value.Value {
 // SetX sets the x operand of the shl instruction.
 func (inst *InstShl) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the shl instruction.
@@ -97,6 +99,8 @@ func (inst *InstShl) Y() value.Value {
 // SetY sets the y operand of the shl instruction.
 func (inst *InstShl) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -171,6 +175,8 @@ func (inst *InstLShr) X() value.Value {
 // SetX sets the x operand of the lshr instruction.
 func (inst *InstLShr) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the lshr instruction.
@@ -181,6 +187,8 @@ func (inst *InstLShr) Y() value.Value {
 // SetY sets the y operand of the lshr instruction.
 func (inst *InstLShr) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -255,6 +263,8 @@ func (inst *InstAShr) X() value.Value {
 // SetX sets the x operand of the ashr instruction.
 func (inst *InstAShr) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the ashr instruction.
@@ -265,6 +275,8 @@ func (inst *InstAShr) Y() value.Value {
 // SetY sets the y operand of the ashr instruction.
 func (inst *InstAShr) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -339,6 +351,8 @@ func (inst *InstAnd) X() value.Value {
 // SetX sets the x operand of the and instruction.
 func (inst *InstAnd) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the and instruction.
@@ -349,6 +363,8 @@ func (inst *InstAnd) Y() value.Value {
 // SetY sets the y operand of the and instruction.
 func (inst *InstAnd) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -423,6 +439,8 @@ func (inst *InstOr) X() value.Value {
 // SetX sets the x operand of the or instruction.
 func (inst *InstOr) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the or instruction.
@@ -433,6 +451,8 @@ func (inst *InstOr) Y() value.Value {
 // SetY sets the y operand of the or instruction.
 func (inst *InstOr) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -507,6 +527,8 @@ func (inst *InstXor) X() value.Value {
 // SetX sets the x operand of the xor instruction.
 func (inst *InstXor) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the xor instruction.
@@ -517,4 +539,6 @@ func (inst *InstXor) Y() value.Value {
 // SetY sets the y operand of the xor instruction.
 func (inst *InstXor) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }

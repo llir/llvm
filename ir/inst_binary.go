@@ -87,6 +87,8 @@ func (inst *InstAdd) X() value.Value {
 // SetX sets the x operand of the add instruction.
 func (inst *InstAdd) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the add instruction.
@@ -97,6 +99,8 @@ func (inst *InstAdd) Y() value.Value {
 // SetY sets the y operand of the add instruction.
 func (inst *InstAdd) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -171,6 +175,8 @@ func (inst *InstFAdd) X() value.Value {
 // SetX sets the x operand of the fadd instruction.
 func (inst *InstFAdd) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the fadd instruction.
@@ -181,6 +187,8 @@ func (inst *InstFAdd) Y() value.Value {
 // SetY sets the y operand of the fadd instruction.
 func (inst *InstFAdd) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -255,6 +263,8 @@ func (inst *InstSub) X() value.Value {
 // SetX sets the x operand of the sub instruction.
 func (inst *InstSub) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the sub instruction.
@@ -265,6 +275,8 @@ func (inst *InstSub) Y() value.Value {
 // SetY sets the y operand of the sub instruction.
 func (inst *InstSub) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -339,6 +351,8 @@ func (inst *InstFSub) X() value.Value {
 // SetX sets the x operand of the fsub instruction.
 func (inst *InstFSub) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the fsub instruction.
@@ -349,6 +363,8 @@ func (inst *InstFSub) Y() value.Value {
 // SetY sets the y operand of the fsub instruction.
 func (inst *InstFSub) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -423,6 +439,8 @@ func (inst *InstMul) X() value.Value {
 // SetX sets the x operand of the mul instruction.
 func (inst *InstMul) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the mul instruction.
@@ -433,6 +451,8 @@ func (inst *InstMul) Y() value.Value {
 // SetY sets the y operand of the mul instruction.
 func (inst *InstMul) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -507,6 +527,8 @@ func (inst *InstFMul) X() value.Value {
 // SetX sets the x operand of the fmul instruction.
 func (inst *InstFMul) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the fmul instruction.
@@ -517,6 +539,8 @@ func (inst *InstFMul) Y() value.Value {
 // SetY sets the y operand of the fmul instruction.
 func (inst *InstFMul) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -591,6 +615,8 @@ func (inst *InstUDiv) X() value.Value {
 // SetX sets the x operand of the udiv instruction.
 func (inst *InstUDiv) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the udiv instruction.
@@ -601,6 +627,8 @@ func (inst *InstUDiv) Y() value.Value {
 // SetY sets the y operand of the udiv instruction.
 func (inst *InstUDiv) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -675,6 +703,8 @@ func (inst *InstSDiv) X() value.Value {
 // SetX sets the x operand of the sdiv instruction.
 func (inst *InstSDiv) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the sdiv instruction.
@@ -685,6 +715,8 @@ func (inst *InstSDiv) Y() value.Value {
 // SetY sets the y operand of the sdiv instruction.
 func (inst *InstSDiv) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -759,6 +791,8 @@ func (inst *InstFDiv) X() value.Value {
 // SetX sets the x operand of the fdiv instruction.
 func (inst *InstFDiv) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the fdiv instruction.
@@ -769,6 +803,8 @@ func (inst *InstFDiv) Y() value.Value {
 // SetY sets the y operand of the fdiv instruction.
 func (inst *InstFDiv) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -843,6 +879,8 @@ func (inst *InstURem) X() value.Value {
 // SetX sets the x operand of the urem instruction.
 func (inst *InstURem) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the urem instruction.
@@ -853,6 +891,8 @@ func (inst *InstURem) Y() value.Value {
 // SetY sets the y operand of the urem instruction.
 func (inst *InstURem) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -927,6 +967,8 @@ func (inst *InstSRem) X() value.Value {
 // SetX sets the x operand of the srem instruction.
 func (inst *InstSRem) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the srem instruction.
@@ -937,6 +979,8 @@ func (inst *InstSRem) Y() value.Value {
 // SetY sets the y operand of the srem instruction.
 func (inst *InstSRem) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -1011,6 +1055,8 @@ func (inst *InstFRem) X() value.Value {
 // SetX sets the x operand of the frem instruction.
 func (inst *InstFRem) SetX(x value.Value) {
 	inst.x = x
+	// TODO: Remove use of old x value.
+	trackValue(&inst.x, inst)
 }
 
 // Y returns the y operand of the frem instruction.
@@ -1021,4 +1067,6 @@ func (inst *InstFRem) Y() value.Value {
 // SetY sets the y operand of the frem instruction.
 func (inst *InstFRem) SetY(y value.Value) {
 	inst.y = y
+	// TODO: Remove use of old y value.
+	trackValue(&inst.y, inst)
 }

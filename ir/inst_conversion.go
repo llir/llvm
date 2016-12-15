@@ -89,6 +89,8 @@ func (inst *InstTrunc) From() value.Value {
 // SetFrom sets the value before conversion of the trunc instruction.
 func (inst *InstTrunc) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ zext ] ----------------------------------------------------------------
@@ -165,6 +167,8 @@ func (inst *InstZExt) From() value.Value {
 // SetFrom sets the value before conversion of the zext instruction.
 func (inst *InstZExt) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -241,6 +245,8 @@ func (inst *InstSExt) From() value.Value {
 // SetFrom sets the value before conversion of the sext instruction.
 func (inst *InstSExt) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ fptrunc ] -------------------------------------------------------------
@@ -317,6 +323,8 @@ func (inst *InstFPTrunc) From() value.Value {
 // SetFrom sets the value before conversion of the fptrunc instruction.
 func (inst *InstFPTrunc) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -393,6 +401,8 @@ func (inst *InstFPExt) From() value.Value {
 // SetFrom sets the value before conversion of the fpext instruction.
 func (inst *InstFPExt) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ fptoui ] --------------------------------------------------------------
@@ -469,6 +479,8 @@ func (inst *InstFPToUI) From() value.Value {
 // SetFrom sets the value before conversion of the fptoui instruction.
 func (inst *InstFPToUI) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -545,6 +557,8 @@ func (inst *InstFPToSI) From() value.Value {
 // SetFrom sets the value before conversion of the fptosi instruction.
 func (inst *InstFPToSI) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ uitofp ] --------------------------------------------------------------
@@ -621,6 +635,8 @@ func (inst *InstUIToFP) From() value.Value {
 // SetFrom sets the value before conversion of the uitofp instruction.
 func (inst *InstUIToFP) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -697,6 +713,8 @@ func (inst *InstSIToFP) From() value.Value {
 // SetFrom sets the value before conversion of the sitofp instruction.
 func (inst *InstSIToFP) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ ptrtoint ] ------------------------------------------------------------
@@ -773,6 +791,8 @@ func (inst *InstPtrToInt) From() value.Value {
 // SetFrom sets the value before conversion of the ptrtoint instruction.
 func (inst *InstPtrToInt) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -849,6 +869,8 @@ func (inst *InstIntToPtr) From() value.Value {
 // SetFrom sets the value before conversion of the inttoptr instruction.
 func (inst *InstIntToPtr) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ bitcast ] -------------------------------------------------------------
@@ -925,6 +947,8 @@ func (inst *InstBitCast) From() value.Value {
 // SetFrom sets the value before conversion of the bitcast instruction.
 func (inst *InstBitCast) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
 
 // --- [ addrspacecast ] -------------------------------------------------------
@@ -1001,4 +1025,6 @@ func (inst *InstAddrSpaceCast) From() value.Value {
 // SetFrom sets the value before conversion of the addrspacecast instruction.
 func (inst *InstAddrSpaceCast) SetFrom(from value.Value) {
 	inst.from = from
+	// TODO: Remove use of old from value.
+	trackValue(&inst.from, inst)
 }
