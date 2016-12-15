@@ -37,7 +37,7 @@ type InstTrunc struct {
 // NewTrunc returns a new trunc instruction based on the given source value and target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 	inst := &InstTrunc{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -113,7 +113,7 @@ type InstZExt struct {
 // NewZExt returns a new zext instruction based on the given source value and target type.
 func NewZExt(from value.Value, to types.Type) *InstZExt {
 	inst := &InstZExt{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -189,7 +189,7 @@ type InstSExt struct {
 // NewSExt returns a new sext instruction based on the given source value and target type.
 func NewSExt(from value.Value, to types.Type) *InstSExt {
 	inst := &InstSExt{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -265,7 +265,7 @@ type InstFPTrunc struct {
 // NewFPTrunc returns a new fptrunc instruction based on the given source value and target type.
 func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 	inst := &InstFPTrunc{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -341,7 +341,7 @@ type InstFPExt struct {
 // NewFPExt returns a new fpext instruction based on the given source value and target type.
 func NewFPExt(from value.Value, to types.Type) *InstFPExt {
 	inst := &InstFPExt{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -417,7 +417,7 @@ type InstFPToUI struct {
 // NewFPToUI returns a new fptoui instruction based on the given source value and target type.
 func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 	inst := &InstFPToUI{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -493,7 +493,7 @@ type InstFPToSI struct {
 // NewFPToSI returns a new fptosi instruction based on the given source value and target type.
 func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 	inst := &InstFPToSI{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -569,7 +569,7 @@ type InstUIToFP struct {
 // NewUIToFP returns a new uitofp instruction based on the given source value and target type.
 func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 	inst := &InstUIToFP{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -645,7 +645,7 @@ type InstSIToFP struct {
 // NewSIToFP returns a new sitofp instruction based on the given source value and target type.
 func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 	inst := &InstSIToFP{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -721,7 +721,7 @@ type InstPtrToInt struct {
 // NewPtrToInt returns a new ptrtoint instruction based on the given source value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 	inst := &InstPtrToInt{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -797,7 +797,7 @@ type InstIntToPtr struct {
 // NewIntToPtr returns a new inttoptr instruction based on the given source value and target type.
 func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 	inst := &InstIntToPtr{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -873,7 +873,7 @@ type InstBitCast struct {
 // NewBitCast returns a new bitcast instruction based on the given source value and target type.
 func NewBitCast(from value.Value, to types.Type) *InstBitCast {
 	inst := &InstBitCast{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 
@@ -949,7 +949,7 @@ type InstAddrSpaceCast struct {
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given source value and target type.
 func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 	inst := &InstAddrSpaceCast{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 

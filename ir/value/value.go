@@ -51,4 +51,12 @@ type Used interface {
 type Use interface {
 	// Replace replaces the used value with the given value.
 	Replace(v Value)
+	// User returns the user of the value.
+	//
+	// The returned user may have one of the following underlying types.
+	//
+	//    *ir.Global
+	//    ir.Instruction
+	//    ir.Terminator
+	User() interface{}
 }

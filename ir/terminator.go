@@ -162,13 +162,7 @@ type TermCondBr struct {
 func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
 	successors := []*BasicBlock{targetTrue, targetFalse}
 	term := &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
-	if cond, ok := cond.(value.Used); ok {
-		replace := func(v value.Value) {
-			term.cond = v
-		}
-		use := newUse(replace)
-		cond.AppendUse(use)
-	}
+	trackValue(&term.cond, term)
 	return term
 }
 
@@ -203,15 +197,8 @@ func (term *TermCondBr) Cond() value.Value {
 // SetCond sets the branching condition of the br terminator.
 func (term *TermCondBr) SetCond(cond value.Value) {
 	term.cond = cond
-	if cond, ok := cond.(value.Used); ok {
-		replace := func(v value.Value) {
-			term.cond = v
-		}
-		fmt.Println("replace")
-		use := newUse(replace)
-		cond.AppendUse(use)
-	}
-	fmt.Printf("t: %T\n", cond)
+	// TODO: Remove use of old cond value.
+	trackValue(&term.cond, term)
 }
 
 // TargetTrue returns the target branch when condition is true of the br

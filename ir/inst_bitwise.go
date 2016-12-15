@@ -35,8 +35,8 @@ type InstShl struct {
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
 	inst := &InstShl{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -119,8 +119,8 @@ type InstLShr struct {
 // NewLShr returns a new lshr instruction based on the given operands.
 func NewLShr(x, y value.Value) *InstLShr {
 	inst := &InstLShr{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -203,8 +203,8 @@ type InstAShr struct {
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
 	inst := &InstAShr{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -287,8 +287,8 @@ type InstAnd struct {
 // NewAnd returns a new and instruction based on the given operands.
 func NewAnd(x, y value.Value) *InstAnd {
 	inst := &InstAnd{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -371,8 +371,8 @@ type InstOr struct {
 // NewOr returns a new or instruction based on the given operands.
 func NewOr(x, y value.Value) *InstOr {
 	inst := &InstOr{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -455,8 +455,8 @@ type InstXor struct {
 // NewXor returns a new xor instruction based on the given operands.
 func NewXor(x, y value.Value) *InstXor {
 	inst := &InstXor{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 

@@ -43,8 +43,8 @@ func NewICmp(cond IntPred, x, y value.Value) *InstICmp {
 		typ = types.NewVector(types.I1, t.Len())
 	}
 	inst := &InstICmp{typ: typ, cond: cond, x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -181,8 +181,8 @@ func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 		typ = types.NewVector(types.I1, t.Len())
 	}
 	inst := &InstFCmp{typ: typ, cond: cond, x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
@@ -329,8 +329,8 @@ func NewPhi(incs ...*Incoming) *InstPhi {
 	typ := incs[0].x.Type()
 	inst := &InstPhi{typ: typ, incs: incs}
 	for _, inc := range incs {
-		trackValue(&inc.x)
-		trackBlock(&inc.pred)
+		trackValue(&inc.x, inst)
+		trackBlock(&inc.pred, inst)
 	}
 	return inst
 }
@@ -439,9 +439,9 @@ type InstSelect struct {
 // condition and operands.
 func NewSelect(cond, x, y value.Value) *InstSelect {
 	inst := &InstSelect{cond: cond, x: x, y: y}
-	trackValue(&inst.cond)
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.cond, inst)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 

@@ -38,7 +38,7 @@ type Inst{{ .Name }} struct {
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given source value and target type.
 func New{{ .Name }}(from value.Value, to types.Type) *Inst{{ .Name }} {
 	inst := &Inst{{ .Name }}{from: from, to: to}
-	trackValue(&inst.from)
+	trackValue(&inst.from, inst)
 	return inst
 }
 

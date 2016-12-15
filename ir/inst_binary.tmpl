@@ -36,8 +36,8 @@ type Inst{{ .Name }} struct {
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given operands.
 func New{{ .Name }}(x, y value.Value) *Inst{{ .Name }} {
 	inst := &Inst{{ .Name }}{x: x, y: y}
-	trackValue(&inst.x)
-	trackValue(&inst.y)
+	trackValue(&inst.x, inst)
+	trackValue(&inst.y, inst)
 	return inst
 }
 
