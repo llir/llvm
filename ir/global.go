@@ -49,9 +49,7 @@ func NewGlobalDecl(name string, content types.Type) *Global {
 func NewGlobalDef(name string, init constant.Constant) *Global {
 	content := init.Type()
 	typ := types.NewPointer(content)
-	global := &Global{name: name, typ: typ, content: content, init: init}
-	trackConstant(&global.init, global)
-	return global
+	return &Global{name: name, typ: typ, content: content, init: init}
 }
 
 // Type returns the type of the global variable.
@@ -117,8 +115,6 @@ func (global *Global) Init() (constant.Constant, bool) {
 // SetInit sets the initial value of the global variable.
 func (global *Global) SetInit(init constant.Constant) {
 	global.init = init
-	// TODO: Remove use of old init value.
-	trackConstant(&global.init, global)
 }
 
 // Const reports whether the global variable is a constant.

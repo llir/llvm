@@ -28,10 +28,7 @@ type ExprShl struct {
 
 // NewShl returns a new shl expression based on the given operands.
 func NewShl(x, y Constant) *ExprShl {
-	expr := &ExprShl{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprShl{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -83,10 +80,7 @@ type ExprLShr struct {
 
 // NewLShr returns a new lshr expression based on the given operands.
 func NewLShr(x, y Constant) *ExprLShr {
-	expr := &ExprLShr{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprLShr{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -138,10 +132,7 @@ type ExprAShr struct {
 
 // NewAShr returns a new ashr expression based on the given operands.
 func NewAShr(x, y Constant) *ExprAShr {
-	expr := &ExprAShr{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprAShr{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -193,10 +184,7 @@ type ExprAnd struct {
 
 // NewAnd returns a new and expression based on the given operands.
 func NewAnd(x, y Constant) *ExprAnd {
-	expr := &ExprAnd{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprAnd{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -248,10 +236,7 @@ type ExprOr struct {
 
 // NewOr returns a new or expression based on the given operands.
 func NewOr(x, y Constant) *ExprOr {
-	expr := &ExprOr{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprOr{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -303,10 +288,7 @@ type ExprXor struct {
 
 // NewXor returns a new xor expression based on the given operands.
 func NewXor(x, y Constant) *ExprXor {
-	expr := &ExprXor{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprXor{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.

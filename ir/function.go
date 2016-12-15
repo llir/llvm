@@ -1,5 +1,3 @@
-// TODO: Track use of basic blocks in functions?
-
 // === [ Functions ] ===========================================================
 //
 // References:

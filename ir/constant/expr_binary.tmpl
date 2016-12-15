@@ -29,10 +29,7 @@ type Expr{{ .Name }} struct {
 
 // New{{ .Name }} returns a new {{ lower .Name }} expression based on the given operands.
 func New{{ .Name }}(x, y Constant) *Expr{{ .Name }} {
-	expr := &Expr{{ .Name }}{x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &Expr{{ .Name }}{x: x, y: y}
 }
 
 // Type returns the type of the constant expression.

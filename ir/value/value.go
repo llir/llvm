@@ -55,8 +55,6 @@ type Use interface {
 	//
 	// The returned user may have one of the following underlying types.
 	//
-	//    constant.Constant
-	//    *ir.Global
 	//    ir.Instruction
 	//    ir.Terminator
 	User() interface{}

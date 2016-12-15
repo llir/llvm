@@ -30,14 +30,7 @@ func Example() {
 	//             init:    &constant.Int{
 	//                 typ:  &types.IntType{(CYCLIC REFERENCE)},
 	//                 x:    &big.Int{},
-	//                 used: constant.used{
-	//                     uses: {
-	//                         &ir.constantTracker{
-	//                             orig: &&constant.Int{(CYCLIC REFERENCE)},
-	//                             user: &ir.Global{(CYCLIC REFERENCE)},
-	//                         },
-	//                     },
-	//                 },
+	//                 used: constant.used{},
 	//             },
 	//             isConst: false,
 	//             used:    ir.used{

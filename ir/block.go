@@ -1,5 +1,3 @@
-// TODO: Track use of instructions in basic blocks?
-
 // === [ Basic blocks ] ========================================================
 
 package ir

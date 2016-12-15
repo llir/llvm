@@ -31,9 +31,7 @@ type Expr{{ .Name }} struct {
 
 // New{{ .Name }} returns a new {{ lower .Name }} expression based on the given source constant and target type.
 func New{{ .Name }}(from Constant, to types.Type) *Expr{{ .Name }} {
-	expr := &Expr{{ .Name }}{from: from, to: to}
-	trackConstant(&expr.from, expr)
-	return expr
+	return &Expr{{ .Name }}{from: from, to: to}
 }
 
 // Type returns the type of the constant expression.

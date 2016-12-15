@@ -38,15 +38,14 @@ type use struct {
 	//
 	// User may have one of the following underlying types.
 	//
-	//    *ir.Global
 	//    ir.Instruction
 	//    ir.Terminator
-	user interface{}
+	user Instruction
 }
 
 // newUse returns a new use of a value based on the given value replacement
 // function.
-func newUse(replace func(v value.Value), user interface{}) value.Use {
+func newUse(replace func(v value.Value), user Instruction) value.Use {
 	return &use{replace: replace, user: user}
 }
 
@@ -59,7 +58,6 @@ func (use *use) Replace(v value.Value) {
 //
 // The returned user may have one of the following underlying types.
 //
-//    *ir.Global
 //    ir.Instruction
 //    ir.Terminator
 func (use *use) User() interface{} {
@@ -71,11 +69,16 @@ type valueTracker struct {
 	// Original value.
 	orig *value.Value
 	// User of the value.
-	user interface{}
+	//
+	// User may have one of the following underlying types.
+	//
+	//    ir.Instruction
+	//    ir.Terminator
+	user Instruction
 }
 
 // trackValue tracks the use of the given value.
-func trackValue(orig *value.Value, user interface{}) {
+func trackValue(orig *value.Value, user Instruction) {
 	use := &valueTracker{orig: orig, user: user}
 	used, ok := (*orig).(value.Used)
 	if !ok {
@@ -93,7 +96,6 @@ func (use *valueTracker) Replace(v value.Value) {
 //
 // The returned user may have one of the following underlying types.
 //
-//    *ir.Global
 //    ir.Instruction
 //    ir.Terminator
 func (use *valueTracker) User() interface{} {
@@ -105,11 +107,16 @@ type blockTracker struct {
 	// Original basic block.
 	orig **BasicBlock
 	// User of the value.
-	user interface{}
+	//
+	// User may have one of the following underlying types.
+	//
+	//    ir.Instruction
+	//    ir.Terminator
+	user Instruction
 }
 
 // trackBlock tracks the use of the given basic block.
-func trackBlock(orig **BasicBlock, user interface{}) {
+func trackBlock(orig **BasicBlock, user Instruction) {
 	use := &blockTracker{orig: orig, user: user}
 	(*orig).AppendUse(use)
 }
@@ -127,7 +134,6 @@ func (use *blockTracker) Replace(v value.Value) {
 //
 // The returned user may have one of the following underlying types.
 //
-//    *ir.Global
 //    ir.Instruction
 //    ir.Terminator
 func (use *blockTracker) User() interface{} {
@@ -139,11 +145,16 @@ type namedTracker struct {
 	// Original named value.
 	orig *value.Named
 	// User of the value.
-	user interface{}
+	//
+	// User may have one of the following underlying types.
+	//
+	//    ir.Instruction
+	//    ir.Terminator
+	user Instruction
 }
 
 // trackNamed tracks the use of the given named value.
-func trackNamed(orig *value.Named, user interface{}) {
+func trackNamed(orig *value.Named, user Instruction) {
 	use := &namedTracker{orig: orig, user: user}
 	used, ok := (*orig).(value.Used)
 	if !ok {
@@ -165,7 +176,6 @@ func (use *namedTracker) Replace(v value.Value) {
 //
 // The returned user may have one of the following underlying types.
 //
-//    *ir.Global
 //    ir.Instruction
 //    ir.Terminator
 func (use *namedTracker) User() interface{} {
@@ -180,15 +190,13 @@ type constantTracker struct {
 	//
 	// User may have one of the following underlying types.
 	//
-	//    constant.Constant
-	//    *ir.Global
 	//    ir.Instruction
 	//    ir.Terminator
-	user interface{}
+	user Instruction
 }
 
 // trackConstant tracks the use of the given constant.
-func trackConstant(orig *constant.Constant, user interface{}) {
+func trackConstant(orig *constant.Constant, user Instruction) {
 	use := &constantTracker{orig: orig, user: user}
 	used, ok := (*orig).(value.Used)
 	if !ok {
@@ -210,8 +218,6 @@ func (use *constantTracker) Replace(v value.Value) {
 //
 // The returned user may have one of the following underlying types.
 //
-//    constant.Constant
-//    *ir.Global
 //    ir.Instruction
 //    ir.Terminator
 func (use *constantTracker) User() interface{} {
@@ -226,15 +232,13 @@ type intConstTracker struct {
 	//
 	// User may have one of the following underlying types.
 	//
-	//    constant.Constant
-	//    *ir.Global
 	//    ir.Instruction
 	//    ir.Terminator
-	user interface{}
+	user Instruction
 }
 
 // trackIntConst tracks the use of the given integer constant.
-func trackIntConst(orig **constant.Int, user interface{}) {
+func trackIntConst(orig **constant.Int, user Instruction) {
 	use := &intConstTracker{orig: orig, user: user}
 	(*orig).AppendUse(use)
 }
@@ -252,8 +256,6 @@ func (use *intConstTracker) Replace(v value.Value) {
 //
 // The returned user may have one of the following underlying types.
 //
-//    constant.Constant
-//    *ir.Global
 //    ir.Instruction
 //    ir.Terminator
 func (use *intConstTracker) User() interface{} {

@@ -35,10 +35,7 @@ func NewICmp(cond IntPred, x, y Constant) *ExprICmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	expr := &ExprICmp{typ: typ, cond: cond, x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprICmp{typ: typ, cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -143,10 +140,7 @@ func NewFCmp(cond FloatPred, x, y Constant) *ExprFCmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len())
 	}
-	expr := &ExprFCmp{typ: typ, cond: cond, x: x, y: y}
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprFCmp{typ: typ, cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the constant expression.
@@ -257,11 +251,7 @@ type ExprSelect struct {
 // NewSelect returns a new select expression based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y Constant) *ExprSelect {
-	expr := &ExprSelect{cond: cond, x: x, y: y}
-	trackConstant(&expr.cond, expr)
-	trackConstant(&expr.x, expr)
-	trackConstant(&expr.y, expr)
-	return expr
+	return &ExprSelect{cond: cond, x: x, y: y}
 }
 
 // Type returns the type of the constant expression.

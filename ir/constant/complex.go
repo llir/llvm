@@ -31,11 +31,7 @@ func NewVector(elems ...Constant) *Vector {
 		panic(fmt.Sprintf("invalid number of vector elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewVector(elems[0].Type(), int64(len(elems)))
-	c := &Vector{typ: typ, elems: elems}
-	for i := range elems {
-		trackConstant(&c.elems[i], c)
-	}
-	return c
+	return &Vector{typ: typ, elems: elems}
 }
 
 // Type returns the type of the constant.
@@ -88,11 +84,7 @@ func NewArray(elems ...Constant) *Array {
 		panic(fmt.Sprintf("invalid number of array elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewArray(elems[0].Type(), int64(len(elems)))
-	c := &Array{typ: typ, elems: elems}
-	for i := range elems {
-		trackConstant(&c.elems[i], c)
-	}
-	return c
+	return &Array{typ: typ, elems: elems}
 }
 
 // Type returns the type of the constant.
@@ -168,11 +160,7 @@ func NewStruct(fields ...Constant) *Struct {
 		fieldTypes = append(fieldTypes, field.Type())
 	}
 	typ := types.NewStruct(fieldTypes...)
-	c := &Struct{typ: typ, fields: fields}
-	for i := range fields {
-		trackConstant(&c.fields[i], c)
-	}
-	return c
+	return &Struct{typ: typ, fields: fields}
 }
 
 // Type returns the type of the constant.
