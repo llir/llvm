@@ -14,6 +14,8 @@ package ast
 // References:
 //    http://llvm.org/docs/LangRef.html#shl-instruction
 type ExprShl struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -36,6 +38,8 @@ func (*ExprShl) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#lshr-instruction
 type ExprLShr struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -58,6 +62,8 @@ func (*ExprLShr) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#ashr-instruction
 type ExprAShr struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -80,6 +86,8 @@ func (*ExprAShr) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#and-instruction
 type ExprAnd struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -102,6 +110,8 @@ func (*ExprAnd) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#or-instruction
 type ExprOr struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -124,6 +134,8 @@ func (*ExprOr) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#xor-instruction
 type ExprXor struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }

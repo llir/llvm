@@ -14,6 +14,8 @@ package ast
 // References:
 //    http://llvm.org/docs/LangRef.html#add-instruction
 type ExprAdd struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -36,6 +38,8 @@ func (*ExprAdd) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fadd-instruction
 type ExprFAdd struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -58,6 +62,8 @@ func (*ExprFAdd) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#sub-instruction
 type ExprSub struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -80,6 +86,8 @@ func (*ExprSub) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fsub-instruction
 type ExprFSub struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -102,6 +110,8 @@ func (*ExprFSub) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#mul-instruction
 type ExprMul struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -124,6 +134,8 @@ func (*ExprMul) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fmul-instruction
 type ExprFMul struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -146,6 +158,8 @@ func (*ExprFMul) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#udiv-instruction
 type ExprUDiv struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -168,6 +182,8 @@ func (*ExprUDiv) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#sdiv-instruction
 type ExprSDiv struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -190,6 +206,8 @@ func (*ExprSDiv) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fdiv-instruction
 type ExprFDiv struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -212,6 +230,8 @@ func (*ExprFDiv) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#urem-instruction
 type ExprURem struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -234,6 +254,8 @@ func (*ExprURem) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#srem-instruction
 type ExprSRem struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }
@@ -256,6 +278,8 @@ func (*ExprSRem) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#frem-instruction
 type ExprFRem struct {
+	// Type of the constant expression.
+	Type Type
 	// Operands.
 	X, Y Constant
 }

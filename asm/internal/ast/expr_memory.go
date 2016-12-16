@@ -7,6 +7,8 @@ package ast
 // References:
 //    http://llvm.org/docs/LangRef.html#getelementptr-instruction
 type ExprGetElementPtr struct {
+	// Type of the constant expression.
+	Type Type
 	// Source address element type.
 	Elem Type
 	// Source address.

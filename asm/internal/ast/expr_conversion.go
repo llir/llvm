@@ -14,6 +14,8 @@ package ast
 // References:
 //    http://llvm.org/docs/LangRef.html#trunc-instruction
 type ExprTrunc struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -38,6 +40,8 @@ func (*ExprTrunc) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#zext-instruction
 type ExprZExt struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -62,6 +66,8 @@ func (*ExprZExt) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#sext-instruction
 type ExprSExt struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -86,6 +92,8 @@ func (*ExprSExt) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fptrunc-instruction
 type ExprFPTrunc struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -110,6 +118,8 @@ func (*ExprFPTrunc) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fpext-instruction
 type ExprFPExt struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -134,6 +144,8 @@ func (*ExprFPExt) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fptoui-instruction
 type ExprFPToUI struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -158,6 +170,8 @@ func (*ExprFPToUI) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#fptosi-instruction
 type ExprFPToSI struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -182,6 +196,8 @@ func (*ExprFPToSI) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#uitofp-instruction
 type ExprUIToFP struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -206,6 +222,8 @@ func (*ExprUIToFP) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#sitofp-instruction
 type ExprSIToFP struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -230,6 +248,8 @@ func (*ExprSIToFP) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#ptrtoint-instruction
 type ExprPtrToInt struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -254,6 +274,8 @@ func (*ExprPtrToInt) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#inttoptr-instruction
 type ExprIntToPtr struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -278,6 +300,8 @@ func (*ExprIntToPtr) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#bitcast-instruction
 type ExprBitCast struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.
@@ -302,6 +326,8 @@ func (*ExprBitCast) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#addrspacecast-instruction
 type ExprAddrSpaceCast struct {
+	// Type of the constant expression.
+	Type Type
 	// Constant before conversion.
 	From Constant
 	// Type after conversion.

@@ -460,29 +460,329 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 	case *GlobalIdent:
 		return &ast.GlobalDummy{Name: val.name, Type: t}, nil
 	case *IntLit:
-		t, ok := t.(*ast.IntType)
-		if !ok {
-			return nil, errors.Errorf("invalid integer constant type; expected *ast.IntType, got %T", t)
-		}
 		return &ast.IntConst{Type: t, Lit: val.lit}, nil
 	case *FloatLit:
-		t, ok := t.(*ast.FloatType)
-		if !ok {
-			return nil, errors.Errorf("invalid floating-point constant type; expected *ast.FloatType, got %T", t)
-		}
 		return &ast.FloatConst{Type: t, Lit: val.lit}, nil
 	case *NullLit:
-		t, ok := t.(*ast.PointerType)
-		if !ok {
-			return nil, errors.Errorf("invalid null constant type; expected *ast.PointerType, got %T", t)
-		}
 		return &ast.NullConst{Type: t}, nil
-	// TODO: Add dummy/dummyconstant package for Vector, Array and Struct,
-	// ExprGetElementPtr, so that typ may be stored and evaluated after type
-	// resolution.
 	case *ZeroInitializerLit:
 		return &ast.ZeroInitializerConst{Type: t}, nil
-	case ast.Constant:
+
+	// Store type of vector, array and struct constants and constant expressions,
+	// so that it may be evaluated after type resolution.
+	case *ast.VectorConst:
+		// Vector constant type should not be known at this stage of parsing, as
+		// they've been constructed from VectorConst literals.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid vector constant type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ArrayConst:
+		// Array constant type should not be known at this stage of parsing, as
+		// they've been constructed from ArrayConst literals.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid array constant type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.StructConst:
+		// Struct constant type should not be known at this stage of parsing, as
+		// they've been constructed from StructConst literals.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid struct constant type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Binary instructions
+	case *ast.ExprAdd:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprAdd production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid add constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFAdd:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFAdd production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fadd constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprSub:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprSub production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid sub constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFSub:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFSub production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fsub constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprMul:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprMul production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid mul constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFMul:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFMul production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fmul constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprUDiv:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprUDiv production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid udiv constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprSDiv:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprSDiv production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid sdiv constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFDiv:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFDiv production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fdiv constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprURem:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprURem production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid urem constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprSRem:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprSRem production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid srem constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFRem:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFRem production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid frem constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Bitwise instructions
+	case *ast.ExprShl:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprShl production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid shl constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprLShr:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprLShr production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid lshr constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprAShr:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprAShr production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid ashr constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprAnd:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprAnd production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid and constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprOr:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprOr production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid or constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprXor:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprXor production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid xor constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Memory instructions
+	case *ast.ExprGetElementPtr:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprGetElementPtr production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid getelementptr constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Conversion instructions
+	case *ast.ExprTrunc:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprTrunc production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid trunc constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprZExt:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprZExt production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid zext constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprSExt:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprSExt production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid sext constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFPTrunc:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFPTrunc production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fptrunc constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFPExt:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFPExt production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fpext constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFPToUI:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFPToUI production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fptoui constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFPToSI:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFPToSI production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fptosi constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprUIToFP:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprUIToFP production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid uitofp constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprSIToFP:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprSIToFP production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid sitofp constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprPtrToInt:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprPtrToInt production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid ptrtoint constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprIntToPtr:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprIntToPtr production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid inttoptr constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprBitCast:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprBitCast production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid bitcast constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprAddrSpaceCast:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprAddrSpaceCast production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid addrspacecast constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Other instructions
+	case *ast.ExprICmp:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprICmp production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid icmp constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprFCmp:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprFCmp production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid fcmp constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprSelect:
+		// Constant expression type should not be known at this stage of parsing,
+		// as they've been constructed from ExprSelect production rules.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid select constant expression type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
 		return val, nil
 	default:
 		panic(fmt.Sprintf("support for value type %T not yet implemented", val))
@@ -612,6 +912,524 @@ func NewStructConst(fields interface{}) (*ast.StructConst, error) {
 // ZeroInitializerLit represents a zeroinitializer literal.
 type ZeroInitializerLit struct {
 }
+
+// --- [ Binary expressions ] --------------------------------------------------
+
+// NewAddExpr returns a new add expression based on the given type and operands.
+func NewAddExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprAdd, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprAdd{X: x, Y: y}, nil
+}
+
+// NewFAddExpr returns a new fadd expression based on the given type and
+// operands.
+func NewFAddExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFAdd, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprFAdd{X: x, Y: y}, nil
+}
+
+// NewSubExpr returns a new sub expression based on the given type and operands.
+func NewSubExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprSub, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprSub{X: x, Y: y}, nil
+}
+
+// NewFSubExpr returns a new fsub expression based on the given type and
+// operands.
+func NewFSubExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFSub, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprFSub{X: x, Y: y}, nil
+}
+
+// NewMulExpr returns a new mul expression based on the given type and operands.
+func NewMulExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprMul, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprMul{X: x, Y: y}, nil
+}
+
+// NewFMulExpr returns a new fmul expression based on the given type and
+// operands.
+func NewFMulExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFMul, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprFMul{X: x, Y: y}, nil
+}
+
+// NewUDivExpr returns a new udiv expression based on the given type and
+// operands.
+func NewUDivExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprUDiv, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprUDiv{X: x, Y: y}, nil
+}
+
+// NewSDivExpr returns a new sdiv expression based on the given type and
+// operands.
+func NewSDivExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprSDiv, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprSDiv{X: x, Y: y}, nil
+}
+
+// NewFDivExpr returns a new fdiv expression based on the given type and
+// operands.
+func NewFDivExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFDiv, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprFDiv{X: x, Y: y}, nil
+}
+
+// NewURemExpr returns a new urem expression based on the given type and
+// operands.
+func NewURemExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprURem, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprURem{X: x, Y: y}, nil
+}
+
+// NewSRemExpr returns a new srem expression based on the given type and
+// operands.
+func NewSRemExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprSRem, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprSRem{X: x, Y: y}, nil
+}
+
+// NewFRemExpr returns a new frem expression based on the given type and
+// operands.
+func NewFRemExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFRem, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprFRem{X: x, Y: y}, nil
+}
+
+// --- [ Bitwise expressions ] -------------------------------------------------
+
+// NewShlExpr returns a new shl expression based on the given type and operands.
+func NewShlExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprShl, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprShl{X: x, Y: y}, nil
+}
+
+// NewLShrExpr returns a new lshr expression based on the given type and
+// operands.
+func NewLShrExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprLShr, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprLShr{X: x, Y: y}, nil
+}
+
+// NewAShrExpr returns a new ashr expression based on the given type and
+// operands.
+func NewAShrExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprAShr, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprAShr{X: x, Y: y}, nil
+}
+
+// NewAndExpr returns a new and expression based on the given type and operands.
+func NewAndExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprAnd, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprAnd{X: x, Y: y}, nil
+}
+
+// NewOrExpr returns a new or expression based on the given type and operands.
+func NewOrExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprOr, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprOr{X: x, Y: y}, nil
+}
+
+// NewXorExpr returns a new xor expression based on the given type and operands.
+func NewXorExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprXor, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprXor{X: x, Y: y}, nil
+}
+
+// --- [ Memory expressions ] --------------------------------------------------
+
+// NewGetElementPtrExpr returns a new getelementptr expression based on the
+// given element type, source address type and value, and element indices.
+func NewGetElementPtrExpr(elem, srcTyp, srcVal, indices interface{}) (*ast.ExprGetElementPtr, error) {
+	e, ok := elem.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
+	}
+	src, err := NewConstant(srcTyp, srcVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	var is []ast.Constant
+	switch indices := indices.(type) {
+	case []ast.Constant:
+		is = indices
+	case nil:
+		// no indices.
+	default:
+		return nil, errors.Errorf("invalid indices type; expected []ast.Constant or nil, got %T", indices)
+	}
+	return &ast.ExprGetElementPtr{Elem: e, Src: src, Indices: is}, nil
+}
+
+// --- [ Conversion expressions ] ----------------------------------------------
+
+// NewTruncExpr returns a new trunc expression based on the given source value
+// and target type.
+func NewTruncExpr(fromTyp, fromVal, to interface{}) (*ast.ExprTrunc, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprTrunc{From: from, To: t}, nil
+}
+
+// NewZExtExpr returns a new zext expression based on the given source value and
+// target type.
+func NewZExtExpr(fromTyp, fromVal, to interface{}) (*ast.ExprZExt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprZExt{From: from, To: t}, nil
+}
+
+// NewSExtExpr returns a new sext expression based on the given source value and
+// target type.
+func NewSExtExpr(fromTyp, fromVal, to interface{}) (*ast.ExprSExt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprSExt{From: from, To: t}, nil
+}
+
+// NewFPTruncExpr returns a new fptrunc expression based on the given source
+// value and target type.
+func NewFPTruncExpr(fromTyp, fromVal, to interface{}) (*ast.ExprFPTrunc, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprFPTrunc{From: from, To: t}, nil
+}
+
+// NewFPExtExpr returns a new fpext expression based on the given source value
+// and target type.
+func NewFPExtExpr(fromTyp, fromVal, to interface{}) (*ast.ExprFPExt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprFPExt{From: from, To: t}, nil
+}
+
+// NewFPToUIExpr returns a new fptoui expression based on the given source value
+// and target type.
+func NewFPToUIExpr(fromTyp, fromVal, to interface{}) (*ast.ExprFPToUI, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprFPToUI{From: from, To: t}, nil
+}
+
+// NewFPToSIExpr returns a new fptosi expression based on the given source value
+// and target type.
+func NewFPToSIExpr(fromTyp, fromVal, to interface{}) (*ast.ExprFPToSI, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprFPToSI{From: from, To: t}, nil
+}
+
+// NewUIToFPExpr returns a new uitofp expression based on the given source value
+// and target type.
+func NewUIToFPExpr(fromTyp, fromVal, to interface{}) (*ast.ExprUIToFP, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprUIToFP{From: from, To: t}, nil
+}
+
+// NewSIToFPExpr returns a new sitofp expression based on the given source value
+// and target type.
+func NewSIToFPExpr(fromTyp, fromVal, to interface{}) (*ast.ExprSIToFP, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprSIToFP{From: from, To: t}, nil
+}
+
+// NewPtrToIntExpr returns a new ptrtoint expression based on the given source
+// value and target type.
+func NewPtrToIntExpr(fromTyp, fromVal, to interface{}) (*ast.ExprPtrToInt, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprPtrToInt{From: from, To: t}, nil
+}
+
+// NewIntToPtrExpr returns a new inttoptr expression based on the given source
+// value and target type.
+func NewIntToPtrExpr(fromTyp, fromVal, to interface{}) (*ast.ExprIntToPtr, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprIntToPtr{From: from, To: t}, nil
+}
+
+// NewBitCastExpr returns a new bitcast expression based on the given source
+// value and target type.
+func NewBitCastExpr(fromTyp, fromVal, to interface{}) (*ast.ExprBitCast, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprBitCast{From: from, To: t}, nil
+}
+
+// NewAddrSpaceCastExpr returns a new addrspacecast expression based on the
+// given source value and target type.
+func NewAddrSpaceCastExpr(fromTyp, fromVal, to interface{}) (*ast.ExprAddrSpaceCast, error) {
+	from, err := NewConstant(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.ExprAddrSpaceCast{From: from, To: t}, nil
+}
+
+// --- [ Other expressions ] ---------------------------------------------------
+
+// NewICmpExpr returns a new icmp expression based on the given integer
+// condition code, type and operands.
+func NewICmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprICmp, error) {
+	c, ok := cond.(ast.IntPred)
+	if !ok {
+		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", cond)
+	}
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprICmp{Cond: c, X: x, Y: y}, nil
+}
+
+// NewFCmpExpr returns a new fcmp expression based on the given floating-point
+// condition code, type and operands.
+func NewFCmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFCmp, error) {
+	c, ok := cond.(ast.FloatPred)
+	if !ok {
+		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", cond)
+	}
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprFCmp{Cond: c, X: x, Y: y}, nil
+}
+
+// NewSeExpr returns a new select expression based on the given selection
+// condition type and value, and operands.
+func NewSelectExpr(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprSelect, error) {
+	cond, err := NewConstant(condTyp, condVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprSelect{Cond: cond, X: x, Y: y}, nil
+}
+
+// === [ Basic blocks ] ========================================================
+
+// === [ Instructions ] ========================================================
 
 // ### [ Helper functions ] ####################################################
 

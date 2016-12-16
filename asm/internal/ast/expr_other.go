@@ -149,6 +149,8 @@ func (*ExprFCmp) isConstExpr() {}
 // References:
 //    http://llvm.org/docs/LangRef.html#select-instruction
 type ExprSelect struct {
+	// Type of the constant expression.
+	Type Type
 	// Selection condition.
 	Cond Constant
 	// Operands.
