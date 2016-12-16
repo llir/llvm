@@ -33,7 +33,7 @@ type Function struct {
 	sig *types.FuncType
 	// Function parameters.
 	params []*Param
-	// Basic blocks of the function; or nil if external function declaration.
+	// Basic blocks of the function; or nil if defined externally.
 	blocks []*BasicBlock
 	// Track uses of the value.
 	used

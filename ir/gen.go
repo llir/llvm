@@ -1,7 +1,7 @@
 //+build ignore
 
 // gen.go generates the data representations of binary, bitwise and conversion
-// instructions.
+// instructions and constant expressions.
 package main
 
 import (

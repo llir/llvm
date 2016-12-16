@@ -17,9 +17,9 @@ import (
 
 // Int represents an integer constant.
 type Int struct {
-	// Constant type.
+	// Integer type.
 	typ *types.IntType
-	// Constant value.
+	// Integer value.
 	x *big.Int
 	// Track uses of the value.
 	used
@@ -103,9 +103,9 @@ func (c *Int) Int64() int64 {
 
 // Float represents a floating-point constant.
 type Float struct {
-	// Constant type.
+	// Floating-point type.
 	typ *types.FloatType
-	// Constant value.
+	// Floating-point value.
 	x *big.Float
 	// Track uses of the value.
 	used
@@ -184,7 +184,7 @@ func (c *Float) Float64() float64 {
 
 // Null represents a null pointer constant.
 type Null struct {
-	// Constant type.
+	// Pointer type.
 	typ *types.PointerType
 	// Track uses of the value.
 	used
