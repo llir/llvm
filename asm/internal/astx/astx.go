@@ -96,6 +96,71 @@ func NewTypeDef(name, typ interface{}) (*ast.NamedType, error) {
 	return &ast.NamedType{Name: n.name, Def: t}, nil
 }
 
+// === [ Functions ] ===========================================================
+
+// Params represents a function parameters specifier.
+type Params struct {
+	// Function parameter types.
+	params []*ast.Param
+	// Variadicity of the function type.
+	variadic bool
+}
+
+// NewParams returns a new function parameters specifier, based on the given
+// function parameters and variadicity.
+func NewParams(params interface{}, variadic bool) (*Params, error) {
+	switch params := params.(type) {
+	case []*ast.Param:
+		return &Params{params: params, variadic: variadic}, nil
+	case nil:
+		return &Params{variadic: variadic}, nil
+	default:
+		return nil, errors.Errorf("invalid function parameter list; expected []*ast.Param or nil, got %T", params)
+	}
+}
+
+// NewParamList returns a new function parameter list based on the given
+// function parameter.
+func NewParamList(param interface{}) ([]*ast.Param, error) {
+	p, ok := param.(*ast.Param)
+	if !ok {
+		return nil, errors.Errorf("invalid function parameter type; expected *ast.Param, got %T", param)
+	}
+	return []*ast.Param{p}, nil
+}
+
+// AppendParam appends the given parameter to the function parameter list.
+func AppendParam(params, param interface{}) ([]*ast.Param, error) {
+	ps, ok := params.([]*ast.Param)
+	if !ok {
+		return nil, errors.Errorf("invalid function parameter list type; expected []*ast.Param, got %T", params)
+	}
+	p, ok := param.(*ast.Param)
+	if !ok {
+		return nil, errors.Errorf("invalid function parameter type; expected *ast.Param, got %T", param)
+	}
+	return append(ps, p), nil
+}
+
+// NewParam returns a new function parameter based on the given parameter type
+// and name.
+func NewParam(typ, name interface{}) (*ast.Param, error) {
+	t, ok := typ.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
+	}
+	var n string
+	switch name := name.(type) {
+	case *LocalIdent:
+		n = name.name
+	case nil:
+		// unnamed function parameter.
+	default:
+		return nil, errors.Errorf("invalid local name type; expected *astx.LocalIdent or nil, got %T", name)
+	}
+	return &ast.Param{Name: n, Type: t}, nil
+}
+
 // === [ Identifiers ] =========================================================
 
 // GlobalIdent represents a global identifier.
@@ -182,6 +247,45 @@ func AppendType(typs, typ interface{}) ([]ast.Type, error) {
 	return append(ts, t), nil
 }
 
+// NewIntType returns a new integer type based on the given integer type token.
+func NewIntType(typeTok interface{}) (*ast.IntType, error) {
+	s, err := getTokenString(typeTok)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if !strings.HasPrefix(s, "i") {
+		return nil, errors.Errorf(`invalid integer type %q; missing "i" prefix`, s)
+	}
+	s = s[1:]
+	size, err := strconv.Atoi(s)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.IntType{Size: size}, nil
+}
+
+// NewFuncType returns a new function type based on the given return type and
+// function parameters.
+func NewFuncType(ret, params interface{}) (*ast.FuncType, error) {
+	r, ok := ret.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid function return type; expected ast.Type, got %T", ret)
+	}
+	sig := &ast.FuncType{Ret: r}
+	switch ps := params.(type) {
+	case *Params:
+		for _, param := range ps.params {
+			sig.Params = append(sig.Params, param)
+		}
+		sig.Variadic = ps.variadic
+	case nil:
+		// no parameters.
+	default:
+		return nil, errors.Errorf("invalid function parameters type; expected *astx.Params or nil, got %T", params)
+	}
+	return sig, nil
+}
+
 // NewPointerType returns a new pointer type based on the given element type.
 func NewPointerType(elem, space interface{}) (*ast.PointerType, error) {
 	e, ok := elem.(ast.Type)
@@ -213,6 +317,34 @@ func NewAddrSpace(space interface{}) (*AddrSpace, error) {
 		return nil, errors.WithStack(err)
 	}
 	return &AddrSpace{space: s}, nil
+}
+
+// NewVectorType returns a new vector type based on the given vector length and
+// element type.
+func NewVectorType(len, elem interface{}) (*ast.VectorType, error) {
+	e, ok := elem.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
+	}
+	l, err := getInt64(len)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.VectorType{Elem: e, Len: l}, nil
+}
+
+// NewArrayType returns a new array type based on the given array length and
+// element type.
+func NewArrayType(len, elem interface{}) (*ast.ArrayType, error) {
+	e, ok := elem.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
+	}
+	l, err := getInt64(len)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ArrayType{Elem: e, Len: l}, nil
 }
 
 // NewStructType returns a new struct type based on the given struct fields.

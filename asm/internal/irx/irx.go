@@ -6,8 +6,6 @@ package irx
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/llir/llvm/internal/dummy"
 	"github.com/llir/llvm/internal/enc"
@@ -113,139 +111,9 @@ func NewFunctionDef(header, body interface{}) (*ir.Function, error) {
 	return f, nil
 }
 
-// Params represents a function parameters specifier.
-type Params struct {
-	// Function parameter types.
-	params []*types.Param
-	// Variadicity of the function type.
-	variadic bool
-}
-
-// NewParams returns a new function parameters specifier, based on the given
-// function parameters and variadicity.
-func NewParams(params interface{}, variadic bool) (*Params, error) {
-	switch params := params.(type) {
-	case []*types.Param:
-		return &Params{params: params, variadic: variadic}, nil
-	case nil:
-		return &Params{variadic: variadic}, nil
-	default:
-		return nil, errors.Errorf("invalid function parameter list; expected []*types.Param or nil, got %T", params)
-	}
-}
-
-// NewParamList returns a new function parameter list based on the given
-// function parameter.
-func NewParamList(param interface{}) ([]*types.Param, error) {
-	p, ok := param.(*types.Param)
-	if !ok {
-		return nil, errors.Errorf("invalid function parameter type; expected *types.Param, got %T", param)
-	}
-	return []*types.Param{p}, nil
-}
-
-// AppendParam appends the given parameter to the function parameter list.
-func AppendParam(params, param interface{}) ([]*types.Param, error) {
-	ps, ok := params.([]*types.Param)
-	if !ok {
-		return nil, errors.Errorf("invalid function parameter list type; expected []*types.Param, got %T", params)
-	}
-	p, ok := param.(*types.Param)
-	if !ok {
-		return nil, errors.Errorf("invalid function parameter type; expected *types.Param, got %T", param)
-	}
-	return append(ps, p), nil
-}
-
-// NewParam returns a new function parameter based on the given parameter type
-// and name.
-func NewParam(typ, name interface{}) (*types.Param, error) {
-	t, ok := typ.(types.Type)
-	if !ok {
-		return nil, errors.Errorf("invalid type; expected types.Type, got %T", typ)
-	}
-	var n string
-	switch name := name.(type) {
-	case *LocalIdent:
-		n = name.name
-	case nil:
-		// unnamed function parameter.
-	default:
-		return nil, errors.Errorf("invalid local name type; expected *irx.LocalIdent or nil, got %T", name)
-	}
-	return types.NewParam(n, t), nil
-}
-
 // === [ Identifiers ] =========================================================
 
 // === [ Types ] ===============================================================
-
-// NewIntType returns a new integer type based on the given integer type token.
-func NewIntType(typeTok interface{}) (*types.IntType, error) {
-	s, err := getTokenString(typeTok)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	if !strings.HasPrefix(s, "i") {
-		return nil, errors.Errorf(`invalid integer type %q; missing "i" prefix`, s)
-	}
-	s = s[1:]
-	size, err := strconv.Atoi(s)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return types.NewInt(size), nil
-}
-
-// NewFuncType returns a new function type based on the given return type and
-// function parameters.
-func NewFuncType(ret, params interface{}) (*types.FuncType, error) {
-	r, ok := ret.(types.Type)
-	if !ok {
-		return nil, errors.Errorf("invalid function return type; expected types.Type, got %T", ret)
-	}
-	sig := types.NewFunc(r)
-	switch ps := params.(type) {
-	case *Params:
-		for _, param := range ps.params {
-			sig.AppendParam(param)
-		}
-		sig.SetVariadic(ps.variadic)
-	case nil:
-		// no parameters.
-	default:
-		return nil, errors.Errorf("invalid function parameters type; expected *irx.Params or nil, got %T", params)
-	}
-	return sig, nil
-}
-
-// NewVectorType returns a new vector type based on the given vector length and
-// element type.
-func NewVectorType(len, elem interface{}) (*types.VectorType, error) {
-	e, ok := elem.(types.Type)
-	if !ok {
-		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
-	}
-	l, err := getInt64(len)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return types.NewVector(e, l), nil
-}
-
-// NewArrayType returns a new array type based on the given array length and
-// element type.
-func NewArrayType(len, elem interface{}) (*types.ArrayType, error) {
-	e, ok := elem.(types.Type)
-	if !ok {
-		return nil, errors.Errorf("invalid element type; expected types.Type, got %T", elem)
-	}
-	l, err := getInt64(len)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return types.NewArray(e, l), nil
-}
 
 // === [ Values ] ==============================================================
 

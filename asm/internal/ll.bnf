@@ -156,7 +156,7 @@ int_type
 // === [ Modules ] =============================================================
 
 Module
-	: TopLevelDecls  << astx.NewModule($0) >>
+	: TopLevelDecls   << astx.NewModule($0) >>
 ;
 
 TopLevelDecls
@@ -165,8 +165,8 @@ TopLevelDecls
 ;
 
 TopLevelDeclList
-	: TopLevelDecl                   << astx.NewTopLevelDeclList($0) >>
-	| TopLevelDeclList TopLevelDecl  << astx.AppendTopLevelDecl($0, $1) >>
+	: TopLevelDecl                    << astx.NewTopLevelDeclList($0) >>
+	| TopLevelDeclList TopLevelDecl   << astx.AppendTopLevelDecl($0, $1) >>
 ;
 
 TopLevelDecl
@@ -179,8 +179,8 @@ TopLevelDecl
 // === [ Type definitions ] ====================================================
 
 TypeDef
-	: LocalIdent "=" "type" Type      << astx.NewTypeDef($0, $3) >>
-	| LocalIdent "=" "type" "opaque"  << astx.NewTypeDef($0, nil) >>
+	: LocalIdent "=" "type" Type       << astx.NewTypeDef($0, $3) >>
+	| LocalIdent "=" "type" "opaque"   << astx.NewTypeDef($0, nil) >>
 ;
 
 // === [ Global variables ] ====================================================
@@ -233,15 +233,15 @@ FunctionBody
 // === [ Identifiers ] =========================================================
 
 GlobalIdent
-	: global_ident  << astx.NewGlobalIdent($0) >>
+	: global_ident   << astx.NewGlobalIdent($0) >>
 ;
 
 LocalIdent
-	: local_ident  << astx.NewLocalIdent($0) >>
+	: local_ident   << astx.NewLocalIdent($0) >>
 ;
 
 LabelIdent
-	: label_ident  << astx.NewLabelIdent($0) >>
+	: label_ident   << astx.NewLabelIdent($0) >>
 ;
 
 // === [ Types ] ===============================================================
@@ -264,49 +264,49 @@ ResultType
 ;
 
 VoidType
-	: "void"  /* << types.Void, nil >> */
+	: "void"   << &ast.VoidType{}, nil >>
 ;
 
 LabelType
-	: "label"  /* << types.Label, nil >> */
+	: "label"   << &types.LabelType{}, nil >>
 ;
 
 IntType
-	: int_type  /* << astx.NewIntType($0) >> */
+	: int_type   << astx.NewIntType($0) >>
 ;
 
 FloatType
-	: "half"       /* << types.Half, nil >> */
-	| "float"      /* << types.Float, nil >> */
-	| "double"     /* << types.Double, nil >> */
-	| "fp128"      /* << types.FP128, nil >> */
-	| "x86_fp80"   /* << types.X86_FP80, nil >> */
-	| "ppc_fp128"  /* << types.PPC_FP128, nil >> */
+	: "half"        << &ast.FloatType{Kind: ast.FloatKindIEEE_16}, nil >>
+	| "float"       << &ast.FloatType{Kind: ast.FloatKindIEEE_32}, nil >>
+	| "double"      << &ast.FloatType{Kind: ast.FloatKindIEEE_64}, nil >>
+	| "fp128"       << &ast.FloatType{Kind: ast.FloatKindIEEE_128}, nil >>
+	| "x86_fp80"    << &ast.FloatType{Kind: ast.FloatKindDoubleExtended_80}, nil >>
+	| "ppc_fp128"   << &ast.FloatType{Kind: ast.FloatKindDoubleDouble_128}, nil >>
 ;
 
 FuncType
-	: ResultType "(" Params ")"  /* << astx.NewFuncType($0, $2) >> */
+	: ResultType "(" Params ")"   << astx.NewFuncType($0, $2) >>
 ;
 
 PointerType
-	: Type OptAddrSpace "*"  << astx.NewPointerType($0, $1) >>
+	: Type OptAddrSpace "*"   << astx.NewPointerType($0, $1) >>
 ;
 
 OptAddrSpace
 	: empty
-	| "addrspace" "(" IntConst ")"  << astx.NewAddrSpace($2) >>
+	| "addrspace" "(" IntConst ")"   << astx.NewAddrSpace($2) >>
 ;
 
 VectorType
-	: "<" IntConst "x" Type ">"  /* << astx.NewVectorType($1, $3) >> */
+	: "<" IntConst "x" Type ">"   << astx.NewVectorType($1, $3) >>
 ;
 
 ArrayType
-	: "[" IntConst "x" Type "]"  /* << astx.NewArrayType($1, $3) >> */
+	: "[" IntConst "x" Type "]"   << astx.NewArrayType($1, $3) >>
 ;
 
 StructType
-	: "{" Fields "}"  << astx.NewStructType($1) >>
+	: "{" Fields "}"   << astx.NewStructType($1) >>
 ;
 
 Fields
@@ -315,12 +315,12 @@ Fields
 ;
 
 FieldList
-	: Type                << astx.NewTypeList($0) >>
-	| FieldList "," Type  << astx.AppendType($0, $2) >>
+	: Type                 << astx.NewTypeList($0) >>
+	| FieldList "," Type   << astx.AppendType($0, $2) >>
 ;
 
 NamedType
-	: LocalIdent  << astx.NewNamedType($0) >>
+	: LocalIdent   << astx.NewNamedType($0) >>
 ;
 
 // === [ Values ] ==============================================================
