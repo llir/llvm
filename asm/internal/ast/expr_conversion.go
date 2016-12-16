@@ -20,6 +20,17 @@ type ExprTrunc struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprTrunc) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprTrunc) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprTrunc) isConstExpr() {}
+
 // --- [ zext ] ----------------------------------------------------------------
 
 // ExprZExt represents a zero extension expression.
@@ -32,6 +43,17 @@ type ExprZExt struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprZExt) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprZExt) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprZExt) isConstExpr() {}
 
 // --- [ sext ] ----------------------------------------------------------------
 
@@ -46,6 +68,17 @@ type ExprSExt struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprSExt) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprSExt) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprSExt) isConstExpr() {}
+
 // --- [ fptrunc ] -------------------------------------------------------------
 
 // ExprFPTrunc represents a floating-point truncation expression.
@@ -58,6 +91,17 @@ type ExprFPTrunc struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprFPTrunc) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprFPTrunc) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprFPTrunc) isConstExpr() {}
 
 // --- [ fpext ] ---------------------------------------------------------------
 
@@ -72,6 +116,17 @@ type ExprFPExt struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprFPExt) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprFPExt) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprFPExt) isConstExpr() {}
+
 // --- [ fptoui ] --------------------------------------------------------------
 
 // ExprFPToUI represents a floating-point to unsigned integer conversion expression.
@@ -84,6 +139,17 @@ type ExprFPToUI struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprFPToUI) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprFPToUI) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprFPToUI) isConstExpr() {}
 
 // --- [ fptosi ] --------------------------------------------------------------
 
@@ -98,6 +164,17 @@ type ExprFPToSI struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprFPToSI) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprFPToSI) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprFPToSI) isConstExpr() {}
+
 // --- [ uitofp ] --------------------------------------------------------------
 
 // ExprUIToFP represents an unsigned integer to floating-point conversion expression.
@@ -110,6 +187,17 @@ type ExprUIToFP struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprUIToFP) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprUIToFP) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprUIToFP) isConstExpr() {}
 
 // --- [ sitofp ] --------------------------------------------------------------
 
@@ -124,6 +212,17 @@ type ExprSIToFP struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprSIToFP) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprSIToFP) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprSIToFP) isConstExpr() {}
+
 // --- [ ptrtoint ] ------------------------------------------------------------
 
 // ExprPtrToInt represents a pointer to integer conversion expression.
@@ -136,6 +235,17 @@ type ExprPtrToInt struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprPtrToInt) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprPtrToInt) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprPtrToInt) isConstExpr() {}
 
 // --- [ inttoptr ] ------------------------------------------------------------
 
@@ -150,6 +260,17 @@ type ExprIntToPtr struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprIntToPtr) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprIntToPtr) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprIntToPtr) isConstExpr() {}
+
 // --- [ bitcast ] -------------------------------------------------------------
 
 // ExprBitCast represents a bitcast expression.
@@ -163,6 +284,17 @@ type ExprBitCast struct {
 	To Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprBitCast) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprBitCast) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprBitCast) isConstExpr() {}
+
 // --- [ addrspacecast ] -------------------------------------------------------
 
 // ExprAddrSpaceCast represents an address space cast expression.
@@ -175,3 +307,14 @@ type ExprAddrSpaceCast struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprAddrSpaceCast) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprAddrSpaceCast) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprAddrSpaceCast) isConstExpr() {}

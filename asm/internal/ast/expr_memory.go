@@ -14,3 +14,14 @@ type ExprGetElementPtr struct {
 	// Element indices.
 	Indices []Constant
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprGetElementPtr) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprGetElementPtr) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprGetElementPtr) isConstExpr() {}

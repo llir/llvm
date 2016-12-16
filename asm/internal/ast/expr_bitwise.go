@@ -18,6 +18,9 @@ type ExprShl struct {
 	X, Y Constant
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprShl) isValue() {}
+
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
 func (*ExprShl) isConstant() {}
@@ -36,6 +39,9 @@ type ExprLShr struct {
 	// Operands.
 	X, Y Constant
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprLShr) isValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
@@ -56,6 +62,9 @@ type ExprAShr struct {
 	X, Y Constant
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprAShr) isValue() {}
+
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
 func (*ExprAShr) isConstant() {}
@@ -74,6 +83,9 @@ type ExprAnd struct {
 	// Operands.
 	X, Y Constant
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprAnd) isValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
@@ -94,6 +106,9 @@ type ExprOr struct {
 	X, Y Constant
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprOr) isValue() {}
+
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
 func (*ExprOr) isConstant() {}
@@ -112,6 +127,9 @@ type ExprXor struct {
 	// Operands.
 	X, Y Constant
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprXor) isValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.

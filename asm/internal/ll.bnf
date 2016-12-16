@@ -186,13 +186,13 @@ TypeDef
 // === [ Global variables ] ====================================================
 
 Global
-	: GlobalIdent "=" "external" Immutable Type  /* << astx.NewGlobalDecl($0, $3, $4) >> */
-	| GlobalIdent "=" Immutable Type Constant    /* << astx.NewGlobalDef($0, $2, $3, $4) >> */
+	: GlobalIdent "=" "external" Immutable Type   << astx.NewGlobalDecl($0, $3, $4) >>
+	| GlobalIdent "=" Immutable Type Constant     << astx.NewGlobalDef($0, $2, $3, $4) >>
 ;
 
 Immutable
-	: "constant"  /* << true, nil >> */
-	| "global"    /* << false, nil >> */
+	: "constant"   << true, nil >>
+	| "global"     << false, nil >>
 ;
 
 // === [ Functions ] ===========================================================
@@ -320,7 +320,7 @@ FieldList
 ;
 
 NamedType
-	: LocalIdent   << astx.NewNamedType($0) >>
+	: LocalIdent   << astx.NewTypeIdent($0) >>
 ;
 
 // === [ Values ] ==============================================================
@@ -346,25 +346,25 @@ Constant
 ;
 
 IntConst
-	: int_lit  /* << astx.NewIntLit($0) >> */
-	| "true"   /* << astx.NewIntLit($0) >> */
-	| "false"  /* << astx.NewIntLit($0) >> */
+	: int_lit   << astx.NewIntLit($0) >>
+	| "true"    << astx.NewIntLit($0) >>
+	| "false"   << astx.NewIntLit($0) >>
 ;
 
 FloatConst
-	: float_lit  /* << astx.NewFloatLit($0) >> */
+	: float_lit   << astx.NewFloatLit($0) >>
 ;
 
 NullConst
-	: "null"  /* << &astx.NullLit{}, nil >> */
+	: "null"   << &astx.NullLit{}, nil >>
 ;
 
 VectorConst
-	: "<" Elems ">"  /* << astx.NewVectorConst($1) >> */
+	: "<" Elems ">"   << astx.NewVectorConst($1) >>
 ;
 
 ArrayConst
-	: "[" Elems "]"  /* << astx.NewArrayConst($1) >> */
+	: "[" Elems "]"   << astx.NewArrayConst($1) >>
 ;
 
 Elems
@@ -373,24 +373,24 @@ Elems
 ;
 
 ElemList
-	: Elem               /* << astx.NewConstantList($0) >> */
-	| ElemList "," Elem  /* << astx.AppendConstant($0, $2) >> */
+	: Elem                << astx.NewConstantList($0) >>
+	| ElemList "," Elem   << astx.AppendConstant($0, $2) >>
 ;
 
 Elem
-	: Type Value  /* << astx.NewConstant($0, $1) >> */
+	: Type Value   << astx.NewConstant($0, $1) >>
 ;
 
 CharArrayConst
-	: "c" string_lit  /* << astx.NewCharArrayConst($1) >> */
+	: "c" string_lit   << astx.NewCharArrayConst($1) >>
 ;
 
 StructConst
-	: "{" Elems "}"  /* << astx.NewStructConst($1) >> */
+	: "{" Elems "}"   << astx.NewStructConst($1) >>
 ;
 
 ZeroInitializerConst
-	: "zeroinitializer"  /* << &astx.ZeroInitializerLit{}, nil >> */
+	: "zeroinitializer"   << &astx.ZeroInitializerLit{}, nil >>
 ;
 
 ConstExpr

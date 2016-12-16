@@ -33,6 +33,7 @@ package ast
 //
 //    ast.ConstExpr
 type Constant interface {
+	Value
 	// isConstant ensures that only constants can be assigned to the ast.Constant
 	// interface.
 	isConstant()

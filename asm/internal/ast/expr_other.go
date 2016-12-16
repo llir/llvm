@@ -55,6 +55,17 @@ func (cond IntPred) String() string {
 	return fmt.Sprintf("<unknown integer condition code %d>", int(cond))
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprICmp) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprICmp) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprICmp) isConstExpr() {}
+
 // --- [ fcmp ] ----------------------------------------------------------------
 
 // ExprFCmp represents an fcmp expression.
@@ -120,6 +131,17 @@ func (cond FloatPred) String() string {
 	return fmt.Sprintf("<unknown floating-point condition code %d>", int(cond))
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprFCmp) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprFCmp) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprFCmp) isConstExpr() {}
+
 // --- [ select ] --------------------------------------------------------------
 
 // ExprSelect represents a select expression.
@@ -132,3 +154,14 @@ type ExprSelect struct {
 	// Operands.
 	X, Y Constant
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprSelect) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*ExprSelect) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*ExprSelect) isConstExpr() {}

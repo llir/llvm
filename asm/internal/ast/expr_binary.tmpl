@@ -19,6 +19,9 @@ type Expr{{ .Name }} struct {
 	X, Y Constant
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*Expr{{ .Name }}) isValue() {}
+
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
 func (*Expr{{ .Name }}) isConstant() {}

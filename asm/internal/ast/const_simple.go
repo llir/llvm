@@ -22,6 +22,11 @@ type NullConst struct {
 	Type Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*IntConst) isValue()   {}
+func (*FloatConst) isValue() {}
+func (*NullConst) isValue()  {}
+
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
 func (*IntConst) isConstant()   {}

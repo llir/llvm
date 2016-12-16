@@ -20,4 +20,15 @@ type Expr{{ .Name }} struct {
 	// Type after conversion.
 	To Type
 }
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*Expr{{ .Name }}) isValue() {}
+
+// isConstant ensures that only constants can be assigned to the ast.Constant
+// interface.
+func (*Expr{{ .Name }}) isConstant() {}
+
+// isConstExpr ensures that only constant expressions can be assigned to the
+// ast.ConstExpr interface.
+func (*Expr{{ .Name }}) isConstExpr() {}
 {{- end }}

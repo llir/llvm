@@ -32,6 +32,12 @@ type ZeroInitializerConst struct {
 	Type Type
 }
 
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*VectorConst) isValue()          {}
+func (*ArrayConst) isValue()           {}
+func (*StructConst) isValue()          {}
+func (*ZeroInitializerConst) isValue() {}
+
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
 func (*VectorConst) isConstant()          {}

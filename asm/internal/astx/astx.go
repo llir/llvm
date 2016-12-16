@@ -3,6 +3,7 @@
 package astx
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/asm/internal/token"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/pkg/errors"
 )
 
@@ -94,6 +96,56 @@ func NewTypeDef(name, typ interface{}) (*ast.NamedType, error) {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
 	}
 	return &ast.NamedType{Name: n.name, Def: t}, nil
+}
+
+// === [ Global variables ] ====================================================
+
+// NewGlobalDecl returns a new global variable declaration based on the given
+// global variable name, immutability and type.
+func NewGlobalDecl(name, immutable, typ interface{}) (*ast.Global, error) {
+	n, ok := name.(*GlobalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid global name type; expected *astx.GlobalIdent, got %T", name)
+	}
+	imm, ok := immutable.(bool)
+	if !ok {
+		return nil, errors.Errorf("invalid immutability type; expected bool, got %T", immutable)
+	}
+	t, ok := typ.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid content type; expected ast.Type, got %T", typ)
+	}
+	global := &ast.Global{Name: n.name, Content: t}
+	global.Immutable = imm
+	return global, nil
+}
+
+// NewGlobalDef returns a new global variable definition based on the given
+// global variable name, immutability, type and value.
+func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
+	n, ok := name.(*GlobalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid global name type; expected *astx.GlobalIdent, got %T", name)
+	}
+	imm, ok := immutable.(bool)
+	if !ok {
+		return nil, errors.Errorf("invalid immutability type; expected bool, got %T", immutable)
+	}
+	t, ok := typ.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
+	}
+	init, err := NewValue(t, val)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i, ok := init.(ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid init type; expected ast.Constant, got %T", init)
+	}
+	global := &ast.Global{Name: n.name, Content: t, Init: i}
+	global.Immutable = imm
+	return global, nil
 }
 
 // === [ Functions ] ===========================================================
@@ -361,19 +413,118 @@ func NewStructType(fields interface{}) (*ast.StructType, error) {
 	return &ast.StructType{Fields: fs}, nil
 }
 
-// NewNamedType returns a new named type based on the given local identifier.
-func NewNamedType(name interface{}) (*ast.NamedType, error) {
+// NewTypeIdent returns a new type identifier based on the given local
+// identifier.
+func NewTypeIdent(name interface{}) (*ast.NamedTypeDummy, error) {
 	n, ok := name.(*LocalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid type name type; expected *astx.LocalIdent, got %T", name)
 	}
-	// NOTE: The named type does not yet have a type definition body.
-	return &ast.NamedType{Name: n.name}, nil
+	return &ast.NamedTypeDummy{Name: n.name}, nil
 }
 
 // === [ Values ] ==============================================================
 
+// NewValueList returns a new value list based on the given
+// value.
+func NewValueList(val interface{}) ([]ast.Value, error) {
+	v, ok := val.(ast.Value)
+	if !ok {
+		return nil, errors.Errorf("invalid value type; expected ast.Value, got %T", val)
+	}
+	return []ast.Value{v}, nil
+}
+
+// AppendValue appends the given value to the value list.
+func AppendValue(vals, val interface{}) ([]ast.Value, error) {
+	vs, ok := vals.([]ast.Value)
+	if !ok {
+		return nil, errors.Errorf("invalid value list type; expected []ast.Value, got %T", vals)
+	}
+	v, ok := val.(ast.Value)
+	if !ok {
+		return nil, errors.Errorf("invalid value type; expected ast.Value, got %T", val)
+	}
+	return append(vs, v), nil
+}
+
+// NewValue returns a value based on the given type and value.
+func NewValue(typ, val interface{}) (ast.Value, error) {
+	t, ok := typ.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid value type; expected ast.Type, got %T", typ)
+	}
+	switch val := val.(type) {
+	case *LocalIdent:
+		return &ast.LocalDummy{Name: val.name, Type: t}, nil
+	case *GlobalIdent:
+		return &ast.GlobalDummy{Name: val.name, Type: t}, nil
+	case *IntLit:
+		t, ok := t.(*ast.IntType)
+		if !ok {
+			return nil, errors.Errorf("invalid integer constant type; expected *ast.IntType, got %T", t)
+		}
+		return &ast.IntConst{Type: t, Lit: val.lit}, nil
+	case *FloatLit:
+		t, ok := t.(*ast.FloatType)
+		if !ok {
+			return nil, errors.Errorf("invalid floating-point constant type; expected *ast.FloatType, got %T", t)
+		}
+		return &ast.FloatConst{Type: t, Lit: val.lit}, nil
+	case *NullLit:
+		t, ok := t.(*ast.PointerType)
+		if !ok {
+			return nil, errors.Errorf("invalid null constant type; expected *ast.PointerType, got %T", t)
+		}
+		return &ast.NullConst{Type: t}, nil
+	// TODO: Add dummy/dummyconstant package for Vector, Array and Struct,
+	// ExprGetElementPtr, so that typ may be stored and evaluated after type
+	// resolution.
+	case *ZeroInitializerLit:
+		return &ast.ZeroInitializerConst{Type: t}, nil
+	case ast.Constant:
+		return val, nil
+	default:
+		panic(fmt.Sprintf("support for value type %T not yet implemented", val))
+	}
+}
+
 // === [ Constants ] ===========================================================
+
+// NewConstantList returns a new constant list based on the given constant.
+func NewConstantList(x interface{}) ([]ast.Constant, error) {
+	c, ok := x.(ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant type; expected ast.Constant, got %T", x)
+	}
+	return []ast.Constant{c}, nil
+}
+
+// AppendConstant appends the given constant to the constant list.
+func AppendConstant(xs, x interface{}) ([]ast.Constant, error) {
+	cs, ok := xs.([]ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant list type; expected []ast.Constant, got %T", xs)
+	}
+	c, ok := x.(ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant type; expected ast.Constant, got %T", x)
+	}
+	return append(cs, c), nil
+}
+
+// NewConstant returns a constant based on the given type and value.
+func NewConstant(typ, val interface{}) (ast.Constant, error) {
+	v, err := NewValue(typ, val)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	c, ok := v.(ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid constant type; expected ast.Constant, got %T", v)
+	}
+	return c, nil
+}
 
 // IntLit represents an integer literal.
 type IntLit struct {
@@ -407,6 +558,59 @@ func NewFloatLit(tok interface{}) (*FloatLit, error) {
 
 // NullLit represents a null literal.
 type NullLit struct {
+}
+
+// NewVectorConst returns a new vector constant based on the given elements.
+func NewVectorConst(elems interface{}) (*ast.VectorConst, error) {
+	es, ok := elems.([]ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid vector elements type; expected []ast.Constant, got %T", elems)
+	}
+	return &ast.VectorConst{Elems: es}, nil
+}
+
+// NewArrayConst returns a new array constant based on the given elements.
+func NewArrayConst(elems interface{}) (*ast.ArrayConst, error) {
+	es, ok := elems.([]ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid array elements type; expected []ast.Constant, got %T", elems)
+	}
+	return &ast.ArrayConst{Elems: es}, nil
+}
+
+// NewCharArrayConst returns a new character array constant based on the given
+// string.
+func NewCharArrayConst(str interface{}) (*ast.ArrayConst, error) {
+	s, err := getTokenString(str)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Skip double-quotes.
+	s = s[1 : len(s)-1]
+	s = enc.Unescape(s)
+	var elems []ast.Constant
+	for i := 0; i < len(s); i++ {
+		// TODO: Validate that string(s[i]) works for the entire byte range 0-255.
+		// Otherwise, use *big.Int to implement integer constants in package ast.
+		elem := &ast.IntConst{Type: &ast.IntType{Size: 8}, Lit: string(s[i])}
+		elems = append(elems, elem)
+	}
+	c := &ast.ArrayConst{Elems: elems}
+	c.CharArray = true
+	return c, nil
+}
+
+// NewStructConst returns a new struct constant based on the given fields.
+func NewStructConst(fields interface{}) (*ast.StructConst, error) {
+	fs, ok := fields.([]ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("invalid struct fields type; expected []ast.Constant, got %T", fields)
+	}
+	return &ast.StructConst{Fields: fs}, nil
+}
+
+// ZeroInitializerLit represents a zeroinitializer literal.
+type ZeroInitializerLit struct {
 }
 
 // ### [ Helper functions ] ####################################################

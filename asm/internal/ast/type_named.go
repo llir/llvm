@@ -11,3 +11,12 @@ type NamedType struct {
 
 // isType ensures that only types can be assigned to the ast.Type interface.
 func (*NamedType) isType() {}
+
+// NamedTypeDummy represents a dummy type identifier.
+type NamedTypeDummy struct {
+	// Type name.
+	Name string
+}
+
+// isType ensures that only types can be assigned to the ast.Type interface.
+func (*NamedTypeDummy) isType() {}
