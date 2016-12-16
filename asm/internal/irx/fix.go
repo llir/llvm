@@ -1,3 +1,5 @@
+//+build ignore
+
 // Fix dummy values as follows.
 //
 // Per module.
