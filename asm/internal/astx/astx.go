@@ -1552,6 +1552,661 @@ func AppendInstruction(insts, inst interface{}) ([]ast.Instruction, error) {
 	return append(is, i), nil
 }
 
+// --- [ Binary instructions ] -------------------------------------------------
+
+// NewAddInst returns a new add instruction based on the given type and
+// operands.
+func NewAddInst(typ, xVal, yVal interface{}) (*ast.InstAdd, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAdd{X: x, Y: y}, nil
+}
+
+// NewFAddInst returns a new fadd instruction based on the given type and
+// operands.
+func NewFAddInst(typ, xVal, yVal interface{}) (*ast.InstFAdd, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFAdd{X: x, Y: y}, nil
+}
+
+// NewSubInst returns a new sub instruction based on the given type and
+// operands.
+func NewSubInst(typ, xVal, yVal interface{}) (*ast.InstSub, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSub{X: x, Y: y}, nil
+}
+
+// NewFSubInst returns a new fsub instruction based on the given type and
+// operands.
+func NewFSubInst(typ, xVal, yVal interface{}) (*ast.InstFSub, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFSub{X: x, Y: y}, nil
+}
+
+// NewMulInst returns a new mul instruction based on the given type and
+// operands.
+func NewMulInst(typ, xVal, yVal interface{}) (*ast.InstMul, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstMul{X: x, Y: y}, nil
+}
+
+// NewFMulInst returns a new fmul instruction based on the given type and
+// operands.
+func NewFMulInst(typ, xVal, yVal interface{}) (*ast.InstFMul, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFMul{X: x, Y: y}, nil
+}
+
+// NewUDivInst returns a new udiv instruction based on the given type and
+// operands.
+func NewUDivInst(typ, xVal, yVal interface{}) (*ast.InstUDiv, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstUDiv{X: x, Y: y}, nil
+}
+
+// NewSDivInst returns a new sdiv instruction based on the given type and
+// operands.
+func NewSDivInst(typ, xVal, yVal interface{}) (*ast.InstSDiv, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSDiv{X: x, Y: y}, nil
+}
+
+// NewFDivInst returns a new fdiv instruction based on the given type and
+// operands.
+func NewFDivInst(typ, xVal, yVal interface{}) (*ast.InstFDiv, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFDiv{X: x, Y: y}, nil
+}
+
+// NewURemInst returns a new urem instruction based on the given type and
+// operands.
+func NewURemInst(typ, xVal, yVal interface{}) (*ast.InstURem, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstURem{X: x, Y: y}, nil
+}
+
+// NewSRemInst returns a new srem instruction based on the given type and
+// operands.
+func NewSRemInst(typ, xVal, yVal interface{}) (*ast.InstSRem, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSRem{X: x, Y: y}, nil
+}
+
+// NewFRemInst returns a new frem instruction based on the given type and
+// operands.
+func NewFRemInst(typ, xVal, yVal interface{}) (*ast.InstFRem, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFRem{X: x, Y: y}, nil
+}
+
+// --- [ Bitwise instructions ] ------------------------------------------------
+
+// NewShlInst returns a new shl instruction based on the given type and
+// operands.
+func NewShlInst(typ, xVal, yVal interface{}) (*ast.InstShl, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstShl{X: x, Y: y}, nil
+}
+
+// NewLShrInst returns a new lshr instruction based on the given type and
+// operands.
+func NewLShrInst(typ, xVal, yVal interface{}) (*ast.InstLShr, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstLShr{X: x, Y: y}, nil
+}
+
+// NewAShrInst returns a new ashr instruction based on the given type and
+// operands.
+func NewAShrInst(typ, xVal, yVal interface{}) (*ast.InstAShr, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAShr{X: x, Y: y}, nil
+}
+
+// NewAndInst returns a new and instruction based on the given type and
+// operands.
+func NewAndInst(typ, xVal, yVal interface{}) (*ast.InstAnd, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAnd{X: x, Y: y}, nil
+}
+
+// NewOrInst returns a new or instruction based on the given type and
+// operands.
+func NewOrInst(typ, xVal, yVal interface{}) (*ast.InstOr, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstOr{X: x, Y: y}, nil
+}
+
+// NewXorInst returns a new xor instruction based on the given type and
+// operands.
+func NewXorInst(typ, xVal, yVal interface{}) (*ast.InstXor, error) {
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstXor{X: x, Y: y}, nil
+}
+
+// --- [ Memory instructions ] -------------------------------------------------
+
+// NewAllocaInst returns a new alloca instruction based on the given element
+// type and number of elements.
+func NewAllocaInst(elem, nelems interface{}) (*ast.InstAlloca, error) {
+	e, ok := elem.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
+	}
+	inst := &ast.InstAlloca{Elem: e}
+	switch nelems := nelems.(type) {
+	case ast.Value:
+		inst.NElems = nelems
+	case nil:
+		// no nelems.
+	default:
+		return nil, errors.Errorf("invalid number of elements type; expected ast.Value or nil, got %T", nelems)
+	}
+	return inst, nil
+}
+
+// NewLoadInst returns a new load instruction based on the given element type,
+// source address type and value.
+func NewLoadInst(elem, srcTyp, srcVal interface{}) (*ast.InstLoad, error) {
+	e, ok := elem.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
+	}
+	src, err := NewValue(srcTyp, srcVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Store e in InstLoad to evaluate against src.Type().Elem() after type
+	// resolution.
+	return &ast.InstLoad{Elem: e, Src: src}, nil
+}
+
+// NewStoreInst returns a new store instruction based on the given element type,
+// source address type and value.
+func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ast.InstStore, error) {
+	src, err := NewValue(srcTyp, srcVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	dst, err := NewValue(dstTyp, dstVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstStore{Src: src, Dst: dst}, nil
+}
+
+// NewGetElementPtrInst returns a new getelementptr instruction based on the
+// given element type, source address type and value, and element indices.
+func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ast.InstGetElementPtr, error) {
+	e, ok := elem.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
+	}
+	src, err := NewValue(srcTyp, srcVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	var is []ast.Value
+	switch indices := indices.(type) {
+	case []ast.Value:
+		is = indices
+	case nil:
+		// no indices.
+	default:
+		return nil, errors.Errorf("invalid indices type; expected []ast.Value or nil, got %T", indices)
+	}
+	// Store e in InstGetElementPtr to evaluate against src.Type().Elem() after
+	// type resolution.
+	return &ast.InstGetElementPtr{Elem: e, Src: src, Indices: is}, nil
+}
+
+// --- [ Conversion instructions ] ---------------------------------------------
+
+// NewTruncInst returns a new trunc instruction based on the given source value
+// and target type.
+func NewTruncInst(fromTyp, fromVal, to interface{}) (*ast.InstTrunc, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstTrunc{From: from, To: t}, nil
+}
+
+// NewZExtInst returns a new zext instruction based on the given source value
+// and target type.
+func NewZExtInst(fromTyp, fromVal, to interface{}) (*ast.InstZExt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstZExt{From: from, To: t}, nil
+}
+
+// NewSExtInst returns a new sext instruction based on the given source value
+// and target type.
+func NewSExtInst(fromTyp, fromVal, to interface{}) (*ast.InstSExt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstSExt{From: from, To: t}, nil
+}
+
+// NewFPTruncInst returns a new fptrunc instruction based on the given source value
+// and target type.
+func NewFPTruncInst(fromTyp, fromVal, to interface{}) (*ast.InstFPTrunc, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstFPTrunc{From: from, To: t}, nil
+}
+
+// NewFPExtInst returns a new fpext instruction based on the given source value
+// and target type.
+func NewFPExtInst(fromTyp, fromVal, to interface{}) (*ast.InstFPExt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstFPExt{From: from, To: t}, nil
+}
+
+// NewFPToUIInst returns a new fptoui instruction based on the given source value
+// and target type.
+func NewFPToUIInst(fromTyp, fromVal, to interface{}) (*ast.InstFPToUI, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstFPToUI{From: from, To: t}, nil
+}
+
+// NewFPToSIInst returns a new fptosi instruction based on the given source value
+// and target type.
+func NewFPToSIInst(fromTyp, fromVal, to interface{}) (*ast.InstFPToSI, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstFPToSI{From: from, To: t}, nil
+}
+
+// NewUIToFPInst returns a new uitofp instruction based on the given source value
+// and target type.
+func NewUIToFPInst(fromTyp, fromVal, to interface{}) (*ast.InstUIToFP, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstUIToFP{From: from, To: t}, nil
+}
+
+// NewSIToFPInst returns a new sitofp instruction based on the given source value
+// and target type.
+func NewSIToFPInst(fromTyp, fromVal, to interface{}) (*ast.InstSIToFP, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstSIToFP{From: from, To: t}, nil
+}
+
+// NewPtrToIntInst returns a new ptrtoint instruction based on the given source value
+// and target type.
+func NewPtrToIntInst(fromTyp, fromVal, to interface{}) (*ast.InstPtrToInt, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstPtrToInt{From: from, To: t}, nil
+}
+
+// NewIntToPtrInst returns a new inttoptr instruction based on the given source value
+// and target type.
+func NewIntToPtrInst(fromTyp, fromVal, to interface{}) (*ast.InstIntToPtr, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstIntToPtr{From: from, To: t}, nil
+}
+
+// NewBitCastInst returns a new bitcast instruction based on the given source value
+// and target type.
+func NewBitCastInst(fromTyp, fromVal, to interface{}) (*ast.InstBitCast, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstBitCast{From: from, To: t}, nil
+}
+
+// NewAddrSpaceCastInst returns a new addrspacecast instruction based on the given source value
+// and target type.
+func NewAddrSpaceCastInst(fromTyp, fromVal, to interface{}) (*ast.InstAddrSpaceCast, error) {
+	from, err := NewValue(fromTyp, fromVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := to.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
+	}
+	return &ast.InstAddrSpaceCast{From: from, To: t}, nil
+}
+
+// --- [ Other instructions ] --------------------------------------------------
+
+// NewICmpInst returns a new icmp instruction based on the given integer
+// condition code, type and operands.
+func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ast.InstICmp, error) {
+	c, ok := cond.(ast.IntPred)
+	if !ok {
+		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", cond)
+	}
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstICmp{Cond: c, X: x, Y: y}, nil
+}
+
+// NewFCmpInst returns a new fcmp instruction based on the given floating-point
+// condition code, type and operands.
+func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ast.InstFCmp, error) {
+	c, ok := cond.(ast.FloatPred)
+	if !ok {
+		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", cond)
+	}
+	x, err := NewValue(typ, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(typ, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFCmp{Cond: c, X: x, Y: y}, nil
+}
+
+// NewPhiInst returns a new phi instruction based on the given incoming values.
+func NewPhiInst(typ, incs interface{}) (*ast.InstPhi, error) {
+	t, ok := typ.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
+	}
+	is, ok := incs.([]*ast.Incoming)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value list type; expected []*ast.Incoming, got %T", incs)
+	}
+	for _, inc := range is {
+		x, err := NewValue(typ, inc.X)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		inc.X = x
+	}
+	return &ast.InstPhi{Type: t, Incs: is}, nil
+}
+
+// NewIncomingList returns a new incoming value list based on the given incoming
+// value.
+func NewIncomingList(inc interface{}) ([]*ast.Incoming, error) {
+	i, ok := inc.(*ast.Incoming)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value type; expected *ast.Incoming, got %T", inc)
+	}
+	return []*ast.Incoming{i}, nil
+}
+
+// AppendIncoming appends the given incoming value to the incoming value list.
+func AppendIncoming(incs, inc interface{}) ([]*ast.Incoming, error) {
+	is, ok := incs.([]*ast.Incoming)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value list type; expected []*ast.Incoming, got %T", incs)
+	}
+	i, ok := inc.(*ast.Incoming)
+	if !ok {
+		return nil, errors.Errorf("invalid incoming value type; expected *ast.Incoming, got %T", inc)
+	}
+	return append(is, i), nil
+}
+
+// NewIncoming returns a new incoming value based on the given value and
+// predecessor basic block.
+func NewIncoming(x, pred interface{}) (*ast.Incoming, error) {
+	p, ok := pred.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid predecessor type; expected *astx.LocalIdent, got %T", pred)
+	}
+	return &ast.Incoming{X: x, Pred: p.name}, nil
+}
+
+// NewSelect returns a new select instruction based on the given selection
+// condition type and value, and operands.
+func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ast.InstSelect, error) {
+	cond, err := NewValue(condTyp, condVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSelect{Cond: cond, X: x, Y: y}, nil
+}
+
+// NewCallInst returns a new call instruction based on the given return type,
+// callee name, and function arguments.
+func NewCallInst(retTyp, callee, args interface{}) (*ast.InstCall, error) {
+	r, ok := retTyp.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid return type; expected ast.Type, got %T", retTyp)
+	}
+	var c string
+	var calleeLocal bool
+	switch callee := callee.(type) {
+	case *GlobalIdent:
+		c = callee.name
+	case *LocalIdent:
+		c = callee.name
+		calleeLocal = true
+	default:
+		return nil, errors.Errorf("invalid callee type; expected *astx.GlobalIdent, got %T", callee)
+	}
+	var as []ast.Value
+	switch args := args.(type) {
+	case []ast.Value:
+		as = args
+	case nil:
+		// no arguments.
+	default:
+		return nil, errors.Errorf("invalid function arguments type; expected []ast.Value or nil, got %T", args)
+	}
+	return &ast.InstCall{Sig: r, Callee: c, CalleeLocal: calleeLocal, Args: as}, nil
+}
+
 // === [ Terminators ] =========================================================
 
 // --- [ ret ] -----------------------------------------------------------------
@@ -1573,7 +2228,7 @@ func NewRetTerm(xTyp, xVal interface{}) (*ast.TermRet, error) {
 func NewBrTerm(target interface{}) (*ast.TermBr, error) {
 	t, ok := target.(*LocalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
+		return nil, errors.Errorf("invalid target branch type; expected *astx.LocalIdent, got %T", target)
 	}
 	return &ast.TermBr{Target: t.name}, nil
 }
@@ -1589,11 +2244,11 @@ func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*ast.
 	}
 	tTrue, ok := targetTrue.(*LocalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetTrue)
+		return nil, errors.Errorf("invalid true target branch type; expected *astx.LocalIdent, got %T", targetTrue)
 	}
 	tFalse, ok := targetFalse.(*LocalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetFalse)
+		return nil, errors.Errorf("invalid true target branch type; expected *astx.LocalIdent, got %T", targetFalse)
 	}
 	return &ast.TermCondBr{Cond: cond, TargetTrue: tTrue.name, TargetFalse: tFalse.name}, nil
 }
@@ -1609,7 +2264,7 @@ func NewSwitchTerm(xTyp, xVal, targetDefault, cases interface{}) (*ast.TermSwitc
 	}
 	tDefault, ok := targetDefault.(*LocalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid default target branch type; expected *irx.LocalIdent, got %T", targetDefault)
+		return nil, errors.Errorf("invalid default target branch type; expected *astx.LocalIdent, got %T", targetDefault)
 	}
 	var cs []*ast.Case
 	switch cases := cases.(type) {
@@ -1658,7 +2313,7 @@ func NewCase(xTyp, xVal, target interface{}) (*ast.Case, error) {
 	}
 	t, ok := target.(*LocalIdent)
 	if !ok {
-		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
+		return nil, errors.Errorf("invalid target branch type; expected *astx.LocalIdent, got %T", target)
 	}
 	return &ast.Case{X: x, Target: t.name}, nil
 }

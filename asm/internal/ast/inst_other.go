@@ -1,7 +1,5 @@
 package ast
 
-import "github.com/llir/llvm/ir/value"
-
 // --- [ icmp ] ----------------------------------------------------------------
 
 // InstICmp represents an icmp instruction.
@@ -11,10 +9,12 @@ import "github.com/llir/llvm/ir/value"
 type InstICmp struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Integer condition code.
 	Cond IntPred
 	// Operands.
-	X, Y value.Value
+	X, Y Value
 }
 
 // --- [ fcmp ] ----------------------------------------------------------------
@@ -26,10 +26,12 @@ type InstICmp struct {
 type InstFCmp struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Floating-point condition code.
 	Cond FloatPred
 	// Operands.
-	X, Y value.Value
+	X, Y Value
 }
 
 // --- [ phi ] -----------------------------------------------------------------
@@ -50,9 +52,14 @@ type InstPhi struct {
 // Incoming represents an incoming value of a phi instruction.
 type Incoming struct {
 	// Incoming value.
-	X Value
+	//
+	// Initially holds *astx.IntLit, *astx.LocalIdent, ... when created from
+	// astx.NewIncoming since the type is not yet known. The astx.NewPhiInst
+	// later replaces this with a value (e.g. *ast.IntConst, *ast.LocalDummy,
+	// ...).
+	X interface{}
 	// Predecessor basic block of the incoming value.
-	Pred *BasicBlock
+	Pred string
 }
 
 // --- [ select ] --------------------------------------------------------------
@@ -64,6 +71,8 @@ type Incoming struct {
 type InstSelect struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Selection condition.
 	Cond Value
 	// Operands.
@@ -79,17 +88,16 @@ type InstSelect struct {
 type InstCall struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Callee.
-	//
-	// Callee may have one of the following underlying types.
-	//
-	//    *ast.Function
-	//    *ast.Param
-	Callee NamedValue
+	Callee string
+	// Specifies whether the callee is a local identifier.
+	CalleeLocal bool
 	// Callee signature.
 	Sig Type
 	// Function arguments.
-	Args []value.Value
+	Args []Value
 }
 
 // --- [ va_arg ] --------------------------------------------------------------

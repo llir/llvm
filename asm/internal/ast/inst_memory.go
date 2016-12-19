@@ -9,6 +9,8 @@ package ast
 type InstAlloca struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Element type.
 	Elem Type
 	// Number of elements; or nil if one element.
@@ -26,6 +28,8 @@ type InstLoad struct {
 	Name string
 	// Type of the instruction.
 	Type Type
+	// Element type.
+	Elem Type
 	// Source address.
 	Src Value
 }
@@ -58,6 +62,8 @@ type InstStore struct {
 type InstGetElementPtr struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Source address element type.
 	Elem Type
 	// Source address.

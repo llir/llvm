@@ -17,6 +17,8 @@ package ast
 type Inst{{ .Name }} struct {
 	// Name of the local variable associated with the instruction.
 	Name string
+	// Type of the instruction.
+	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.

@@ -657,8 +657,8 @@ Instructions
 ;
 
 InstructionList
-	: Instruction                  /* << astx.NewInstructionList($0) >> */
-	| InstructionList Instruction  /* << astx.AppendInstruction($0, $1) >> */
+	: Instruction                   << astx.NewInstructionList($0) >>
+	| InstructionList Instruction   << astx.AppendInstruction($0, $1) >>
 ;
 
 Instruction
@@ -717,232 +717,232 @@ ValueInstruction
 // --- [ Binary instructions ] -------------------------------------------------
 
 AddInst
-	: "add" Type Value "," Value  /* << astx.NewAddInst($1, $2, $4) >> */
+	: "add" Type Value "," Value   << astx.NewAddInst($1, $2, $4) >>
 ;
 
 FAddInst
-	: "fadd" Type Value "," Value  /* << astx.NewFAddInst($1, $2, $4) >> */
+	: "fadd" Type Value "," Value   << astx.NewFAddInst($1, $2, $4) >>
 ;
 
 SubInst
-	: "sub" Type Value "," Value  /* << astx.NewSubInst($1, $2, $4) >> */
+	: "sub" Type Value "," Value   << astx.NewSubInst($1, $2, $4) >>
 ;
 
 FSubInst
-	: "fsub" Type Value "," Value  /* << astx.NewFSubInst($1, $2, $4) >> */
+	: "fsub" Type Value "," Value   << astx.NewFSubInst($1, $2, $4) >>
 ;
 
 MulInst
-	: "mul" Type Value "," Value  /* << astx.NewMulInst($1, $2, $4) >> */
+	: "mul" Type Value "," Value   << astx.NewMulInst($1, $2, $4) >>
 ;
 
 FMulInst
-	: "fmul" Type Value "," Value  /* << astx.NewFMulInst($1, $2, $4) >> */
+	: "fmul" Type Value "," Value   << astx.NewFMulInst($1, $2, $4) >>
 ;
 
 UDivInst
-	: "udiv" Type Value "," Value  /* << astx.NewUDivInst($1, $2, $4) >> */
+	: "udiv" Type Value "," Value   << astx.NewUDivInst($1, $2, $4) >>
 ;
 
 SDivInst
-	: "sdiv" Type Value "," Value  /* << astx.NewSDivInst($1, $2, $4) >> */
+	: "sdiv" Type Value "," Value   << astx.NewSDivInst($1, $2, $4) >>
 ;
 
 FDivInst
-	: "fdiv" Type Value "," Value  /* << astx.NewFDivInst($1, $2, $4) >> */
+	: "fdiv" Type Value "," Value   << astx.NewFDivInst($1, $2, $4) >>
 ;
 
 URemInst
-	: "urem" Type Value "," Value  /* << astx.NewURemInst($1, $2, $4) >> */
+	: "urem" Type Value "," Value   << astx.NewURemInst($1, $2, $4) >>
 ;
 
 SRemInst
-	: "srem" Type Value "," Value  /* << astx.NewSRemInst($1, $2, $4) >> */
+	: "srem" Type Value "," Value   << astx.NewSRemInst($1, $2, $4) >>
 ;
 
 FRemInst
-	: "frem" Type Value "," Value  /* << astx.NewFRemInst($1, $2, $4) >> */
+	: "frem" Type Value "," Value   << astx.NewFRemInst($1, $2, $4) >>
 ;
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
 ShlInst
-	: "shl" Type Value "," Value  /* << astx.NewShlInst($1, $2, $4) >> */
+	: "shl" Type Value "," Value   << astx.NewShlInst($1, $2, $4) >>
 ;
 
 LShrInst
-	: "lshr" Type Value "," Value  /* << astx.NewLShrInst($1, $2, $4) >> */
+	: "lshr" Type Value "," Value   << astx.NewLShrInst($1, $2, $4) >>
 ;
 
 AShrInst
-	: "ashr" Type Value "," Value  /* << astx.NewAShrInst($1, $2, $4) >> */
+	: "ashr" Type Value "," Value   << astx.NewAShrInst($1, $2, $4) >>
 ;
 
 AndInst
-	: "and" Type Value "," Value  /* << astx.NewAndInst($1, $2, $4) >> */
+	: "and" Type Value "," Value   << astx.NewAndInst($1, $2, $4) >>
 ;
 
 OrInst
-	: "or" Type Value "," Value  /* << astx.NewOrInst($1, $2, $4) >> */
+	: "or" Type Value "," Value   << astx.NewOrInst($1, $2, $4) >>
 ;
 
 XorInst
-	: "xor" Type Value "," Value  /* << astx.NewXorInst($1, $2, $4) >> */
+	: "xor" Type Value "," Value   << astx.NewXorInst($1, $2, $4) >>
 ;
 
 // --- [ Memory instructions ] -------------------------------------------------
 
 AllocaInst
-	: "alloca" Type OptNElems  /* << astx.NewAllocaInst($1, $2) >> */
+	: "alloca" Type OptNElems   << astx.NewAllocaInst($1, $2) >>
 ;
 
 OptNElems
 	: empty
-	| "," Type Value  /* << astx.NewValue($1, $2) >> */
+	| "," Type Value   << astx.NewValue($1, $2) >>
 ;
 
 LoadInst
-	: "load" Type "," PointerType Value  /* << astx.NewLoadInst($1, $3, $4) >> */
+	: "load" Type "," PointerType Value   << astx.NewLoadInst($1, $3, $4) >>
 ;
 
 GetElementPtrInst
-	: "getelementptr" Type "," Type Value Indices  /* << astx.NewGetElementPtrInst($1, $3, $4, $5) >> */
+	: "getelementptr" Type "," Type Value Indices   << astx.NewGetElementPtrInst($1, $3, $4, $5) >>
 ;
 
 Indices
 	: empty
-	| "," IndexList  /* << $1, nil >> */
+	| "," IndexList   << $1, nil >>
 ;
 
 IndexList
-	: Index                /* << astx.NewValueList($0) >> */
-	| IndexList "," Index  /* << astx.AppendValue($0, $2) >> */
+	: Index                 << astx.NewValueList($0) >>
+	| IndexList "," Index   << astx.AppendValue($0, $2) >>
 ;
 
 Index
-	: Type Value  /* << astx.NewValue($0, $1) >> */
+	: Type Value   << astx.NewValue($0, $1) >>
 ;
 
 StoreInst
-	: "store" Type Value "," PointerType Value  /* << astx.NewStoreInst($1, $2, $4, $5) >> */
+	: "store" Type Value "," PointerType Value   << astx.NewStoreInst($1, $2, $4, $5) >>
 ;
 
 // --- [ Conversion instructions ] ---------------------------------------------
 
 TruncInst
-	: "trunc" Type Value "to" Type  /* << astx.NewTruncInst($1, $2, $4) >> */
+	: "trunc" Type Value "to" Type   << astx.NewTruncInst($1, $2, $4) >>
 ;
 
 ZExtInst
-	: "zext" Type Value "to" Type  /* << astx.NewZExtInst($1, $2, $4) >> */
+	: "zext" Type Value "to" Type   << astx.NewZExtInst($1, $2, $4) >>
 ;
 
 SExtInst
-	: "sext" Type Value "to" Type  /* << astx.NewSExtInst($1, $2, $4) >> */
+	: "sext" Type Value "to" Type   << astx.NewSExtInst($1, $2, $4) >>
 ;
 
 FPTruncInst
-	: "fptrunc" Type Value "to" Type  /* << astx.NewFPTruncInst($1, $2, $4) >> */
+	: "fptrunc" Type Value "to" Type   << astx.NewFPTruncInst($1, $2, $4) >>
 ;
 
 FPExtInst
-	: "fpext" Type Value "to" Type  /* << astx.NewFPExtInst($1, $2, $4) >> */
+	: "fpext" Type Value "to" Type   << astx.NewFPExtInst($1, $2, $4) >>
 ;
 
 FPToUIInst
-	: "fptoui" Type Value "to" Type  /* << astx.NewFPToUIInst($1, $2, $4) >> */
+	: "fptoui" Type Value "to" Type   << astx.NewFPToUIInst($1, $2, $4) >>
 ;
 
 FPToSIInst
-	: "fptosi" Type Value "to" Type  /* << astx.NewFPToSIInst($1, $2, $4) >> */
+	: "fptosi" Type Value "to" Type   << astx.NewFPToSIInst($1, $2, $4) >>
 ;
 
 UIToFPInst
-	: "uitofp" Type Value "to" Type  /* << astx.NewUIToFPInst($1, $2, $4) >> */
+	: "uitofp" Type Value "to" Type   << astx.NewUIToFPInst($1, $2, $4) >>
 ;
 
 SIToFPInst
-	: "sitofp" Type Value "to" Type  /* << astx.NewSIToFPInst($1, $2, $4) >> */
+	: "sitofp" Type Value "to" Type   << astx.NewSIToFPInst($1, $2, $4) >>
 ;
 
 PtrToIntInst
-	: "ptrtoint" Type Value "to" Type  /* << astx.NewPtrToIntInst($1, $2, $4) >> */
+	: "ptrtoint" Type Value "to" Type   << astx.NewPtrToIntInst($1, $2, $4) >>
 ;
 
 IntToPtrInst
-	: "inttoptr" Type Value "to" Type  /* << astx.NewIntToPtrInst($1, $2, $4) >> */
+	: "inttoptr" Type Value "to" Type   << astx.NewIntToPtrInst($1, $2, $4) >>
 ;
 
 BitCastInst
-	: "bitcast" Type Value "to" Type  /* << astx.NewBitCastInst($1, $2, $4) >> */
+	: "bitcast" Type Value "to" Type   << astx.NewBitCastInst($1, $2, $4) >>
 ;
 
 AddrSpaceCastInst
-	: "addrspacecast" Type Value "to" Type  /* << astx.NewAddrSpaceCastInst($1, $2, $4) >> */
+	: "addrspacecast" Type Value "to" Type   << astx.NewAddrSpaceCastInst($1, $2, $4) >>
 ;
 
 // --- [ Other instructions ] --------------------------------------------------
 
 ICmpInst
-	: "icmp" IntPred Type Value "," Value  /* << astx.NewICmpInst($1, $2, $3, $5) >> */
+	: "icmp" IntPred Type Value "," Value   << astx.NewICmpInst($1, $2, $3, $5) >>
 ;
 
 IntPred
-	: "eq"   /* << ast.IntEQ, nil >> */
-	| "ne"   /* << ast.IntNE, nil >> */
-	| "ugt"  /* << ast.IntUGT, nil >> */
-	| "uge"  /* << ast.IntUGE, nil >> */
-	| "ult"  /* << ast.IntULT, nil >> */
-	| "ule"  /* << ast.IntULE, nil >> */
-	| "sgt"  /* << ast.IntSGT, nil >> */
-	| "sge"  /* << ast.IntSGE, nil >> */
-	| "slt"  /* << ast.IntSLT, nil >> */
-	| "sle"  /* << ast.IntSLE, nil >> */
+	: "eq"    << ast.IntEQ, nil >>
+	| "ne"    << ast.IntNE, nil >>
+	| "ugt"   << ast.IntUGT, nil >>
+	| "uge"   << ast.IntUGE, nil >>
+	| "ult"   << ast.IntULT, nil >>
+	| "ule"   << ast.IntULE, nil >>
+	| "sgt"   << ast.IntSGT, nil >>
+	| "sge"   << ast.IntSGE, nil >>
+	| "slt"   << ast.IntSLT, nil >>
+	| "sle"   << ast.IntSLE, nil >>
 ;
 
 FCmpInst
-	: "fcmp" FloatPred Type Value "," Value  /* << astx.NewFCmpInst($1, $2, $3, $5) >> */
+	: "fcmp" FloatPred Type Value "," Value   << astx.NewFCmpInst($1, $2, $3, $5) >>
 ;
 
 FloatPred
-	: "false"  /* << ast.FloatFalse, nil >> */
-	| "oeq"    /* << ast.FloatOEQ, nil >> */
-	| "ogt"    /* << ast.FloatOGT, nil >> */
-	| "oge"    /* << ast.FloatOGE, nil >> */
-	| "olt"    /* << ast.FloatOLT, nil >> */
-	| "ole"    /* << ast.FloatOLE, nil >> */
-	| "one"    /* << ast.FloatONE, nil >> */
-	| "ord"    /* << ast.FloatORD, nil >> */
-	| "ueq"    /* << ast.FloatUEQ, nil >> */
-	| "ugt"    /* << ast.FloatUGT, nil >> */
-	| "uge"    /* << ast.FloatUGE, nil >> */
-	| "ult"    /* << ast.FloatULT, nil >> */
-	| "ule"    /* << ast.FloatULE, nil >> */
-	| "une"    /* << ast.FloatUNE, nil >> */
-	| "uno"    /* << ast.FloatUNO, nil >> */
-	| "true"   /* << ast.FloatTrue, nil >> */
+	: "false"   << ast.FloatFalse, nil >>
+	| "oeq"     << ast.FloatOEQ, nil >>
+	| "ogt"     << ast.FloatOGT, nil >>
+	| "oge"     << ast.FloatOGE, nil >>
+	| "olt"     << ast.FloatOLT, nil >>
+	| "ole"     << ast.FloatOLE, nil >>
+	| "one"     << ast.FloatONE, nil >>
+	| "ord"     << ast.FloatORD, nil >>
+	| "ueq"     << ast.FloatUEQ, nil >>
+	| "ugt"     << ast.FloatUGT, nil >>
+	| "uge"     << ast.FloatUGE, nil >>
+	| "ult"     << ast.FloatULT, nil >>
+	| "ule"     << ast.FloatULE, nil >>
+	| "une"     << ast.FloatUNE, nil >>
+	| "uno"     << ast.FloatUNO, nil >>
+	| "true"    << ast.FloatTrue, nil >>
 ;
 
 PhiInst
-	: "phi" Type IncomingList  /* << astx.NewPhiInst($1, $2) >> */
+	: "phi" Type IncomingList   << astx.NewPhiInst($1, $2) >>
 ;
 
 IncomingList
-	: Incoming                   /* << astx.NewIncomingList($0) >> */
-	| IncomingList "," Incoming  /* << astx.AppendIncoming($0, $2) >> */
+	: Incoming                    << astx.NewIncomingList($0) >>
+	| IncomingList "," Incoming   << astx.AppendIncoming($0, $2) >>
 ;
 
 Incoming
-	: "[" Value "," LocalIdent "]"  /* << astx.NewIncoming($1, $3) >> */
+	: "[" Value "," LocalIdent "]"   << astx.NewIncoming($1, $3) >>
 ;
 
 SelectInst
-	: "select" Type Value "," Type Value "," Type Value  /* << astx.NewSelectInst($1, $2, $4, $5, $7, $8) >> */
+	: "select" Type Value "," Type Value "," Type Value   << astx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
 ;
 
 CallInst
-	: "call" ResultType GlobalIdent "(" Args ")"  /* << astx.NewCallInst($1, $2, $4) >> */
-	| "call" ResultType LocalIdent "(" Args ")"  /* << astx.NewCallInst($1, $2, $4) >> */
+	: "call" ResultType GlobalIdent "(" Args ")"   << astx.NewCallInst($1, $2, $4) >>
+	| "call" ResultType LocalIdent "(" Args ")"   << astx.NewCallInst($1, $2, $4) >>
 ;
 
 Args
@@ -951,12 +951,12 @@ Args
 ;
 
 ArgList
-	: Arg              /* << astx.NewValueList($0) >> */
-	| ArgList "," Arg  /* << astx.AppendValue($0, $2) >> */
+	: Arg               << astx.NewValueList($0) >>
+	| ArgList "," Arg   << astx.AppendValue($0, $2) >>
 ;
 
 Arg
-	: Type Value  /* << astx.NewValue($0, $1) >> */
+	: Type Value   << astx.NewValue($0, $1) >>
 ;
 
 // === [ Terminators ] =========================================================
