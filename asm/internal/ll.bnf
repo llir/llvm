@@ -198,36 +198,36 @@ Immutable
 // === [ Functions ] ===========================================================
 
 FunctionDecl
-	: "declare" FunctionHeader  /* << $1, nil >> */
+	: "declare" FunctionHeader   << $1, nil >>
 ;
 
 FunctionDef
-	: "define" FunctionHeader FunctionBody  /* << astx.NewFunctionDef($1, $2) >> */
+	: "define" FunctionHeader FunctionBody   << astx.NewFunctionDef($1, $2) >>
 ;
 
 FunctionHeader
-	: ResultType GlobalIdent "(" Params ")"  /* << astx.NewFunctionDecl($0, $1, $3) >> */
+	: ResultType GlobalIdent "(" Params ")"   << astx.NewFunctionDecl($0, $1, $3) >>
 ;
 
 Params
 	: empty
-	| "..."                /* << astx.NewParams(nil, true) >> */
-	| ParamList            /* << astx.NewParams($0, false) >> */
-	| ParamList "," "..."  /* << astx.NewParams($0, true) >> */
+	| "..."                 << astx.NewParams(nil, true) >>
+	| ParamList             << astx.NewParams($0, false) >>
+	| ParamList "," "..."   << astx.NewParams($0, true) >>
 ;
 
 ParamList
-	: Param                /* << astx.NewParamList($0) >> */
-	| ParamList "," Param  /* << astx.AppendParam($0, $2) >> */
+	: Param                 << astx.NewParamList($0) >>
+	| ParamList "," Param   << astx.AppendParam($0, $2) >>
 ;
 
 Param
-	: Type             /* << astx.NewParam($0, nil) >> */
-	| Type LocalIdent  /* << astx.NewParam($0, $1) >> */
+	: Type              << astx.NewParam($0, nil) >>
+	| Type LocalIdent   << astx.NewParam($0, $1) >>
 ;
 
 FunctionBody
-	: "{" BasicBlocks "}"  /* << $1, nil >> */
+	: "{" BasicBlocks "}"   << $1, nil >>
 ;
 
 // === [ Identifiers ] =========================================================
@@ -640,13 +640,13 @@ BasicBlocks
 ;
 
 BasicBlockList
-	: BasicBlock                 /* << astx.NewBasicBlockList($0) >> */
-	| BasicBlockList BasicBlock  /* << astx.AppendBasicBlock($0, $1) >> */
+	: BasicBlock                  << astx.NewBasicBlockList($0) >>
+	| BasicBlockList BasicBlock   << astx.AppendBasicBlock($0, $1) >>
 ;
 
 BasicBlock
-	: Instructions Terminator             /* << astx.NewBasicBlock(nil, $0, $1) >> */
-	| LabelIdent Instructions Terminator  /* << astx.NewBasicBlock($0, $1, $2) >> */
+	: Instructions Terminator              << astx.NewBasicBlock(nil, $0, $1) >>
+	| LabelIdent Instructions Terminator   << astx.NewBasicBlock($0, $1, $2) >>
 ;
 
 // === [ Instructions ] ========================================================
@@ -970,8 +970,8 @@ Terminator
 ;
 
 RetTerm
-	: "ret" VoidType    /* << ast.NewRet(nil), nil >> */
-	| "ret" Type Value  /* << astx.NewRetTerm($1, $2) >> */
+	: "ret" VoidType     << &ast.TermRet{}, nil >>
+	| "ret" Type Value   << astx.NewRetTerm($1, $2) >>
 ;
 
 BrTerm

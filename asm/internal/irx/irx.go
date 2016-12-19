@@ -21,49 +21,6 @@ import (
 
 // === [ Functions ] ===========================================================
 
-// NewFunctionDecl returns a new function declaration based on the given
-// return type, function name and parameters.
-func NewFunctionDecl(ret, name, params interface{}) (*ir.Function, error) {
-	r, ok := ret.(types.Type)
-	if !ok {
-		return nil, errors.Errorf("invalid function return type; expected types.Type, got %T", ret)
-	}
-	n, ok := name.(*GlobalIdent)
-	if !ok {
-		return nil, errors.Errorf("invalid function name type; expected *irx.GlobalIdent, got %T", name)
-	}
-	f := ir.NewFunction(n.name, r)
-	switch ps := params.(type) {
-	case *Params:
-		for _, param := range ps.params {
-			f.NewParam(param.Name(), param.Type())
-		}
-		f.SetVariadic(ps.variadic)
-	case nil:
-		// no parameters.
-	default:
-		return nil, errors.Errorf("invalid function parameters type; expected *irx.Params or nil, got %T", params)
-	}
-	return f, nil
-}
-
-// NewFunctionDef returns a new function definition based on the given function
-// header and body.
-func NewFunctionDef(header, body interface{}) (*ir.Function, error) {
-	f, ok := header.(*ir.Function)
-	if !ok {
-		return nil, errors.Errorf("invalid function header type; expected *ir.Function, got %T", header)
-	}
-	blocks, ok := body.([]*ir.BasicBlock)
-	if !ok {
-		return nil, errors.Errorf("invalid function body type; expected []*ir.BasicBlock, got %T", body)
-	}
-	for _, block := range blocks {
-		f.AppendBlock(block)
-	}
-	return f, nil
-}
-
 // === [ Identifiers ] =========================================================
 
 // === [ Types ] ===============================================================
@@ -74,85 +31,7 @@ func NewFunctionDef(header, body interface{}) (*ir.Function, error) {
 
 // === [ Basic blocks ] ========================================================
 
-// NewBasicBlockList returns a new basic block list based on the given basic
-// block.
-func NewBasicBlockList(block interface{}) ([]*ir.BasicBlock, error) {
-	b, ok := block.(*ir.BasicBlock)
-	if !ok {
-		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", block)
-	}
-	return []*ir.BasicBlock{b}, nil
-}
-
-// AppendBasicBlock appends the given basic block to the basic block list.
-func AppendBasicBlock(blocks, block interface{}) ([]*ir.BasicBlock, error) {
-	bs, ok := blocks.([]*ir.BasicBlock)
-	if !ok {
-		return nil, errors.Errorf("invalid basic block list type; expected []*ir.BasicBlock, got %T", blocks)
-	}
-	b, ok := block.(*ir.BasicBlock)
-	if !ok {
-		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", block)
-	}
-	return append(bs, b), nil
-}
-
-// NewBasicBlock returns a new basic block based on the given label name, non-
-// branching instructions and terminator.
-func NewBasicBlock(name, insts, term interface{}) (*ir.BasicBlock, error) {
-	block := ir.NewBlock("")
-	switch name := name.(type) {
-	case *LabelIdent:
-		block.SetName(name.name)
-	case nil:
-		// unnamed basic block.
-	default:
-		return nil, errors.Errorf("invalid label name type; expected *irx.LabelIdent or nil, got %T", name)
-	}
-	var is []ir.Instruction
-	switch insts := insts.(type) {
-	case []ir.Instruction:
-		is = insts
-	case nil:
-		// no instructions.
-	default:
-		return nil, errors.Errorf("invalid instruction list type; expected []ir.Instruction, got %T", insts)
-	}
-	t, ok := term.(ir.Terminator)
-	if !ok {
-		return nil, errors.Errorf("invalid terminator type; expected ir.Terminator, got %T", term)
-	}
-	for _, inst := range is {
-		block.AppendInst(inst)
-	}
-	block.SetTerm(t)
-	return block, nil
-}
-
 // === [ Instructions ] ========================================================
-
-// NewInstructionList returns a new instruction list based on the given
-// instruction.
-func NewInstructionList(inst interface{}) ([]ir.Instruction, error) {
-	i, ok := inst.(ir.Instruction)
-	if !ok {
-		return nil, errors.Errorf("invalid instruction type; expected ir.Instruction, got %T", inst)
-	}
-	return []ir.Instruction{i}, nil
-}
-
-// AppendInstruction appends the given instruction to the instruction list.
-func AppendInstruction(insts, inst interface{}) ([]ir.Instruction, error) {
-	is, ok := insts.([]ir.Instruction)
-	if !ok {
-		return nil, errors.Errorf("invalid instruction list type; expected []ir.Instruction, got %T", insts)
-	}
-	i, ok := inst.(ir.Instruction)
-	if !ok {
-		return nil, errors.Errorf("invalid instruction type; expected ir.Instruction, got %T", inst)
-	}
-	return append(is, i), nil
-}
 
 // NewNamedInstruction returns a named instruction based on the given local
 // variable name and instruction.

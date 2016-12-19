@@ -150,6 +150,51 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
 
 // === [ Functions ] ===========================================================
 
+// NewFunctionDecl returns a new function declaration based on the given
+// return type, function name and parameters.
+func NewFunctionDecl(ret, name, params interface{}) (*ast.Function, error) {
+	r, ok := ret.(ast.Type)
+	if !ok {
+		return nil, errors.Errorf("invalid function return type; expected ast.Type, got %T", ret)
+	}
+	n, ok := name.(*GlobalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid function name type; expected *astx.GlobalIdent, got %T", name)
+	}
+	sig := &ast.FuncType{Ret: r}
+	switch ps := params.(type) {
+	case *Params:
+		for _, param := range ps.params {
+			sig.Params = append(sig.Params, param)
+		}
+		sig.Variadic = ps.variadic
+	case nil:
+		// no parameters.
+	default:
+		return nil, errors.Errorf("invalid function parameters type; expected *astx.Params or nil, got %T", params)
+	}
+	f := &ast.Function{
+		Name: n.name,
+		Sig:  sig,
+	}
+	return f, nil
+}
+
+// NewFunctionDef returns a new function definition based on the given function
+// header and body.
+func NewFunctionDef(header, body interface{}) (*ast.Function, error) {
+	f, ok := header.(*ast.Function)
+	if !ok {
+		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
+	}
+	blocks, ok := body.([]*ast.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid function body type; expected []*ast.BasicBlock, got %T", body)
+	}
+	f.Blocks = blocks
+	return f, nil
+}
+
 // Params represents a function parameters specifier.
 type Params struct {
 	// Function parameter types.
@@ -1429,7 +1474,97 @@ func NewSelectExpr(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ast.E
 
 // === [ Basic blocks ] ========================================================
 
+// NewBasicBlockList returns a new basic block list based on the given basic
+// block.
+func NewBasicBlockList(block interface{}) ([]*ast.BasicBlock, error) {
+	b, ok := block.(*ast.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid basic block type; expected *ast.BasicBlock, got %T", block)
+	}
+	return []*ast.BasicBlock{b}, nil
+}
+
+// AppendBasicBlock appends the given basic block to the basic block list.
+func AppendBasicBlock(blocks, block interface{}) ([]*ast.BasicBlock, error) {
+	bs, ok := blocks.([]*ast.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid basic block list type; expected []*ast.BasicBlock, got %T", blocks)
+	}
+	b, ok := block.(*ast.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid basic block type; expected *ast.BasicBlock, got %T", block)
+	}
+	return append(bs, b), nil
+}
+
+// NewBasicBlock returns a new basic block based on the given label name, non-
+// branching instructions and terminator.
+func NewBasicBlock(name, insts, term interface{}) (*ast.BasicBlock, error) {
+	block := &ast.BasicBlock{}
+	switch name := name.(type) {
+	case *LabelIdent:
+		block.Name = name.name
+	case nil:
+		// unnamed basic block.
+	default:
+		return nil, errors.Errorf("invalid label name type; expected *astx.LabelIdent or nil, got %T", name)
+	}
+	var is []ast.Instruction
+	switch insts := insts.(type) {
+	case []ast.Instruction:
+		is = insts
+	case nil:
+		// no instructions.
+	default:
+		return nil, errors.Errorf("invalid instruction list type; expected []ast.Instruction, got %T", insts)
+	}
+	t, ok := term.(ast.Terminator)
+	if !ok {
+		return nil, errors.Errorf("invalid terminator type; expected ast.Terminator, got %T", term)
+	}
+	block.Insts = is
+	block.Term = t
+	return block, nil
+}
+
 // === [ Instructions ] ========================================================
+
+// NewInstructionList returns a new instruction list based on the given
+// instruction.
+func NewInstructionList(inst interface{}) ([]ast.Instruction, error) {
+	i, ok := inst.(ast.Instruction)
+	if !ok {
+		return nil, errors.Errorf("invalid instruction type; expected ast.Instruction, got %T", inst)
+	}
+	return []ast.Instruction{i}, nil
+}
+
+// AppendInstruction appends the given instruction to the instruction list.
+func AppendInstruction(insts, inst interface{}) ([]ast.Instruction, error) {
+	is, ok := insts.([]ast.Instruction)
+	if !ok {
+		return nil, errors.Errorf("invalid instruction list type; expected []ast.Instruction, got %T", insts)
+	}
+	i, ok := inst.(ast.Instruction)
+	if !ok {
+		return nil, errors.Errorf("invalid instruction type; expected ast.Instruction, got %T", inst)
+	}
+	return append(is, i), nil
+}
+
+// === [ Terminators ] =========================================================
+
+// --- [ ret ] -----------------------------------------------------------------
+
+// NewRetTerm returns a new ret terminator based on the given return type and
+// value.
+func NewRetTerm(xTyp, xVal interface{}) (*ast.TermRet, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.TermRet{X: x}, nil
+}
 
 // ### [ Helper functions ] ####################################################
 
