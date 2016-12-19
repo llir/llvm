@@ -975,15 +975,15 @@ RetTerm
 ;
 
 BrTerm
-	: "br" LabelType LocalIdent  /* << astx.NewBrTerm($2) >> */
+	: "br" LabelType LocalIdent   << astx.NewBrTerm($2) >>
 ;
 
 CondBrTerm
-	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent  /* << astx.NewCondBrTerm($1, $2, $5, $8) >> */
+	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << astx.NewCondBrTerm($1, $2, $5, $8) >>
 ;
 
 SwitchTerm
-	: "switch" IntType Value "," LabelType LocalIdent "[" Cases "]"  /* << astx.NewSwitchTerm($1, $2, $5, $7) >> */
+	: "switch" IntType Value "," LabelType LocalIdent "[" Cases "]"   << astx.NewSwitchTerm($1, $2, $5, $7) >>
 ;
 
 Cases
@@ -992,14 +992,14 @@ Cases
 ;
 
 CastList
-	: Case           /* << astx.NewCaseList($0) >> */
-	| CastList Case  /* << astx.AppendCase($0, $1) >> */
+	: Case            << astx.NewCaseList($0) >>
+	| CastList Case   << astx.AppendCase($0, $1) >>
 ;
 
 Case
-	: IntType Value "," LabelType LocalIdent  /* << astx.NewCase($0, $1, $4) >> */
+	: IntType Value "," LabelType LocalIdent   << astx.NewCase($0, $1, $4) >>
 ;
 
 UnreachableTerm
-	: "unreachable"  /* << ast.NewUnreachable(), nil >> */
+	: "unreachable"   << &ast.TermUnreachable{}, nil >>
 ;

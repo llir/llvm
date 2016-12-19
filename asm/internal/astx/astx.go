@@ -1566,6 +1566,103 @@ func NewRetTerm(xTyp, xVal interface{}) (*ast.TermRet, error) {
 	return &ast.TermRet{X: x}, nil
 }
 
+// --- [ br ] ------------------------------------------------------------------
+
+// NewBrTerm returns a new unconditional br terminator based on the given target
+// branch.
+func NewBrTerm(target interface{}) (*ast.TermBr, error) {
+	t, ok := target.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
+	}
+	return &ast.TermBr{Target: t.name}, nil
+}
+
+// --- [ conditional br ] ------------------------------------------------------
+
+// NewCondBrTerm returns a new conditional br terminator based on the given
+// branching condition type and value, and conditional target branches.
+func NewCondBrTerm(condTyp, condVal, targetTrue, targetFalse interface{}) (*ast.TermCondBr, error) {
+	cond, err := NewValue(condTyp, condVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	tTrue, ok := targetTrue.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetTrue)
+	}
+	tFalse, ok := targetFalse.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid true target branch type; expected *irx.LocalIdent, got %T", targetFalse)
+	}
+	return &ast.TermCondBr{Cond: cond, TargetTrue: tTrue.name, TargetFalse: tFalse.name}, nil
+}
+
+// --- [ switch ] --------------------------------------------------------------
+
+// NewSwitchTerm returns a new switch terminator based on the given control
+// variable type and value, default target branch and switch cases.
+func NewSwitchTerm(xTyp, xVal, targetDefault, cases interface{}) (*ast.TermSwitch, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	tDefault, ok := targetDefault.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid default target branch type; expected *irx.LocalIdent, got %T", targetDefault)
+	}
+	var cs []*ast.Case
+	switch cases := cases.(type) {
+	case []*ast.Case:
+		cs = cases
+	case nil:
+		// no cases.
+	default:
+		return nil, errors.Errorf("invalid switch cases type; expected []*ast.Case or nil, got %T", cases)
+	}
+	return &ast.TermSwitch{X: x, TargetDefault: tDefault.name, Cases: cs}, nil
+}
+
+// NewCaseList returns a new switch case list based on the given case.
+func NewCaseList(switchCase interface{}) ([]*ast.Case, error) {
+	c, ok := switchCase.(*ast.Case)
+	if !ok {
+		return nil, errors.Errorf("invalid switch case type; expected *ast.Case, got %T", switchCase)
+	}
+	return []*ast.Case{c}, nil
+}
+
+// AppendCase appends the given case to the switch case list.
+func AppendCase(cases, switchCase interface{}) ([]*ast.Case, error) {
+	cs, ok := cases.([]*ast.Case)
+	if !ok {
+		return nil, errors.Errorf("invalid switch case list type; expected []*ast.Case, got %T", cases)
+	}
+	c, ok := switchCase.(*ast.Case)
+	if !ok {
+		return nil, errors.Errorf("invalid switch case type; expected *ast.Case, got %T", switchCase)
+	}
+	return append(cs, c), nil
+}
+
+// NewCase returns a new switch case based on the given case comparand and
+// target branch.
+func NewCase(xTyp, xVal, target interface{}) (*ast.Case, error) {
+	xValue, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, ok := xValue.(*ast.IntConst)
+	if !ok {
+		return nil, errors.Errorf("invalid case comparand type; expected *ast.IntConst, got %T", xValue)
+	}
+	t, ok := target.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid target branch type; expected *irx.LocalIdent, got %T", target)
+	}
+	return &ast.Case{X: x, Target: t.name}, nil
+}
+
 // ### [ Helper functions ] ####################################################
 
 // getTokenString returns the string literal of the given token.
