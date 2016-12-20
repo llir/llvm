@@ -83,6 +83,27 @@ func fixModule(m *ast.Module) *ast.Module {
 	}
 	astutil.Walk(m, resolveGlobals)
 
+	// Resolve callees.
+	resolveNamedGlobals := func(node interface{}) {
+		p, ok := node.(*ast.NamedValue)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.GlobalDummy)
+		if !ok {
+			return
+		}
+		global := fix.getGlobal(old.Name)
+		// TODO: Validate type of old and new global.
+		*p = global
+	}
+	astutil.Walk(m, resolveNamedGlobals)
+
+	// Fix functions.
+	for _, f := range m.Funcs {
+		fix.fixFunction(f)
+	}
+
 	return m
 }
 
@@ -124,6 +145,83 @@ func (fix *fixer) fixType(old ast.Type) ast.Type {
 		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
 	return old
+}
+
+// === [ Functions ] ===========================================================
+
+// fixFunction replaces dummy values within the given function with their real
+// values.
+func (fix *fixer) fixFunction(f *ast.Function) {
+	// Reset locals.
+	fix.locals = make(map[string]ast.NamedValue)
+
+	// Index basic blocks.
+	for _, block := range f.Blocks {
+		name := block.Name
+		if _, ok := fix.locals[name]; ok {
+			panic(fmt.Sprintf("basic block label %q already present; old `%v`, new `%v`", name, fix.locals[name], block))
+		}
+		fix.locals[name] = block
+	}
+
+	// Index function parameters.
+	for _, param := range f.Sig.Params {
+		name := param.Name
+		if _, ok := fix.locals[name]; ok {
+			panic(fmt.Sprintf("function parameter name %q already present; old `%v`, new `%v`", name, fix.locals[name], param))
+		}
+		fix.locals[name] = param
+	}
+
+	// Index local variables produced by instructions.
+	for _, block := range f.Blocks {
+		for _, inst := range block.Insts {
+			if inst, ok := inst.(ast.NamedValue); ok {
+				if inst, ok := inst.(*ast.InstCall); ok {
+					if _, ok := inst.Type.(*ast.VoidType); ok {
+						continue
+					}
+				}
+				name := inst.GetName()
+				if _, ok := fix.locals[name]; ok {
+					panic(fmt.Sprintf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
+				}
+				fix.locals[name] = inst
+			}
+		}
+	}
+
+	// Resolve local variables.
+	resolveLocals := func(node interface{}) {
+		p, ok := node.(*ast.Value)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.LocalDummy)
+		if !ok {
+			return
+		}
+		local := fix.getLocal(old.Name)
+		// TODO: Validate type of old and new local.
+		*p = local
+	}
+	astutil.WalkFunc(f, resolveLocals)
+
+	// Resolve basic blocks and callees.
+	resolveNamedLocals := func(node interface{}) {
+		p, ok := node.(*ast.NamedValue)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.LocalDummy)
+		if !ok {
+			return
+		}
+		local := fix.getLocal(old.Name)
+		// TODO: Validate type of old and new local.
+		*p = local
+	}
+	astutil.WalkFunc(f, resolveNamedLocals)
 }
 
 // ### [ Helper functions ] ####################################################

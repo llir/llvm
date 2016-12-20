@@ -18,6 +18,13 @@ func Walk(x interface{}, visit func(interface{})) {
 	WalkBeforeAfter(x, nop, visit)
 }
 
+// WalkFunc traverses the AST of the given function, calling visit(y) for each
+// node y in the tree but also with a pointer to each ast.Type, ast.Value, and
+// *ast.BasicBlock, in a bottom-up traversal.
+func WalkFunc(f *ast.Function, visit func(interface{})) {
+	WalkFuncBeforeAfter(f, nop, visit)
+}
+
 // nop performs no operation on the given AST.
 func nop(x interface{}) {
 }
@@ -33,8 +40,31 @@ func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 	w.walkBeforeAfter(x, before, after)
 }
 
+// WalkFuncBeforeAfter traverses the AST of the given function, calling
+// before(y) before traversing y's children and after(y) afterward for each node
+// y in the tree but also with a pointer to each ast.Type, ast.Value, and
+// *ast.BasicBlock, in a bottom-up traversal.
+//
+// Special precausion is taken during traversal to stay within the scope of the
+// function.
+func WalkFuncBeforeAfter(f *ast.Function, before, after func(interface{})) {
+	w := &walker{
+		funcScope: true,
+		visited:   make(map[interface{}]bool),
+	}
+	// Traverse child nodes of function, instead of f directly, as *ast.Function
+	// nodes are not traversed when staying within the scope of the function.
+	w.walkBeforeAfter(&f.Sig, before, after)
+	if f.Blocks != nil {
+		w.walkBeforeAfter(&f.Blocks, before, after)
+	}
+}
+
 // A walker traverses ASTs of LLVM IR while preventing infinite loops.
 type walker struct {
+	// Specifies whether to stay within the scope of the function during
+	// traversal.
+	funcScope bool
 	// visited keeps track of visited nodes to prevent infinite loops.
 	visited map[interface{}]bool
 }
@@ -47,6 +77,12 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	switch x.(type) {
 	case []*ast.Global, []*ast.Function, []*ast.Param, []ast.Type, []*ast.NamedType, []ast.Value, []ast.Constant, []*ast.BasicBlock, []ast.Instruction, []*ast.Incoming, []*ast.Case:
 		// unhashable type.
+	case *ast.Function:
+		if w.funcScope {
+			// *ast.Function nodes are not traversed when staying within the scope
+			// *of the function.
+			return
+		}
 	default:
 		// Prevent infinite loops.
 
