@@ -12,12 +12,18 @@ type Function struct {
 	Blocks []*BasicBlock
 }
 
+// GetName returns the name of the value.
+func (f *Function) GetName() string {
+	return f.Name
+}
+
+// SetName sets the name of the value.
+func (f *Function) SetName(name string) {
+	f.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*Function) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*Function) isNamedValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.

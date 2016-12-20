@@ -8,9 +8,15 @@ type LocalDummy struct {
 	Type Type
 }
 
+// GetName returns the name of the value.
+func (local *LocalDummy) GetName() string {
+	return local.Name
+}
+
+// SetName sets the name of the value.
+func (local *LocalDummy) SetName(name string) {
+	local.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*LocalDummy) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*LocalDummy) isNamedValue() {}

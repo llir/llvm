@@ -24,12 +24,18 @@ type InstTrunc struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstTrunc) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstTrunc) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstTrunc) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstTrunc) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -52,12 +58,18 @@ type InstZExt struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstZExt) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstZExt) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstZExt) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstZExt) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -80,12 +92,18 @@ type InstSExt struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstSExt) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstSExt) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstSExt) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstSExt) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -108,12 +126,18 @@ type InstFPTrunc struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstFPTrunc) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstFPTrunc) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstFPTrunc) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstFPTrunc) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -136,12 +160,18 @@ type InstFPExt struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstFPExt) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstFPExt) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstFPExt) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstFPExt) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -164,12 +194,18 @@ type InstFPToUI struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstFPToUI) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstFPToUI) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstFPToUI) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstFPToUI) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -192,12 +228,18 @@ type InstFPToSI struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstFPToSI) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstFPToSI) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstFPToSI) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstFPToSI) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -220,12 +262,18 @@ type InstUIToFP struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstUIToFP) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstUIToFP) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstUIToFP) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstUIToFP) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -248,12 +296,18 @@ type InstSIToFP struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstSIToFP) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstSIToFP) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstSIToFP) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstSIToFP) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -276,12 +330,18 @@ type InstPtrToInt struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstPtrToInt) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstPtrToInt) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstPtrToInt) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstPtrToInt) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -304,12 +364,18 @@ type InstIntToPtr struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstIntToPtr) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstIntToPtr) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstIntToPtr) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstIntToPtr) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -332,12 +398,18 @@ type InstBitCast struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstBitCast) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstBitCast) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstBitCast) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstBitCast) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
@@ -360,12 +432,18 @@ type InstAddrSpaceCast struct {
 	To Type
 }
 
+// GetName returns the name of the value.
+func (inst *InstAddrSpaceCast) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstAddrSpaceCast) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstAddrSpaceCast) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstAddrSpaceCast) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.

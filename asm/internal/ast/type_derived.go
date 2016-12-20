@@ -23,12 +23,18 @@ type Param struct {
 	Type Type
 }
 
+// GetName returns the name of the value.
+func (param *Param) GetName() string {
+	return param.Name
+}
+
+// SetName sets the name of the value.
+func (param *Param) SetName(name string) {
+	param.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*Param) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*Param) isNamedValue() {}
 
 // --- [ pointer ] -------------------------------------------------------------
 

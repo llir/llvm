@@ -17,6 +17,16 @@ type InstICmp struct {
 	X, Y Value
 }
 
+// GetName returns the name of the value.
+func (inst *InstICmp) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstICmp) SetName(name string) {
+	inst.Name = name
+}
+
 // --- [ fcmp ] ----------------------------------------------------------------
 
 // InstFCmp represents an fcmp instruction.
@@ -34,6 +44,16 @@ type InstFCmp struct {
 	X, Y Value
 }
 
+// GetName returns the name of the value.
+func (inst *InstFCmp) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstFCmp) SetName(name string) {
+	inst.Name = name
+}
+
 // --- [ phi ] -----------------------------------------------------------------
 
 // InstPhi represents a phi instruction.
@@ -47,6 +67,16 @@ type InstPhi struct {
 	Type Type
 	// Incoming values.
 	Incs []*Incoming
+}
+
+// GetName returns the name of the value.
+func (inst *InstPhi) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstPhi) SetName(name string) {
+	inst.Name = name
 }
 
 // Incoming represents an incoming value of a phi instruction.
@@ -79,6 +109,16 @@ type InstSelect struct {
 	X, Y Value
 }
 
+// GetName returns the name of the value.
+func (inst *InstSelect) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstSelect) SetName(name string) {
+	inst.Name = name
+}
+
 // --- [ call ] ----------------------------------------------------------------
 
 // InstCall represents a call instruction.
@@ -100,6 +140,16 @@ type InstCall struct {
 	Args []Value
 }
 
+// GetName returns the name of the value.
+func (inst *InstCall) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstCall) SetName(name string) {
+	inst.Name = name
+}
+
 // --- [ va_arg ] --------------------------------------------------------------
 
 // --- [ landingpad ] ----------------------------------------------------------
@@ -114,14 +164,6 @@ func (*InstFCmp) isValue()   {}
 func (*InstPhi) isValue()    {}
 func (*InstSelect) isValue() {}
 func (*InstCall) isValue()   {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstICmp) isNamedValue()   {}
-func (*InstFCmp) isNamedValue()   {}
-func (*InstPhi) isNamedValue()    {}
-func (*InstSelect) isNamedValue() {}
-func (*InstCall) isNamedValue()   {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.

@@ -130,9 +130,11 @@ var (
 // Valutate that the relevant types satisfy the ast.NamedValue interface.
 var (
 	_ ast.NamedValue = &ast.Global{}
+	_ ast.NamedValue = &ast.GlobalDummy{}
 	_ ast.NamedValue = &ast.Function{}
 	_ ast.NamedValue = &ast.Param{}
 	_ ast.NamedValue = &ast.BasicBlock{}
+	_ ast.NamedValue = &ast.LocalDummy{}
 	// Binary instructions
 	_ ast.NamedValue = &ast.InstAdd{}
 	_ ast.NamedValue = &ast.InstFAdd{}

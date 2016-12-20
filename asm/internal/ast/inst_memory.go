@@ -17,6 +17,16 @@ type InstAlloca struct {
 	NElems Value
 }
 
+// GetName returns the name of the value.
+func (inst *InstAlloca) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstAlloca) SetName(name string) {
+	inst.Name = name
+}
+
 // --- [ load ] ----------------------------------------------------------------
 
 // InstLoad represents a load instruction.
@@ -32,6 +42,16 @@ type InstLoad struct {
 	Elem Type
 	// Source address.
 	Src Value
+}
+
+// GetName returns the name of the value.
+func (inst *InstLoad) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstLoad) SetName(name string) {
+	inst.Name = name
 }
 
 // --- [ store ] ---------------------------------------------------------------
@@ -72,18 +92,21 @@ type InstGetElementPtr struct {
 	Indices []Value
 }
 
+// GetName returns the name of the value.
+func (inst *InstGetElementPtr) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *InstGetElementPtr) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*InstAlloca) isValue()        {}
 func (*InstLoad) isValue()          {}
 func (*InstStore) isValue()         {}
 func (*InstGetElementPtr) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*InstAlloca) isNamedValue()        {}
-func (*InstLoad) isNamedValue()          {}
-func (*InstStore) isNamedValue()         {}
-func (*InstGetElementPtr) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.

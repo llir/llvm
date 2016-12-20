@@ -13,12 +13,18 @@ type Global struct {
 	Immutable bool
 }
 
+// GetName returns the name of the value.
+func (global *Global) GetName() string {
+	return global.Name
+}
+
+// SetName sets the name of the value.
+func (global *Global) SetName(name string) {
+	global.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*Global) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*Global) isNamedValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
@@ -32,12 +38,18 @@ type GlobalDummy struct {
 	Type Type
 }
 
+// GetName returns the name of the value.
+func (global *GlobalDummy) GetName() string {
+	return global.Name
+}
+
+// SetName sets the name of the value.
+func (global *GlobalDummy) SetName(name string) {
+	global.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*GlobalDummy) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*GlobalDummy) isNamedValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.

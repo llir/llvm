@@ -24,7 +24,8 @@ type Value interface {
 //    ast.Instruction
 type NamedValue interface {
 	Value
-	// isNamedValue ensures that only named values can be assigned to the
-	// ast.NamedValue interface.
-	isNamedValue()
+	// GetName returns the name of the value.
+	GetName() string
+	// SetName sets the name of the value.
+	SetName(name string)
 }

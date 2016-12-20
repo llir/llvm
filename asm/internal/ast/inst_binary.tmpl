@@ -23,12 +23,18 @@ type Inst{{ .Name }} struct {
 	X, Y Value
 }
 
+// GetName returns the name of the value.
+func (inst *Inst{{ .Name }}) GetName() string {
+	return inst.Name
+}
+
+// SetName sets the name of the value.
+func (inst *Inst{{ .Name }}) SetName(name string) {
+	inst.Name = name
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*Inst{{ .Name }}) isValue() {}
-
-// isNamedValue ensures that only named values can be assigned to the
-// ast.NamedValue interface.
-func (*Inst{{ .Name }}) isNamedValue() {}
 
 // isInst ensures that only instructions can be assigned to the ast.Instruction
 // interface.
