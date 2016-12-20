@@ -521,6 +521,44 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 	case *ZeroInitializerLit:
 		return &ast.ZeroInitializerConst{Type: t}, nil
 
+	// Replace *ast.TypeDummy with real type; as used by incoming values of phi
+	// instructions.
+	case *ast.GlobalDummy:
+		// Global dummy identifier type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid global dummy identifier type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.LocalDummy:
+		// Local dummy identifier type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid local dummy identifier type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.IntConst:
+		// Integer constant type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid integer constant type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.FloatConst:
+		// Floating-point constant type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid floating-point constant type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.NullConst:
+		// Null pointer constant type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid null pointer constant type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
 	// Store type of vector, array and struct constants and constant expressions,
 	// so that it may be evaluated after type resolution.
 	case *ast.VectorConst:
@@ -544,6 +582,14 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		// they've been constructed from StructConst literals.
 		if val.Type != nil {
 			return nil, errors.Errorf("invalid struct constant type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ZeroInitializerConst:
+		// zeroinitializer constant type should not be known at this stage of parsing, as
+		// they've been constructed from ZeroInitializerConst literals.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid zeroinitializer constant type, expected nil, got %T", val.Type)
 		}
 		val.Type = t
 		return val, nil
@@ -2145,7 +2191,7 @@ func NewPhiInst(typ, incs interface{}) (*ast.InstPhi, error) {
 		return nil, errors.Errorf("invalid incoming value list type; expected []*ast.Incoming, got %T", incs)
 	}
 	for _, inc := range is {
-		x, err := NewValue(typ, inc.X)
+		x, err := NewValue(t, inc.X)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -2180,6 +2226,10 @@ func AppendIncoming(incs, inc interface{}) ([]*ast.Incoming, error) {
 // NewIncoming returns a new incoming value based on the given value and
 // predecessor basic block.
 func NewIncoming(x, pred interface{}) (*ast.Incoming, error) {
+	xx, err := NewValue(&ast.TypeDummy{}, x)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 	pp, err := NewValue(&ast.TypeDummy{}, pred)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2188,7 +2238,7 @@ func NewIncoming(x, pred interface{}) (*ast.Incoming, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid predecessor type; expected ast.NamedValue, got %T", pp)
 	}
-	return &ast.Incoming{X: x, Pred: p}, nil
+	return &ast.Incoming{X: xx, Pred: p}, nil
 }
 
 // NewSelect returns a new select instruction based on the given selection

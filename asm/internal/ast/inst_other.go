@@ -78,12 +78,7 @@ func (inst *InstPhi) SetName(name string) {
 // Incoming represents an incoming value of a phi instruction.
 type Incoming struct {
 	// Incoming value.
-	//
-	// Initially holds *astx.IntLit, *astx.LocalIdent, ... when created from
-	// astx.NewIncoming since the type is not yet known. The astx.NewPhiInst
-	// later replaces this with a value (e.g. *ast.IntConst, *ast.LocalDummy,
-	// ...).
-	X interface{}
+	X Value
 	// Predecessor basic block of the incoming value.
 	Pred NamedValue
 }
