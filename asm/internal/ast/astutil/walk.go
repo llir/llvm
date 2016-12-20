@@ -18,7 +18,7 @@ func Walk(x interface{}, visit func(interface{})) {
 	WalkBeforeAfter(x, nop, visit)
 }
 
-// nop performs no operation on the given AST x.
+// nop performs no operation on the given AST.
 func nop(x interface{}) {
 }
 
@@ -317,17 +317,24 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		WalkBeforeAfter(&n.Types, before, after)
 		WalkBeforeAfter(&n.Globals, before, after)
 		WalkBeforeAfter(&n.Funcs, before, after)
-	case *ast.Global:
-		panic("not yet implemented")
 	case []*ast.Global:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
+	case *ast.Global:
+		WalkBeforeAfter(&n.Content, before, after)
+		WalkBeforeAfter(&n.Init, before, after)
 	case []*ast.Function:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.Function:
 		WalkBeforeAfter(&n.Blocks, before, after)
 		WalkBeforeAfter(&n.Sig, before, after)
 	case []*ast.Param:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.Param:
 		panic("not yet implemented")
 	case *ast.GlobalDummy:
@@ -336,7 +343,9 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		panic("not yet implemented")
 	// Types
 	case []ast.Type:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.VoidType:
 		panic("not yet implemented")
 	case *ast.LabelType:
@@ -356,16 +365,22 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.StructType:
 		panic("not yet implemented")
 	case []*ast.NamedType:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.NamedType:
 		panic("not yet implemented")
 	case *ast.NamedTypeDummy:
 		panic("not yet implemented")
 	// Constants
 	case []ast.Value:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case []ast.Constant:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.IntConst:
 		panic("not yet implemented")
 	case *ast.FloatConst:
@@ -452,7 +467,9 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.ExprSelect:
 		panic("not yet implemented")
 	case []*ast.BasicBlock:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.BasicBlock:
 		panic("not yet implemented")
 	// Instructions
@@ -537,7 +554,9 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.InstPhi:
 		panic("not yet implemented")
 	case []*ast.Incoming:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.Incoming:
 		panic("not yet implemented")
 	case *ast.InstSelect:
@@ -554,7 +573,9 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.TermSwitch:
 		panic("not yet implemented")
 	case []*ast.Case:
-		panic("not yet implemented")
+		for i := range n {
+			WalkBeforeAfter(&n[i], before, after)
+		}
 	case *ast.Case:
 		panic("not yet implemented")
 	case *ast.TermUnreachable:
