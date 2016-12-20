@@ -44,15 +44,6 @@ import (
 // values.
 func fixModule(m *ir.Module) *ir.Module {
 
-	// TODO: Remove debug output.
-	//fmt.Println("=== [ globals ] ===")
-	//pretty.Println(fix.globals)
-
-	// Fix globals.
-	for _, global := range globals {
-		fix.fixGlobal(global)
-	}
-
 	// Fix functions.
 	for _, f := range funcs {
 		fix.fixFunction(f)
@@ -64,16 +55,6 @@ func fixModule(m *ir.Module) *ir.Module {
 // === [ Type definitions ] ====================================================
 
 // === [ Global variables ] ====================================================
-
-// fixGlobal replaces dummy values within the given global variable with their
-// real values.
-func (fix *fixer) fixGlobal(old *ir.Global) {
-	if init, ok := old.Init(); ok {
-		if init, ok := fix.fixConstant(init); ok {
-			old.SetInit(init)
-		}
-	}
-}
 
 // === [ Functions ] ===========================================================
 

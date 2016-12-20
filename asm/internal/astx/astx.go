@@ -199,6 +199,7 @@ func NewFunctionDef(header, body interface{}) (*ast.Function, error) {
 		return nil, errors.Errorf("invalid function body type; expected []*ast.BasicBlock, got %T", body)
 	}
 	f.Blocks = blocks
+	f.AssignIDs()
 	return f, nil
 }
 
