@@ -14,6 +14,8 @@ package ast
 //    *ast.ArrayType
 //    *ast.StructType
 //    *ast.NamedType
+//    *ast.NamedTypeDummy
+//    *ast.TypeDummy
 type Type interface {
 	// isType ensures that only types can be assigned to the ast.Type interface.
 	isType()

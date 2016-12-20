@@ -18,9 +18,11 @@ type Value interface {
 // NamedValue may have one of the following underlying types.
 //
 //    *ast.Global
+//    *ast.GlobalDummy
 //    *ast.Function
 //    *ast.Param
 //    *ast.BasicBlock
+//    *ast.LocalDummy
 //    ast.Instruction
 type NamedValue interface {
 	Value
