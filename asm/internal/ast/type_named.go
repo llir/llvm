@@ -9,6 +9,11 @@ type NamedType struct {
 	Def Type
 }
 
+// GetName returns the name of the type.
+func (t *NamedType) GetName() string {
+	return t.Name
+}
+
 // isType ensures that only types can be assigned to the ast.Type interface.
 func (*NamedType) isType() {}
 

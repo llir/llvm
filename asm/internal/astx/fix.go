@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/asm/internal/ast"
+	"github.com/llir/llvm/asm/internal/ast/astutil"
 )
 
 // === [ Modules ] =============================================================
@@ -20,7 +21,7 @@ func fixModule(m *ast.Module) *ast.Module {
 	for _, typ := range m.Types {
 		name := typ.Name
 		if _, ok := fix.types[name]; ok {
-			panic(fmt.Sprintf("type name %q already present; old `%v`, new `%v`", name, fix.types[name], typ))
+			panic(fmt.Errorf("type name %q already present; old `%v`, new `%v`", name, fix.types[name], typ))
 		}
 		fix.types[name] = typ
 	}
@@ -29,7 +30,7 @@ func fixModule(m *ast.Module) *ast.Module {
 	for _, global := range m.Globals {
 		name := global.Name
 		if _, ok := fix.globals[name]; ok {
-			panic(fmt.Sprintf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], global))
+			panic(fmt.Errorf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], global))
 		}
 		fix.globals[name] = global
 	}
@@ -38,7 +39,7 @@ func fixModule(m *ast.Module) *ast.Module {
 	for _, f := range m.Funcs {
 		name := f.Name
 		if _, ok := fix.globals[name]; ok {
-			panic(fmt.Sprintf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], f))
+			panic(fmt.Errorf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], f))
 		}
 		fix.globals[name] = f
 	}
@@ -47,6 +48,25 @@ func fixModule(m *ast.Module) *ast.Module {
 	for _, typ := range m.Types {
 		typ.Def = fix.fixType(typ.Def)
 	}
+
+	// Fix body of named types.
+	visit := func(node interface{}) {
+		p, ok := node.(*ast.Type)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.NamedTypeDummy)
+		if !ok {
+			return
+		}
+		typ := fix.getType(old.Name)
+		if typ.Def == nil {
+			panic(fmt.Errorf("invalid type definition %q; expected underlying definition, got nil", typ.Name))
+		}
+		*p = typ
+	}
+	_ = visit
+	astutil.Walk(m, visit)
 
 	return m
 }
@@ -86,7 +106,7 @@ func (fix *fixer) fixType(old ast.Type) ast.Type {
 	case *ast.NamedTypeDummy:
 		return fix.getType(old.Name)
 	default:
-		panic(fmt.Sprintf("support for type %T not yet implemented", old))
+		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
 	return old
 }
@@ -108,7 +128,7 @@ type fixer struct {
 func (fix *fixer) getType(name string) *ast.NamedType {
 	typ, ok := fix.types[name]
 	if !ok {
-		panic(fmt.Sprintf("unable to locate type name %q", name))
+		panic(fmt.Errorf("unable to locate type name %q", name))
 	}
 	return typ
 }
@@ -117,7 +137,7 @@ func (fix *fixer) getType(name string) *ast.NamedType {
 func (fix *fixer) getGlobal(name string) ast.NamedValue {
 	global, ok := fix.globals[name]
 	if !ok {
-		panic(fmt.Sprintf("unable to locate global identifier %q", name))
+		panic(fmt.Errorf("unable to locate global identifier %q", name))
 	}
 	return global
 }
@@ -126,7 +146,7 @@ func (fix *fixer) getGlobal(name string) ast.NamedValue {
 func (fix *fixer) getLocal(name string) ast.NamedValue {
 	local, ok := fix.locals[name]
 	if !ok {
-		panic(fmt.Sprintf("unable to locate local identifier %q", name))
+		panic(fmt.Errorf("unable to locate local identifier %q", name))
 	}
 	return local
 }
@@ -136,7 +156,7 @@ func (fix *fixer) getBlock(name string) *ast.BasicBlock {
 	local := fix.getLocal(name)
 	block, ok := local.(*ast.BasicBlock)
 	if !ok {
-		panic(fmt.Sprintf("invalid basic block type; expected *ast.BasicBlock, got %T", local))
+		panic(fmt.Errorf("invalid basic block type; expected *ast.BasicBlock, got %T", local))
 	}
 	return block
 }

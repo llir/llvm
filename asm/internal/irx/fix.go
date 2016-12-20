@@ -50,24 +50,6 @@ func fixModule(m *ir.Module) *ir.Module {
 	//fmt.Println("=== [ globals ] ===")
 	//pretty.Println(fix.globals)
 
-	// Fix body of named types.
-	visit := func(node interface{}) bool {
-		old, ok := node.(*types.NamedType)
-		if !ok {
-			return true
-		}
-		if _, ok := old.Def(); !ok {
-			typ := fix.getType(old.Name())
-			def, ok := typ.Def()
-			if !ok {
-				panic(fmt.Sprintf("invalid type definition %q; expected underlying definition, got nil", typ.Name()))
-			}
-			old.SetDef(def)
-		}
-		return true
-	}
-	irutil.Walk(m, visit)
-
 	// Replace dummy instructions containing dummy Type method implementations;
 	// e.g. *dummy.InstGetElementPtr.
 	visit = func(node interface{}) bool {
