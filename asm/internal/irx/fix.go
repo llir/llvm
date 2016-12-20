@@ -40,101 +40,15 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// A fixer keeps track of global and local identifiers to replace dummy values
-// with their real values.
-type fixer struct {
-	// types maps type identifiers to their real types.
-	types map[string]*types.NamedType
-	// globals maps global identifiers to their real values.
-	globals map[string]value.Named
-	// locals maps local identifiers to their real values.
-	locals map[string]value.Named
-}
-
-// getType returns the type of the given type name.
-func (fix *fixer) getType(name string) *types.NamedType {
-	typ, ok := fix.types[name]
-	if !ok {
-		panic(fmt.Sprintf("unable to locate type name %q", name))
-	}
-	return typ
-}
-
-// getGlobal returns the global value of the given global identifier.
-func (fix *fixer) getGlobal(name string) value.Named {
-	global, ok := fix.globals[name]
-	if !ok {
-		panic(fmt.Sprintf("unable to locate global identifier %q", name))
-	}
-	return global
-}
-
-// getLocal returns the local value of the given local identifier.
-func (fix *fixer) getLocal(name string) value.Named {
-	local, ok := fix.locals[name]
-	if !ok {
-		panic(fmt.Sprintf("unable to locate local identifier %q", name))
-	}
-	return local
-}
-
-// getBlock returns the basic block of the given label name.
-func (fix *fixer) getBlock(name string) *ir.BasicBlock {
-	local := fix.getLocal(name)
-	block, ok := local.(*ir.BasicBlock)
-	if !ok {
-		panic(fmt.Sprintf("invalid basic block type; expected *ir.BasicBlock, got %T", local))
-	}
-	return block
-}
-
 // === [ Modules ] =============================================================
 
 // fixModule replaces dummy values within the given module with their real
 // values.
 func fixModule(m *ir.Module) *ir.Module {
-	fix := &fixer{
-		globals: make(map[string]value.Named),
-		types:   make(map[string]*types.NamedType),
-	}
-
-	// Index type definitions.
-	for _, typ := range m.Types() {
-		name := typ.Name()
-		if _, ok := fix.types[name]; ok {
-			panic(fmt.Sprintf("type name %q already present; old `%v`, new `%v`", name, fix.types[name], typ))
-		}
-		fix.types[name] = typ
-	}
-
-	// Index global variables.
-	globals := m.Globals()
-	for _, global := range globals {
-		name := global.Name()
-		if _, ok := fix.globals[name]; ok {
-			panic(fmt.Sprintf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], global))
-		}
-		fix.globals[name] = global
-	}
 
 	// TODO: Remove debug output.
 	//fmt.Println("=== [ globals ] ===")
 	//pretty.Println(fix.globals)
-
-	// Index functions.
-	funcs := m.Funcs()
-	for _, f := range funcs {
-		name := f.Name()
-		if _, ok := fix.globals[name]; ok {
-			panic(fmt.Sprintf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], f))
-		}
-		fix.globals[name] = f
-	}
-
-	// Fix type definitions.
-	for _, typ := range m.Types() {
-		fix.fixType(typ)
-	}
 
 	// Fix body of named types.
 	visit := func(node interface{}) bool {
@@ -201,42 +115,6 @@ func fixModule(m *ir.Module) *ir.Module {
 }
 
 // === [ Type definitions ] ====================================================
-
-// fixType replaces dummy types within the given type with their real types.
-func (fix *fixer) fixType(old types.Type) {
-	switch old := old.(type) {
-	case *types.VoidType:
-		// nothing to do.
-	case *types.LabelType:
-		// nothing to do.
-	case *types.IntType:
-		// nothing to do.
-	case *types.FloatType:
-		// nothing to do.
-	case *types.FuncType:
-		fix.fixType(old.RetType())
-		for _, param := range old.Params() {
-			fix.fixType(param.Type())
-		}
-	case *types.PointerType:
-		fix.fixType(old.Elem())
-	case *types.VectorType:
-		fix.fixType(old.Elem())
-	case *types.ArrayType:
-		fix.fixType(old.Elem())
-	case *types.StructType:
-		for _, field := range old.Fields() {
-			fix.fixType(field)
-		}
-	case *types.NamedType:
-		if _, ok := old.Def(); !ok {
-			def := fix.getType(old.Name())
-			old.SetDef(def)
-		}
-	default:
-		panic(fmt.Sprintf("support for type %T not yet implemented", old))
-	}
-}
 
 // === [ Global variables ] ====================================================
 

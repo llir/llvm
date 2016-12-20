@@ -18,3 +18,11 @@ type Type interface {
 	// isType ensures that only types can be assigned to the ast.Type interface.
 	isType()
 }
+
+// TypeDummy represents a dummy type; used when a type is unknown during
+// parsing.
+type TypeDummy struct {
+}
+
+// isType ensures that only types can be assigned to the ast.Type interface.
+func (*TypeDummy) isType() {}

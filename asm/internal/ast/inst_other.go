@@ -89,7 +89,7 @@ type Incoming struct {
 	// ...).
 	X interface{}
 	// Predecessor basic block of the incoming value.
-	Pred string
+	Pred NamedValue
 }
 
 // --- [ select ] --------------------------------------------------------------
@@ -131,9 +131,7 @@ type InstCall struct {
 	// Type of the instruction.
 	Type Type
 	// Callee.
-	Callee string
-	// Specifies whether the callee is a local identifier.
-	CalleeLocal bool
+	Callee NamedValue
 	// Callee signature.
 	Sig Type
 	// Function arguments.

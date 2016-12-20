@@ -38,7 +38,7 @@ type TermRet struct {
 //    http://llvm.org/docs/LangRef.html#br-instruction
 type TermBr struct {
 	// Target branch.
-	Target string
+	Target NamedValue
 }
 
 // --- [ conditional br ] ------------------------------------------------------
@@ -51,9 +51,9 @@ type TermCondBr struct {
 	// Branching condition.
 	Cond Value
 	// Target branch when condition is true.
-	TargetTrue string
+	TargetTrue NamedValue
 	// Target branch when condition is false.
-	TargetFalse string
+	TargetFalse NamedValue
 }
 
 // --- [ switch ] --------------------------------------------------------------
@@ -66,7 +66,7 @@ type TermSwitch struct {
 	// Control variable.
 	X Value
 	// Default target branch.
-	TargetDefault string
+	TargetDefault NamedValue
 	// Switch cases.
 	Cases []*Case
 }
@@ -76,7 +76,7 @@ type Case struct {
 	// Case comparand.
 	X *IntConst
 	// Case target branch.
-	Target string
+	Target NamedValue
 }
 
 // --- [ indirectbr ] ----------------------------------------------------------
