@@ -67,7 +67,7 @@ func fixModule(m *ast.Module) *ast.Module {
 	}
 	astutil.Walk(m, resolveTypes)
 
-	// Resolve global identifiers.
+	// Resolve values of global identifiers.
 	resolveGlobals := func(node interface{}) {
 		p, ok := node.(*ast.Value)
 		if !ok {
@@ -83,7 +83,7 @@ func fixModule(m *ast.Module) *ast.Module {
 	}
 	astutil.Walk(m, resolveGlobals)
 
-	// Resolve callees.
+	// Resolve named values of global identifiers.
 	resolveNamedGlobals := func(node interface{}) {
 		p, ok := node.(*ast.NamedValue)
 		if !ok {
@@ -98,6 +98,27 @@ func fixModule(m *ast.Module) *ast.Module {
 		*p = global
 	}
 	astutil.Walk(m, resolveNamedGlobals)
+
+	// Resolve constants of global identifiers.
+	resolveConstantGlobals := func(node interface{}) {
+		p, ok := node.(*ast.Constant)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.GlobalDummy)
+		if !ok {
+			return
+		}
+		global := fix.getGlobal(old.Name)
+		g, ok := global.(ast.Constant)
+		if !ok {
+			panic(fmt.Errorf("invalid global type of %q; expected ast.Constant, got %T", global.GetName(), global))
+		}
+
+		// TODO: Validate type of old and new global.
+		*p = g
+	}
+	astutil.Walk(m, resolveConstantGlobals)
 
 	// Fix functions.
 	for _, f := range m.Funcs {
