@@ -27,6 +27,29 @@ func nop(x interface{}) {
 // pointer to each ast.Type, ast.Value, and *ast.BasicBlock, in a bottom-up
 // traversal.
 func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
+	w := &walker{
+		visited: make(map[interface{}]bool),
+	}
+	w.walkBeforeAfter(x, before, after)
+}
+
+// A walker traverses ASTs of LLVM IR while preventing infinite loops.
+type walker struct {
+	// visited keeps track of visited nodes to prevent infinite loops.
+	visited map[interface{}]bool
+}
+
+// walkBeforeAfter traverses the AST x, calling before(y) before traversing y's
+// children and after(y) afterward for each node y in the tree but also with a
+// pointer to each ast.Type, ast.Value, and *ast.BasicBlock, in a bottom-up
+// traversal.
+func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{})) {
+	// Prevent infinite loops.
+	if w.visited[x] {
+		return
+	}
+	w.visited[x] = true
+
 	before(x)
 
 	switch n := x.(type) {
