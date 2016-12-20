@@ -663,7 +663,7 @@ InstructionList
 
 Instruction
 	: StoreInst
-	| LocalIdent "=" ValueInstruction  /* << astx.NewNamedInstruction($0, $2) >> */
+	| LocalIdent "=" ValueInstruction   << astx.NewNamedInstruction($0, $2) >>
 	| ValueInstruction
 ;
 

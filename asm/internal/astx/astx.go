@@ -1552,6 +1552,26 @@ func AppendInstruction(insts, inst interface{}) ([]ast.Instruction, error) {
 	return append(is, i), nil
 }
 
+// NewNamedInstruction returns a named instruction based on the given local
+// variable name and instruction.
+func NewNamedInstruction(name, inst interface{}) (ast.Instruction, error) {
+	// namedInstruction represents a namedInstruction instruction.
+	type namedInstruction interface {
+		ast.Instruction
+		ast.NamedValue
+	}
+	n, ok := name.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid local variable name type; expected *astx.LocalIdent, got %T", name)
+	}
+	i, ok := inst.(namedInstruction)
+	if !ok {
+		return nil, errors.Errorf("invalid instruction type; expected namedInstruction, got %T", inst)
+	}
+	i.SetName(n.name)
+	return i, nil
+}
+
 // --- [ Binary instructions ] -------------------------------------------------
 
 // NewAddInst returns a new add instruction based on the given type and
