@@ -2232,7 +2232,7 @@ func NewCallInst(retTyp, callee, args interface{}) (*ast.InstCall, error) {
 	default:
 		return nil, errors.Errorf("invalid function arguments type; expected []ast.Value or nil, got %T", args)
 	}
-	return &ast.InstCall{Sig: r, Callee: c, Args: as}, nil
+	return &ast.InstCall{Type: r, Callee: c, Args: as}, nil
 }
 
 // === [ Terminators ] =========================================================

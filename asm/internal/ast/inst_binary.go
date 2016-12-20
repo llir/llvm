@@ -16,8 +16,6 @@ package ast
 type InstAdd struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -48,8 +46,6 @@ func (*InstAdd) isInst() {}
 type InstFAdd struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -80,8 +76,6 @@ func (*InstFAdd) isInst() {}
 type InstSub struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -112,8 +106,6 @@ func (*InstSub) isInst() {}
 type InstFSub struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -144,8 +136,6 @@ func (*InstFSub) isInst() {}
 type InstMul struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -176,8 +166,6 @@ func (*InstMul) isInst() {}
 type InstFMul struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -208,8 +196,6 @@ func (*InstFMul) isInst() {}
 type InstUDiv struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -240,8 +226,6 @@ func (*InstUDiv) isInst() {}
 type InstSDiv struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -272,8 +256,6 @@ func (*InstSDiv) isInst() {}
 type InstFDiv struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -304,8 +286,6 @@ func (*InstFDiv) isInst() {}
 type InstURem struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -336,8 +316,6 @@ func (*InstURem) isInst() {}
 type InstSRem struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -368,8 +346,6 @@ func (*InstSRem) isInst() {}
 type InstFRem struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }

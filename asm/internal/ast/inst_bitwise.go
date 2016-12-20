@@ -16,8 +16,6 @@ package ast
 type InstShl struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -48,8 +46,6 @@ func (*InstShl) isInst() {}
 type InstLShr struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -80,8 +76,6 @@ func (*InstLShr) isInst() {}
 type InstAShr struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -112,8 +106,6 @@ func (*InstAShr) isInst() {}
 type InstAnd struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -144,8 +136,6 @@ func (*InstAnd) isInst() {}
 type InstOr struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }
@@ -176,8 +166,6 @@ func (*InstOr) isInst() {}
 type InstXor struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Operands.
 	X, Y Value
 }

@@ -9,8 +9,6 @@ package ast
 type InstICmp struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Integer condition code.
 	Cond IntPred
 	// Operands.
@@ -36,8 +34,6 @@ func (inst *InstICmp) SetName(name string) {
 type InstFCmp struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Floating-point condition code.
 	Cond FloatPred
 	// Operands.
@@ -101,8 +97,6 @@ type Incoming struct {
 type InstSelect struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Selection condition.
 	Cond Value
 	// Operands.
@@ -128,12 +122,10 @@ func (inst *InstSelect) SetName(name string) {
 type InstCall struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
+	// Type of the instruction; or callee type signature.
 	Type Type
 	// Callee.
 	Callee NamedValue
-	// Callee signature.
-	Sig Type
 	// Function arguments.
 	Args []Value
 }

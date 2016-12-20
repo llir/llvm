@@ -16,8 +16,6 @@ package ast
 type InstTrunc struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -50,8 +48,6 @@ func (*InstTrunc) isInst() {}
 type InstZExt struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -84,8 +80,6 @@ func (*InstZExt) isInst() {}
 type InstSExt struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -118,8 +112,6 @@ func (*InstSExt) isInst() {}
 type InstFPTrunc struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -152,8 +144,6 @@ func (*InstFPTrunc) isInst() {}
 type InstFPExt struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -186,8 +176,6 @@ func (*InstFPExt) isInst() {}
 type InstFPToUI struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -220,8 +208,6 @@ func (*InstFPToUI) isInst() {}
 type InstFPToSI struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -254,8 +240,6 @@ func (*InstFPToSI) isInst() {}
 type InstUIToFP struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -288,8 +272,6 @@ func (*InstUIToFP) isInst() {}
 type InstSIToFP struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -322,8 +304,6 @@ func (*InstSIToFP) isInst() {}
 type InstPtrToInt struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -356,8 +336,6 @@ func (*InstPtrToInt) isInst() {}
 type InstIntToPtr struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -390,8 +368,6 @@ func (*InstIntToPtr) isInst() {}
 type InstBitCast struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.
@@ -424,8 +400,6 @@ func (*InstBitCast) isInst() {}
 type InstAddrSpaceCast struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Type of the instruction.
-	Type Type
 	// Value before conversion.
 	From Value
 	// Type after conversion.

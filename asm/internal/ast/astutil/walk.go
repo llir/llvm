@@ -323,55 +323,60 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		}
 	case *ast.Global:
 		WalkBeforeAfter(&n.Content, before, after)
-		WalkBeforeAfter(&n.Init, before, after)
+		if n.Init != nil {
+			WalkBeforeAfter(&n.Init, before, after)
+		}
 	case []*ast.Function:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.Function:
-		WalkBeforeAfter(&n.Blocks, before, after)
 		WalkBeforeAfter(&n.Sig, before, after)
+		if n.Blocks != nil {
+			WalkBeforeAfter(&n.Blocks, before, after)
+		}
 	case []*ast.Param:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.Param:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	case *ast.GlobalDummy:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	case *ast.LocalDummy:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	// Types
 	case []ast.Type:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.VoidType:
-		panic("not yet implemented")
+		// nothing to do.
 	case *ast.LabelType:
-		panic("not yet implemented")
+		// nothing to do.
 	case *ast.IntType:
-		panic("not yet implemented")
+		// nothing to do.
 	case *ast.FloatType:
-		panic("not yet implemented")
+		// nothing to do.
 	case *ast.FuncType:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Ret, before, after)
+		WalkBeforeAfter(&n.Params, before, after)
 	case *ast.PointerType:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Elem, before, after)
 	case *ast.VectorType:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Elem, before, after)
 	case *ast.ArrayType:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Elem, before, after)
 	case *ast.StructType:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Fields, before, after)
 	case []*ast.NamedType:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.NamedType:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Def, before, after)
 	case *ast.NamedTypeDummy:
-		panic("not yet implemented")
+		// nothing to do.
 	// Constants
 	case []ast.Value:
 		for i := range n {
@@ -382,204 +387,331 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.IntConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	case *ast.FloatConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	case *ast.NullConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	case *ast.VectorConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Elems, before, after)
 	case *ast.ArrayConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Elems, before, after)
 	case *ast.StructConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Fields, before, after)
 	case *ast.ZeroInitializerConst:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
 	// Constant expressions
 	case *ast.ExprAdd:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprFAdd:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprSub:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprFSub:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprMul:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprFMul:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprUDiv:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprSDiv:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprFDiv:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprURem:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprSRem:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprFRem:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprShl:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprLShr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprAShr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprAnd:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprOr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprXor:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprGetElementPtr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Elem, before, after)
+		WalkBeforeAfter(&n.Src, before, after)
+		WalkBeforeAfter(&n.Indices, before, after)
 	case *ast.ExprTrunc:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprZExt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprSExt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprFPTrunc:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprFPExt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprFPToUI:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprFPToSI:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprUIToFP:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprSIToFP:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprPtrToInt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprIntToPtr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprBitCast:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprAddrSpaceCast:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.ExprICmp:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprFCmp:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.ExprSelect:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Cond, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case []*ast.BasicBlock:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.BasicBlock:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Insts, before, after)
+		WalkBeforeAfter(&n.Term, before, after)
 	// Instructions
 	case []ast.Instruction:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.InstAdd:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstFAdd:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstSub:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstFSub:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstMul:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstFMul:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstUDiv:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstSDiv:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstFDiv:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstURem:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstSRem:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstFRem:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstShl:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstLShr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstAShr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstAnd:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstOr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstXor:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstAlloca:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Elem, before, after)
+		WalkBeforeAfter(&n.NElems, before, after)
 	case *ast.InstLoad:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Elem, before, after)
+		WalkBeforeAfter(&n.Src, before, after)
 	case *ast.InstStore:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Src, before, after)
+		WalkBeforeAfter(&n.Dst, before, after)
 	case *ast.InstGetElementPtr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Elem, before, after)
+		WalkBeforeAfter(&n.Src, before, after)
+		WalkBeforeAfter(&n.Indices, before, after)
 	case *ast.InstTrunc:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstZExt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstSExt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstFPTrunc:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstFPExt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstFPToUI:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstFPToSI:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstUIToFP:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstSIToFP:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstPtrToInt:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstIntToPtr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstBitCast:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstAddrSpaceCast:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.From, before, after)
+		WalkBeforeAfter(&n.To, before, after)
 	case *ast.InstICmp:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstFCmp:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstPhi:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Incs, before, after)
 	case []*ast.Incoming:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.Incoming:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Pred, before, after)
 	case *ast.InstSelect:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Cond, before, after)
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Y, before, after)
 	case *ast.InstCall:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Type, before, after)
+		WalkBeforeAfter(&n.Callee, before, after)
+		WalkBeforeAfter(&n.Args, before, after)
 	// Terminators
 	case *ast.TermRet:
-		panic("not yet implemented")
+		if n.X != nil {
+			WalkBeforeAfter(&n.X, before, after)
+		}
 	case *ast.TermBr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Target, before, after)
 	case *ast.TermCondBr:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Cond, before, after)
+		WalkBeforeAfter(&n.TargetTrue, before, after)
+		WalkBeforeAfter(&n.TargetFalse, before, after)
 	case *ast.TermSwitch:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.TargetDefault, before, after)
+		WalkBeforeAfter(&n.Cases, before, after)
 	case []*ast.Case:
 		for i := range n {
 			WalkBeforeAfter(&n[i], before, after)
 		}
 	case *ast.Case:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.X, before, after)
+		WalkBeforeAfter(&n.Target, before, after)
 	case *ast.TermUnreachable:
-		panic("not yet implemented")
+		// nothing to do.
 
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", x))
