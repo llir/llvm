@@ -364,6 +364,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
+	case *ast.TypeDummy:
+		// nothing to do.
 	case *ast.VoidType:
 		// nothing to do.
 	case *ast.LabelType:

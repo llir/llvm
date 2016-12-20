@@ -35,8 +35,6 @@ import (
 	"github.com/llir/llvm/internal/dummy"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
-	"github.com/llir/llvm/ir/irutil"
-	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -49,39 +47,6 @@ func fixModule(m *ir.Module) *ir.Module {
 	// TODO: Remove debug output.
 	//fmt.Println("=== [ globals ] ===")
 	//pretty.Println(fix.globals)
-
-	// Replace dummy instructions containing dummy Type method implementations;
-	// e.g. *dummy.InstGetElementPtr.
-	visit = func(node interface{}) bool {
-		block, ok := node.(*ir.BasicBlock)
-		if !ok {
-			return true
-		}
-		var insts []ir.Instruction
-		for _, inst := range block.Insts() {
-			switch old := inst.(type) {
-			case *dummy.InstGetElementPtr:
-				// Validate elem against old.Src().Type().Elem().
-				src := old.Src()
-				st, ok := src.Type().(*types.PointerType)
-				if !ok {
-					panic(fmt.Sprintf("invalid source type; expected *types.Pointer, got %T", src.Type()))
-				}
-				if !old.ElemType().Equal(st.Elem()) {
-					panic(fmt.Sprintf("type mismatch between element type `%v` and source address element type `%v`", old.ElemType(), st.Elem()))
-				}
-				// Replace dummy getelementptr instruction with real instruction.
-				new := ir.NewGetElementPtr(src, old.Indices()...)
-				new.SetParent(old.Parent())
-				new.SetName(old.Name())
-				inst = new
-			}
-			insts = append(insts, inst)
-		}
-		block.SetInsts(insts)
-		return true
-	}
-	irutil.Walk(m, visit)
 
 	// Fix globals.
 	for _, global := range globals {

@@ -49,8 +49,8 @@ func fixModule(m *ast.Module) *ast.Module {
 		typ.Def = fix.fixType(typ.Def)
 	}
 
-	// Fix body of named types.
-	visit := func(node interface{}) {
+	// Resolve named types.
+	resolveTypes := func(node interface{}) {
 		p, ok := node.(*ast.Type)
 		if !ok {
 			return
@@ -65,8 +65,23 @@ func fixModule(m *ast.Module) *ast.Module {
 		}
 		*p = typ
 	}
-	_ = visit
-	astutil.Walk(m, visit)
+	astutil.Walk(m, resolveTypes)
+
+	// Resolve global identifiers.
+	resolveGlobals := func(node interface{}) {
+		p, ok := node.(*ast.Value)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.GlobalDummy)
+		if !ok {
+			return
+		}
+		global := fix.getGlobal(old.Name)
+		// TODO: Validate type of old and new global.
+		*p = global
+	}
+	astutil.Walk(m, resolveGlobals)
 
 	return m
 }
