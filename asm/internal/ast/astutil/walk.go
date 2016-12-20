@@ -268,9 +268,15 @@ func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 	// pointers to slices
 	case *[]ast.Type:
 		WalkBeforeAfter(*n, before, after)
+	case *[]*ast.NamedType:
+		WalkBeforeAfter(*n, before, after)
+	case *[]*ast.Global:
+		WalkBeforeAfter(*n, before, after)
 	case *[]ast.Value:
 		WalkBeforeAfter(*n, before, after)
 	case *[]ast.Constant:
+		WalkBeforeAfter(*n, before, after)
+	case *[]*ast.Function:
 		WalkBeforeAfter(*n, before, after)
 	case *[]*ast.Param:
 		WalkBeforeAfter(*n, before, after)
@@ -285,8 +291,14 @@ func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 
 	// These are ordered and grouped to match ../../ll.bnf
 	case *ast.Module:
-		panic("not yet implemented")
+		WalkBeforeAfter(&n.Types, before, after)
+		WalkBeforeAfter(&n.Globals, before, after)
+		WalkBeforeAfter(&n.Funcs, before, after)
 	case *ast.Global:
+		panic("not yet implemented")
+	case []*ast.Global:
+		panic("not yet implemented")
+	case []*ast.Function:
 		panic("not yet implemented")
 	case *ast.Function:
 		WalkBeforeAfter(&n.Blocks, before, after)
@@ -319,6 +331,8 @@ func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 	case *ast.ArrayType:
 		panic("not yet implemented")
 	case *ast.StructType:
+		panic("not yet implemented")
+	case []*ast.NamedType:
 		panic("not yet implemented")
 	case *ast.NamedType:
 		panic("not yet implemented")
