@@ -28,8 +28,8 @@ type Value interface {
 //    ir.Instruction   (https://godoc.org/github.com/llir/llvm/ir#Instruction)
 type Named interface {
 	Value
-	// Name returns the name of the value.
-	Name() string
+	// GetName returns the name of the value.
+	GetName() string
 	// SetName sets the name of the value.
 	SetName(name string)
 }

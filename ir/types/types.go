@@ -49,7 +49,7 @@ func IsLabel(t Type) bool {
 // with bit size 1).
 func IsBool(t Type) bool {
 	if t, ok := t.(*IntType); ok {
-		return t.Size() == 1
+		return t.Size == 1
 	}
 	return false
 }
@@ -115,15 +115,15 @@ var (
 	// I128 represents the `i128` integer type.
 	I128 = NewInt(128)
 	// Half represents the `half` floating-point type.
-	Half = &FloatType{kind: FloatKindIEEE_16}
+	Half = &FloatType{Kind: FloatKindIEEE_16}
 	// Float represents the `float` floating-point type.
-	Float = &FloatType{kind: FloatKindIEEE_32}
+	Float = &FloatType{Kind: FloatKindIEEE_32}
 	// Double represents the `double` floating-point type.
-	Double = &FloatType{kind: FloatKindIEEE_64}
+	Double = &FloatType{Kind: FloatKindIEEE_64}
 	// FP128 represents the `fp128` floating-point type.
-	FP128 = &FloatType{kind: FloatKindIEEE_128}
+	FP128 = &FloatType{Kind: FloatKindIEEE_128}
 	// X86_FP80 represents the `x86_fp80` floating-point type.
-	X86_FP80 = &FloatType{kind: FloatKindDoubleExtended_80}
+	X86_FP80 = &FloatType{Kind: FloatKindDoubleExtended_80}
 	// PPC_FP128 represents the `ppc_fp128` floating-point type.
-	PPC_FP128 = &FloatType{kind: FloatKindDoubleDouble_128}
+	PPC_FP128 = &FloatType{Kind: FloatKindDoubleDouble_128}
 )

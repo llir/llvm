@@ -22,7 +22,22 @@ func NewParam(name string, typ types.Type) *Param {
 	return &Param{Param: types.NewParam(name, typ)}
 }
 
+// Type returns the type of the function parameter.
+func (param *Param) Type() Type {
+	return param.Typ
+}
+
 // Ident returns the identifier associated with the function parameter.
 func (param *Param) Ident() string {
-	return enc.Local(param.Name())
+	return enc.Local(param.Name)
+}
+
+// GetName returns the name of the function parameter.
+func (param *Param) GetName() string {
+	return param.Name
+}
+
+// SetName sets the name of the function parameter.
+func (param *Param) SetName(name string) {
+	param.Name = name
 }

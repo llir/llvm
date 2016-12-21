@@ -72,9 +72,9 @@ func TestFuncTypeString(t *testing.T) {
 	i8, i32 := types.I8, types.I32
 	formatParam := types.NewParam("format", types.NewPointer(i8))
 	printfSig := types.NewFunc(i32, formatParam)
-	printfSig.SetVariadic(true)
+	printfSig.Variadic = true
 	addSig := types.NewFunc(i32)
-	addSig.AppendParam(types.NewParam("x", i32))
+	addSig.Params = append(addSig.Params, types.NewParam("x", i32))
 	addSig.NewParam("y", i32)
 	golden := []struct {
 		want string
@@ -819,7 +819,7 @@ func TestFuncEqual(t *testing.T) {
 	i32i32Sig := types.NewFunc(i32, types.NewParam("x", i32))
 	// i32 (i32, ...)
 	i32i32VariadicSig := types.NewFunc(i32, types.NewParam("x", i32))
-	i32i32VariadicSig.SetVariadic(true)
+	i32i32VariadicSig.Variadic = true
 	// i32 (i32, i32)
 	i32i32i32Sig := types.NewFunc(i32, types.NewParam("x", i32), types.NewParam("y", i32))
 	// i32 (i32, float)
@@ -827,7 +827,7 @@ func TestFuncEqual(t *testing.T) {
 	// i32 (i8*, ...)
 	formatParam := types.NewParam("format", types.NewPointer(i8))
 	printfSig := types.NewFunc(i32, formatParam)
-	printfSig.SetVariadic(true)
+	printfSig.Variadic = true
 
 	golden := []struct {
 		want bool
