@@ -90,9 +90,9 @@ type BasicBlock struct {
 
 // SetTerm sets the terminator of the basic block.
 func (block *BasicBlock) SetTerm(term ir.Terminator) {
-	if block.Term() != nil {
-		panic(fmt.Errorf("terminator instruction already set for basic block; old term (%v), new term (%v), basic block (%v)", term, block.Term(), block))
+	if block.Term != nil {
+		panic(fmt.Errorf("terminator instruction already set for basic block; old term (%v), new term (%v), basic block (%v)", term, block.Term, block))
 	}
-	block.BasicBlock.SetTerm(term)
+	block.BasicBlock.Term = term
 	block.parent.AppendBlock(block.BasicBlock)
 }

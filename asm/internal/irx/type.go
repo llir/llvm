@@ -39,11 +39,11 @@ func (m *Module) irtype(old ast.Type) types.Type {
 			params[i] = types.NewParam(oldParam.Name, m.irtype(oldParam.Type))
 		}
 		typ := types.NewFunc(m.irtype(old.Ret), params...)
-		typ.SetVariadic(old.Variadic)
+		typ.Variadic = old.Variadic
 		return typ
 	case *ast.PointerType:
 		typ := types.NewPointer(m.irtype(old.Elem))
-		typ.SetAddrSpace(old.Space)
+		typ.AddrSpace = old.AddrSpace
 		return typ
 	case *ast.VectorType:
 		return types.NewVector(m.irtype(old.Elem), old.Len)

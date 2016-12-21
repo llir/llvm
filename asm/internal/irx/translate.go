@@ -53,7 +53,7 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 func (m *Module) typeDef(old *ast.NamedType) {
 	typ := m.getType(old.Name)
 	def := m.irtype(old.Def)
-	typ.SetDef(def)
+	typ.Def = def
 }
 
 // === [ Global variables ] ====================================================

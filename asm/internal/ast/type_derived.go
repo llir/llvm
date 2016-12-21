@@ -46,7 +46,7 @@ type PointerType struct {
 	// Element type.
 	Elem Type
 	// Address space.
-	Space int64
+	AddrSpace int64
 }
 
 // --- [ vector ] --------------------------------------------------------------

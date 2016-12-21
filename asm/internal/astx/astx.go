@@ -393,7 +393,7 @@ func NewPointerType(elem, space interface{}) (*ast.PointerType, error) {
 	t := &ast.PointerType{Elem: e}
 	switch space := space.(type) {
 	case *AddrSpace:
-		t.Space = space.space
+		t.AddrSpace = space.space
 	case nil:
 		// no address space.
 	default:
