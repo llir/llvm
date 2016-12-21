@@ -30,6 +30,24 @@ func NewModule() *Module {
 	}
 }
 
+// getType returns the type of the given type name.
+func (m *Module) getType(name string) *types.NamedType {
+	typ, ok := m.types[name]
+	if !ok {
+		panic(fmt.Errorf("unable to locate type name %q", name))
+	}
+	return typ
+}
+
+// getGlobal returns the global value of the given global identifier.
+func (m *Module) getGlobal(name string) value.Named {
+	global, ok := m.globals[name]
+	if !ok {
+		panic(fmt.Errorf("unable to locate global identifier %q", name))
+	}
+	return global
+}
+
 // A Function represents an LLVM IR function generator.
 type Function struct {
 	// Function being generated.
