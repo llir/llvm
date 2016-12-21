@@ -34,27 +34,21 @@ func NewModule(decls interface{}) (*ast.Module, error) {
 	default:
 		return nil, errors.Errorf("invalid top-level declaration list type; expected []astx.TopLevelDecl, got %T", decls)
 	}
-	module := &ast.Module{}
+	m := &ast.Module{}
 	for _, d := range ds {
 		switch d := d.(type) {
 		case *ast.NamedType:
-			module.Types = append(module.Types, d)
+			m.Types = append(m.Types, d)
 		case *ast.Global:
-			module.Globals = append(module.Globals, d)
+			m.Globals = append(m.Globals, d)
 		case *ast.Function:
-			module.Funcs = append(module.Funcs, d)
+			m.Funcs = append(m.Funcs, d)
 		default:
 			dbg.Printf("support for %T not yet implemented", d)
 		}
 	}
-	module = fixModule(module)
-
-	// Translate the AST of the module to an equivalent LLVM IR module.
-	//m, err := translate(module)
-	//if err != nil {
-	//	return nil, errors.WithStack(err)
-	//}
-	return module, nil
+	m = fixModule(m)
+	return m, nil
 }
 
 // TopLevelDecl represents a top-level declaration.
@@ -199,7 +193,6 @@ func NewFunctionDef(header, body interface{}) (*ast.Function, error) {
 		return nil, errors.Errorf("invalid function body type; expected []*ast.BasicBlock, got %T", body)
 	}
 	f.Blocks = blocks
-	f.AssignIDs()
 	return f, nil
 }
 

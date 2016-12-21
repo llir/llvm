@@ -1,3 +1,22 @@
+// Fix dummy values as follows.
+//
+// Per module.
+//
+//    1. Index type definitions.
+//    2. Index global variables.
+//    3. Index functions.
+//    4. Fix type definitions.
+//    5. Resolve named types.
+//    6. Resolve global identifiers.
+//
+// Per function.
+//
+//    1. Assign unique local IDs to unnamed basic blocks and instructions.
+//    2. Index basic blocks.
+//    3. Index function parameters.
+//    4. Index local variables produced by instructions.
+//    5. Resolve local identifiers.
+
 package astx
 
 import (
@@ -114,7 +133,6 @@ func fixModule(m *ast.Module) *ast.Module {
 		if !ok {
 			panic(fmt.Errorf("invalid global type of %q; expected ast.Constant, got %T", global.GetName(), global))
 		}
-
 		// TODO: Validate type of old and new global.
 		*p = g
 	}
@@ -176,6 +194,9 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	// Reset locals.
 	fix.locals = make(map[string]ast.NamedValue)
 
+	// Assign unique local IDs to unnamed basic blocks and instructions.
+	f.AssignIDs()
+
 	// Index basic blocks.
 	for _, block := range f.Blocks {
 		name := block.Name
@@ -198,6 +219,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	for _, block := range f.Blocks {
 		for _, inst := range block.Insts {
 			if inst, ok := inst.(ast.NamedValue); ok {
+				// Ignore local value if of type void.
 				if inst, ok := inst.(*ast.InstCall); ok {
 					if _, ok := inst.Type.(*ast.VoidType); ok {
 						continue
@@ -212,7 +234,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 		}
 	}
 
-	// Resolve local variables.
+	// Resolve values of local identifiers.
 	resolveLocals := func(node interface{}) {
 		p, ok := node.(*ast.Value)
 		if !ok {
@@ -228,7 +250,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	}
 	astutil.WalkFunc(f, resolveLocals)
 
-	// Resolve basic blocks and callees.
+	// Resolve named values of local identifiers.
 	resolveNamedLocals := func(node interface{}) {
 		p, ok := node.(*ast.NamedValue)
 		if !ok {
@@ -283,14 +305,4 @@ func (fix *fixer) getLocal(name string) ast.NamedValue {
 		panic(fmt.Errorf("unable to locate local identifier %q", name))
 	}
 	return local
-}
-
-// getBlock returns the basic block of the given label name.
-func (fix *fixer) getBlock(name string) *ast.BasicBlock {
-	local := fix.getLocal(name)
-	block, ok := local.(*ast.BasicBlock)
-	if !ok {
-		panic(fmt.Errorf("invalid basic block type; expected *ast.BasicBlock, got %T", local))
-	}
-	return block
 }
