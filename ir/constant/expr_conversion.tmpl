@@ -22,30 +22,29 @@ import (
 //    http://llvm.org/docs/LangRef.html#{{ lower .Name }}-instruction
 type Expr{{ .Name }} struct {
 	// Constant before conversion.
-	from Constant
+	From Constant
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} expression based on the given source constant and target type.
 func New{{ .Name }}(from Constant, to types.Type) *Expr{{ .Name }} {
-	return &Expr{{ .Name }}{from: from, to: to}
+	return &Expr{{ .Name }}{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
 func (expr *Expr{{ .Name }}) Type() types.Type {
-	return expr.to
+	return expr.To
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *Expr{{ .Name }}) Ident() string {
-	from := expr.From()
 	return fmt.Sprintf("{{ lower .Name }} (%s %s to %s)",
-		from.Type(),
-		from.Ident(),
-		expr.Type())
+		expr.From.Type(),
+		expr.From.Ident(),
+		expr.To)
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -55,10 +54,5 @@ func (*Expr{{ .Name }}) Immutable() {}
 // Simplify returns a simplified version of the constant expression.
 func (expr *Expr{{ .Name }}) Simplify() Constant {
 	panic("not yet implemented")
-}
-
-// From returns the constant before conversion of the {{ lower .Name }} expression.
-func (expr *Expr{{ .Name }}) From() Constant {
-	return expr.from
 }
 {{- end }}

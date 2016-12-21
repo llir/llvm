@@ -18,9 +18,9 @@ import (
 // Vector represents a vector constant.
 type Vector struct {
 	// Vector type.
-	typ *types.VectorType
+	Typ *types.VectorType
 	// Vector elements.
-	elems []Constant
+	Elems []Constant
 	// Track uses of the value.
 	used
 }
@@ -31,19 +31,19 @@ func NewVector(elems ...Constant) *Vector {
 		panic(fmt.Sprintf("invalid number of vector elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewVector(elems[0].Type(), int64(len(elems)))
-	return &Vector{typ: typ, elems: elems}
+	return &Vector{Typ: typ, Elems: elems}
 }
 
 // Type returns the type of the constant.
 func (c *Vector) Type() types.Type {
-	return c.typ
+	return c.Typ
 }
 
 // Ident returns the string representation of the constant.
 func (c *Vector) Ident() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("<")
-	for i, elem := range c.Elems() {
+	for i, elem := range c.Elems {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -59,21 +59,16 @@ func (c *Vector) Ident() string {
 // constant.Constant interface.
 func (*Vector) Immutable() {}
 
-// Elems returns the elements of the vector constant.
-func (c *Vector) Elems() []Constant {
-	return c.elems
-}
-
 // --- [ array ] ---------------------------------------------------------------
 
 // Array represents an array constant.
 type Array struct {
 	// Array type.
-	typ *types.ArrayType
+	Typ *types.ArrayType
 	// Array elements.
-	elems []Constant
+	Elems []Constant
 	// Pretty-print as character array.
-	charArray bool
+	CharArray bool
 	// Track uses of the value.
 	used
 }
@@ -84,20 +79,20 @@ func NewArray(elems ...Constant) *Array {
 		panic(fmt.Sprintf("invalid number of array elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewArray(elems[0].Type(), int64(len(elems)))
-	return &Array{typ: typ, elems: elems}
+	return &Array{Typ: typ, Elems: elems}
 }
 
 // Type returns the type of the constant.
 func (c *Array) Type() types.Type {
-	return c.typ
+	return c.Typ
 }
 
 // Ident returns the string representation of the constant.
 func (c *Array) Ident() string {
 	// Pretty-print character arrays.
-	if c.CharArray() {
-		buf := make([]byte, 0, len(c.elems))
-		for _, elem := range c.Elems() {
+	if c.CharArray {
+		buf := make([]byte, 0, len(c.Elems))
+		for _, elem := range c.Elems {
 			e, ok := elem.(*Int)
 			if !ok {
 				panic(fmt.Sprintf("invalid array element type; expected *constant.Int, got %T", elem))
@@ -110,7 +105,7 @@ func (c *Array) Ident() string {
 	// Print regular arrays.
 	buf := &bytes.Buffer{}
 	buf.WriteString("[")
-	for i, elem := range c.Elems() {
+	for i, elem := range c.Elems {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -126,29 +121,14 @@ func (c *Array) Ident() string {
 // constant.Constant interface.
 func (*Array) Immutable() {}
 
-// Elems returns the elements of the array constant.
-func (c *Array) Elems() []Constant {
-	return c.elems
-}
-
-// CharArray reports whether the given array is a character array.
-func (c *Array) CharArray() bool {
-	return c.charArray
-}
-
-// SetCharArray sets the given array to a character array.
-func (c *Array) SetCharArray(charArray bool) {
-	c.charArray = charArray
-}
-
 // --- [ struct ] --------------------------------------------------------------
 
 // Struct represents a struct constant.
 type Struct struct {
 	// Struct type.
-	typ *types.StructType
+	Typ *types.StructType
 	// Struct fields.
-	fields []Constant
+	Fields []Constant
 	// Track uses of the value.
 	used
 }
@@ -160,19 +140,19 @@ func NewStruct(fields ...Constant) *Struct {
 		fieldTypes = append(fieldTypes, field.Type())
 	}
 	typ := types.NewStruct(fieldTypes...)
-	return &Struct{typ: typ, fields: fields}
+	return &Struct{Typ: typ, Fields: fields}
 }
 
 // Type returns the type of the constant.
 func (c *Struct) Type() types.Type {
-	return c.typ
+	return c.Typ
 }
 
 // Ident returns the string representation of the constant.
 func (c *Struct) Ident() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
-	for i, field := range c.Fields() {
+	for i, field := range c.Fields {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -188,17 +168,12 @@ func (c *Struct) Ident() string {
 // constant.Constant interface.
 func (*Struct) Immutable() {}
 
-// Fields returns the struct fields of the struct constant.
-func (c *Struct) Fields() []Constant {
-	return c.fields
-}
-
 // --- [ zeroinitializer ] -----------------------------------------------------
 
 // ZeroInitializer represents a zeroinitializer constant.
 type ZeroInitializer struct {
 	// Constant type.
-	typ types.Type
+	Typ types.Type
 	// Track uses of the value.
 	used
 }
@@ -206,12 +181,12 @@ type ZeroInitializer struct {
 // NewZeroInitializer returns a new zeroinitializer constant based on the given
 // type.
 func NewZeroInitializer(typ types.Type) *ZeroInitializer {
-	return &ZeroInitializer{typ: typ}
+	return &ZeroInitializer{Typ: typ}
 }
 
 // Type returns the type of the constant.
 func (c *ZeroInitializer) Type() types.Type {
-	return c.typ
+	return c.Typ
 }
 
 // Ident returns the string representation of the constant.
