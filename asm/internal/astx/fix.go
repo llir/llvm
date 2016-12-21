@@ -272,7 +272,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 // A fixer keeps track of global and local identifiers to replace dummy values
 // with their real values.
 type fixer struct {
-	// types maps from type identifiers to real types.
+	// types maps from type identifiers to their real types.
 	types map[string]*ast.NamedType
 	// globals maps global identifiers to their real values.
 	globals map[string]ast.NamedValue
