@@ -23,74 +23,62 @@ import (
 //    http://llvm.org/docs/LangRef.html#trunc-instruction
 type InstTrunc struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
-	inst := &InstTrunc{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstTrunc{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstTrunc) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstTrunc) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstTrunc) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstTrunc) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstTrunc) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstTrunc) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = trunc %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstTrunc) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstTrunc) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstTrunc) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the trunc instruction.
-func (inst *InstTrunc) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the trunc instruction.
-func (inst *InstTrunc) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ zext ] ----------------------------------------------------------------
@@ -101,74 +89,62 @@ func (inst *InstTrunc) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#zext-instruction
 type InstZExt struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewZExt returns a new zext instruction based on the given source value and target type.
 func NewZExt(from value.Value, to types.Type) *InstZExt {
-	inst := &InstZExt{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstZExt{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstZExt) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstZExt) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstZExt) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstZExt) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstZExt) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstZExt) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = zext %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstZExt) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstZExt) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstZExt) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the zext instruction.
-func (inst *InstZExt) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the zext instruction.
-func (inst *InstZExt) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ sext ] ----------------------------------------------------------------
@@ -179,74 +155,62 @@ func (inst *InstZExt) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#sext-instruction
 type InstSExt struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewSExt returns a new sext instruction based on the given source value and target type.
 func NewSExt(from value.Value, to types.Type) *InstSExt {
-	inst := &InstSExt{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstSExt{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstSExt) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSExt) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstSExt) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstSExt) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstSExt) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSExt) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = sext %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstSExt) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstSExt) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstSExt) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the sext instruction.
-func (inst *InstSExt) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the sext instruction.
-func (inst *InstSExt) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ fptrunc ] -------------------------------------------------------------
@@ -257,74 +221,62 @@ func (inst *InstSExt) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#fptrunc-instruction
 type InstFPTrunc struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value and target type.
 func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
-	inst := &InstFPTrunc{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstFPTrunc{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFPTrunc) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPTrunc) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFPTrunc) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFPTrunc) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFPTrunc) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPTrunc) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = fptrunc %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFPTrunc) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFPTrunc) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFPTrunc) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the fptrunc instruction.
-func (inst *InstFPTrunc) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the fptrunc instruction.
-func (inst *InstFPTrunc) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ fpext ] ---------------------------------------------------------------
@@ -335,74 +287,62 @@ func (inst *InstFPTrunc) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#fpext-instruction
 type InstFPExt struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and target type.
 func NewFPExt(from value.Value, to types.Type) *InstFPExt {
-	inst := &InstFPExt{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstFPExt{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFPExt) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPExt) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFPExt) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFPExt) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFPExt) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPExt) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = fpext %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFPExt) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFPExt) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFPExt) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the fpext instruction.
-func (inst *InstFPExt) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the fpext instruction.
-func (inst *InstFPExt) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ fptoui ] --------------------------------------------------------------
@@ -413,74 +353,62 @@ func (inst *InstFPExt) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#fptoui-instruction
 type InstFPToUI struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value and target type.
 func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
-	inst := &InstFPToUI{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstFPToUI{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFPToUI) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPToUI) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFPToUI) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFPToUI) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFPToUI) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToUI) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = fptoui %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFPToUI) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFPToUI) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFPToUI) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the fptoui instruction.
-func (inst *InstFPToUI) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the fptoui instruction.
-func (inst *InstFPToUI) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ fptosi ] --------------------------------------------------------------
@@ -491,74 +419,62 @@ func (inst *InstFPToUI) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#fptosi-instruction
 type InstFPToSI struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value and target type.
 func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
-	inst := &InstFPToSI{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstFPToSI{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFPToSI) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPToSI) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFPToSI) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFPToSI) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFPToSI) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToSI) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = fptosi %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFPToSI) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFPToSI) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFPToSI) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the fptosi instruction.
-func (inst *InstFPToSI) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the fptosi instruction.
-func (inst *InstFPToSI) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ uitofp ] --------------------------------------------------------------
@@ -569,74 +485,62 @@ func (inst *InstFPToSI) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#uitofp-instruction
 type InstUIToFP struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value and target type.
 func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
-	inst := &InstUIToFP{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstUIToFP{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstUIToFP) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstUIToFP) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstUIToFP) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstUIToFP) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstUIToFP) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstUIToFP) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = uitofp %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstUIToFP) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstUIToFP) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstUIToFP) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the uitofp instruction.
-func (inst *InstUIToFP) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the uitofp instruction.
-func (inst *InstUIToFP) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ sitofp ] --------------------------------------------------------------
@@ -647,74 +551,62 @@ func (inst *InstUIToFP) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#sitofp-instruction
 type InstSIToFP struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value and target type.
 func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
-	inst := &InstSIToFP{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstSIToFP{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstSIToFP) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSIToFP) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstSIToFP) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstSIToFP) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstSIToFP) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSIToFP) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = sitofp %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstSIToFP) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstSIToFP) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstSIToFP) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the sitofp instruction.
-func (inst *InstSIToFP) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the sitofp instruction.
-func (inst *InstSIToFP) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ ptrtoint ] ------------------------------------------------------------
@@ -725,74 +617,62 @@ func (inst *InstSIToFP) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#ptrtoint-instruction
 type InstPtrToInt struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
-	inst := &InstPtrToInt{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstPtrToInt{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstPtrToInt) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstPtrToInt) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstPtrToInt) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstPtrToInt) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstPtrToInt) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstPtrToInt) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = ptrtoint %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstPtrToInt) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstPtrToInt) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstPtrToInt) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the ptrtoint instruction.
-func (inst *InstPtrToInt) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the ptrtoint instruction.
-func (inst *InstPtrToInt) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ inttoptr ] ------------------------------------------------------------
@@ -803,74 +683,62 @@ func (inst *InstPtrToInt) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#inttoptr-instruction
 type InstIntToPtr struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source value and target type.
 func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
-	inst := &InstIntToPtr{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstIntToPtr{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstIntToPtr) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstIntToPtr) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstIntToPtr) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstIntToPtr) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstIntToPtr) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstIntToPtr) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = inttoptr %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstIntToPtr) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstIntToPtr) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstIntToPtr) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the inttoptr instruction.
-func (inst *InstIntToPtr) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the inttoptr instruction.
-func (inst *InstIntToPtr) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ bitcast ] -------------------------------------------------------------
@@ -881,74 +749,62 @@ func (inst *InstIntToPtr) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#bitcast-instruction
 type InstBitCast struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value and target type.
 func NewBitCast(from value.Value, to types.Type) *InstBitCast {
-	inst := &InstBitCast{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstBitCast{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstBitCast) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstBitCast) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstBitCast) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstBitCast) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstBitCast) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstBitCast) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = bitcast %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstBitCast) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstBitCast) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstBitCast) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the bitcast instruction.
-func (inst *InstBitCast) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the bitcast instruction.
-func (inst *InstBitCast) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 
 // --- [ addrspacecast ] -------------------------------------------------------
@@ -959,72 +815,60 @@ func (inst *InstBitCast) SetFrom(from value.Value) {
 //    http://llvm.org/docs/LangRef.html#addrspacecast-instruction
 type InstAddrSpaceCast struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given source value and target type.
 func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
-	inst := &InstAddrSpaceCast{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &InstAddrSpaceCast{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstAddrSpaceCast) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAddrSpaceCast) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstAddrSpaceCast) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstAddrSpaceCast) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstAddrSpaceCast) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstAddrSpaceCast) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = addrspacecast %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstAddrSpaceCast) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstAddrSpaceCast) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstAddrSpaceCast) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the addrspacecast instruction.
-func (inst *InstAddrSpaceCast) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the addrspacecast instruction.
-func (inst *InstAddrSpaceCast) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }

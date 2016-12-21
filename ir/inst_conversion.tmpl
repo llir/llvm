@@ -24,73 +24,61 @@ import (
 //    http://llvm.org/docs/LangRef.html#{{ lower .Name }}-instruction
 type Inst{{ .Name }} struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Value before conversion.
-	from value.Value
+	From value.Value
 	// Type after conversion.
-	to types.Type
+	To types.Type
 	// Track uses of the value.
 	used
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given source value and target type.
 func New{{ .Name }}(from value.Value, to types.Type) *Inst{{ .Name }} {
-	inst := &Inst{{ .Name }}{from: from, to: to}
-	trackValue(&inst.from, inst)
+	inst := &Inst{{ .Name }}{From: from, To: to}
+	trackValue(&inst.From, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *Inst{{ .Name }}) Type() types.Type {
-	return inst.to
+	return inst.To
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *Inst{{ .Name }}) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *Inst{{ .Name }}) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *Inst{{ .Name }}) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *Inst{{ .Name }}) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *Inst{{ .Name }}) String() string {
-	from := inst.From()
 	return fmt.Sprintf("%s = {{ lower .Name }} %s %s to %s",
 		inst.Ident(),
-		from.Type(),
-		from.Ident(),
-		inst.Type())
+		inst.From.Type(),
+		inst.From.Ident(),
+		inst.To)
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *Inst{{ .Name }}) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *Inst{{ .Name }}) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// From returns the value before conversion of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) From() value.Value {
-	return inst.from
-}
-
-// SetFrom sets the value before conversion of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) SetFrom(from value.Value) {
-	inst.from = from
-	// TODO: Remove use of old from value.
-	trackValue(&inst.from, inst)
+	inst.Parent = parent
 }
 {{- end }}

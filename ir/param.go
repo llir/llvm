@@ -23,7 +23,7 @@ func NewParam(name string, typ types.Type) *Param {
 }
 
 // Type returns the type of the function parameter.
-func (param *Param) Type() Type {
+func (param *Param) Type() types.Type {
 	return param.Typ
 }
 

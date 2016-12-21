@@ -23,41 +23,42 @@ import (
 //    http://llvm.org/docs/LangRef.html#add-instruction
 type InstAdd struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewAdd returns a new add instruction based on the given operands.
 func NewAdd(x, y value.Value) *InstAdd {
-	inst := &InstAdd{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstAdd{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstAdd) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAdd) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstAdd) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstAdd) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstAdd) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -65,42 +66,18 @@ func (inst *InstAdd) String() string {
 	return fmt.Sprintf("%s = add %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstAdd) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstAdd) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstAdd) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the add instruction.
-func (inst *InstAdd) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the add instruction.
-func (inst *InstAdd) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the add instruction.
-func (inst *InstAdd) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the add instruction.
-func (inst *InstAdd) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ fadd ] ----------------------------------------------------------------
@@ -111,41 +88,42 @@ func (inst *InstAdd) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#fadd-instruction
 type InstFAdd struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
 func NewFAdd(x, y value.Value) *InstFAdd {
-	inst := &InstFAdd{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstFAdd{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFAdd) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFAdd) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFAdd) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFAdd) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFAdd) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -153,42 +131,18 @@ func (inst *InstFAdd) String() string {
 	return fmt.Sprintf("%s = fadd %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFAdd) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFAdd) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFAdd) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the fadd instruction.
-func (inst *InstFAdd) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the fadd instruction.
-func (inst *InstFAdd) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the fadd instruction.
-func (inst *InstFAdd) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the fadd instruction.
-func (inst *InstFAdd) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ sub ] -----------------------------------------------------------------
@@ -199,41 +153,42 @@ func (inst *InstFAdd) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#sub-instruction
 type InstSub struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewSub returns a new sub instruction based on the given operands.
 func NewSub(x, y value.Value) *InstSub {
-	inst := &InstSub{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstSub{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstSub) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSub) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstSub) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstSub) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstSub) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -241,42 +196,18 @@ func (inst *InstSub) String() string {
 	return fmt.Sprintf("%s = sub %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstSub) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstSub) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstSub) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the sub instruction.
-func (inst *InstSub) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the sub instruction.
-func (inst *InstSub) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the sub instruction.
-func (inst *InstSub) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the sub instruction.
-func (inst *InstSub) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ fsub ] ----------------------------------------------------------------
@@ -287,41 +218,42 @@ func (inst *InstSub) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#fsub-instruction
 type InstFSub struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
 func NewFSub(x, y value.Value) *InstFSub {
-	inst := &InstFSub{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstFSub{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFSub) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFSub) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFSub) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFSub) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFSub) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -329,42 +261,18 @@ func (inst *InstFSub) String() string {
 	return fmt.Sprintf("%s = fsub %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFSub) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFSub) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFSub) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the fsub instruction.
-func (inst *InstFSub) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the fsub instruction.
-func (inst *InstFSub) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the fsub instruction.
-func (inst *InstFSub) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the fsub instruction.
-func (inst *InstFSub) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ mul ] -----------------------------------------------------------------
@@ -375,41 +283,42 @@ func (inst *InstFSub) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#mul-instruction
 type InstMul struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewMul returns a new mul instruction based on the given operands.
 func NewMul(x, y value.Value) *InstMul {
-	inst := &InstMul{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstMul{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstMul) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstMul) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstMul) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstMul) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstMul) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -417,42 +326,18 @@ func (inst *InstMul) String() string {
 	return fmt.Sprintf("%s = mul %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstMul) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstMul) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstMul) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the mul instruction.
-func (inst *InstMul) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the mul instruction.
-func (inst *InstMul) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the mul instruction.
-func (inst *InstMul) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the mul instruction.
-func (inst *InstMul) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ fmul ] ----------------------------------------------------------------
@@ -463,41 +348,42 @@ func (inst *InstMul) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#fmul-instruction
 type InstFMul struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
 func NewFMul(x, y value.Value) *InstFMul {
-	inst := &InstFMul{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstFMul{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFMul) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFMul) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFMul) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFMul) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFMul) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -505,42 +391,18 @@ func (inst *InstFMul) String() string {
 	return fmt.Sprintf("%s = fmul %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFMul) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFMul) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFMul) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the fmul instruction.
-func (inst *InstFMul) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the fmul instruction.
-func (inst *InstFMul) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the fmul instruction.
-func (inst *InstFMul) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the fmul instruction.
-func (inst *InstFMul) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ udiv ] ----------------------------------------------------------------
@@ -551,41 +413,42 @@ func (inst *InstFMul) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#udiv-instruction
 type InstUDiv struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
 func NewUDiv(x, y value.Value) *InstUDiv {
-	inst := &InstUDiv{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstUDiv{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstUDiv) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstUDiv) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstUDiv) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstUDiv) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstUDiv) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -593,42 +456,18 @@ func (inst *InstUDiv) String() string {
 	return fmt.Sprintf("%s = udiv %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstUDiv) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstUDiv) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstUDiv) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the udiv instruction.
-func (inst *InstUDiv) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the udiv instruction.
-func (inst *InstUDiv) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the udiv instruction.
-func (inst *InstUDiv) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the udiv instruction.
-func (inst *InstUDiv) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ sdiv ] ----------------------------------------------------------------
@@ -639,41 +478,42 @@ func (inst *InstUDiv) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#sdiv-instruction
 type InstSDiv struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
 func NewSDiv(x, y value.Value) *InstSDiv {
-	inst := &InstSDiv{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstSDiv{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstSDiv) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSDiv) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstSDiv) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstSDiv) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstSDiv) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -681,42 +521,18 @@ func (inst *InstSDiv) String() string {
 	return fmt.Sprintf("%s = sdiv %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstSDiv) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstSDiv) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstSDiv) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the sdiv instruction.
-func (inst *InstSDiv) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the sdiv instruction.
-func (inst *InstSDiv) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the sdiv instruction.
-func (inst *InstSDiv) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the sdiv instruction.
-func (inst *InstSDiv) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ fdiv ] ----------------------------------------------------------------
@@ -727,41 +543,42 @@ func (inst *InstSDiv) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#fdiv-instruction
 type InstFDiv struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
 func NewFDiv(x, y value.Value) *InstFDiv {
-	inst := &InstFDiv{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstFDiv{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFDiv) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFDiv) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFDiv) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFDiv) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFDiv) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -769,42 +586,18 @@ func (inst *InstFDiv) String() string {
 	return fmt.Sprintf("%s = fdiv %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFDiv) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFDiv) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFDiv) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the fdiv instruction.
-func (inst *InstFDiv) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the fdiv instruction.
-func (inst *InstFDiv) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the fdiv instruction.
-func (inst *InstFDiv) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the fdiv instruction.
-func (inst *InstFDiv) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ urem ] ----------------------------------------------------------------
@@ -815,41 +608,42 @@ func (inst *InstFDiv) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#urem-instruction
 type InstURem struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewURem returns a new urem instruction based on the given operands.
 func NewURem(x, y value.Value) *InstURem {
-	inst := &InstURem{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstURem{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstURem) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstURem) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstURem) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstURem) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstURem) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -857,42 +651,18 @@ func (inst *InstURem) String() string {
 	return fmt.Sprintf("%s = urem %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstURem) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstURem) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstURem) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the urem instruction.
-func (inst *InstURem) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the urem instruction.
-func (inst *InstURem) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the urem instruction.
-func (inst *InstURem) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the urem instruction.
-func (inst *InstURem) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ srem ] ----------------------------------------------------------------
@@ -903,41 +673,42 @@ func (inst *InstURem) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#srem-instruction
 type InstSRem struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
 func NewSRem(x, y value.Value) *InstSRem {
-	inst := &InstSRem{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstSRem{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstSRem) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSRem) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstSRem) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstSRem) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstSRem) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -945,42 +716,18 @@ func (inst *InstSRem) String() string {
 	return fmt.Sprintf("%s = srem %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstSRem) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstSRem) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstSRem) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the srem instruction.
-func (inst *InstSRem) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the srem instruction.
-func (inst *InstSRem) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the srem instruction.
-func (inst *InstSRem) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the srem instruction.
-func (inst *InstSRem) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
 
 // --- [ frem ] ----------------------------------------------------------------
@@ -991,41 +738,42 @@ func (inst *InstSRem) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#frem-instruction
 type InstFRem struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 	// Track uses of the value.
 	used
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
 func NewFRem(x, y value.Value) *InstFRem {
-	inst := &InstFRem{x: x, y: y}
-	trackValue(&inst.x, inst)
-	trackValue(&inst.y, inst)
+	inst := &InstFRem{X: x, Y: y}
+	trackValue(&inst.X, inst)
+	trackValue(&inst.Y, inst)
 	return inst
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFRem) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFRem) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFRem) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFRem) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFRem) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -1033,40 +781,16 @@ func (inst *InstFRem) String() string {
 	return fmt.Sprintf("%s = frem %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFRem) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFRem) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFRem) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the frem instruction.
-func (inst *InstFRem) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the frem instruction.
-func (inst *InstFRem) SetX(x value.Value) {
-	inst.x = x
-	// TODO: Remove use of old x value.
-	trackValue(&inst.x, inst)
-}
-
-// Y returns the y operand of the frem instruction.
-func (inst *InstFRem) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the frem instruction.
-func (inst *InstFRem) SetY(y value.Value) {
-	inst.y = y
-	// TODO: Remove use of old y value.
-	trackValue(&inst.y, inst)
+	inst.Parent = parent
 }
