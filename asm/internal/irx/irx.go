@@ -5,18 +5,10 @@ package irx
 import (
 	"fmt"
 
-	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
-
-// Translate translates the AST of the given module to an equivalent LLVM IR
-// module.
-func Translate(module *ast.Module) (*ir.Module, error) {
-	m := ir.NewModule()
-	return m, nil
-}
 
 // A Module represents an LLVM IR module generator.
 type Module struct {
