@@ -885,7 +885,7 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		val.Type = t
 		return val, nil
 	default:
-		panic(fmt.Sprintf("support for value type %T not yet implemented", val))
+		panic(fmt.Errorf("support for value type %T not yet implemented", val))
 	}
 }
 

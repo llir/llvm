@@ -201,7 +201,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	for _, block := range f.Blocks {
 		name := block.Name
 		if _, ok := fix.locals[name]; ok {
-			panic(fmt.Sprintf("basic block label %q already present; old `%v`, new `%v`", name, fix.locals[name], block))
+			panic(fmt.Errorf("basic block label %q already present; old `%v`, new `%v`", name, fix.locals[name], block))
 		}
 		fix.locals[name] = block
 	}
@@ -210,7 +210,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	for _, param := range f.Sig.Params {
 		name := param.Name
 		if _, ok := fix.locals[name]; ok {
-			panic(fmt.Sprintf("function parameter name %q already present; old `%v`, new `%v`", name, fix.locals[name], param))
+			panic(fmt.Errorf("function parameter name %q already present; old `%v`, new `%v`", name, fix.locals[name], param))
 		}
 		fix.locals[name] = param
 	}
@@ -227,7 +227,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 				}
 				name := inst.GetName()
 				if _, ok := fix.locals[name]; ok {
-					panic(fmt.Sprintf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
+					panic(fmt.Errorf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
 				}
 				fix.locals[name] = inst
 			}

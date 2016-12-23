@@ -4,7 +4,9 @@
 //
 //    1. Index type definitions.
 //    2. Index global variables.
-//    3. Index functions.
+//       - Store preliminary content type.
+//    3. Index function.
+//       - Store type.
 //    4. Fix type definitions.
 //    5. Fix globals.
 //    6. Fix functions.
@@ -14,6 +16,7 @@
 //    1. Index function parameters.
 //    2. Index basic blocks.
 //    3. Index local variables produced by instructions.
+//       - Store preliminary type.
 //    4. Fix basic blocks.
 
 package irx
@@ -57,6 +60,13 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		global := &ir.Global{
 			Name: name,
 		}
+		// TODO: Verify if it is needed to store preliminary content type of
+		// globals; i.e. validate type resolution for circularly defined globals.
+		//
+		//// Store preliminary content type.
+		// content := m.irType(old.Content)
+		//global.Content = content
+		//global.Typ = types.NewPointer(content)
 		m.Globals = append(m.Globals, global)
 		m.globals[name] = global
 	}
@@ -67,9 +77,23 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		if _, ok := m.globals[name]; ok {
 			panic(fmt.Errorf("global identifier %q already present; old `%v`, new `%v`", name, m.globals[name], old))
 		}
+		// Store type.
+		oldSig := m.irType(old.Sig)
+		sig, ok := oldSig.(*types.FuncType)
+		if !ok {
+			panic(fmt.Errorf("invalid function signature type, expected *types.FuncType, got %T", oldSig))
+		}
+		var params []*ir.Param
+		for _, param := range sig.Params {
+			params = append(params, ir.NewParam(param.Name, param.Typ))
+		}
+		typ := types.NewPointer(sig)
 		f := &ir.Function{
 			Parent: m.Module,
 			Name:   name,
+			Typ:    typ,
+			Sig:    sig,
+			Params: params,
 		}
 		m.Funcs = append(m.Funcs, f)
 		m.globals[name] = f
@@ -118,6 +142,9 @@ func (m *Module) globalDecl(old *ast.Global) {
 	}
 	if old.Init != nil {
 		init := m.irConstant(old.Init)
+		// TODO: Verify that two circularly referential globals both get the
+		// correct type; more specifically that neither get global.Content == nil
+		// after resolution.
 		global.Content = init.Type()
 		global.Init = init
 	} else {
@@ -140,23 +167,9 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 	if !ok {
 		panic(fmt.Errorf("invalid function type; expected *ir.Function, got %T", v))
 	}
-	oldSig := m.irType(oldFunc.Sig)
-	sig, ok := oldSig.(*types.FuncType)
-	if !ok {
-		panic(fmt.Errorf("invalid function signature type, expected *types.FuncType, got %T", oldSig))
-	}
-	var params []*ir.Param
-	for _, param := range sig.Params {
-		params = append(params, ir.NewParam(param.Name, param.Typ))
-	}
-	typ := types.NewPointer(sig)
-	f.Typ = typ
-	f.Sig = sig
-	fmt.Println("sig:", sig)
-	f.Params = params
 
 	// Index function parameters.
-	for _, param := range params {
+	for _, param := range f.Params {
 		name := param.Name
 		if _, ok := m.locals[name]; ok {
 			panic(fmt.Errorf("local identifier %q already present; old `%v`, new `%v`", name, m.locals[name], param))
@@ -277,9 +290,18 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 				inst = &ir.InstCall{Name: oldInst.Name}
 
 			default:
-				panic(fmt.Sprintf("support for instruction %T not yet implemented", oldInst))
+				panic(fmt.Errorf("support for instruction %T not yet implemented", oldInst))
 			}
 			block.Insts = append(block.Insts, inst)
+
+			// TODO: Validate if it is required to store a preliminary type of
+			// instructions prior to local variable resolution.
+			//
+			// What happens if a getelementptr instruction refers to the value
+			// produced by an instruction which cannot be calculated prior to its
+			// operands being resolved?
+			//
+			//// Store preliminary type.
 
 			// Index local variable.
 			if inst, ok := inst.(value.Named); ok {
@@ -327,10 +349,6 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 	// Fix instructions.
 	for i := 0; i < len(oldBlock.Insts); i++ {
 		oldInst := oldBlock.Insts[i]
-		fmt.Println("old block name:", oldBlock.Name)
-		fmt.Println("old block len: ", len(oldBlock.Insts))
-		fmt.Println("block name:    ", block.Name)
-		fmt.Println("block len:     ", len(block.Insts))
 		v := block.Insts[i]
 		switch oldInst := oldInst.(type) {
 		// Binary instructions
@@ -641,11 +659,11 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			typ, ok := callee.Type().(*types.PointerType)
 			if !ok {
-				panic(fmt.Sprintf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+				panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
 			}
 			sig, ok := typ.Elem.(*types.FuncType)
 			if !ok {
-				panic(fmt.Sprintf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
+				panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
 			}
 			inst.Callee = callee
 			inst.Sig = sig
