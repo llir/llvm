@@ -197,8 +197,12 @@ type Null struct {
 }
 
 // NewNull returns a new null pointer constant based on the given pointer type.
-func NewNull(typ *types.PointerType) *Null {
-	return &Null{Typ: typ}
+func NewNull(typ types.Type) *Null {
+	t, ok := typ.(*types.PointerType)
+	if !ok {
+		panic(fmt.Sprintf("invalid null pointer constant type; expected *types.PointerType, got %T", typ))
+	}
+	return &Null{Typ: t}
 }
 
 // Type returns the type of the constant.

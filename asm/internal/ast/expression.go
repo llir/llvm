@@ -4,7 +4,7 @@ package ast
 //
 // ConstExpr may have one of the following underlying types.
 //
-// Binary instructions
+// Binary expressions
 //
 // http://llvm.org/docs/LangRef.html#binary-operations
 //
@@ -21,7 +21,7 @@ package ast
 //    *ast.ExprSRem
 //    *ast.ExprFRem
 //
-// Bitwise instructions
+// Bitwise expressions
 //
 // http://llvm.org/docs/LangRef.html#bitwise-binary-operations
 //
@@ -32,13 +32,13 @@ package ast
 //    *ast.ExprOr
 //    *ast.ExprXor
 //
-// Memory instructions
+// Memory expressions
 //
 // http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
 //
 //    *ast.ExprGetElementPtr
 //
-// Conversion instructions
+// Conversion expressions
 //
 // http://llvm.org/docs/LangRef.html#conversion-operations
 //
@@ -56,7 +56,7 @@ package ast
 //    *ast.ExprBitCast
 //    *ast.ExprAddrSpaceCast
 //
-// Other instructions
+// Other expressions
 //
 // http://llvm.org/docs/LangRef.html#other-operations
 //

@@ -7,8 +7,8 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
-// irtype returns the corresponding LLVM IR type of the given type.
-func (m *Module) irtype(old ast.Type) types.Type {
+// irType returns the corresponding LLVM IR type of the given type.
+func (m *Module) irType(old ast.Type) types.Type {
 	switch old := old.(type) {
 	case *ast.VoidType:
 		return types.Void
@@ -36,23 +36,23 @@ func (m *Module) irtype(old ast.Type) types.Type {
 	case *ast.FuncType:
 		params := make([]*types.Param, len(old.Params))
 		for i, oldParam := range old.Params {
-			params[i] = types.NewParam(oldParam.Name, m.irtype(oldParam.Type))
+			params[i] = types.NewParam(oldParam.Name, m.irType(oldParam.Type))
 		}
-		typ := types.NewFunc(m.irtype(old.Ret), params...)
+		typ := types.NewFunc(m.irType(old.Ret), params...)
 		typ.Variadic = old.Variadic
 		return typ
 	case *ast.PointerType:
-		typ := types.NewPointer(m.irtype(old.Elem))
+		typ := types.NewPointer(m.irType(old.Elem))
 		typ.AddrSpace = old.AddrSpace
 		return typ
 	case *ast.VectorType:
-		return types.NewVector(m.irtype(old.Elem), old.Len)
+		return types.NewVector(m.irType(old.Elem), old.Len)
 	case *ast.ArrayType:
-		return types.NewArray(m.irtype(old.Elem), old.Len)
+		return types.NewArray(m.irType(old.Elem), old.Len)
 	case *ast.StructType:
 		fields := make([]types.Type, len(old.Fields))
 		for i, oldField := range old.Fields {
-			fields[i] = m.irtype(oldField)
+			fields[i] = m.irType(oldField)
 		}
 		return types.NewStruct(fields...)
 	case *ast.NamedType:

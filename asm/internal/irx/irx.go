@@ -18,6 +18,8 @@ type Module struct {
 	types map[string]*types.NamedType
 	// globals maps global identifiers to their corresponding LLVM IR values.
 	globals map[string]value.Named
+	// List of errors encountered during translation.
+	errs []error
 }
 
 // NewModule returns a new module generator.
