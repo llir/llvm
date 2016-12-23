@@ -28,16 +28,14 @@ type InstAdd struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewAdd returns a new add instruction based on the given operands.
 func NewAdd(x, y value.Value) *InstAdd {
-	inst := &InstAdd{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstAdd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -93,16 +91,14 @@ type InstFAdd struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
 func NewFAdd(x, y value.Value) *InstFAdd {
-	inst := &InstFAdd{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstFAdd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -158,16 +154,14 @@ type InstSub struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewSub returns a new sub instruction based on the given operands.
 func NewSub(x, y value.Value) *InstSub {
-	inst := &InstSub{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstSub{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -223,16 +217,14 @@ type InstFSub struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
 func NewFSub(x, y value.Value) *InstFSub {
-	inst := &InstFSub{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstFSub{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -288,16 +280,14 @@ type InstMul struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewMul returns a new mul instruction based on the given operands.
 func NewMul(x, y value.Value) *InstMul {
-	inst := &InstMul{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstMul{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -353,16 +343,14 @@ type InstFMul struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
 func NewFMul(x, y value.Value) *InstFMul {
-	inst := &InstFMul{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstFMul{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -418,16 +406,14 @@ type InstUDiv struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
 func NewUDiv(x, y value.Value) *InstUDiv {
-	inst := &InstUDiv{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstUDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -483,16 +469,14 @@ type InstSDiv struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
 func NewSDiv(x, y value.Value) *InstSDiv {
-	inst := &InstSDiv{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstSDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -548,16 +532,14 @@ type InstFDiv struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
 func NewFDiv(x, y value.Value) *InstFDiv {
-	inst := &InstFDiv{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstFDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -613,16 +595,14 @@ type InstURem struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewURem returns a new urem instruction based on the given operands.
 func NewURem(x, y value.Value) *InstURem {
-	inst := &InstURem{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstURem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -678,16 +658,14 @@ type InstSRem struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
 func NewSRem(x, y value.Value) *InstSRem {
-	inst := &InstSRem{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstSRem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -743,16 +721,14 @@ type InstFRem struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
 func NewFRem(x, y value.Value) *InstFRem {
-	inst := &InstFRem{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstFRem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.

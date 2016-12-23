@@ -31,15 +31,14 @@ type Inst{{ .Name }} struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given source value and target type.
 func New{{ .Name }}(from value.Value, to types.Type) *Inst{{ .Name }} {
-	inst := &Inst{{ .Name }}{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &Inst{{ .Name }}{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.

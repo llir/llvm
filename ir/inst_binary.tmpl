@@ -29,16 +29,14 @@ type Inst{{ .Name }} struct {
 	Name string
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given operands.
 func New{{ .Name }}(x, y value.Value) *Inst{{ .Name }} {
-	inst := &Inst{{ .Name }}{X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &Inst{{ .Name }}{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.

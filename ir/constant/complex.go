@@ -21,8 +21,6 @@ type Vector struct {
 	Typ *types.VectorType
 	// Vector elements.
 	Elems []Constant
-	// Track uses of the value.
-	used
 }
 
 // NewVector returns a new vector constant based on the given elements.
@@ -69,8 +67,6 @@ type Array struct {
 	Elems []Constant
 	// Pretty-print as character array.
 	CharArray bool
-	// Track uses of the value.
-	used
 }
 
 // NewArray returns a new array constant based on the given elements.
@@ -129,8 +125,6 @@ type Struct struct {
 	Typ *types.StructType
 	// Struct fields.
 	Fields []Constant
-	// Track uses of the value.
-	used
 }
 
 // NewStruct returns a new struct constant based on the given struct fields.
@@ -174,8 +168,6 @@ func (*Struct) Immutable() {}
 type ZeroInitializer struct {
 	// Constant type.
 	Typ types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewZeroInitializer returns a new zeroinitializer constant based on the given

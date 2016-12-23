@@ -32,14 +32,15 @@ type InstAlloca struct {
 	Elem types.Type
 	// Number of elements; or nil if one element.
 	NElems value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
 func NewAlloca(elem types.Type) *InstAlloca {
 	typ := types.NewPointer(elem)
-	return &InstAlloca{Typ: typ, Elem: elem}
+	return &InstAlloca{
+		Typ:  typ,
+		Elem: elem,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -102,8 +103,6 @@ type InstLoad struct {
 	Typ types.Type
 	// Source address.
 	Src value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -112,9 +111,10 @@ func NewLoad(src value.Value) *InstLoad {
 	if !ok {
 		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
-	inst := &InstLoad{Typ: t.Elem, Src: src}
-	trackValue(&inst.Src, inst)
-	return inst
+	return &InstLoad{
+		Typ: t.Elem,
+		Src: src,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -175,10 +175,10 @@ type InstStore struct {
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
 func NewStore(src, dst value.Value) *InstStore {
-	inst := &InstStore{Src: src, Dst: dst}
-	trackValue(&inst.Src, inst)
-	trackValue(&inst.Dst, inst)
-	return inst
+	return &InstStore{
+		Src: src,
+		Dst: dst,
+	}
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -225,8 +225,6 @@ type InstGetElementPtr struct {
 	Src value.Value
 	// Element indices.
 	Indices []value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
@@ -269,12 +267,12 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 		}
 	}
 	typ := types.NewPointer(e)
-	inst := &InstGetElementPtr{Typ: typ, Elem: elem, Src: src, Indices: indices}
-	trackValue(&inst.Src, inst)
-	for i := range inst.Indices {
-		trackValue(&inst.Indices[i], inst)
+	return &InstGetElementPtr{
+		Typ:     typ,
+		Elem:    elem,
+		Src:     src,
+		Indices: indices,
 	}
-	return inst
 }
 
 // Type returns the type of the instruction.

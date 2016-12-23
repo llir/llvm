@@ -33,29 +33,3 @@ type Named interface {
 	// SetName sets the name of the value.
 	SetName(name string)
 }
-
-// Used represents a used value; e.g. a value used as an operand to an
-// instruction.
-type Used interface {
-	Value
-	// Uses returns the uses of the used value.
-	Uses() []Use
-	// AppendUse appends the given use to the used value.
-	AppendUse(use Use)
-	// SetUses sets the uses of the used value.
-	SetUses(uses []Use)
-}
-
-// Use represents the use of a value; e.g. when used as an operand to an
-// instruction.
-type Use interface {
-	// Replace replaces the used value with the given value.
-	Replace(v Value)
-	// User returns the user of the value.
-	//
-	// The returned user may have one of the following underlying types.
-	//
-	//    ir.Instruction
-	//    ir.Terminator
-	User() interface{}
-}

@@ -22,13 +22,14 @@ import (
 type ExprShl struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewShl returns a new shl expression based on the given operands.
 func NewShl(x, y Constant) *ExprShl {
-	return &ExprShl{X: x, Y: y}
+	return &ExprShl{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -63,13 +64,14 @@ func (expr *ExprShl) Simplify() Constant {
 type ExprLShr struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewLShr returns a new lshr expression based on the given operands.
 func NewLShr(x, y Constant) *ExprLShr {
-	return &ExprLShr{X: x, Y: y}
+	return &ExprLShr{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -104,13 +106,14 @@ func (expr *ExprLShr) Simplify() Constant {
 type ExprAShr struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewAShr returns a new ashr expression based on the given operands.
 func NewAShr(x, y Constant) *ExprAShr {
-	return &ExprAShr{X: x, Y: y}
+	return &ExprAShr{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -145,13 +148,14 @@ func (expr *ExprAShr) Simplify() Constant {
 type ExprAnd struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewAnd returns a new and expression based on the given operands.
 func NewAnd(x, y Constant) *ExprAnd {
-	return &ExprAnd{X: x, Y: y}
+	return &ExprAnd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -186,13 +190,14 @@ func (expr *ExprAnd) Simplify() Constant {
 type ExprOr struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewOr returns a new or expression based on the given operands.
 func NewOr(x, y Constant) *ExprOr {
-	return &ExprOr{X: x, Y: y}
+	return &ExprOr{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -227,13 +232,14 @@ func (expr *ExprOr) Simplify() Constant {
 type ExprXor struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewXor returns a new xor expression based on the given operands.
 func NewXor(x, y Constant) *ExprXor {
-	return &ExprXor{X: x, Y: y}
+	return &ExprXor{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.

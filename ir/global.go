@@ -33,8 +33,6 @@ type Global struct {
 	Init constant.Constant
 	// Immutability of the global variable.
 	IsConst bool
-	// Track uses of the value.
-	used
 }
 
 // NewGlobalDecl returns a new external global variable declaration based on the

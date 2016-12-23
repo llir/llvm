@@ -30,15 +30,14 @@ type InstTrunc struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
-	inst := &InstTrunc{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstTrunc{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -96,15 +95,14 @@ type InstZExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewZExt returns a new zext instruction based on the given source value and target type.
 func NewZExt(from value.Value, to types.Type) *InstZExt {
-	inst := &InstZExt{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstZExt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -162,15 +160,14 @@ type InstSExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewSExt returns a new sext instruction based on the given source value and target type.
 func NewSExt(from value.Value, to types.Type) *InstSExt {
-	inst := &InstSExt{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstSExt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -228,15 +225,14 @@ type InstFPTrunc struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value and target type.
 func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
-	inst := &InstFPTrunc{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstFPTrunc{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -294,15 +290,14 @@ type InstFPExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and target type.
 func NewFPExt(from value.Value, to types.Type) *InstFPExt {
-	inst := &InstFPExt{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstFPExt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -360,15 +355,14 @@ type InstFPToUI struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value and target type.
 func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
-	inst := &InstFPToUI{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstFPToUI{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -426,15 +420,14 @@ type InstFPToSI struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value and target type.
 func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
-	inst := &InstFPToSI{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstFPToSI{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -492,15 +485,14 @@ type InstUIToFP struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value and target type.
 func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
-	inst := &InstUIToFP{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstUIToFP{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -558,15 +550,14 @@ type InstSIToFP struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value and target type.
 func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
-	inst := &InstSIToFP{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstSIToFP{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -624,15 +615,14 @@ type InstPtrToInt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
-	inst := &InstPtrToInt{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstPtrToInt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -690,15 +680,14 @@ type InstIntToPtr struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source value and target type.
 func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
-	inst := &InstIntToPtr{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstIntToPtr{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -756,15 +745,14 @@ type InstBitCast struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value and target type.
 func NewBitCast(from value.Value, to types.Type) *InstBitCast {
-	inst := &InstBitCast{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstBitCast{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -822,15 +810,14 @@ type InstAddrSpaceCast struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given source value and target type.
 func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
-	inst := &InstAddrSpaceCast{From: from, To: to}
-	trackValue(&inst.From, inst)
-	return inst
+	return &InstAddrSpaceCast{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the instruction.

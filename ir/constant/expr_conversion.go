@@ -24,13 +24,14 @@ type ExprTrunc struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewTrunc returns a new trunc expression based on the given source constant and target type.
 func NewTrunc(from Constant, to types.Type) *ExprTrunc {
-	return &ExprTrunc{From: from, To: to}
+	return &ExprTrunc{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -66,13 +67,14 @@ type ExprZExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewZExt returns a new zext expression based on the given source constant and target type.
 func NewZExt(from Constant, to types.Type) *ExprZExt {
-	return &ExprZExt{From: from, To: to}
+	return &ExprZExt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -108,13 +110,14 @@ type ExprSExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewSExt returns a new sext expression based on the given source constant and target type.
 func NewSExt(from Constant, to types.Type) *ExprSExt {
-	return &ExprSExt{From: from, To: to}
+	return &ExprSExt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -150,13 +153,14 @@ type ExprFPTrunc struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPTrunc returns a new fptrunc expression based on the given source constant and target type.
 func NewFPTrunc(from Constant, to types.Type) *ExprFPTrunc {
-	return &ExprFPTrunc{From: from, To: to}
+	return &ExprFPTrunc{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -192,13 +196,14 @@ type ExprFPExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPExt returns a new fpext expression based on the given source constant and target type.
 func NewFPExt(from Constant, to types.Type) *ExprFPExt {
-	return &ExprFPExt{From: from, To: to}
+	return &ExprFPExt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -234,13 +239,14 @@ type ExprFPToUI struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPToUI returns a new fptoui expression based on the given source constant and target type.
 func NewFPToUI(from Constant, to types.Type) *ExprFPToUI {
-	return &ExprFPToUI{From: from, To: to}
+	return &ExprFPToUI{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -276,13 +282,14 @@ type ExprFPToSI struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewFPToSI returns a new fptosi expression based on the given source constant and target type.
 func NewFPToSI(from Constant, to types.Type) *ExprFPToSI {
-	return &ExprFPToSI{From: from, To: to}
+	return &ExprFPToSI{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -318,13 +325,14 @@ type ExprUIToFP struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewUIToFP returns a new uitofp expression based on the given source constant and target type.
 func NewUIToFP(from Constant, to types.Type) *ExprUIToFP {
-	return &ExprUIToFP{From: from, To: to}
+	return &ExprUIToFP{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -360,13 +368,14 @@ type ExprSIToFP struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewSIToFP returns a new sitofp expression based on the given source constant and target type.
 func NewSIToFP(from Constant, to types.Type) *ExprSIToFP {
-	return &ExprSIToFP{From: from, To: to}
+	return &ExprSIToFP{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -402,13 +411,14 @@ type ExprPtrToInt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewPtrToInt returns a new ptrtoint expression based on the given source constant and target type.
 func NewPtrToInt(from Constant, to types.Type) *ExprPtrToInt {
-	return &ExprPtrToInt{From: from, To: to}
+	return &ExprPtrToInt{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -444,13 +454,14 @@ type ExprIntToPtr struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewIntToPtr returns a new inttoptr expression based on the given source constant and target type.
 func NewIntToPtr(from Constant, to types.Type) *ExprIntToPtr {
-	return &ExprIntToPtr{From: from, To: to}
+	return &ExprIntToPtr{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -486,13 +497,14 @@ type ExprBitCast struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewBitCast returns a new bitcast expression based on the given source constant and target type.
 func NewBitCast(from Constant, to types.Type) *ExprBitCast {
-	return &ExprBitCast{From: from, To: to}
+	return &ExprBitCast{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -528,13 +540,14 @@ type ExprAddrSpaceCast struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
-	// Track uses of the value.
-	used
 }
 
 // NewAddrSpaceCast returns a new addrspacecast expression based on the given source constant and target type.
 func NewAddrSpaceCast(from Constant, to types.Type) *ExprAddrSpaceCast {
-	return &ExprAddrSpaceCast{From: from, To: to}
+	return &ExprAddrSpaceCast{
+		From: from,
+		To:   to,
+	}
 }
 
 // Type returns the type of the constant expression.

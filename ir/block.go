@@ -26,14 +26,14 @@ type BasicBlock struct {
 	Insts []Instruction
 	// Terminator of the basic block.
 	Term Terminator
-	// Track uses of the value.
-	used
 }
 
 // NewBlock returns a new basic block based on the given label name. An empty
 // label name indicates an unnamed basic block.
 func NewBlock(name string) *BasicBlock {
-	return &BasicBlock{Name: name}
+	return &BasicBlock{
+		Name: name,
+	}
 }
 
 // Type returns the type of the basic block.

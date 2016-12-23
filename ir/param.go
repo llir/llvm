@@ -12,14 +12,14 @@ import (
 type Param struct {
 	// Underlying type.
 	*types.Param
-	// Track uses of the value.
-	used
 }
 
 // NewParam returns a new function parameter based on the given parameter name
 // and type.
 func NewParam(name string, typ types.Type) *Param {
-	return &Param{Param: types.NewParam(name, typ)}
+	return &Param{
+		Param: types.NewParam(name, typ),
+	}
 }
 
 // Type returns the type of the function parameter.

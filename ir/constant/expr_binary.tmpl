@@ -23,13 +23,14 @@ import (
 type Expr{{ .Name }} struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} expression based on the given operands.
 func New{{ .Name }}(x, y Constant) *Expr{{ .Name }} {
-	return &Expr{{ .Name }}{X: x, Y: y}
+	return &Expr{{ .Name }}{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.

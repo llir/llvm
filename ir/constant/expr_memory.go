@@ -27,8 +27,6 @@ type ExprGetElementPtr struct {
 	Src Constant
 	// Element indices.
 	Indices []Constant
-	// Track uses of the value.
-	used
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
@@ -71,7 +69,12 @@ func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
 		}
 	}
 	typ := types.NewPointer(e)
-	return &ExprGetElementPtr{Typ: typ, Elem: elem, Src: src, Indices: indices}
+	return &ExprGetElementPtr{
+		Typ:     typ,
+		Elem:    elem,
+		Src:     src,
+		Indices: indices,
+	}
 }
 
 // Type returns the type of the constant expression.

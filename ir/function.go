@@ -35,8 +35,6 @@ type Function struct {
 	Params []*Param
 	// Basic blocks of the function; or nil if defined externally.
 	Blocks []*BasicBlock
-	// Track uses of the value.
-	used
 }
 
 // NewFunction returns a new function based on the given function name, return

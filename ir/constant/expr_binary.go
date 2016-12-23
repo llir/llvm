@@ -22,13 +22,14 @@ import (
 type ExprAdd struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewAdd returns a new add expression based on the given operands.
 func NewAdd(x, y Constant) *ExprAdd {
-	return &ExprAdd{X: x, Y: y}
+	return &ExprAdd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -63,13 +64,14 @@ func (expr *ExprAdd) Simplify() Constant {
 type ExprFAdd struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewFAdd returns a new fadd expression based on the given operands.
 func NewFAdd(x, y Constant) *ExprFAdd {
-	return &ExprFAdd{X: x, Y: y}
+	return &ExprFAdd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -104,13 +106,14 @@ func (expr *ExprFAdd) Simplify() Constant {
 type ExprSub struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewSub returns a new sub expression based on the given operands.
 func NewSub(x, y Constant) *ExprSub {
-	return &ExprSub{X: x, Y: y}
+	return &ExprSub{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -145,13 +148,14 @@ func (expr *ExprSub) Simplify() Constant {
 type ExprFSub struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewFSub returns a new fsub expression based on the given operands.
 func NewFSub(x, y Constant) *ExprFSub {
-	return &ExprFSub{X: x, Y: y}
+	return &ExprFSub{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -186,13 +190,14 @@ func (expr *ExprFSub) Simplify() Constant {
 type ExprMul struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewMul returns a new mul expression based on the given operands.
 func NewMul(x, y Constant) *ExprMul {
-	return &ExprMul{X: x, Y: y}
+	return &ExprMul{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -227,13 +232,14 @@ func (expr *ExprMul) Simplify() Constant {
 type ExprFMul struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewFMul returns a new fmul expression based on the given operands.
 func NewFMul(x, y Constant) *ExprFMul {
-	return &ExprFMul{X: x, Y: y}
+	return &ExprFMul{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -268,13 +274,14 @@ func (expr *ExprFMul) Simplify() Constant {
 type ExprUDiv struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewUDiv returns a new udiv expression based on the given operands.
 func NewUDiv(x, y Constant) *ExprUDiv {
-	return &ExprUDiv{X: x, Y: y}
+	return &ExprUDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -309,13 +316,14 @@ func (expr *ExprUDiv) Simplify() Constant {
 type ExprSDiv struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewSDiv returns a new sdiv expression based on the given operands.
 func NewSDiv(x, y Constant) *ExprSDiv {
-	return &ExprSDiv{X: x, Y: y}
+	return &ExprSDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -350,13 +358,14 @@ func (expr *ExprSDiv) Simplify() Constant {
 type ExprFDiv struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewFDiv returns a new fdiv expression based on the given operands.
 func NewFDiv(x, y Constant) *ExprFDiv {
-	return &ExprFDiv{X: x, Y: y}
+	return &ExprFDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -391,13 +400,14 @@ func (expr *ExprFDiv) Simplify() Constant {
 type ExprURem struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewURem returns a new urem expression based on the given operands.
 func NewURem(x, y Constant) *ExprURem {
-	return &ExprURem{X: x, Y: y}
+	return &ExprURem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -432,13 +442,14 @@ func (expr *ExprURem) Simplify() Constant {
 type ExprSRem struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewSRem returns a new srem expression based on the given operands.
 func NewSRem(x, y Constant) *ExprSRem {
-	return &ExprSRem{X: x, Y: y}
+	return &ExprSRem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
@@ -473,13 +484,14 @@ func (expr *ExprSRem) Simplify() Constant {
 type ExprFRem struct {
 	// Operands.
 	X, Y Constant
-	// Track uses of the value.
-	used
 }
 
 // NewFRem returns a new frem expression based on the given operands.
 func NewFRem(x, y Constant) *ExprFRem {
-	return &ExprFRem{X: x, Y: y}
+	return &ExprFRem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.

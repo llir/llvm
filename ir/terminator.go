@@ -48,13 +48,9 @@ type TermRet struct {
 // NewRet returns a new ret terminator based on the given return value. A nil
 // return value indicates a "void" return.
 func NewRet(x value.Value) *TermRet {
-	term := &TermRet{
+	return &TermRet{
 		X: x,
 	}
-	if term.X != nil {
-		trackValue(&term.X, term)
-	}
-	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -102,12 +98,10 @@ type TermBr struct {
 // branch.
 func NewBr(target *BasicBlock) *TermBr {
 	successors := []*BasicBlock{target}
-	term := &TermBr{
+	return &TermBr{
 		Target:     target,
 		Successors: successors,
 	}
-	trackBlock(&term.Target, term)
-	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -153,16 +147,12 @@ type TermCondBr struct {
 // branching condition and conditional target branches.
 func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
 	successors := []*BasicBlock{targetTrue, targetFalse}
-	term := &TermCondBr{
+	return &TermCondBr{
 		Cond:        cond,
 		TargetTrue:  targetTrue,
 		TargetFalse: targetFalse,
 		Successors:  successors,
 	}
-	trackValue(&term.Cond, term)
-	trackBlock(&term.TargetTrue, term)
-	trackBlock(&term.TargetFalse, term)
-	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -217,19 +207,12 @@ func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSw
 	for _, c := range cases {
 		successors = append(successors, c.Target)
 	}
-	term := &TermSwitch{
+	return &TermSwitch{
 		X:             x,
 		TargetDefault: targetDefault,
 		Cases:         cases,
 		Successors:    successors,
 	}
-	trackValue(&term.X, term)
-	trackBlock(&term.TargetDefault, term)
-	for _, c := range term.Cases {
-		trackIntConst(&c.X, term)
-		trackBlock(&c.Target, term)
-	}
-	return term
 }
 
 // String returns the LLVM syntax representation of the terminator.
@@ -275,7 +258,10 @@ type Case struct {
 // NewCase returns a new switch case based on the given case comparand and
 // target branch.
 func NewCase(x *constant.Int, target *BasicBlock) *Case {
-	return &Case{X: x, Target: target}
+	return &Case{
+		X:      x,
+		Target: target,
+	}
 }
 
 // --- [ indirectbr ] ----------------------------------------------------------

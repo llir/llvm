@@ -21,8 +21,6 @@ type Int struct {
 	Typ *types.IntType
 	// Integer value.
 	X *big.Int
-	// Track uses of the value.
-	used
 }
 
 // NewInt returns a new integer constant based on the given integer value and
@@ -108,8 +106,6 @@ type Float struct {
 	Typ *types.FloatType
 	// Floating-point value.
 	X *big.Float
-	// Track uses of the value.
-	used
 }
 
 // NewFloat returns a new floating-point constant based on the given
@@ -192,8 +188,6 @@ func (c *Float) Float64() float64 {
 type Null struct {
 	// Pointer type.
 	Typ *types.PointerType
-	// Track uses of the value.
-	used
 }
 
 // NewNull returns a new null pointer constant based on the given pointer type.

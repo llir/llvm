@@ -31,8 +31,6 @@ type InstICmp struct {
 	Cond IntPred
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewICmp returns a new icmp instruction based on the given integer condition
@@ -42,10 +40,12 @@ func NewICmp(cond IntPred, x, y value.Value) *InstICmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len)
 	}
-	inst := &InstICmp{Typ: typ, Cond: cond, X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstICmp{
+		Typ:  typ,
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -144,8 +144,6 @@ type InstFCmp struct {
 	Cond FloatPred
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -155,10 +153,12 @@ func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len)
 	}
-	inst := &InstFCmp{Typ: typ, Cond: cond, X: x, Y: y}
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstFCmp{
+		Typ:  typ,
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -267,8 +267,6 @@ type InstPhi struct {
 	Typ types.Type
 	// Incoming values.
 	Incs []*Incoming
-	// Track uses of the value.
-	used
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -277,12 +275,10 @@ func NewPhi(incs ...*Incoming) *InstPhi {
 		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
 	}
 	typ := incs[0].X.Type()
-	inst := &InstPhi{Typ: typ, Incs: incs}
-	for _, inc := range incs {
-		trackValue(&inc.X, inst)
-		trackBlock(&inc.Pred, inst)
+	return &InstPhi{
+		Typ:  typ,
+		Incs: incs,
 	}
-	return inst
 }
 
 // Type returns the type of the instruction.
@@ -344,7 +340,10 @@ type Incoming struct {
 // NewIncoming returns a new incoming value based on the given value and
 // predecessor basic block.
 func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
-	return &Incoming{X: x, Pred: pred}
+	return &Incoming{
+		X:    x,
+		Pred: pred,
+	}
 }
 
 // --- [ select ] --------------------------------------------------------------
@@ -362,18 +361,16 @@ type InstSelect struct {
 	Cond value.Value
 	// Operands.
 	X, Y value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewSelect returns a new select instruction based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y value.Value) *InstSelect {
-	inst := &InstSelect{Cond: cond, X: x, Y: y}
-	trackValue(&inst.Cond, inst)
-	trackValue(&inst.X, inst)
-	trackValue(&inst.Y, inst)
-	return inst
+	return &InstSelect{
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the instruction.
@@ -441,8 +438,6 @@ type InstCall struct {
 	Sig *types.FuncType
 	// Function arguments.
 	Args []value.Value
-	// Track uses of the value.
-	used
 }
 
 // NewCall returns a new call instruction based on the given callee and function
@@ -461,12 +456,11 @@ func NewCall(callee value.Named, args ...value.Value) *InstCall {
 	if !ok {
 		panic(fmt.Sprintf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
 	}
-	inst := &InstCall{Callee: callee, Sig: sig, Args: args}
-	trackNamed(&inst.Callee, inst)
-	for i := range inst.Args {
-		trackValue(&inst.Args[i], inst)
+	return &InstCall{
+		Callee: callee,
+		Sig:    sig,
+		Args:   args,
 	}
-	return inst
 }
 
 // Type returns the type of the instruction.
