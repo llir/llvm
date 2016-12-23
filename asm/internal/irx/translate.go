@@ -469,9 +469,13 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAlloca, got %T", v))
 			}
-
-			_ = inst
-			panic("not yet implemented")
+			elem := m.irType(oldInst.Elem)
+			typ := types.NewPointer(elem)
+			inst.Typ = typ
+			inst.Elem = elem
+			if oldInst.NElems != nil {
+				inst.NElems = m.irValue(oldInst.NElems)
+			}
 		case *ast.InstLoad:
 			inst, ok := v.(*ir.InstLoad)
 			if !ok {
@@ -509,92 +513,92 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstTrunc, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstZExt:
 			inst, ok := v.(*ir.InstZExt)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstZExt, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstSExt:
 			inst, ok := v.(*ir.InstSExt)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSExt, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstFPTrunc:
 			inst, ok := v.(*ir.InstFPTrunc)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPTrunc, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstFPExt:
 			inst, ok := v.(*ir.InstFPExt)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPExt, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstFPToUI:
 			inst, ok := v.(*ir.InstFPToUI)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPToUI, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstFPToSI:
 			inst, ok := v.(*ir.InstFPToSI)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPToSI, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstUIToFP:
 			inst, ok := v.(*ir.InstUIToFP)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstUIToFP, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstSIToFP:
 			inst, ok := v.(*ir.InstSIToFP)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSIToFP, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstPtrToInt:
 			inst, ok := v.(*ir.InstPtrToInt)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstPtrToInt, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstIntToPtr:
 			inst, ok := v.(*ir.InstIntToPtr)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstIntToPtr, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstBitCast:
 			inst, ok := v.(*ir.InstBitCast)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstBitCast, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 		case *ast.InstAddrSpaceCast:
 			inst, ok := v.(*ir.InstAddrSpaceCast)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAddrSpaceCast, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.From = m.irValue(oldInst.From)
+			inst.To = m.irType(oldInst.To)
 
 		// Other instructions
 		case *ast.InstICmp:
