@@ -6,6 +6,7 @@ import (
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
 
@@ -40,7 +41,19 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
 			m.errs = append(m.errs, errors.Errorf("array type mismatch; expected `%v`, got `%v`", want, got))
 		}
-		c.CharArray = old.CharArray
+		return c
+	case *ast.CharArrayConst:
+		var elems []constant.Constant
+		for i := 0; i < len(old.Lit); i++ {
+			b := int64(old.Lit[i])
+			elem := constant.NewInt(b, types.I8)
+			elems = append(elems, elem)
+		}
+		c := constant.NewArray(elems...)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("character array type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		c.CharArray = true
 		return c
 	case *ast.StructConst:
 		var fields []constant.Constant
@@ -81,84 +94,354 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 
 	// Binary expressions
 	case *ast.ExprAdd:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewAdd(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("add expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFAdd:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewFAdd(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fadd expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprSub:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewSub(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("sub expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFSub:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewFSub(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fsub expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprMul:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewMul(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("mul expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFMul:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewFMul(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fmul expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprUDiv:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewUDiv(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("udiv expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprSDiv:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewSDiv(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("sdiv expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFDiv:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewFDiv(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fdiv expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprURem:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewURem(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("urem expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprSRem:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewSRem(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("srem expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFRem:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewFRem(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("frem expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
+
 	// Bitwise expressions
 	case *ast.ExprShl:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewShl(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("shl expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprLShr:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewLShr(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("lshr expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprAShr:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewAShr(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("ashr expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprAnd:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewAnd(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("and expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprOr:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewOr(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("or expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprXor:
-		panic("not yet implemented")
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewXor(x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("xor expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 
 	// Memory expressions
 	case *ast.ExprGetElementPtr:
-		panic("not yet implemented")
+		src := m.irConstant(old.Src)
+		if srcType, ok := src.Type().(*types.PointerType); !ok {
+			m.errs = append(m.errs, errors.Errorf("invalid source type; expected *types.PointerType, got %T", src.Type()))
+		} else if got, want := srcType.Elem, m.irType(old.Elem); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("source element type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		var indices []constant.Constant
+		for _, oldIndex := range old.Indices {
+			index := m.irConstant(oldIndex)
+			indices = append(indices, index)
+		}
+		c := constant.NewGetElementPtr(src, indices...)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("getelementptr expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 
 	// Conversion expressions
 	case *ast.ExprTrunc:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewTrunc(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("trunc expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprZExt:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewZExt(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("zext expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprSExt:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewSExt(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("sext expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFPTrunc:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewFPTrunc(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fptrunc expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFPExt:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewFPExt(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fpext expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFPToUI:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewFPToUI(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fptoui expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFPToSI:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewFPToSI(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fptosi expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprUIToFP:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewUIToFP(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("uitofp expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprSIToFP:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewSIToFP(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("sitofp expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprPtrToInt:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewPtrToInt(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("ptrtoint expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprIntToPtr:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewIntToPtr(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("inttoptr expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprBitCast:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewBitCast(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("bitcast expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprAddrSpaceCast:
-		panic("not yet implemented")
+		from := m.irConstant(old.From)
+		to := m.irType(old.To)
+		c := constant.NewAddrSpaceCast(from, to)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("addrspacecast expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 
 	// Other expressions
 	case *ast.ExprICmp:
-		panic("not yet implemented")
+		cond := m.irIntPred(old.Cond)
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewICmp(cond, x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("icmp expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprFCmp:
-		panic("not yet implemented")
+		cond := m.irFloatPred(old.Cond)
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewFCmp(cond, x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("fcmp expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 	case *ast.ExprSelect:
-		panic("not yet implemented")
+		cond := m.irConstant(old.Cond)
+		x, y := m.irConstant(old.X), m.irConstant(old.Y)
+		c := constant.NewSelect(cond, x, y)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("select expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
 
 	default:
 		panic(fmt.Errorf("support for %T not yet implemented", old))
 	}
+}
+
+// irIntPred returns the corresponding LLVM IR integer predicate of the given
+// integer predicate.
+func (m *Module) irIntPred(cond ast.IntPred) constant.IntPred {
+	switch cond {
+	case ast.IntEQ:
+		return constant.IntEQ
+	case ast.IntNE:
+		return constant.IntNE
+	case ast.IntUGT:
+		return constant.IntUGT
+	case ast.IntUGE:
+		return constant.IntUGE
+	case ast.IntULT:
+		return constant.IntULT
+	case ast.IntULE:
+		return constant.IntULE
+	case ast.IntSGT:
+		return constant.IntSGT
+	case ast.IntSGE:
+		return constant.IntSGE
+	case ast.IntSLT:
+		return constant.IntSLT
+	case ast.IntSLE:
+		return constant.IntSLE
+	}
+	panic(fmt.Errorf("support for %v not yet implemented", cond))
+}
+
+// irFloatPred returns the corresponding LLVM IR floating-point predicate of the
+// given floating-point predicate.
+func (m *Module) irFloatPred(cond ast.FloatPred) constant.FloatPred {
+	switch cond {
+	case ast.FloatFalse:
+		return constant.FloatFalse
+	case ast.FloatOEQ:
+		return constant.FloatOEQ
+	case ast.FloatOGT:
+		return constant.FloatOGT
+	case ast.FloatOGE:
+		return constant.FloatOGE
+	case ast.FloatOLT:
+		return constant.FloatOLT
+	case ast.FloatOLE:
+		return constant.FloatOLE
+	case ast.FloatONE:
+		return constant.FloatONE
+	case ast.FloatORD:
+		return constant.FloatORD
+	case ast.FloatUEQ:
+		return constant.FloatUEQ
+	case ast.FloatUGT:
+		return constant.FloatUGT
+	case ast.FloatUGE:
+		return constant.FloatUGE
+	case ast.FloatULT:
+		return constant.FloatULT
+	case ast.FloatULE:
+		return constant.FloatULE
+	case ast.FloatUNE:
+		return constant.FloatUNE
+	case ast.FloatUNO:
+		return constant.FloatUNO
+	case ast.FloatTrue:
+		return constant.FloatTrue
+	}
+	panic(fmt.Errorf("support for %v not yet implemented", cond))
 }

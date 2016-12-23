@@ -14,8 +14,14 @@ type ArrayConst struct {
 	Type Type
 	// Array elements.
 	Elems []Constant
-	// Pretty-print as character array.
-	CharArray bool
+}
+
+// CharArrayConst represents a character array constant.
+type CharArrayConst struct {
+	// Array type.
+	Type Type
+	// Array elements.
+	Lit string
 }
 
 // StructConst represents a struct constant.
@@ -35,6 +41,7 @@ type ZeroInitializerConst struct {
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*VectorConst) isValue()          {}
 func (*ArrayConst) isValue()           {}
+func (*CharArrayConst) isValue()       {}
 func (*StructConst) isValue()          {}
 func (*ZeroInitializerConst) isValue() {}
 
@@ -42,5 +49,6 @@ func (*ZeroInitializerConst) isValue() {}
 // interface.
 func (*VectorConst) isConstant()          {}
 func (*ArrayConst) isConstant()           {}
+func (*CharArrayConst) isConstant()       {}
 func (*StructConst) isConstant()          {}
 func (*ZeroInitializerConst) isConstant() {}

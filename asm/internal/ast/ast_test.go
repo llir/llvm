@@ -14,6 +14,7 @@ var (
 	// Complex constants.
 	_ ast.Constant = &ast.VectorConst{}
 	_ ast.Constant = &ast.ArrayConst{}
+	_ ast.Constant = &ast.CharArrayConst{}
 	_ ast.Constant = &ast.StructConst{}
 	_ ast.Constant = &ast.ZeroInitializerConst{}
 	// Global variable and function addresses

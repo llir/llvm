@@ -570,6 +570,14 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		}
 		val.Type = t
 		return val, nil
+	case *ast.CharArrayConst:
+		// CharArray constant type should not be known at this stage of parsing,
+		// as they've been constructed from ArrayConst literals.
+		if val.Type != nil {
+			return nil, errors.Errorf("invalid character array constant type, expected nil, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
 	case *ast.StructConst:
 		// Struct constant type should not be known at this stage of parsing, as
 		// they've been constructed from StructConst literals.
@@ -972,7 +980,7 @@ func NewArrayConst(elems interface{}) (*ast.ArrayConst, error) {
 
 // NewCharArrayConst returns a new character array constant based on the given
 // string.
-func NewCharArrayConst(str interface{}) (*ast.ArrayConst, error) {
+func NewCharArrayConst(str interface{}) (*ast.CharArrayConst, error) {
 	s, err := getTokenString(str)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -980,15 +988,7 @@ func NewCharArrayConst(str interface{}) (*ast.ArrayConst, error) {
 	// Skip double-quotes.
 	s = s[1 : len(s)-1]
 	s = enc.Unescape(s)
-	var elems []ast.Constant
-	for i := 0; i < len(s); i++ {
-		// TODO: Validate that string(s[i]) works for the entire byte range 0-255.
-		// Otherwise, use *big.Int to implement integer constants in package ast.
-		elem := &ast.IntConst{Type: &ast.IntType{Size: 8}, Lit: string(s[i])}
-		elems = append(elems, elem)
-	}
-	c := &ast.ArrayConst{Elems: elems}
-	c.CharArray = true
+	c := &ast.CharArrayConst{Lit: s}
 	return c, nil
 }
 

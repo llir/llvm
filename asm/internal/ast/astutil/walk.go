@@ -158,6 +158,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.ArrayConst:
 		w.walkBeforeAfter(*n, before, after)
+	case **ast.CharArrayConst:
+		w.walkBeforeAfter(*n, before, after)
 	case **ast.StructConst:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.ZeroInitializerConst:
@@ -460,6 +462,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		if n.Elems != nil {
 			w.walkBeforeAfter(&n.Elems, before, after)
 		}
+	case *ast.CharArrayConst:
+		w.walkBeforeAfter(&n.Type, before, after)
 	case *ast.StructConst:
 		w.walkBeforeAfter(&n.Type, before, after)
 		if n.Fields != nil {
