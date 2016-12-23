@@ -374,7 +374,7 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		return c
 
 	default:
-		panic(fmt.Errorf("support for %T not yet implemented", old))
+		panic(fmt.Errorf("support for constant %T not yet implemented", old))
 	}
 }
 
@@ -403,7 +403,7 @@ func (m *Module) irIntPred(cond ast.IntPred) constant.IntPred {
 	case ast.IntSLE:
 		return constant.IntSLE
 	}
-	panic(fmt.Errorf("support for %v not yet implemented", cond))
+	panic(fmt.Errorf("support for integer predicate %v not yet implemented", cond))
 }
 
 // irFloatPred returns the corresponding LLVM IR floating-point predicate of the
@@ -443,5 +443,5 @@ func (m *Module) irFloatPred(cond ast.FloatPred) constant.FloatPred {
 	case ast.FloatTrue:
 		return constant.FloatTrue
 	}
-	panic(fmt.Errorf("support for %v not yet implemented", cond))
+	panic(fmt.Errorf("support for floating-point predicate %v not yet implemented", cond))
 }

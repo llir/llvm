@@ -18,6 +18,9 @@ type Module struct {
 	types map[string]*types.NamedType
 	// globals maps global identifiers to their corresponding LLVM IR values.
 	globals map[string]value.Named
+	// locals maps local identifiers to their corresponding LLVM IR values; reset
+	// once per function definition.
+	locals map[string]value.Named
 	// List of errors encountered during translation.
 	errs []error
 }
@@ -50,51 +53,11 @@ func (m *Module) getGlobal(name string) value.Named {
 	return global
 }
 
-// A Function represents an LLVM IR function generator.
-type Function struct {
-	// Function being generated.
-	*ir.Function
-	// Current basic block being generated.
-	curBlock *BasicBlock
-	// locals maps local identifiers to their corresponding LLVM IR values.
-	locals map[string]value.Named
-}
-
-// NewFunction returns a new function generator based on the given function name
-// and signature.
-//
-// The caller is responsible for initializing basic blocks.
-func NewFunction(name string, ret types.Type, params ...*ir.Param) *Function {
-	f := ir.NewFunction(name, ret, params...)
-	return &Function{
-		Function: f,
-		locals:   make(map[string]value.Named),
+// getLocal returns the local value of the given local identifier.
+func (m *Module) getLocal(name string) value.Named {
+	local, ok := m.locals[name]
+	if !ok {
+		panic(fmt.Errorf("unable to locate local identifier %q", name))
 	}
-}
-
-// NewBlock returns a new basic block generator based on the given name and
-// parent function.
-func (f *Function) NewBlock(name string) *BasicBlock {
-	block := ir.NewBlock(name)
-	return &BasicBlock{
-		BasicBlock: block,
-		parent:     f,
-	}
-}
-
-// A BasicBlock represents an LLVM IR basic block generator.
-type BasicBlock struct {
-	// Basic block being generated.
-	*ir.BasicBlock
-	// Parent function of the basic block.
-	parent *Function
-}
-
-// SetTerm sets the terminator of the basic block.
-func (block *BasicBlock) SetTerm(term ir.Terminator) {
-	if block.Term != nil {
-		panic(fmt.Errorf("terminator instruction already set for basic block; old term (%v), new term (%v), basic block (%v)", term, block.Term, block))
-	}
-	block.BasicBlock.Term = term
-	block.parent.AppendBlock(block.BasicBlock)
+	return local
 }
