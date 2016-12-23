@@ -624,15 +624,33 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstICmp, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			cond := irIntPred(oldInst.Cond)
+			x := m.irValue(oldInst.X)
+			y := m.irValue(oldInst.Y)
+			var typ types.Type = types.I1
+			if t, ok := x.Type().(*types.VectorType); ok {
+				typ = types.NewVector(types.I1, t.Len)
+			}
+			inst.Typ = typ
+			inst.Cond = cond
+			inst.X = x
+			inst.Y = y
 		case *ast.InstFCmp:
 			inst, ok := v.(*ir.InstFCmp)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFCmp, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			cond := irFloatPred(oldInst.Cond)
+			x := m.irValue(oldInst.X)
+			y := m.irValue(oldInst.Y)
+			var typ types.Type = types.I1
+			if t, ok := x.Type().(*types.VectorType); ok {
+				typ = types.NewVector(types.I1, t.Len)
+			}
+			inst.Typ = typ
+			inst.Cond = cond
+			inst.X = x
+			inst.Y = y
 		case *ast.InstPhi:
 			inst, ok := v.(*ir.InstPhi)
 			if !ok {
@@ -689,9 +707,36 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 		}
 		block.Term = term
 	case *ast.TermBr:
-		panic("not yet implemented")
+		term := &ir.TermBr{
+			Parent: block,
+		}
+		v := m.irValue(oldTerm.Target)
+		target, ok := v.(*ir.BasicBlock)
+		if !ok {
+			panic(fmt.Errorf("invalid target branch type, expected *ir.BasicBlock, got %T", v))
+		}
+		term.Target = target
+		block.Term = term
 	case *ast.TermCondBr:
-		panic("not yet implemented")
+		term := &ir.TermCondBr{
+			Parent: block,
+		}
+		tTrue := m.irValue(oldTerm.TargetTrue)
+		targetTrue, ok := tTrue.(*ir.BasicBlock)
+		if !ok {
+			panic(fmt.Errorf("invalid true target branch type, expected *ir.BasicBlock, got %T", tTrue))
+		}
+		tFalse := m.irValue(oldTerm.TargetFalse)
+		targetFalse, ok := tFalse.(*ir.BasicBlock)
+		if !ok {
+			panic(fmt.Errorf("invalid false target branch type, expected *ir.BasicBlock, got %T", tFalse))
+		}
+		successors := []*ir.BasicBlock{targetTrue, targetFalse}
+		term.Cond = m.irValue(oldTerm.Cond)
+		term.TargetTrue = targetTrue
+		term.TargetFalse = targetFalse
+		term.Successors = successors
+		block.Term = term
 	case *ast.TermSwitch:
 		panic("not yet implemented")
 	case *ast.TermUnreachable:

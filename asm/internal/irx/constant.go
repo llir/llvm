@@ -349,7 +349,7 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 
 	// Other expressions
 	case *ast.ExprICmp:
-		cond := m.irIntPred(old.Cond)
+		cond := constant.IntPred(irIntPred(old.Cond))
 		x, y := m.irConstant(old.X), m.irConstant(old.Y)
 		c := constant.NewICmp(cond, x, y)
 		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
@@ -357,7 +357,7 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		}
 		return c
 	case *ast.ExprFCmp:
-		cond := m.irFloatPred(old.Cond)
+		cond := constant.FloatPred(irFloatPred(old.Cond))
 		x, y := m.irConstant(old.X), m.irConstant(old.Y)
 		c := constant.NewFCmp(cond, x, y)
 		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
@@ -376,72 +376,4 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 	default:
 		panic(fmt.Errorf("support for constant %T not yet implemented", old))
 	}
-}
-
-// irIntPred returns the corresponding LLVM IR integer predicate of the given
-// integer predicate.
-func (m *Module) irIntPred(cond ast.IntPred) constant.IntPred {
-	switch cond {
-	case ast.IntEQ:
-		return constant.IntEQ
-	case ast.IntNE:
-		return constant.IntNE
-	case ast.IntUGT:
-		return constant.IntUGT
-	case ast.IntUGE:
-		return constant.IntUGE
-	case ast.IntULT:
-		return constant.IntULT
-	case ast.IntULE:
-		return constant.IntULE
-	case ast.IntSGT:
-		return constant.IntSGT
-	case ast.IntSGE:
-		return constant.IntSGE
-	case ast.IntSLT:
-		return constant.IntSLT
-	case ast.IntSLE:
-		return constant.IntSLE
-	}
-	panic(fmt.Errorf("support for integer predicate %v not yet implemented", cond))
-}
-
-// irFloatPred returns the corresponding LLVM IR floating-point predicate of the
-// given floating-point predicate.
-func (m *Module) irFloatPred(cond ast.FloatPred) constant.FloatPred {
-	switch cond {
-	case ast.FloatFalse:
-		return constant.FloatFalse
-	case ast.FloatOEQ:
-		return constant.FloatOEQ
-	case ast.FloatOGT:
-		return constant.FloatOGT
-	case ast.FloatOGE:
-		return constant.FloatOGE
-	case ast.FloatOLT:
-		return constant.FloatOLT
-	case ast.FloatOLE:
-		return constant.FloatOLE
-	case ast.FloatONE:
-		return constant.FloatONE
-	case ast.FloatORD:
-		return constant.FloatORD
-	case ast.FloatUEQ:
-		return constant.FloatUEQ
-	case ast.FloatUGT:
-		return constant.FloatUGT
-	case ast.FloatUGE:
-		return constant.FloatUGE
-	case ast.FloatULT:
-		return constant.FloatULT
-	case ast.FloatULE:
-		return constant.FloatULE
-	case ast.FloatUNE:
-		return constant.FloatUNE
-	case ast.FloatUNO:
-		return constant.FloatUNO
-	case ast.FloatTrue:
-		return constant.FloatTrue
-	}
-	panic(fmt.Errorf("support for floating-point predicate %v not yet implemented", cond))
 }
