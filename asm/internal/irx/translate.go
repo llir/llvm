@@ -185,7 +185,8 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 			panic(fmt.Errorf("local identifier %q already present; old `%v`, new `%v`", name, m.locals[name], old))
 		}
 		block := &ir.BasicBlock{
-			Name: name,
+			Name:   name,
+			Parent: f,
 		}
 		f.Blocks = append(f.Blocks, block)
 		m.locals[name] = block
@@ -200,95 +201,214 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 			switch oldInst := oldInst.(type) {
 			// Binary instructions
 			case *ast.InstAdd:
-				inst = &ir.InstAdd{Name: oldInst.Name}
+				inst = &ir.InstAdd{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFAdd:
-				inst = &ir.InstFAdd{Name: oldInst.Name}
+				inst = &ir.InstFAdd{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstSub:
-				inst = &ir.InstSub{Name: oldInst.Name}
+				inst = &ir.InstSub{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFSub:
-				inst = &ir.InstFSub{Name: oldInst.Name}
+				inst = &ir.InstFSub{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstMul:
-				inst = &ir.InstMul{Name: oldInst.Name}
+				inst = &ir.InstMul{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFMul:
-				inst = &ir.InstFMul{Name: oldInst.Name}
+				inst = &ir.InstFMul{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstUDiv:
-				inst = &ir.InstUDiv{Name: oldInst.Name}
+				inst = &ir.InstUDiv{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstSDiv:
-				inst = &ir.InstSDiv{Name: oldInst.Name}
+				inst = &ir.InstSDiv{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFDiv:
-				inst = &ir.InstFDiv{Name: oldInst.Name}
+				inst = &ir.InstFDiv{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstURem:
-				inst = &ir.InstURem{Name: oldInst.Name}
+				inst = &ir.InstURem{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstSRem:
-				inst = &ir.InstSRem{Name: oldInst.Name}
+				inst = &ir.InstSRem{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFRem:
-				inst = &ir.InstFRem{Name: oldInst.Name}
+				inst = &ir.InstFRem{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 
 			// Bitwise instructions
 			case *ast.InstShl:
-				inst = &ir.InstShl{Name: oldInst.Name}
+				inst = &ir.InstShl{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstLShr:
-				inst = &ir.InstLShr{Name: oldInst.Name}
+				inst = &ir.InstLShr{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstAShr:
-				inst = &ir.InstAShr{Name: oldInst.Name}
+				inst = &ir.InstAShr{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstAnd:
-				inst = &ir.InstAnd{Name: oldInst.Name}
+				inst = &ir.InstAnd{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstOr:
-				inst = &ir.InstOr{Name: oldInst.Name}
+				inst = &ir.InstOr{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstXor:
-				inst = &ir.InstXor{Name: oldInst.Name}
+				inst = &ir.InstXor{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 
 			// Memory instructions
 			case *ast.InstAlloca:
-				inst = &ir.InstAlloca{Name: oldInst.Name}
+				inst = &ir.InstAlloca{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstLoad:
-				inst = &ir.InstLoad{Name: oldInst.Name}
+				inst = &ir.InstLoad{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstStore:
 				// Store instructions produce no value, and are thus not assigned
 				// names.
-				inst = &ir.InstStore{}
+				inst = &ir.InstStore{
+					Parent: block,
+				}
 			case *ast.InstGetElementPtr:
-				inst = &ir.InstGetElementPtr{Name: oldInst.Name}
+				inst = &ir.InstGetElementPtr{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 
 			// Conversion instructions
 			case *ast.InstTrunc:
-				inst = &ir.InstTrunc{Name: oldInst.Name}
+				inst = &ir.InstTrunc{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstZExt:
-				inst = &ir.InstZExt{Name: oldInst.Name}
+				inst = &ir.InstZExt{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstSExt:
-				inst = &ir.InstSExt{Name: oldInst.Name}
+				inst = &ir.InstSExt{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFPTrunc:
-				inst = &ir.InstFPTrunc{Name: oldInst.Name}
+				inst = &ir.InstFPTrunc{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFPExt:
-				inst = &ir.InstFPExt{Name: oldInst.Name}
+				inst = &ir.InstFPExt{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFPToUI:
-				inst = &ir.InstFPToUI{Name: oldInst.Name}
+				inst = &ir.InstFPToUI{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFPToSI:
-				inst = &ir.InstFPToSI{Name: oldInst.Name}
+				inst = &ir.InstFPToSI{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstUIToFP:
-				inst = &ir.InstUIToFP{Name: oldInst.Name}
+				inst = &ir.InstUIToFP{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstSIToFP:
-				inst = &ir.InstSIToFP{Name: oldInst.Name}
+				inst = &ir.InstSIToFP{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstPtrToInt:
-				inst = &ir.InstPtrToInt{Name: oldInst.Name}
+				inst = &ir.InstPtrToInt{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstIntToPtr:
-				inst = &ir.InstIntToPtr{Name: oldInst.Name}
+				inst = &ir.InstIntToPtr{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstBitCast:
-				inst = &ir.InstBitCast{Name: oldInst.Name}
+				inst = &ir.InstBitCast{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstAddrSpaceCast:
-				inst = &ir.InstAddrSpaceCast{Name: oldInst.Name}
+				inst = &ir.InstAddrSpaceCast{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 
 			// Other instructions
 			case *ast.InstICmp:
-				inst = &ir.InstICmp{Name: oldInst.Name}
+				inst = &ir.InstICmp{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstFCmp:
-				inst = &ir.InstFCmp{Name: oldInst.Name}
+				inst = &ir.InstFCmp{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstPhi:
-				inst = &ir.InstPhi{Name: oldInst.Name}
+				inst = &ir.InstPhi{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstSelect:
-				inst = &ir.InstSelect{Name: oldInst.Name}
+				inst = &ir.InstSelect{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 			case *ast.InstCall:
-				inst = &ir.InstCall{Name: oldInst.Name}
+				inst = &ir.InstCall{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
 
 			default:
 				panic(fmt.Errorf("support for instruction %T not yet implemented", oldInst))
