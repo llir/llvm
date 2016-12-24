@@ -800,7 +800,37 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 		term.Successors = successors
 		block.Term = term
 	case *ast.TermSwitch:
-		panic("not yet implemented")
+		term := &ir.TermSwitch{
+			Parent: block,
+		}
+		term.X = m.irValue(oldTerm.X)
+		v := m.getLocal(oldTerm.TargetDefault.GetName())
+		targetDefault, ok := v.(*ir.BasicBlock)
+		if !ok {
+			panic(fmt.Errorf("invalid default target branch type, expected *ir.BasicBlock, got %T", v))
+		}
+		term.TargetDefault = targetDefault
+		successors := []*ir.BasicBlock{targetDefault}
+		for _, oldCase := range oldTerm.Cases {
+			xx := m.irConstant(oldCase.X)
+			x, ok := xx.(*constant.Int)
+			if !ok {
+				panic(fmt.Errorf("invalid x type, expected *constant.Int, got %T", xx))
+			}
+			v := m.getLocal(oldCase.Target.GetName())
+			target, ok := v.(*ir.BasicBlock)
+			if !ok {
+				panic(fmt.Errorf("invalid target branch type, expected *ir.BasicBlock, got %T", v))
+			}
+			c := &ir.Case{
+				X:      x,
+				Target: target,
+			}
+			term.Cases = append(term.Cases, c)
+			successors = append(successors, target)
+		}
+		term.Successors = successors
+		block.Term = term
 	case *ast.TermUnreachable:
 		panic("not yet implemented")
 	default:
