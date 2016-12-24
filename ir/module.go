@@ -37,7 +37,7 @@ func (m *Module) String() string {
 	buf := &bytes.Buffer{}
 	for _, typ := range m.Types {
 		if typ.Def == nil {
-			panic(fmt.Sprintf("invalid type definition %q; expected underlying type definition, got nil", typ))
+			panic(fmt.Errorf("invalid type definition %q; expected underlying type definition, got nil", typ))
 		}
 		if def, ok := typ.Def.(*types.StructType); ok {
 			fmt.Fprintf(buf, "%s = type { ", typ)

@@ -109,7 +109,7 @@ type InstLoad struct {
 func NewLoad(src value.Value) *InstLoad {
 	t, ok := src.Type().(*types.PointerType)
 	if !ok {
-		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
+		panic(fmt.Errorf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
 	return &InstLoad{
 		Typ: t.Elem,
@@ -232,7 +232,7 @@ type InstGetElementPtr struct {
 func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
 	srcType, ok := src.Type().(*types.PointerType)
 	if !ok {
-		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
+		panic(fmt.Errorf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
 	elem := srcType.Elem
 	e := elem
@@ -246,7 +246,7 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 		}
 		if t, ok := e.(*types.NamedType); ok {
 			if t.Def == nil {
-				panic(fmt.Sprintf("invalid named type %q; expected underlying type definition, got nil", t))
+				panic(fmt.Errorf("invalid named type %q; expected underlying type definition, got nil", t))
 			}
 			e = t.Def
 		}
@@ -259,11 +259,11 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 		case *types.StructType:
 			idx, ok := index.(*constant.Int)
 			if !ok {
-				panic(fmt.Sprintf("invalid index type for structure element; expected *constant.Int, got %T", index))
+				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
 			}
 			e = t.Fields[idx.Int64()]
 		default:
-			panic(fmt.Sprintf("support for indexing element type %T not yet implemented", e))
+			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
 		}
 	}
 	typ := types.NewPointer(e)

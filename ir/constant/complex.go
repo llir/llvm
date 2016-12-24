@@ -26,7 +26,7 @@ type Vector struct {
 // NewVector returns a new vector constant based on the given elements.
 func NewVector(elems ...Constant) *Vector {
 	if len(elems) < 1 {
-		panic(fmt.Sprintf("invalid number of vector elements; expected > 0, got %d", len(elems)))
+		panic(fmt.Errorf("invalid number of vector elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewVector(elems[0].Type(), int64(len(elems)))
 	return &Vector{Typ: typ, Elems: elems}
@@ -72,7 +72,7 @@ type Array struct {
 // NewArray returns a new array constant based on the given elements.
 func NewArray(elems ...Constant) *Array {
 	if len(elems) < 1 {
-		panic(fmt.Sprintf("invalid number of array elements; expected > 0, got %d", len(elems)))
+		panic(fmt.Errorf("invalid number of array elements; expected > 0, got %d", len(elems)))
 	}
 	typ := types.NewArray(elems[0].Type(), int64(len(elems)))
 	return &Array{Typ: typ, Elems: elems}
@@ -91,7 +91,7 @@ func (c *Array) Ident() string {
 		for _, elem := range c.Elems {
 			e, ok := elem.(*Int)
 			if !ok {
-				panic(fmt.Sprintf("invalid array element type; expected *constant.Int, got %T", elem))
+				panic(fmt.Errorf("invalid array element type; expected *constant.Int, got %T", elem))
 			}
 			b := byte(e.Int64())
 			buf = append(buf, b)

@@ -26,6 +26,7 @@ import (
 
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -522,8 +523,56 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstGetElementPtr, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			src := m.irValue(oldInst.Src)
+			srcType, ok := src.Type().(*types.PointerType)
+			if !ok {
+				m.errs = append(m.errs, errors.Errorf("invalid source type; expected *types.PointerType, got %T", src.Type()))
+			}
+			elem := srcType.Elem
+			if got, want := elem, m.irType(oldInst.Elem); !got.Equal(want) {
+				m.errs = append(m.errs, errors.Errorf("source element type mismatch; expected `%v`, got `%v`", want, got))
+			}
+			var indices []value.Value
+			for _, oldIndex := range oldInst.Indices {
+				index := m.irValue(oldIndex)
+				indices = append(indices, index)
+			}
+			e := elem
+			for i, index := range indices {
+				if i == 0 {
+					// Ignore checking the 0th index as it simply follows the pointer of
+					// src.
+					//
+					// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+					continue
+				}
+				if t, ok := e.(*types.NamedType); ok {
+					if t.Def == nil {
+						panic(fmt.Errorf("invalid named type %q; expected underlying type definition, got nil", t))
+					}
+					e = t.Def
+				}
+				switch t := e.(type) {
+				case *types.PointerType:
+					// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+					panic("unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep")
+				case *types.ArrayType:
+					e = t.Elem
+				case *types.StructType:
+					idx, ok := index.(*constant.Int)
+					if !ok {
+						panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
+					}
+					e = t.Fields[idx.Int64()]
+				default:
+					panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
+				}
+			}
+			typ := types.NewPointer(e)
+			inst.Typ = typ
+			inst.Elem = elem
+			inst.Src = src
+			inst.Indices = indices
 
 		// Conversion instructions
 		case *ast.InstTrunc:

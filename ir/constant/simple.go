@@ -28,7 +28,7 @@ type Int struct {
 func NewInt(x int64, typ types.Type) *Int {
 	t, ok := typ.(*types.IntType)
 	if !ok {
-		panic(fmt.Sprintf("invalid integer constant type; expected *types.IntType, got %T", typ))
+		panic(fmt.Errorf("invalid integer constant type; expected *types.IntType, got %T", typ))
 	}
 	return &Int{Typ: t, X: big.NewInt(x)}
 }
@@ -45,11 +45,11 @@ func NewIntFromString(s string, typ types.Type) *Int {
 		case "1", "true":
 			c.X.SetInt64(1)
 		default:
-			panic(fmt.Sprintf("invalid integer constant %q for type i1", s))
+			panic(fmt.Errorf("invalid integer constant %q for type i1", s))
 		}
 		return c
 	} else if s == "true" || s == "false" {
-		panic(fmt.Sprintf("invalid integer constant %q for type %s", s, typ))
+		panic(fmt.Errorf("invalid integer constant %q for type %s", s, typ))
 	}
 
 	// Parse decimal or hexadecimal integer constant.
@@ -66,7 +66,7 @@ func NewIntFromString(s string, typ types.Type) *Int {
 		base = 16
 	}
 	if _, ok := c.X.SetString(s, base); !ok {
-		panic(fmt.Sprintf("unable to parse constant %q of type %s", s, typ))
+		panic(fmt.Errorf("unable to parse constant %q of type %s", s, typ))
 	}
 	return c
 }
@@ -113,7 +113,7 @@ type Float struct {
 func NewFloat(x float64, typ types.Type) *Float {
 	t, ok := typ.(*types.FloatType)
 	if !ok {
-		panic(fmt.Sprintf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
+		panic(fmt.Errorf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
 	}
 	return &Float{Typ: t, X: big.NewFloat(x)}
 }
@@ -124,11 +124,11 @@ func NewFloatFromString(s string, typ types.Type) *Float {
 	// Parse floating-point constant.
 	t, ok := typ.(*types.FloatType)
 	if !ok {
-		panic(fmt.Sprintf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
+		panic(fmt.Errorf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
 	}
 	c := &Float{X: &big.Float{}, Typ: t}
 	if _, ok := c.X.SetString(s); !ok {
-		panic(fmt.Sprintf("unable to parse floating-point constant %q", s))
+		panic(fmt.Errorf("unable to parse floating-point constant %q", s))
 	}
 
 	// TODO: Implement support for the following floating-point representation:
@@ -138,11 +138,11 @@ func NewFloatFromString(s string, typ types.Type) *Float {
 	switch t.Kind {
 	case types.FloatKindIEEE_32:
 		if x, acc := c.X.Float32(); acc != big.Exact {
-			panic(fmt.Sprintf(`invalid floating-point constant %q for type %s; precision loss ("%g")`, s, typ, x))
+			panic(fmt.Errorf(`invalid floating-point constant %q for type %s; precision loss ("%g")`, s, typ, x))
 		}
 	case types.FloatKindIEEE_64:
 		if x, acc := c.X.Float64(); acc != big.Exact {
-			panic(fmt.Sprintf(`invalid floating-point constant %q for type %s; precision loss ("%g")`, s, typ, x))
+			panic(fmt.Errorf(`invalid floating-point constant %q for type %s; precision loss ("%g")`, s, typ, x))
 		}
 	}
 	return c
@@ -194,7 +194,7 @@ type Null struct {
 func NewNull(typ types.Type) *Null {
 	t, ok := typ.(*types.PointerType)
 	if !ok {
-		panic(fmt.Sprintf("invalid null pointer constant type; expected *types.PointerType, got %T", typ))
+		panic(fmt.Errorf("invalid null pointer constant type; expected *types.PointerType, got %T", typ))
 	}
 	return &Null{Typ: t}
 }

@@ -272,7 +272,7 @@ type InstPhi struct {
 // NewPhi returns a new phi instruction based on the given incoming values.
 func NewPhi(incs ...*Incoming) *InstPhi {
 	if len(incs) < 1 {
-		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
+		panic(fmt.Errorf("invalid number of incoming values; expected > 0, got %d", len(incs)))
 	}
 	typ := incs[0].X.Type()
 	return &InstPhi{
@@ -450,11 +450,11 @@ type InstCall struct {
 func NewCall(callee value.Named, args ...value.Value) *InstCall {
 	typ, ok := callee.Type().(*types.PointerType)
 	if !ok {
-		panic(fmt.Sprintf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+		panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
 	}
 	sig, ok := typ.Elem.(*types.FuncType)
 	if !ok {
-		panic(fmt.Sprintf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
+		panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
 	}
 	return &InstCall{
 		Callee: callee,
