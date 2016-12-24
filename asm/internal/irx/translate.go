@@ -724,8 +724,9 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSelect, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.Cond = m.irValue(oldInst.Cond)
+			inst.X = m.irValue(oldInst.X)
+			inst.Y = m.irValue(oldInst.Y)
 		case *ast.InstCall:
 			inst, ok := v.(*ir.InstCall)
 			if !ok {
