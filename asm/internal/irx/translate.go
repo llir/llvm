@@ -832,7 +832,10 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 		term.Successors = successors
 		block.Term = term
 	case *ast.TermUnreachable:
-		panic("not yet implemented")
+		term := &ir.TermUnreachable{
+			Parent: block,
+		}
+		block.Term = term
 	default:
 		panic(fmt.Errorf("support for terminator %T not yet implemented", oldTerm))
 	}
