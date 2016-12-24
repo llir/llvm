@@ -705,8 +705,20 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstPhi, got %T", v))
 			}
-			_ = inst
-			panic("not yet implemented")
+			inst.Typ = m.irType(oldInst.Type)
+			for _, oldInc := range oldInst.Incs {
+				x := m.irValue(oldInc.X)
+				v := m.getLocal(oldInc.Pred.GetName())
+				pred, ok := v.(*ir.BasicBlock)
+				if !ok {
+					panic(fmt.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v))
+				}
+				inc := &ir.Incoming{
+					X:    x,
+					Pred: pred,
+				}
+				inst.Incs = append(inst.Incs, inc)
+			}
 		case *ast.InstSelect:
 			inst, ok := v.(*ir.InstSelect)
 			if !ok {
