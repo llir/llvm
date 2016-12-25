@@ -81,6 +81,8 @@ import "fmt"
 //    *ir.InstCall     (https://godoc.org/github.com/llir/llvm/ir#InstCall)
 type Instruction interface {
 	fmt.Stringer
-	// Parent returns the parent basic block of the instruction.
-	Parent() *BasicBlock
+	// GetParent returns the parent basic block of the instruction.
+	GetParent() *BasicBlock
+	// SetParent sets the parent basic block of the instruction.
+	SetParent(parent *BasicBlock)
 }

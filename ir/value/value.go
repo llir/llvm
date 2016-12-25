@@ -23,13 +23,13 @@ type Value interface {
 //
 //    *ir.Global       (https://godoc.org/github.com/llir/llvm/ir#Global)
 //    *ir.Function     (https://godoc.org/github.com/llir/llvm/ir#Function)
-//    *types.Param     (https://godoc.org/github.com/llir/llvm/ir/types#Param)
+//    *ir.Param        (https://godoc.org/github.com/llir/llvm/ir#Param)
 //    *ir.BasicBlock   (https://godoc.org/github.com/llir/llvm/ir#BasicBlock)
 //    ir.Instruction   (https://godoc.org/github.com/llir/llvm/ir#Instruction)
 type Named interface {
 	Value
-	// Name returns the name of the value.
-	Name() string
+	// GetName returns the name of the value.
+	GetName() string
 	// SetName sets the name of the value.
 	SetName(name string)
 }

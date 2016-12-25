@@ -19,11 +19,11 @@ import (
 //    http://llvm.org/docs/LangRef.html#icmp-instruction
 type ExprICmp struct {
 	// Type of the constant expression.
-	typ types.Type
+	Typ types.Type
 	// Integer condition code.
-	cond IntPred
+	Cond IntPred
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewICmp returns a new icmp expression based on the given integer condition
@@ -31,25 +31,29 @@ type ExprICmp struct {
 func NewICmp(cond IntPred, x, y Constant) *ExprICmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
-		typ = types.NewVector(types.I1, t.Len())
+		typ = types.NewVector(types.I1, t.Len)
 	}
-	return &ExprICmp{typ: typ, cond: cond, x: x, y: y}
+	return &ExprICmp{
+		Typ:  typ,
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprICmp) Type() types.Type {
-	return expr.typ
+	return expr.Typ
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprICmp) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("icmp %s (%s %s, %s %s)",
-		expr.Cond(),
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.Cond,
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -59,21 +63,6 @@ func (*ExprICmp) Immutable() {}
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprICmp) Simplify() Constant {
 	panic("not yet implemented")
-}
-
-// Cond returns the integer condition code of the icmp expression.
-func (expr *ExprICmp) Cond() IntPred {
-	return expr.cond
-}
-
-// X returns the x operand of the icmp expression.
-func (expr *ExprICmp) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the icmp expression.
-func (expr *ExprICmp) Y() Constant {
-	return expr.y
 }
 
 // IntPred represents the set of condition codes of the icmp expression.
@@ -122,11 +111,11 @@ func (cond IntPred) String() string {
 //    http://llvm.org/docs/LangRef.html#fcmp-instruction
 type ExprFCmp struct {
 	// Type of the constant expression.
-	typ types.Type
+	Typ types.Type
 	// Floating-point condition code.
-	cond FloatPred
+	Cond FloatPred
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
@@ -134,25 +123,29 @@ type ExprFCmp struct {
 func NewFCmp(cond FloatPred, x, y Constant) *ExprFCmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
-		typ = types.NewVector(types.I1, t.Len())
+		typ = types.NewVector(types.I1, t.Len)
 	}
-	return &ExprFCmp{typ: typ, cond: cond, x: x, y: y}
+	return &ExprFCmp{
+		Typ:  typ,
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprFCmp) Type() types.Type {
-	return expr.typ
+	return expr.Typ
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFCmp) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fcmp %s (%s %s, %s %s)",
-		expr.Cond(),
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.Cond,
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -162,21 +155,6 @@ func (*ExprFCmp) Immutable() {}
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprFCmp) Simplify() Constant {
 	panic("not yet implemented")
-}
-
-// Cond returns the floating-point condition code of the fcmp expression.
-func (expr *ExprFCmp) Cond() FloatPred {
-	return expr.cond
-}
-
-// X returns the x operand of the fcmp expression.
-func (expr *ExprFCmp) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the fcmp expression.
-func (expr *ExprFCmp) Y() Constant {
-	return expr.y
 }
 
 // FloatPred represents the set of condition codes of the fcmp expression.
@@ -237,32 +215,35 @@ func (cond FloatPred) String() string {
 //    http://llvm.org/docs/LangRef.html#select-instruction
 type ExprSelect struct {
 	// Selection condition.
-	cond Constant
+	Cond Constant
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewSelect returns a new select expression based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y Constant) *ExprSelect {
-	return &ExprSelect{cond: cond, x: x, y: y}
+	return &ExprSelect{
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprSelect) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprSelect) Ident() string {
-	cond, x, y := expr.Cond(), expr.X(), expr.Y()
 	return fmt.Sprintf("select (%s %s, %s %s, %s %s)",
-		cond.Type(),
-		cond.Ident(),
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.Cond.Type(),
+		expr.Cond.Ident(),
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -272,19 +253,4 @@ func (*ExprSelect) Immutable() {}
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprSelect) Simplify() Constant {
 	panic("not yet implemented")
-}
-
-// Cond returns the selection condition of the select expression.
-func (expr *ExprSelect) Cond() Constant {
-	return expr.cond
-}
-
-// X returns the x operand of the select expression.
-func (expr *ExprSelect) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the select expression.
-func (expr *ExprSelect) Y() Constant {
-	return expr.y
 }

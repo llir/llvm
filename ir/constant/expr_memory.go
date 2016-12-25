@@ -20,13 +20,13 @@ import (
 //    http://llvm.org/docs/LangRef.html#getelementptr-instruction
 type ExprGetElementPtr struct {
 	// Type of the constant expression.
-	typ types.Type
+	Typ *types.PointerType
 	// Source address element type.
-	elem types.Type
+	Elem types.Type
 	// Source address.
-	src Constant
+	Src Constant
 	// Element indices.
-	indices []Constant
+	Indices []Constant
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
@@ -34,9 +34,9 @@ type ExprGetElementPtr struct {
 func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
 	srcType, ok := src.Type().(*types.PointerType)
 	if !ok {
-		panic(fmt.Sprintf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
+		panic(fmt.Errorf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
-	elem := srcType.Elem()
+	elem := srcType.Elem
 	e := elem
 	for i, index := range indices {
 		if i == 0 {
@@ -47,45 +47,49 @@ func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
 			continue
 		}
 		if t, ok := e.(*types.NamedType); ok {
-			e, ok = t.Def()
-			if !ok {
-				panic(fmt.Sprintf("invalid named type %q; expected underlying type definition, got nil", t))
+			if t.Def == nil {
+				panic(fmt.Errorf("invalid named type %q; expected underlying type definition, got nil", t))
 			}
+			e = t.Def
 		}
 		switch t := e.(type) {
 		case *types.PointerType:
 			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
 			panic("unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep")
 		case *types.ArrayType:
-			e = t.Elem()
+			e = t.Elem
 		case *types.StructType:
 			idx, ok := index.(*Int)
 			if !ok {
-				panic(fmt.Sprintf("invalid index type for structure element; expected *constant.Int, got %T", index))
+				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
 			}
-			e = t.Fields()[idx.Int64()]
+			e = t.Fields[idx.Int64()]
 		default:
-			panic(fmt.Sprintf("support for indexing element type %T not yet implemented", e))
+			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
 		}
 	}
 	typ := types.NewPointer(e)
-	return &ExprGetElementPtr{typ: typ, elem: elem, src: src, indices: indices}
+	return &ExprGetElementPtr{
+		Typ:     typ,
+		Elem:    elem,
+		Src:     src,
+		Indices: indices,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprGetElementPtr) Type() types.Type {
-	return expr.typ
+	return expr.Typ
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprGetElementPtr) Ident() string {
 	buf := &bytes.Buffer{}
-	src := expr.Src()
 	fmt.Fprintf(buf, "getelementptr (%s, %s %s",
-		expr.elem,
-		src.Type(),
-		src.Ident())
-	for _, index := range expr.Indices() {
+		expr.Elem,
+		expr.Src.Type(),
+		expr.Src.Ident())
+	for _, index := range expr.Indices {
 		fmt.Fprintf(buf, ", %s %s",
 			index.Type(),
 			index.Ident())
@@ -101,24 +105,4 @@ func (*ExprGetElementPtr) Immutable() {}
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprGetElementPtr) Simplify() Constant {
 	panic("not yet implemented")
-}
-
-// Src returns the source address of the getelementptr expression.
-func (expr *ExprGetElementPtr) Src() Constant {
-	return expr.src
-}
-
-// SetSrc sets the source address of the getelementptr expression.
-func (expr *ExprGetElementPtr) SetSrc(src Constant) {
-	expr.src = src
-}
-
-// Indices returns the element indices of the getelementptr expression.
-func (expr *ExprGetElementPtr) Indices() []Constant {
-	return expr.indices
-}
-
-// SetIndices sets the element indices of the getelementptr expression.
-func (expr *ExprGetElementPtr) SetIndices(indices []Constant) {
-	expr.indices = indices
 }

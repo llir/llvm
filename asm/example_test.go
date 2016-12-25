@@ -18,125 +18,136 @@ func Example() {
 	// Output:
 	//
 	// &ir.Module{
-	//     types:   nil,
-	//     globals: {
+	//     Types:   nil,
+	//     Globals: {
 	//         &ir.Global{
-	//             name: "seed",
-	//             typ:  &types.PointerType{
-	//                 elem:  &types.IntType{size:32},
-	//                 space: 0,
+	//             Name: "seed",
+	//             Typ:  &types.PointerType{
+	//                 Elem:      &types.IntType{Size:32},
+	//                 AddrSpace: 0,
 	//             },
-	//             content: &types.IntType{size:32},
-	//             init:    &constant.Int{
-	//                 typ: &types.IntType{(CYCLIC REFERENCE)},
-	//                 x:   &big.Int{},
+	//             Content: &types.IntType{Size:32},
+	//             Init:    &constant.Int{
+	//                 Typ: &types.IntType{(CYCLIC REFERENCE)},
+	//                 X:   &big.Int{},
 	//             },
-	//             isConst: false,
+	//             IsConst: false,
 	//         },
 	//     },
-	//     funcs: {
+	//     Funcs: {
 	//         &ir.Function{
-	//             parent: &ir.Module{(CYCLIC REFERENCE)},
-	//             name:   "abs",
-	//             typ:    &types.PointerType{
-	//                 elem: &types.FuncType{
-	//                     ret:    &types.IntType{size:32},
-	//                     params: {
+	//             Parent: &ir.Module{(CYCLIC REFERENCE)},
+	//             Name:   "abs",
+	//             Typ:    &types.PointerType{
+	//                 Elem: &types.FuncType{
+	//                     Ret:    &types.IntType{Size:32},
+	//                     Params: {
 	//                         &types.Param{
-	//                             name: "x",
-	//                             typ:  &types.IntType{size:32},
+	//                             Name: "x",
+	//                             Typ:  &types.IntType{Size:32},
 	//                         },
 	//                     },
-	//                     variadic: false,
+	//                     Variadic: false,
 	//                 },
-	//                 space: 0,
+	//                 AddrSpace: 0,
 	//             },
-	//             sig: &types.FuncType{
-	//                 ret:    &types.IntType{size:32},
-	//                 params: {
+	//             Sig: &types.FuncType{
+	//                 Ret:    &types.IntType{Size:32},
+	//                 Params: {
 	//                     &types.Param{
-	//                         name: "x",
-	//                         typ:  &types.IntType{size:32},
+	//                         Name: "x",
+	//                         Typ:  &types.IntType{Size:32},
 	//                     },
 	//                 },
-	//                 variadic: false,
+	//                 Variadic: false,
 	//             },
-	//             blocks: nil,
+	//             Params: {
+	//                 &ir.Param{
+	//                     Param: &types.Param{
+	//                         Name: "x",
+	//                         Typ:  &types.IntType{Size:32},
+	//                     },
+	//                 },
+	//             },
+	//             Blocks: nil,
 	//         },
 	//         &ir.Function{
-	//             parent: &ir.Module{(CYCLIC REFERENCE)},
-	//             name:   "rand",
-	//             typ:    &types.PointerType{
-	//                 elem: &types.FuncType{
-	//                     ret:      &types.IntType{size:32},
-	//                     params:   nil,
-	//                     variadic: false,
+	//             Parent: &ir.Module{(CYCLIC REFERENCE)},
+	//             Name:   "rand",
+	//             Typ:    &types.PointerType{
+	//                 Elem: &types.FuncType{
+	//                     Ret:    &types.IntType{Size:32},
+	//                     Params: {
+	//                     },
+	//                     Variadic: false,
 	//                 },
-	//                 space: 0,
+	//                 AddrSpace: 0,
 	//             },
-	//             sig: &types.FuncType{
-	//                 ret:      &types.IntType{size:32},
-	//                 params:   nil,
-	//                 variadic: false,
+	//             Sig: &types.FuncType{
+	//                 Ret:    &types.IntType{Size:32},
+	//                 Params: {
+	//                 },
+	//                 Variadic: false,
 	//             },
-	//             blocks: {
+	//             Params: nil,
+	//             Blocks: {
 	//                 &ir.BasicBlock{
-	//                     parent: &ir.Function{(CYCLIC REFERENCE)},
-	//                     name:   "0",
-	//                     insts:  {
+	//                     Parent: &ir.Function{(CYCLIC REFERENCE)},
+	//                     Name:   "0",
+	//                     Insts:  {
 	//                         &ir.InstLoad{
-	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             name:   "1",
-	//                             typ:    &types.IntType{size:32},
-	//                             src:    &ir.Global{(CYCLIC REFERENCE)},
+	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Name:   "1",
+	//                             Typ:    &types.IntType{(CYCLIC REFERENCE)},
+	//                             Src:    &ir.Global{(CYCLIC REFERENCE)},
 	//                         },
 	//                         &ir.InstMul{
-	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             name:   "2",
-	//                             x:      &ir.InstLoad{(CYCLIC REFERENCE)},
-	//                             y:      &constant.Int{
-	//                                 typ: &types.IntType{size:32},
-	//                                 x:   &big.Int{
+	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Name:   "2",
+	//                             X:      &ir.InstLoad{(CYCLIC REFERENCE)},
+	//                             Y:      &constant.Int{
+	//                                 Typ: &types.IntType{Size:32},
+	//                                 X:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x15a4e35},
 	//                                 },
 	//                             },
 	//                         },
 	//                         &ir.InstAdd{
-	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             name:   "3",
-	//                             x:      &ir.InstMul{(CYCLIC REFERENCE)},
-	//                             y:      &constant.Int{
-	//                                 typ: &types.IntType{size:32},
-	//                                 x:   &big.Int{
+	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Name:   "3",
+	//                             X:      &ir.InstMul{(CYCLIC REFERENCE)},
+	//                             Y:      &constant.Int{
+	//                                 Typ: &types.IntType{Size:32},
+	//                                 X:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x1},
 	//                                 },
 	//                             },
 	//                         },
 	//                         &ir.InstStore{
-	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             src:    &ir.InstAdd{(CYCLIC REFERENCE)},
-	//                             dst:    &ir.Global{(CYCLIC REFERENCE)},
+	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Src:    &ir.InstAdd{(CYCLIC REFERENCE)},
+	//                             Dst:    &ir.Global{(CYCLIC REFERENCE)},
 	//                         },
 	//                         &ir.InstCall{
-	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             name:   "4",
-	//                             callee: &ir.Function{(CYCLIC REFERENCE)},
-	//                             sig:    &types.FuncType{(CYCLIC REFERENCE)},
-	//                             args:   {
+	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Name:   "4",
+	//                             Callee: &ir.Function{(CYCLIC REFERENCE)},
+	//                             Sig:    &types.FuncType{(CYCLIC REFERENCE)},
+	//                             Args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
 	//                         },
 	//                     },
-	//                     term: &ir.TermRet{
-	//                         parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                         x:      &ir.InstCall{
-	//                             parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             name:   "4",
-	//                             callee: &ir.Function{(CYCLIC REFERENCE)},
-	//                             sig:    &types.FuncType{(CYCLIC REFERENCE)},
-	//                             args:   {
+	//                     Term: &ir.TermRet{
+	//                         Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                         X:      &ir.InstCall{
+	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Name:   "4",
+	//                             Callee: &ir.Function{(CYCLIC REFERENCE)},
+	//                             Sig:    &types.FuncType{(CYCLIC REFERENCE)},
+	//                             Args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
 	//                         },

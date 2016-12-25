@@ -28,8 +28,8 @@ import (
 //    *ir.TermUnreachable   (https://godoc.org/github.com/llir/llvm/ir#TermUnreachable)
 type Terminator interface {
 	Instruction
-	// Successors returns the successor basic blocks of the terminator.
-	Successors() []*BasicBlock
+	// Succs returns the successor basic blocks of the terminator.
+	Succs() []*BasicBlock
 }
 
 // --- [ ret ] -----------------------------------------------------------------
@@ -40,55 +40,43 @@ type Terminator interface {
 //    http://llvm.org/docs/LangRef.html#ret-instruction
 type TermRet struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Return value; or nil if "void" return.
-	x value.Value
+	X value.Value
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
 // return value indicates a "void" return.
 func NewRet(x value.Value) *TermRet {
-	return &TermRet{x: x}
+	return &TermRet{
+		X: x,
+	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermRet) String() string {
-	if x, ok := term.X(); ok {
+	if term.X != nil {
 		return fmt.Sprintf("ret %s %s",
-			x.Type(),
-			x.Ident())
+			term.X.Type(),
+			term.X.Ident())
 	}
 	return "ret void"
 }
 
-// Parent returns the parent basic block of the terminator.
-func (term *TermRet) Parent() *BasicBlock {
-	return term.parent
+// GetParent returns the parent basic block of the terminator.
+func (term *TermRet) GetParent() *BasicBlock {
+	return term.Parent
 }
 
 // SetParent sets the parent basic block of the terminator.
 func (term *TermRet) SetParent(parent *BasicBlock) {
-	term.parent = parent
+	term.Parent = parent
 }
 
-// Successors returns the successor basic blocks of the terminator.
-func (term *TermRet) Successors() []*BasicBlock {
+// Succs returns the successor basic blocks of the terminator.
+func (term *TermRet) Succs() []*BasicBlock {
 	// ret terminators have no successors.
 	return nil
-}
-
-// X returns the return value of the ret terminator and a boolean indicating if
-// a return value was present.
-func (term *TermRet) X() (value.Value, bool) {
-	if term.x != nil {
-		return term.x, true
-	}
-	return nil, false
-}
-
-// SetX sets the return value of the ret terminator.
-func (term *TermRet) SetX(x value.Value) {
-	term.x = x
 }
 
 // --- [ br ] ------------------------------------------------------------------
@@ -99,43 +87,41 @@ func (term *TermRet) SetX(x value.Value) {
 //    http://llvm.org/docs/LangRef.html#br-instruction
 type TermBr struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Target branch.
-	target *BasicBlock
+	Target *BasicBlock
 	// Successors basic blocks.
-	successors []*BasicBlock
+	Successors []*BasicBlock
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
 // branch.
 func NewBr(target *BasicBlock) *TermBr {
 	successors := []*BasicBlock{target}
-	return &TermBr{target: target, successors: successors}
+	return &TermBr{
+		Target:     target,
+		Successors: successors,
+	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermBr) String() string {
-	return fmt.Sprintf("br label %s", term.Target().Ident())
+	return fmt.Sprintf("br label %s", term.Target.Ident())
 }
 
-// Parent returns the parent basic block of the terminator.
-func (term *TermBr) Parent() *BasicBlock {
-	return term.parent
+// GetParent returns the parent basic block of the terminator.
+func (term *TermBr) GetParent() *BasicBlock {
+	return term.Parent
 }
 
 // SetParent sets the parent basic block of the terminator.
 func (term *TermBr) SetParent(parent *BasicBlock) {
-	term.parent = parent
+	term.Parent = parent
 }
 
-// Successors returns the successor basic blocks of the terminator.
-func (term *TermBr) Successors() []*BasicBlock {
-	return term.successors
-}
-
-// Target returns the target branch of the br terminator.
-func (term *TermBr) Target() *BasicBlock {
-	return term.target
+// Succs returns the successor basic blocks of the terminator.
+func (term *TermBr) Succs() []*BasicBlock {
+	return term.Successors
 }
 
 // --- [ conditional br ] ------------------------------------------------------
@@ -146,67 +132,50 @@ func (term *TermBr) Target() *BasicBlock {
 //    http://llvm.org/docs/LangRef.html#br-instruction
 type TermCondBr struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Branching condition.
-	cond value.Value
+	Cond value.Value
 	// Target branch when condition is true.
-	targetTrue *BasicBlock
+	TargetTrue *BasicBlock
 	// Target branch when condition is false.
-	targetFalse *BasicBlock
+	TargetFalse *BasicBlock
 	// Successors basic blocks.
-	successors []*BasicBlock
+	Successors []*BasicBlock
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
 // branching condition and conditional target branches.
 func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
 	successors := []*BasicBlock{targetTrue, targetFalse}
-	return &TermCondBr{cond: cond, targetTrue: targetTrue, targetFalse: targetFalse, successors: successors}
+	return &TermCondBr{
+		Cond:        cond,
+		TargetTrue:  targetTrue,
+		TargetFalse: targetFalse,
+		Successors:  successors,
+	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermCondBr) String() string {
 	return fmt.Sprintf("br i1 %s, label %s, label %s",
-		term.Cond().Ident(),
-		term.TargetTrue().Ident(),
-		term.TargetFalse().Ident())
+		term.Cond.Ident(),
+		term.TargetTrue.Ident(),
+		term.TargetFalse.Ident())
 }
 
-// Parent returns the parent basic block of the terminator.
-func (term *TermCondBr) Parent() *BasicBlock {
-	return term.parent
+// GetParent returns the parent basic block of the terminator.
+func (term *TermCondBr) GetParent() *BasicBlock {
+	return term.Parent
 }
 
 // SetParent sets the parent basic block of the terminator.
 func (term *TermCondBr) SetParent(parent *BasicBlock) {
-	term.parent = parent
+	term.Parent = parent
 }
 
-// Successors returns the successor basic blocks of the terminator.
-func (term *TermCondBr) Successors() []*BasicBlock {
-	return term.successors
-}
-
-// Cond returns the branching condition of the br terminator.
-func (term *TermCondBr) Cond() value.Value {
-	return term.cond
-}
-
-// SetCond sets the branching condition of the br terminator.
-func (term *TermCondBr) SetCond(cond value.Value) {
-	term.cond = cond
-}
-
-// TargetTrue returns the target branch when condition is true of the br
-// terminator.
-func (term *TermCondBr) TargetTrue() *BasicBlock {
-	return term.targetTrue
-}
-
-// TargetFalse returns the target branch when condition is false of the br
-// terminator.
-func (term *TermCondBr) TargetFalse() *BasicBlock {
-	return term.targetFalse
+// Succs returns the successor basic blocks of the terminator.
+func (term *TermCondBr) Succs() []*BasicBlock {
+	return term.Successors
 }
 
 // --- [ switch ] --------------------------------------------------------------
@@ -217,15 +186,15 @@ func (term *TermCondBr) TargetFalse() *BasicBlock {
 //    http://llvm.org/docs/LangRef.html#switch-instruction
 type TermSwitch struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Control variable.
-	x value.Value
+	X value.Value
 	// Default target branch.
-	targetDefault *BasicBlock
+	TargetDefault *BasicBlock
 	// Switch cases.
-	cases []*Case
+	Cases []*Case
 	// Successors basic blocks.
-	successors []*BasicBlock
+	Successors []*BasicBlock
 }
 
 // TODO: Consider renaming x to control to avoid confusion between term.X() and
@@ -236,92 +205,63 @@ type TermSwitch struct {
 func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
 	successors := []*BasicBlock{targetDefault}
 	for _, c := range cases {
-		successors = append(successors, c.target)
+		successors = append(successors, c.Target)
 	}
-	return &TermSwitch{x: x, targetDefault: targetDefault, cases: cases, successors: successors}
+	return &TermSwitch{
+		X:             x,
+		TargetDefault: targetDefault,
+		Cases:         cases,
+		Successors:    successors,
+	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermSwitch) String() string {
 	buf := &bytes.Buffer{}
-	x := term.X()
 	fmt.Fprintf(buf, "switch %s %s, label %s [\n",
-		x.Type(),
-		x.Ident(),
-		term.TargetDefault().Ident())
-	for _, c := range term.Cases() {
-		x := c.X()
+		term.X.Type(),
+		term.X.Ident(),
+		term.TargetDefault.Ident())
+	for _, c := range term.Cases {
 		fmt.Fprintf(buf, "\t\t%s %s, label %s\n",
-			x.Type(),
-			x.Ident(),
-			c.Target().Ident())
+			c.X.Type(),
+			c.X.Ident(),
+			c.Target.Ident())
 	}
 	buf.WriteString("\t]")
 	return buf.String()
 }
 
-// Parent returns the parent basic block of the terminator.
-func (term *TermSwitch) Parent() *BasicBlock {
-	return term.parent
+// GetParent returns the parent basic block of the terminator.
+func (term *TermSwitch) GetParent() *BasicBlock {
+	return term.Parent
 }
 
 // SetParent sets the parent basic block of the terminator.
 func (term *TermSwitch) SetParent(parent *BasicBlock) {
-	term.parent = parent
+	term.Parent = parent
 }
 
-// Successors returns the successor basic blocks of the terminator.
-func (term *TermSwitch) Successors() []*BasicBlock {
-	return term.successors
-}
-
-// X returns the control variable of the switch terminator.
-func (term *TermSwitch) X() value.Value {
-	return term.x
-}
-
-// SetX sets the control variable of the switch terminator.
-func (term *TermSwitch) SetX(x value.Value) {
-	term.x = x
-}
-
-// TargetDefault returns the default target branch of the switch terminator.
-func (term *TermSwitch) TargetDefault() *BasicBlock {
-	return term.targetDefault
-}
-
-// Cases returns the switch cases of the switch terminator.
-func (term *TermSwitch) Cases() []*Case {
-	return term.cases
+// Succs returns the successor basic blocks of the terminator.
+func (term *TermSwitch) Succs() []*BasicBlock {
+	return term.Successors
 }
 
 // Case represents a case of a switch terminator.
 type Case struct {
 	// Case comparand.
-	x *constant.Int
+	X *constant.Int
 	// Case target branch.
-	target *BasicBlock
+	Target *BasicBlock
 }
 
 // NewCase returns a new switch case based on the given case comparand and
 // target branch.
 func NewCase(x *constant.Int, target *BasicBlock) *Case {
-	return &Case{x: x, target: target}
-}
-
-// X returns the case comparand.
-func (c *Case) X() *constant.Int {
-	return c.x
-}
-
-// SetX sets the case comparand.
-func (c *Case) SetX(x *constant.Int) {
-	c.x = x
-}
-
-// Target returns the case target branch.
-func (c *Case) Target() *BasicBlock {
-	return c.target
+	return &Case{
+		X:      x,
+		Target: target,
+	}
 }
 
 // --- [ indirectbr ] ----------------------------------------------------------
@@ -344,7 +284,7 @@ func (c *Case) Target() *BasicBlock {
 //    http://llvm.org/docs/LangRef.html#unreachable-instruction
 type TermUnreachable struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 }
 
 // NewUnreachable returns a new unreachable terminator.
@@ -357,18 +297,18 @@ func (term *TermUnreachable) String() string {
 	return "unreachable"
 }
 
-// Parent returns the parent basic block of the terminator.
-func (term *TermUnreachable) Parent() *BasicBlock {
-	return term.parent
+// GetParent returns the parent basic block of the terminator.
+func (term *TermUnreachable) GetParent() *BasicBlock {
+	return term.Parent
 }
 
 // SetParent sets the parent basic block of the terminator.
 func (term *TermUnreachable) SetParent(parent *BasicBlock) {
-	term.parent = parent
+	term.Parent = parent
 }
 
-// Successors returns the successor basic blocks of the terminator.
-func (term *TermUnreachable) Successors() []*BasicBlock {
+// Succs returns the successor basic blocks of the terminator.
+func (term *TermUnreachable) Succs() []*BasicBlock {
 	// unreachable terminators have no successors.
 	return nil
 }

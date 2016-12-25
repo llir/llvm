@@ -21,27 +21,29 @@ import (
 //    http://llvm.org/docs/LangRef.html#add-instruction
 type ExprAdd struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewAdd returns a new add expression based on the given operands.
 func NewAdd(x, y Constant) *ExprAdd {
-	return &ExprAdd{x: x, y: y}
+	return &ExprAdd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprAdd) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprAdd) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("add (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -53,16 +55,6 @@ func (expr *ExprAdd) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the add expression.
-func (expr *ExprAdd) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the add expression.
-func (expr *ExprAdd) Y() Constant {
-	return expr.y
-}
-
 // --- [ fadd ] ----------------------------------------------------------------
 
 // ExprFAdd represents a floating-point addition expression.
@@ -71,27 +63,29 @@ func (expr *ExprAdd) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#fadd-instruction
 type ExprFAdd struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewFAdd returns a new fadd expression based on the given operands.
 func NewFAdd(x, y Constant) *ExprFAdd {
-	return &ExprFAdd{x: x, y: y}
+	return &ExprFAdd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprFAdd) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFAdd) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fadd (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -103,16 +97,6 @@ func (expr *ExprFAdd) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the fadd expression.
-func (expr *ExprFAdd) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the fadd expression.
-func (expr *ExprFAdd) Y() Constant {
-	return expr.y
-}
-
 // --- [ sub ] -----------------------------------------------------------------
 
 // ExprSub represents a subtraction expression.
@@ -121,27 +105,29 @@ func (expr *ExprFAdd) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#sub-instruction
 type ExprSub struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewSub returns a new sub expression based on the given operands.
 func NewSub(x, y Constant) *ExprSub {
-	return &ExprSub{x: x, y: y}
+	return &ExprSub{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprSub) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprSub) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("sub (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -153,16 +139,6 @@ func (expr *ExprSub) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the sub expression.
-func (expr *ExprSub) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the sub expression.
-func (expr *ExprSub) Y() Constant {
-	return expr.y
-}
-
 // --- [ fsub ] ----------------------------------------------------------------
 
 // ExprFSub represents a floating-point subtraction expression.
@@ -171,27 +147,29 @@ func (expr *ExprSub) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#fsub-instruction
 type ExprFSub struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewFSub returns a new fsub expression based on the given operands.
 func NewFSub(x, y Constant) *ExprFSub {
-	return &ExprFSub{x: x, y: y}
+	return &ExprFSub{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprFSub) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFSub) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fsub (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -203,16 +181,6 @@ func (expr *ExprFSub) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the fsub expression.
-func (expr *ExprFSub) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the fsub expression.
-func (expr *ExprFSub) Y() Constant {
-	return expr.y
-}
-
 // --- [ mul ] -----------------------------------------------------------------
 
 // ExprMul represents a multiplication expression.
@@ -221,27 +189,29 @@ func (expr *ExprFSub) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#mul-instruction
 type ExprMul struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewMul returns a new mul expression based on the given operands.
 func NewMul(x, y Constant) *ExprMul {
-	return &ExprMul{x: x, y: y}
+	return &ExprMul{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprMul) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprMul) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("mul (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -253,16 +223,6 @@ func (expr *ExprMul) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the mul expression.
-func (expr *ExprMul) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the mul expression.
-func (expr *ExprMul) Y() Constant {
-	return expr.y
-}
-
 // --- [ fmul ] ----------------------------------------------------------------
 
 // ExprFMul represents a floating-point multiplication expression.
@@ -271,27 +231,29 @@ func (expr *ExprMul) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#fmul-instruction
 type ExprFMul struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewFMul returns a new fmul expression based on the given operands.
 func NewFMul(x, y Constant) *ExprFMul {
-	return &ExprFMul{x: x, y: y}
+	return &ExprFMul{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprFMul) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFMul) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fmul (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -303,16 +265,6 @@ func (expr *ExprFMul) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the fmul expression.
-func (expr *ExprFMul) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the fmul expression.
-func (expr *ExprFMul) Y() Constant {
-	return expr.y
-}
-
 // --- [ udiv ] ----------------------------------------------------------------
 
 // ExprUDiv represents an unsigned division expression.
@@ -321,27 +273,29 @@ func (expr *ExprFMul) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#udiv-instruction
 type ExprUDiv struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewUDiv returns a new udiv expression based on the given operands.
 func NewUDiv(x, y Constant) *ExprUDiv {
-	return &ExprUDiv{x: x, y: y}
+	return &ExprUDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprUDiv) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprUDiv) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("udiv (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -353,16 +307,6 @@ func (expr *ExprUDiv) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the udiv expression.
-func (expr *ExprUDiv) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the udiv expression.
-func (expr *ExprUDiv) Y() Constant {
-	return expr.y
-}
-
 // --- [ sdiv ] ----------------------------------------------------------------
 
 // ExprSDiv represents a signed division expression.
@@ -371,27 +315,29 @@ func (expr *ExprUDiv) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#sdiv-instruction
 type ExprSDiv struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewSDiv returns a new sdiv expression based on the given operands.
 func NewSDiv(x, y Constant) *ExprSDiv {
-	return &ExprSDiv{x: x, y: y}
+	return &ExprSDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprSDiv) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprSDiv) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("sdiv (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -403,16 +349,6 @@ func (expr *ExprSDiv) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the sdiv expression.
-func (expr *ExprSDiv) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the sdiv expression.
-func (expr *ExprSDiv) Y() Constant {
-	return expr.y
-}
-
 // --- [ fdiv ] ----------------------------------------------------------------
 
 // ExprFDiv represents a floating-point division expression.
@@ -421,27 +357,29 @@ func (expr *ExprSDiv) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#fdiv-instruction
 type ExprFDiv struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewFDiv returns a new fdiv expression based on the given operands.
 func NewFDiv(x, y Constant) *ExprFDiv {
-	return &ExprFDiv{x: x, y: y}
+	return &ExprFDiv{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprFDiv) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFDiv) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("fdiv (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -453,16 +391,6 @@ func (expr *ExprFDiv) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the fdiv expression.
-func (expr *ExprFDiv) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the fdiv expression.
-func (expr *ExprFDiv) Y() Constant {
-	return expr.y
-}
-
 // --- [ urem ] ----------------------------------------------------------------
 
 // ExprURem represents an unsigned remainder expression.
@@ -471,27 +399,29 @@ func (expr *ExprFDiv) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#urem-instruction
 type ExprURem struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewURem returns a new urem expression based on the given operands.
 func NewURem(x, y Constant) *ExprURem {
-	return &ExprURem{x: x, y: y}
+	return &ExprURem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprURem) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprURem) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("urem (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -503,16 +433,6 @@ func (expr *ExprURem) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the urem expression.
-func (expr *ExprURem) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the urem expression.
-func (expr *ExprURem) Y() Constant {
-	return expr.y
-}
-
 // --- [ srem ] ----------------------------------------------------------------
 
 // ExprSRem represents a signed remainder expression.
@@ -521,27 +441,29 @@ func (expr *ExprURem) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#srem-instruction
 type ExprSRem struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewSRem returns a new srem expression based on the given operands.
 func NewSRem(x, y Constant) *ExprSRem {
-	return &ExprSRem{x: x, y: y}
+	return &ExprSRem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprSRem) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprSRem) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("srem (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -553,16 +475,6 @@ func (expr *ExprSRem) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// X returns the x operand of the srem expression.
-func (expr *ExprSRem) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the srem expression.
-func (expr *ExprSRem) Y() Constant {
-	return expr.y
-}
-
 // --- [ frem ] ----------------------------------------------------------------
 
 // ExprFRem represents a floating-point remainder expression.
@@ -571,27 +483,29 @@ func (expr *ExprSRem) Y() Constant {
 //    http://llvm.org/docs/LangRef.html#frem-instruction
 type ExprFRem struct {
 	// Operands.
-	x, y Constant
+	X, Y Constant
 }
 
 // NewFRem returns a new frem expression based on the given operands.
 func NewFRem(x, y Constant) *ExprFRem {
-	return &ExprFRem{x: x, y: y}
+	return &ExprFRem{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the constant expression.
 func (expr *ExprFRem) Type() types.Type {
-	return expr.x.Type()
+	return expr.X.Type()
 }
 
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFRem) Ident() string {
-	x, y := expr.X(), expr.Y()
 	return fmt.Sprintf("frem (%s %s, %s %s)",
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		expr.X.Type(),
+		expr.X.Ident(),
+		expr.Y.Type(),
+		expr.Y.Ident())
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -601,14 +515,4 @@ func (*ExprFRem) Immutable() {}
 // Simplify returns a simplified version of the constant expression.
 func (expr *ExprFRem) Simplify() Constant {
 	panic("not yet implemented")
-}
-
-// X returns the x operand of the frem expression.
-func (expr *ExprFRem) X() Constant {
-	return expr.x
-}
-
-// Y returns the y operand of the frem expression.
-func (expr *ExprFRem) Y() Constant {
-	return expr.y
 }

@@ -77,6 +77,7 @@ var (
 var (
 	_ value.Named = &ir.Global{}
 	_ value.Named = &ir.Function{}
+	_ value.Named = &ir.Param{}
 	_ value.Named = &ir.BasicBlock{}
 	// Binary instructions
 	_ value.Named = &ir.InstAdd{}

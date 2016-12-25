@@ -19,19 +19,21 @@ import (
 // considered LLVM IR values of label type.
 type BasicBlock struct {
 	// Parent function of the basic block.
-	parent *Function
+	Parent *Function
 	// Label name of the basic block; or empty if unnamed basic block.
-	name string
+	Name string
 	// Non-branching instructions of the basic block.
-	insts []Instruction
+	Insts []Instruction
 	// Terminator of the basic block.
-	term Terminator
+	Term Terminator
 }
 
 // NewBlock returns a new basic block based on the given label name. An empty
 // label name indicates an unnamed basic block.
 func NewBlock(name string) *BasicBlock {
-	return &BasicBlock{name: name}
+	return &BasicBlock{
+		Name: name,
+	}
 }
 
 // Type returns the type of the basic block.
@@ -41,81 +43,45 @@ func (block *BasicBlock) Type() types.Type {
 
 // Ident returns the identifier associated with the basic block.
 func (block *BasicBlock) Ident() string {
-	return enc.Local(block.name)
+	return enc.Local(block.Name)
 }
 
-// Name returns the label name of the basic block.
-func (block *BasicBlock) Name() string {
-	return block.name
+// GetName returns the label name of the basic block.
+func (block *BasicBlock) GetName() string {
+	return block.Name
 }
 
 // SetName sets the label name of the basic block.
 func (block *BasicBlock) SetName(name string) {
-	block.name = name
+	block.Name = name
 }
 
 // String returns the LLVM syntax representation of the basic block.
 func (block *BasicBlock) String() string {
 	buf := &bytes.Buffer{}
-	if isLocalID(block.Name()) {
+	if isLocalID(block.Name) {
 
-		fmt.Fprintf(buf, "; <label>:%s\n", enc.EscapeIdent(block.name))
+		fmt.Fprintf(buf, "; <label>:%s\n", enc.EscapeIdent(block.Name))
 	} else {
-		fmt.Fprintf(buf, "%s:\n", enc.EscapeIdent(block.name))
+		fmt.Fprintf(buf, "%s:\n", enc.EscapeIdent(block.Name))
 	}
-	for _, inst := range block.Insts() {
+	for _, inst := range block.Insts {
 		fmt.Fprintf(buf, "\t%s\n", inst)
 	}
-	fmt.Fprintf(buf, "\t%s", block.Term())
+	fmt.Fprintf(buf, "\t%s", block.Term)
 	return buf.String()
-}
-
-// Parent returns the parent function of the basic block.
-func (block *BasicBlock) Parent() *Function {
-	return block.parent
-}
-
-// SetParent sets the parent function of the basic block.
-func (block *BasicBlock) SetParent(parent *Function) {
-	block.parent = parent
-}
-
-// Insts returns the non-branching instructions of the basic block.
-func (block *BasicBlock) Insts() []Instruction {
-	return block.insts
-}
-
-// SetInsts sets the non-branching instructions of the basic block.
-func (block *BasicBlock) SetInsts(insts []Instruction) {
-	block.insts = insts
-}
-
-// Term returns the terminator of the basic block.
-func (block *BasicBlock) Term() Terminator {
-	return block.term
-}
-
-// SetTerm sets the terminator of the basic block.
-func (block *BasicBlock) SetTerm(term Terminator) {
-	if term, ok := term.(parentSetter); ok {
-		term.SetParent(block)
-	}
-	block.term = term
 }
 
 // AppendInst appends the given instruction to the basic block.
 func (block *BasicBlock) AppendInst(inst Instruction) {
-	if inst, ok := inst.(parentSetter); ok {
-		inst.SetParent(block)
-	}
-	block.insts = append(block.insts, inst)
+	inst.SetParent(block)
+	block.Insts = append(block.Insts, inst)
 }
 
-// parentSetter is the interface that wraps the SetParent method of instructions
-// and terminators.
-type parentSetter interface {
-	// SetParent sets the parent basic block of the instruction.
-	SetParent(parent *BasicBlock)
+// SetTerm sets the terminator of the basic block.
+func (block *BasicBlock) SetTerm(term Terminator) {
+	term.SetParent(block)
+	block.Term = term
 }
 
 // --- [ Binary instructions ] -------------------------------------------------
@@ -450,7 +416,7 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 // The callee value may have one of the following underlying types.
 //
 //    *ir.Function
-//    *types.Param
+//    *ir.Param
 func (block *BasicBlock) NewCall(callee value.Named, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	block.AppendInst(inst)

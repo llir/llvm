@@ -5,8 +5,6 @@ package types
 import (
 	"bytes"
 	"fmt"
-
-	"github.com/llir/llvm/internal/enc"
 )
 
 // --- [ function ] ------------------------------------------------------------
@@ -17,31 +15,31 @@ import (
 //    http://llvm.org/docs/LangRef.html#function-type
 type FuncType struct {
 	// Return type.
-	ret Type
+	Ret Type
 	// Function parameters.
-	params []*Param
+	Params []*Param
 	// Variadicity of the function type.
-	variadic bool
+	Variadic bool
 }
 
 // NewFunc returns a new function type based on the given return type and
 // parameters.
 func NewFunc(ret Type, params ...*Param) *FuncType {
-	return &FuncType{ret: ret, params: params}
+	return &FuncType{Ret: ret, Params: params}
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *FuncType) String() string {
 	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s (", t.RetType())
-	for i, param := range t.Params() {
+	fmt.Fprintf(buf, "%s (", t.Ret)
+	for i, param := range t.Params {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(param.Type().String())
+		buf.WriteString(param.Typ.String())
 	}
-	if t.Variadic() {
-		if len(t.params) > 0 {
+	if t.Variadic {
+		if len(t.Params) > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString("...")
@@ -53,90 +51,43 @@ func (t *FuncType) String() string {
 // Equal reports whether t and u are of equal type.
 func (t *FuncType) Equal(u Type) bool {
 	if u, ok := u.(*FuncType); ok {
-		if !t.ret.Equal(u.ret) {
+		if !t.Ret.Equal(u.Ret) {
 			return false
 		}
-		if len(t.params) != len(u.params) {
+		if len(t.Params) != len(u.Params) {
 			return false
 		}
-		for i := range t.params {
-			if !t.params[i].Type().Equal(u.params[i].Type()) {
+		for i, tp := range t.Params {
+			up := u.Params[i]
+			if !tp.Typ.Equal(up.Typ) {
 				return false
 			}
 		}
-		return t.variadic == u.variadic
+		return t.Variadic == u.Variadic
 	}
 	return false
-}
-
-// RetType returns the return type of the function type.
-func (t *FuncType) RetType() Type {
-	return t.ret
-}
-
-// Params returns the function parameters of the function type.
-func (t *FuncType) Params() []*Param {
-	return t.params
-}
-
-// Variadic reports whether the function type is variadic.
-func (t *FuncType) Variadic() bool {
-	return t.variadic
-}
-
-// SetVariadic sets the variadicity of the function type.
-func (t *FuncType) SetVariadic(variadic bool) {
-	t.variadic = variadic
-}
-
-// AppendParam appends the given function parameter to the function type.
-func (t *FuncType) AppendParam(param *Param) {
-	t.params = append(t.params, param)
 }
 
 // NewParam appends a new function parameter to the function type based on the
 // given parameter name and type.
 func (t *FuncType) NewParam(name string, typ Type) *Param {
 	param := NewParam(name, typ)
-	t.AppendParam(param)
+	t.Params = append(t.Params, param)
 	return param
 }
 
 // A Param represents an LLVM IR function parameter.
-//
-// Function parameters may be referenced from instructions (e.g. add), and are
-// thus considered LLVM IR values.
 type Param struct {
 	// Parameter name.
-	name string
+	Name string
 	// Parameter type.
-	typ Type
+	Typ Type
 }
 
 // NewParam returns a new function parameter based on the given parameter name
 // and type.
 func NewParam(name string, typ Type) *Param {
-	return &Param{name: name, typ: typ}
-}
-
-// Type returns the type of the function parameter.
-func (param *Param) Type() Type {
-	return param.typ
-}
-
-// Ident returns the identifier associated with the function parameter.
-func (param *Param) Ident() string {
-	return enc.Local(param.name)
-}
-
-// Name returns the name of the function parameter.
-func (param *Param) Name() string {
-	return param.name
-}
-
-// SetName sets the name of the function parameter.
-func (param *Param) SetName(name string) {
-	param.name = name
+	return &Param{Name: name, Typ: typ}
 }
 
 // --- [ pointer ] -------------------------------------------------------------
@@ -147,45 +98,30 @@ func (param *Param) SetName(name string) {
 //    http://llvm.org/docs/LangRef.html#pointer-type
 type PointerType struct {
 	// Element type.
-	elem Type
+	Elem Type
 	// Address space.
-	space int64
+	AddrSpace int64
 }
 
 // NewPointer returns a new pointer type based on the given element type.
 func NewPointer(elem Type) *PointerType {
-	return &PointerType{elem: elem}
+	return &PointerType{Elem: elem}
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *PointerType) String() string {
-	if t.space != 0 {
-		return fmt.Sprintf("%s addrspace(%d)*", t.Elem(), t.AddrSpace())
+	if t.AddrSpace != 0 {
+		return fmt.Sprintf("%s addrspace(%d)*", t.Elem, t.AddrSpace)
 	}
-	return fmt.Sprintf("%s*", t.Elem())
+	return fmt.Sprintf("%s*", t.Elem)
 }
 
 // Equal reports whether t and u are of equal type.
 func (t *PointerType) Equal(u Type) bool {
 	if u, ok := u.(*PointerType); ok {
-		return t.elem.Equal(u.elem)
+		return t.Elem.Equal(u.Elem) && t.AddrSpace == u.AddrSpace
 	}
 	return false
-}
-
-// Elem returns the element type of the pointer type.
-func (t *PointerType) Elem() Type {
-	return t.elem
-}
-
-// AddrSpace returns the address space of the pointer type.
-func (t *PointerType) AddrSpace() int64 {
-	return t.space
-}
-
-// SetAddrSpace sets the address space of the pointer type.
-func (t *PointerType) SetAddrSpace(space int64) {
-	t.space = space
 }
 
 // --- [ vector ] --------------------------------------------------------------
@@ -196,43 +132,30 @@ func (t *PointerType) SetAddrSpace(space int64) {
 //    http://llvm.org/docs/LangRef.html#vector-type
 type VectorType struct {
 	// Element type.
-	elem Type
+	Elem Type
 	// Vector length.
-	len int64
+	Len int64
 }
 
 // NewVector returns a new vector type based on the given element type and
 // vector length.
 func NewVector(elem Type, len int64) *VectorType {
-	return &VectorType{elem: elem, len: len}
+	return &VectorType{Elem: elem, Len: len}
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *VectorType) String() string {
 	return fmt.Sprintf("<%d x %s>",
-		t.Len(),
-		t.Elem())
+		t.Len,
+		t.Elem)
 }
 
 // Equal reports whether t and u are of equal type.
 func (t *VectorType) Equal(u Type) bool {
 	if u, ok := u.(*VectorType); ok {
-		if !t.elem.Equal(u.elem) {
-			return false
-		}
-		return t.len == u.len
+		return t.Elem.Equal(u.Elem) && t.Len == u.Len
 	}
 	return false
-}
-
-// Elem returns the element type of the vector type.
-func (t *VectorType) Elem() Type {
-	return t.elem
-}
-
-// Len returns the length of the vector type.
-func (t *VectorType) Len() int64 {
-	return t.len
 }
 
 // --- [ array ] ---------------------------------------------------------------
@@ -243,43 +166,30 @@ func (t *VectorType) Len() int64 {
 //    http://llvm.org/docs/LangRef.html#array-type
 type ArrayType struct {
 	// Element type.
-	elem Type
+	Elem Type
 	// Array length.
-	len int64
+	Len int64
 }
 
 // NewArray returns a new array type based on the given element type and array
 // length.
 func NewArray(elem Type, len int64) *ArrayType {
-	return &ArrayType{elem: elem, len: len}
+	return &ArrayType{Elem: elem, Len: len}
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *ArrayType) String() string {
 	return fmt.Sprintf("[%d x %s]",
-		t.Len(),
-		t.Elem())
+		t.Len,
+		t.Elem)
 }
 
 // Equal reports whether t and u are of equal type.
 func (t *ArrayType) Equal(u Type) bool {
 	if u, ok := u.(*ArrayType); ok {
-		if !t.elem.Equal(u.elem) {
-			return false
-		}
-		return t.len == u.len
+		return t.Elem.Equal(u.Elem) && t.Len == u.Len
 	}
 	return false
-}
-
-// Elem returns the element type of the array type.
-func (t *ArrayType) Elem() Type {
-	return t.elem
-}
-
-// Len returns the length of the array type.
-func (t *ArrayType) Len() int64 {
-	return t.len
 }
 
 // --- [ struct ] --------------------------------------------------------------
@@ -290,19 +200,19 @@ func (t *ArrayType) Len() int64 {
 //    http://llvm.org/docs/LangRef.html#structure-type
 type StructType struct {
 	// Struct fields.
-	fields []Type
+	Fields []Type
 }
 
 // NewStruct returns a new struct type based on the given struct fields.
 func NewStruct(fields ...Type) *StructType {
-	return &StructType{fields: fields}
+	return &StructType{Fields: fields}
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *StructType) String() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
-	for i, field := range t.Fields() {
+	for i, field := range t.Fields {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -315,20 +225,16 @@ func (t *StructType) String() string {
 // Equal reports whether t and u are of equal type.
 func (t *StructType) Equal(u Type) bool {
 	if u, ok := u.(*StructType); ok {
-		if len(t.fields) != len(u.fields) {
+		if len(t.Fields) != len(u.Fields) {
 			return false
 		}
-		for i := range t.fields {
-			if !t.fields[i].Equal(u.fields[i]) {
+		for i, tf := range t.Fields {
+			uf := u.Fields[i]
+			if !tf.Equal(uf) {
 				return false
 			}
 		}
 		return true
 	}
 	return false
-}
-
-// Fields returns the struct fields of the struct type.
-func (t *StructType) Fields() []Type {
-	return t.fields
 }

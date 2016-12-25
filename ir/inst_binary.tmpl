@@ -24,36 +24,40 @@ import (
 //    http://llvm.org/docs/LangRef.html#{{ lower .Name }}-instruction
 type Inst{{ .Name }} struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given operands.
 func New{{ .Name }}(x, y value.Value) *Inst{{ .Name }} {
-	return &Inst{{ .Name }}{x: x, y: y}
+	return &Inst{{ .Name }}{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *Inst{{ .Name }}) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *Inst{{ .Name }}) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *Inst{{ .Name }}) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *Inst{{ .Name }}) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *Inst{{ .Name }}) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 
@@ -62,37 +66,17 @@ func (inst *Inst{{ .Name }}) String() string {
 	return fmt.Sprintf("%s = {{ lower .Name }} %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *Inst{{ .Name }}) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *Inst{{ .Name }}) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *Inst{{ .Name }}) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the {{ lower .Name }} instruction.
-func (inst *Inst{{ .Name }}) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 {{- end }}

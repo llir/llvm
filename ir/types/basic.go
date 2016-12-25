@@ -52,30 +52,25 @@ func (t *LabelType) Equal(u Type) bool {
 //    http://llvm.org/docs/LangRef.html#integer-type
 type IntType struct {
 	// Bit size.
-	size int
+	Size int
 }
 
 // NewInt returns a new integer type based on the given bit size.
 func NewInt(size int) *IntType {
-	return &IntType{size: size}
+	return &IntType{Size: size}
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *IntType) String() string {
-	return fmt.Sprintf("i%d", t.size)
+	return fmt.Sprintf("i%d", t.Size)
 }
 
 // Equal reports whether t and u are of equal type.
 func (t *IntType) Equal(u Type) bool {
 	if u, ok := u.(*IntType); ok {
-		return t.size == u.size
+		return t.Size == u.Size
 	}
 	return false
-}
-
-// Size returns the bit size of the integer type.
-func (t *IntType) Size() int {
-	return t.size
 }
 
 // --- [ floating-point ] ------------------------------------------------------
@@ -86,25 +81,20 @@ func (t *IntType) Size() int {
 //    http://llvm.org/docs/LangRef.html#floating-point-types
 type FloatType struct {
 	// Floating-point kind.
-	kind FloatKind
+	Kind FloatKind
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *FloatType) String() string {
-	return t.Kind().String()
+	return t.Kind.String()
 }
 
 // Equal reports whether t and u are of equal type.
 func (t *FloatType) Equal(u Type) bool {
 	if u, ok := u.(*FloatType); ok {
-		return t.kind == u.kind
+		return t.Kind == u.Kind
 	}
 	return false
-}
-
-// Kind returns the kind of the floating-point type.
-func (t *FloatType) Kind() FloatKind {
-	return t.kind
 }
 
 // FloatKind represents the set of floating-point kinds.

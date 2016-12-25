@@ -22,15 +22,15 @@ import (
 //    http://llvm.org/docs/LangRef.html#icmp-instruction
 type InstICmp struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Type of the instruction.
-	typ types.Type
+	Typ types.Type
 	// Integer condition code.
-	cond IntPred
+	Cond IntPred
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewICmp returns a new icmp instruction based on the given integer condition
@@ -38,75 +38,55 @@ type InstICmp struct {
 func NewICmp(cond IntPred, x, y value.Value) *InstICmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
-		typ = types.NewVector(types.I1, t.Len())
+		typ = types.NewVector(types.I1, t.Len)
 	}
-	return &InstICmp{typ: typ, cond: cond, x: x, y: y}
+	return &InstICmp{
+		Typ:  typ,
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstICmp) Type() types.Type {
-	return inst.typ
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstICmp) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstICmp) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstICmp) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstICmp) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstICmp) String() string {
-	x, y := inst.X(), inst.Y()
 	return fmt.Sprintf("%s = icmp %s %s %s, %s",
 		inst.Ident(),
-		inst.Cond(),
-		x.Type(),
-		x.Ident(),
-		y.Ident())
+		inst.Cond,
+		inst.X.Type(),
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstICmp) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstICmp) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstICmp) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// Cond returns the integer condition code of the icmp instruction.
-func (inst *InstICmp) Cond() IntPred {
-	return inst.cond
-}
-
-// X returns the x operand of the icmp instruction.
-func (inst *InstICmp) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the icmp instruction.
-func (inst *InstICmp) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the icmp instruction.
-func (inst *InstICmp) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the icmp instruction.
-func (inst *InstICmp) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // IntPred represents the set of condition codes of the icmp instruction.
@@ -155,15 +135,15 @@ func (cond IntPred) String() string {
 //    http://llvm.org/docs/LangRef.html#fcmp-instruction
 type InstFCmp struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Type of the instruction.
-	typ types.Type
+	Typ types.Type
 	// Floating-point condition code.
-	cond FloatPred
+	Cond FloatPred
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -171,75 +151,55 @@ type InstFCmp struct {
 func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
-		typ = types.NewVector(types.I1, t.Len())
+		typ = types.NewVector(types.I1, t.Len)
 	}
-	return &InstFCmp{typ: typ, cond: cond, x: x, y: y}
+	return &InstFCmp{
+		Typ:  typ,
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstFCmp) Type() types.Type {
-	return inst.typ
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFCmp) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstFCmp) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstFCmp) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstFCmp) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFCmp) String() string {
-	x, y := inst.X(), inst.Y()
 	return fmt.Sprintf("%s = fcmp %s %s %s, %s",
 		inst.Ident(),
-		inst.Cond(),
-		x.Type(),
-		x.Ident(),
-		y.Ident())
+		inst.Cond,
+		inst.X.Type(),
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstFCmp) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstFCmp) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstFCmp) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// Cond returns the floating-point condition code of the fcmp instruction.
-func (inst *InstFCmp) Cond() FloatPred {
-	return inst.cond
-}
-
-// X returns the x operand of the fcmp instruction.
-func (inst *InstFCmp) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the fcmp instruction.
-func (inst *InstFCmp) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the fcmp instruction.
-func (inst *InstFCmp) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the fcmp instruction.
-func (inst *InstFCmp) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // FloatPred represents the set of condition codes of the fcmp instruction.
@@ -300,42 +260,46 @@ func (cond FloatPred) String() string {
 //    http://llvm.org/docs/LangRef.html#phi-instruction
 type InstPhi struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Type of the instruction.
-	typ types.Type
+	Typ types.Type
 	// Incoming values.
-	incs []*Incoming
+	Incs []*Incoming
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
 func NewPhi(incs ...*Incoming) *InstPhi {
 	if len(incs) < 1 {
-		panic(fmt.Sprintf("invalid number of incoming values; expected > 0, got %d", len(incs)))
+		panic(fmt.Errorf("invalid number of incoming values; expected > 0, got %d", len(incs)))
 	}
-	typ := incs[0].x.Type()
-	return &InstPhi{typ: typ, incs: incs}
+	typ := incs[0].X.Type()
+	return &InstPhi{
+		Typ:  typ,
+		Incs: incs,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstPhi) Type() types.Type {
-	return inst.typ
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstPhi) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstPhi) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstPhi) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstPhi) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -344,59 +308,42 @@ func (inst *InstPhi) String() string {
 	fmt.Fprintf(buf, "%s = phi %s ",
 		inst.Ident(),
 		inst.Type())
-	for i, inc := range inst.Incs() {
+	for i, inc := range inst.Incs {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		fmt.Fprintf(buf, "[ %s, %s ]",
-			inc.X().Ident(),
-			inc.Pred().Ident())
+			inc.X.Ident(),
+			inc.Pred.Ident())
 	}
 	return buf.String()
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstPhi) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstPhi) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstPhi) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// Incs returns the incoming values of the phi instruction.
-func (inst *InstPhi) Incs() []*Incoming {
-	return inst.incs
+	inst.Parent = parent
 }
 
 // Incoming represents an incoming value of a phi instruction.
 type Incoming struct {
 	// Incoming value.
-	x value.Value
+	X value.Value
 	// Predecessor basic block of the incoming value.
-	pred *BasicBlock
+	Pred *BasicBlock
 }
 
 // NewIncoming returns a new incoming value based on the given value and
 // predecessor basic block.
 func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
-	return &Incoming{x: x, pred: pred}
-}
-
-// X returns the incoming value.
-func (inc *Incoming) X() value.Value {
-	return inc.x
-}
-
-// SetX sets the incoming value.
-func (inc *Incoming) SetX(x value.Value) {
-	inc.x = x
-}
-
-// Pred returns the predecessor basic block of the incoming value.
-func (inc *Incoming) Pred() *BasicBlock {
-	return inc.pred
+	return &Incoming{
+		X:    x,
+		Pred: pred,
+	}
 }
 
 // --- [ select ] --------------------------------------------------------------
@@ -407,92 +354,66 @@ func (inc *Incoming) Pred() *BasicBlock {
 //    http://llvm.org/docs/LangRef.html#select-instruction
 type InstSelect struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Selection condition.
-	cond value.Value
+	Cond value.Value
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewSelect returns a new select instruction based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y value.Value) *InstSelect {
-	return &InstSelect{cond: cond, x: x, y: y}
+	return &InstSelect{
+		Cond: cond,
+		X:    x,
+		Y:    y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstSelect) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSelect) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstSelect) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstSelect) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstSelect) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSelect) String() string {
-	cond, x, y := inst.Cond(), inst.X(), inst.Y()
 	return fmt.Sprintf("%s = select %s %s, %s %s, %s %s",
 		inst.Ident(),
-		cond.Type(),
-		cond.Ident(),
-		x.Type(),
-		x.Ident(),
-		y.Type(),
-		y.Ident())
+		inst.Cond.Type(),
+		inst.Cond.Ident(),
+		inst.X.Type(),
+		inst.X.Ident(),
+		inst.Y.Type(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstSelect) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstSelect) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstSelect) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// Cond returns the selection condition of the select instruction.
-func (inst *InstSelect) Cond() value.Value {
-	return inst.cond
-}
-
-// SetCond sets the selection condition of the select instruction.
-func (inst *InstSelect) SetCond(cond value.Value) {
-	inst.cond = cond
-}
-
-// X returns the x operand of the select instruction.
-func (inst *InstSelect) X() value.Value {
-	return inst.x
-}
-
-// SetX returns the x operand of the select instruction.
-func (inst *InstSelect) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the select instruction.
-func (inst *InstSelect) Y() value.Value {
-	return inst.y
-}
-
-// SetY returns the y operand of the select instruction.
-func (inst *InstSelect) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // --- [ call ] ----------------------------------------------------------------
@@ -503,20 +424,20 @@ func (inst *InstSelect) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#call-instruction
 type InstCall struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Callee.
 	//
 	// Callee may have one of the following underlying types.
 	//
 	//    *ir.Function
-	//    *types.Param
-	callee value.Named
+	//    *ir.Param
+	Callee value.Named
 	// Callee signature.
-	sig *types.FuncType
+	Sig *types.FuncType
 	// Function arguments.
-	args []value.Value
+	Args []value.Value
 }
 
 // NewCall returns a new call instruction based on the given callee and function
@@ -525,37 +446,42 @@ type InstCall struct {
 // The callee value may have one of the following underlying types.
 //
 //    *ir.Function
-//    *types.Param
+//    *ir.Param
 func NewCall(callee value.Named, args ...value.Value) *InstCall {
 	typ, ok := callee.Type().(*types.PointerType)
 	if !ok {
-		panic(fmt.Sprintf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+		panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
 	}
-	sig, ok := typ.Elem().(*types.FuncType)
+	sig, ok := typ.Elem.(*types.FuncType)
 	if !ok {
-		panic(fmt.Sprintf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem()))
+		panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
 	}
-	return &InstCall{callee: callee, sig: sig, args: args}
+	return &InstCall{
+		Callee: callee,
+		Sig:    sig,
+		Args:   args,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstCall) Type() types.Type {
-	return inst.sig.RetType()
+	return inst.Sig.Ret
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstCall) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstCall) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstCall) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstCall) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -567,8 +493,8 @@ func (inst *InstCall) String() string {
 	}
 	fmt.Fprintf(buf, "call %s %s(",
 		typ,
-		inst.Callee().Ident())
-	for i, arg := range inst.Args() {
+		inst.Callee.Ident())
+	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
@@ -580,34 +506,14 @@ func (inst *InstCall) String() string {
 	return buf.String()
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstCall) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstCall) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstCall) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// Callee returns the callee of the call instruction.
-//
-// The returned callee value may have one of the following underlying types.
-//
-//    *ir.Function
-//    *types.Param
-func (inst *InstCall) Callee() value.Named {
-	return inst.callee
-}
-
-// Args returns the function arguments of the call instruction.
-func (inst *InstCall) Args() []value.Value {
-	return inst.args
-}
-
-// SetArgs sets the function arguments of the call instruction.
-func (inst *InstCall) SetArgs(args []value.Value) {
-	inst.args = args
+	inst.Parent = parent
 }
 
 // --- [ va_arg ] --------------------------------------------------------------

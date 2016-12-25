@@ -24,22 +24,26 @@ import (
 // thus considered LLVM IR values of pointer type.
 type Global struct {
 	// Global variable name.
-	name string
+	Name string
 	// Global variable type.
-	typ *types.PointerType
+	Typ *types.PointerType
 	// Content type.
-	content types.Type
+	Content types.Type
 	// Initial value; or nil if defined externally.
-	init constant.Constant
+	Init constant.Constant
 	// Immutability of the global variable.
-	isConst bool
+	IsConst bool
 }
 
 // NewGlobalDecl returns a new external global variable declaration based on the
 // given global variable name and content type.
 func NewGlobalDecl(name string, content types.Type) *Global {
 	typ := types.NewPointer(content)
-	return &Global{name: name, typ: typ, content: content}
+	return &Global{
+		Name:    name,
+		Typ:     typ,
+		Content: content,
+	}
 }
 
 // NewGlobalDef returns a new global variable definition based on the given
@@ -47,27 +51,32 @@ func NewGlobalDecl(name string, content types.Type) *Global {
 func NewGlobalDef(name string, init constant.Constant) *Global {
 	content := init.Type()
 	typ := types.NewPointer(content)
-	return &Global{name: name, typ: typ, content: content, init: init}
+	return &Global{
+		Name:    name,
+		Typ:     typ,
+		Content: content,
+		Init:    init,
+	}
 }
 
 // Type returns the type of the global variable.
 func (global *Global) Type() types.Type {
-	return global.typ
+	return global.Typ
 }
 
 // Ident returns the identifier associated with the global variable.
 func (global *Global) Ident() string {
-	return enc.Global(global.name)
+	return enc.Global(global.Name)
 }
 
-// Name returns the name of the global variable.
-func (global *Global) Name() string {
-	return global.name
+// GetName returns the name of the global variable.
+func (global *Global) GetName() string {
+	return global.Name
 }
 
 // SetName sets the name of the global variable.
 func (global *Global) SetName(name string) {
-	global.name = name
+	global.Name = name
 }
 
 // Immutable ensures that only constants can be assigned to the
@@ -77,50 +86,20 @@ func (*Global) Immutable() {}
 // String returns the LLVM syntax representation of the global variable.
 func (global *Global) String() string {
 	imm := "global"
-	if global.Const() {
+	if global.IsConst {
 		imm = "constant"
 	}
-	content := global.ContentType()
-	if init, ok := global.Init(); ok {
+	if global.Init != nil {
 		// Global variable definition.
 		return fmt.Sprintf("%s = %s %s %s",
 			global.Ident(),
 			imm,
-			content,
-			init.Ident())
+			global.Init.Type(),
+			global.Init.Ident())
 	}
 	// External global variable declaration.
 	return fmt.Sprintf("%s = external %s %s",
 		global.Ident(),
 		imm,
-		content)
-}
-
-// ContentType returns the content type of the global variable.
-func (global *Global) ContentType() types.Type {
-	return global.content
-}
-
-// Init returns the initial value of the global variable and a boolean
-// indicating if an initializer was present.
-func (global *Global) Init() (constant.Constant, bool) {
-	if global.init != nil {
-		return global.init, true
-	}
-	return nil, false
-}
-
-// SetInit sets the initial value of the global variable.
-func (global *Global) SetInit(init constant.Constant) {
-	global.init = init
-}
-
-// Const reports whether the global variable is a constant.
-func (global *Global) Const() bool {
-	return global.isConst
-}
-
-// SetConst sets the immutability of the global variable.
-func (global *Global) SetConst(isConst bool) {
-	global.isConst = isConst
+		global.Content)
 }

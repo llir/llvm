@@ -23,36 +23,40 @@ import (
 //    http://llvm.org/docs/LangRef.html#shl-instruction
 type InstShl struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
-	return &InstShl{x: x, y: y}
+	return &InstShl{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstShl) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstShl) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstShl) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstShl) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstShl) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -60,38 +64,18 @@ func (inst *InstShl) String() string {
 	return fmt.Sprintf("%s = shl %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstShl) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstShl) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstShl) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the shl instruction.
-func (inst *InstShl) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the shl instruction.
-func (inst *InstShl) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the shl instruction.
-func (inst *InstShl) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the shl instruction.
-func (inst *InstShl) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // --- [ lshr ] ----------------------------------------------------------------
@@ -102,36 +86,40 @@ func (inst *InstShl) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#lshr-instruction
 type InstLShr struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
 func NewLShr(x, y value.Value) *InstLShr {
-	return &InstLShr{x: x, y: y}
+	return &InstLShr{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstLShr) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstLShr) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstLShr) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstLShr) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstLShr) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -139,38 +127,18 @@ func (inst *InstLShr) String() string {
 	return fmt.Sprintf("%s = lshr %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstLShr) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstLShr) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstLShr) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the lshr instruction.
-func (inst *InstLShr) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the lshr instruction.
-func (inst *InstLShr) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the lshr instruction.
-func (inst *InstLShr) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the lshr instruction.
-func (inst *InstLShr) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // --- [ ashr ] ----------------------------------------------------------------
@@ -181,36 +149,40 @@ func (inst *InstLShr) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#ashr-instruction
 type InstAShr struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
-	return &InstAShr{x: x, y: y}
+	return &InstAShr{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstAShr) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAShr) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstAShr) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstAShr) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstAShr) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -218,38 +190,18 @@ func (inst *InstAShr) String() string {
 	return fmt.Sprintf("%s = ashr %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstAShr) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstAShr) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstAShr) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the ashr instruction.
-func (inst *InstAShr) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the ashr instruction.
-func (inst *InstAShr) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the ashr instruction.
-func (inst *InstAShr) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the ashr instruction.
-func (inst *InstAShr) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // --- [ and ] -----------------------------------------------------------------
@@ -260,36 +212,40 @@ func (inst *InstAShr) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#and-instruction
 type InstAnd struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewAnd returns a new and instruction based on the given operands.
 func NewAnd(x, y value.Value) *InstAnd {
-	return &InstAnd{x: x, y: y}
+	return &InstAnd{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstAnd) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAnd) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstAnd) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstAnd) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstAnd) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -297,38 +253,18 @@ func (inst *InstAnd) String() string {
 	return fmt.Sprintf("%s = and %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstAnd) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstAnd) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstAnd) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the and instruction.
-func (inst *InstAnd) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the and instruction.
-func (inst *InstAnd) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the and instruction.
-func (inst *InstAnd) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the and instruction.
-func (inst *InstAnd) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // --- [ or ] ------------------------------------------------------------------
@@ -339,36 +275,40 @@ func (inst *InstAnd) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#or-instruction
 type InstOr struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewOr returns a new or instruction based on the given operands.
 func NewOr(x, y value.Value) *InstOr {
-	return &InstOr{x: x, y: y}
+	return &InstOr{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstOr) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstOr) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstOr) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstOr) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstOr) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -376,38 +316,18 @@ func (inst *InstOr) String() string {
 	return fmt.Sprintf("%s = or %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstOr) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstOr) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstOr) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the or instruction.
-func (inst *InstOr) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the or instruction.
-func (inst *InstOr) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the or instruction.
-func (inst *InstOr) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the or instruction.
-func (inst *InstOr) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
 
 // --- [ xor ] -----------------------------------------------------------------
@@ -418,36 +338,40 @@ func (inst *InstOr) SetY(y value.Value) {
 //    http://llvm.org/docs/LangRef.html#xor-instruction
 type InstXor struct {
 	// Parent basic block.
-	parent *BasicBlock
+	Parent *BasicBlock
 	// Name of the local variable associated with the instruction.
-	name string
+	Name string
 	// Operands.
-	x, y value.Value
+	X, Y value.Value
 }
 
 // NewXor returns a new xor instruction based on the given operands.
 func NewXor(x, y value.Value) *InstXor {
-	return &InstXor{x: x, y: y}
+	return &InstXor{
+		X: x,
+		Y: y,
+	}
 }
 
 // Type returns the type of the instruction.
 func (inst *InstXor) Type() types.Type {
-	return inst.x.Type()
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstXor) Ident() string {
-	return enc.Local(inst.name)
+	return enc.Local(inst.Name)
 }
 
-// Name returns the name of the local variable associated with the instruction.
-func (inst *InstXor) Name() string {
-	return inst.name
+// GetName returns the name of the local variable associated with the
+// instruction.
+func (inst *InstXor) GetName() string {
+	return inst.Name
 }
 
 // SetName sets the name of the local variable associated with the instruction.
 func (inst *InstXor) SetName(name string) {
-	inst.name = name
+	inst.Name = name
 }
 
 // String returns the LLVM syntax representation of the instruction.
@@ -455,36 +379,16 @@ func (inst *InstXor) String() string {
 	return fmt.Sprintf("%s = xor %s %s, %s",
 		inst.Ident(),
 		inst.Type(),
-		inst.x.Ident(),
-		inst.y.Ident())
+		inst.X.Ident(),
+		inst.Y.Ident())
 }
 
-// Parent returns the parent basic block of the instruction.
-func (inst *InstXor) Parent() *BasicBlock {
-	return inst.parent
+// GetParent returns the parent basic block of the instruction.
+func (inst *InstXor) GetParent() *BasicBlock {
+	return inst.Parent
 }
 
 // SetParent sets the parent basic block of the instruction.
 func (inst *InstXor) SetParent(parent *BasicBlock) {
-	inst.parent = parent
-}
-
-// X returns the x operand of the xor instruction.
-func (inst *InstXor) X() value.Value {
-	return inst.x
-}
-
-// SetX sets the x operand of the xor instruction.
-func (inst *InstXor) SetX(x value.Value) {
-	inst.x = x
-}
-
-// Y returns the y operand of the xor instruction.
-func (inst *InstXor) Y() value.Value {
-	return inst.y
-}
-
-// SetY sets the y operand of the xor instruction.
-func (inst *InstXor) SetY(y value.Value) {
-	inst.y = y
+	inst.Parent = parent
 }
