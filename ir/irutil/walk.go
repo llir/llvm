@@ -114,8 +114,6 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 
 	// pointers to struct pointers
-	case **ir.Module:
-		w.walkBeforeAfter(*n, before, after)
 	case **ir.Global:
 		w.walkBeforeAfter(*n, before, after)
 	case **ir.Function:
