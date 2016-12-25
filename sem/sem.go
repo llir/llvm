@@ -3,17 +3,32 @@ package sem
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/irutil"
 	"github.com/llir/llvm/ir/types"
+	"github.com/pkg/errors"
 )
+
+// ErrorList represents a list of errors.
+type ErrorList []error
+
+// Error returns a string representation of the list of errors.
+func (es ErrorList) Error() string {
+	var errs []string
+	for _, e := range es {
+		errs = append(errs, e.Error())
+	}
+	return strings.Join(errs, "; ")
+}
 
 // Check performs static semantic analysis on the given LLVM IR module.
 func Check(m *ir.Module) error {
 	// List of identified errors.
-	var errs []error
+	var errs ErrorList
 	// check performs static semantic analysis on the given LLVM IR node.
 	check := func(n interface{}) {
 		var err error
@@ -41,8 +56,7 @@ func Check(m *ir.Module) error {
 	}
 	irutil.Walk(m, check)
 	if len(errs) > 0 {
-		// TODO: Return the full list of identified errors.
-		return errs[0]
+		return errs
 	}
 	return nil
 }
@@ -75,7 +89,17 @@ func checkType(t types.Type) error {
 	case *types.LabelType:
 		panic("not yet implemented")
 	case *types.IntType:
-		panic("not yet implemented")
+		// Any bit width from 1 bit to 2²³-1 can be specified.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#integer-type
+		const maxSize = 1<<23 - 1
+		if t.Size < 1 {
+			return errors.Errorf("invalid integer type bit width; expected > 0, got %d", t.Size)
+		}
+		if t.Size > maxSize {
+			return errors.Errorf("invalid integer type bit width; expected < 2^24, got %d", t.Size)
+		}
 	case *types.FloatType:
 		panic("not yet implemented")
 	case *types.FuncType:
@@ -89,10 +113,17 @@ func checkType(t types.Type) error {
 	case *types.StructType:
 		panic("not yet implemented")
 	case *types.NamedType:
-		panic("not yet implemented")
+		if len(t.Name) == 0 {
+			return errors.New("type name missing")
+		}
+		if !isValidName(t.Name) {
+			return errors.Errorf("invalid type name `%v`", enc.Local(t.Name))
+		}
+		// t.Def is validated when later traversed.
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}
+	return nil
 }
 
 // checkConst validates the semantics of the given constant.
@@ -303,4 +334,46 @@ func checkTerm(term ir.Terminator) error {
 	default:
 		panic(fmt.Errorf("support for instruction %T not yet implemented", term))
 	}
+}
+
+// isValidName reports whether the given name is valid.
+func isValidName(name string) bool {
+	// _ascii_letter
+	//    : 'A' - 'Z'
+	//    | 'a' - 'z'
+	// ;
+	//
+	// _letter
+	//    : _ascii_letter
+	//    | '$'
+	//    | '-'
+	//    | '.'
+	//    | '_'
+	// ;
+	//
+	// _decimal_digit
+	//    : '0' - '9'
+	// ;
+	//
+	// _name
+	//    : _letter { _letter | _decimal_digit }
+	// ;
+	const (
+		asciiLetter  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+		letter       = asciiLetter + "$-._"
+		decimalDigit = "0123456789"
+	)
+	if len(name) < 1 {
+		return false
+	}
+	for i, r := range name {
+		charset := letter
+		if i > 0 {
+			charset = letter + decimalDigit
+		}
+		if !strings.ContainsRune(charset, r) {
+			return false
+		}
+	}
+	return true
 }
