@@ -1,27 +1,29 @@
-// Note, the AST traversal implementation of this package is heavily inspired by
-// go fix; which is governed by a BSD license.
+// Note, the LLVM IR traversal implementation of this package is heavily
+// inspired by go fix; which is governed by a BSD license.
 
-// Package astutil provides utility functions for interacting with ASTs of LLVM
-// IR assembly.
-package astutil
+// Package irutil provides LLVM IR utility functions.
+package irutil
 
 import (
 	"fmt"
 
-	"github.com/llir/llvm/asm/internal/ast"
+	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // Walk traverses the AST x, calling visit(y) for each node y in the tree but
-// also with a pointer to each ast.Type, ast.Value, and *ast.BasicBlock, in a
+// also with a pointer to each types.Type, value.Value, and *ir.BasicBlock, in a
 // bottom-up traversal.
 func Walk(x interface{}, visit func(interface{})) {
 	WalkBeforeAfter(x, nop, visit)
 }
 
 // WalkFunc traverses the AST of the given function, calling visit(y) for each
-// node y in the tree but also with a pointer to each ast.Type, ast.Value, and
-// *ast.BasicBlock, in a bottom-up traversal.
-func WalkFunc(f *ast.Function, visit func(interface{})) {
+// node y in the tree but also with a pointer to each types.Type, value.Value,
+// and *ir.BasicBlock, in a bottom-up traversal.
+func WalkFunc(f *ir.Function, visit func(interface{})) {
 	WalkFuncBeforeAfter(f, nop, visit)
 }
 
@@ -31,7 +33,7 @@ func nop(x interface{}) {
 
 // WalkBeforeAfter traverses the AST x, calling before(y) before traversing y's
 // children and after(y) afterward for each node y in the tree but also with a
-// pointer to each ast.Type, ast.Value, and *ast.BasicBlock, in a bottom-up
+// pointer to each types.Type, value.Value, and *ir.BasicBlock, in a bottom-up
 // traversal.
 func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 	w := &walker{
@@ -42,17 +44,17 @@ func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 
 // WalkFuncBeforeAfter traverses the AST of the given function, calling
 // before(y) before traversing y's children and after(y) afterward for each node
-// y in the tree but also with a pointer to each ast.Type, ast.Value, and
-// *ast.BasicBlock, in a bottom-up traversal.
+// y in the tree but also with a pointer to each types.Type, value.Value, and
+// *ir.BasicBlock, in a bottom-up traversal.
 //
 // Special precausion is taken during traversal to stay within the scope of the
 // function.
-func WalkFuncBeforeAfter(f *ast.Function, before, after func(interface{})) {
+func WalkFuncBeforeAfter(f *ir.Function, before, after func(interface{})) {
 	w := &walker{
 		funcScope: true,
 		visited:   make(map[interface{}]bool),
 	}
-	// Traverse child nodes of function, instead of f directly, as *ast.Function
+	// Traverse child nodes of function, instead of f directly, as *ir.Function
 	// nodes are not traversed when staying within the scope of the function.
 	w.walkBeforeAfter(&f.Sig, before, after)
 	if f.Blocks != nil {
@@ -71,23 +73,23 @@ type walker struct {
 
 // walkBeforeAfter traverses the AST x, calling before(y) before traversing y's
 // children and after(y) afterward for each node y in the tree but also with a
-// pointer to each ast.Type, ast.Value, and *ast.BasicBlock, in a bottom-up
+// pointer to each types.Type, value.Value, and *ir.BasicBlock, in a bottom-up
 // traversal.
 func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{})) {
 	switch x.(type) {
-	case []*ast.Global, []*ast.Function, []*ast.Param, []ast.Type, []*ast.NamedType, []ast.Value, []ast.Constant, []*ast.BasicBlock, []ast.Instruction, []*ast.Incoming, []*ast.Case:
+	case []*ir.Global, []*ir.Function, []*ir.Param, []types.Type, []*types.NamedType, []value.Value, []constant.Constant, []*ir.BasicBlock, []ir.Instruction, []*ir.Incoming, []*ir.Case:
 		// unhashable type.
-	case *ast.Function:
+	case *ir.Function:
 		if w.funcScope {
-			// *ast.Function nodes are not traversed when staying within the scope
+			// *ir.Function nodes are not traversed when staying within the scope
 			// *of the function.
 			return
 		}
 	default:
 		// Prevent infinite loops.
 
-		// TODO: Check if it is enough to only track *ast.NamedType to prevent inf
-		// loops.
+		// TODO: Check if it is enough to only track *types.NamedType to prevent
+		// inf loops.
 		if w.visited[x] {
 			return
 		}
@@ -98,269 +100,261 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 
 	switch n := x.(type) {
 	// pointers to interfaces
-	case *ast.Type:
+	case *types.Type:
 		w.walkBeforeAfter(*n, before, after)
-	case *ast.Value:
+	case *value.Value:
 		w.walkBeforeAfter(*n, before, after)
-	case *ast.NamedValue:
+	case *value.Named:
 		w.walkBeforeAfter(*n, before, after)
-	case *ast.Constant:
+	case *constant.Constant:
 		w.walkBeforeAfter(*n, before, after)
-	case *ast.Instruction:
+	case *ir.Instruction:
 		w.walkBeforeAfter(*n, before, after)
-	case *ast.Terminator:
+	case *ir.Terminator:
 		w.walkBeforeAfter(*n, before, after)
 
 	// pointers to struct pointers
-	case **ast.Module:
+	case **ir.Module:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.Global:
+	case **ir.Global:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.Function:
+	case **ir.Function:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.Param:
-		w.walkBeforeAfter(*n, before, after)
-	case **ast.GlobalDummy:
-		w.walkBeforeAfter(*n, before, after)
-	case **ast.LocalDummy:
+	case **ir.Param:
 		w.walkBeforeAfter(*n, before, after)
 	// Types
-	case **ast.VoidType:
+	case **types.VoidType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.LabelType:
+	case **types.LabelType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.IntType:
+	case **types.IntType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.FloatType:
+	case **types.FloatType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.FuncType:
+	case **types.FuncType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.PointerType:
+	case **types.PointerType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.VectorType:
+	case **types.VectorType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ArrayType:
+	case **types.ArrayType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.StructType:
+	case **types.StructType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.NamedType:
-		w.walkBeforeAfter(*n, before, after)
-	case **ast.NamedTypeDummy:
+	case **types.NamedType:
 		w.walkBeforeAfter(*n, before, after)
 	// Constants
-	case **ast.IntConst:
+	case **constant.Int:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.FloatConst:
+	case **constant.Float:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.NullConst:
+	case **constant.Null:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.VectorConst:
+	case **constant.Vector:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ArrayConst:
+	case **constant.Array:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.CharArrayConst:
+	case **constant.Struct:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.StructConst:
-		w.walkBeforeAfter(*n, before, after)
-	case **ast.ZeroInitializerConst:
+	case **constant.ZeroInitializer:
 		w.walkBeforeAfter(*n, before, after)
 	// Constant expressions
-	case **ast.ExprAdd:
+	case **constant.ExprAdd:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFAdd:
+	case **constant.ExprFAdd:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprSub:
+	case **constant.ExprSub:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFSub:
+	case **constant.ExprFSub:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprMul:
+	case **constant.ExprMul:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFMul:
+	case **constant.ExprFMul:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprUDiv:
+	case **constant.ExprUDiv:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprSDiv:
+	case **constant.ExprSDiv:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFDiv:
+	case **constant.ExprFDiv:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprURem:
+	case **constant.ExprURem:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprSRem:
+	case **constant.ExprSRem:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFRem:
+	case **constant.ExprFRem:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprShl:
+	case **constant.ExprShl:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprLShr:
+	case **constant.ExprLShr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprAShr:
+	case **constant.ExprAShr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprAnd:
+	case **constant.ExprAnd:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprOr:
+	case **constant.ExprOr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprXor:
+	case **constant.ExprXor:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprGetElementPtr:
+	case **constant.ExprGetElementPtr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprTrunc:
+	case **constant.ExprTrunc:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprZExt:
+	case **constant.ExprZExt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprSExt:
+	case **constant.ExprSExt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFPTrunc:
+	case **constant.ExprFPTrunc:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFPExt:
+	case **constant.ExprFPExt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFPToUI:
+	case **constant.ExprFPToUI:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFPToSI:
+	case **constant.ExprFPToSI:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprUIToFP:
+	case **constant.ExprUIToFP:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprSIToFP:
+	case **constant.ExprSIToFP:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprPtrToInt:
+	case **constant.ExprPtrToInt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprIntToPtr:
+	case **constant.ExprIntToPtr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprBitCast:
+	case **constant.ExprBitCast:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprAddrSpaceCast:
+	case **constant.ExprAddrSpaceCast:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprICmp:
+	case **constant.ExprICmp:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprFCmp:
+	case **constant.ExprFCmp:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.ExprSelect:
+	case **constant.ExprSelect:
 		w.walkBeforeAfter(*n, before, after)
 	// Basic blocks.
-	case **ast.BasicBlock:
+	case **ir.BasicBlock:
 		w.walkBeforeAfter(*n, before, after)
 	// Instructions
-	case **ast.InstAdd:
+	case **ir.InstAdd:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFAdd:
+	case **ir.InstFAdd:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstSub:
+	case **ir.InstSub:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFSub:
+	case **ir.InstFSub:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstMul:
+	case **ir.InstMul:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFMul:
+	case **ir.InstFMul:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstUDiv:
+	case **ir.InstUDiv:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstSDiv:
+	case **ir.InstSDiv:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFDiv:
+	case **ir.InstFDiv:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstURem:
+	case **ir.InstURem:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstSRem:
+	case **ir.InstSRem:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFRem:
+	case **ir.InstFRem:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstShl:
+	case **ir.InstShl:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstLShr:
+	case **ir.InstLShr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstAShr:
+	case **ir.InstAShr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstAnd:
+	case **ir.InstAnd:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstOr:
+	case **ir.InstOr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstXor:
+	case **ir.InstXor:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstAlloca:
+	case **ir.InstAlloca:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstLoad:
+	case **ir.InstLoad:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstStore:
+	case **ir.InstStore:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstGetElementPtr:
+	case **ir.InstGetElementPtr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstTrunc:
+	case **ir.InstTrunc:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstZExt:
+	case **ir.InstZExt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstSExt:
+	case **ir.InstSExt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFPTrunc:
+	case **ir.InstFPTrunc:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFPExt:
+	case **ir.InstFPExt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFPToUI:
+	case **ir.InstFPToUI:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFPToSI:
+	case **ir.InstFPToSI:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstUIToFP:
+	case **ir.InstUIToFP:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstSIToFP:
+	case **ir.InstSIToFP:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstPtrToInt:
+	case **ir.InstPtrToInt:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstIntToPtr:
+	case **ir.InstIntToPtr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstBitCast:
+	case **ir.InstBitCast:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstAddrSpaceCast:
+	case **ir.InstAddrSpaceCast:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstICmp:
+	case **ir.InstICmp:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstFCmp:
+	case **ir.InstFCmp:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstPhi:
+	case **ir.InstPhi:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.Incoming:
+	case **ir.Incoming:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstSelect:
+	case **ir.InstSelect:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.InstCall:
+	case **ir.InstCall:
 		w.walkBeforeAfter(*n, before, after)
 	// Terminators
-	case **ast.TermRet:
+	case **ir.TermRet:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.TermBr:
+	case **ir.TermBr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.TermCondBr:
+	case **ir.TermCondBr:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.TermSwitch:
+	case **ir.TermSwitch:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.Case:
+	case **ir.Case:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.TermUnreachable:
+	case **ir.TermUnreachable:
 		w.walkBeforeAfter(*n, before, after)
 
 	// pointers to slices
-	case *[]ast.Type:
+	case *[]types.Type:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.NamedType:
+	case *[]*types.NamedType:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.Global:
+	case *[]*ir.Global:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]ast.Value:
+	case *[]value.Value:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]ast.Constant:
+	case *[]constant.Constant:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.Function:
+	case *[]*ir.Function:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.Param:
+	case *[]*ir.Param:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.BasicBlock:
+	case *[]*ir.BasicBlock:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]ast.Instruction:
+	case *[]ir.Instruction:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.Case:
+	case *[]*ir.Case:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*ast.Incoming:
+	case *[]*ir.Incoming:
 		w.walkBeforeAfter(*n, before, after)
 
 	// These are ordered and grouped to match ../../ll.bnf
-	case *ast.Module:
+	case *ir.Module:
 		if n.Types != nil {
 			w.walkBeforeAfter(&n.Types, before, after)
 		}
@@ -370,431 +364,389 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		if n.Funcs != nil {
 			w.walkBeforeAfter(&n.Funcs, before, after)
 		}
-	case []*ast.Global:
+	case []*ir.Global:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.Global:
+	case *ir.Global:
 		w.walkBeforeAfter(&n.Content, before, after)
 		if n.Init != nil {
 			w.walkBeforeAfter(&n.Init, before, after)
 		}
-	case []*ast.Function:
+	case []*ir.Function:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.Function:
+	case *ir.Function:
 		w.walkBeforeAfter(&n.Sig, before, after)
 		if n.Blocks != nil {
 			w.walkBeforeAfter(&n.Blocks, before, after)
 		}
-	case []*ast.Param:
+	case []*ir.Param:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.Param:
-		w.walkBeforeAfter(&n.Type, before, after)
-	case *ast.GlobalDummy:
-		w.walkBeforeAfter(&n.Type, before, after)
-	case *ast.LocalDummy:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *ir.Param:
+		w.walkBeforeAfter(&n.Typ, before, after)
 	// Types
-	case []ast.Type:
+	case []types.Type:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.TypeDummy:
+	case *types.VoidType:
 		// nothing to do.
-	case *ast.VoidType:
+	case *types.LabelType:
 		// nothing to do.
-	case *ast.LabelType:
+	case *types.IntType:
 		// nothing to do.
-	case *ast.IntType:
+	case *types.FloatType:
 		// nothing to do.
-	case *ast.FloatType:
-		// nothing to do.
-	case *ast.FuncType:
+	case *types.FuncType:
 		w.walkBeforeAfter(&n.Ret, before, after)
 		if n.Params != nil {
 			w.walkBeforeAfter(&n.Params, before, after)
 		}
-	case *ast.PointerType:
+	case *types.PointerType:
 		w.walkBeforeAfter(&n.Elem, before, after)
-	case *ast.VectorType:
+	case *types.VectorType:
 		w.walkBeforeAfter(&n.Elem, before, after)
-	case *ast.ArrayType:
+	case *types.ArrayType:
 		w.walkBeforeAfter(&n.Elem, before, after)
-	case *ast.StructType:
+	case *types.StructType:
 		if n.Fields != nil {
 			w.walkBeforeAfter(&n.Fields, before, after)
 		}
-	case []*ast.NamedType:
+	case []*types.NamedType:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.NamedType:
+	case *types.NamedType:
 		if n.Def != nil {
 			w.walkBeforeAfter(&n.Def, before, after)
 		}
-	case *ast.NamedTypeDummy:
-		// nothing to do.
 	// Constants
-	case []ast.Value:
+	case []value.Value:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case []ast.Constant:
+	case []constant.Constant:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.IntConst:
-		w.walkBeforeAfter(&n.Type, before, after)
-	case *ast.FloatConst:
-		w.walkBeforeAfter(&n.Type, before, after)
-	case *ast.NullConst:
-		w.walkBeforeAfter(&n.Type, before, after)
-	case *ast.VectorConst:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.Int:
+		w.walkBeforeAfter(&n.Typ, before, after)
+	case *constant.Float:
+		w.walkBeforeAfter(&n.Typ, before, after)
+	case *constant.Null:
+		w.walkBeforeAfter(&n.Typ, before, after)
+	case *constant.Vector:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		if n.Elems != nil {
 			w.walkBeforeAfter(&n.Elems, before, after)
 		}
-	case *ast.ArrayConst:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.Array:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		if n.Elems != nil {
 			w.walkBeforeAfter(&n.Elems, before, after)
 		}
-	case *ast.CharArrayConst:
-		w.walkBeforeAfter(&n.Type, before, after)
-	case *ast.StructConst:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.Struct:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		if n.Fields != nil {
 			w.walkBeforeAfter(&n.Fields, before, after)
 		}
-	case *ast.ZeroInitializerConst:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ZeroInitializer:
+		w.walkBeforeAfter(&n.Typ, before, after)
 	// Constant expressions
-	case *ast.ExprAdd:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprAdd:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprFAdd:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFAdd:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprSub:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprSub:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprFSub:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFSub:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprMul:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprMul:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprFMul:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFMul:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprUDiv:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprUDiv:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprSDiv:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprSDiv:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprFDiv:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFDiv:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprURem:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprURem:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprSRem:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprSRem:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprFRem:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFRem:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprShl:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprShl:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprLShr:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprLShr:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprAShr:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprAShr:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprAnd:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprAnd:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprOr:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprOr:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprXor:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprXor:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprGetElementPtr:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprGetElementPtr:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		w.walkBeforeAfter(&n.Elem, before, after)
 		w.walkBeforeAfter(&n.Src, before, after)
 		if n.Indices != nil {
 			w.walkBeforeAfter(&n.Indices, before, after)
 		}
-	case *ast.ExprTrunc:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprTrunc:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprZExt:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprZExt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprSExt:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprSExt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprFPTrunc:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFPTrunc:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprFPExt:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFPExt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprFPToUI:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFPToUI:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprFPToSI:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFPToSI:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprUIToFP:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprUIToFP:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprSIToFP:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprSIToFP:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprPtrToInt:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprPtrToInt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprIntToPtr:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprIntToPtr:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprBitCast:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprBitCast:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprAddrSpaceCast:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprAddrSpaceCast:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.ExprICmp:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprICmp:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprFCmp:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprFCmp:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.ExprSelect:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *constant.ExprSelect:
 		w.walkBeforeAfter(&n.Cond, before, after)
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
 	// Basic blocks.
-	case []*ast.BasicBlock:
+	case []*ir.BasicBlock:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.BasicBlock:
+	case *ir.BasicBlock:
 		if n.Insts != nil {
 			w.walkBeforeAfter(&n.Insts, before, after)
 		}
 		w.walkBeforeAfter(&n.Term, before, after)
 	// Instructions
-	case []ast.Instruction:
+	case []ir.Instruction:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.InstAdd:
+	case *ir.InstAdd:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstFAdd:
+	case *ir.InstFAdd:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstSub:
+	case *ir.InstSub:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstFSub:
+	case *ir.InstFSub:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstMul:
+	case *ir.InstMul:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstFMul:
+	case *ir.InstFMul:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstUDiv:
+	case *ir.InstUDiv:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstSDiv:
+	case *ir.InstSDiv:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstFDiv:
+	case *ir.InstFDiv:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstURem:
+	case *ir.InstURem:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstSRem:
+	case *ir.InstSRem:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstFRem:
+	case *ir.InstFRem:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstShl:
+	case *ir.InstShl:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstLShr:
+	case *ir.InstLShr:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstAShr:
+	case *ir.InstAShr:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstAnd:
+	case *ir.InstAnd:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstOr:
+	case *ir.InstOr:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstXor:
+	case *ir.InstXor:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstAlloca:
+	case *ir.InstAlloca:
 		w.walkBeforeAfter(&n.Elem, before, after)
 		if n.NElems != nil {
 			w.walkBeforeAfter(&n.NElems, before, after)
 		}
-	case *ast.InstLoad:
-		w.walkBeforeAfter(&n.Elem, before, after)
+	case *ir.InstLoad:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		w.walkBeforeAfter(&n.Src, before, after)
-	case *ast.InstStore:
+	case *ir.InstStore:
 		w.walkBeforeAfter(&n.Src, before, after)
 		w.walkBeforeAfter(&n.Dst, before, after)
-	case *ast.InstGetElementPtr:
+	case *ir.InstGetElementPtr:
 		w.walkBeforeAfter(&n.Elem, before, after)
 		w.walkBeforeAfter(&n.Src, before, after)
 		if n.Indices != nil {
 			w.walkBeforeAfter(&n.Indices, before, after)
 		}
-	case *ast.InstTrunc:
+	case *ir.InstTrunc:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstZExt:
+	case *ir.InstZExt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstSExt:
+	case *ir.InstSExt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstFPTrunc:
+	case *ir.InstFPTrunc:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstFPExt:
+	case *ir.InstFPExt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstFPToUI:
+	case *ir.InstFPToUI:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstFPToSI:
+	case *ir.InstFPToSI:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstUIToFP:
+	case *ir.InstUIToFP:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstSIToFP:
+	case *ir.InstSIToFP:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstPtrToInt:
+	case *ir.InstPtrToInt:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstIntToPtr:
+	case *ir.InstIntToPtr:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstBitCast:
+	case *ir.InstBitCast:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstAddrSpaceCast:
+	case *ir.InstAddrSpaceCast:
 		w.walkBeforeAfter(&n.From, before, after)
 		w.walkBeforeAfter(&n.To, before, after)
-	case *ast.InstICmp:
+	case *ir.InstICmp:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstFCmp:
+	case *ir.InstFCmp:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstPhi:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *ir.InstPhi:
+		w.walkBeforeAfter(&n.Typ, before, after)
 		if n.Incs != nil {
 			w.walkBeforeAfter(&n.Incs, before, after)
 		}
-	case []*ast.Incoming:
+	case []*ir.Incoming:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.Incoming:
+	case *ir.Incoming:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Pred, before, after)
-	case *ast.InstSelect:
+	case *ir.InstSelect:
 		w.walkBeforeAfter(&n.Cond, before, after)
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
-	case *ast.InstCall:
-		w.walkBeforeAfter(&n.Type, before, after)
+	case *ir.InstCall:
 		w.walkBeforeAfter(&n.Callee, before, after)
+		w.walkBeforeAfter(&n.Sig, before, after)
 		if n.Args != nil {
 			w.walkBeforeAfter(&n.Args, before, after)
 		}
 	// Terminators
-	case *ast.TermRet:
+	case *ir.TermRet:
 		if n.X != nil {
 			w.walkBeforeAfter(&n.X, before, after)
 		}
-	case *ast.TermBr:
+	case *ir.TermBr:
 		w.walkBeforeAfter(&n.Target, before, after)
-	case *ast.TermCondBr:
+	case *ir.TermCondBr:
 		w.walkBeforeAfter(&n.Cond, before, after)
 		w.walkBeforeAfter(&n.TargetTrue, before, after)
 		w.walkBeforeAfter(&n.TargetFalse, before, after)
-	case *ast.TermSwitch:
+	case *ir.TermSwitch:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.TargetDefault, before, after)
 		if n.Cases != nil {
 			w.walkBeforeAfter(&n.Cases, before, after)
 		}
-	case []*ast.Case:
+	case []*ir.Case:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
-	case *ast.Case:
+	case *ir.Case:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Target, before, after)
-	case *ast.TermUnreachable:
+	case *ir.TermUnreachable:
 		// nothing to do.
 
 	default:
