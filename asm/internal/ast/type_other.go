@@ -42,9 +42,29 @@ func (param *Param) SetName(name string) {
 	param.Name = name
 }
 
+// --- [ label ] ---------------------------------------------------------------
+
+// LabelType represents a label type, which is used for basic block values.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#label-type
+type LabelType struct {
+}
+
+// --- [ metadata ] ------------------------------------------------------------
+
+// MetadataType represents a metadata type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#metadata-type
+type MetadataType struct {
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*Param) isValue() {}
 
 // isType ensures that only types can be assigned to the ast.Type interface.
-func (*VoidType) isType() {}
-func (*FuncType) isType() {}
+func (*VoidType) isType()     {}
+func (*FuncType) isType()     {}
+func (*LabelType) isType()    {}
+func (*MetadataType) isType() {}

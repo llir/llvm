@@ -1,4 +1,4 @@
-// === [ Function specific types ] =============================================
+// === [ Other types ] =========================================================
 
 package types
 
@@ -108,4 +108,44 @@ type Param struct {
 // and type.
 func NewParam(name string, typ Type) *Param {
 	return &Param{Name: name, Typ: typ}
+}
+
+// --- [ label ] ---------------------------------------------------------------
+
+// LabelType represents a label type, which is used for basic block values.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#label-type
+type LabelType struct {
+}
+
+// String returns the LLVM syntax representation of the type.
+func (t *LabelType) String() string {
+	return "label"
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *LabelType) Equal(u Type) bool {
+	_, ok := u.(*LabelType)
+	return ok
+}
+
+// --- [ metadata ] ------------------------------------------------------------
+
+// MetadataType represents a metadata type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#metadata-type
+type MetadataType struct {
+}
+
+// String returns the LLVM syntax representation of the type.
+func (t *MetadataType) String() string {
+	return "metadata"
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *MetadataType) Equal(u Type) bool {
+	_, ok := u.(*MetadataType)
+	return ok
 }

@@ -193,4 +193,5 @@ var (
 	_ ast.Type = &ast.MetadataType{}
 	_ ast.Type = &ast.ArrayType{}
 	_ ast.Type = &ast.StructType{}
+	_ ast.Type = &ast.NamedType{}
 )

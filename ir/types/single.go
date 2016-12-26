@@ -1,14 +1,11 @@
-// === [ First class types ] ===================================================
+// === [ Single value types ] ==================================================
 //
 // References:
-//    http://llvm.org/docs/LangRef.html#first-class-types
+//    http://llvm.org/docs/LangRef.html#single-value-types
 
 package types
 
-import (
-	"bytes"
-	"fmt"
-)
+import "fmt"
 
 // --- [ integer ] -------------------------------------------------------------
 
@@ -159,127 +156,6 @@ func (t *VectorType) String() string {
 func (t *VectorType) Equal(u Type) bool {
 	if u, ok := u.(*VectorType); ok {
 		return t.Elem.Equal(u.Elem) && t.Len == u.Len
-	}
-	return false
-}
-
-// --- [ label ] ---------------------------------------------------------------
-
-// LabelType represents a label type, which is used for basic block values.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#label-type
-type LabelType struct {
-}
-
-// String returns the LLVM syntax representation of the type.
-func (t *LabelType) String() string {
-	return "label"
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *LabelType) Equal(u Type) bool {
-	_, ok := u.(*LabelType)
-	return ok
-}
-
-// --- [ metadata ] ------------------------------------------------------------
-
-// MetadataType represents a metadata type.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#metadata-type
-type MetadataType struct {
-}
-
-// String returns the LLVM syntax representation of the type.
-func (t *MetadataType) String() string {
-	return "metadata"
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *MetadataType) Equal(u Type) bool {
-	_, ok := u.(*MetadataType)
-	return ok
-}
-
-// --- [ array ] ---------------------------------------------------------------
-
-// ArrayType represents an array type.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#array-type
-type ArrayType struct {
-	// Element type.
-	Elem Type
-	// Array length.
-	Len int64
-}
-
-// NewArray returns a new array type based on the given element type and array
-// length.
-func NewArray(elem Type, len int64) *ArrayType {
-	return &ArrayType{Elem: elem, Len: len}
-}
-
-// String returns the LLVM syntax representation of the type.
-func (t *ArrayType) String() string {
-	return fmt.Sprintf("[%d x %s]",
-		t.Len,
-		t.Elem)
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *ArrayType) Equal(u Type) bool {
-	if u, ok := u.(*ArrayType); ok {
-		return t.Elem.Equal(u.Elem) && t.Len == u.Len
-	}
-	return false
-}
-
-// --- [ struct ] --------------------------------------------------------------
-
-// StructType represents a struct type.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#structure-type
-type StructType struct {
-	// Struct fields.
-	Fields []Type
-}
-
-// NewStruct returns a new struct type based on the given struct fields.
-func NewStruct(fields ...Type) *StructType {
-	return &StructType{Fields: fields}
-}
-
-// String returns the LLVM syntax representation of the type.
-func (t *StructType) String() string {
-	buf := &bytes.Buffer{}
-	buf.WriteString("{")
-	for i, field := range t.Fields {
-		if i != 0 {
-			buf.WriteString(", ")
-		}
-		buf.WriteString(field.String())
-	}
-	buf.WriteString("}")
-	return buf.String()
-}
-
-// Equal reports whether t and u are of equal type.
-func (t *StructType) Equal(u Type) bool {
-	if u, ok := u.(*StructType); ok {
-		if len(t.Fields) != len(u.Fields) {
-			return false
-		}
-		for i, tf := range t.Fields {
-			uf := u.Fields[i]
-			if !tf.Equal(uf) {
-				return false
-			}
-		}
-		return true
 	}
 	return false
 }
