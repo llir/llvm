@@ -77,7 +77,7 @@ type walker struct {
 // traversal.
 func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{})) {
 	switch x.(type) {
-	case []*ir.Global, []*ir.Function, []*ir.Param, []types.Type, []*types.NamedType, []value.Value, []constant.Constant, []*ir.BasicBlock, []ir.Instruction, []*ir.Incoming, []*ir.Case:
+	case []*ir.Global, []*ir.Function, []*ir.Param, []types.Type, []*types.Param, []*types.NamedType, []value.Value, []constant.Constant, []*ir.BasicBlock, []ir.Instruction, []*ir.Incoming, []*ir.Case:
 		// unhashable type.
 	case *ir.Function:
 		if w.funcScope {
@@ -124,6 +124,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case **types.VoidType:
 		w.walkBeforeAfter(*n, before, after)
 	case **types.FuncType:
+		w.walkBeforeAfter(*n, before, after)
+	case **types.Param:
 		w.walkBeforeAfter(*n, before, after)
 	case **types.IntType:
 		w.walkBeforeAfter(*n, before, after)
@@ -332,6 +334,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	// pointers to slices
 	case *[]types.Type:
 		w.walkBeforeAfter(*n, before, after)
+	case *[]*types.Param:
+		w.walkBeforeAfter(*n, before, after)
 	case *[]*types.NamedType:
 		w.walkBeforeAfter(*n, before, after)
 	case *[]*ir.Global:
@@ -400,6 +404,12 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		if n.Params != nil {
 			w.walkBeforeAfter(&n.Params, before, after)
 		}
+	case []*types.Param:
+		for i := range n {
+			w.walkBeforeAfter(&n[i], before, after)
+		}
+	case *types.Param:
+		w.walkBeforeAfter(&n.Typ, before, after)
 	case *types.IntType:
 		// nothing to do.
 	case *types.FloatType:

@@ -71,12 +71,33 @@ func (sem *sem) Errorf(format string, args ...interface{}) {
 
 // checkGlobal validates the semantics of the given global.
 func (sem *sem) checkGlobal(global *ir.Global) {
-	panic("not yet implemented")
+	// Validate global name.
+	if len(global.Name) == 0 {
+		sem.Errorf("global name missing")
+	} else if !isValidIdent(global.Name) {
+		sem.Errorf("invalid global name `%v`", enc.Global(global.Name))
+	}
+	// Validate global variable type.
+	content, elem := global.Content, global.Typ.Elem
+	if !content.Equal(elem) {
+		sem.Errorf("global variable content type `%v` and element type `%v` mismatch", content, elem)
+	}
+	// Validate global variable content type.
+	if !isSingleValueType(content) && !isAggregateType(content) {
+		sem.Errorf("invalid global content type; expected single value or aggregate type, got %T", content)
+	}
+	// Validate global variable initial value
+	if init := global.Init; init != nil {
+		if !content.Equal(init.Type()) {
+			sem.Errorf("global variable content type `%v` and initial value type `%v` mismatch", content, init.Type())
+		}
+	}
 }
 
 // checkFunc validates the semantics of the given function.
 func (sem *sem) checkFunc(f *ir.Function) {
-	panic("not yet implemented")
+	// TODO: Implement
+	//panic("not yet implemented")
 }
 
 // checkParam validates the semantics of the given function parameter.
@@ -94,10 +115,23 @@ func (sem *sem) checkType(t types.Type) {
 	switch t := t.(type) {
 	case *types.VoidType:
 		// nothing to do.
-	case *types.LabelType:
-		// nothing to do.
-	case *types.MetadataType:
-		// nothing to do.
+	case *types.FuncType:
+		// The return type of a function type is a void type or first class type -
+		// except for label and metadata types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#function-type
+		if !types.IsVoid(t.Ret) && !isSingleValueType(t.Ret) && !isAggregateType(t.Ret) {
+			sem.Errorf("invalid function return type; expected void, single value or aggregate type, got %T", t.Ret)
+		}
+		for _, param := range t.Params {
+			if len(param.Name) > 0 && !isValidIdent(param.Name) {
+				sem.Errorf("invalid function parameter name `%v`", enc.Local(param.Name))
+			}
+			if !isFirstClassType(param.Typ) {
+				sem.Errorf("invalid function parameter; expected first class type, got %T", param.Typ)
+			}
+		}
 	case *types.IntType:
 		// Any bit width from 1 bit to 2²³-1 can be specified.
 		//
@@ -120,33 +154,34 @@ func (sem *sem) checkType(t types.Type) {
 		default:
 			sem.Errorf("invalid float type kind; expected half, float, double, fp128, x86_fp80 or ppc_fp128, got %v", t.Kind)
 		}
-	case *types.FuncType:
-		// The return type of a function type is a void type or first class type -
-		// except for label and metadata types.
-		//
-		// References:
-		//    http://llvm.org/docs/LangRef.html#function-type
-		if !types.IsVoid(t.Ret) && !isFirstClass(t.Ret) || types.IsLabel(t.Ret) || types.IsMetadata(t.Ret) {
-			sem.Errorf("invalid function return type; expected void or first class type except label and metadata, got %T", t.Ret)
-		}
-		for _, param := range t.Params {
-			if !isFirstClass(param.Typ) {
-				sem.Errorf("invalid function argument; expected first class type, got %T", param.Typ)
-			}
-		}
 	case *types.PointerType:
-		panic("not yet implemented")
+		if !types.IsFunc(t.Elem) && !isSingleValueType(t.Elem) && !isAggregateType(t.Elem) {
+			sem.Errorf("invalid pointer element type; expected function, single value or aggregate type, got %T", t.Elem)
+		}
 	case *types.VectorType:
-		// The element type may be any integer, floating point or pointer type.
+		// The number of elements is a constant integer value larger than 0; the
+		// element type may be any integer, floating point or pointer type.
 		// Vectors of size zero are not allowed.
 		//
 		// References:
 		//    http://llvm.org/docs/LangRef.html#vector-type
-		panic("not yet implemented")
+		if !types.IsInt(t.Elem) && !types.IsFloat(t.Elem) && !types.IsPointer(t.Elem) {
+			sem.Errorf("invalid vector element type; expected integer, floating-point or pointer type, got %T", t.Elem)
+		}
+	case *types.LabelType:
+		// nothing to do.
+	case *types.MetadataType:
+		// nothing to do.
 	case *types.ArrayType:
-		panic("not yet implemented")
+		if !isSingleValueType(t.Elem) && !isAggregateType(t.Elem) {
+			sem.Errorf("invalid array element type; expected single value or aggregate type, got %T", t.Elem)
+		}
 	case *types.StructType:
-		panic("not yet implemented")
+		for _, field := range t.Fields {
+			if !isSingleValueType(field) && !isAggregateType(field) {
+				sem.Errorf("invalid struct field type; expected single value or aggregate type, got %T", field)
+			}
+		}
 	case *types.NamedType:
 		if len(t.Name) == 0 {
 			sem.Errorf("type name missing")
@@ -439,31 +474,91 @@ func isValidName(name string) bool {
 	return true
 }
 
-// isFirstClass reports whether the given type is a first class type.
-func isFirstClass(t types.Type) bool {
+// isFirstClassType reports whether the given type is a first class type.
+func isFirstClassType(t types.Type) bool {
 	switch t := t.(type) {
 	case *types.VoidType:
 		return false
-	case *types.LabelType:
-		return true
-	case *types.MetadataType:
-		return true
+	case *types.FuncType:
+		return false
 	case *types.IntType:
 		return true
 	case *types.FloatType:
 		return true
-	case *types.FuncType:
-		return false
 	case *types.PointerType:
 		return true
 	case *types.VectorType:
+		return true
+	case *types.LabelType:
+		return true
+	case *types.MetadataType:
 		return true
 	case *types.ArrayType:
 		return true
 	case *types.StructType:
 		return true
 	case *types.NamedType:
-		return isFirstClass(t.Def)
+		return isFirstClassType(t.Def)
+	default:
+		panic(fmt.Errorf("support for type %T not yet implemented", t))
+	}
+}
+
+// isSingleValueType reports whether the given type is a single value type.
+func isSingleValueType(t types.Type) bool {
+	switch t := t.(type) {
+	case *types.VoidType:
+		return false
+	case *types.FuncType:
+		return false
+	case *types.IntType:
+		return true
+	case *types.FloatType:
+		return true
+	case *types.PointerType:
+		return true
+	case *types.VectorType:
+		return true
+	case *types.LabelType:
+		return false
+	case *types.MetadataType:
+		return false
+	case *types.ArrayType:
+		return false
+	case *types.StructType:
+		return false
+	case *types.NamedType:
+		return isSingleValueType(t.Def)
+	default:
+		panic(fmt.Errorf("support for type %T not yet implemented", t))
+	}
+}
+
+// isAggregateType reports whether the given type is an aggregate type.
+func isAggregateType(t types.Type) bool {
+	switch t := t.(type) {
+	case *types.VoidType:
+		return false
+	case *types.FuncType:
+		return false
+	case *types.IntType:
+		return true
+	case *types.FloatType:
+		return true
+	case *types.PointerType:
+		return true
+	case *types.VectorType:
+		return true
+	case *types.LabelType:
+		return false
+	case *types.MetadataType:
+		return false
+	case *types.ArrayType:
+		return true
+	case *types.StructType:
+		return true
+	case *types.NamedType:
+		return isAggregateType(t.Def)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}

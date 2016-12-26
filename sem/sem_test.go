@@ -12,6 +12,23 @@ func TestCheck(t *testing.T) {
 		path string
 		errs []string
 	}{
+		// Global variables.
+		{
+			path: "testdata/global.ll",
+			errs: []string{
+				"invalid global content type; expected single value or aggregate type, got *types.LabelType",
+				"invalid global content type; expected single value or aggregate type, got *types.MetadataType",
+			},
+		},
+		// Types.
+		{
+			path: "testdata/type_func.ll",
+			errs: []string{
+				"invalid function return type; expected void, single value or aggregate type, got *types.FuncType",
+				"invalid function return type; expected void, single value or aggregate type, got *types.LabelType",
+				"invalid function return type; expected void, single value or aggregate type, got *types.MetadataType",
+			},
+		},
 		{
 			path: "testdata/type_int.ll",
 			errs: []string{
@@ -20,11 +37,36 @@ func TestCheck(t *testing.T) {
 			},
 		},
 		{
-			path: "testdata/type_func.ll",
+			path: "testdata/type_pointer.ll",
 			errs: []string{
-				"invalid function return type; expected void or first class type except label and metadata, got *types.FuncType",
-				"invalid function return type; expected void or first class type except label and metadata, got *types.LabelType",
-				"invalid function return type; expected void or first class type except label and metadata, got *types.MetadataType",
+				"invalid pointer element type; expected function, single value or aggregate type, got *types.VoidType",
+				"invalid pointer element type; expected function, single value or aggregate type, got *types.LabelType",
+				"invalid pointer element type; expected function, single value or aggregate type, got *types.MetadataType",
+			},
+		},
+		{
+			path: "testdata/type_vector.ll",
+			errs: []string{
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.VectorType",
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.LabelType",
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.MetadataType",
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.ArrayType",
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.StructType",
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.NamedType",
+			},
+		},
+		{
+			path: "testdata/type_array.ll",
+			errs: []string{
+				"invalid array element type; expected single value or aggregate type, got *types.LabelType",
+				"invalid array element type; expected single value or aggregate type, got *types.MetadataType",
+			},
+		},
+		{
+			path: "testdata/type_struct.ll",
+			errs: []string{
+				"invalid struct field type; expected single value or aggregate type, got *types.LabelType",
+				"invalid struct field type; expected single value or aggregate type, got *types.MetadataType",
 			},
 		},
 	}
@@ -56,7 +98,6 @@ func TestCheck(t *testing.T) {
 				want, got := g.errs[i], errs[i].Error()
 				if got != want {
 					t.Errorf("%q: error mismatch; expected `%v`, got `%v`", g.path, want, got)
-					continue
 				}
 			}
 		} else if g.errs != nil {
