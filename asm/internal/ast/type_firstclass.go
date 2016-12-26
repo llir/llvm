@@ -2,33 +2,6 @@ package ast
 
 import "fmt"
 
-// --- [ void ] ----------------------------------------------------------------
-
-// VoidType represents a void type.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#void-type
-type VoidType struct {
-}
-
-// --- [ label ] ---------------------------------------------------------------
-
-// LabelType represents a label type, which is used for basic block values.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#label-type
-type LabelType struct {
-}
-
-// --- [ metadata ] ------------------------------------------------------------
-
-// MetadataType represents a metadata type.
-//
-// References:
-//    http://llvm.org/docs/LangRef.html#metadata-type
-type MetadataType struct {
-}
-
 // --- [ integer ] -------------------------------------------------------------
 
 // IntType represents an integer type.
@@ -83,9 +56,80 @@ func (kind FloatKind) String() string {
 	return fmt.Sprintf("<unknown floating-point kind %d>", int(kind))
 }
 
+// --- [ pointer ] -------------------------------------------------------------
+
+// PointerType represents a pointer type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#pointer-type
+type PointerType struct {
+	// Element type.
+	Elem Type
+	// Address space.
+	AddrSpace int64
+}
+
+// --- [ vector ] --------------------------------------------------------------
+
+// VectorType represents a vector type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#vector-type
+type VectorType struct {
+	// Element type.
+	Elem Type
+	// Vector length.
+	Len int64
+}
+
+// --- [ label ] ---------------------------------------------------------------
+
+// LabelType represents a label type, which is used for basic block values.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#label-type
+type LabelType struct {
+}
+
+// --- [ metadata ] ------------------------------------------------------------
+
+// MetadataType represents a metadata type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#metadata-type
+type MetadataType struct {
+}
+
+// --- [ array ] ---------------------------------------------------------------
+
+// ArrayType represents an array type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#array-type
+type ArrayType struct {
+	// Element type.
+	Elem Type
+	// Array length.
+	Len int64
+}
+
+// --- [ struct ] --------------------------------------------------------------
+
+// StructType represents a struct type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#structure-type
+type StructType struct {
+	// Struct fields.
+	Fields []Type
+}
+
 // isType ensures that only types can be assigned to the ast.Type interface.
-func (*VoidType) isType()     {}
-func (*LabelType) isType()    {}
-func (*MetadataType) isType() {}
 func (*IntType) isType()      {}
 func (*FloatType) isType()    {}
+func (*PointerType) isType()  {}
+func (*VectorType) isType()   {}
+func (*LabelType) isType()    {}
+func (*MetadataType) isType() {}
+func (*ArrayType) isType()    {}
+func (*StructType) isType()   {}

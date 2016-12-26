@@ -184,13 +184,13 @@ var (
 // Valutate that the relevant types satisfy the ast.Type interface.
 var (
 	_ ast.Type = &ast.VoidType{}
-	_ ast.Type = &ast.LabelType{}
-	_ ast.Type = &ast.MetadataType{}
+	_ ast.Type = &ast.FuncType{}
 	_ ast.Type = &ast.IntType{}
 	_ ast.Type = &ast.FloatType{}
-	_ ast.Type = &ast.FuncType{}
 	_ ast.Type = &ast.PointerType{}
 	_ ast.Type = &ast.VectorType{}
+	_ ast.Type = &ast.LabelType{}
+	_ ast.Type = &ast.MetadataType{}
 	_ ast.Type = &ast.ArrayType{}
 	_ ast.Type = &ast.StructType{}
 )

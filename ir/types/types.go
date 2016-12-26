@@ -13,13 +13,13 @@ import "fmt"
 // Type may have one of the following underlying types.
 //
 //    *types.VoidType       (https://godoc.org/github.com/llir/llvm/ir/types#VoidType)
-//    *types.LabelType      (https://godoc.org/github.com/llir/llvm/ir/types#LabelType)
-//    *types.MetadataType   (https://godoc.org/github.com/llir/llvm/ir/types#MetadataType)
+//    *types.FuncType       (https://godoc.org/github.com/llir/llvm/ir/types#FuncType)
 //    *types.IntType        (https://godoc.org/github.com/llir/llvm/ir/types#IntType)
 //    *types.FloatType      (https://godoc.org/github.com/llir/llvm/ir/types#FloatType)
-//    *types.FuncType       (https://godoc.org/github.com/llir/llvm/ir/types#FuncType)
 //    *types.PointerType    (https://godoc.org/github.com/llir/llvm/ir/types#PointerType)
 //    *types.VectorType     (https://godoc.org/github.com/llir/llvm/ir/types#VectorType)
+//    *types.LabelType      (https://godoc.org/github.com/llir/llvm/ir/types#LabelType)
+//    *types.MetadataType   (https://godoc.org/github.com/llir/llvm/ir/types#MetadataType)
 //    *types.ArrayType      (https://godoc.org/github.com/llir/llvm/ir/types#ArrayType)
 //    *types.StructType     (https://godoc.org/github.com/llir/llvm/ir/types#StructType)
 //    *types.NamedType      (https://godoc.org/github.com/llir/llvm/ir/types#NamedType)
@@ -29,88 +29,10 @@ type Type interface {
 	Equal(u Type) bool
 }
 
-// Equal reports whether t and u are of equal type.
-func Equal(t, u Type) bool {
-	return t.Equal(u)
-}
-
-// IsVoid reports whether the given type is a void type.
-func IsVoid(t Type) bool {
-	_, ok := t.(*VoidType)
-	return ok
-}
-
-// IsLabel reports whether the given type is a label type.
-func IsLabel(t Type) bool {
-	_, ok := t.(*LabelType)
-	return ok
-}
-
-// IsMetadata reports whether the given type is a metadata type.
-func IsMetadata(t Type) bool {
-	_, ok := t.(*MetadataType)
-	return ok
-}
-
-// IsBool reports whether the given type is a boolean type (i.e. an integer type
-// with bit size 1).
-func IsBool(t Type) bool {
-	if t, ok := t.(*IntType); ok {
-		return t.Size == 1
-	}
-	return false
-}
-
-// IsInt reports whether the given type is an integer type.
-func IsInt(t Type) bool {
-	_, ok := t.(*IntType)
-	return ok
-}
-
-// IsFloat reports whether the given type is a floating-point type.
-func IsFloat(t Type) bool {
-	_, ok := t.(*FloatType)
-	return ok
-}
-
-// IsFunc reports whether the given type is a function type.
-func IsFunc(t Type) bool {
-	_, ok := t.(*FuncType)
-	return ok
-}
-
-// IsPointer reports whether the given type is a pointer type.
-func IsPointer(t Type) bool {
-	_, ok := t.(*PointerType)
-	return ok
-}
-
-// IsVector reports whether the given type is a vector type.
-func IsVector(t Type) bool {
-	_, ok := t.(*VectorType)
-	return ok
-}
-
-// IsArray reports whether the given type is an array type.
-func IsArray(t Type) bool {
-	_, ok := t.(*ArrayType)
-	return ok
-}
-
-// IsStruct reports whether the given type is a struct type.
-func IsStruct(t Type) bool {
-	_, ok := t.(*StructType)
-	return ok
-}
-
 // Convenience types.
 var (
 	// Void represents the `void` type.
 	Void = &VoidType{}
-	// Label represents the `label` type.
-	Label = &LabelType{}
-	// Metadata represents the `metadata` type.
-	Metadata = &MetadataType{}
 	// I1 represents the `i1` integer type.
 	I1 = NewInt(1)
 	// I8 represents the `i8` integer type.
@@ -135,4 +57,82 @@ var (
 	X86_FP80 = &FloatType{Kind: FloatKindDoubleExtended_80}
 	// PPC_FP128 represents the `ppc_fp128` floating-point type.
 	PPC_FP128 = &FloatType{Kind: FloatKindDoubleDouble_128}
+	// Label represents the `label` type.
+	Label = &LabelType{}
+	// Metadata represents the `metadata` type.
+	Metadata = &MetadataType{}
 )
+
+// Equal reports whether t and u are of equal type.
+func Equal(t, u Type) bool {
+	return t.Equal(u)
+}
+
+// IsVoid reports whether the given type is a void type.
+func IsVoid(t Type) bool {
+	_, ok := t.(*VoidType)
+	return ok
+}
+
+// IsFunc reports whether the given type is a function type.
+func IsFunc(t Type) bool {
+	_, ok := t.(*FuncType)
+	return ok
+}
+
+// IsBool reports whether the given type is a boolean type (i.e. an integer type
+// with bit size 1).
+func IsBool(t Type) bool {
+	if t, ok := t.(*IntType); ok {
+		return t.Size == 1
+	}
+	return false
+}
+
+// IsInt reports whether the given type is an integer type.
+func IsInt(t Type) bool {
+	_, ok := t.(*IntType)
+	return ok
+}
+
+// IsFloat reports whether the given type is a floating-point type.
+func IsFloat(t Type) bool {
+	_, ok := t.(*FloatType)
+	return ok
+}
+
+// IsPointer reports whether the given type is a pointer type.
+func IsPointer(t Type) bool {
+	_, ok := t.(*PointerType)
+	return ok
+}
+
+// IsVector reports whether the given type is a vector type.
+func IsVector(t Type) bool {
+	_, ok := t.(*VectorType)
+	return ok
+}
+
+// IsLabel reports whether the given type is a label type.
+func IsLabel(t Type) bool {
+	_, ok := t.(*LabelType)
+	return ok
+}
+
+// IsMetadata reports whether the given type is a metadata type.
+func IsMetadata(t Type) bool {
+	_, ok := t.(*MetadataType)
+	return ok
+}
+
+// IsArray reports whether the given type is an array type.
+func IsArray(t Type) bool {
+	_, ok := t.(*ArrayType)
+	return ok
+}
+
+// IsStruct reports whether the given type is a struct type.
+func IsStruct(t Type) bool {
+	_, ok := t.(*StructType)
+	return ok
+}

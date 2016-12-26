@@ -22,9 +22,9 @@ func TestCheck(t *testing.T) {
 		{
 			path: "testdata/type_func.ll",
 			errs: []string{
+				"invalid function return type; expected void or first class type except label and metadata, got *types.FuncType",
 				"invalid function return type; expected void or first class type except label and metadata, got *types.LabelType",
 				"invalid function return type; expected void or first class type except label and metadata, got *types.MetadataType",
-				"invalid function return type; expected void or first class type except label and metadata, got *types.FuncType",
 			},
 		},
 	}

@@ -153,23 +153,23 @@ func (fix *fixer) fixType(old ast.Type) ast.Type {
 	switch old := old.(type) {
 	case *ast.VoidType:
 		// nothing to do.
-	case *ast.LabelType:
-		// nothing to do.
-	case *ast.MetadataType:
-		// nothing to do.
-	case *ast.IntType:
-		// nothing to do.
-	case *ast.FloatType:
-		// nothing to do.
 	case *ast.FuncType:
 		old.Ret = fix.fixType(old.Ret)
 		for _, param := range old.Params {
 			param.Type = fix.fixType(param.Type)
 		}
+	case *ast.IntType:
+		// nothing to do.
+	case *ast.FloatType:
+		// nothing to do.
 	case *ast.PointerType:
 		old.Elem = fix.fixType(old.Elem)
 	case *ast.VectorType:
 		old.Elem = fix.fixType(old.Elem)
+	case *ast.LabelType:
+		// nothing to do.
+	case *ast.MetadataType:
+		// nothing to do.
 	case *ast.ArrayType:
 		old.Elem = fix.fixType(old.Elem)
 	case *ast.StructType:

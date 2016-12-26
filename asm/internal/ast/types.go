@@ -5,13 +5,13 @@ package ast
 // Type may have one of the following underlying types.
 //
 //    *ast.VoidType
-//    *ast.LabelType
-//    *ast.MetadataType
+//    *ast.FuncType
 //    *ast.IntType
 //    *ast.FloatType
-//    *ast.FuncType
 //    *ast.PointerType
 //    *ast.VectorType
+//    *ast.LabelType
+//    *ast.MetadataType
 //    *ast.ArrayType
 //    *ast.StructType
 //    *ast.NamedType

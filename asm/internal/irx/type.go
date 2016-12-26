@@ -12,10 +12,14 @@ func (m *Module) irType(old ast.Type) types.Type {
 	switch old := old.(type) {
 	case *ast.VoidType:
 		return types.Void
-	case *ast.LabelType:
-		return types.Label
-	case *ast.MetadataType:
-		return types.Metadata
+	case *ast.FuncType:
+		params := make([]*types.Param, len(old.Params))
+		for i, oldParam := range old.Params {
+			params[i] = types.NewParam(oldParam.Name, m.irType(oldParam.Type))
+		}
+		typ := types.NewFunc(m.irType(old.Ret), params...)
+		typ.Variadic = old.Variadic
+		return typ
 	case *ast.IntType:
 		return types.NewInt(old.Size)
 	case *ast.FloatType:
@@ -35,20 +39,16 @@ func (m *Module) irType(old ast.Type) types.Type {
 		default:
 			panic(fmt.Errorf("support for %v not yet implemented", old.Kind))
 		}
-	case *ast.FuncType:
-		params := make([]*types.Param, len(old.Params))
-		for i, oldParam := range old.Params {
-			params[i] = types.NewParam(oldParam.Name, m.irType(oldParam.Type))
-		}
-		typ := types.NewFunc(m.irType(old.Ret), params...)
-		typ.Variadic = old.Variadic
-		return typ
 	case *ast.PointerType:
 		typ := types.NewPointer(m.irType(old.Elem))
 		typ.AddrSpace = old.AddrSpace
 		return typ
 	case *ast.VectorType:
 		return types.NewVector(m.irType(old.Elem), old.Len)
+	case *ast.LabelType:
+		return types.Label
+	case *ast.MetadataType:
+		return types.Metadata
 	case *ast.ArrayType:
 		return types.NewArray(m.irType(old.Elem), old.Len)
 	case *ast.StructType:

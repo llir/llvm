@@ -137,6 +137,11 @@ func (sem *sem) checkType(t types.Type) {
 	case *types.PointerType:
 		panic("not yet implemented")
 	case *types.VectorType:
+		// The element type may be any integer, floating point or pointer type.
+		// Vectors of size zero are not allowed.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#vector-type
 		panic("not yet implemented")
 	case *types.ArrayType:
 		panic("not yet implemented")

@@ -13,7 +13,7 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
-// --- [ int ] -----------------------------------------------------------------
+// --- [ integer ] -------------------------------------------------------------
 
 // Int represents an integer constant.
 type Int struct {
@@ -98,7 +98,7 @@ func (c *Int) Int64() int64 {
 	return c.X.Int64()
 }
 
-// --- [ float ] ---------------------------------------------------------------
+// --- [ floating-point ] ------------------------------------------------------
 
 // Float represents a floating-point constant.
 type Float struct {
@@ -182,7 +182,7 @@ func (c *Float) Float64() float64 {
 	return x
 }
 
-// --- [ null ] ----------------------------------------------------------------
+// --- [ null pointer ] --------------------------------------------------------
 
 // Null represents a null pointer constant.
 type Null struct {

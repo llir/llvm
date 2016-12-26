@@ -125,19 +125,19 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	// Types
 	case **ast.VoidType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.LabelType:
-		w.walkBeforeAfter(*n, before, after)
-	case **ast.MetadataType:
+	case **ast.FuncType:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.IntType:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.FloatType:
 		w.walkBeforeAfter(*n, before, after)
-	case **ast.FuncType:
-		w.walkBeforeAfter(*n, before, after)
 	case **ast.PointerType:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.VectorType:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.LabelType:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.MetadataType:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.ArrayType:
 		w.walkBeforeAfter(*n, before, after)
@@ -407,23 +407,23 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		// nothing to do.
 	case *ast.VoidType:
 		// nothing to do.
-	case *ast.LabelType:
-		// nothing to do.
-	case *ast.MetadataType:
-		// nothing to do.
-	case *ast.IntType:
-		// nothing to do.
-	case *ast.FloatType:
-		// nothing to do.
 	case *ast.FuncType:
 		w.walkBeforeAfter(&n.Ret, before, after)
 		if n.Params != nil {
 			w.walkBeforeAfter(&n.Params, before, after)
 		}
+	case *ast.IntType:
+		// nothing to do.
+	case *ast.FloatType:
+		// nothing to do.
 	case *ast.PointerType:
 		w.walkBeforeAfter(&n.Elem, before, after)
 	case *ast.VectorType:
 		w.walkBeforeAfter(&n.Elem, before, after)
+	case *ast.LabelType:
+		// nothing to do.
+	case *ast.MetadataType:
+		// nothing to do.
 	case *ast.ArrayType:
 		w.walkBeforeAfter(&n.Elem, before, after)
 	case *ast.StructType:
