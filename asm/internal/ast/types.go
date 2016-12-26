@@ -6,6 +6,7 @@ package ast
 //
 //    *ast.VoidType
 //    *ast.LabelType
+//    *ast.MetadataType
 //    *ast.IntType
 //    *ast.FloatType
 //    *ast.FuncType

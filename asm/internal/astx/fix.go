@@ -155,6 +155,8 @@ func (fix *fixer) fixType(old ast.Type) ast.Type {
 		// nothing to do.
 	case *ast.LabelType:
 		// nothing to do.
+	case *ast.MetadataType:
+		// nothing to do.
 	case *ast.IntType:
 		// nothing to do.
 	case *ast.FloatType:

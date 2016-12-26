@@ -12,16 +12,17 @@ import "fmt"
 //
 // Type may have one of the following underlying types.
 //
-//    *types.VoidType      (https://godoc.org/github.com/llir/llvm/ir/types#VoidType)
-//    *types.LabelType     (https://godoc.org/github.com/llir/llvm/ir/types#LabelType)
-//    *types.IntType       (https://godoc.org/github.com/llir/llvm/ir/types#IntType)
-//    *types.FloatType     (https://godoc.org/github.com/llir/llvm/ir/types#FloatType)
-//    *types.FuncType      (https://godoc.org/github.com/llir/llvm/ir/types#FuncType)
-//    *types.PointerType   (https://godoc.org/github.com/llir/llvm/ir/types#PointerType)
-//    *types.VectorType    (https://godoc.org/github.com/llir/llvm/ir/types#VectorType)
-//    *types.ArrayType     (https://godoc.org/github.com/llir/llvm/ir/types#ArrayType)
-//    *types.StructType    (https://godoc.org/github.com/llir/llvm/ir/types#StructType)
-//    *types.NamedType     (https://godoc.org/github.com/llir/llvm/ir/types#NamedType)
+//    *types.VoidType       (https://godoc.org/github.com/llir/llvm/ir/types#VoidType)
+//    *types.LabelType      (https://godoc.org/github.com/llir/llvm/ir/types#LabelType)
+//    *types.MetadataType   (https://godoc.org/github.com/llir/llvm/ir/types#MetadataType)
+//    *types.IntType        (https://godoc.org/github.com/llir/llvm/ir/types#IntType)
+//    *types.FloatType      (https://godoc.org/github.com/llir/llvm/ir/types#FloatType)
+//    *types.FuncType       (https://godoc.org/github.com/llir/llvm/ir/types#FuncType)
+//    *types.PointerType    (https://godoc.org/github.com/llir/llvm/ir/types#PointerType)
+//    *types.VectorType     (https://godoc.org/github.com/llir/llvm/ir/types#VectorType)
+//    *types.ArrayType      (https://godoc.org/github.com/llir/llvm/ir/types#ArrayType)
+//    *types.StructType     (https://godoc.org/github.com/llir/llvm/ir/types#StructType)
+//    *types.NamedType      (https://godoc.org/github.com/llir/llvm/ir/types#NamedType)
 type Type interface {
 	fmt.Stringer
 	// Equal reports whether t and u are of equal type.
@@ -42,6 +43,12 @@ func IsVoid(t Type) bool {
 // IsLabel reports whether the given type is a label type.
 func IsLabel(t Type) bool {
 	_, ok := t.(*LabelType)
+	return ok
+}
+
+// IsMetadata reports whether the given type is a metadata type.
+func IsMetadata(t Type) bool {
+	_, ok := t.(*MetadataType)
 	return ok
 }
 
@@ -102,6 +109,8 @@ var (
 	Void = &VoidType{}
 	// Label represents the `label` type.
 	Label = &LabelType{}
+	// Metadata represents the `metadata` type.
+	Metadata = &MetadataType{}
 	// I1 represents the `i1` integer type.
 	I1 = NewInt(1)
 	// I8 represents the `i8` integer type.

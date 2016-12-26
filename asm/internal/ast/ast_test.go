@@ -1,9 +1,6 @@
 package ast_test
 
-import (
-	"github.com/llir/llvm/asm/internal/ast"
-	"github.com/llir/llvm/ir/constant"
-)
+import "github.com/llir/llvm/asm/internal/ast"
 
 // Valutate that the relevant types satisfy the ast.Constant interface.
 var (
@@ -22,49 +19,49 @@ var (
 	_ ast.Constant = &ast.Function{}
 )
 
-// Valutate that the relevant types satisfy the constant.Expr interface.
+// Valutate that the relevant types satisfy the ast.Constant interface.
 var (
 	// Constant expressions.
 	// Binary instructions
-	_ constant.Expr = &constant.ExprAdd{}
-	_ constant.Expr = &constant.ExprFAdd{}
-	_ constant.Expr = &constant.ExprSub{}
-	_ constant.Expr = &constant.ExprFSub{}
-	_ constant.Expr = &constant.ExprMul{}
-	_ constant.Expr = &constant.ExprFMul{}
-	_ constant.Expr = &constant.ExprUDiv{}
-	_ constant.Expr = &constant.ExprSDiv{}
-	_ constant.Expr = &constant.ExprFDiv{}
-	_ constant.Expr = &constant.ExprURem{}
-	_ constant.Expr = &constant.ExprSRem{}
-	_ constant.Expr = &constant.ExprFRem{}
+	_ ast.Constant = &ast.ExprAdd{}
+	_ ast.Constant = &ast.ExprFAdd{}
+	_ ast.Constant = &ast.ExprSub{}
+	_ ast.Constant = &ast.ExprFSub{}
+	_ ast.Constant = &ast.ExprMul{}
+	_ ast.Constant = &ast.ExprFMul{}
+	_ ast.Constant = &ast.ExprUDiv{}
+	_ ast.Constant = &ast.ExprSDiv{}
+	_ ast.Constant = &ast.ExprFDiv{}
+	_ ast.Constant = &ast.ExprURem{}
+	_ ast.Constant = &ast.ExprSRem{}
+	_ ast.Constant = &ast.ExprFRem{}
 	// Bitwise instructions
-	_ constant.Expr = &constant.ExprShl{}
-	_ constant.Expr = &constant.ExprLShr{}
-	_ constant.Expr = &constant.ExprAShr{}
-	_ constant.Expr = &constant.ExprAnd{}
-	_ constant.Expr = &constant.ExprOr{}
-	_ constant.Expr = &constant.ExprXor{}
+	_ ast.Constant = &ast.ExprShl{}
+	_ ast.Constant = &ast.ExprLShr{}
+	_ ast.Constant = &ast.ExprAShr{}
+	_ ast.Constant = &ast.ExprAnd{}
+	_ ast.Constant = &ast.ExprOr{}
+	_ ast.Constant = &ast.ExprXor{}
 	// Memory instructions
-	_ constant.Expr = &constant.ExprGetElementPtr{}
+	_ ast.Constant = &ast.ExprGetElementPtr{}
 	// Conversion instructions
-	_ constant.Expr = &constant.ExprTrunc{}
-	_ constant.Expr = &constant.ExprZExt{}
-	_ constant.Expr = &constant.ExprSExt{}
-	_ constant.Expr = &constant.ExprFPTrunc{}
-	_ constant.Expr = &constant.ExprFPExt{}
-	_ constant.Expr = &constant.ExprFPToUI{}
-	_ constant.Expr = &constant.ExprFPToSI{}
-	_ constant.Expr = &constant.ExprUIToFP{}
-	_ constant.Expr = &constant.ExprSIToFP{}
-	_ constant.Expr = &constant.ExprPtrToInt{}
-	_ constant.Expr = &constant.ExprIntToPtr{}
-	_ constant.Expr = &constant.ExprBitCast{}
-	_ constant.Expr = &constant.ExprAddrSpaceCast{}
+	_ ast.Constant = &ast.ExprTrunc{}
+	_ ast.Constant = &ast.ExprZExt{}
+	_ ast.Constant = &ast.ExprSExt{}
+	_ ast.Constant = &ast.ExprFPTrunc{}
+	_ ast.Constant = &ast.ExprFPExt{}
+	_ ast.Constant = &ast.ExprFPToUI{}
+	_ ast.Constant = &ast.ExprFPToSI{}
+	_ ast.Constant = &ast.ExprUIToFP{}
+	_ ast.Constant = &ast.ExprSIToFP{}
+	_ ast.Constant = &ast.ExprPtrToInt{}
+	_ ast.Constant = &ast.ExprIntToPtr{}
+	_ ast.Constant = &ast.ExprBitCast{}
+	_ ast.Constant = &ast.ExprAddrSpaceCast{}
 	// Other instructions
-	_ constant.Expr = &constant.ExprICmp{}
-	_ constant.Expr = &constant.ExprFCmp{}
-	_ constant.Expr = &constant.ExprSelect{}
+	_ ast.Constant = &ast.ExprICmp{}
+	_ ast.Constant = &ast.ExprFCmp{}
+	_ ast.Constant = &ast.ExprSelect{}
 )
 
 // Valutate that the relevant types satisfy the ast.Instruction interface.
@@ -188,6 +185,7 @@ var (
 var (
 	_ ast.Type = &ast.VoidType{}
 	_ ast.Type = &ast.LabelType{}
+	_ ast.Type = &ast.MetadataType{}
 	_ ast.Type = &ast.IntType{}
 	_ ast.Type = &ast.FloatType{}
 	_ ast.Type = &ast.FuncType{}

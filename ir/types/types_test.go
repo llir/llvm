@@ -68,6 +68,14 @@ func TestFloatTypeString(t *testing.T) {
 	}
 }
 
+func TestMetadataTypeString(t *testing.T) {
+	const want = "metadata"
+	got := types.Metadata.String()
+	if got != want {
+		t.Errorf("expected %q, got %q", want, got)
+	}
+}
+
 func TestFuncTypeString(t *testing.T) {
 	i8, i32 := types.I8, types.I32
 	formatParam := types.NewParam("format", types.NewPointer(i8))

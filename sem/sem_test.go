@@ -19,6 +19,14 @@ func TestCheck(t *testing.T) {
 				"invalid integer type bit width; expected < 2^24, got 8388608",
 			},
 		},
+		{
+			path: "testdata/type_func.ll",
+			errs: []string{
+				"invalid function return type; expected void or first class type except label and metadata, got *types.LabelType",
+				"invalid function return type; expected void or first class type except label and metadata, got *types.MetadataType",
+				"invalid function return type; expected void or first class type except label and metadata, got *types.FuncType",
+			},
+		},
 	}
 	for _, g := range golden {
 		m, err := asm.ParseFile(g.path)
@@ -34,6 +42,14 @@ func TestCheck(t *testing.T) {
 			errs := err.(sem.ErrorList)
 			if len(errs) != len(g.errs) {
 				t.Errorf("%q: number of errors mismatch; expected %d, got %d", g.path, len(g.errs), len(errs))
+				t.Errorf("want:")
+				for _, err := range g.errs {
+					t.Errorf("\t%s", err)
+				}
+				t.Errorf("got:")
+				for _, err := range errs {
+					t.Errorf("\t%s", err)
+				}
 				continue
 			}
 			for i := range g.errs {

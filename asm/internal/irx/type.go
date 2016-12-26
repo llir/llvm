@@ -14,6 +14,8 @@ func (m *Module) irType(old ast.Type) types.Type {
 		return types.Void
 	case *ast.LabelType:
 		return types.Label
+	case *ast.MetadataType:
+		return types.Metadata
 	case *ast.IntType:
 		return types.NewInt(old.Size)
 	case *ast.FloatType:

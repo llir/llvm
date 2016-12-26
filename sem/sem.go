@@ -27,67 +27,77 @@ func (es ErrorList) Error() string {
 
 // Check performs static semantic analysis on the given LLVM IR module.
 func Check(m *ir.Module) error {
-	// List of identified errors.
-	var errs ErrorList
+	sem := &sem{}
 	// check performs static semantic analysis on the given LLVM IR node.
 	check := func(n interface{}) {
-		var err error
 		switch n := n.(type) {
 		case *ir.Global:
-			err = checkGlobal(n)
+			sem.checkGlobal(n)
 		case *ir.Function:
-			err = checkFunc(n)
+			sem.checkFunc(n)
 		case *ir.Param:
-			err = checkParam(n)
+			sem.checkParam(n)
 		case *ir.BasicBlock:
-			err = checkBlock(n)
+			sem.checkBlock(n)
 		case types.Type:
-			err = checkType(n)
+			sem.checkType(n)
 		case constant.Constant:
-			err = checkConst(n)
+			sem.checkConst(n)
 		case ir.Instruction:
-			err = checkInst(n)
+			sem.checkInst(n)
 		case ir.Terminator:
-			err = checkTerm(n)
-		}
-		if err != nil {
-			errs = append(errs, err)
+			sem.checkTerm(n)
 		}
 	}
 	irutil.Walk(m, check)
-	if len(errs) > 0 {
-		return errs
+	if len(sem.errs) > 0 {
+		return sem.errs
 	}
 	return nil
 }
 
+// sem represents a static semantic analysis checker for LLVM IR.
+type sem struct {
+	// List of identified errors.
+	errs ErrorList
+}
+
+// Errorf formats according to a format specifier and appends the error to the
+// list of identified semantic errors.
+func (sem *sem) Errorf(format string, args ...interface{}) {
+	err := errors.Errorf(format, args...)
+	sem.errs = append(sem.errs, err)
+}
+
 // checkGlobal validates the semantics of the given global.
-func checkGlobal(global *ir.Global) error {
+func (sem *sem) checkGlobal(global *ir.Global) {
 	panic("not yet implemented")
 }
 
 // checkFunc validates the semantics of the given function.
-func checkFunc(f *ir.Function) error {
+func (sem *sem) checkFunc(f *ir.Function) {
 	panic("not yet implemented")
 }
 
 // checkParam validates the semantics of the given function parameter.
-func checkParam(param *ir.Param) error {
+func (sem *sem) checkParam(param *ir.Param) {
 	panic("not yet implemented")
 }
 
 // checkBlock validates the semantics of the given basic block.
-func checkBlock(param *ir.BasicBlock) error {
+func (sem *sem) checkBlock(param *ir.BasicBlock) {
 	panic("not yet implemented")
 }
 
 // checkType validates the semantics of the given type.
-func checkType(t types.Type) error {
+func (sem *sem) checkType(t types.Type) {
 	switch t := t.(type) {
 	case *types.VoidType:
-		panic("not yet implemented")
+		// nothing to do.
 	case *types.LabelType:
-		panic("not yet implemented")
+		// nothing to do.
+	case *types.MetadataType:
+		// nothing to do.
 	case *types.IntType:
 		// Any bit width from 1 bit to 2²³-1 can be specified.
 		//
@@ -95,15 +105,35 @@ func checkType(t types.Type) error {
 		//    http://llvm.org/docs/LangRef.html#integer-type
 		const maxSize = 1<<23 - 1
 		if t.Size < 1 {
-			return errors.Errorf("invalid integer type bit width; expected > 0, got %d", t.Size)
-		}
-		if t.Size > maxSize {
-			return errors.Errorf("invalid integer type bit width; expected < 2^24, got %d", t.Size)
+			sem.Errorf("invalid integer type bit width; expected > 0, got %d", t.Size)
+		} else if t.Size > maxSize {
+			sem.Errorf("invalid integer type bit width; expected < 2^24, got %d", t.Size)
 		}
 	case *types.FloatType:
-		panic("not yet implemented")
+		switch t.Kind {
+		case types.FloatKindIEEE_16:
+		case types.FloatKindIEEE_32:
+		case types.FloatKindIEEE_64:
+		case types.FloatKindIEEE_128:
+		case types.FloatKindDoubleExtended_80:
+		case types.FloatKindDoubleDouble_128:
+		default:
+			sem.Errorf("invalid float type kind; expected half, float, double, fp128, x86_fp80 or ppc_fp128, got %v", t.Kind)
+		}
 	case *types.FuncType:
-		panic("not yet implemented")
+		// The return type of a function type is a void type or first class type -
+		// except for label and metadata types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#function-type
+		if !types.IsVoid(t.Ret) && !isFirstClass(t.Ret) || types.IsLabel(t.Ret) || types.IsMetadata(t.Ret) {
+			sem.Errorf("invalid function return type; expected void or first class type except label and metadata, got %T", t.Ret)
+		}
+		for _, param := range t.Params {
+			if !isFirstClass(param.Typ) {
+				sem.Errorf("invalid function argument; expected first class type, got %T", param.Typ)
+			}
+		}
 	case *types.PointerType:
 		panic("not yet implemented")
 	case *types.VectorType:
@@ -114,20 +144,18 @@ func checkType(t types.Type) error {
 		panic("not yet implemented")
 	case *types.NamedType:
 		if len(t.Name) == 0 {
-			return errors.New("type name missing")
-		}
-		if !isValidName(t.Name) {
-			return errors.Errorf("invalid type name `%v`", enc.Local(t.Name))
+			sem.Errorf("type name missing")
+		} else if !isValidIdent(t.Name) {
+			sem.Errorf("invalid type name `%v`", enc.Local(t.Name))
 		}
 		// t.Def is validated when later traversed.
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}
-	return nil
 }
 
 // checkConst validates the semantics of the given constant.
-func checkConst(c constant.Constant) error {
+func (sem *sem) checkConst(c constant.Constant) {
 	switch c := c.(type) {
 	// Simple constants.
 	case *constant.Int:
@@ -226,7 +254,7 @@ func checkConst(c constant.Constant) error {
 }
 
 // checkInst validates the semantics of the given instruction.
-func checkInst(inst ir.Instruction) error {
+func (sem *sem) checkInst(inst ir.Instruction) {
 	switch inst := inst.(type) {
 	// Binary instructions.
 	case *ir.InstAdd:
@@ -319,7 +347,7 @@ func checkInst(inst ir.Instruction) error {
 }
 
 // checkTerm validates the semantics of the given terminator.
-func checkTerm(term ir.Terminator) error {
+func (sem *sem) checkTerm(term ir.Terminator) {
 	switch term := term.(type) {
 	case *ir.TermRet:
 		panic("not yet implemented")
@@ -334,6 +362,39 @@ func checkTerm(term ir.Terminator) error {
 	default:
 		panic(fmt.Errorf("support for instruction %T not yet implemented", term))
 	}
+}
+
+const (
+	asciiLetter  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	letter       = asciiLetter + "$-._"
+	decimalDigit = "0123456789"
+)
+
+// isValidIdent reports whether the given identifier is valid.
+func isValidIdent(ident string) bool {
+	// TODO: Add support for quoted string identifiers.
+	return isValidID(ident) || isValidName(ident)
+}
+
+// isValidID reports whether the given ID is valid.
+func isValidID(id string) bool {
+	// _decimals
+	//    : _decimal_digit { _decimal_digit }
+	// ;
+	//
+	// _id
+	//    : _decimals
+	// ;
+	if len(id) < 1 {
+		return false
+	}
+	for _, r := range id {
+		const charset = decimalDigit
+		if !strings.ContainsRune(charset, r) {
+			return false
+		}
+	}
+	return true
 }
 
 // isValidName reports whether the given name is valid.
@@ -358,11 +419,6 @@ func isValidName(name string) bool {
 	// _name
 	//    : _letter { _letter | _decimal_digit }
 	// ;
-	const (
-		asciiLetter  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-		letter       = asciiLetter + "$-._"
-		decimalDigit = "0123456789"
-	)
 	if len(name) < 1 {
 		return false
 	}
@@ -376,4 +432,34 @@ func isValidName(name string) bool {
 		}
 	}
 	return true
+}
+
+// isFirstClass reports whether the given type is a first class type.
+func isFirstClass(t types.Type) bool {
+	switch t := t.(type) {
+	case *types.VoidType:
+		return false
+	case *types.LabelType:
+		return true
+	case *types.MetadataType:
+		return true
+	case *types.IntType:
+		return true
+	case *types.FloatType:
+		return true
+	case *types.FuncType:
+		return false
+	case *types.PointerType:
+		return true
+	case *types.VectorType:
+		return true
+	case *types.ArrayType:
+		return true
+	case *types.StructType:
+		return true
+	case *types.NamedType:
+		return isFirstClass(t.Def)
+	default:
+		panic(fmt.Errorf("support for type %T not yet implemented", t))
+	}
 }

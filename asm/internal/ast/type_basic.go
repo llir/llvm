@@ -20,6 +20,15 @@ type VoidType struct {
 type LabelType struct {
 }
 
+// --- [ metadata ] ------------------------------------------------------------
+
+// MetadataType represents a metadata type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#metadata-type
+type MetadataType struct {
+}
+
 // --- [ integer ] -------------------------------------------------------------
 
 // IntType represents an integer type.
@@ -75,7 +84,8 @@ func (kind FloatKind) String() string {
 }
 
 // isType ensures that only types can be assigned to the ast.Type interface.
-func (*VoidType) isType()  {}
-func (*LabelType) isType() {}
-func (*IntType) isType()   {}
-func (*FloatType) isType() {}
+func (*VoidType) isType()     {}
+func (*LabelType) isType()    {}
+func (*MetadataType) isType() {}
+func (*IntType) isType()      {}
+func (*FloatType) isType()    {}

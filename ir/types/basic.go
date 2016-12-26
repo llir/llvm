@@ -44,6 +44,26 @@ func (t *LabelType) Equal(u Type) bool {
 	return ok
 }
 
+// --- [ metadata ] ------------------------------------------------------------
+
+// MetadataType represents a metadata type.
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#metadata-type
+type MetadataType struct {
+}
+
+// String returns the LLVM syntax representation of the type.
+func (t *MetadataType) String() string {
+	return "metadata"
+}
+
+// Equal reports whether t and u are of equal type.
+func (t *MetadataType) Equal(u Type) bool {
+	_, ok := u.(*MetadataType)
+	return ok
+}
+
 // --- [ integer ] -------------------------------------------------------------
 
 // IntType represents an integer type.

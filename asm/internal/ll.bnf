@@ -186,8 +186,8 @@ TypeDef
 // === [ Global variables ] ====================================================
 
 Global
-	: GlobalIdent "=" "external" Immutable Type   << astx.NewGlobalDecl($0, $3, $4) >>
-	| GlobalIdent "=" Immutable Type Constant     << astx.NewGlobalDef($0, $2, $3, $4) >>
+	: GlobalIdent "=" "external" Immutable FirstClassType   << astx.NewGlobalDecl($0, $3, $4) >>
+	| GlobalIdent "=" Immutable FirstClassType Constant     << astx.NewGlobalDef($0, $2, $3, $4) >>
 ;
 
 Immutable
@@ -206,7 +206,7 @@ FunctionDef
 ;
 
 FunctionHeader
-	: ResultType GlobalIdent "(" Params ")"   << astx.NewFunctionDecl($0, $1, $3) >>
+	: Type GlobalIdent "(" Params ")"   << astx.NewFunctionDecl($0, $1, $3) >>
 ;
 
 Params
@@ -222,8 +222,8 @@ ParamList
 ;
 
 Param
-	: Type              << astx.NewParam($0, nil) >>
-	| Type LocalIdent   << astx.NewParam($0, $1) >>
+	: FirstClassType              << astx.NewParam($0, nil) >>
+	| FirstClassType LocalIdent   << astx.NewParam($0, $1) >>
 ;
 
 FunctionBody
@@ -247,28 +247,29 @@ LabelIdent
 // === [ Types ] ===============================================================
 
 Type
-	: LabelType
-	| IntType
-	| FloatType
-	| FuncType
-	| PointerType
-	| VectorType
-	| ArrayType
-	| StructType
-	| NamedType
-;
-
-ResultType
 	: VoidType
-	| Type
+	| FuncType
+	| FirstClassType
 ;
 
 VoidType
 	: "void"   << &ast.VoidType{}, nil >>
 ;
 
-LabelType
-	: "label"   << &ast.LabelType{}, nil >>
+FuncType
+	: Type "(" Params ")"   << astx.NewFuncType($0, $2) >>
+;
+
+FirstClassType
+	: IntType
+	| FloatType
+	| PointerType
+	| VectorType
+	| LabelType
+	| MetadataType
+	| ArrayType
+	| StructType
+	| NamedType
 ;
 
 IntType
@@ -284,10 +285,6 @@ FloatType
 	| "ppc_fp128"   << &ast.FloatType{Kind: ast.FloatKindDoubleDouble_128}, nil >>
 ;
 
-FuncType
-	: ResultType "(" Params ")"   << astx.NewFuncType($0, $2) >>
-;
-
 PointerType
 	: Type OptAddrSpace "*"   << astx.NewPointerType($0, $1) >>
 ;
@@ -298,11 +295,19 @@ OptAddrSpace
 ;
 
 VectorType
-	: "<" IntConst "x" Type ">"   << astx.NewVectorType($1, $3) >>
+	: "<" IntConst "x" FirstClassType ">"   << astx.NewVectorType($1, $3) >>
+;
+
+LabelType
+	: "label"   << &ast.LabelType{}, nil >>
+;
+
+MetadataType
+	: "metadata"   << &ast.MetadataType{}, nil >>
 ;
 
 ArrayType
-	: "[" IntConst "x" Type "]"   << astx.NewArrayType($1, $3) >>
+	: "[" IntConst "x" FirstClassType "]"   << astx.NewArrayType($1, $3) >>
 ;
 
 StructType
@@ -315,8 +320,8 @@ Fields
 ;
 
 FieldList
-	: Type                 << astx.NewTypeList($0) >>
-	| FieldList "," Type   << astx.AppendType($0, $2) >>
+	: FirstClassType                 << astx.NewTypeList($0) >>
+	| FieldList "," FirstClassType   << astx.AppendType($0, $2) >>
 ;
 
 NamedType
@@ -378,7 +383,7 @@ ElemList
 ;
 
 Elem
-	: Type Value   << astx.NewConstant($0, $1) >>
+	: FirstClassType Value   << astx.NewConstant($0, $1) >>
 ;
 
 CharArrayConst
@@ -439,83 +444,83 @@ ConstExpr
 // --- [ Binary expressions ] --------------------------------------------------
 
 AddExpr
-	: "add" "(" Type Constant "," Type Constant ")"   << astx.NewAddExpr($2, $3, $5, $6) >>
+	: "add" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAddExpr($2, $3, $5, $6) >>
 ;
 
 FAddExpr
-	: "fadd" "(" Type Constant "," Type Constant ")"   << astx.NewFAddExpr($2, $3, $5, $6) >>
+	: "fadd" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFAddExpr($2, $3, $5, $6) >>
 ;
 
 SubExpr
-	: "sub" "(" Type Constant "," Type Constant ")"   << astx.NewSubExpr($2, $3, $5, $6) >>
+	: "sub" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSubExpr($2, $3, $5, $6) >>
 ;
 
 FSubExpr
-	: "fsub" "(" Type Constant "," Type Constant ")"   << astx.NewFSubExpr($2, $3, $5, $6) >>
+	: "fsub" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFSubExpr($2, $3, $5, $6) >>
 ;
 
 MulExpr
-	: "mul" "(" Type Constant "," Type Constant ")"   << astx.NewMulExpr($2, $3, $5, $6) >>
+	: "mul" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewMulExpr($2, $3, $5, $6) >>
 ;
 
 FMulExpr
-	: "fmul" "(" Type Constant "," Type Constant ")"   << astx.NewFMulExpr($2, $3, $5, $6) >>
+	: "fmul" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFMulExpr($2, $3, $5, $6) >>
 ;
 
 UDivExpr
-	: "udiv" "(" Type Constant "," Type Constant ")"   << astx.NewUDivExpr($2, $3, $5, $6) >>
+	: "udiv" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewUDivExpr($2, $3, $5, $6) >>
 ;
 
 SDivExpr
-	: "sdiv" "(" Type Constant "," Type Constant ")"   << astx.NewSDivExpr($2, $3, $5, $6) >>
+	: "sdiv" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSDivExpr($2, $3, $5, $6) >>
 ;
 
 FDivExpr
-	: "fdiv" "(" Type Constant "," Type Constant ")"   << astx.NewFDivExpr($2, $3, $5, $6) >>
+	: "fdiv" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFDivExpr($2, $3, $5, $6) >>
 ;
 
 URemExpr
-	: "urem" "(" Type Constant "," Type Constant ")"   << astx.NewURemExpr($2, $3, $5, $6) >>
+	: "urem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewURemExpr($2, $3, $5, $6) >>
 ;
 
 SRemExpr
-	: "srem" "(" Type Constant "," Type Constant ")"   << astx.NewSRemExpr($2, $3, $5, $6) >>
+	: "srem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSRemExpr($2, $3, $5, $6) >>
 ;
 
 FRemExpr
-	: "frem" "(" Type Constant "," Type Constant ")"   << astx.NewFRemExpr($2, $3, $5, $6) >>
+	: "frem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFRemExpr($2, $3, $5, $6) >>
 ;
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
 ShlExpr
-	: "shl" "(" Type Constant "," Type Constant ")"   << astx.NewShlExpr($2, $3, $5, $6) >>
+	: "shl" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewShlExpr($2, $3, $5, $6) >>
 ;
 
 LShrExpr
-	: "lshr" "(" Type Constant "," Type Constant ")"   << astx.NewLShrExpr($2, $3, $5, $6) >>
+	: "lshr" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewLShrExpr($2, $3, $5, $6) >>
 ;
 
 AShrExpr
-	: "ashr" "(" Type Constant "," Type Constant ")"   << astx.NewAShrExpr($2, $3, $5, $6) >>
+	: "ashr" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAShrExpr($2, $3, $5, $6) >>
 ;
 
 AndExpr
-	: "and" "(" Type Constant "," Type Constant ")"   << astx.NewAndExpr($2, $3, $5, $6) >>
+	: "and" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAndExpr($2, $3, $5, $6) >>
 ;
 
 OrExpr
-	: "or" "(" Type Constant "," Type Constant ")"   << astx.NewOrExpr($2, $3, $5, $6) >>
+	: "or" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewOrExpr($2, $3, $5, $6) >>
 ;
 
 XorExpr
-	: "xor" "(" Type Constant "," Type Constant ")"   << astx.NewXorExpr($2, $3, $5, $6) >>
+	: "xor" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewXorExpr($2, $3, $5, $6) >>
 ;
 
 // --- [ Memory expressions ] --------------------------------------------------
 
 GetElementPtrExpr
-	: "getelementptr" "(" Type "," Type Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($2, $4, $5, $6) >>
+	: "getelementptr" "(" FirstClassType "," FirstClassType Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($2, $4, $5, $6) >>
 ;
 
 ConstIndices
@@ -535,61 +540,61 @@ ConstIndex
 // --- [ Conversion expressions ] ----------------------------------------------
 
 TruncExpr
-	: "trunc" "(" Type Constant "to" Type ")"   << astx.NewTruncExpr($2, $3, $5) >>
+	: "trunc" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewTruncExpr($2, $3, $5) >>
 ;
 
 ZExtExpr
-	: "zext" "(" Type Constant "to" Type ")"   << astx.NewZExtExpr($2, $3, $5) >>
+	: "zext" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewZExtExpr($2, $3, $5) >>
 ;
 
 SExtExpr
-	: "sext" "(" Type Constant "to" Type ")"   << astx.NewSExtExpr($2, $3, $5) >>
+	: "sext" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewSExtExpr($2, $3, $5) >>
 ;
 
 FPTruncExpr
-	: "fptrunc" "(" Type Constant "to" Type ")"   << astx.NewFPTruncExpr($2, $3, $5) >>
+	: "fptrunc" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPTruncExpr($2, $3, $5) >>
 ;
 
 FPExtExpr
-	: "fpext" "(" Type Constant "to" Type ")"   << astx.NewFPExtExpr($2, $3, $5) >>
+	: "fpext" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPExtExpr($2, $3, $5) >>
 ;
 
 FPToUIExpr
-	: "fptoui" "(" Type Constant "to" Type ")"   << astx.NewFPToUIExpr($2, $3, $5) >>
+	: "fptoui" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPToUIExpr($2, $3, $5) >>
 ;
 
 FPToSIExpr
-	: "fptosi" "(" Type Constant "to" Type ")"   << astx.NewFPToSIExpr($2, $3, $5) >>
+	: "fptosi" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPToSIExpr($2, $3, $5) >>
 ;
 
 UIToFPExpr
-	: "uitofp" "(" Type Constant "to" Type ")"   << astx.NewUIToFPExpr($2, $3, $5) >>
+	: "uitofp" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewUIToFPExpr($2, $3, $5) >>
 ;
 
 SIToFPExpr
-	: "sitofp" "(" Type Constant "to" Type ")"   << astx.NewSIToFPExpr($2, $3, $5) >>
+	: "sitofp" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewSIToFPExpr($2, $3, $5) >>
 ;
 
 PtrToIntExpr
-	: "ptrtoint" "(" Type Constant "to" Type ")"   << astx.NewPtrToIntExpr($2, $3, $5) >>
+	: "ptrtoint" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewPtrToIntExpr($2, $3, $5) >>
 ;
 
 IntToPtrExpr
-	: "inttoptr" "(" Type Constant "to" Type ")"   << astx.NewIntToPtrExpr($2, $3, $5) >>
+	: "inttoptr" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewIntToPtrExpr($2, $3, $5) >>
 ;
 
 BitCastExpr
-	: "bitcast" "(" Type Constant "to" Type ")"   << astx.NewBitCastExpr($2, $3, $5) >>
+	: "bitcast" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewBitCastExpr($2, $3, $5) >>
 ;
 
 AddrSpaceCastExpr
-	: "addrspacecast" "(" Type Constant "to" Type ")"   << astx.NewAddrSpaceCastExpr($2, $3, $5) >>
+	: "addrspacecast" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewAddrSpaceCastExpr($2, $3, $5) >>
 ;
 
 // --- [ Other expressions ] ---------------------------------------------------
 
 ICmpExpr
-	: "icmp" ConstIntPred "(" Type Constant "," Type Constant ")"   << astx.NewICmpExpr($1, $3, $4, $6, $7) >>
+	: "icmp" ConstIntPred "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewICmpExpr($1, $3, $4, $6, $7) >>
 ;
 
 ConstIntPred
@@ -606,7 +611,7 @@ ConstIntPred
 ;
 
 FCmpExpr
-	: "fcmp" ConstFloatPred "(" Type Constant "," Type Constant ")"   << astx.NewFCmpExpr($1, $3, $4, $6, $7) >>
+	: "fcmp" ConstFloatPred "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFCmpExpr($1, $3, $4, $6, $7) >>
 ;
 
 ConstFloatPred
@@ -629,7 +634,7 @@ ConstFloatPred
 ;
 
 SelectExpr
-	: "select" "(" Type Constant "," Type Constant "," Type Constant ")"   << astx.NewSelectExpr($2, $3, $5, $6, $8, $9) >>
+	: "select" "(" FirstClassType Constant "," FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSelectExpr($2, $3, $5, $6, $8, $9) >>
 ;
 
 // === [ Basic blocks ] ========================================================
@@ -717,96 +722,96 @@ ValueInstruction
 // --- [ Binary instructions ] -------------------------------------------------
 
 AddInst
-	: "add" Type Value "," Value   << astx.NewAddInst($1, $2, $4) >>
+	: "add" FirstClassType Value "," Value   << astx.NewAddInst($1, $2, $4) >>
 ;
 
 FAddInst
-	: "fadd" Type Value "," Value   << astx.NewFAddInst($1, $2, $4) >>
+	: "fadd" FirstClassType Value "," Value   << astx.NewFAddInst($1, $2, $4) >>
 ;
 
 SubInst
-	: "sub" Type Value "," Value   << astx.NewSubInst($1, $2, $4) >>
+	: "sub" FirstClassType Value "," Value   << astx.NewSubInst($1, $2, $4) >>
 ;
 
 FSubInst
-	: "fsub" Type Value "," Value   << astx.NewFSubInst($1, $2, $4) >>
+	: "fsub" FirstClassType Value "," Value   << astx.NewFSubInst($1, $2, $4) >>
 ;
 
 MulInst
-	: "mul" Type Value "," Value   << astx.NewMulInst($1, $2, $4) >>
+	: "mul" FirstClassType Value "," Value   << astx.NewMulInst($1, $2, $4) >>
 ;
 
 FMulInst
-	: "fmul" Type Value "," Value   << astx.NewFMulInst($1, $2, $4) >>
+	: "fmul" FirstClassType Value "," Value   << astx.NewFMulInst($1, $2, $4) >>
 ;
 
 UDivInst
-	: "udiv" Type Value "," Value   << astx.NewUDivInst($1, $2, $4) >>
+	: "udiv" FirstClassType Value "," Value   << astx.NewUDivInst($1, $2, $4) >>
 ;
 
 SDivInst
-	: "sdiv" Type Value "," Value   << astx.NewSDivInst($1, $2, $4) >>
+	: "sdiv" FirstClassType Value "," Value   << astx.NewSDivInst($1, $2, $4) >>
 ;
 
 FDivInst
-	: "fdiv" Type Value "," Value   << astx.NewFDivInst($1, $2, $4) >>
+	: "fdiv" FirstClassType Value "," Value   << astx.NewFDivInst($1, $2, $4) >>
 ;
 
 URemInst
-	: "urem" Type Value "," Value   << astx.NewURemInst($1, $2, $4) >>
+	: "urem" FirstClassType Value "," Value   << astx.NewURemInst($1, $2, $4) >>
 ;
 
 SRemInst
-	: "srem" Type Value "," Value   << astx.NewSRemInst($1, $2, $4) >>
+	: "srem" FirstClassType Value "," Value   << astx.NewSRemInst($1, $2, $4) >>
 ;
 
 FRemInst
-	: "frem" Type Value "," Value   << astx.NewFRemInst($1, $2, $4) >>
+	: "frem" FirstClassType Value "," Value   << astx.NewFRemInst($1, $2, $4) >>
 ;
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
 ShlInst
-	: "shl" Type Value "," Value   << astx.NewShlInst($1, $2, $4) >>
+	: "shl" FirstClassType Value "," Value   << astx.NewShlInst($1, $2, $4) >>
 ;
 
 LShrInst
-	: "lshr" Type Value "," Value   << astx.NewLShrInst($1, $2, $4) >>
+	: "lshr" FirstClassType Value "," Value   << astx.NewLShrInst($1, $2, $4) >>
 ;
 
 AShrInst
-	: "ashr" Type Value "," Value   << astx.NewAShrInst($1, $2, $4) >>
+	: "ashr" FirstClassType Value "," Value   << astx.NewAShrInst($1, $2, $4) >>
 ;
 
 AndInst
-	: "and" Type Value "," Value   << astx.NewAndInst($1, $2, $4) >>
+	: "and" FirstClassType Value "," Value   << astx.NewAndInst($1, $2, $4) >>
 ;
 
 OrInst
-	: "or" Type Value "," Value   << astx.NewOrInst($1, $2, $4) >>
+	: "or" FirstClassType Value "," Value   << astx.NewOrInst($1, $2, $4) >>
 ;
 
 XorInst
-	: "xor" Type Value "," Value   << astx.NewXorInst($1, $2, $4) >>
+	: "xor" FirstClassType Value "," Value   << astx.NewXorInst($1, $2, $4) >>
 ;
 
 // --- [ Memory instructions ] -------------------------------------------------
 
 AllocaInst
-	: "alloca" Type OptNElems   << astx.NewAllocaInst($1, $2) >>
+	: "alloca" FirstClassType OptNElems   << astx.NewAllocaInst($1, $2) >>
 ;
 
 OptNElems
 	: empty
-	| "," Type Value   << astx.NewValue($1, $2) >>
+	| "," FirstClassType Value   << astx.NewValue($1, $2) >>
 ;
 
 LoadInst
-	: "load" Type "," PointerType Value   << astx.NewLoadInst($1, $3, $4) >>
+	: "load" FirstClassType "," PointerType Value   << astx.NewLoadInst($1, $3, $4) >>
 ;
 
 GetElementPtrInst
-	: "getelementptr" Type "," Type Value Indices   << astx.NewGetElementPtrInst($1, $3, $4, $5) >>
+	: "getelementptr" FirstClassType "," FirstClassType Value Indices   << astx.NewGetElementPtrInst($1, $3, $4, $5) >>
 ;
 
 Indices
@@ -820,71 +825,71 @@ IndexList
 ;
 
 Index
-	: Type Value   << astx.NewValue($0, $1) >>
+	: IntType Value   << astx.NewValue($0, $1) >>
 ;
 
 StoreInst
-	: "store" Type Value "," PointerType Value   << astx.NewStoreInst($1, $2, $4, $5) >>
+	: "store" FirstClassType Value "," PointerType Value   << astx.NewStoreInst($1, $2, $4, $5) >>
 ;
 
 // --- [ Conversion instructions ] ---------------------------------------------
 
 TruncInst
-	: "trunc" Type Value "to" Type   << astx.NewTruncInst($1, $2, $4) >>
+	: "trunc" FirstClassType Value "to" FirstClassType   << astx.NewTruncInst($1, $2, $4) >>
 ;
 
 ZExtInst
-	: "zext" Type Value "to" Type   << astx.NewZExtInst($1, $2, $4) >>
+	: "zext" FirstClassType Value "to" FirstClassType   << astx.NewZExtInst($1, $2, $4) >>
 ;
 
 SExtInst
-	: "sext" Type Value "to" Type   << astx.NewSExtInst($1, $2, $4) >>
+	: "sext" FirstClassType Value "to" FirstClassType   << astx.NewSExtInst($1, $2, $4) >>
 ;
 
 FPTruncInst
-	: "fptrunc" Type Value "to" Type   << astx.NewFPTruncInst($1, $2, $4) >>
+	: "fptrunc" FirstClassType Value "to" FirstClassType   << astx.NewFPTruncInst($1, $2, $4) >>
 ;
 
 FPExtInst
-	: "fpext" Type Value "to" Type   << astx.NewFPExtInst($1, $2, $4) >>
+	: "fpext" FirstClassType Value "to" FirstClassType   << astx.NewFPExtInst($1, $2, $4) >>
 ;
 
 FPToUIInst
-	: "fptoui" Type Value "to" Type   << astx.NewFPToUIInst($1, $2, $4) >>
+	: "fptoui" FirstClassType Value "to" FirstClassType   << astx.NewFPToUIInst($1, $2, $4) >>
 ;
 
 FPToSIInst
-	: "fptosi" Type Value "to" Type   << astx.NewFPToSIInst($1, $2, $4) >>
+	: "fptosi" FirstClassType Value "to" FirstClassType   << astx.NewFPToSIInst($1, $2, $4) >>
 ;
 
 UIToFPInst
-	: "uitofp" Type Value "to" Type   << astx.NewUIToFPInst($1, $2, $4) >>
+	: "uitofp" FirstClassType Value "to" FirstClassType   << astx.NewUIToFPInst($1, $2, $4) >>
 ;
 
 SIToFPInst
-	: "sitofp" Type Value "to" Type   << astx.NewSIToFPInst($1, $2, $4) >>
+	: "sitofp" FirstClassType Value "to" FirstClassType   << astx.NewSIToFPInst($1, $2, $4) >>
 ;
 
 PtrToIntInst
-	: "ptrtoint" Type Value "to" Type   << astx.NewPtrToIntInst($1, $2, $4) >>
+	: "ptrtoint" FirstClassType Value "to" FirstClassType   << astx.NewPtrToIntInst($1, $2, $4) >>
 ;
 
 IntToPtrInst
-	: "inttoptr" Type Value "to" Type   << astx.NewIntToPtrInst($1, $2, $4) >>
+	: "inttoptr" FirstClassType Value "to" FirstClassType   << astx.NewIntToPtrInst($1, $2, $4) >>
 ;
 
 BitCastInst
-	: "bitcast" Type Value "to" Type   << astx.NewBitCastInst($1, $2, $4) >>
+	: "bitcast" FirstClassType Value "to" FirstClassType   << astx.NewBitCastInst($1, $2, $4) >>
 ;
 
 AddrSpaceCastInst
-	: "addrspacecast" Type Value "to" Type   << astx.NewAddrSpaceCastInst($1, $2, $4) >>
+	: "addrspacecast" FirstClassType Value "to" FirstClassType   << astx.NewAddrSpaceCastInst($1, $2, $4) >>
 ;
 
 // --- [ Other instructions ] --------------------------------------------------
 
 ICmpInst
-	: "icmp" IntPred Type Value "," Value   << astx.NewICmpInst($1, $2, $3, $5) >>
+	: "icmp" IntPred FirstClassType Value "," Value   << astx.NewICmpInst($1, $2, $3, $5) >>
 ;
 
 IntPred
@@ -901,7 +906,7 @@ IntPred
 ;
 
 FCmpInst
-	: "fcmp" FloatPred Type Value "," Value   << astx.NewFCmpInst($1, $2, $3, $5) >>
+	: "fcmp" FloatPred FirstClassType Value "," Value   << astx.NewFCmpInst($1, $2, $3, $5) >>
 ;
 
 FloatPred
@@ -924,7 +929,7 @@ FloatPred
 ;
 
 PhiInst
-	: "phi" Type IncomingList   << astx.NewPhiInst($1, $2) >>
+	: "phi" FirstClassType IncomingList   << astx.NewPhiInst($1, $2) >>
 ;
 
 IncomingList
@@ -937,12 +942,12 @@ Incoming
 ;
 
 SelectInst
-	: "select" Type Value "," Type Value "," Type Value   << astx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
+	: "select" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << astx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
 ;
 
 CallInst
-	: "call" ResultType GlobalIdent "(" Args ")"   << astx.NewCallInst($1, $2, $4) >>
-	| "call" ResultType LocalIdent "(" Args ")"   << astx.NewCallInst($1, $2, $4) >>
+	: "call" Type GlobalIdent "(" Args ")"   << astx.NewCallInst($1, $2, $4) >>
+	| "call" Type LocalIdent "(" Args ")"    << astx.NewCallInst($1, $2, $4) >>
 ;
 
 Args
@@ -956,7 +961,7 @@ ArgList
 ;
 
 Arg
-	: Type Value   << astx.NewValue($0, $1) >>
+	: FirstClassType Value   << astx.NewValue($0, $1) >>
 ;
 
 // === [ Terminators ] =========================================================
@@ -971,7 +976,7 @@ Terminator
 
 RetTerm
 	: "ret" VoidType     << &ast.TermRet{}, nil >>
-	| "ret" Type Value   << astx.NewRetTerm($1, $2) >>
+	| "ret" FirstClassType Value   << astx.NewRetTerm($1, $2) >>
 ;
 
 BrTerm

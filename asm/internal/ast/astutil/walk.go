@@ -127,6 +127,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.LabelType:
 		w.walkBeforeAfter(*n, before, after)
+	case **ast.MetadataType:
+		w.walkBeforeAfter(*n, before, after)
 	case **ast.IntType:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.FloatType:
@@ -406,6 +408,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.VoidType:
 		// nothing to do.
 	case *ast.LabelType:
+		// nothing to do.
+	case *ast.MetadataType:
 		// nothing to do.
 	case *ast.IntType:
 		// nothing to do.
