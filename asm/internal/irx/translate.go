@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/asm/internal/ast"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
@@ -152,20 +153,25 @@ func (m *Module) globalDecl(old *ast.Global) {
 // funcDecl translates the given function declaration to LLVM IR, emitting code
 // to m.
 func (m *Module) funcDecl(oldFunc *ast.Function) {
+	// Early exit if function declaration.
+	if len(oldFunc.Blocks) < 1 {
+		return
+	}
+
 	// Reset locals.
 	m.locals = make(map[string]value.Named)
 
 	v := m.getGlobal(oldFunc.Name)
 	f, ok := v.(*ir.Function)
 	if !ok {
-		panic(fmt.Errorf("invalid function type; expected *ir.Function, got %T", v))
+		panic(fmt.Errorf("invalid function type for function %s; expected *ir.Function, got %T", enc.Global(oldFunc.Name), v))
 	}
 
 	// Index function parameters.
 	for _, param := range f.Params() {
 		name := param.Name
 		if _, ok := m.locals[name]; ok {
-			panic(fmt.Errorf("local identifier %q already present; old `%v`, new `%v`", name, m.locals[name], param))
+			panic(fmt.Errorf("local identifier %q already present for function %s; old `%v`, new `%v`", name, f.Ident(), m.locals[name], param))
 		}
 		m.locals[name] = param
 	}
@@ -174,7 +180,7 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 	for _, old := range oldFunc.Blocks {
 		name := old.Name
 		if _, ok := m.locals[name]; ok {
-			panic(fmt.Errorf("local identifier %q already present; old `%v`, new `%v`", name, m.locals[name], old))
+			panic(fmt.Errorf("local identifier %q already present for function %s; old `%v`, new `%v`", name, f.Ident(), m.locals[name], old))
 		}
 		block := &ir.BasicBlock{
 			Name:   name,

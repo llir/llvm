@@ -24,6 +24,7 @@ import (
 
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/asm/internal/ast/astutil"
+	"github.com/llir/llvm/internal/enc"
 )
 
 // === [ Modules ] =============================================================
@@ -208,7 +209,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	for _, block := range f.Blocks {
 		name := block.Name
 		if _, ok := fix.locals[name]; ok {
-			panic(fmt.Errorf("basic block label %q already present; old `%v`, new `%v`", name, fix.locals[name], block))
+			panic(fmt.Errorf("basic block label %q already present for function %s; old `%v`, new `%v`", name, enc.Global(f.Name), fix.locals[name], block))
 		}
 		fix.locals[name] = block
 	}
@@ -217,7 +218,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 	for _, param := range f.Sig.Params {
 		name := param.Name
 		if _, ok := fix.locals[name]; ok {
-			panic(fmt.Errorf("function parameter name %q already present; old `%v`, new `%v`", name, fix.locals[name], param))
+			panic(fmt.Errorf("function parameter name %q already present for function %s; old `%v`, new `%v`", name, enc.Global(f.Name), fix.locals[name], param))
 		}
 		fix.locals[name] = param
 	}
@@ -239,7 +240,7 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 				}
 				name := inst.GetName()
 				if _, ok := fix.locals[name]; ok {
-					panic(fmt.Errorf("instruction name %q already present; old `%v`, new `%v`", name, fix.locals[name], inst))
+					panic(fmt.Errorf("instruction name %q already present for function %s; old `%v`, new `%v`", name, enc.Global(f.Name), fix.locals[name], inst))
 				}
 				fix.locals[name] = inst
 			}
