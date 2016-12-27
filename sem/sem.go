@@ -310,7 +310,22 @@ func (sem *sem) checkConst(c constant.Constant) {
 			sem.Errorf("add expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprFAdd:
-		panic("not yet implemented")
+		// The two arguments to the `fadd` instruction must be floating point or
+		// vector of floating point values. Both arguments must have identical
+		// types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#fadd-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isFloatOrFloatVectorType(xType) {
+			sem.Errorf("invalid fadd expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("fadd expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprSub:
 		// The two arguments to the `sub` instruction must be integer or vector of
 		// integer values. Both arguments must have identical types.
@@ -328,7 +343,22 @@ func (sem *sem) checkConst(c constant.Constant) {
 			sem.Errorf("invalid sub expression x type; expected integer or vector of integers type, got %T", xType)
 		}
 	case *constant.ExprFSub:
-		panic("not yet implemented")
+		// The two arguments to the `fsub` instruction must be floating point or
+		// vector of floating point values. Both arguments must have identical
+		// types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#fsub-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isFloatOrFloatVectorType(xType) {
+			sem.Errorf("invalid fsub expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("fsub expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprMul:
 		// The two arguments to the `mul` instruction must be integer or vector of
 		// integer values. Both arguments must have identical types.
@@ -346,7 +376,22 @@ func (sem *sem) checkConst(c constant.Constant) {
 			sem.Errorf("invalid mul expression x type; expected integer or vector of integers type, got %T", xType)
 		}
 	case *constant.ExprFMul:
-		panic("not yet implemented")
+		// The two arguments to the `fmul` instruction must be floating point or
+		// vector of floating point values. Both arguments must have identical
+		// types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#fmul-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isFloatOrFloatVectorType(xType) {
+			sem.Errorf("invalid fmul expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("fmul expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprUDiv:
 		// The two arguments to the `udiv` instruction must be integer or vector of
 		// integer values. Both arguments must have identical types.
@@ -380,7 +425,22 @@ func (sem *sem) checkConst(c constant.Constant) {
 			sem.Errorf("invalid sdiv expression x type; expected integer or vector of integers type, got %T", xType)
 		}
 	case *constant.ExprFDiv:
-		panic("not yet implemented")
+		// The two arguments to the `fdiv` instruction must be floating point or
+		// vector of floating point values. Both arguments must have identical
+		// types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#fdiv-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isFloatOrFloatVectorType(xType) {
+			sem.Errorf("invalid fdiv expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("fdiv expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprURem:
 		// The two arguments to the `urem` instruction must be integer or vector of
 		// integer values. Both arguments must have identical types.
@@ -414,7 +474,22 @@ func (sem *sem) checkConst(c constant.Constant) {
 			sem.Errorf("invalid srem expression x type; expected integer or vector of integers type, got %T", xType)
 		}
 	case *constant.ExprFRem:
-		panic("not yet implemented")
+		// The two arguments to the `frem` instruction must be floating point or
+		// vector of floating point values. Both arguments must have identical
+		// types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#frem-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isFloatOrFloatVectorType(xType) {
+			sem.Errorf("invalid frem expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("frem expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 
 	// Bitwise expressions.
 	case *constant.ExprShl:
