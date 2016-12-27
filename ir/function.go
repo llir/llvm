@@ -175,7 +175,7 @@ func assignIDs(f *Function) {
 		case isLocalID(name):
 			want := strconv.Itoa(id)
 			if name != want {
-				panic(fmt.Errorf("invalid local ID; expected %s, got %s", enc.Local(want), enc.Local(name)))
+				panic(fmt.Errorf("invalid local ID in function %s; expected %s, got %s", enc.Global(f.Name), enc.Local(want), enc.Local(name)))
 			}
 			id++
 		}

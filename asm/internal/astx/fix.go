@@ -193,6 +193,11 @@ func (fix *fixer) fixType(old ast.Type) ast.Type {
 // fixFunction replaces dummy values within the given function with their real
 // values.
 func (fix *fixer) fixFunction(f *ast.Function) {
+	// Early exit if function declaration.
+	if len(f.Blocks) < 1 {
+		return
+	}
+
 	// Reset locals.
 	fix.locals = make(map[string]ast.NamedValue)
 
