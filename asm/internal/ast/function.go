@@ -73,6 +73,11 @@ func (f *Function) AssignIDs() {
 				if _, ok := inst.Type.(*VoidType); ok {
 					continue
 				}
+				if sig, ok := inst.Type.(*FuncType); ok {
+					if _, ok := sig.Ret.(*VoidType); ok {
+						continue
+					}
+				}
 			}
 			// Assign local IDs to unnamed local variables.
 			setName(n)

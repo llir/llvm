@@ -231,6 +231,11 @@ func (fix *fixer) fixFunction(f *ast.Function) {
 					if _, ok := inst.Type.(*ast.VoidType); ok {
 						continue
 					}
+					if sig, ok := inst.Type.(*ast.FuncType); ok {
+						if _, ok := sig.Ret.(*ast.VoidType); ok {
+							continue
+						}
+					}
 				}
 				name := inst.GetName()
 				if _, ok := fix.locals[name]; ok {
