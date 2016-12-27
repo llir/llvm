@@ -7,7 +7,7 @@ import (
 	"github.com/llir/llvm/asm"
 )
 
-func TestParseFile(t *testing.T) {
+func TestParseString(t *testing.T) {
 	// Round-trip test of the parser.
 	golden := []struct {
 		path string
@@ -36,6 +36,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/recursive_types.ll"},
 		{path: "../testdata/call_local_func.ll"},
 		{path: "../testdata/ret.ll"},
+		{path: "../testdata/gep_forward_reference.ll"},
 	}
 	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
