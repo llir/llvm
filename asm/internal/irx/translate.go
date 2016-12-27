@@ -61,13 +61,10 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		global := &ir.Global{
 			Name: name,
 		}
-		// TODO: Verify if it is needed to store preliminary content type of
-		// globals; i.e. validate type resolution for circularly defined globals.
-		//
-		//// Store preliminary content type.
-		// content := m.irType(old.Content)
-		//global.Content = content
-		//global.Typ = types.NewPointer(content)
+		// Store preliminary content type.
+		content := m.irType(old.Content)
+		global.Typ = types.NewPointer(content)
+		global.Content = content
 		m.Globals = append(m.Globals, global)
 		m.globals[name] = global
 	}
