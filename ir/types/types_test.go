@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 func TestVoidTypeString(t *testing.T) {
@@ -1046,7 +1047,7 @@ func TestStructEqual(t *testing.T) {
 	}
 }
 
-// Valutate that the relevant types satisfy the types.Type interface.
+// Validate that the relevant types satisfy the types.Type interface.
 var (
 	_ types.Type = &types.VoidType{}
 	_ types.Type = &types.FuncType{}
@@ -1059,4 +1060,9 @@ var (
 	_ types.Type = &types.ArrayType{}
 	_ types.Type = &types.StructType{}
 	_ types.Type = &types.NamedType{}
+)
+
+// Validate that the relevant types satisfy the value.Named interface.
+var (
+	_ value.Named = &types.Param{}
 )

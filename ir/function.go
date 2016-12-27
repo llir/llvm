@@ -33,25 +33,19 @@ type Function struct {
 	Typ *types.PointerType
 	// Function type.
 	Sig *types.FuncType
-	// Function parameters.
-	Params []*Param
 	// Basic blocks of the function; or nil if defined externally.
 	Blocks []*BasicBlock
 }
 
 // NewFunction returns a new function based on the given function name, return
 // type and parameters.
-func NewFunction(name string, ret types.Type, params ...*Param) *Function {
-	sig := types.NewFunc(ret)
-	for _, param := range params {
-		sig.Params = append(sig.Params, param.Param)
-	}
+func NewFunction(name string, ret types.Type, params ...*types.Param) *Function {
+	sig := types.NewFunc(ret, params...)
 	typ := types.NewPointer(sig)
 	return &Function{
-		Name:   name,
-		Typ:    typ,
-		Sig:    sig,
-		Params: params,
+		Name: name,
+		Typ:  typ,
+		Sig:  sig,
 	}
 }
 
@@ -90,7 +84,8 @@ func (f *Function) String() string {
 	fmt.Fprintf(sig, "%s %s(",
 		f.Sig.Ret,
 		f.Ident())
-	for i, param := range f.Params {
+	params := f.Params()
+	for i, param := range params {
 		if i != 0 {
 			sig.WriteString(", ")
 		}
@@ -103,7 +98,7 @@ func (f *Function) String() string {
 		}
 	}
 	if f.Sig.Variadic {
-		if len(f.Params) > 0 {
+		if len(params) > 0 {
 			sig.WriteString(", ")
 		}
 		sig.WriteString("...")
@@ -125,16 +120,20 @@ func (f *Function) String() string {
 	return fmt.Sprintf("declare %s", sig)
 }
 
+// Params returns the parameters of the function.
+func (f *Function) Params() []*types.Param {
+	return f.Sig.Params
+}
+
 // AppendParam appends the given function parameter to the function.
-func (f *Function) AppendParam(param *Param) {
-	f.Sig.Params = append(f.Sig.Params, param.Param)
-	f.Params = append(f.Params, param)
+func (f *Function) AppendParam(param *types.Param) {
+	f.Sig.Params = append(f.Sig.Params, param)
 }
 
 // NewParam appends a new function parameter to the function based on the given
 // parameter name and type.
-func (f *Function) NewParam(name string, typ types.Type) *Param {
-	param := NewParam(name, typ)
+func (f *Function) NewParam(name string, typ types.Type) *types.Param {
+	param := types.NewParam(name, typ)
 	f.AppendParam(param)
 	return param
 }
@@ -155,41 +154,10 @@ func (f *Function) NewBlock(name string) *BasicBlock {
 
 // --- [ Function parameters ] -------------------------------------------------
 
-// A Param represents an LLVM IR function parameter.
-//
-// Function parameters may be referenced from instructions (e.g. add), and are
-// thus considered LLVM IR values.
-type Param struct {
-	// Underlying type.
-	*types.Param
-}
-
 // NewParam returns a new function parameter based on the given parameter name
 // and type.
-func NewParam(name string, typ types.Type) *Param {
-	return &Param{
-		Param: types.NewParam(name, typ),
-	}
-}
-
-// Type returns the type of the function parameter.
-func (param *Param) Type() types.Type {
-	return param.Typ
-}
-
-// Ident returns the identifier associated with the function parameter.
-func (param *Param) Ident() string {
-	return enc.Local(param.Name)
-}
-
-// GetName returns the name of the function parameter.
-func (param *Param) GetName() string {
-	return param.Name
-}
-
-// SetName sets the name of the function parameter.
-func (param *Param) SetName(name string) {
-	param.Name = name
+func NewParam(name string, typ types.Type) *types.Param {
+	return types.NewParam(name, typ)
 }
 
 // ### [ Helper functions ] ####################################################
@@ -212,7 +180,7 @@ func assignIDs(f *Function) {
 			id++
 		}
 	}
-	for _, param := range f.Params {
+	for _, param := range f.Params() {
 		// Assign local IDs to unnamed parameters of function definitions.
 		if len(f.Blocks) > 0 {
 			setName(param)

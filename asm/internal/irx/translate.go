@@ -84,17 +84,12 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		if !ok {
 			panic(fmt.Errorf("invalid function signature type, expected *types.FuncType, got %T", oldSig))
 		}
-		var params []*ir.Param
-		for _, param := range sig.Params {
-			params = append(params, ir.NewParam(param.Name, param.Typ))
-		}
 		typ := types.NewPointer(sig)
 		f := &ir.Function{
 			Parent: m.Module,
 			Name:   name,
 			Typ:    typ,
 			Sig:    sig,
-			Params: params,
 		}
 		m.Funcs = append(m.Funcs, f)
 		m.globals[name] = f
@@ -170,7 +165,7 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 	}
 
 	// Index function parameters.
-	for _, param := range f.Params {
+	for _, param := range f.Params() {
 		name := param.Name
 		if _, ok := m.locals[name]; ok {
 			panic(fmt.Errorf("local identifier %q already present; old `%v`, new `%v`", name, m.locals[name], param))

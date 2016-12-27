@@ -23,7 +23,7 @@ type Value interface {
 //
 //    *ir.Global       (https://godoc.org/github.com/llir/llvm/ir#Global)
 //    *ir.Function     (https://godoc.org/github.com/llir/llvm/ir#Function)
-//    *ir.Param        (https://godoc.org/github.com/llir/llvm/ir#Param)
+//    *types.Param     (https://godoc.org/github.com/llir/llvm/ir/types#Param)
 //    *ir.BasicBlock   (https://godoc.org/github.com/llir/llvm/ir#BasicBlock)
 //    ir.Instruction   (https://godoc.org/github.com/llir/llvm/ir#Instruction)
 type Named interface {

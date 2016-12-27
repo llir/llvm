@@ -6,13 +6,13 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// Valutate that the relevant types satisfy the constant.Constant interface.
+// Validate that the relevant types satisfy the constant.Constant interface.
 var (
 	_ constant.Constant = &ir.Global{}
 	_ constant.Constant = &ir.Function{}
 )
 
-// Valutate that the relevant types satisfy the ir.Instruction interface.
+// Validate that the relevant types satisfy the ir.Instruction interface.
 var (
 	// Binary instructions
 	_ ir.Instruction = &ir.InstAdd{}
@@ -63,7 +63,7 @@ var (
 	_ ir.Instruction = &ir.InstCall{}
 )
 
-// Valutate that the relevant types satisfy the ir.Terminator interface.
+// Validate that the relevant types satisfy the ir.Terminator interface.
 var (
 	// Terminators
 	_ ir.Terminator = &ir.TermRet{}
@@ -73,11 +73,10 @@ var (
 	_ ir.Terminator = &ir.TermUnreachable{}
 )
 
-// Valutate that the relevant types satisfy the value.Named interface.
+// Validate that the relevant types satisfy the value.Named interface.
 var (
 	_ value.Named = &ir.Global{}
 	_ value.Named = &ir.Function{}
-	_ value.Named = &ir.Param{}
 	_ value.Named = &ir.BasicBlock{}
 	// Binary instructions
 	_ value.Named = &ir.InstAdd{}

@@ -13,18 +13,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ErrorList represents a list of errors.
-type ErrorList []error
-
-// Error returns a string representation of the list of errors.
-func (es ErrorList) Error() string {
-	var errs []string
-	for _, e := range es {
-		errs = append(errs, e.Error())
-	}
-	return strings.Join(errs, "; ")
-}
-
 // Check performs static semantic analysis on the given LLVM IR module.
 func Check(m *ir.Module) error {
 	sem := &sem{}
@@ -35,8 +23,6 @@ func Check(m *ir.Module) error {
 			sem.checkGlobal(n)
 		case *ir.Function:
 			sem.checkFunc(n)
-		case *ir.Param:
-			sem.checkParam(n)
 		case *ir.BasicBlock:
 			sem.checkBlock(n)
 		case types.Type:
@@ -54,6 +40,18 @@ func Check(m *ir.Module) error {
 		return sem.errs
 	}
 	return nil
+}
+
+// ErrorList represents a list of errors.
+type ErrorList []error
+
+// Error returns a string representation of the list of errors.
+func (es ErrorList) Error() string {
+	var errs []string
+	for _, e := range es {
+		errs = append(errs, e.Error())
+	}
+	return strings.Join(errs, "; ")
 }
 
 // sem represents a static semantic analysis checker for LLVM IR.
@@ -96,13 +94,22 @@ func (sem *sem) checkGlobal(global *ir.Global) {
 
 // checkFunc validates the semantics of the given function.
 func (sem *sem) checkFunc(f *ir.Function) {
-	// TODO: Implement
-	//panic("not yet implemented")
-}
-
-// checkParam validates the semantics of the given function parameter.
-func (sem *sem) checkParam(param *ir.Param) {
-	panic("not yet implemented")
+	// Validate parent module of the function.
+	if f.Parent == nil {
+		sem.Errorf("parent module of function missing")
+	}
+	// Validate function name.
+	if len(f.Name) == 0 {
+		sem.Errorf("function name missing")
+	} else if !isValidIdent(f.Name) {
+		sem.Errorf("invalid function name `%v`", enc.Global(f.Name))
+	}
+	// Validate function type.
+	sig, elem := f.Sig, f.Typ.Elem
+	if !sig.Equal(elem) {
+		sem.Errorf("function signature type `%v` and element type `%v` mismatch", sig, elem)
+	}
+	// TODO: Implement.
 }
 
 // checkBlock validates the semantics of the given basic block.
@@ -413,28 +420,7 @@ const (
 // isValidIdent reports whether the given identifier is valid.
 func isValidIdent(ident string) bool {
 	// TODO: Add support for quoted string identifiers.
-	return isValidID(ident) || isValidName(ident)
-}
-
-// isValidID reports whether the given ID is valid.
-func isValidID(id string) bool {
-	// _decimals
-	//    : _decimal_digit { _decimal_digit }
-	// ;
-	//
-	// _id
-	//    : _decimals
-	// ;
-	if len(id) < 1 {
-		return false
-	}
-	for _, r := range id {
-		const charset = decimalDigit
-		if !strings.ContainsRune(charset, r) {
-			return false
-		}
-	}
-	return true
+	return isValidName(ident) || isValidID(ident)
 }
 
 // isValidName reports whether the given name is valid.
@@ -467,6 +453,27 @@ func isValidName(name string) bool {
 		if i > 0 {
 			charset = letter + decimalDigit
 		}
+		if !strings.ContainsRune(charset, r) {
+			return false
+		}
+	}
+	return true
+}
+
+// isValidID reports whether the given ID is valid.
+func isValidID(id string) bool {
+	// _decimals
+	//    : _decimal_digit { _decimal_digit }
+	// ;
+	//
+	// _id
+	//    : _decimals
+	// ;
+	if len(id) < 1 {
+		return false
+	}
+	for _, r := range id {
+		const charset = decimalDigit
 		if !strings.ContainsRune(charset, r) {
 			return false
 		}

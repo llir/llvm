@@ -61,14 +61,6 @@ func Example() {
 	//                 },
 	//                 Variadic: false,
 	//             },
-	//             Params: {
-	//                 &ir.Param{
-	//                     Param: &types.Param{
-	//                         Name: "x",
-	//                         Typ:  &types.IntType{Size:32},
-	//                     },
-	//                 },
-	//             },
 	//             Blocks: nil,
 	//         },
 	//         &ir.Function{
@@ -89,7 +81,6 @@ func Example() {
 	//                 },
 	//                 Variadic: false,
 	//             },
-	//             Params: nil,
 	//             Blocks: {
 	//                 &ir.BasicBlock{
 	//                     Parent: &ir.Function{(CYCLIC REFERENCE)},

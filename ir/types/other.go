@@ -5,6 +5,8 @@ package types
 import (
 	"bytes"
 	"fmt"
+
+	"github.com/llir/llvm/internal/enc"
 )
 
 // --- [ void ] ----------------------------------------------------------------
@@ -97,6 +99,9 @@ func (t *FuncType) NewParam(name string, typ Type) *Param {
 }
 
 // A Param represents an LLVM IR function parameter.
+//
+// Function parameters may be referenced from instructions (e.g. add), and are
+// thus considered LLVM IR values.
 type Param struct {
 	// Parameter name.
 	Name string
@@ -108,6 +113,26 @@ type Param struct {
 // and type.
 func NewParam(name string, typ Type) *Param {
 	return &Param{Name: name, Typ: typ}
+}
+
+// Type returns the type of the function parameter.
+func (param *Param) Type() Type {
+	return param.Typ
+}
+
+// Ident returns the identifier associated with the function parameter.
+func (param *Param) Ident() string {
+	return enc.Local(param.Name)
+}
+
+// GetName returns the name of the function parameter.
+func (param *Param) GetName() string {
+	return param.Name
+}
+
+// SetName sets the name of the function parameter.
+func (param *Param) SetName(name string) {
+	param.Name = name
 }
 
 // --- [ label ] ---------------------------------------------------------------

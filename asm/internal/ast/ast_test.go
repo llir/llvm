@@ -2,7 +2,7 @@ package ast_test
 
 import "github.com/llir/llvm/asm/internal/ast"
 
-// Valutate that the relevant types satisfy the ast.Constant interface.
+// Validate that the relevant types satisfy the ast.Constant interface.
 var (
 	// Simple constants.
 	_ ast.Constant = &ast.IntConst{}
@@ -19,7 +19,7 @@ var (
 	_ ast.Constant = &ast.Function{}
 )
 
-// Valutate that the relevant types satisfy the ast.Constant interface.
+// Validate that the relevant types satisfy the ast.Constant interface.
 var (
 	// Constant expressions.
 	// Binary instructions
@@ -64,7 +64,7 @@ var (
 	_ ast.Constant = &ast.ExprSelect{}
 )
 
-// Valutate that the relevant types satisfy the ast.Instruction interface.
+// Validate that the relevant types satisfy the ast.Instruction interface.
 var (
 	// Binary instructions
 	_ ast.Instruction = &ast.InstAdd{}
@@ -115,7 +115,7 @@ var (
 	_ ast.Instruction = &ast.InstCall{}
 )
 
-// Valutate that the relevant types satisfy the ast.Terminator interface.
+// Validate that the relevant types satisfy the ast.Terminator interface.
 var (
 	// Terminators
 	_ ast.Terminator = &ast.TermRet{}
@@ -125,7 +125,7 @@ var (
 	_ ast.Terminator = &ast.TermUnreachable{}
 )
 
-// Valutate that the relevant types satisfy the ast.NamedValue interface.
+// Validate that the relevant types satisfy the ast.NamedValue interface.
 var (
 	_ ast.NamedValue = &ast.Global{}
 	_ ast.NamedValue = &ast.GlobalDummy{}
@@ -181,7 +181,7 @@ var (
 	_ ast.NamedValue = &ast.InstCall{}
 )
 
-// Valutate that the relevant types satisfy the ast.Type interface.
+// Validate that the relevant types satisfy the ast.Type interface.
 var (
 	_ ast.Type = &ast.VoidType{}
 	_ ast.Type = &ast.FuncType{}

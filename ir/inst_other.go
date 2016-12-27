@@ -432,7 +432,7 @@ type InstCall struct {
 	// Callee may have one of the following underlying types.
 	//
 	//    *ir.Function
-	//    *ir.Param
+	//    *types.Param
 	Callee value.Named
 	// Callee signature.
 	Sig *types.FuncType
@@ -446,7 +446,7 @@ type InstCall struct {
 // The callee value may have one of the following underlying types.
 //
 //    *ir.Function
-//    *ir.Param
+//    *types.Param
 func NewCall(callee value.Named, args ...value.Value) *InstCall {
 	typ, ok := callee.Type().(*types.PointerType)
 	if !ok {

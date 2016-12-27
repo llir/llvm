@@ -4,7 +4,7 @@ import (
 	"github.com/llir/llvm/ir/constant"
 )
 
-// Valutate that the relevant types satisfy the constant.Constant interface.
+// Validate that the relevant types satisfy the constant.Constant interface.
 var (
 	// Simple constants.
 	_ constant.Constant = &constant.Int{}
@@ -17,7 +17,7 @@ var (
 	_ constant.Constant = &constant.ZeroInitializer{}
 )
 
-// Valutate that the relevant types satisfy the constant.Expr interface.
+// Validate that the relevant types satisfy the constant.Expr interface.
 var (
 	// Constant expressions.
 	// Binary instructions
