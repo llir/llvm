@@ -304,10 +304,10 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid add expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `add` expression x type; expected integer or vector of integers type, got %T", xType)
 		}
 		if !xType.Equal(yType) {
-			sem.Errorf("add expression x type `%v` and y type `%v` mismatch", xType, yType)
+			sem.Errorf("`add` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprFAdd:
 		// The two arguments to the `fadd` instruction must be floating point or
@@ -321,10 +321,10 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
 		if !isFloatOrFloatVectorType(xType) {
-			sem.Errorf("invalid fadd expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+			sem.Errorf("invalid `fadd` expression x type; expected floating-point or vector of floating-points type, got %T", xType)
 		}
 		if !xType.Equal(yType) {
-			sem.Errorf("fadd expression x type `%v` and y type `%v` mismatch", xType, yType)
+			sem.Errorf("`fadd` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprSub:
 		// The two arguments to the `sub` instruction must be integer or vector of
@@ -336,11 +336,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.X is validated when later traversed.
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
-		if !xType.Equal(yType) {
-			sem.Errorf("sub expression x type `%v` and y type `%v` mismatch", xType, yType)
-		}
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid sub expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `sub` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`sub` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprFSub:
 		// The two arguments to the `fsub` instruction must be floating point or
@@ -354,10 +354,10 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
 		if !isFloatOrFloatVectorType(xType) {
-			sem.Errorf("invalid fsub expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+			sem.Errorf("invalid `fsub` expression x type; expected floating-point or vector of floating-points type, got %T", xType)
 		}
 		if !xType.Equal(yType) {
-			sem.Errorf("fsub expression x type `%v` and y type `%v` mismatch", xType, yType)
+			sem.Errorf("`fsub` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprMul:
 		// The two arguments to the `mul` instruction must be integer or vector of
@@ -369,11 +369,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.X is validated when later traversed.
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
-		if !xType.Equal(yType) {
-			sem.Errorf("mul expression x type `%v` and y type `%v` mismatch", xType, yType)
-		}
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid mul expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `mul` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`mul` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprFMul:
 		// The two arguments to the `fmul` instruction must be floating point or
@@ -387,10 +387,10 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
 		if !isFloatOrFloatVectorType(xType) {
-			sem.Errorf("invalid fmul expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+			sem.Errorf("invalid `fmul` expression x type; expected floating-point or vector of floating-points type, got %T", xType)
 		}
 		if !xType.Equal(yType) {
-			sem.Errorf("fmul expression x type `%v` and y type `%v` mismatch", xType, yType)
+			sem.Errorf("`fmul` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprUDiv:
 		// The two arguments to the `udiv` instruction must be integer or vector of
@@ -402,11 +402,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.X is validated when later traversed.
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
-		if !xType.Equal(yType) {
-			sem.Errorf("udiv expression x type `%v` and y type `%v` mismatch", xType, yType)
-		}
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid udiv expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `udiv` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`udiv` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprSDiv:
 		// The two arguments to the `sdiv` instruction must be integer or vector of
@@ -418,11 +418,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.X is validated when later traversed.
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
-		if !xType.Equal(yType) {
-			sem.Errorf("sdiv expression x type `%v` and y type `%v` mismatch", xType, yType)
-		}
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid sdiv expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `sdiv` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`sdiv` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprFDiv:
 		// The two arguments to the `fdiv` instruction must be floating point or
@@ -436,10 +436,10 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
 		if !isFloatOrFloatVectorType(xType) {
-			sem.Errorf("invalid fdiv expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+			sem.Errorf("invalid `fdiv` expression x type; expected floating-point or vector of floating-points type, got %T", xType)
 		}
 		if !xType.Equal(yType) {
-			sem.Errorf("fdiv expression x type `%v` and y type `%v` mismatch", xType, yType)
+			sem.Errorf("`fdiv` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprURem:
 		// The two arguments to the `urem` instruction must be integer or vector of
@@ -451,11 +451,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.X is validated when later traversed.
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
-		if !xType.Equal(yType) {
-			sem.Errorf("urem expression x type `%v` and y type `%v` mismatch", xType, yType)
-		}
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid urem expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `urem` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`urem` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprSRem:
 		// The two arguments to the `srem` instruction must be integer or vector of
@@ -467,11 +467,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.X is validated when later traversed.
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
-		if !xType.Equal(yType) {
-			sem.Errorf("srem expression x type `%v` and y type `%v` mismatch", xType, yType)
-		}
 		if !isIntOrIntVectorType(xType) {
-			sem.Errorf("invalid srem expression x type; expected integer or vector of integers type, got %T", xType)
+			sem.Errorf("invalid `srem` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`srem` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 	case *constant.ExprFRem:
 		// The two arguments to the `frem` instruction must be floating point or
@@ -485,25 +485,109 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Y is validated when later traversed.
 		xType, yType := c.X.Type(), c.Y.Type()
 		if !isFloatOrFloatVectorType(xType) {
-			sem.Errorf("invalid frem expression x type; expected floating-point or vector of floating-points type, got %T", xType)
+			sem.Errorf("invalid `frem` expression x type; expected floating-point or vector of floating-points type, got %T", xType)
 		}
 		if !xType.Equal(yType) {
-			sem.Errorf("frem expression x type `%v` and y type `%v` mismatch", xType, yType)
+			sem.Errorf("`frem` expression x type `%v` and y type `%v` mismatch", xType, yType)
 		}
 
 	// Bitwise expressions.
 	case *constant.ExprShl:
-		panic("not yet implemented")
+		// Both arguments to the `shl` instruction must be the same integer or
+		// vector of integer type.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#shl-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid `shl` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`shl` expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprLShr:
-		panic("not yet implemented")
+		// Both arguments to the `lshr` instruction must be the same integer or
+		// vector of integer type.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#lshr-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid `lshr` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`lshr` expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprAShr:
-		panic("not yet implemented")
+		// Both arguments to the `ashr` instruction must be the same integer or
+		// vector of integer type.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#ashr-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid `ashr` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`ashr` expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprAnd:
-		panic("not yet implemented")
+		// The two arguments to the `and` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#and-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid `and` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`and` expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprOr:
-		panic("not yet implemented")
+		// The two arguments to the `or` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#or-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid `or` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`or` expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprXor:
-		panic("not yet implemented")
+		// The two arguments to the `xor` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#xor-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid `xor` expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("`xor` expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 
 	// Memory expressions.
 	case *constant.ExprGetElementPtr:
