@@ -62,7 +62,8 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		}
 		c := constant.NewStruct(fields...)
 		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
-			m.errs = append(m.errs, errors.Errorf("struct type mismatch; expected `%v`, got `%v`", want, got))
+			err := errors.Errorf("struct type mismatch; expected `%v`, got `%v`", want, got)
+			m.errs = append(m.errs, err)
 		}
 		return c
 	case *ast.ZeroInitializerConst:
