@@ -67,13 +67,15 @@ func (sem *sem) Errorf(format string, args ...interface{}) {
 	sem.errs = append(sem.errs, err)
 }
 
-// checkGlobal validates the semantics of the given global.
+// --- [ Global variables ] ----------------------------------------------------
+
+// checkGlobal validates the semantics of the given global variable.
 func (sem *sem) checkGlobal(global *ir.Global) {
-	// Validate global name.
+	// Validate global variable name.
 	if len(global.Name) == 0 {
-		sem.Errorf("global name missing")
+		sem.Errorf("global variable name missing")
 	} else if !isValidIdent(global.Name) {
-		sem.Errorf("invalid global name `%v`", enc.Global(global.Name))
+		sem.Errorf("invalid global variable name `%v`", enc.Global(global.Name))
 	}
 	// Validate global variable type.
 	content, elem := global.Content, global.Typ.Elem
@@ -82,7 +84,7 @@ func (sem *sem) checkGlobal(global *ir.Global) {
 	}
 	// Validate global variable content type.
 	if !isSingleValueType(content) && !isAggregateType(content) {
-		sem.Errorf("invalid global content type; expected single value or aggregate type, got %T", content)
+		sem.Errorf("invalid global variable content type; expected single value or aggregate type, got %T", content)
 	}
 	// Validate global variable initial value
 	if init := global.Init; init != nil {
@@ -91,6 +93,8 @@ func (sem *sem) checkGlobal(global *ir.Global) {
 		}
 	}
 }
+
+// --- [ Functions ] -----------------------------------------------------------
 
 // checkFunc validates the semantics of the given function.
 func (sem *sem) checkFunc(f *ir.Function) {
@@ -113,6 +117,8 @@ func (sem *sem) checkFunc(f *ir.Function) {
 	// f.Blocks is validated when later traversed.
 }
 
+// --- [ Basic blocks ] --------------------------------------------------------
+
 // checkBlock validates the semantics of the given basic block.
 func (sem *sem) checkBlock(block *ir.BasicBlock) {
 	// Validate parent function of the basic block.
@@ -131,6 +137,8 @@ func (sem *sem) checkBlock(block *ir.BasicBlock) {
 	}
 	// block.Term is further validated when later traversed.
 }
+
+// --- [ Types ] ---------------------------------------------------------------
 
 // checkType validates the semantics of the given type.
 func (sem *sem) checkType(t types.Type) {
@@ -215,6 +223,8 @@ func (sem *sem) checkType(t types.Type) {
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}
 }
+
+// --- [ Constants ] -----------------------------------------------------------
 
 // checkConst validates the semantics of the given constant.
 func (sem *sem) checkConst(c constant.Constant) {
@@ -315,6 +325,8 @@ func (sem *sem) checkConst(c constant.Constant) {
 	}
 }
 
+// --- [ Instructions ] --------------------------------------------------------
+
 // checkInst validates the semantics of the given instruction.
 func (sem *sem) checkInst(inst ir.Instruction) {
 	switch inst := inst.(type) {
@@ -408,6 +420,8 @@ func (sem *sem) checkInst(inst ir.Instruction) {
 	}
 }
 
+// --- [ Terminators ] ---------------------------------------------------------
+
 // checkTerm validates the semantics of the given terminator.
 func (sem *sem) checkTerm(term ir.Terminator) {
 	switch term := term.(type) {
@@ -425,6 +439,8 @@ func (sem *sem) checkTerm(term ir.Terminator) {
 		panic(fmt.Errorf("support for instruction %T not yet implemented", term))
 	}
 }
+
+// ### [ Helper functions ] ####################################################
 
 const (
 	asciiLetter  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"

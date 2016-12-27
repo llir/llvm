@@ -16,8 +16,8 @@ func TestCheck(t *testing.T) {
 		{
 			path: "testdata/global.ll",
 			errs: []string{
-				"invalid global content type; expected single value or aggregate type, got *types.LabelType",
-				"invalid global content type; expected single value or aggregate type, got *types.MetadataType",
+				"invalid global variable content type; expected single value or aggregate type, got *types.LabelType",
+				"invalid global variable content type; expected single value or aggregate type, got *types.MetadataType",
 			},
 		},
 		// Types.
