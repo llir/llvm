@@ -20,6 +20,7 @@ func TestCheck(t *testing.T) {
 				"invalid global variable content type; expected single value or aggregate type, got *types.MetadataType",
 			},
 		},
+
 		// Types.
 		{
 			path: "testdata/type_func.ll",
@@ -68,6 +69,24 @@ func TestCheck(t *testing.T) {
 				"invalid struct field type; expected single value or aggregate type, got *types.LabelType",
 				"invalid struct field type; expected single value or aggregate type, got *types.MetadataType",
 			},
+		},
+
+		// Constants.
+		{
+			path: "testdata/const_vector.ll",
+			errs: []string{
+				"vector constant element type `i32` and element type `i8` mismatch",
+			},
+		},
+		{
+			path: "testdata/const_array.ll",
+			errs: []string{
+				"array constant element type `i32` and element type `i8` mismatch",
+			},
+		},
+		{
+			path: "testdata/const_struct.ll",
+			errs: nil,
 		},
 	}
 	for _, g := range golden {

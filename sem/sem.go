@@ -231,20 +231,67 @@ func (sem *sem) checkConst(c constant.Constant) {
 	switch c := c.(type) {
 	// Simple constants.
 	case *constant.Int:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+		// Validate integer value.
+		if c.X == nil {
+			sem.Errorf("integer constant value missing")
+		}
 	case *constant.Float:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+		// Validate floating-point value.
+		if c.X == nil {
+			sem.Errorf("floating-point constant value missing")
+		}
 	case *constant.Null:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+
 	// Complex constants.
 	case *constant.Vector:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+		// Validate number of vector elements.
+		if c.Typ.Len != int64(len(c.Elems)) {
+			sem.Errorf("number of vector constant elements mismatch for type `%v`; expected %d, got %d", c.Typ, c.Typ.Len, len(c.Elems))
+		}
+		// Validate vector constant element types.
+		want := c.Typ.Elem
+		for _, elem := range c.Elems {
+			if got := elem.Type(); !got.Equal(want) {
+				sem.Errorf("vector constant element type `%v` and element type `%v` mismatch", want, got)
+			}
+		}
 	case *constant.Array:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+		// Validate number of array elements.
+		if c.Typ.Len != int64(len(c.Elems)) {
+			sem.Errorf("number of array constant elements mismatch for type `%v`; expected %d, got %d", c.Typ, c.Typ.Len, len(c.Elems))
+		}
+		// Validate array constant element types.
+		want := c.Typ.Elem
+		if c.CharArray && !want.Equal(types.I8) {
+			sem.Errorf("invalid character array constant element type; expected `i8`, got `%v`", want)
+		}
+		for _, elem := range c.Elems {
+			if got := elem.Type(); !got.Equal(want) {
+				sem.Errorf("array constant element type `%v` and element type `%v` mismatch", want, got)
+			}
+		}
 	case *constant.Struct:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+		// Validate number of struct fields.
+		if len(c.Typ.Fields) != len(c.Fields) {
+			sem.Errorf("number of struct constant fields mismatch for type `%v`; expected %d, got %d", c.Typ, len(c.Typ.Fields), len(c.Fields))
+			return
+		}
+		// Validate struct constant field types.
+		for i, field := range c.Fields {
+			want := c.Typ.Fields[i]
+			if got := field.Type(); !got.Equal(want) {
+				sem.Errorf("struct constant field type `%v` and field type `%v` mismatch", want, got)
+			}
+		}
 	case *constant.ZeroInitializer:
-		panic("not yet implemented")
+		// c.Typ is validated when later traversed.
+
 	// Binary expressions.
 	case *constant.ExprAdd:
 		panic("not yet implemented")
@@ -270,6 +317,7 @@ func (sem *sem) checkConst(c constant.Constant) {
 		panic("not yet implemented")
 	case *constant.ExprFRem:
 		panic("not yet implemented")
+
 	// Bitwise expressions.
 	case *constant.ExprShl:
 		panic("not yet implemented")
@@ -283,9 +331,11 @@ func (sem *sem) checkConst(c constant.Constant) {
 		panic("not yet implemented")
 	case *constant.ExprXor:
 		panic("not yet implemented")
+
 	// Memory expressions.
 	case *constant.ExprGetElementPtr:
 		panic("not yet implemented")
+
 	// Conversion expressions.
 	case *constant.ExprTrunc:
 		panic("not yet implemented")
@@ -313,6 +363,7 @@ func (sem *sem) checkConst(c constant.Constant) {
 		panic("not yet implemented")
 	case *constant.ExprAddrSpaceCast:
 		panic("not yet implemented")
+
 	// Other expressions.
 	case *constant.ExprICmp:
 		panic("not yet implemented")
@@ -320,6 +371,7 @@ func (sem *sem) checkConst(c constant.Constant) {
 		panic("not yet implemented")
 	case *constant.ExprSelect:
 		panic("not yet implemented")
+
 	default:
 		panic(fmt.Errorf("support for constant %T not yet implemented", c))
 	}
