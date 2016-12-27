@@ -250,43 +250,43 @@ func (sem *sem) checkConst(c constant.Constant) {
 		// c.Typ is validated when later traversed.
 		// Validate number of vector elements.
 		if c.Typ.Len != int64(len(c.Elems)) {
-			sem.Errorf("number of vector constant elements mismatch for type `%v`; expected %d, got %d", c.Typ, c.Typ.Len, len(c.Elems))
+			sem.Errorf("number of vector elements mismatch for type `%v`; expected %d, got %d", c.Typ, c.Typ.Len, len(c.Elems))
 		}
-		// Validate vector constant element types.
+		// Validate vector element types.
 		want := c.Typ.Elem
 		for _, elem := range c.Elems {
 			if got := elem.Type(); !got.Equal(want) {
-				sem.Errorf("vector constant element type `%v` and element type `%v` mismatch", want, got)
+				sem.Errorf("vector element type `%v` and element type `%v` mismatch", want, got)
 			}
 		}
 	case *constant.Array:
 		// c.Typ is validated when later traversed.
 		// Validate number of array elements.
 		if c.Typ.Len != int64(len(c.Elems)) {
-			sem.Errorf("number of array constant elements mismatch for type `%v`; expected %d, got %d", c.Typ, c.Typ.Len, len(c.Elems))
+			sem.Errorf("number of array elements mismatch for type `%v`; expected %d, got %d", c.Typ, c.Typ.Len, len(c.Elems))
 		}
-		// Validate array constant element types.
+		// Validate array element types.
 		want := c.Typ.Elem
 		if c.CharArray && !want.Equal(types.I8) {
-			sem.Errorf("invalid character array constant element type; expected `i8`, got `%v`", want)
+			sem.Errorf("invalid character array element type; expected `i8`, got `%v`", want)
 		}
 		for _, elem := range c.Elems {
 			if got := elem.Type(); !got.Equal(want) {
-				sem.Errorf("array constant element type `%v` and element type `%v` mismatch", want, got)
+				sem.Errorf("array element type `%v` and element type `%v` mismatch", want, got)
 			}
 		}
 	case *constant.Struct:
 		// c.Typ is validated when later traversed.
 		// Validate number of struct fields.
 		if len(c.Typ.Fields) != len(c.Fields) {
-			sem.Errorf("number of struct constant fields mismatch for type `%v`; expected %d, got %d", c.Typ, len(c.Typ.Fields), len(c.Fields))
+			sem.Errorf("number of struct fields mismatch for type `%v`; expected %d, got %d", c.Typ, len(c.Typ.Fields), len(c.Fields))
 			return
 		}
-		// Validate struct constant field types.
+		// Validate struct field types.
 		for i, field := range c.Fields {
 			want := c.Typ.Fields[i]
 			if got := field.Type(); !got.Equal(want) {
-				sem.Errorf("struct constant field type `%v` and field type `%v` mismatch", want, got)
+				sem.Errorf("struct field type `%v` and field type `%v` mismatch", want, got)
 			}
 		}
 	case *constant.ZeroInitializer:
@@ -294,27 +294,125 @@ func (sem *sem) checkConst(c constant.Constant) {
 
 	// Binary expressions.
 	case *constant.ExprAdd:
-		panic("not yet implemented")
+		// The two arguments to the `add` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#add-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid add expression x type; expected integer or vector of integers type, got %T", xType)
+		}
+		if !xType.Equal(yType) {
+			sem.Errorf("add expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
 	case *constant.ExprFAdd:
 		panic("not yet implemented")
 	case *constant.ExprSub:
-		panic("not yet implemented")
+		// The two arguments to the `sub` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#sub-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !xType.Equal(yType) {
+			sem.Errorf("sub expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid sub expression x type; expected integer or vector of integers type, got %T", xType)
+		}
 	case *constant.ExprFSub:
 		panic("not yet implemented")
 	case *constant.ExprMul:
-		panic("not yet implemented")
+		// The two arguments to the `mul` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#mul-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !xType.Equal(yType) {
+			sem.Errorf("mul expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid mul expression x type; expected integer or vector of integers type, got %T", xType)
+		}
 	case *constant.ExprFMul:
 		panic("not yet implemented")
 	case *constant.ExprUDiv:
-		panic("not yet implemented")
+		// The two arguments to the `udiv` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#udiv-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !xType.Equal(yType) {
+			sem.Errorf("udiv expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid udiv expression x type; expected integer or vector of integers type, got %T", xType)
+		}
 	case *constant.ExprSDiv:
-		panic("not yet implemented")
+		// The two arguments to the `sdiv` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#sdiv-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !xType.Equal(yType) {
+			sem.Errorf("sdiv expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid sdiv expression x type; expected integer or vector of integers type, got %T", xType)
+		}
 	case *constant.ExprFDiv:
 		panic("not yet implemented")
 	case *constant.ExprURem:
-		panic("not yet implemented")
+		// The two arguments to the `urem` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#urem-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !xType.Equal(yType) {
+			sem.Errorf("urem expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid urem expression x type; expected integer or vector of integers type, got %T", xType)
+		}
 	case *constant.ExprSRem:
-		panic("not yet implemented")
+		// The two arguments to the `srem` instruction must be integer or vector of
+		// integer values. Both arguments must have identical types.
+		//
+		// References:
+		//    http://llvm.org/docs/LangRef.html#srem-instruction
+
+		// c.X is validated when later traversed.
+		// c.Y is validated when later traversed.
+		xType, yType := c.X.Type(), c.Y.Type()
+		if !xType.Equal(yType) {
+			sem.Errorf("srem expression x type `%v` and y type `%v` mismatch", xType, yType)
+		}
+		if !isIntOrIntVectorType(xType) {
+			sem.Errorf("invalid srem expression x type; expected integer or vector of integers type, got %T", xType)
+		}
 	case *constant.ExprFRem:
 		panic("not yet implemented")
 
@@ -651,5 +749,31 @@ func isAggregateType(t types.Type) bool {
 		return isAggregateType(t.Def)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
+	}
+}
+
+// isIntOrIntVectorType reports whether the given type is an integer or vector
+// of integers type.
+func isIntOrIntVectorType(t types.Type) bool {
+	switch t := t.(type) {
+	case *types.IntType:
+		return true
+	case *types.VectorType:
+		return types.IsInt(t.Elem)
+	default:
+		return false
+	}
+}
+
+// isFloatOrFloatVectorType reports whether the given type is a floating-point
+// or vector of floating-points type.
+func isFloatOrFloatVectorType(t types.Type) bool {
+	switch t := t.(type) {
+	case *types.FloatType:
+		return true
+	case *types.VectorType:
+		return types.IsFloat(t.Elem)
+	default:
+		return false
 	}
 }

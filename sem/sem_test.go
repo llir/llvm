@@ -75,13 +75,13 @@ func TestCheck(t *testing.T) {
 		{
 			path: "testdata/const_vector.ll",
 			errs: []string{
-				"vector constant element type `i32` and element type `i8` mismatch",
+				"vector element type `i32` and element type `i8` mismatch",
 			},
 		},
 		{
 			path: "testdata/const_array.ll",
 			errs: []string{
-				"array constant element type `i32` and element type `i8` mismatch",
+				"array element type `i32` and element type `i8` mismatch",
 			},
 		},
 		{
