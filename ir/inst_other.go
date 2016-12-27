@@ -487,12 +487,17 @@ func (inst *InstCall) SetName(name string) {
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstCall) String() string {
 	buf := &bytes.Buffer{}
-	typ := inst.Type()
-	if !typ.Equal(types.Void) {
+	if !inst.Type().Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", inst.Ident())
 	}
+	// Print callee signature instead of return type for variadic callees.
+	sig := inst.Sig
+	ret := sig.Ret.String()
+	if sig.Variadic {
+		ret = sig.String()
+	}
 	fmt.Fprintf(buf, "call %s %s(",
-		typ,
+		ret,
 		inst.Callee.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
