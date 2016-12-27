@@ -109,12 +109,27 @@ func (sem *sem) checkFunc(f *ir.Function) {
 	if !sig.Equal(elem) {
 		sem.Errorf("function signature type `%v` and element type `%v` mismatch", sig, elem)
 	}
-	// TODO: Implement.
+	// f.Sig is validated when later traversed.
+	// f.Blocks is validated when later traversed.
 }
 
 // checkBlock validates the semantics of the given basic block.
-func (sem *sem) checkBlock(param *ir.BasicBlock) {
-	panic("not yet implemented")
+func (sem *sem) checkBlock(block *ir.BasicBlock) {
+	// Validate parent function of the basic block.
+	if block.Parent == nil {
+		sem.Errorf("parent function of basic block missing")
+	}
+	// Validate basic block label name.
+	if len(block.Name) == 0 {
+		// valid; unnamed basic block.
+	} else if !isValidIdent(block.Name) {
+		sem.Errorf("invalid basic block label name `%v`", enc.Local(block.Name))
+	}
+	// block.Insts is validated when later traversed.
+	if block.Term == nil {
+		sem.Errorf("terminator of basic block missing")
+	}
+	// block.Term is further validated when later traversed.
 }
 
 // checkType validates the semantics of the given type.
