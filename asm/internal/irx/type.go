@@ -56,7 +56,9 @@ func (m *Module) irType(old ast.Type) types.Type {
 		for i, oldField := range old.Fields {
 			fields[i] = m.irType(oldField)
 		}
-		return types.NewStruct(fields...)
+		typ := types.NewStruct(fields...)
+		typ.Opaque = old.Opaque
+		return typ
 	case *ast.NamedType:
 		return m.getType(old.Name)
 	case *ast.NamedTypeDummy:

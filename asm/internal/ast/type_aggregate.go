@@ -22,6 +22,11 @@ type ArrayType struct {
 type StructType struct {
 	// Struct fields.
 	Fields []Type
+	// Opaque struct type.
+	//
+	// References:
+	//    http://llvm.org/docs/LangRef.html#opaque-structure-types
+	Opaque bool
 }
 
 // isType ensures that only types can be assigned to the ast.Type interface.

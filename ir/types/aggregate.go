@@ -53,6 +53,11 @@ func (t *ArrayType) Equal(u Type) bool {
 type StructType struct {
 	// Struct fields.
 	Fields []Type
+	// Opaque struct type.
+	//
+	// References:
+	//    http://llvm.org/docs/LangRef.html#opaque-structure-types
+	Opaque bool
 }
 
 // NewStruct returns a new struct type based on the given struct fields.
@@ -62,6 +67,9 @@ func NewStruct(fields ...Type) *StructType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *StructType) String() string {
+	if t.Opaque {
+		return "opaque"
+	}
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
 	for i, field := range t.Fields {

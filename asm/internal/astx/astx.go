@@ -87,15 +87,21 @@ func NewTypeDef(name, typ interface{}) (*ast.NamedType, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type name type; expected *astx.LocalIdent, got %T", name)
 	}
-	var t ast.Type
-	switch typ := typ.(type) {
-	case ast.Type:
-		t = typ
-	case nil:
-		// opaque identified struct type.
-	default:
+	t, ok := typ.(ast.Type)
+	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
 	}
+	return &ast.NamedType{Name: n.name, Def: t}, nil
+}
+
+// NewTypeDefOpaque returns a new opaque struct type definition based on the
+// given type name.
+func NewTypeDefOpaque(name interface{}) (*ast.NamedType, error) {
+	n, ok := name.(*LocalIdent)
+	if !ok {
+		return nil, errors.Errorf("invalid type name type; expected *astx.LocalIdent, got %T", name)
+	}
+	t := &ast.StructType{Opaque: true}
 	return &ast.NamedType{Name: n.name, Def: t}, nil
 }
 

@@ -180,7 +180,7 @@ TopLevelDecl
 
 TypeDef
 	: LocalIdent "=" "type" Type       << astx.NewTypeDef($0, $3) >>
-	| LocalIdent "=" "type" "opaque"   << astx.NewTypeDef($0, nil) >>
+	| LocalIdent "=" "type" "opaque"   << astx.NewTypeDefOpaque($0) >>
 ;
 
 // === [ Global variables ] ====================================================
