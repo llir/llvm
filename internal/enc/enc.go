@@ -91,10 +91,6 @@ func Escape(s string) string {
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 		switch {
-		case b == '\\':
-			// Escape backslash characters.
-			//    `\` -> `\\`
-			extra++
 		case !isPrint(b):
 			// Two extra bytes are required for each invalid byte; e.g.
 			//    "#" -> `\23`
@@ -115,10 +111,6 @@ func Escape(s string) string {
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 		switch {
-		case b == '\\':
-			buf[j] = '\\'
-			buf[j+1] = '\\'
-			j += 2
 		case !isPrint(b):
 			buf[j] = '\\'
 			buf[j+1] = hextable[b>>4]
@@ -134,7 +126,7 @@ func Escape(s string) string {
 
 // isPrint reports whether the given byte is printable.
 func isPrint(b byte) bool {
-	return ' ' <= b && b <= '~'
+	return ' ' <= b && b <= '~' && b != '"' && b != '\\'
 }
 
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their

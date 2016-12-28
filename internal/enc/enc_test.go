@@ -141,7 +141,7 @@ func TestEscape(t *testing.T) {
 		// i=9
 		{s: "foo世bar", want: `foo\E4\B8\96bar`},
 		// i=10
-		{s: `foo \ bar`, want: `foo \\ bar`},
+		{s: `foo \ bar`, want: `foo \5C bar`},
 	}
 
 	for i, g := range golden {
