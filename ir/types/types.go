@@ -70,69 +70,122 @@ func Equal(t, u Type) bool {
 
 // IsVoid reports whether the given type is a void type.
 func IsVoid(t Type) bool {
-	_, ok := t.(*VoidType)
-	return ok
+	switch t := t.(type) {
+	case *VoidType:
+		return true
+	case *NamedType:
+		return IsVoid(t.Def)
+	}
+	return false
 }
 
 // IsFunc reports whether the given type is a function type.
 func IsFunc(t Type) bool {
-	_, ok := t.(*FuncType)
-	return ok
+	switch t := t.(type) {
+	case *FuncType:
+		return true
+	case *NamedType:
+		return IsFunc(t.Def)
+	}
+	return false
 }
 
 // IsBool reports whether the given type is a boolean type (i.e. an integer type
 // with bit size 1).
 func IsBool(t Type) bool {
-	if t, ok := t.(*IntType); ok {
+	switch t := t.(type) {
+	case *IntType:
 		return t.Size == 1
+	case *NamedType:
+		return IsBool(t.Def)
 	}
 	return false
 }
 
 // IsInt reports whether the given type is an integer type.
 func IsInt(t Type) bool {
-	_, ok := t.(*IntType)
-	return ok
+	switch t := t.(type) {
+	case *IntType:
+		return true
+	case *NamedType:
+		return IsInt(t.Def)
+	}
+	return false
 }
 
 // IsFloat reports whether the given type is a floating-point type.
 func IsFloat(t Type) bool {
-	_, ok := t.(*FloatType)
-	return ok
+	switch t := t.(type) {
+	case *FloatType:
+		return true
+	case *NamedType:
+		return IsFloat(t.Def)
+	}
+	return false
 }
 
 // IsPointer reports whether the given type is a pointer type.
 func IsPointer(t Type) bool {
-	_, ok := t.(*PointerType)
-	return ok
+	switch t := t.(type) {
+	case *PointerType:
+		return true
+	case *NamedType:
+		return IsPointer(t.Def)
+	}
+	return false
 }
 
 // IsVector reports whether the given type is a vector type.
 func IsVector(t Type) bool {
-	_, ok := t.(*VectorType)
-	return ok
+	switch t := t.(type) {
+	case *VectorType:
+		return true
+	case *NamedType:
+		return IsVector(t.Def)
+	}
+	return false
 }
 
 // IsLabel reports whether the given type is a label type.
 func IsLabel(t Type) bool {
-	_, ok := t.(*LabelType)
-	return ok
+	switch t := t.(type) {
+	case *LabelType:
+		return true
+	case *NamedType:
+		return IsLabel(t.Def)
+	}
+	return false
 }
 
 // IsMetadata reports whether the given type is a metadata type.
 func IsMetadata(t Type) bool {
-	_, ok := t.(*MetadataType)
-	return ok
+	switch t := t.(type) {
+	case *MetadataType:
+		return true
+	case *NamedType:
+		return IsMetadata(t.Def)
+	}
+	return false
 }
 
 // IsArray reports whether the given type is an array type.
 func IsArray(t Type) bool {
-	_, ok := t.(*ArrayType)
-	return ok
+	switch t := t.(type) {
+	case *ArrayType:
+		return true
+	case *NamedType:
+		return IsArray(t.Def)
+	}
+	return false
 }
 
 // IsStruct reports whether the given type is a struct type.
 func IsStruct(t Type) bool {
-	_, ok := t.(*StructType)
-	return ok
+	switch t := t.(type) {
+	case *StructType:
+		return true
+	case *NamedType:
+		return IsStruct(t.Def)
+	}
+	return false
 }
