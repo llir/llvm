@@ -89,7 +89,9 @@ func (f *Function) String() string {
 		if i != 0 {
 			sig.WriteString(", ")
 		}
-		if len(param.Name) > 0 {
+		// Use same output format as Clang. Don't output local ID for unnamed
+		// function parameters.
+		if len(param.Name) > 0 && !isLocalID(param.Name) {
 			fmt.Fprintf(sig, "%s %s",
 				param.Type(),
 				param.Ident())

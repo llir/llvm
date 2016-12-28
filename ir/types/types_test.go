@@ -1059,7 +1059,6 @@ var (
 	_ types.Type = &types.MetadataType{}
 	_ types.Type = &types.ArrayType{}
 	_ types.Type = &types.StructType{}
-	_ types.Type = &types.NamedType{}
 )
 
 // Validate that the relevant types satisfy the value.Named interface.

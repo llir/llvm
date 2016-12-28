@@ -77,7 +77,7 @@ type walker struct {
 // traversal.
 func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{})) {
 	switch x.(type) {
-	case []*ir.Global, []*ir.Function, []types.Type, []*types.Param, []*types.NamedType, []value.Value, []constant.Constant, []*ir.BasicBlock, []ir.Instruction, []*ir.Incoming, []*ir.Case:
+	case []*ir.Global, []*ir.Function, []types.Type, []*types.Param, []value.Value, []constant.Constant, []*ir.BasicBlock, []ir.Instruction, []*ir.Incoming, []*ir.Case:
 		// unhashable type.
 	case *ir.Function:
 		if w.funcScope {
@@ -88,8 +88,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	default:
 		// Prevent infinite loops.
 
-		// TODO: Check if it is enough to only track *types.NamedType to prevent
-		// inf loops.
+		// TODO: Check if it is enough to only track identified *types.StructType
+		// to prevent inf loops.
 		if w.visited[x] {
 			return
 		}
@@ -140,8 +140,6 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case **types.ArrayType:
 		w.walkBeforeAfter(*n, before, after)
 	case **types.StructType:
-		w.walkBeforeAfter(*n, before, after)
-	case **types.NamedType:
 		w.walkBeforeAfter(*n, before, after)
 	// Constants
 	case **constant.Int:
@@ -334,8 +332,6 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case *[]*types.Param:
 		w.walkBeforeAfter(*n, before, after)
-	case *[]*types.NamedType:
-		w.walkBeforeAfter(*n, before, after)
 	case *[]*ir.Global:
 		w.walkBeforeAfter(*n, before, after)
 	case *[]value.Value:
@@ -417,14 +413,6 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *types.StructType:
 		if n.Fields != nil {
 			w.walkBeforeAfter(&n.Fields, before, after)
-		}
-	case []*types.NamedType:
-		for i := range n {
-			w.walkBeforeAfter(&n[i], before, after)
-		}
-	case *types.NamedType:
-		if n.Def != nil {
-			w.walkBeforeAfter(&n.Def, before, after)
 		}
 	// Constants
 	case []value.Value:

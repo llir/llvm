@@ -244,12 +244,6 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
 			continue
 		}
-		if t, ok := e.(*types.NamedType); ok {
-			if t.Def == nil {
-				panic(fmt.Errorf("invalid named type %q; expected underlying type definition, got nil", t))
-			}
-			e = t.Def
-		}
 		switch t := e.(type) {
 		case *types.PointerType:
 			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep

@@ -61,7 +61,17 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 			fields = append(fields, m.irConstant(oldField))
 		}
 		c := constant.NewStruct(fields...)
-		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+		got := c.Typ
+		oldType := m.irType(old.Type)
+		want, ok := oldType.(*types.StructType)
+		if !ok {
+			panic(fmt.Errorf("invalid struct type; expected *types.StructType, got %T", oldType))
+		}
+		// TODO: Figure out how to validate the bodies of got and want. After name
+		// is copied from want to got, only name identity is used for type
+		// equality.
+		got.Name = want.Name
+		if !got.Equal(want) {
 			err := errors.Errorf("struct type mismatch; expected `%v`, got `%v`", want, got)
 			m.errs = append(m.errs, err)
 		}

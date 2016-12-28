@@ -5,7 +5,11 @@
 
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/llir/llvm/internal/enc"
+)
 
 // --- [ integer ] -------------------------------------------------------------
 
@@ -14,6 +18,8 @@ import "fmt"
 // References:
 //    http://llvm.org/docs/LangRef.html#integer-type
 type IntType struct {
+	// Type name alias.
+	Name string
 	// Bit size.
 	Size int
 }
@@ -25,6 +31,14 @@ func NewInt(size int) *IntType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *IntType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *IntType) Def() string {
 	return fmt.Sprintf("i%d", t.Size)
 }
 
@@ -36,6 +50,16 @@ func (t *IntType) Equal(u Type) bool {
 	return false
 }
 
+// GetName returns the name of the type.
+func (t *IntType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *IntType) SetName(name string) {
+	t.Name = name
+}
+
 // --- [ floating-point ] ------------------------------------------------------
 
 // FloatType represents a floating-point type.
@@ -43,12 +67,22 @@ func (t *IntType) Equal(u Type) bool {
 // References:
 //    http://llvm.org/docs/LangRef.html#floating-point-types
 type FloatType struct {
+	// Type name alias.
+	Name string
 	// Floating-point kind.
 	Kind FloatKind
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *FloatType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *FloatType) Def() string {
 	return t.Kind.String()
 }
 
@@ -58,6 +92,16 @@ func (t *FloatType) Equal(u Type) bool {
 		return t.Kind == u.Kind
 	}
 	return false
+}
+
+// GetName returns the name of the type.
+func (t *FloatType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *FloatType) SetName(name string) {
+	t.Name = name
 }
 
 // FloatKind represents the set of floating-point kinds.
@@ -99,6 +143,8 @@ func (kind FloatKind) String() string {
 // References:
 //    http://llvm.org/docs/LangRef.html#pointer-type
 type PointerType struct {
+	// Type name alias.
+	Name string
 	// Element type.
 	Elem Type
 	// Address space.
@@ -112,6 +158,14 @@ func NewPointer(elem Type) *PointerType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *PointerType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *PointerType) Def() string {
 	if t.AddrSpace != 0 {
 		return fmt.Sprintf("%s addrspace(%d)*", t.Elem, t.AddrSpace)
 	}
@@ -126,6 +180,16 @@ func (t *PointerType) Equal(u Type) bool {
 	return false
 }
 
+// GetName returns the name of the type.
+func (t *PointerType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *PointerType) SetName(name string) {
+	t.Name = name
+}
+
 // --- [ vector ] --------------------------------------------------------------
 
 // VectorType represents a vector type.
@@ -133,6 +197,8 @@ func (t *PointerType) Equal(u Type) bool {
 // References:
 //    http://llvm.org/docs/LangRef.html#vector-type
 type VectorType struct {
+	// Type name alias.
+	Name string
 	// Element type.
 	Elem Type
 	// Vector length.
@@ -147,6 +213,14 @@ func NewVector(elem Type, len int64) *VectorType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *VectorType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *VectorType) Def() string {
 	return fmt.Sprintf("<%d x %s>",
 		t.Len,
 		t.Elem)
@@ -158,4 +232,14 @@ func (t *VectorType) Equal(u Type) bool {
 		return t.Elem.Equal(u.Elem) && t.Len == u.Len
 	}
 	return false
+}
+
+// GetName returns the name of the type.
+func (t *VectorType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *VectorType) SetName(name string) {
+	t.Name = name
 }

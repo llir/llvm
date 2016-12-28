@@ -46,9 +46,8 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		if _, ok := m.types[name]; ok {
 			panic(fmt.Errorf("type name %q already present; old `%v`, new `%v`", name, m.types[name], old))
 		}
-		typ := &types.NamedType{
-			Name: name,
-		}
+		typ := newEmptyNamedType(old.Def)
+		typ.SetName(name)
 		m.Types = append(m.Types, typ)
 		m.types[name] = typ
 	}
@@ -115,13 +114,112 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 	return m.Module, nil
 }
 
+// newEmptyNamedType returns an empty type definition for the given named type.
+func newEmptyNamedType(old ast.Type) types.Type {
+	switch old := old.(type) {
+	case *ast.VoidType:
+		return &types.VoidType{}
+	case *ast.FuncType:
+		return &types.FuncType{}
+	case *ast.IntType:
+		return &types.IntType{}
+	case *ast.FloatType:
+		return &types.FloatType{}
+	case *ast.PointerType:
+		return &types.PointerType{}
+	case *ast.VectorType:
+		return &types.VectorType{}
+	case *ast.LabelType:
+		return &types.LabelType{}
+	case *ast.MetadataType:
+		return &types.MetadataType{}
+	case *ast.ArrayType:
+		return &types.ArrayType{}
+	case *ast.StructType:
+		return &types.StructType{}
+	case *ast.NamedType:
+		return newEmptyNamedType(old.Def)
+	default:
+		panic(fmt.Errorf("support for type %T not yet implemented", old))
+	}
+}
+
 // === [ Type definitions ] ====================================================
 
 // typeDef translates the given type definition to LLVM IR, emitting code to m.
 func (m *Module) typeDef(old *ast.NamedType) {
 	typ := m.getType(old.Name)
 	def := m.irType(old.Def)
-	typ.Def = def
+	switch typ := typ.(type) {
+	case *types.VoidType:
+		_, ok := def.(*types.VoidType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.VoidType, got %T", def))
+		}
+		// nothing to do.
+	case *types.FuncType:
+		d, ok := def.(*types.FuncType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.FuncType, got %T", def))
+		}
+		typ.Ret = d.Ret
+		typ.Params = d.Params
+		typ.Variadic = d.Variadic
+	case *types.IntType:
+		d, ok := def.(*types.IntType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.IntType, got %T", def))
+		}
+		typ.Size = d.Size
+	case *types.FloatType:
+		d, ok := def.(*types.FloatType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.FloatType, got %T", def))
+		}
+		typ.Kind = d.Kind
+	case *types.PointerType:
+		d, ok := def.(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.PointerType, got %T", def))
+		}
+		typ.Elem = d.Elem
+		typ.AddrSpace = d.AddrSpace
+	case *types.VectorType:
+		d, ok := def.(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.VectorType, got %T", def))
+		}
+		typ.Elem = d.Elem
+		typ.Len = d.Len
+	case *types.LabelType:
+		_, ok := def.(*types.LabelType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.LabelType, got %T", def))
+		}
+		// nothing to do.
+	case *types.MetadataType:
+		_, ok := def.(*types.MetadataType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.MetadataType, got %T", def))
+		}
+		// nothing to do.
+	case *types.ArrayType:
+		d, ok := def.(*types.ArrayType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.ArrayType, got %T", def))
+		}
+		typ.Elem = d.Elem
+		typ.Len = d.Len
+	case *types.StructType:
+		d, ok := def.(*types.StructType)
+		if !ok {
+			panic(fmt.Errorf("invalid type; expected *types.StructType, got %T", def))
+		}
+		typ.Fields = d.Fields
+		typ.Opaque = d.Opaque
+	default:
+		panic(fmt.Errorf("support for type %T not yet implemented", typ))
+	}
 }
 
 // === [ Global variables ] ====================================================
@@ -663,12 +761,6 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 					//
 					// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
 					continue
-				}
-				if t, ok := e.(*types.NamedType); ok {
-					if t.Def == nil {
-						panic(fmt.Errorf("invalid named type %q; expected underlying type definition, got nil", t))
-					}
-					e = t.Def
 				}
 				switch t := e.(type) {
 				case *types.PointerType:

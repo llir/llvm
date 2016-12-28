@@ -1,3 +1,5 @@
+//+build ignore
+
 // Package sem implements a static semantic analysis checker of LLVM IR modules.
 package sem
 

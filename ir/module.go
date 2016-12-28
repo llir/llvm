@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 )
@@ -20,7 +21,7 @@ import (
 // definitions, global variables, functions, and metadata.
 type Module struct {
 	// Type definitions.
-	Types []*types.NamedType
+	Types []types.Type
 	// Global variables of the module.
 	Globals []*Global
 	// Functions of the module.
@@ -36,21 +37,8 @@ func NewModule() *Module {
 func (m *Module) String() string {
 	buf := &bytes.Buffer{}
 	for _, typ := range m.Types {
-		if typ.Def == nil {
-			panic(fmt.Errorf("invalid type definition %q; expected underlying type definition, got nil", typ))
-		}
-		if def, ok := typ.Def.(*types.StructType); ok {
-			fmt.Fprintf(buf, "%s = type { ", typ)
-			for i, field := range def.Fields {
-				if i != 0 {
-					buf.WriteString(", ")
-				}
-				buf.WriteString(field.String())
-			}
-			buf.WriteString(" }\n")
-		} else {
-			fmt.Fprintf(buf, "%s = type %s\n", typ, def)
-		}
+		name := enc.Local(typ.GetName())
+		fmt.Fprintf(buf, "%s = type %s\n", name, typ.Def())
 	}
 	for _, global := range m.Globals {
 		fmt.Fprintln(buf, global)
@@ -69,11 +57,8 @@ func (m *Module) AppendFunction(f *Function) {
 
 // NewType appends a new type definition to the module based on the given type
 // name and underlying type definition.
-//
-// A nil underlying type definition may be used to specify an opaque struct
-// type, the body of which may later be specified using the SetDef method.
-func (m *Module) NewType(name string, def types.Type) *types.NamedType {
-	typ := types.NewNamed(name, def)
+func (m *Module) NewType(name string, typ types.Type) types.Type {
+	typ.SetName(name)
 	m.Types = append(m.Types, typ)
 	return typ
 }
