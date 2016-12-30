@@ -23,10 +23,11 @@ func Example() {
 	//         &ir.Global{
 	//             Name: "seed",
 	//             Typ:  &types.PointerType{
-	//                 Elem:      &types.IntType{Size:32},
+	//                 Name:      "",
+	//                 Elem:      &types.IntType{Name:"", Size:32},
 	//                 AddrSpace: 0,
 	//             },
-	//             Content: &types.IntType{Size:32},
+	//             Content: &types.IntType{Name:"", Size:32},
 	//             Init:    &constant.Int{
 	//                 Typ: &types.IntType{(CYCLIC REFERENCE)},
 	//                 X:   &big.Int{},
@@ -39,12 +40,14 @@ func Example() {
 	//             Parent: &ir.Module{(CYCLIC REFERENCE)},
 	//             Name:   "abs",
 	//             Typ:    &types.PointerType{
+	//                 Name: "",
 	//                 Elem: &types.FuncType{
-	//                     Ret:    &types.IntType{Size:32},
+	//                     Name:   "",
+	//                     Ret:    &types.IntType{Name:"", Size:32},
 	//                     Params: {
 	//                         &types.Param{
 	//                             Name: "x",
-	//                             Typ:  &types.IntType{Size:32},
+	//                             Typ:  &types.IntType{Name:"", Size:32},
 	//                         },
 	//                     },
 	//                     Variadic: false,
@@ -52,11 +55,12 @@ func Example() {
 	//                 AddrSpace: 0,
 	//             },
 	//             Sig: &types.FuncType{
-	//                 Ret:    &types.IntType{Size:32},
+	//                 Name:   "",
+	//                 Ret:    &types.IntType{Name:"", Size:32},
 	//                 Params: {
 	//                     &types.Param{
 	//                         Name: "x",
-	//                         Typ:  &types.IntType{Size:32},
+	//                         Typ:  &types.IntType{Name:"", Size:32},
 	//                     },
 	//                 },
 	//                 Variadic: false,
@@ -67,8 +71,10 @@ func Example() {
 	//             Parent: &ir.Module{(CYCLIC REFERENCE)},
 	//             Name:   "rand",
 	//             Typ:    &types.PointerType{
+	//                 Name: "",
 	//                 Elem: &types.FuncType{
-	//                     Ret:    &types.IntType{Size:32},
+	//                     Name:   "",
+	//                     Ret:    &types.IntType{Name:"", Size:32},
 	//                     Params: {
 	//                     },
 	//                     Variadic: false,
@@ -76,7 +82,8 @@ func Example() {
 	//                 AddrSpace: 0,
 	//             },
 	//             Sig: &types.FuncType{
-	//                 Ret:    &types.IntType{Size:32},
+	//                 Name:   "",
+	//                 Ret:    &types.IntType{Name:"", Size:32},
 	//                 Params: {
 	//                 },
 	//                 Variadic: false,
@@ -97,7 +104,7 @@ func Example() {
 	//                             Name:   "2",
 	//                             X:      &ir.InstLoad{(CYCLIC REFERENCE)},
 	//                             Y:      &constant.Int{
-	//                                 Typ: &types.IntType{Size:32},
+	//                                 Typ: &types.IntType{Name:"", Size:32},
 	//                                 X:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x15a4e35},
@@ -109,7 +116,7 @@ func Example() {
 	//                             Name:   "3",
 	//                             X:      &ir.InstMul{(CYCLIC REFERENCE)},
 	//                             Y:      &constant.Int{
-	//                                 Typ: &types.IntType{Size:32},
+	//                                 Typ: &types.IntType{Name:"", Size:32},
 	//                                 X:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x1},
