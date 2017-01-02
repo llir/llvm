@@ -38,11 +38,8 @@ func (t *ArrayType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *ArrayType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *ArrayType:
+	if u, ok := u.(*ArrayType); ok {
 		return t.Elem.Equal(u.Elem) && t.Len == u.Len
-	case *NamedType:
-		return t.Equal(u.Def)
 	}
 	return false
 }
@@ -87,8 +84,7 @@ func (t *StructType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *StructType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *StructType:
+	if u, ok := u.(*StructType); ok {
 		if len(t.Fields) != len(u.Fields) {
 			return false
 		}
@@ -99,10 +95,6 @@ func (t *StructType) Equal(u Type) bool {
 			}
 		}
 		return true
-	case *NamedType:
-		// t is an an unnamed type and u is a type alias or an identified struct;
-		// thus never equal.
-		return false
 	}
 	return false
 }

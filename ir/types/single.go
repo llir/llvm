@@ -30,11 +30,8 @@ func (t *IntType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *IntType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *IntType:
+	if u, ok := u.(*IntType); ok {
 		return t.Size == u.Size
-	case *NamedType:
-		return t.Equal(u.Def)
 	}
 	return false
 }
@@ -57,11 +54,8 @@ func (t *FloatType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *FloatType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *FloatType:
+	if u, ok := u.(*FloatType); ok {
 		return t.Kind == u.Kind
-	case *NamedType:
-		return t.Equal(u.Def)
 	}
 	return false
 }
@@ -126,11 +120,8 @@ func (t *PointerType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *PointerType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *PointerType:
+	if u, ok := u.(*PointerType); ok {
 		return t.Elem.Equal(u.Elem) && t.AddrSpace == u.AddrSpace
-	case *NamedType:
-		return t.Equal(u.Def)
 	}
 	return false
 }
@@ -163,11 +154,8 @@ func (t *VectorType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *VectorType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *VectorType:
+	if u, ok := u.(*VectorType); ok {
 		return t.Elem.Equal(u.Elem) && t.Len == u.Len
-	case *NamedType:
-		return t.Equal(u.Def)
 	}
 	return false
 }

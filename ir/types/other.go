@@ -25,13 +25,8 @@ func (t *VoidType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *VoidType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *VoidType:
-		return true
-	case *NamedType:
-		return t.Equal(u.Def)
-	}
-	return false
+	_, ok := u.(*VoidType)
+	return ok
 }
 
 // --- [ function ] ------------------------------------------------------------
@@ -77,8 +72,7 @@ func (t *FuncType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *FuncType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *FuncType:
+	if u, ok := u.(*FuncType); ok {
 		if !t.Ret.Equal(u.Ret) {
 			return false
 		}
@@ -92,8 +86,6 @@ func (t *FuncType) Equal(u Type) bool {
 			}
 		}
 		return t.Variadic == u.Variadic
-	case *NamedType:
-		return t.Equal(u.Def)
 	}
 	return false
 }
@@ -159,13 +151,8 @@ func (t *LabelType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *LabelType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *LabelType:
-		return true
-	case *NamedType:
-		return t.Equal(u.Def)
-	}
-	return false
+	_, ok := u.(*LabelType)
+	return ok
 }
 
 // --- [ metadata ] ------------------------------------------------------------
@@ -184,11 +171,6 @@ func (t *MetadataType) String() string {
 
 // Equal reports whether t and u are of equal type.
 func (t *MetadataType) Equal(u Type) bool {
-	switch u := u.(type) {
-	case *MetadataType:
-		return true
-	case *NamedType:
-		return t.Equal(u.Def)
-	}
-	return false
+	_, ok := u.(*MetadataType)
+	return ok
 }
