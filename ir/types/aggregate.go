@@ -8,6 +8,8 @@ package types
 import (
 	"bytes"
 	"fmt"
+
+	"github.com/llir/llvm/internal/enc"
 )
 
 // --- [ array ] ---------------------------------------------------------------
@@ -17,6 +19,8 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#array-type
 type ArrayType struct {
+	// Type name alias.
+	Name string
 	// Element type.
 	Elem Type
 	// Array length.
@@ -31,6 +35,14 @@ func NewArray(elem Type, len int64) *ArrayType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *ArrayType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *ArrayType) Def() string {
 	return fmt.Sprintf("[%d x %s]",
 		t.Len,
 		t.Elem)
@@ -44,13 +56,26 @@ func (t *ArrayType) Equal(u Type) bool {
 	return false
 }
 
+// GetName returns the name of the type.
+func (t *ArrayType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *ArrayType) SetName(name string) {
+	t.Name = name
+}
+
 // --- [ struct ] --------------------------------------------------------------
 
-// StructType represents a struct type.
+// StructType represents a struct type. Identified struct types are uniqued by
+// type names, not by structural identity.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#structure-type
 type StructType struct {
+	// Type name of identified struct type; or empty if struct type literal.
+	Name string
 	// Struct fields.
 	Fields []Type
 	// Opaque struct type.
@@ -67,16 +92,32 @@ func NewStruct(fields ...Type) *StructType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *StructType) String() string {
+	if t.Identified() {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *StructType) Def() string {
 	if t.Opaque {
 		return "opaque"
 	}
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
+	if len(t.Fields) > 0 {
+		// Use same output format as Clang.
+		buf.WriteString(" ")
+	}
 	for i, field := range t.Fields {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(field.String())
+	}
+	if len(t.Fields) > 0 {
+		// Use same output format as Clang.
+		buf.WriteString(" ")
 	}
 	buf.WriteString("}")
 	return buf.String()
@@ -85,6 +126,12 @@ func (t *StructType) String() string {
 // Equal reports whether t and u are of equal type.
 func (t *StructType) Equal(u Type) bool {
 	if u, ok := u.(*StructType); ok {
+		// Identified struct types are uniqued by type names, not by structural
+		// identity.
+		if t.Identified() || u.Identified() {
+			return t.Name == u.Name
+		}
+		// Literal struct types are uniqued by structural identity.
 		if len(t.Fields) != len(u.Fields) {
 			return false
 		}
@@ -97,4 +144,19 @@ func (t *StructType) Equal(u Type) bool {
 		return true
 	}
 	return false
+}
+
+// GetName returns the name of the type.
+func (t *StructType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *StructType) SetName(name string) {
+	t.Name = name
+}
+
+// Identified reports whether t is an identified struct type.
+func (t *StructType) Identified() bool {
+	return len(t.Name) > 0
 }

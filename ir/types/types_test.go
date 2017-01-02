@@ -154,8 +154,8 @@ func TestStructTypeString(t *testing.T) {
 		want string
 		typ  *types.StructType
 	}{
-		{want: "{i32, i8*}", typ: types.NewStruct(types.I32, types.NewPointer(types.I8))},
-		{want: "{i32, i16, i8}", typ: types.NewStruct(types.I32, types.I16, types.I8)},
+		{want: "{ i32, i8* }", typ: types.NewStruct(types.I32, types.NewPointer(types.I8))},
+		{want: "{ i32, i16, i8 }", typ: types.NewStruct(types.I32, types.I16, types.I8)},
 		{want: "{}", typ: types.NewStruct()},
 	}
 	for i, g := range golden {
@@ -1059,7 +1059,6 @@ var (
 	_ types.Type = &types.MetadataType{}
 	_ types.Type = &types.ArrayType{}
 	_ types.Type = &types.StructType{}
-	_ types.Type = &types.NamedType{}
 )
 
 // Validate that the relevant types satisfy the value.Named interface.

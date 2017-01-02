@@ -16,6 +16,16 @@ import (
 // Check performs static semantic analysis on the given LLVM IR module.
 func Check(m *ir.Module) error {
 	sem := &sem{}
+	// Validate type definitions.
+	for _, typ := range m.Types {
+		name := typ.GetName()
+		if len(name) == 0 {
+			sem.Errorf("type name missing in type definition")
+		} else if !isValidIdent(name) {
+			sem.Errorf("invalid type name `%v`", enc.Local(name))
+		}
+	}
+
 	// check performs static semantic analysis on the given LLVM IR node.
 	check := func(n interface{}) {
 		switch n := n.(type) {
@@ -212,13 +222,6 @@ func (sem *sem) checkType(t types.Type) {
 				sem.Errorf("invalid struct field type; expected single value or aggregate type, got %T", field)
 			}
 		}
-	case *types.NamedType:
-		if len(t.Name) == 0 {
-			sem.Errorf("type name missing")
-		} else if !isValidIdent(t.Name) {
-			sem.Errorf("invalid type name `%v`", enc.Local(t.Name))
-		}
-		// t.Def is validated when later traversed.
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}
@@ -844,8 +847,6 @@ func isFirstClassType(t types.Type) bool {
 		return true
 	case *types.StructType:
 		return true
-	case *types.NamedType:
-		return isFirstClassType(t.Def)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}
@@ -874,8 +875,6 @@ func isSingleValueType(t types.Type) bool {
 		return false
 	case *types.StructType:
 		return false
-	case *types.NamedType:
-		return isSingleValueType(t.Def)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}
@@ -904,8 +903,6 @@ func isAggregateType(t types.Type) bool {
 		return true
 	case *types.StructType:
 		return true
-	case *types.NamedType:
-		return isAggregateType(t.Def)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", t))
 	}

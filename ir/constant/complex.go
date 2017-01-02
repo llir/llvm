@@ -146,6 +146,10 @@ func (c *Struct) Type() types.Type {
 func (c *Struct) Ident() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("{")
+	if len(c.Fields) > 0 {
+		// Use same output format as Clang.
+		buf.WriteString(" ")
+	}
 	for i, field := range c.Fields {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -153,6 +157,10 @@ func (c *Struct) Ident() string {
 		fmt.Fprintf(buf, "%s %s",
 			field.Type(),
 			field.Ident())
+	}
+	if len(c.Fields) > 0 {
+		// Use same output format as Clang.
+		buf.WriteString(" ")
 	}
 	buf.WriteString("}")
 	return buf.String()

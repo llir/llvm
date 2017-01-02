@@ -22,11 +22,16 @@ import "fmt"
 //    *types.MetadataType   (https://godoc.org/github.com/llir/llvm/ir/types#MetadataType)
 //    *types.ArrayType      (https://godoc.org/github.com/llir/llvm/ir/types#ArrayType)
 //    *types.StructType     (https://godoc.org/github.com/llir/llvm/ir/types#StructType)
-//    *types.NamedType      (https://godoc.org/github.com/llir/llvm/ir/types#NamedType)
 type Type interface {
 	fmt.Stringer
+	// Def returns the LLVM syntax representation of the definition of the type.
+	Def() string
 	// Equal reports whether t and u are of equal type.
 	Equal(u Type) bool
+	// GetName returns the name of the type.
+	GetName() string
+	// SetName sets the name of the type.
+	SetName(name string)
 }
 
 // Convenience types.

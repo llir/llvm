@@ -53,7 +53,7 @@ func TestCheck(t *testing.T) {
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.MetadataType",
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.ArrayType",
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.StructType",
-				"invalid vector element type; expected integer, floating-point or pointer type, got *types.NamedType",
+				"invalid vector element type; expected integer, floating-point or pointer type, got *types.StructType",
 			},
 		},
 		{

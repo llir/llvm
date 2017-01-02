@@ -15,7 +15,7 @@ type Module struct {
 	// Module being generated.
 	*ir.Module
 	// types maps from type identifiers to their corresponding LLVM IR types.
-	types map[string]*types.NamedType
+	types map[string]types.Type
 	// globals maps global identifiers to their corresponding LLVM IR values.
 	globals map[string]value.Named
 	// locals maps local identifiers to their corresponding LLVM IR values; reset
@@ -30,13 +30,13 @@ func NewModule() *Module {
 	m := ir.NewModule()
 	return &Module{
 		Module:  m,
-		types:   make(map[string]*types.NamedType),
+		types:   make(map[string]types.Type),
 		globals: make(map[string]value.Named),
 	}
 }
 
 // getType returns the type of the given type name.
-func (m *Module) getType(name string) *types.NamedType {
+func (m *Module) getType(name string) types.Type {
 	typ, ok := m.types[name]
 	if !ok {
 		panic(fmt.Errorf("unable to locate type name %q", name))

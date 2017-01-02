@@ -16,10 +16,20 @@ import (
 // References:
 //    http://llvm.org/docs/LangRef.html#void-type
 type VoidType struct {
+	// Type name alias.
+	Name string
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *VoidType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *VoidType) Def() string {
 	return "void"
 }
 
@@ -29,6 +39,16 @@ func (t *VoidType) Equal(u Type) bool {
 	return ok
 }
 
+// GetName returns the name of the type.
+func (t *VoidType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *VoidType) SetName(name string) {
+	t.Name = name
+}
+
 // --- [ function ] ------------------------------------------------------------
 
 // FuncType represents a function type.
@@ -36,6 +56,8 @@ func (t *VoidType) Equal(u Type) bool {
 // References:
 //    http://llvm.org/docs/LangRef.html#function-type
 type FuncType struct {
+	// Type name alias.
+	Name string
 	// Return type.
 	Ret Type
 	// Function parameters.
@@ -52,6 +74,14 @@ func NewFunc(ret Type, params ...*Param) *FuncType {
 
 // String returns the LLVM syntax representation of the type.
 func (t *FuncType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *FuncType) Def() string {
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "%s (", t.Ret)
 	for i, param := range t.Params {
@@ -88,6 +118,16 @@ func (t *FuncType) Equal(u Type) bool {
 		return t.Variadic == u.Variadic
 	}
 	return false
+}
+
+// GetName returns the name of the type.
+func (t *FuncType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *FuncType) SetName(name string) {
+	t.Name = name
 }
 
 // NewParam appends a new function parameter to the function type based on the
@@ -142,10 +182,20 @@ func (param *Param) SetName(name string) {
 // References:
 //    http://llvm.org/docs/LangRef.html#label-type
 type LabelType struct {
+	// Type name alias.
+	Name string
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *LabelType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *LabelType) Def() string {
 	return "label"
 }
 
@@ -155,6 +205,16 @@ func (t *LabelType) Equal(u Type) bool {
 	return ok
 }
 
+// GetName returns the name of the type.
+func (t *LabelType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *LabelType) SetName(name string) {
+	t.Name = name
+}
+
 // --- [ metadata ] ------------------------------------------------------------
 
 // MetadataType represents a metadata type.
@@ -162,10 +222,20 @@ func (t *LabelType) Equal(u Type) bool {
 // References:
 //    http://llvm.org/docs/LangRef.html#metadata-type
 type MetadataType struct {
+	// Type name alias.
+	Name string
 }
 
 // String returns the LLVM syntax representation of the type.
 func (t *MetadataType) String() string {
+	if len(t.Name) > 0 {
+		return enc.Local(t.Name)
+	}
+	return t.Def()
+}
+
+// Def returns the LLVM syntax representation of the definition of the type.
+func (t *MetadataType) Def() string {
 	return "metadata"
 }
 
@@ -173,4 +243,14 @@ func (t *MetadataType) String() string {
 func (t *MetadataType) Equal(u Type) bool {
 	_, ok := u.(*MetadataType)
 	return ok
+}
+
+// GetName returns the name of the type.
+func (t *MetadataType) GetName() string {
+	return t.Name
+}
+
+// SetName sets the name of the type.
+func (t *MetadataType) SetName(name string) {
+	t.Name = name
 }
