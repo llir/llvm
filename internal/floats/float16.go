@@ -86,13 +86,56 @@ func (f Float16) Float32() float32 {
 	//    1 bit:   sign
 	//    8 bits:  exponent
 	//    23 bits: fraction
+	//
+	// References:
+	//    https://en.wikipedia.org/wiki/Single-precision_floating-point_format#IEEE_754_single-precision_binary_floating-point_format:_binary32
 	bits := sign<<31 | exp32<<23 | frac<<13
 	return math.Float32frombits(bits)
 }
 
 // Float64 returns the float64 representation of f.
 func (f Float16) Float64() float64 {
-	panic("not yet implemented")
+	a := uint64(f.a)
+	// 1 bit: sign
+	sign := a >> 15
+	// 5 bits: exponent
+	exp := (a >> 10) & 0x1F
+	// Adjust for exponent bias.
+	//
+	// === [ binary64 ] =========================================================
+	//
+	// Exponent bias 1023.
+	//
+	//    +===========================+=======================+
+	//    | Exponent (in binary)      | Notes                 |
+	//    +===========================+=======================+
+	//    | 00000000000               | zero/subnormal number |
+	//    +---------------------------+-----------------------+
+	//    | 00000000001 - 11111111110 | normalized value      |
+	//    +---------------------------+-----------------------+
+	//    | 11111111111               | infinity/NaN          |
+	//    +---------------------------+-----------------------+
+	//
+	// References:
+	//    https://en.wikipedia.org/wiki/Double-precision_floating-point_format#Exponent_encoding
+	exp64 := exp - 15 + 1023
+	if exp == 0 {
+		exp64 = 0
+	} else if exp == 0x1F {
+		exp64 = 0x7FF
+	}
+	// 10 bits: fraction
+	frac := a & 0x3FF
+	// Sign, exponent and fraction of binary64.
+	//
+	//    1 bit:   sign
+	//    11 bits: exponent
+	//    52 bits: fraction
+	//
+	// References:
+	//    https://en.wikipedia.org/wiki/Double-precision_floating-point_format#IEEE_754_double-precision_binary_floating-point_format:_binary64
+	bits := sign<<63 | exp64<<52 | frac<<42
+	return math.Float64frombits(bits)
 }
 
 // NewFloat16FromFloat32 returns a new 16-bit floating-point value based on f.
