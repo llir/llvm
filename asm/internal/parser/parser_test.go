@@ -45,11 +45,16 @@ func TestParseString(t *testing.T) {
 			t.Errorf("%q: unable to read file; %v", g.path, err)
 			continue
 		}
-		want := string(buf)
-		m, err := asm.ParseString(want)
+		input := string(buf)
+		m, err := asm.ParseString(input)
 		if err != nil {
 			t.Errorf("%q: unable to parse file; %v", g.path, err)
 			continue
+		}
+		want := input
+		// Read foo.ll.golden if present.
+		if buf, err := ioutil.ReadFile(g.path + ".golden"); err == nil {
+			want = string(buf)
 		}
 		got := m.String()
 		if want != got {
