@@ -107,8 +107,8 @@ float_lit
 ;
 
 _frac_lit
-	: ( '+' | '-' ) _decimals '.' _decimals
-	| _decimals '.' _decimals
+	: ( '+' | '-' ) _decimals '.' { _decimal_digit }
+	| _decimals '.' { _decimal_digit }
 ;
 
 _sci_lit
