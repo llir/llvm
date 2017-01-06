@@ -5,7 +5,10 @@
 // values.
 package floats
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 // Float16 represents a 16-bit IEEE 754 half-precision floating-point value, in
 // binary16 format.
@@ -149,12 +152,40 @@ func NewFloat16FromFloat64(f float64) Float16 {
 }
 
 // NewFloat16FromString returns a new 16-bit floating-point value based on s,
-// which is in hexadecimal format.
+// which contains 4 bytes in hexadecimal format.
 func NewFloat16FromString(s string) Float16 {
-	panic("not yet implemented")
+	return NewFloat16FromBytes([]byte(s))
+}
+
+// NewFloat16FromBytes returns a new 16-bit floating-point value based on b,
+// which contains 4 bytes in hexadecimal format.
+func NewFloat16FromBytes(b []byte) Float16 {
+	if len(b) != 4 {
+		panic(fmt.Errorf("invalid length of hexadecimal representation, expected 4, got %d", len(b)))
+	}
+	bits := uint16(unhex(b[0])<<12 | unhex(b[1])<<8 | unhex(b[2])<<4 | unhex(b[3])<<0)
+	return NewFloat16FromBits(bits)
 }
 
 // NewFloat16FromBits returns a new 16-bit floating-point value based on bits.
 func NewFloat16FromBits(bits uint16) Float16 {
-	panic("not yet implemented")
+	return Float16{a: bits}
+}
+
+// ### [ helper functions ] ####################################################
+
+// unhex returns the numeric value represented by the hexadecimal digit b. It
+// panics if b is not a hexadecimal digit.
+func unhex(b byte) uint64 {
+	// This is an adapted copy of the unhex function from the strconv package,
+	// which is goverend by a BSD-style license.
+	switch {
+	case '0' <= b && b <= '9':
+		return uint64(b - '0')
+	case 'a' <= b && b <= 'f':
+		return uint64(b - 'a' + 10)
+	case 'A' <= b && b <= 'F':
+		return uint64(b - 'A' + 10)
+	}
+	panic(fmt.Errorf("invalid byte; expected hexadecimal, got %q", b))
 }
