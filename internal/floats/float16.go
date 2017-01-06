@@ -32,7 +32,13 @@ func (f Float16) Bits() uint16 {
 // Bytes returns the IEEE 754 binary representation of f as a byte slice,
 // containing 4 bytes in hexadecimal format.
 func (f Float16) Bytes() []byte {
-	panic("not yet implemented")
+	return []byte(f.String())
+}
+
+// String returns the IEEE 754 binary representation of f as a string,
+// containing 4 bytes in hexadecimal format.
+func (f Float16) String() string {
+	return fmt.Sprintf("%04X", f.Bits())
 }
 
 // Float32 returns the float32 representation of f.
