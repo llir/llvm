@@ -26,10 +26,11 @@ type Float16 struct {
 
 // Bits returns the IEEE 754 binary representation of f.
 func (f Float16) Bits() uint16 {
-	panic("not yet implemented")
+	return f.a
 }
 
-// Bytes returns the IEEE 754 binary representation of f as a byte slice.
+// Bytes returns the IEEE 754 binary representation of f as a byte slice,
+// containing 4 bytes in hexadecimal format.
 func (f Float16) Bytes() []byte {
 	panic("not yet implemented")
 }
@@ -40,7 +41,7 @@ func (f Float16) Float32() float32 {
 	// 1 bit: sign
 	sign := a >> 15
 	// 5 bits: exponent
-	exp := (a >> 10) & 0x1F
+	exp := a >> 10 & 0x1F
 	// Adjust for exponent bias.
 	//
 	// === [ binary16 ] =========================================================
@@ -77,9 +78,10 @@ func (f Float16) Float32() float32 {
 	// References:
 	//    https://en.wikipedia.org/wiki/Single-precision_floating-point_format#Exponent_encoding
 	exp32 := exp - 15 + 127
-	if exp == 0 {
+	switch {
+	case exp == 0:
 		exp32 = 0
-	} else if exp == 0x1F {
+	case exp == 0x1F:
 		exp32 = 0xFF
 	}
 	// 10 bits: fraction
@@ -102,7 +104,7 @@ func (f Float16) Float64() float64 {
 	// 1 bit: sign
 	sign := a >> 15
 	// 5 bits: exponent
-	exp := (a >> 10) & 0x1F
+	exp := a >> 10 & 0x1F
 	// Adjust for exponent bias.
 	//
 	// === [ binary64 ] =========================================================
@@ -122,9 +124,10 @@ func (f Float16) Float64() float64 {
 	// References:
 	//    https://en.wikipedia.org/wiki/Double-precision_floating-point_format#Exponent_encoding
 	exp64 := exp - 15 + 1023
-	if exp == 0 {
+	switch {
+	case exp == 0:
 		exp64 = 0
-	} else if exp == 0x1F {
+	case exp == 0x1F:
 		exp64 = 0x7FF
 	}
 	// 10 bits: fraction
@@ -141,13 +144,66 @@ func (f Float16) Float64() float64 {
 	return math.Float64frombits(bits)
 }
 
-// NewFloat16FromFloat32 returns a new 16-bit floating-point value based on f.
-func NewFloat16FromFloat32(f float32) Float16 {
-	panic("not yet implemented")
+// NewFloat16FromFloat32 returns the nearest 16-bit floating-point value for x
+// and a bool indicating whether f represents x exactly.
+func NewFloat16FromFloat32(x float32) (f Float16, exact bool) {
+	exact = true
+	// Sign, exponent and fraction of binary32.
+	//
+	//    1 bit:   sign
+	//    8 bits:  exponent
+	//    23 bits: fraction
+	bits := math.Float32bits(x)
+	// 1 bit: sign
+	sign := uint16(bits >> 31)
+	// 8 bits: exponent
+	exp := bits >> 23 & 0xFF
+	// 23 bits: fraction
+	frac := bits & 0x7FFFFF
+
+	// Sign, exponent and fraction of binary16.
+	//
+	//    1 bit:   sign
+	//    5 bits:  exponent
+	//    10 bits: fraction
+
+	// 5 bits: exponent.
+	//
+	// Exponent bias 127 (binary32)
+	// Exponent bias 15  (binary16)
+	exp16 := int16(exp) - 127 + 15
+	// 10 bits: fraction.
+	//
+	// Truncate 13 bits of the binary32 fraction.
+	if frac&0x1FFF != 0 {
+		exact = false
+	}
+	frac16 := uint16(frac >> 13)
+	switch {
+	case exp == 0:
+		exp16 = 0
+	case exp == 0xFF:
+		exp16 = 0x1F
+	default:
+		if exp16 < 0x1 {
+			// set float16 to zero if exp is too low.
+			exp16 = 0
+			frac16 = 0
+			exact = false
+		} else if exp16 > 0x1E {
+			// set float16 to infinity if exp is too high.
+			exp16 = 0x1F
+			frac16 = 0
+			exact = false
+		}
+	}
+	a := sign<<15 | uint16(exp16<<10) | frac16
+	return NewFloat16FromBits(a), exact
 }
 
-// NewFloat16FromFloat64 returns a new 16-bit floating-point value based on f.
-func NewFloat16FromFloat64(f float64) Float16 {
+// NewFloat16FromFloat64 returns the nearest 16-bit floating-point value for x
+// and a bool indicating whether f represents x exactly.
+func NewFloat16FromFloat64(x float64) (f Float16, exact bool) {
 	panic("not yet implemented")
 }
 
