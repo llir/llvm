@@ -88,3 +88,33 @@ func TestNewFloat16FromFloat32(t *testing.T) {
 		}
 	}
 }
+
+func TestNewFloat16FromFloat64(t *testing.T) {
+	golden := []struct {
+		want uint16
+		in   float64
+	}{
+		{want: 0x3C00, in: 1},
+		{want: 0x4000, in: 2},
+		{want: 0xC000, in: -2},
+		{want: 0x7BFE, in: 65472},
+		{want: 0x7BFF, in: 65504},
+		{want: 0xFBFF, in: -65504},
+		{want: 0x0000, in: 0},
+		{want: 0x8000, in: math.Copysign(0, -1)},
+		{want: 0x7C00, in: math.Inf(1)},
+		{want: 0xFC00, in: math.Inf(-1)},
+		{want: 0x5B8F, in: 241.875},
+		{want: 0x48C8, in: 9.5625},
+	}
+	for _, g := range golden {
+		f, exact := NewFloat16FromFloat64(g.in)
+		if !exact {
+			t.Errorf("unable to represent %v exactly using binary16 format", g.in)
+		}
+		got := f.Bits()
+		if got != g.want {
+			t.Errorf("binary16 mismatch for float64 %v; expected 0x%04X, got 0x%04X", g.in, g.want, got)
+		}
+	}
+}

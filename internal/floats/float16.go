@@ -204,7 +204,58 @@ func NewFloat16FromFloat32(x float32) (f Float16, exact bool) {
 // NewFloat16FromFloat64 returns the nearest 16-bit floating-point value for x
 // and a bool indicating whether f represents x exactly.
 func NewFloat16FromFloat64(x float64) (f Float16, exact bool) {
-	panic("not yet implemented")
+	exact = true
+	// Sign, exponent and fraction of binary64.
+	//
+	//    1 bit:   sign
+	//    11 bits: exponent
+	//    52 bits: fraction
+	bits := math.Float64bits(x)
+	// 1 bit: sign
+	sign := uint16(bits >> 63)
+	// 11 bits: exponent
+	exp := bits >> 52 & 0x7FF
+	// 52 bits: fraction
+	frac := bits & 0xFFFFFFFFFFFFF
+
+	// Sign, exponent and fraction of binary16.
+	//
+	//    1 bit:   sign
+	//    5 bits:  exponent
+	//    10 bits: fraction
+
+	// 5 bits: exponent.
+	//
+	// Exponent bias 1023 (binary64)
+	// Exponent bias 15  (binary16)
+	exp16 := int16(exp) - 1023 + 15
+	// 10 bits: fraction.
+	//
+	// Truncate 42 bits of the binary64 fraction.
+	if frac&0x3FFFFFFFFFF != 0 {
+		exact = false
+	}
+	frac16 := uint16(frac >> 42)
+	switch {
+	case exp == 0:
+		exp16 = 0
+	case exp == 0x7FF:
+		exp16 = 0x1F
+	default:
+		if exp16 < 0x1 {
+			// set float16 to zero if exp is too low.
+			exp16 = 0
+			frac16 = 0
+			exact = false
+		} else if exp16 > 0x1E {
+			// set float16 to infinity if exp is too high.
+			exp16 = 0x1F
+			frac16 = 0
+			exact = false
+		}
+	}
+	a := sign<<15 | uint16(exp16<<10) | frac16
+	return NewFloat16FromBits(a), exact
 }
 
 // NewFloat16FromString returns a new 16-bit floating-point value based on s,
