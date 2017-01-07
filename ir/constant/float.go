@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/llir/llvm/internal/floats"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -41,65 +42,62 @@ func NewFloatFromString(s string, typ types.Type) *Float {
 	if !ok {
 		panic(fmt.Errorf("invalid floating-point constant type; expected *types.FloatType, got %T", typ))
 	}
-	c := &Float{X: &big.Float{}, Typ: t}
+	c := &Float{Typ: t}
 
-	// Parse floating-point literal based on its representation format.
-	//
-	//   HexFP80Constant   0xK[0-9A-Fa-f]+    // 20 hex digits
-	//   HexFP128Constant  0xL[0-9A-Fa-f]+    // 32 hex digits
-	//   HexPPC128Constant 0xM[0-9A-Fa-f]+    // 32 hex digits
-	//   HexHalfConstant   0xH[0-9A-Fa-f]+    // 4 hex digits
-	//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
-	//   FPConstant        [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
+	// Parse floating-point literal in hexadecimal format.
 	switch {
 	case strings.HasPrefix(s, "0xK"):
+		//   HexFP80Constant   0xK[0-9A-Fa-f]+    // 20 hex digits
+
 		// TODO: Implement support for the 0xK floating-point representation format.
+		c.X = &big.Float{}
 		c.X.SetString("0.0") // TODO: Remove placehold zero value.
 		//panic(fmt.Errorf("support for floating-point constant 0xK representation not yet implemented; unable to parse floating-point constant %q", s))
 		s = s[len("0xK"):]
+		return c
 	case strings.HasPrefix(s, "0xL"):
+		//   HexFP128Constant  0xL[0-9A-Fa-f]+    // 32 hex digits
+
 		// TODO: Implement support for the 0xL floating-point representation format.
+		c.X = &big.Float{}
 		c.X.SetString("0.0") // TODO: Remove placehold zero value.
 		//panic(fmt.Errorf("support for floating-point constant 0xL representation not yet implemented; unable to parse floating-point constant %q", s))
 		s = s[len("0xL"):]
+		return c
 	case strings.HasPrefix(s, "0xM"):
+		//   HexPPC128Constant 0xM[0-9A-Fa-f]+    // 32 hex digits
+
 		// TODO: Implement support for the 0xM floating-point representation format.
+		c.X = &big.Float{}
 		c.X.SetString("0.0") // TODO: Remove placehold zero value.
 		//panic(fmt.Errorf("support for floating-point constant 0xM representation not yet implemented; unable to parse floating-point constant %q", s))
 		s = s[len("0xM"):]
+		return c
 	case strings.HasPrefix(s, "0xH"):
-		// TODO: Implement support for the 0xH floating-point representation format.
-		c.X.SetString("0.0") // TODO: Remove placehold zero value.
-		//panic(fmt.Errorf("support for floating-point constant 0xH representation not yet implemented; unable to parse floating-point constant %q", s))
-		s = s[len("0xH"):]
+		//   HexHalfConstant   0xH[0-9A-Fa-f]+    // 4 hex digits
+
+		str := s[len("0xH"):]
+		x := floats.NewFloat16FromString(str)
+		c.X = big.NewFloat(x.Float64())
+		return c
 	case strings.HasPrefix(s, "0x"):
+		//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
+
 		// TODO: Implement support for the 0x floating-point representation format.
+		c.X = &big.Float{}
 		c.X.SetString("0.0") // TODO: Remove placehold zero value.
 		//panic(fmt.Errorf("support for floating-point constant 0x representation not yet implemented; unable to parse floating-point constant %q", s))
 		s = s[len("0x"):]
-	default:
-		if _, ok := c.X.SetString(s); !ok {
-			panic(fmt.Errorf("unable to parse floating-point constant %q", s))
-		}
+		return c
 	}
 
-	// Verify that there was no precision loss.
-
-	// TODO: Re-enable precision loss validation. Disabled for now to allow for
-	// parsing of as part of sqlite.ll.
+	// Parse floating-point literal.
 	//
-	//    %797 = fmul double %796, 1.000000e-01
-
-	//switch t.Kind {
-	//case types.FloatKindIEEE_32:
-	//	if x, acc := c.X.Float32(); acc != big.Exact {
-	//		panic(fmt.Errorf(`invalid floating-point constant %q for type %s; precision loss ("%g")`, s, typ, x))
-	//	}
-	//case types.FloatKindIEEE_64:
-	//	if x, acc := c.X.Float64(); acc != big.Exact {
-	//		panic(fmt.Errorf(`invalid floating-point constant %q for type %s; precision loss ("%g")`, s, typ, x))
-	//	}
-	//}
+	//   FPConstant        [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
+	c.X = &big.Float{}
+	if _, ok := c.X.SetString(s); !ok {
+		panic(fmt.Errorf("unable to parse floating-point constant %q", s))
+	}
 	return c
 }
 
@@ -110,10 +108,40 @@ func (c *Float) Type() types.Type {
 
 // Ident returns the string representation of the constant.
 func (c *Float) Ident() string {
+	// TODO: Handle NaN.
+
+	// Use hexadecimal representation for +Inf and -Inf.
+	if c.X.IsInf() {
+		switch c.Typ.Kind {
+		case types.FloatKindIEEE_16:
+			// TODO: Implement.
+			x, _ := c.X.Float64()
+			f16, _ := floats.NewFloat16FromFloat64(x)
+			return "0xH" + f16.String()
+		case types.FloatKindIEEE_32:
+			// TODO: Implement.
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+		case types.FloatKindIEEE_64:
+			// TODO: Implement.
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+		case types.FloatKindIEEE_128:
+			// TODO: Implement.
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+		case types.FloatKindDoubleExtended_80:
+			// TODO: Implement.
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+		case types.FloatKindDoubleDouble_128:
+			// TODO: Implement.
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+		default:
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+		}
+	}
+
 	// Insert decimal point if not present.
 	//    3e4 -> 3.0e4
 	//    42  -> 42.0
-	s := c.X.Text('g', -1)
+	s := c.X.Text('f', -1)
 	if !strings.ContainsRune(s, '.') {
 		if pos := strings.IndexByte(s, 'e'); pos != -1 {
 			s = s[:pos] + ".0" + s[pos:]

@@ -38,6 +38,7 @@ func TestParseString(t *testing.T) {
 		{path: "../testdata/ret.ll"},
 		{path: "../testdata/gep_forward_reference.ll"},
 		{path: "../testdata/const_struct.ll"},
+		{path: "../testdata/float16.ll"},
 	}
 	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
