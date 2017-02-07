@@ -170,10 +170,17 @@ TopLevelDeclList
 ;
 
 TopLevelDecl
-	: TypeDef
+	: SourceFilename
+	| TypeDef
 	| Global
 	| FunctionDecl
 	| FunctionDef
+;
+
+// === [ Source filename ] =====================================================
+
+SourceFilename
+	: "source_filename" "=" string_lit   << nil, nil >>
 ;
 
 // === [ Type definitions ] ====================================================

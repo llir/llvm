@@ -57,6 +57,10 @@ type TopLevelDecl interface{}
 // NewTopLevelDeclList returns a new top-level declaration list based on the
 // given top-level declaration.
 func NewTopLevelDeclList(decl interface{}) ([]TopLevelDecl, error) {
+	// Skip ignored top-level declaration; e.g. "source_filename".
+	if decl == nil {
+		return []TopLevelDecl{}, nil
+	}
 	d, ok := decl.(TopLevelDecl)
 	if !ok {
 		return nil, errors.Errorf("invalid top-level declaration type; expected astx.TopLevelDecl, got %T", decl)
@@ -70,6 +74,10 @@ func AppendTopLevelDecl(decls, decl interface{}) ([]TopLevelDecl, error) {
 	ds, ok := decls.([]TopLevelDecl)
 	if !ok {
 		return nil, errors.Errorf("invalid top-level declaration list type; expected []astx.TopLevelDecl, got %T", decls)
+	}
+	// Skip ignored top-level declaration; e.g. "source_filename".
+	if decl == nil {
+		return ds, nil
 	}
 	d, ok := decl.(TopLevelDecl)
 	if !ok {

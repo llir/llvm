@@ -8,8 +8,6 @@ f=$1
 sar -i "; <label>:([0-9]+):[^\n]+" "\${1}:" "${f}"
 # Remove comments.
 sar -i "(^|[\n]);[^\n]+" "" "${f}"
-# Remove source file name.
-sar -i "(^|[\n])source_filename[^\n]+" "" "${f}"
 # Remove target specifiers.
 sar -i "(^|[\n])target[^\n]+" "" "${f}"
 # Remove attributes.
