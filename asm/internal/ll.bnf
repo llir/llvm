@@ -734,7 +734,7 @@ ValueInstruction
 // --- [ Binary instructions ] -------------------------------------------------
 
 AddInst
-	: "add" FirstClassType Value "," Value   << astx.NewAddInst($1, $2, $4) >>
+	: "add" OverflowFlags FirstClassType Value "," Value   << astx.NewAddInst($2, $3, $5) >>
 ;
 
 FAddInst
@@ -742,7 +742,7 @@ FAddInst
 ;
 
 SubInst
-	: "sub" FirstClassType Value "," Value   << astx.NewSubInst($1, $2, $4) >>
+	: "sub" OverflowFlags FirstClassType Value "," Value   << astx.NewSubInst($2, $3, $5) >>
 ;
 
 FSubInst
@@ -750,7 +750,7 @@ FSubInst
 ;
 
 MulInst
-	: "mul" FirstClassType Value "," Value   << astx.NewMulInst($1, $2, $4) >>
+	: "mul" OverflowFlags FirstClassType Value "," Value   << astx.NewMulInst($2, $3, $5) >>
 ;
 
 FMulInst
@@ -781,6 +781,21 @@ FRemInst
 	: "frem" FastMathFlags FirstClassType Value "," Value   << astx.NewFRemInst($2, $3, $5) >>
 ;
 
+OverflowFlags
+	: empty
+	| OverflowFlagList
+;
+
+OverflowFlagList
+	: OverflowFlag
+	| OverflowFlagList OverflowFlag
+;
+
+OverflowFlag
+	: "nuw"
+	| "nsw"
+;
+
 FastMathFlags
 	: empty
 	| FastMathFlagList
@@ -802,7 +817,7 @@ FastMathFlag
 // --- [ Bitwise instructions ] ------------------------------------------------
 
 ShlInst
-	: "shl" FirstClassType Value "," Value   << astx.NewShlInst($1, $2, $4) >>
+	: "shl" OverflowFlags FirstClassType Value "," Value   << astx.NewShlInst($2, $3, $5) >>
 ;
 
 LShrInst
