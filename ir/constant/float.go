@@ -108,11 +108,37 @@ func (c *Float) Type() types.Type {
 
 // Ident returns the string representation of the constant.
 func (c *Float) Ident() string {
-	// TODO: Handle NaN.
+	// Hexadecimal format is always used for long double, and there are three
+	// forms of long double.
+	kind := c.Typ.Kind
+	switch kind {
+	case types.FloatKindIEEE_128:
+		// The IEEE 128-bit format is represented by 0xL followed by 32
+		// hexadecimal digits.
+
+		// TODO: Implement.
+		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
+	case types.FloatKindDoubleExtended_80:
+		// The 80-bit format used by x86 is represented as 0xK followed by 20
+		// hexadecimal digits.
+
+		// TODO: Implement.
+		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
+	case types.FloatKindDoubleDouble_128:
+		// The 128-bit format used by PowerPC (two adjacent doubles) is
+		// represented by 0xM followed by 32 hexadecimal digits.
+
+		// TODO: Implement.
+		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
+	}
+
+	// TODO: Handle NaN, special values (e.g. Pi). Print those in hexadecimal
+	// representation.
 
 	// Use hexadecimal representation for +Inf and -Inf.
-	if c.X.IsInf() {
-		switch c.Typ.Kind {
+	printHex := c.X.IsInf()
+	if printHex {
+		switch kind {
 		case types.FloatKindIEEE_16:
 			// TODO: Implement.
 			x, _ := c.X.Float64()
@@ -120,21 +146,12 @@ func (c *Float) Ident() string {
 			return "0xH" + f16.String()
 		case types.FloatKindIEEE_32:
 			// TODO: Implement.
-			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
 		case types.FloatKindIEEE_64:
 			// TODO: Implement.
-			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
-		case types.FloatKindIEEE_128:
-			// TODO: Implement.
-			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
-		case types.FloatKindDoubleExtended_80:
-			// TODO: Implement.
-			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
-		case types.FloatKindDoubleDouble_128:
-			// TODO: Implement.
-			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
 		default:
-			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
+			panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
 		}
 	}
 
