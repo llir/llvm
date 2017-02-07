@@ -239,6 +239,11 @@ FunctionBody
 
 // === [ Identifiers ] =========================================================
 
+Ident
+	: GlobalIdent
+	| LocalIdent
+;
+
 GlobalIdent
 	: global_ident   << astx.NewGlobalIdent($0) >>
 ;
@@ -733,7 +738,7 @@ AddInst
 ;
 
 FAddInst
-	: "fadd" FirstClassType Value "," Value   << astx.NewFAddInst($1, $2, $4) >>
+	: "fadd" FastMathFlags FirstClassType Value "," Value   << astx.NewFAddInst($2, $3, $5) >>
 ;
 
 SubInst
@@ -741,7 +746,7 @@ SubInst
 ;
 
 FSubInst
-	: "fsub" FirstClassType Value "," Value   << astx.NewFSubInst($1, $2, $4) >>
+	: "fsub" FastMathFlags FirstClassType Value "," Value   << astx.NewFSubInst($2, $3, $5) >>
 ;
 
 MulInst
@@ -749,7 +754,7 @@ MulInst
 ;
 
 FMulInst
-	: "fmul" FirstClassType Value "," Value   << astx.NewFMulInst($1, $2, $4) >>
+	: "fmul" FastMathFlags FirstClassType Value "," Value   << astx.NewFMulInst($2, $3, $5) >>
 ;
 
 UDivInst
@@ -761,7 +766,7 @@ SDivInst
 ;
 
 FDivInst
-	: "fdiv" FirstClassType Value "," Value   << astx.NewFDivInst($1, $2, $4) >>
+	: "fdiv" FastMathFlags FirstClassType Value "," Value   << astx.NewFDivInst($2, $3, $5) >>
 ;
 
 URemInst
@@ -773,7 +778,25 @@ SRemInst
 ;
 
 FRemInst
-	: "frem" FirstClassType Value "," Value   << astx.NewFRemInst($1, $2, $4) >>
+	: "frem" FastMathFlags FirstClassType Value "," Value   << astx.NewFRemInst($2, $3, $5) >>
+;
+
+FastMathFlags
+	: empty
+	| FastMathFlagList
+;
+
+FastMathFlagList
+	: FastMathFlag
+	| FastMathFlagList FastMathFlag
+;
+
+FastMathFlag
+	: "nnan"
+	| "ninf"
+	| "nsz"
+	| "arcp"
+	| "fast"
 ;
 
 // --- [ Bitwise instructions ] ------------------------------------------------
@@ -913,7 +936,7 @@ IntPred
 ;
 
 FCmpInst
-	: "fcmp" FloatPred FirstClassType Value "," Value   << astx.NewFCmpInst($1, $2, $3, $5) >>
+	: "fcmp" FastMathFlags FloatPred FirstClassType Value "," Value   << astx.NewFCmpInst($2, $3, $4, $6) >>
 ;
 
 FloatPred
@@ -953,8 +976,7 @@ SelectInst
 ;
 
 CallInst
-	: "call" Type GlobalIdent "(" Args ")"   << astx.NewCallInst($1, $2, $4) >>
-	| "call" Type LocalIdent "(" Args ")"    << astx.NewCallInst($1, $2, $4) >>
+	: "call" FastMathFlags Type Ident "(" Args ")"   << astx.NewCallInst($2, $3, $5) >>
 ;
 
 Args
