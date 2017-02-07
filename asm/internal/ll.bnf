@@ -762,7 +762,7 @@ UDivInst
 ;
 
 SDivInst
-	: "sdiv" FirstClassType Value "," Value   << astx.NewSDivInst($1, $2, $4) >>
+	: "sdiv" ExactFlags FirstClassType Value "," Value   << astx.NewSDivInst($2, $3, $5) >>
 ;
 
 FDivInst
@@ -770,7 +770,7 @@ FDivInst
 ;
 
 URemInst
-	: "urem" FirstClassType Value "," Value   << astx.NewURemInst($1, $2, $4) >>
+	: "urem" ExactFlags FirstClassType Value "," Value   << astx.NewURemInst($2, $3, $5) >>
 ;
 
 SRemInst
@@ -814,6 +814,11 @@ FastMathFlag
 	| "fast"
 ;
 
+ExactFlags
+	: empty
+	| "exact"
+;
+
 // --- [ Bitwise instructions ] ------------------------------------------------
 
 ShlInst
@@ -821,11 +826,11 @@ ShlInst
 ;
 
 LShrInst
-	: "lshr" FirstClassType Value "," Value   << astx.NewLShrInst($1, $2, $4) >>
+	: "lshr" ExactFlags FirstClassType Value "," Value   << astx.NewLShrInst($2, $3, $5) >>
 ;
 
 AShrInst
-	: "ashr" FirstClassType Value "," Value   << astx.NewAShrInst($1, $2, $4) >>
+	: "ashr" ExactFlags FirstClassType Value "," Value   << astx.NewAShrInst($2, $3, $5) >>
 ;
 
 AndInst
