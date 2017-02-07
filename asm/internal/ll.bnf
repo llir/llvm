@@ -193,8 +193,8 @@ TypeDef
 // === [ Global variables ] ====================================================
 
 Global
-	: GlobalIdent "=" ExternLinkage Immutable FirstClassType         << astx.NewGlobalDecl($0, $3, $4) >>
-	| GlobalIdent "=" OptLinkage Immutable FirstClassType Constant   << astx.NewGlobalDef($0, $3, $4, $5) >>
+	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType         << astx.NewGlobalDecl($0, $4, $5) >>
+	| GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant   << astx.NewGlobalDef($0, $4, $5, $6) >>
 ;
 
 OptLinkage
@@ -224,6 +224,16 @@ ExternLinkage
 	| "external"
 ;
 
+OptUnnamedAddr
+	: empty
+	| UnnamedAddr
+;
+
+UnnamedAddr
+	: "unnamed_addr"
+	| "local_unnamed_addr"
+;
+
 Immutable
 	: "constant"   << true, nil >>
 	| "global"     << false, nil >>
@@ -232,11 +242,11 @@ Immutable
 // === [ Functions ] ===========================================================
 
 FunctionDecl
-	: "declare" OptExternLinkage FunctionHeader   << $2, nil >>
+	: "declare" OptExternLinkage FunctionHeader OptUnnamedAddr   << $2, nil >>
 ;
 
 FunctionDef
-	: "define" OptLinkage FunctionHeader FunctionBody   << astx.NewFunctionDef($2, $3) >>
+	: "define" OptLinkage FunctionHeader OptUnnamedAddr FunctionBody   << astx.NewFunctionDef($2, $4) >>
 ;
 
 FunctionHeader
