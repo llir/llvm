@@ -193,8 +193,35 @@ TypeDef
 // === [ Global variables ] ====================================================
 
 Global
-	: GlobalIdent "=" "external" Immutable FirstClassType   << astx.NewGlobalDecl($0, $3, $4) >>
-	| GlobalIdent "=" Immutable FirstClassType Constant     << astx.NewGlobalDef($0, $2, $3, $4) >>
+	: GlobalIdent "=" ExternLinkage Immutable FirstClassType         << astx.NewGlobalDecl($0, $3, $4) >>
+	| GlobalIdent "=" OptLinkage Immutable FirstClassType Constant   << astx.NewGlobalDef($0, $3, $4, $5) >>
+;
+
+OptLinkage
+	: empty
+	| Linkage
+;
+
+Linkage
+	: "private"
+	| "internal"
+	| "available_externally"
+	| "linkonce"
+	| "weak"
+	| "common"
+	| "appending"
+	| "linkonce_odr"
+	| "weak_odr"
+;
+
+OptExternLinkage
+	: empty
+	| ExternLinkage
+;
+
+ExternLinkage
+	: "extern_weak"
+	| "external"
 ;
 
 Immutable
@@ -205,11 +232,11 @@ Immutable
 // === [ Functions ] ===========================================================
 
 FunctionDecl
-	: "declare" FunctionHeader   << $1, nil >>
+	: "declare" OptExternLinkage FunctionHeader   << $2, nil >>
 ;
 
 FunctionDef
-	: "define" FunctionHeader FunctionBody   << astx.NewFunctionDef($1, $2) >>
+	: "define" OptLinkage FunctionHeader FunctionBody   << astx.NewFunctionDef($2, $3) >>
 ;
 
 FunctionHeader

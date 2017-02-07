@@ -51,7 +51,7 @@ sar -i "([0-9]+):\n" "; <label>:\${1}\n" "${f}"
 
 sar -i "getelementptr inbounds " "getelementptr " "${f}"
 sar -i "= common " "= " "${f}"
-sar -i "private unnamed_addr constant " "constant " "${f}"
+sar -i "unnamed_addr constant " "constant " "${f}"
 sar -i "[\n]define internal " "\ndefine " "${f}"
 sar -i "internal (constant|global) " "\${1} " "${f}"
 sar -i "(i8|i16|i32|call|define) signext" "\${1}" "${f}"
