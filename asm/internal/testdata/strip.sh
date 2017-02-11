@@ -8,8 +8,6 @@ f=$1
 sar -i "; <label>:([0-9]+):[^\n]+" "\${1}:" "${f}"
 # Remove comments.
 sar -i "(^|[\n]);[^\n]+" "" "${f}"
-# Remove target specifiers.
-sar -i "(^|[\n])target[^\n]+" "" "${f}"
 # Remove attributes.
 sar -i "(^|[\n])attributes[^\n]+" "" "${f}"
 # Remove function attributes.
