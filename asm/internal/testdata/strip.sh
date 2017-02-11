@@ -16,8 +16,6 @@ sar -i "(^|[\n])attributes[^\n]+" "" "${f}"
 sar -i "[)] #[0-9]+" ")" "${f}"
 # Remove metadata nodes.
 sar -i "(^|[\n])[!][^\n]+" "" "${f}"
-# Remove alignment.
-sar -i ", align [0-9]+\n" "\n" "${f}"
 # Add labels for the first basic block of functions with 0 parameters.
 
 # TODO: Fix handling of ...

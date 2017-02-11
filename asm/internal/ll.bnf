@@ -193,8 +193,8 @@ TypeDef
 // === [ Global variables ] ====================================================
 
 Global
-	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType         << astx.NewGlobalDecl($0, $4, $5) >>
-	| GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant   << astx.NewGlobalDef($0, $4, $5, $6) >>
+	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType OptCommaAlign        << astx.NewGlobalDecl($0, $4, $5) >>
+	| GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant OptCommaAlign  << astx.NewGlobalDef($0, $4, $5, $6) >>
 ;
 
 OptLinkage
@@ -239,14 +239,23 @@ Immutable
 	| "global"     << false, nil >>
 ;
 
+OptCommaAlign
+	: empty
+	| "," Align
+;
+
+Align
+	: "align" int_lit
+;
+
 // === [ Functions ] ===========================================================
 
 FunctionDecl
-	: "declare" OptExternLinkage FunctionHeader OptUnnamedAddr   << $2, nil >>
+	: "declare" OptExternLinkage FunctionHeader OptUnnamedAddr OptAlign   << $2, nil >>
 ;
 
 FunctionDef
-	: "define" OptLinkage FunctionHeader OptUnnamedAddr FunctionBody   << astx.NewFunctionDef($2, $4) >>
+	: "define" OptLinkage FunctionHeader OptUnnamedAddr OptAlign FunctionBody   << astx.NewFunctionDef($2, $5) >>
 ;
 
 FunctionHeader
@@ -268,6 +277,11 @@ ParamList
 Param
 	: FirstClassType              << astx.NewParam($0, nil) >>
 	| FirstClassType LocalIdent   << astx.NewParam($0, $1) >>
+;
+
+OptAlign
+	: empty
+	| Align
 ;
 
 FunctionBody
@@ -885,16 +899,20 @@ XorInst
 // --- [ Memory instructions ] -------------------------------------------------
 
 AllocaInst
-	: "alloca" FirstClassType OptNElems   << astx.NewAllocaInst($1, $2) >>
+	: "alloca" FirstClassType AllocaOptions   << astx.NewAllocaInst($1, $2) >>
 ;
 
-OptNElems
-	: empty
-	| "," FirstClassType Value   << astx.NewValue($1, $2) >>
+AllocaOptions
+	: "," NElems OptCommaAlign   << $1, nil >>
+	| OptCommaAlign              << nil, nil >>
+;
+
+NElems
+	: FirstClassType Value   << astx.NewValue($1, $2) >>
 ;
 
 LoadInst
-	: "load" FirstClassType "," PointerType Value   << astx.NewLoadInst($1, $3, $4) >>
+	: "load" FirstClassType "," PointerType Value OptCommaAlign   << astx.NewLoadInst($1, $3, $4) >>
 ;
 
 GetElementPtrInst
@@ -916,7 +934,7 @@ Index
 ;
 
 StoreInst
-	: "store" FirstClassType Value "," PointerType Value   << astx.NewStoreInst($1, $2, $4, $5) >>
+	: "store" FirstClassType Value "," PointerType Value OptCommaAlign   << astx.NewStoreInst($1, $2, $4, $5) >>
 ;
 
 // --- [ Conversion instructions ] ---------------------------------------------
@@ -1061,7 +1079,7 @@ Terminator
 ;
 
 RetTerm
-	: "ret" VoidType     << &ast.TermRet{}, nil >>
+	: "ret" VoidType               << &ast.TermRet{}, nil >>
 	| "ret" FirstClassType Value   << astx.NewRetTerm($1, $2) >>
 ;
 
