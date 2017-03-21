@@ -883,7 +883,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstICmp, got %T", v))
 			}
-			cond := irIntPred(oldInst.Cond)
+			pred := irIntPred(oldInst.Pred)
 			x := m.irValue(oldInst.X)
 			y := m.irValue(oldInst.Y)
 			var typ types.Type = types.I1
@@ -891,7 +891,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 				typ = types.NewVector(types.I1, t.Len)
 			}
 			inst.Typ = typ
-			inst.Cond = cond
+			inst.Pred = pred
 			inst.X = x
 			inst.Y = y
 		case *ast.InstFCmp:
@@ -899,7 +899,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFCmp, got %T", v))
 			}
-			cond := irFloatPred(oldInst.Cond)
+			pred := irFloatPred(oldInst.Pred)
 			x := m.irValue(oldInst.X)
 			y := m.irValue(oldInst.Y)
 			var typ types.Type = types.I1
@@ -907,7 +907,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 				typ = types.NewVector(types.I1, t.Len)
 			}
 			inst.Typ = typ
-			inst.Cond = cond
+			inst.Pred = pred
 			inst.X = x
 			inst.Y = y
 		case *ast.InstPhi:

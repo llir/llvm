@@ -2109,11 +2109,11 @@ func NewAddrSpaceCastInst(fromTyp, fromVal, to interface{}) (*ast.InstAddrSpaceC
 // --- [ Other instructions ] --------------------------------------------------
 
 // NewICmpInst returns a new icmp instruction based on the given integer
-// condition code, type and operands.
-func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ast.InstICmp, error) {
-	c, ok := cond.(ast.IntPred)
+// predicate, type and operands.
+func NewICmpInst(pred, typ, xVal, yVal interface{}) (*ast.InstICmp, error) {
+	p, ok := pred.(ast.IntPred)
 	if !ok {
-		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", cond)
+		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", pred)
 	}
 	x, err := NewValue(typ, xVal)
 	if err != nil {
@@ -2123,15 +2123,15 @@ func NewICmpInst(cond, typ, xVal, yVal interface{}) (*ast.InstICmp, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstICmp{Cond: c, X: x, Y: y}, nil
+	return &ast.InstICmp{Pred: p, X: x, Y: y}, nil
 }
 
 // NewFCmpInst returns a new fcmp instruction based on the given floating-point
-// condition code, type and operands.
-func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ast.InstFCmp, error) {
-	c, ok := cond.(ast.FloatPred)
+// predicate, type and operands.
+func NewFCmpInst(pred, typ, xVal, yVal interface{}) (*ast.InstFCmp, error) {
+	p, ok := pred.(ast.FloatPred)
 	if !ok {
-		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", cond)
+		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", pred)
 	}
 	x, err := NewValue(typ, xVal)
 	if err != nil {
@@ -2141,7 +2141,7 @@ func NewFCmpInst(cond, typ, xVal, yVal interface{}) (*ast.InstFCmp, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFCmp{Cond: c, X: x, Y: y}, nil
+	return &ast.InstFCmp{Pred: p, X: x, Y: y}, nil
 }
 
 // NewPhiInst returns a new phi instruction based on the given incoming values.

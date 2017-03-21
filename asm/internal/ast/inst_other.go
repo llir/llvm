@@ -9,8 +9,8 @@ package ast
 type InstICmp struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Integer condition code.
-	Cond IntPred
+	// Integer predicate.
+	Pred IntPred
 	// Operands.
 	X, Y Value
 }
@@ -34,8 +34,8 @@ func (inst *InstICmp) SetName(name string) {
 type InstFCmp struct {
 	// Name of the local variable associated with the instruction.
 	Name string
-	// Floating-point condition code.
-	Cond FloatPred
+	// Floating-point predicate.
+	Pred FloatPred
 	// Operands.
 	X, Y Value
 }

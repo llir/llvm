@@ -27,22 +27,22 @@ type InstICmp struct {
 	Name string
 	// Type of the instruction.
 	Typ types.Type
-	// Integer condition code.
-	Cond IntPred
+	// Integer predicate.
+	Pred IntPred
 	// Operands.
 	X, Y value.Value
 }
 
-// NewICmp returns a new icmp instruction based on the given integer condition
-// code and operands.
-func NewICmp(cond IntPred, x, y value.Value) *InstICmp {
+// NewICmp returns a new icmp instruction based on the given integer predicate
+// and operands.
+func NewICmp(pred IntPred, x, y value.Value) *InstICmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len)
 	}
 	return &InstICmp{
 		Typ:  typ,
-		Cond: cond,
+		Pred: pred,
 		X:    x,
 		Y:    y,
 	}
@@ -73,7 +73,7 @@ func (inst *InstICmp) SetName(name string) {
 func (inst *InstICmp) String() string {
 	return fmt.Sprintf("%s = icmp %s %s %s, %s",
 		inst.Ident(),
-		inst.Cond,
+		inst.Pred,
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Y.Ident())
@@ -89,10 +89,10 @@ func (inst *InstICmp) SetParent(parent *BasicBlock) {
 	inst.Parent = parent
 }
 
-// IntPred represents the set of condition codes of the icmp instruction.
+// IntPred represents the set of integer predicates of the icmp instruction.
 type IntPred int
 
-// Integer condition codes.
+// Integer predicates.
 const (
 	IntEQ  IntPred = iota + 1 // eq: equal
 	IntNE                     // ne: not equal
@@ -106,9 +106,8 @@ const (
 	IntSLE                    // sle: signed less than or equal
 )
 
-// String returns the LLVM syntax representation of the integer condition
-// code.
-func (cond IntPred) String() string {
+// String returns the LLVM syntax representation of the integer predicate.
+func (pred IntPred) String() string {
 	m := map[IntPred]string{
 		IntEQ:  "eq",
 		IntNE:  "ne",
@@ -121,10 +120,10 @@ func (cond IntPred) String() string {
 		IntSLT: "slt",
 		IntSLE: "sle",
 	}
-	if s, ok := m[cond]; ok {
+	if s, ok := m[pred]; ok {
 		return s
 	}
-	return fmt.Sprintf("<unknown integer condition code %d>", int(cond))
+	return fmt.Sprintf("<unknown integer predicate %d>", int(pred))
 }
 
 // --- [ fcmp ] ----------------------------------------------------------------
@@ -140,22 +139,22 @@ type InstFCmp struct {
 	Name string
 	// Type of the instruction.
 	Typ types.Type
-	// Floating-point condition code.
-	Cond FloatPred
+	// Floating-point predicate.
+	Pred FloatPred
 	// Operands.
 	X, Y value.Value
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
-// condition code and operands.
-func NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
+// predicate and operands.
+func NewFCmp(pred FloatPred, x, y value.Value) *InstFCmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len)
 	}
 	return &InstFCmp{
 		Typ:  typ,
-		Cond: cond,
+		Pred: pred,
 		X:    x,
 		Y:    y,
 	}
@@ -186,7 +185,7 @@ func (inst *InstFCmp) SetName(name string) {
 func (inst *InstFCmp) String() string {
 	return fmt.Sprintf("%s = fcmp %s %s %s, %s",
 		inst.Ident(),
-		inst.Cond,
+		inst.Pred,
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Y.Ident())
@@ -202,10 +201,11 @@ func (inst *InstFCmp) SetParent(parent *BasicBlock) {
 	inst.Parent = parent
 }
 
-// FloatPred represents the set of condition codes of the fcmp instruction.
+// FloatPred represents the set of floating-point predicates of the fcmp
+// instruction.
 type FloatPred int
 
-// Floating-point condition codes.
+// Floating-point predicates.
 const (
 	FloatFalse FloatPred = iota + 1 // false: no comparison, always returns false
 	FloatOEQ                        // oeq: ordered and equal
@@ -226,8 +226,8 @@ const (
 )
 
 // String returns the LLVM syntax representation of the floating-point
-// condition code.
-func (cond FloatPred) String() string {
+// predicate.
+func (pred FloatPred) String() string {
 	m := map[FloatPred]string{
 		FloatFalse: "false",
 		FloatOEQ:   "oeq",
@@ -246,10 +246,10 @@ func (cond FloatPred) String() string {
 		FloatUNO:   "uno",
 		FloatTrue:  "true",
 	}
-	if s, ok := m[cond]; ok {
+	if s, ok := m[pred]; ok {
 		return s
 	}
-	return fmt.Sprintf("<unknown floating-point condition code %d>", int(cond))
+	return fmt.Sprintf("<unknown floating-point predicate %d>", int(pred))
 }
 
 // --- [ phi ] -----------------------------------------------------------------
