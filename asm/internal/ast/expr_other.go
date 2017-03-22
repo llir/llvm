@@ -11,16 +11,16 @@ import "fmt"
 type ExprICmp struct {
 	// Type of the constant expression.
 	Type Type
-	// Integer condition code.
-	Cond IntPred
+	// Integer predicate.
+	Pred IntPred
 	// Operands.
 	X, Y Constant
 }
 
-// IntPred represents the set of condition codes of the icmp expression.
+// IntPred represents the set of integer predicate of the icmp expression.
 type IntPred int
 
-// Integer condition codes.
+// Integer predicates.
 const (
 	IntEQ  IntPred = iota + 1 // eq: equal
 	IntNE                     // ne: not equal
@@ -34,9 +34,8 @@ const (
 	IntSLE                    // sle: signed less than or equal
 )
 
-// String returns the LLVM syntax representation of the integer condition
-// code.
-func (cond IntPred) String() string {
+// String returns the LLVM syntax representation of the integer predicate.
+func (pred IntPred) String() string {
 	m := map[IntPred]string{
 		IntEQ:  "eq",
 		IntNE:  "ne",
@@ -49,10 +48,10 @@ func (cond IntPred) String() string {
 		IntSLT: "slt",
 		IntSLE: "sle",
 	}
-	if s, ok := m[cond]; ok {
+	if s, ok := m[pred]; ok {
 		return s
 	}
-	return fmt.Sprintf("<unknown integer condition code %d>", int(cond))
+	return fmt.Sprintf("<unknown integer predicate %d>", int(pred))
 }
 
 // isValue ensures that only values can be assigned to the ast.Value interface.
@@ -75,16 +74,16 @@ func (*ExprICmp) isConstExpr() {}
 type ExprFCmp struct {
 	// Type of the constant expression.
 	Type Type
-	// Floating-point condition code.
-	Cond FloatPred
+	// Floating-point predicate.
+	Pred FloatPred
 	// Operands.
 	X, Y Constant
 }
 
-// FloatPred represents the set of condition codes of the fcmp expression.
+// FloatPred represents the set of predicates of the fcmp expression.
 type FloatPred int
 
-// Floating-point condition codes.
+// Floating-point predicates.
 const (
 	FloatFalse FloatPred = iota + 1 // false: no comparison, always returns false
 	FloatOEQ                        // oeq: ordered and equal
@@ -105,8 +104,8 @@ const (
 )
 
 // String returns the LLVM syntax representation of the floating-point
-// condition code.
-func (cond FloatPred) String() string {
+// predicate.
+func (pred FloatPred) String() string {
 	m := map[FloatPred]string{
 		FloatFalse: "false",
 		FloatOEQ:   "oeq",
@@ -125,10 +124,10 @@ func (cond FloatPred) String() string {
 		FloatUNO:   "uno",
 		FloatTrue:  "true",
 	}
-	if s, ok := m[cond]; ok {
+	if s, ok := m[pred]; ok {
 		return s
 	}
-	return fmt.Sprintf("<unknown floating-point condition code %d>", int(cond))
+	return fmt.Sprintf("<unknown floating-point predicate %d>", int(pred))
 }
 
 // isValue ensures that only values can be assigned to the ast.Value interface.

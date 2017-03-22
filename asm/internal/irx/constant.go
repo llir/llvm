@@ -360,7 +360,7 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 
 	// Other expressions
 	case *ast.ExprICmp:
-		cond := constant.IntPred(irIntPred(old.Cond))
+		cond := constant.IntPred(irIntPred(old.Pred))
 		x, y := m.irConstant(old.X), m.irConstant(old.Y)
 		c := constant.NewICmp(cond, x, y)
 		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
@@ -368,7 +368,7 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		}
 		return c
 	case *ast.ExprFCmp:
-		cond := constant.FloatPred(irFloatPred(old.Cond))
+		cond := constant.FloatPred(irFloatPred(old.Pred))
 		x, y := m.irConstant(old.X), m.irConstant(old.Y)
 		c := constant.NewFCmp(cond, x, y)
 		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {

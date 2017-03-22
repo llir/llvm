@@ -20,22 +20,22 @@ import (
 type ExprICmp struct {
 	// Type of the constant expression.
 	Typ types.Type
-	// Integer condition code.
-	Cond IntPred
+	// Integer predicate.
+	Pred IntPred
 	// Operands.
 	X, Y Constant
 }
 
-// NewICmp returns a new icmp expression based on the given integer condition
-// code and operands.
-func NewICmp(cond IntPred, x, y Constant) *ExprICmp {
+// NewICmp returns a new icmp expression based on the given integer predicate
+// and operands.
+func NewICmp(pred IntPred, x, y Constant) *ExprICmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len)
 	}
 	return &ExprICmp{
 		Typ:  typ,
-		Cond: cond,
+		Pred: pred,
 		X:    x,
 		Y:    y,
 	}
@@ -49,7 +49,7 @@ func (expr *ExprICmp) Type() types.Type {
 // Ident returns the string representation of the constant expression.
 func (expr *ExprICmp) Ident() string {
 	return fmt.Sprintf("icmp %s (%s %s, %s %s)",
-		expr.Cond,
+		expr.Pred,
 		expr.X.Type(),
 		expr.X.Ident(),
 		expr.Y.Type(),
@@ -65,10 +65,10 @@ func (expr *ExprICmp) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// IntPred represents the set of condition codes of the icmp expression.
+// IntPred represents the set of integer predicates of the icmp expression.
 type IntPred int
 
-// Integer condition codes.
+// Integer predicates.
 const (
 	IntEQ  IntPred = iota + 1 // eq: equal
 	IntNE                     // ne: not equal
@@ -82,9 +82,8 @@ const (
 	IntSLE                    // sle: signed less than or equal
 )
 
-// String returns the LLVM syntax representation of the integer condition
-// code.
-func (cond IntPred) String() string {
+// String returns the LLVM syntax representation of the integer predicate.
+func (pred IntPred) String() string {
 	m := map[IntPred]string{
 		IntEQ:  "eq",
 		IntNE:  "ne",
@@ -97,10 +96,10 @@ func (cond IntPred) String() string {
 		IntSLT: "slt",
 		IntSLE: "sle",
 	}
-	if s, ok := m[cond]; ok {
+	if s, ok := m[pred]; ok {
 		return s
 	}
-	return fmt.Sprintf("<unknown integer condition code %d>", int(cond))
+	return fmt.Sprintf("<unknown integer predicate %d>", int(pred))
 }
 
 // --- [ fcmp ] ----------------------------------------------------------------
@@ -112,22 +111,22 @@ func (cond IntPred) String() string {
 type ExprFCmp struct {
 	// Type of the constant expression.
 	Typ types.Type
-	// Floating-point condition code.
-	Cond FloatPred
+	// Floating-point predicate.
+	Pred FloatPred
 	// Operands.
 	X, Y Constant
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
-// condition code and operands.
-func NewFCmp(cond FloatPred, x, y Constant) *ExprFCmp {
+// predicate and operands.
+func NewFCmp(pred FloatPred, x, y Constant) *ExprFCmp {
 	var typ types.Type = types.I1
 	if t, ok := x.Type().(*types.VectorType); ok {
 		typ = types.NewVector(types.I1, t.Len)
 	}
 	return &ExprFCmp{
 		Typ:  typ,
-		Cond: cond,
+		Pred: pred,
 		X:    x,
 		Y:    y,
 	}
@@ -141,7 +140,7 @@ func (expr *ExprFCmp) Type() types.Type {
 // Ident returns the string representation of the constant expression.
 func (expr *ExprFCmp) Ident() string {
 	return fmt.Sprintf("fcmp %s (%s %s, %s %s)",
-		expr.Cond,
+		expr.Pred,
 		expr.X.Type(),
 		expr.X.Ident(),
 		expr.Y.Type(),
@@ -157,10 +156,11 @@ func (expr *ExprFCmp) Simplify() Constant {
 	panic("not yet implemented")
 }
 
-// FloatPred represents the set of condition codes of the fcmp expression.
+// FloatPred represents the set of floating-point predicates of the fcmp
+// expression.
 type FloatPred int
 
-// Floating-point condition codes.
+// Floating-point predicates.
 const (
 	FloatFalse FloatPred = iota + 1 // false: no comparison, always returns false
 	FloatOEQ                        // oeq: ordered and equal
@@ -181,8 +181,8 @@ const (
 )
 
 // String returns the LLVM syntax representation of the floating-point
-// condition code.
-func (cond FloatPred) String() string {
+// predicate.
+func (pred FloatPred) String() string {
 	m := map[FloatPred]string{
 		FloatFalse: "false",
 		FloatOEQ:   "oeq",
@@ -201,10 +201,10 @@ func (cond FloatPred) String() string {
 		FloatUNO:   "uno",
 		FloatTrue:  "true",
 	}
-	if s, ok := m[cond]; ok {
+	if s, ok := m[pred]; ok {
 		return s
 	}
-	return fmt.Sprintf("<unknown floating-point condition code %d>", int(cond))
+	return fmt.Sprintf("<unknown floating-point predicate %d>", int(pred))
 }
 
 // --- [ select ] --------------------------------------------------------------

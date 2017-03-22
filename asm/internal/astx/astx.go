@@ -1437,11 +1437,11 @@ func NewAddrSpaceCastExpr(fromTyp, fromVal, to interface{}) (*ast.ExprAddrSpaceC
 // --- [ Other expressions ] ---------------------------------------------------
 
 // NewICmpExpr returns a new icmp expression based on the given integer
-// condition code, type and operands.
-func NewICmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprICmp, error) {
-	c, ok := cond.(ast.IntPred)
+// predicate, type and operands.
+func NewICmpExpr(pred, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprICmp, error) {
+	p, ok := pred.(ast.IntPred)
 	if !ok {
-		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", cond)
+		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", pred)
 	}
 	x, err := NewConstant(xTyp, xVal)
 	if err != nil {
@@ -1451,15 +1451,15 @@ func NewICmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprICmp, error
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.ExprICmp{Type: &ast.TypeDummy{}, Cond: c, X: x, Y: y}, nil
+	return &ast.ExprICmp{Type: &ast.TypeDummy{}, Pred: p, X: x, Y: y}, nil
 }
 
 // NewFCmpExpr returns a new fcmp expression based on the given floating-point
-// condition code, type and operands.
-func NewFCmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFCmp, error) {
-	c, ok := cond.(ast.FloatPred)
+// predicate, type and operands.
+func NewFCmpExpr(pred, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFCmp, error) {
+	p, ok := pred.(ast.FloatPred)
 	if !ok {
-		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", cond)
+		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", pred)
 	}
 	x, err := NewConstant(xTyp, xVal)
 	if err != nil {
@@ -1469,7 +1469,7 @@ func NewFCmpExpr(cond, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFCmp, error
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.ExprFCmp{Type: &ast.TypeDummy{}, Cond: c, X: x, Y: y}, nil
+	return &ast.ExprFCmp{Type: &ast.TypeDummy{}, Pred: p, X: x, Y: y}, nil
 }
 
 // NewSeExpr returns a new select expression based on the given selection
