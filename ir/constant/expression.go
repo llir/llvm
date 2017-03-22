@@ -9,7 +9,7 @@ package constant
 //
 // Expr may have one of the following underlying types.
 //
-// Binary instructions
+// Binary expressions
 //
 // http://llvm.org/docs/LangRef.html#binary-operations
 //
@@ -26,7 +26,7 @@ package constant
 //    *constant.ExprSRem   (https://godoc.org/github.com/llir/llvm/ir/constant#ExprSRem)
 //    *constant.ExprFRem   (https://godoc.org/github.com/llir/llvm/ir/constant#ExprFRem)
 //
-// Bitwise instructions
+// Bitwise expressions
 //
 // http://llvm.org/docs/LangRef.html#bitwise-binary-operations
 //
@@ -37,13 +37,13 @@ package constant
 //    *constant.ExprOr     (https://godoc.org/github.com/llir/llvm/ir/constant#ExprOr)
 //    *constant.ExprXor    (https://godoc.org/github.com/llir/llvm/ir/constant#ExprXor)
 //
-// Memory instructions
+// Memory expressions
 //
 // http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
 //
 //    *constant.ExprGetElementPtr   (https://godoc.org/github.com/llir/llvm/ir/constant#ExprGetElementPtr)
 //
-// Conversion instructions
+// Conversion expressions
 //
 // http://llvm.org/docs/LangRef.html#conversion-operations
 //
@@ -61,7 +61,7 @@ package constant
 //    *constant.ExprBitCast         (https://godoc.org/github.com/llir/llvm/ir/constant#ExprBitCast)
 //    *constant.ExprAddrSpaceCast   (https://godoc.org/github.com/llir/llvm/ir/constant#ExprAddrSpaceCast)
 //
-// Other instructions
+// Other expressions
 //
 // http://llvm.org/docs/LangRef.html#other-operations
 //
