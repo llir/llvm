@@ -892,7 +892,7 @@ AllocaOptions
 ;
 
 NElems
-	: FirstClassType Value   << astx.NewValue($1, $2) >>
+	: FirstClassType Value   << astx.NewValue($0, $1) >>
 ;
 
 LoadInst
