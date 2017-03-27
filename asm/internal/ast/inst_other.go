@@ -120,7 +120,7 @@ type InstCall struct {
 	// Type of the instruction; or callee type signature.
 	Type Type
 	// Callee.
-	Callee NamedValue
+	Callee Value
 	// Function arguments.
 	Args []Value
 }

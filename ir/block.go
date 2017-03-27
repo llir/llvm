@@ -417,6 +417,7 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 //
 //    *ir.Function
 //    *types.Param
+//    *constant.ExprBitCast
 func (block *BasicBlock) NewCall(callee value.Named, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	block.AppendInst(inst)

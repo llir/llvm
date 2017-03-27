@@ -306,11 +306,6 @@ FunctionBody
 
 // === [ Identifiers ] =========================================================
 
-Ident
-	: GlobalIdent
-	| LocalIdent
-;
-
 GlobalIdent
 	: global_ident   << astx.NewGlobalIdent($0) >>
 ;
@@ -886,6 +881,8 @@ AllocaInst
 	: "alloca" FirstClassType AllocaOptions   << astx.NewAllocaInst($1, $2) >>
 ;
 
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 rune lookahead.
 AllocaOptions
 	: "," NElems OptCommaAlign   << $1, nil >>
 	| OptCommaAlign              << nil, nil >>
@@ -1035,7 +1032,7 @@ SelectInst
 ;
 
 CallInst
-	: "call" FastMathFlags Type Ident "(" Args ")"   << astx.NewCallInst($2, $3, $5) >>
+	: "call" FastMathFlags Type Value "(" Args ")"   << astx.NewCallInst($2, $3, $5) >>
 ;
 
 Args

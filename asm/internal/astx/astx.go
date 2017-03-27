@@ -2230,13 +2230,31 @@ func NewCallInst(retTyp, callee, args interface{}) (*ast.InstCall, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid return type; expected ast.Type, got %T", retTyp)
 	}
-	cc, err := NewValue(&ast.TypeDummy{}, callee)
+	// Ad-hoc solution to update the type of bitcast expressions used as callees
+	// in call instructions. Note, the LLVM IR syntax of call instructions does
+	// not pertain all type information of the callee value use. E.g.
+	//
+	//    %42 = call i32 bitcast (i32 (...)* @open to i32 (i8*, i32, ...)*)(i8* %41, i32 0)
+	calleeType := r
+	if cc, ok := callee.(*ast.ExprBitCast); ok {
+		ccType, ok := cc.To.(*ast.PointerType)
+		if !ok {
+			return nil, errors.Errorf("invalid to type of callee bitcast expression; expected *ast.PointerType, got %T", cc.To)
+		}
+		if _, ok := ccType.Elem.(*ast.FuncType); !ok {
+			return nil, errors.Errorf("invalid to type of callee type pointer elem; expected *ast.FuncType, got %T", ccType.Elem)
+		}
+		// Infer the proper type of retType.
+		if rTyp, ok := retTyp.(*ast.FuncType); ok {
+			calleeType = &ast.PointerType{Elem: rTyp}
+		} else {
+			// Ignore retType if containing incomplete type information.
+			calleeType = ccType
+		}
+	}
+	c, err := NewValue(calleeType, callee)
 	if err != nil {
 		return nil, errors.WithStack(err)
-	}
-	c, ok := cc.(ast.NamedValue)
-	if !ok {
-		return nil, errors.Errorf("invalid callee type; expected ast.NamedValue, got %T", cc)
 	}
 	var as []ast.Value
 	switch args := args.(type) {

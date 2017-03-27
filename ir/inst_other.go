@@ -433,7 +433,8 @@ type InstCall struct {
 	//
 	//    *ir.Function
 	//    *types.Param
-	Callee value.Named
+	//    *constant.ExprBitCast
+	Callee value.Value
 	// Callee signature.
 	Sig *types.FuncType
 	// Function arguments.
@@ -447,7 +448,8 @@ type InstCall struct {
 //
 //    *ir.Function
 //    *types.Param
-func NewCall(callee value.Named, args ...value.Value) *InstCall {
+//    *constant.ExprBitCast
+func NewCall(callee value.Value, args ...value.Value) *InstCall {
 	typ, ok := callee.Type().(*types.PointerType)
 	if !ok {
 		panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))

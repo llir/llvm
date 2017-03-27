@@ -942,11 +942,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstCall, got %T", v))
 			}
-			v := m.irValue(oldInst.Callee)
-			callee, ok := v.(value.Named)
-			if !ok {
-				panic(fmt.Errorf("invalid callee type; expected value.Named, got %T", v))
-			}
+			callee := m.irValue(oldInst.Callee)
 			typ, ok := callee.Type().(*types.PointerType)
 			if !ok {
 				panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
