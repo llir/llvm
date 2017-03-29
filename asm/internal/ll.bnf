@@ -80,6 +80,12 @@ label_ident
 	| _quoted_string ':'
 ;
 
+// --- [ Attribute group identifiers ] -----------------------------------------
+
+attr_group_id
+	: '#' _id
+;
+
 // === [ Integer literals ] ====================================================
 
 //   Integer           [-]?[0-9]+
@@ -176,6 +182,7 @@ TopLevelDecl
 	| Global
 	| FunctionDecl
 	| FunctionDef
+	| AttrGroupDef
 ;
 
 // === [ Source filename ] =====================================================
@@ -267,11 +274,11 @@ Align
 // === [ Functions ] ===========================================================
 
 FunctionDecl
-	: "declare" OptExternLinkage FunctionHeader OptUnnamedAddr OptAlign   << $2, nil >>
+	: "declare" OptExternLinkage FunctionHeader OptUnnamedAddr FuncAttrs OptAlign   << $2, nil >>
 ;
 
 FunctionDef
-	: "define" OptLinkage FunctionHeader OptUnnamedAddr OptAlign FunctionBody   << astx.NewFunctionDef($2, $5) >>
+	: "define" OptLinkage FunctionHeader OptUnnamedAddr FuncAttrs OptAlign FunctionBody   << astx.NewFunctionDef($2, $6) >>
 ;
 
 FunctionHeader
@@ -304,6 +311,64 @@ FunctionBody
 	: "{" BasicBlocks "}"   << $1, nil >>
 ;
 
+// === [ Attribute group definitions ] =========================================
+
+AttrGroupDef
+	: "attributes" AttrGroupID "=" "{" FuncAttrs "}"   << nil, nil >>
+;
+
+FuncAttrs
+	: empty
+	| FuncAttrs FuncAttr
+;
+
+// ref: http://llvm.org/docs/LangRef.html#function-attributes
+FuncAttr
+	: string_lit
+	| string_lit "=" string_lit
+	| AttrGroupID
+	| "alignstack" "(" int_lit ")"
+	| "allocsize" "(" int_lit OptAllocSizeNElems ")"
+	| "alwaysinline"
+	| "builtin"
+	| "cold"
+	| "convergent"
+	| "inaccessiblememonly"
+	| "inaccessiblemem_or_argmemonly"
+	| "inlinehint"
+	| "jumptable"
+	| "minsize"
+	| "naked"
+	| "nobuiltin"
+	| "noduplicate"
+	| "noimplicitfloat"
+	| "noinline"
+	| "nonlazybind"
+	| "noredzone"
+	| "noreturn"
+	| "norecurse"
+	| "nounwind"
+	| "optnone"
+	| "optsize"
+	| "readnone"
+	| "readonly"
+	| "writeonly"
+	| "argmemonly"
+	| "returns_twice"
+	| "safestack"
+	| "sanitize_address"
+	| "sanitize_memory"
+	| "sanitize_thread"
+	| "ssp"
+	| "sspreq"
+	| "sspstrong"
+	| "uwtable"
+;
+
+OptAllocSizeNElems
+	: "," int_lit
+;
+
 // === [ Identifiers ] =========================================================
 
 GlobalIdent
@@ -316,6 +381,10 @@ LocalIdent
 
 LabelIdent
 	: label_ident   << astx.NewLabelIdent($0) >>
+;
+
+AttrGroupID
+	: attr_group_id
 ;
 
 // === [ Types ] ===============================================================
@@ -1032,7 +1101,7 @@ SelectInst
 ;
 
 CallInst
-	: "call" FastMathFlags Type Value "(" Args ")"   << astx.NewCallInst($2, $3, $5) >>
+	: "call" FastMathFlags Type Value "(" Args ")" FuncAttrs   << astx.NewCallInst($2, $3, $5) >>
 ;
 
 Args

@@ -8,10 +8,6 @@ f=$1
 sar -i "; <label>:([0-9]+):[^\n]+" "\${1}:" "${f}"
 # Remove comments.
 sar -i "(^|[\n]);[^\n]+" "" "${f}"
-# Remove attributes.
-sar -i "(^|[\n])attributes[^\n]+" "" "${f}"
-# Remove function attributes.
-sar -i "[)] #[0-9]+" ")" "${f}"
 # Remove metadata nodes.
 sar -i "(^|[\n])[!][^\n]+" "" "${f}"
 # Add labels for the first basic block of functions with 0 parameters.
