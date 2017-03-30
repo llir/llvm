@@ -4,12 +4,18 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 f=$1
+
+# --- [ not yet implemented ] --------------------------------------------------
+
+# Remove metadata nodes.
+sar -i "(^|[\n])[!][^\n]+" "" "${f}"
+
+# --- [ pretty print ] ---------------------------------------------------------
+
 # Replace basic block label name comments with labels.
 sar -i "; <label>:([0-9]+):[^\n]+" "\${1}:" "${f}"
 # Remove comments.
 sar -i "(^|[\n]);[^\n]+" "" "${f}"
-# Remove metadata nodes.
-sar -i "(^|[\n])[!][^\n]+" "" "${f}"
 # Add labels for the first basic block of functions with 0 parameters.
 
 # TODO: Fix handling of ...
@@ -41,16 +47,6 @@ sar -i "[\n][\t]  " "\n\t\t" "${f}"
 
 sar -i "([0-9]+):\n" "; <label>:\${1}\n" "${f}"
 
-sar -i "[\n]define internal " "\ndefine " "${f}"
-sar -i "internal (constant|global) " "\${1} " "${f}"
-sar -i "(i8|i16|i32|call|define) signext" "\${1}" "${f}"
-sar -i "(i8|i16|i32|call|define) zeroext" "\${1}" "${f}"
-sar -i " noalias " " " "${f}"
-sar -i "[*] nocapture" "*" "${f}"
-sar -i "[*] writeonly" "*" "${f}"
-sar -i "[*] readonly" "*" "${f}"
-sar -i "[*] nocapture" "*" "${f}"
-sar -i " volatile " " " "${f}"
 #sar -i "getelementptr ([^,]+), ([^,]+), i32 0, i32 0" "getelementptr \${1}, \${2}, i64 0, i64 0" "${f}"
 sar -i "[.]000000e[+]00" ".0" "${f}"
 sar -i "([0-9])[.]([0-9]+)?[0]+e[+]([0-9][0-9])" "\${1}.\${2}e\${3}" "${f}"

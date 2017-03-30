@@ -307,6 +307,8 @@ ParamAttrs
 	| ParamAttrs ParamAttr
 ;
 
+// From spec and src of v4.0.
+//
 // ref: http://llvm.org/docs/LangRef.html#parameter-attributes
 ParamAttr
 	: string_lit
@@ -321,14 +323,14 @@ ParamAttr
 	| "noalias"
 	| "nocapture"
 	| "nonnull"
-	| "readnone"  // NOTE: accepted by lli but not part of spec
-	| "readonly"  // NOTE: accepted by lli but not part of spec
+	| "readnone" // NOTE: accepted by lli but not part of spec in v4.0
+	| "readonly" // NOTE: accepted by lli but not part of spec in v4.0
 	| "returned"
 	| "signext"
 	| "sret"
 	| "swifterror"
 	| "swiftself"
-	| "writeonly" // NOTE: accepted by lli but not part of spec
+	| "writeonly" // NOTE: accepted by lli but not part of spec in v4.0
 	| "zeroext"
 ;
 
@@ -352,6 +354,8 @@ FuncAttrs
 	| FuncAttrs FuncAttr
 ;
 
+// From spec and src of v4.0.
+//
 // ref: http://llvm.org/docs/LangRef.html#function-attributes
 FuncAttr
 	: string_lit
@@ -997,7 +1001,12 @@ NElems
 ;
 
 LoadInst
-	: "load" FirstClassType "," PointerType Value OptCommaAlign   << astx.NewLoadInst($1, $3, $4) >>
+	: "load" OptVolatile FirstClassType "," PointerType Value OptCommaAlign   << astx.NewLoadInst($2, $4, $5) >>
+;
+
+OptVolatile
+	: empty
+	| "volatile"
 ;
 
 GetElementPtrInst
@@ -1019,7 +1028,7 @@ Index
 ;
 
 StoreInst
-	: "store" FirstClassType Value "," PointerType Value OptCommaAlign   << astx.NewStoreInst($1, $2, $4, $5) >>
+	: "store" OptVolatile FirstClassType Value "," PointerType Value OptCommaAlign   << astx.NewStoreInst($2, $3, $5, $6) >>
 ;
 
 // --- [ Conversion instructions ] ---------------------------------------------
