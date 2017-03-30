@@ -282,7 +282,7 @@ FunctionDef
 ;
 
 FunctionHeader
-	: Type GlobalIdent "(" Params ")"   << astx.NewFunctionDecl($0, $1, $3) >>
+	: ParamAttrs Type GlobalIdent "(" Params ")"   << astx.NewFunctionDecl($1, $2, $4) >>
 ;
 
 Params
@@ -298,8 +298,38 @@ ParamList
 ;
 
 Param
-	: FirstClassType              << astx.NewParam($0, nil) >>
-	| FirstClassType LocalIdent   << astx.NewParam($0, $1) >>
+	: FirstClassType ParamAttrs              << astx.NewParam($0, nil) >>
+	| FirstClassType ParamAttrs LocalIdent   << astx.NewParam($0, $2) >>
+;
+
+ParamAttrs
+	: empty
+	| ParamAttrs ParamAttr
+;
+
+// ref: http://llvm.org/docs/LangRef.html#parameter-attributes
+ParamAttr
+	: string_lit
+	| string_lit "=" string_lit
+	| Align
+	| "byval"
+	| "dereferenceable" "(" int_lit ")"
+	| "dereferenceable_or_null" "(" int_lit ")"
+	| "inalloca"
+	| "inreg"
+	| "nest"
+	| "noalias"
+	| "nocapture"
+	| "nonnull"
+	| "readnone"  // NOTE: accepted by lli but not part of spec
+	| "readonly"  // NOTE: accepted by lli but not part of spec
+	| "returned"
+	| "signext"
+	| "sret"
+	| "swifterror"
+	| "swiftself"
+	| "writeonly" // NOTE: accepted by lli but not part of spec
+	| "zeroext"
 ;
 
 OptAlign
@@ -330,11 +360,12 @@ FuncAttr
 	| "alignstack" "(" int_lit ")"
 	| "allocsize" "(" int_lit OptAllocSizeNElems ")"
 	| "alwaysinline"
+	| "argmemonly"
 	| "builtin"
 	| "cold"
 	| "convergent"
-	| "inaccessiblememonly"
 	| "inaccessiblemem_or_argmemonly"
+	| "inaccessiblememonly"
 	| "inlinehint"
 	| "jumptable"
 	| "minsize"
@@ -344,16 +375,14 @@ FuncAttr
 	| "noimplicitfloat"
 	| "noinline"
 	| "nonlazybind"
+	| "norecurse"
 	| "noredzone"
 	| "noreturn"
-	| "norecurse"
 	| "nounwind"
 	| "optnone"
 	| "optsize"
 	| "readnone"
 	| "readonly"
-	| "writeonly"
-	| "argmemonly"
 	| "returns_twice"
 	| "safestack"
 	| "sanitize_address"
@@ -363,6 +392,7 @@ FuncAttr
 	| "sspreq"
 	| "sspstrong"
 	| "uwtable"
+	| "writeonly"
 ;
 
 OptAllocSizeNElems
@@ -1106,7 +1136,7 @@ SelectInst
 ;
 
 CallInst
-	: "call" FastMathFlags Type Value "(" Args ")" FuncAttrs   << astx.NewCallInst($2, $3, $5) >>
+	: "call" FastMathFlags ParamAttrs Type Value "(" Args ")" FuncAttrs   << astx.NewCallInst($3, $4, $6) >>
 ;
 
 Args
@@ -1120,7 +1150,7 @@ ArgList
 ;
 
 Arg
-	: FirstClassType Value   << astx.NewValue($0, $1) >>
+	: FirstClassType ParamAttrs Value   << astx.NewValue($0, $2) >>
 ;
 
 // === [ Terminators ] =========================================================
