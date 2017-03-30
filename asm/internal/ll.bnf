@@ -86,6 +86,16 @@ attr_group_id
 	: '#' _id
 ;
 
+// --- [ Metadata identifiers ] ------------------------------------------------
+
+metadata_name
+	: '!' _name
+;
+
+metadata_id
+	: '!' _id
+;
+
 // === [ Integer literals ] ====================================================
 
 //   Integer           [-]?[0-9]+
@@ -183,6 +193,8 @@ TopLevelDecl
 	| FunctionDecl
 	| FunctionDef
 	| AttrGroupDef
+	| NamedMetadataDef
+	| MetadataDef
 ;
 
 // === [ Source filename ] =====================================================
@@ -403,6 +415,52 @@ OptAllocSizeNElems
 	: "," int_lit
 ;
 
+// === [ Metadata definitions ] ================================================
+
+NamedMetadataDef
+	: MetadataName "=" "!" "{" MetadataIDs "}"   << nil, nil >>
+;
+
+MetadataIDs
+	: empty
+	| MetadataIDList
+;
+
+MetadataIDList
+	: MetadataID
+	| MetadataIDList "," MetadataID
+;
+
+MetadataDef
+	: MetadataID "=" OptDistinct Metadata   << nil, nil >>
+;
+
+OptDistinct
+	: empty
+	| "distinct"
+;
+
+Metadata
+	: "!" "{" MetadataNodes "}"
+;
+
+MetadataNodes
+	: empty
+	| MetadataNodeList
+;
+
+MetadataNodeList
+	: MetadataNode
+	| MetadataNodeList "," MetadataNode
+;
+
+MetadataNode
+	: Metadata
+	| MetadataID
+	| "!" string_lit
+	| Type Value
+;
+
 // === [ Identifiers ] =========================================================
 
 GlobalIdent
@@ -419,6 +477,14 @@ LabelIdent
 
 AttrGroupID
 	: attr_group_id
+;
+
+MetadataName
+	: metadata_name
+;
+
+MetadataID
+	: metadata_id
 ;
 
 // === [ Types ] ===============================================================
