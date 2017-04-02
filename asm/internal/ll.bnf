@@ -884,6 +884,9 @@ InstructionList
 
 Instruction
 	: StoreInst
+	| FenceInst
+	| CmpXchgInst
+	| AtomicRMWInst
 	| LocalIdent "=" ValueInstruction   << astx.NewNamedInstruction($0, $2) >>
 	| ValueInstruction
 ;
@@ -909,6 +912,13 @@ ValueInstruction
 	| AndInst
 	| OrInst
 	| XorInst
+	// Vector instructions
+	| ExtractElementInst
+	| InsertElementInst
+	| ShuffleVectorInst
+	// Aggregate instructions
+	| ExtractValueInst
+	| InsertValueInst
 	// Memory instructions
 	| AllocaInst
 	| LoadInst
@@ -933,53 +943,81 @@ ValueInstruction
 	| PhiInst
 	| SelectInst
 	| CallInst
+	| VAArgInst
+	| LandingPadInst
+	| CatchPadInst
+	| CleanupPadInst
 ;
 
 // --- [ Binary instructions ] -------------------------------------------------
+
+// ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AddInst
 	: "add" OverflowFlags FirstClassType Value "," Value   << astx.NewAddInst($2, $3, $5) >>
 ;
 
+// ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 FAddInst
 	: "fadd" FastMathFlags FirstClassType Value "," Value   << astx.NewFAddInst($2, $3, $5) >>
 ;
+
+// ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SubInst
 	: "sub" OverflowFlags FirstClassType Value "," Value   << astx.NewSubInst($2, $3, $5) >>
 ;
 
+// ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 FSubInst
 	: "fsub" FastMathFlags FirstClassType Value "," Value   << astx.NewFSubInst($2, $3, $5) >>
 ;
+
+// ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 MulInst
 	: "mul" OverflowFlags FirstClassType Value "," Value   << astx.NewMulInst($2, $3, $5) >>
 ;
 
+// ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 FMulInst
 	: "fmul" FastMathFlags FirstClassType Value "," Value   << astx.NewFMulInst($2, $3, $5) >>
 ;
+
+// ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 UDivInst
 	: "udiv" FirstClassType Value "," Value   << astx.NewUDivInst($1, $2, $4) >>
 ;
 
+// ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 SDivInst
 	: "sdiv" ExactFlags FirstClassType Value "," Value   << astx.NewSDivInst($2, $3, $5) >>
 ;
+
+// ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FDivInst
 	: "fdiv" FastMathFlags FirstClassType Value "," Value   << astx.NewFDivInst($2, $3, $5) >>
 ;
 
+// ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 URemInst
 	: "urem" ExactFlags FirstClassType Value "," Value   << astx.NewURemInst($2, $3, $5) >>
 ;
 
+// ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 SRemInst
 	: "srem" FirstClassType Value "," Value   << astx.NewSRemInst($1, $2, $4) >>
 ;
+
+// ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FRemInst
 	: "frem" FastMathFlags FirstClassType Value "," Value   << astx.NewFRemInst($2, $3, $5) >>
@@ -1025,31 +1063,84 @@ ExactFlags
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
+// ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ShlInst
 	: "shl" OverflowFlags FirstClassType Value "," Value   << astx.NewShlInst($2, $3, $5) >>
 ;
+
+// ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LShrInst
 	: "lshr" ExactFlags FirstClassType Value "," Value   << astx.NewLShrInst($2, $3, $5) >>
 ;
 
+// ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 AShrInst
 	: "ashr" ExactFlags FirstClassType Value "," Value   << astx.NewAShrInst($2, $3, $5) >>
 ;
+
+// ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AndInst
 	: "and" FirstClassType Value "," Value   << astx.NewAndInst($1, $2, $4) >>
 ;
 
+// ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 OrInst
 	: "or" FirstClassType Value "," Value   << astx.NewOrInst($1, $2, $4) >>
 ;
+
+// ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 XorInst
 	: "xor" FirstClassType Value "," Value   << astx.NewXorInst($1, $2, $4) >>
 ;
 
+// --- [ Vector instructions ] -------------------------------------------------
+
+// ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ExtractElementInst
+	: "extractelement" FirstClassType Value "," FirstClassType Value   << nil, nil >>
+;
+
+// ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+InsertElementInst
+	: "insertelement" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << nil, nil >>
+;
+
+// ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ShuffleVectorInst
+	: "shufflevector" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << nil, nil >>
+;
+
+// --- [ Aggregate  instructions ] ---------------------------------------------
+
+// ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ExtractValueInst
+	: "extractvalue" FirstClassType Value "," IntConstList   << nil, nil >>
+;
+
+IntConstList
+	: IntConst
+	| IntConstList "," IntConst
+;
+
+// ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+InsertValueInst
+	: "insertvalue" FirstClassType Value "," FirstClassType Value "," IntConstList   << nil, nil >>
+;
+
 // --- [ Memory instructions ] -------------------------------------------------
+
+// ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AllocaInst
 	: "alloca" FirstClassType AllocaOptions   << astx.NewAllocaInst($1, $2) >>
@@ -1057,6 +1148,9 @@ AllocaInst
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
 // through the limitation of 1 rune lookahead.
+//
+// Structured in this way to allow for naiive 1 rune lookahead parser
+// generators.
 AllocaOptions
 	: "," NElems OptCommaAlign   << $1, nil >>
 	| OptCommaAlign              << nil, nil >>
@@ -1066,6 +1160,8 @@ NElems
 	: FirstClassType Value   << astx.NewValue($0, $1) >>
 ;
 
+// ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 LoadInst
 	: "load" OptVolatile FirstClassType "," PointerType Value OptCommaAlign   << astx.NewLoadInst($2, $4, $5) >>
 ;
@@ -1074,6 +1170,65 @@ OptVolatile
 	: empty
 	| "volatile"
 ;
+
+// ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+StoreInst
+	: "store" OptVolatile FirstClassType Value "," PointerType Value OptCommaAlign   << astx.NewStoreInst($2, $3, $5, $6) >>
+;
+
+// ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+FenceInst
+	: "fence" OptSinglethread Ordering   << nil, nil >>
+;
+
+OptSinglethread
+	: empty
+	| "singlethread"
+;
+
+Ordering
+	: "unordered"
+	| "monotonic"
+	| "acquire"
+	| "release"
+	| "acq_rel"
+	| "seq_cst"
+;
+
+// ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CmpXchgInst
+	: "cmpxchg" OptWeak OptVolatile FirstClassType Value "," FirstClassType Value "," FirstClassType Value OptSinglethread Ordering Ordering   << nil, nil >>
+;
+
+OptWeak
+	: empty
+	| "weak"
+;
+
+// ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+AtomicRMWInst
+	: "atomicrmw" OptVolatile AtomicOperation FirstClassType Value "," FirstClassType Value OptSinglethread Ordering   << nil, nil >>
+;
+
+AtomicOperation
+	: "xchg"
+	| "add"
+	| "sub"
+	| "and"
+	| "nand"
+	| "or"
+	| "xor"
+	| "max"
+	| "min"
+	| "umax"
+	| "umin"
+;
+
+// ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GetElementPtrInst
 	: "getelementptr" OptInbounds FirstClassType "," FirstClassType Value Indices   << astx.NewGetElementPtrInst($2, $4, $5, $6) >>
@@ -1093,65 +1248,89 @@ Index
 	: IntType Value   << astx.NewValue($0, $1) >>
 ;
 
-StoreInst
-	: "store" OptVolatile FirstClassType Value "," PointerType Value OptCommaAlign   << astx.NewStoreInst($2, $3, $5, $6) >>
-;
-
 // --- [ Conversion instructions ] ---------------------------------------------
+
+// ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TruncInst
 	: "trunc" FirstClassType Value "to" FirstClassType   << astx.NewTruncInst($1, $2, $4) >>
 ;
 
+// ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ZExtInst
 	: "zext" FirstClassType Value "to" FirstClassType   << astx.NewZExtInst($1, $2, $4) >>
 ;
+
+// ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SExtInst
 	: "sext" FirstClassType Value "to" FirstClassType   << astx.NewSExtInst($1, $2, $4) >>
 ;
 
+// ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 FPTruncInst
 	: "fptrunc" FirstClassType Value "to" FirstClassType   << astx.NewFPTruncInst($1, $2, $4) >>
 ;
+
+// ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FPExtInst
 	: "fpext" FirstClassType Value "to" FirstClassType   << astx.NewFPExtInst($1, $2, $4) >>
 ;
 
+// ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 FPToUIInst
 	: "fptoui" FirstClassType Value "to" FirstClassType   << astx.NewFPToUIInst($1, $2, $4) >>
 ;
+
+// ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FPToSIInst
 	: "fptosi" FirstClassType Value "to" FirstClassType   << astx.NewFPToSIInst($1, $2, $4) >>
 ;
 
+// ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 UIToFPInst
 	: "uitofp" FirstClassType Value "to" FirstClassType   << astx.NewUIToFPInst($1, $2, $4) >>
 ;
+
+// ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SIToFPInst
 	: "sitofp" FirstClassType Value "to" FirstClassType   << astx.NewSIToFPInst($1, $2, $4) >>
 ;
 
+// ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 PtrToIntInst
 	: "ptrtoint" FirstClassType Value "to" FirstClassType   << astx.NewPtrToIntInst($1, $2, $4) >>
 ;
+
+// ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 IntToPtrInst
 	: "inttoptr" FirstClassType Value "to" FirstClassType   << astx.NewIntToPtrInst($1, $2, $4) >>
 ;
 
+// ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 BitCastInst
 	: "bitcast" FirstClassType Value "to" FirstClassType   << astx.NewBitCastInst($1, $2, $4) >>
 ;
+
+// ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AddrSpaceCastInst
 	: "addrspacecast" FirstClassType Value "to" FirstClassType   << astx.NewAddrSpaceCastInst($1, $2, $4) >>
 ;
 
 // --- [ Other instructions ] --------------------------------------------------
+
+// ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ICmpInst
 	: "icmp" IntPred FirstClassType Value "," Value   << astx.NewICmpInst($1, $2, $3, $5) >>
@@ -1169,6 +1348,8 @@ IntPred
 	| "slt"   << ast.IntSLT, nil >>
 	| "sle"   << ast.IntSLE, nil >>
 ;
+
+// ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FCmpInst
 	: "fcmp" FastMathFlags FloatPred FirstClassType Value "," Value   << astx.NewFCmpInst($2, $3, $4, $6) >>
@@ -1193,6 +1374,8 @@ FloatPred
 	| "true"    << ast.FloatTrue, nil >>
 ;
 
+// ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 PhiInst
 	: "phi" FirstClassType IncomingList   << astx.NewPhiInst($1, $2) >>
 ;
@@ -1206,9 +1389,13 @@ Incoming
 	: "[" Value "," LocalIdent "]"   << astx.NewIncoming($1, $3) >>
 ;
 
+// ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 SelectInst
 	: "select" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << astx.NewSelectInst($1, $2, $4, $5, $7, $8) >>
 ;
+
+// ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CallInst
 	: "call" FastMathFlags ParamAttrs Type Value "(" Args ")" FuncAttrs   << astx.NewCallInst($3, $4, $6) >>
@@ -1228,6 +1415,51 @@ Arg
 	: FirstClassType ParamAttrs Value   << astx.NewValue($0, $2) >>
 ;
 
+// ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+VAArgInst
+	: "va_arg" FirstClassType Value "," FirstClassType   << nil, nil >>
+;
+
+// ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LandingPadInst
+	: "landingpad" FirstClassType ClauseList   << nil, nil >>
+	| "landingpad" FirstClassType "cleanup" Clauses   << nil, nil >>
+;
+
+Clauses
+	: empty
+	| ClauseList
+;
+
+ClauseList
+	: Clause
+	| ClauseList Clause
+;
+
+Clause
+	: "catch" FirstClassType Value
+	| "filter" FirstClassType ArrayConst
+;
+
+// ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CatchPadInst
+	: "catchpad" "within" LocalIdent ArrayConst   << nil, nil >>
+;
+
+// ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CleanupPadInst
+	: "cleanuppad" "within" ExceptionParent ArrayConst   << nil, nil >>
+;
+
+ExceptionParent
+	: "none"
+	| LocalIdent
+;
+
 // === [ Terminators ] =========================================================
 
 Terminator
@@ -1235,21 +1467,35 @@ Terminator
 	| BrTerm
 	| CondBrTerm
 	| SwitchTerm
+	| IndirectBrTerm
+	| InvokeTerm
+	| ResumeTerm
+	| CatchSwitchTerm
+	| CatchRetTerm
+	| CleanupRetTerm
 	| UnreachableTerm
 ;
+
+// ~~~ [ ret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RetTerm
 	: "ret" VoidType               << &ast.TermRet{}, nil >>
 	| "ret" FirstClassType Value   << astx.NewRetTerm($1, $2) >>
 ;
 
+// ~~~ [ br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 BrTerm
 	: "br" LabelType LocalIdent   << astx.NewBrTerm($1, $2) >>
 ;
 
+// ~~~ [ br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 CondBrTerm
 	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << astx.NewCondBrTerm($1, $2, $4, $5, $7, $8) >>
 ;
+
+// ~~~ [ switch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SwitchTerm
 	: "switch" IntType Value "," LabelType LocalIdent "[" Cases "]"   << astx.NewSwitchTerm($1, $2, $4, $5, $7) >>
@@ -1268,6 +1514,97 @@ CastList
 Case
 	: IntType Value "," LabelType LocalIdent   << astx.NewCase($0, $1, $3, $4) >>
 ;
+
+// ~~~ [ indirectbr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+IndirectBrTerm
+	: "indirectbr" FirstClassType Value "," ArrayConst   << nil, nil >>
+;
+
+// ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+InvokeTerm
+	: "invoke" OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs OptOperandBundle "to" LabelType Value "unwind" LabelType Value   << nil, nil >>
+;
+
+OptCallConv
+	: empty
+	| CallConv
+;
+
+CallConv
+	: "ccc"
+	| "fastcc"
+	| "coldcc"
+	| "webkit_jscc"
+	| "anyregcc"
+	| "preserve_mostcc"
+	| "preserve_allcc"
+	| "cxx_fast_tlscc"
+	| "swiftcc"
+	| "cc" int_lit
+;
+
+OperandBundle
+	: "[" TagValues "]"
+;
+
+OptOperandBundle
+	: empty
+	| OperandBundle
+;
+
+TagValues
+	: empty
+	| TagValueList
+;
+
+TagValue
+	: string_lit "(" Values  ")"
+;
+
+TagValueList
+	: TagValue
+	| TagValueList "," TagValue
+;
+
+Values
+	: empty
+	| ValueList
+;
+
+ValueList
+	: FirstClassType Value
+	| ValueList "," FirstClassType Value
+;
+
+// ~~~ [ resume ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ResumeTerm
+	: "resume" FirstClassType Value   << nil, nil >>
+;
+
+// ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CatchSwitchTerm
+	: "catchswitch" "within" ExceptionParent ArrayConst "unwind" "to" "caller"     << nil, nil >>
+	| "catchswitch" "within" ExceptionParent ArrayConst "unwind" LabelType Value   << nil, nil >>
+;
+
+// ~~~ [ catchret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CatchRetTerm
+	: "catchret" "from" Value "to" LabelType Value   << nil, nil >>
+;
+
+// ~~~ [ cleanupret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CleanupRetTerm
+	: "cleanupret" "from" Value "unwind" "to" "caller"     << nil, nil >>
+	| "cleanupret" "from" Value "unwind" LabelType Value   << nil, nil >>
+;
+
+// ~~~ [ unreachable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 UnreachableTerm
 	: "unreachable"   << &ast.TermUnreachable{}, nil >>

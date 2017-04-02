@@ -1550,6 +1550,10 @@ func NewBasicBlock(name, insts, term interface{}) (*ast.BasicBlock, error) {
 // NewInstructionList returns a new instruction list based on the given
 // instruction.
 func NewInstructionList(inst interface{}) ([]ast.Instruction, error) {
+	// TODO: Remove once all instructions in the BNF are supported.
+	if inst == nil {
+		return []ast.Instruction{}, nil
+	}
 	i, ok := inst.(ast.Instruction)
 	if !ok {
 		return nil, errors.Errorf("invalid instruction type; expected ast.Instruction, got %T", inst)
@@ -1562,6 +1566,10 @@ func AppendInstruction(insts, inst interface{}) ([]ast.Instruction, error) {
 	is, ok := insts.([]ast.Instruction)
 	if !ok {
 		return nil, errors.Errorf("invalid instruction list type; expected []ast.Instruction, got %T", insts)
+	}
+	// TODO: Remove once all instructions in the BNF are supported.
+	if inst == nil {
+		return is, nil
 	}
 	i, ok := inst.(ast.Instruction)
 	if !ok {
