@@ -121,7 +121,7 @@ _decimals
 	: _decimal_digit { _decimal_digit }
 ;
 
-// === [ Float literals ] ====================================================
+// === [ Floating-point literals ] =============================================
 
 //   FPConstant        [-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?
 
@@ -132,13 +132,16 @@ float_lit
 ;
 
 _frac_lit
-	: ( '+' | '-' ) _decimals '.' { _decimal_digit }
-	| _decimals '.' { _decimal_digit }
+	: [ _sign ] _decimals '.' { _decimal_digit }
+;
+
+_sign
+	: '+'
+	| '-'
 ;
 
 _sci_lit
-	: _frac_lit ( 'e' | 'E' ) ( '+' | '-' ) _decimals
-	| _frac_lit ( 'e' | 'E' ) _decimals
+	: _frac_lit ( 'e' | 'E' ) [ _sign ] _decimals
 ;
 
 //   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
@@ -157,12 +160,12 @@ _float_hex_lit
 
 // === [ String literals ] =====================================================
 
-_quoted_string
-	: '"' { . } '"'
-;
-
 string_lit
 	: _quoted_string
+;
+
+_quoted_string
+	: '"' { . } '"'
 ;
 
 // === [ Types ] ===============================================================
