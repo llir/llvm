@@ -13,12 +13,17 @@ _letter
 	| '_'
 ;
 
+_escape_letter
+	: _letter
+	| '\\'
+;
+
 _decimal_digit
 	: '0' - '9'
 ;
 
 _hex_digit
-	: '0' - '9'
+	: _decimal_digit
 	| 'A' - 'F'
 	| 'a' - 'f'
 ;
@@ -31,6 +36,10 @@ _hex_digit
 
 _name
 	: _letter { _letter | _decimal_digit }
+;
+
+_escape_name
+	: _escape_letter { _escape_letter | _decimal_digit }
 ;
 
 _quoted_name
@@ -89,7 +98,7 @@ attr_group_id
 // --- [ Metadata identifiers ] ------------------------------------------------
 
 metadata_name
-	: '!' _name
+	: '!' _escape_name
 ;
 
 metadata_id
