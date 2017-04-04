@@ -978,8 +978,12 @@ BasicBlockList
 ;
 
 BasicBlock
-	: Instructions Terminator              << astx.NewBasicBlock(nil, $0, $1) >>
-	| LabelIdent Instructions Terminator   << astx.NewBasicBlock($0, $1, $2) >>
+	: OptLabelIdent Instructions Terminator   << astx.NewBasicBlock($0, $1, $2) >>
+;
+
+OptLabelIdent
+	: empty
+	| LabelIdent
 ;
 
 // === [ Instructions ] ========================================================
@@ -1536,7 +1540,7 @@ VAArgInst
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LandingPadInst
-	: "landingpad" FirstClassType ClauseList   << nil, nil >>
+	: "landingpad" FirstClassType ClauseList          << nil, nil >>
 	| "landingpad" FirstClassType "cleanup" Clauses   << nil, nil >>
 ;
 
@@ -1630,13 +1634,13 @@ Case
 // ~~~ [ indirectbr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 IndirectBrTerm
-	: "indirectbr" FirstClassType Value "," ArrayConst   << nil, nil >>
+	: "indirectbr" FirstClassType Value "," "[" Labels "]"   << nil, nil >>
 ;
 
 // ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InvokeTerm
-	: "invoke" OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs OptOperandBundle "to" LabelType Value "unwind" LabelType Value   << nil, nil >>
+	: "invoke" OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs OptOperandBundle "to" LabelType LocalIdent "unwind" LabelType LocalIdent   << nil, nil >>
 ;
 
 OptCallConv
@@ -1645,20 +1649,16 @@ OptCallConv
 ;
 
 CallConv
-	: "ccc"
-	| "fastcc"
-	| "coldcc"
-	| "webkit_jscc"
-	| "anyregcc"
-	| "preserve_mostcc"
-	| "preserve_allcc"
-	| "cxx_fast_tlscc"
-	| "swiftcc"
+	: "anyregcc"
 	| "cc" int_lit
-;
-
-OperandBundle
-	: "[" TagValues "]"
+	| "ccc"
+	| "coldcc"
+	| "cxx_fast_tlscc"
+	| "fastcc"
+	| "preserve_allcc"
+	| "preserve_mostcc"
+	| "swiftcc"
+	| "webkit_jscc"
 ;
 
 OptOperandBundle
@@ -1666,18 +1666,22 @@ OptOperandBundle
 	| OperandBundle
 ;
 
+OperandBundle
+	: "[" TagValues "]"
+;
+
 TagValues
 	: empty
 	| TagValueList
 ;
 
-TagValue
-	: string_lit "(" Values  ")"
-;
-
 TagValueList
 	: TagValue
 	| TagValueList "," TagValue
+;
+
+TagValue
+	: string_lit "(" Values ")"
 ;
 
 Values
@@ -1699,21 +1703,35 @@ ResumeTerm
 // ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CatchSwitchTerm
-	: "catchswitch" "within" ExceptionParent ArrayConst "unwind" "to" "caller"     << nil, nil >>
-	| "catchswitch" "within" ExceptionParent ArrayConst "unwind" LabelType Value   << nil, nil >>
+	: "catchswitch" "within" ExceptionParent "[" Labels "]" "unwind" "to" "caller"          << nil, nil >>
+	| "catchswitch" "within" ExceptionParent "[" Labels "]" "unwind" LabelType LocalIdent   << nil, nil >>
+;
+
+Labels
+	: empty
+	| LabelList
+;
+
+LabelList
+	: Label
+	| LabelList "," Label
+;
+
+Label
+	: LabelType LocalIdent
 ;
 
 // ~~~ [ catchret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CatchRetTerm
-	: "catchret" "from" Value "to" LabelType Value   << nil, nil >>
+	: "catchret" "from" Value "to" LabelType LocalIdent   << nil, nil >>
 ;
 
 // ~~~ [ cleanupret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CleanupRetTerm
-	: "cleanupret" "from" Value "unwind" "to" "caller"     << nil, nil >>
-	| "cleanupret" "from" Value "unwind" LabelType Value   << nil, nil >>
+	: "cleanupret" "from" Value "unwind" "to" "caller"          << nil, nil >>
+	| "cleanupret" "from" Value "unwind" LabelType LocalIdent   << nil, nil >>
 ;
 
 // ~~~ [ unreachable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
