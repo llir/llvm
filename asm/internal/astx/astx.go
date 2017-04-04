@@ -1899,6 +1899,69 @@ func NewShuffleVectorInst(xTyp, xVal, yTyp, yVal, maskTyp, maskVal interface{}) 
 	return &ast.InstShuffleVector{X: x, Y: y, Mask: mask}, nil
 }
 
+// --- [ Aggregate instructions ] ----------------------------------------------
+
+// NewExtractValueInst returns a new extractvalue instruction based on the
+// given aggregate value and indices.
+func NewExtractValueInst(xTyp, xVal, indices interface{}) (*ast.InstExtractValue, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	is, ok := indices.([]int64)
+	if !ok {
+		return nil, errors.Errorf("invalid indices type; expected []int64, got %T", indices)
+	}
+	if len(is) < 1 {
+		return nil, errors.Errorf("invalid indices length; expected > 0, got %d", len(is))
+	}
+	return &ast.InstExtractValue{X: x, Indices: is}, nil
+}
+
+// NewIntLitList returns a new integer literal list based on the given integer
+// literal.
+func NewIntLitList(i interface{}) ([]int64, error) {
+	x, err := getInt64(i)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return []int64{x}, nil
+}
+
+// AppendIntLit appends the given integer literal to the integer literal list.
+func AppendIntLit(is, i interface{}) ([]int64, error) {
+	xs, ok := is.([]int64)
+	if !ok {
+		return nil, errors.Errorf("invalid integer literal list type; expected []int64, got %T", is)
+	}
+	x, err := getInt64(i)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return append(xs, x), nil
+}
+
+// NewInsertValueInst returns a new insertvalue instruction based on the
+// given aggregate value, element and indices.
+func NewInsertValueInst(xTyp, xVal, elemTyp, elemVal, indices interface{}) (*ast.InstInsertValue, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	elem, err := NewValue(elemTyp, elemVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	is, ok := indices.([]int64)
+	if !ok {
+		return nil, errors.Errorf("invalid indices type; expected []int64, got %T", indices)
+	}
+	if len(is) < 1 {
+		return nil, errors.Errorf("invalid indices length; expected > 0, got %d", len(is))
+	}
+	return &ast.InstInsertValue{X: x, Elem: elem, Indices: is}, nil
+}
+
 // --- [ Memory instructions ] -------------------------------------------------
 
 // NewAllocaInst returns a new alloca instruction based on the given element

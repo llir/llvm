@@ -1236,18 +1236,18 @@ ShuffleVectorInst
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ExtractValueInst
-	: "extractvalue" FirstClassType Value "," IntLitList   << nil, nil >>
+	: "extractvalue" FirstClassType Value "," IntLitList   << astx.NewExtractValueInst($1, $2, $4) >>
 ;
 
 IntLitList
-	: IntLit
-	| IntLitList "," IntLit
+	: IntLit                  << astx.NewIntLitList($0) >>
+	| IntLitList "," IntLit   << astx.AppendIntLit($0, $2) >>
 ;
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InsertValueInst
-	: "insertvalue" FirstClassType Value "," FirstClassType Value "," IntLitList   << nil, nil >>
+	: "insertvalue" FirstClassType Value "," FirstClassType Value "," IntLitList   << astx.NewInsertValueInst($1, $2, $4, $5, $7) >>
 ;
 
 // --- [ Memory instructions ] -------------------------------------------------

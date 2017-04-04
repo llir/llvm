@@ -405,6 +405,18 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 					Name:   oldInst.Name,
 				}
 
+			// Aggregate instructions
+			case *ast.InstExtractValue:
+				inst = &ir.InstExtractValue{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
+			case *ast.InstInsertValue:
+				inst = &ir.InstInsertValue{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
+
 			// Memory instructions
 			case *ast.InstAlloca:
 				inst = &ir.InstAlloca{
@@ -744,6 +756,26 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
 			inst.Mask = m.irValue(oldInst.Mask)
+
+		// Aggregate instructions
+		case *ast.InstExtractValue:
+			inst, ok := v.(*ir.InstExtractValue)
+			if !ok {
+				panic(fmt.Errorf("invalid instruction type; expected *ir.InstExtractValue, got %T", v))
+			}
+			x := m.irValue(oldInst.X)
+			typ := aggregateElemType(x.Type(), oldInst.Indices)
+			inst.Typ = typ
+			inst.X = x
+			inst.Indices = oldInst.Indices
+		case *ast.InstInsertValue:
+			inst, ok := v.(*ir.InstInsertValue)
+			if !ok {
+				panic(fmt.Errorf("invalid instruction type; expected *ir.InstInsertValue, got %T", v))
+			}
+			inst.X = m.irValue(oldInst.X)
+			inst.Elem = m.irValue(oldInst.Elem)
+			inst.Indices = oldInst.Indices
 
 		// Memory instructions
 		case *ast.InstAlloca:

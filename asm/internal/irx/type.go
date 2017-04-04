@@ -67,3 +67,26 @@ func (m *Module) irType(old ast.Type) types.Type {
 		panic(fmt.Errorf("support for %T not yet implemented", old))
 	}
 }
+
+// aggregateElemType returns the element type of the given aggregate type, based
+// on the specified indices.
+func aggregateElemType(t types.Type, indices []int64) types.Type {
+	if len(indices) == 0 {
+		return t
+	}
+	index := indices[0]
+	switch t := t.(type) {
+	case *types.ArrayType:
+		if index >= t.Len {
+			panic(fmt.Errorf("invalid index (%d); exceeds array length (%d)", index, t.Len))
+		}
+		return aggregateElemType(t.Elem, indices[1:])
+	case *types.StructType:
+		if index >= int64(len(t.Fields)) {
+			panic(fmt.Errorf("invalid index (%d); exceeds struct field count (%d)", index, len(t.Fields)))
+		}
+		return aggregateElemType(t.Fields[index], indices[1:])
+	default:
+		panic(fmt.Errorf("invalid aggregate value type; expected *types.ArrayType or *types.StructType, got %T", t))
+	}
+}
