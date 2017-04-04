@@ -497,6 +497,8 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		return &ast.GlobalDummy{Name: val.name, Type: t}, nil
 	case *IntLit:
 		return &ast.IntConst{Type: t, Lit: val.lit}, nil
+	case *BoolLit:
+		return &ast.IntConst{Type: t, Lit: val.lit}, nil
 	case *FloatLit:
 		return &ast.FloatConst{Type: t, Lit: val.lit}, nil
 	case *NullLit:
@@ -886,6 +888,21 @@ func NewIntLit(tok interface{}) (*IntLit, error) {
 		return nil, errors.WithStack(err)
 	}
 	return &IntLit{lit: s}, nil
+}
+
+// BoolLit represents a boolean literal.
+type BoolLit struct {
+	// Boolean literal.
+	lit string
+}
+
+// NewBoolLit returns a new boolean literal based on the given boolean token.
+func NewBoolLit(tok interface{}) (*BoolLit, error) {
+	s, err := getTokenString(tok)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &BoolLit{lit: s}, nil
 }
 
 // FloatLit represents an floating-point literal.
@@ -2399,12 +2416,6 @@ func getInt64(lit interface{}) (int64, error) {
 	l, ok := lit.(*IntLit)
 	if !ok {
 		return 0, errors.Errorf("invalid integer literal type; expected *astx.IntLit, got %T", lit)
-	}
-	switch l.lit {
-	case "true":
-		return 1, nil
-	case "false":
-		return 0, nil
 	}
 	n, err := strconv.ParseInt(l.lit, 10, 64)
 	if err != nil {

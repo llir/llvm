@@ -590,7 +590,7 @@ OptAddrSpace
 // --- [ vector type ] ---------------------------------------------------------
 
 VectorType
-	: "<" IntConst "x" FirstClassType ">"   << astx.NewVectorType($1, $3) >>
+	: "<" IntLit "x" FirstClassType ">"   << astx.NewVectorType($1, $3) >>
 ;
 
 // --- [ label type ] ----------------------------------------------------------
@@ -608,13 +608,14 @@ MetadataType
 // --- [ array type ] ----------------------------------------------------------
 
 ArrayType
-	: "[" IntConst "x" FirstClassType "]"   << astx.NewArrayType($1, $3) >>
+	: "[" IntLit "x" FirstClassType "]"   << astx.NewArrayType($1, $3) >>
 ;
 
 // --- [ struct type ] ---------------------------------------------------------
 
 StructType
-	: "{" Fields "}"   << astx.NewStructType($1) >>
+	: "{" Fields "}"           << astx.NewStructType($1) >>
+	| "<" "{" Fields "}" ">"   << astx.NewStructType($2) >>
 ;
 
 Fields
@@ -655,26 +656,38 @@ Constant
 	| ConstExpr
 ;
 
+// --- [ integer constant ] ----------------------------------------------------
+
 IntConst
-	: int_lit   << astx.NewIntLit($0) >>
-	| "true"    << astx.NewIntLit($0) >>
-	| "false"   << astx.NewIntLit($0) >>
+	: IntLit
+	| BoolLit
 ;
+
+IntLit
+	: int_lit   << astx.NewIntLit($0) >>
+;
+
+BoolLit
+	: "true"    << astx.NewBoolLit($0) >>
+	| "false"   << astx.NewBoolLit($0) >>
+;
+
+// --- [ floating-point constant ] ---------------------------------------------
 
 FloatConst
 	: float_lit   << astx.NewFloatLit($0) >>
 ;
 
+// --- [ pointer constant ] ----------------------------------------------------
+
 NullConst
 	: "null"   << &astx.NullLit{}, nil >>
 ;
 
+// --- [ vector constant ] -----------------------------------------------------
+
 VectorConst
 	: "<" Elems ">"   << astx.NewVectorConst($1) >>
-;
-
-ArrayConst
-	: "[" Elems "]"   << astx.NewArrayConst($1) >>
 ;
 
 Elems
@@ -691,17 +704,29 @@ Elem
 	: FirstClassType Value   << astx.NewConstant($0, $1) >>
 ;
 
+// --- [ array constant ] ------------------------------------------------------
+
+ArrayConst
+	: "[" Elems "]"   << astx.NewArrayConst($1) >>
+;
+
 CharArrayConst
 	: "c" string_lit   << astx.NewCharArrayConst($1) >>
 ;
+
+// --- [ struct constant ] -----------------------------------------------------
 
 StructConst
 	: "{" Elems "}"   << astx.NewStructConst($1) >>
 ;
 
+// --- [ zero initializer constant ] -------------------------------------------
+
 ZeroInitializerConst
 	: "zeroinitializer"   << &astx.ZeroInitializerLit{}, nil >>
 ;
+
+// --- [ constant expressions ] ------------------------------------------------
 
 ConstExpr
 	// Binary expressions
@@ -724,6 +749,17 @@ ConstExpr
 	| AndExpr
 	| OrExpr
 	| XorExpr
+	// Vector expressions
+
+	// TODO: extractelement
+	// TODO: insertelement
+	// TODO: shufflevector
+
+	// Aggregate expressions
+
+	// TODO: extractvalue
+	// TODO: insertvalue
+
 	// Memory expressions
 	| GetElementPtrExpr
 	// Conversion expressions
@@ -746,7 +782,7 @@ ConstExpr
 	| SelectExpr
 ;
 
-// --- [ Binary expressions ] --------------------------------------------------
+// ~~~ [ Binary expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AddExpr
 	: "add" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAddExpr($2, $3, $5, $6) >>
@@ -796,7 +832,7 @@ FRemExpr
 	: "frem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFRemExpr($2, $3, $5, $6) >>
 ;
 
-// --- [ Bitwise expressions ] -------------------------------------------------
+// ~~~ [ Bitwise expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ShlExpr
 	: "shl" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewShlExpr($2, $3, $5, $6) >>
@@ -822,7 +858,21 @@ XorExpr
 	: "xor" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewXorExpr($2, $3, $5, $6) >>
 ;
 
-// --- [ Memory expressions ] --------------------------------------------------
+// ~~~ [ Vector expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO: extractelement
+
+// TODO: insertelement
+
+// TODO: shufflevector
+
+// ~~~ [ Aggregate expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO: extractvalue
+
+// TODO: insertvalue
+
+// ~~~ [ Memory expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GetElementPtrExpr
 	: "getelementptr" OptInbounds "(" FirstClassType "," FirstClassType Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($3, $5, $6, $7) >>
@@ -847,7 +897,7 @@ ConstIndex
 	: IntType Constant   << astx.NewConstant($0, $1) >>
 ;
 
-// --- [ Conversion expressions ] ----------------------------------------------
+// ~~~ [ Conversion expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TruncExpr
 	: "trunc" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewTruncExpr($2, $3, $5) >>
@@ -901,7 +951,7 @@ AddrSpaceCastExpr
 	: "addrspacecast" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewAddrSpaceCastExpr($2, $3, $5) >>
 ;
 
-// --- [ Other expressions ] ---------------------------------------------------
+// ~~~ [ Other expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ICmpExpr
 	: "icmp" IntPred "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewICmpExpr($1, $3, $4, $6, $7) >>
@@ -1186,18 +1236,18 @@ ShuffleVectorInst
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ExtractValueInst
-	: "extractvalue" FirstClassType Value "," IntConstList   << nil, nil >>
+	: "extractvalue" FirstClassType Value "," IntLitList   << nil, nil >>
 ;
 
-IntConstList
-	: IntConst
-	| IntConstList "," IntConst
+IntLitList
+	: IntLit
+	| IntLitList "," IntLit
 ;
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InsertValueInst
-	: "insertvalue" FirstClassType Value "," FirstClassType Value "," IntConstList   << nil, nil >>
+	: "insertvalue" FirstClassType Value "," FirstClassType Value "," IntLitList   << nil, nil >>
 ;
 
 // --- [ Memory instructions ] -------------------------------------------------
