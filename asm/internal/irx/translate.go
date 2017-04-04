@@ -183,7 +183,6 @@ func (m *Module) typeDef(old *ast.NamedType) {
 			panic(fmt.Errorf("invalid type; expected *types.PointerType, got %T", def))
 		}
 		typ.Elem = d.Elem
-		typ.AddrSpace = d.AddrSpace
 	case *types.VectorType:
 		d, ok := def.(*types.VectorType)
 		if !ok {

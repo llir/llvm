@@ -579,12 +579,12 @@ FloatType
 // --- [ pointer type ] --------------------------------------------------------
 
 PointerType
-	: Type OptAddrSpace "*"   << astx.NewPointerType($0, $1) >>
+	: Type OptAddrSpace "*"   << astx.NewPointerType($0) >>
 ;
 
 OptAddrSpace
 	: empty
-	| "addrspace" "(" IntConst ")"   << astx.NewAddrSpace($2) >>
+	| "addrspace" "(" int_lit ")"
 ;
 
 // --- [ vector type ] ---------------------------------------------------------

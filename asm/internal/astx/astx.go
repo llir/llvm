@@ -399,36 +399,12 @@ func NewFuncType(ret, params interface{}) (*ast.FuncType, error) {
 }
 
 // NewPointerType returns a new pointer type based on the given element type.
-func NewPointerType(elem, space interface{}) (*ast.PointerType, error) {
+func NewPointerType(elem interface{}) (*ast.PointerType, error) {
 	e, ok := elem.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
 	}
-	t := &ast.PointerType{Elem: e}
-	switch space := space.(type) {
-	case *AddrSpace:
-		t.AddrSpace = space.space
-	case nil:
-		// no address space.
-	default:
-		return nil, errors.Errorf("invalid address space type; expected *astx.AddrSpace or nil, got %T", space)
-	}
-	return t, nil
-}
-
-// AddrSpace represents the address space of a pointer type.
-type AddrSpace struct {
-	// Address space.
-	space int64
-}
-
-// NewAddrSpace returns a new address space pointer based on the given space.
-func NewAddrSpace(space interface{}) (*AddrSpace, error) {
-	s, err := getInt64(space)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return &AddrSpace{space: s}, nil
+	return &ast.PointerType{Elem: e}, nil
 }
 
 // NewVectorType returns a new vector type based on the given vector length and
@@ -2422,7 +2398,7 @@ func getTokenString(tok interface{}) (string, error) {
 func getInt64(lit interface{}) (int64, error) {
 	l, ok := lit.(*IntLit)
 	if !ok {
-		return 0, errors.Errorf("invalid array length type; expected *astx.IntLit, got %T", lit)
+		return 0, errors.Errorf("invalid integer literal type; expected *astx.IntLit, got %T", lit)
 	}
 	switch l.lit {
 	case "true":

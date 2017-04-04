@@ -65,8 +65,6 @@ func (kind FloatKind) String() string {
 type PointerType struct {
 	// Element type.
 	Elem Type
-	// Address space.
-	AddrSpace int64
 }
 
 // --- [ vector ] --------------------------------------------------------------
