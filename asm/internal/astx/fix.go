@@ -141,7 +141,7 @@ func fixModule(m *ast.Module) *ast.Module {
 
 	// Fix functions.
 	for _, f := range m.Funcs {
-		fix.fixFunction(f)
+		fix.fixFunc(f)
 	}
 
 	return m
@@ -191,9 +191,9 @@ func (fix *fixer) fixType(old ast.Type) ast.Type {
 
 // === [ Functions ] ===========================================================
 
-// fixFunction replaces dummy values within the given function with their real
+// fixFunc replaces dummy values within the given function with their real
 // values.
-func (fix *fixer) fixFunction(f *ast.Function) {
+func (fix *fixer) fixFunc(f *ast.Function) {
 	// Early exit if function declaration.
 	if len(f.Blocks) < 1 {
 		return

@@ -202,8 +202,8 @@ TopLevelDecl
 	| TargetSpec
 	| TypeDef
 	| Global
-	| FunctionDecl
-	| FunctionDef
+	| FuncDecl
+	| FuncDef
 	| AttrGroupDef
 	| NamedMetadataDef
 	| MetadataDef
@@ -240,7 +240,9 @@ TypeDef
 // === [ Global variables ] ====================================================
 
 Global
+	// global declaration.
 	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType OptCommaAlign        << astx.NewGlobalDecl($0, $4, $5) >>
+	// global definition.
 	| GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant OptCommaAlign  << astx.NewGlobalDef($0, $4, $5, $6) >>
 ;
 
@@ -250,14 +252,14 @@ OptLinkage
 ;
 
 Linkage
-	: "private"
-	| "internal"
+	: "appending"
 	| "available_externally"
-	| "linkonce"
-	| "weak"
 	| "common"
-	| "appending"
+	| "internal"
+	| "linkonce"
 	| "linkonce_odr"
+	| "private"
+	| "weak"
 	| "weak_odr"
 ;
 
@@ -277,8 +279,8 @@ OptUnnamedAddr
 ;
 
 UnnamedAddr
-	: "unnamed_addr"
-	| "local_unnamed_addr"
+	: "local_unnamed_addr"
+	| "unnamed_addr"
 ;
 
 Immutable
@@ -297,38 +299,26 @@ Align
 
 // === [ Functions ] ===========================================================
 
-FunctionDecl
-	: "declare" OptExternLinkage FunctionHeader OptUnnamedAddr FuncAttrs OptAlign   << $2, nil >>
+FuncDecl
+	: "declare" OptExternLinkage FuncHeader     << $2, nil >>
 ;
 
-FunctionDef
-	: "define" OptLinkage FunctionHeader OptUnnamedAddr FuncAttrs OptAlign FunctionBody   << astx.NewFunctionDef($2, $6) >>
+FuncDef
+	: "define" OptLinkage FuncHeader FuncBody   << astx.NewFuncDef($2, $3) >>
 ;
 
-FunctionHeader
-	: ParamAttrs Type GlobalIdent "(" Params ")"   << astx.NewFunctionDecl($1, $2, $4) >>
-;
-
-Params
-	: empty
-	| "..."                 << astx.NewParams(nil, true) >>
-	| ParamList             << astx.NewParams($0, false) >>
-	| ParamList "," "..."   << astx.NewParams($0, true) >>
-;
-
-ParamList
-	: Param                 << astx.NewParamList($0) >>
-	| ParamList "," Param   << astx.AppendParam($0, $2) >>
-;
-
-Param
-	: FirstClassType ParamAttrs              << astx.NewParam($0, nil) >>
-	| FirstClassType ParamAttrs LocalIdent   << astx.NewParam($0, $2) >>
+FuncHeader
+	: ParamAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncDecl($1, $2, $4) >>
 ;
 
 ParamAttrs
 	: empty
-	| ParamAttrs ParamAttr
+	| ParamAttrList
+;
+
+ParamAttrList
+	: ParamAttr
+	| ParamAttrList ParamAttr
 ;
 
 // From spec and src of v4.0.
@@ -358,12 +348,29 @@ ParamAttr
 	| "zeroext"
 ;
 
+Params
+	: empty
+	| "..."                 << astx.NewParams(nil, true) >>
+	| ParamList             << astx.NewParams($0, false) >>
+	| ParamList "," "..."   << astx.NewParams($0, true) >>
+;
+
+ParamList
+	: Param                 << astx.NewParamList($0) >>
+	| ParamList "," Param   << astx.AppendParam($0, $2) >>
+;
+
+Param
+	: FirstClassType ParamAttrs              << astx.NewParam($0, nil) >>
+	| FirstClassType ParamAttrs LocalIdent   << astx.NewParam($0, $2) >>
+;
+
 OptAlign
 	: empty
 	| Align
 ;
 
-FunctionBody
+FuncBody
 	: "{" BasicBlocks "}"   << $1, nil >>
 ;
 
@@ -375,7 +382,12 @@ AttrGroupDef
 
 FuncAttrs
 	: empty
-	| FuncAttrs FuncAttr
+	| FuncAttrList
+;
+
+FuncAttrList
+	: FuncAttr
+	| FuncAttrList FuncAttr
 ;
 
 // From spec and src of v4.0.
@@ -507,14 +519,6 @@ Type
 	| FirstClassType
 ;
 
-VoidType
-	: "void"   << &ast.VoidType{}, nil >>
-;
-
-FuncType
-	: Type "(" Params ")"   << astx.NewFuncType($0, $2) >>
-;
-
 FirstClassType
 	: IntType
 	| FloatType
@@ -527,9 +531,41 @@ FirstClassType
 	| NamedType
 ;
 
+// --- [ void type ] -----------------------------------------------------------
+
+VoidType
+	: "void"   << &ast.VoidType{}, nil >>
+;
+
+// --- [ function type ] -------------------------------------------------------
+
+FuncType
+	: Type "(" ParamTypes ")"   << astx.NewFuncType($0, $2) >>
+;
+
+ParamTypes
+	: empty
+	| "..."                     << astx.NewParams(nil, true) >>
+	| ParamTypeList             << astx.NewParams($0, false) >>
+	| ParamTypeList "," "..."   << astx.NewParams($0, true) >>
+;
+
+ParamTypeList
+	: ParamType                     << astx.NewParamList($0) >>
+	| ParamTypeList "," ParamType   << astx.AppendParam($0, $2) >>
+;
+
+ParamType
+	: FirstClassType   << astx.NewParam($0, nil) >>
+;
+
+// --- [ integer type ] --------------------------------------------------------
+
 IntType
 	: int_type   << astx.NewIntType($0) >>
 ;
+
+// --- [ floating-point type ] -------------------------------------------------
 
 FloatType
 	: "half"        << &ast.FloatType{Kind: ast.FloatKindIEEE_16}, nil >>
@@ -540,6 +576,8 @@ FloatType
 	| "ppc_fp128"   << &ast.FloatType{Kind: ast.FloatKindDoubleDouble_128}, nil >>
 ;
 
+// --- [ pointer type ] --------------------------------------------------------
+
 PointerType
 	: Type OptAddrSpace "*"   << astx.NewPointerType($0, $1) >>
 ;
@@ -549,21 +587,31 @@ OptAddrSpace
 	| "addrspace" "(" IntConst ")"   << astx.NewAddrSpace($2) >>
 ;
 
+// --- [ vector type ] ---------------------------------------------------------
+
 VectorType
 	: "<" IntConst "x" FirstClassType ">"   << astx.NewVectorType($1, $3) >>
 ;
+
+// --- [ label type ] ----------------------------------------------------------
 
 LabelType
 	: "label"   << &ast.LabelType{}, nil >>
 ;
 
+// --- [ metadata type ] -------------------------------------------------------
+
 MetadataType
 	: "metadata"   << &ast.MetadataType{}, nil >>
 ;
 
+// --- [ array type ] ----------------------------------------------------------
+
 ArrayType
 	: "[" IntConst "x" FirstClassType "]"   << astx.NewArrayType($1, $3) >>
 ;
+
+// --- [ struct type ] ---------------------------------------------------------
 
 StructType
 	: "{" Fields "}"   << astx.NewStructType($1) >>
@@ -578,6 +626,8 @@ FieldList
 	: FirstClassType                 << astx.NewTypeList($0) >>
 	| FieldList "," FirstClassType   << astx.AppendType($0, $2) >>
 ;
+
+// --- [ named type ] ----------------------------------------------------------
 
 NamedType
 	: LocalIdent   << astx.NewTypeIdent($0) >>

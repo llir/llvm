@@ -165,9 +165,9 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
 
 // === [ Functions ] ===========================================================
 
-// NewFunctionDecl returns a new function declaration based on the given
-// return type, function name and parameters.
-func NewFunctionDecl(ret, name, params interface{}) (*ast.Function, error) {
+// NewFuncDecl returns a new function declaration based on the given return
+// type, function name and parameters.
+func NewFuncDecl(ret, name, params interface{}) (*ast.Function, error) {
 	r, ok := ret.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid function return type; expected ast.Type, got %T", ret)
@@ -195,9 +195,9 @@ func NewFunctionDecl(ret, name, params interface{}) (*ast.Function, error) {
 	return f, nil
 }
 
-// NewFunctionDef returns a new function definition based on the given function
+// NewFuncDef returns a new function definition based on the given function
 // header and body.
-func NewFunctionDef(header, body interface{}) (*ast.Function, error) {
+func NewFuncDef(header, body interface{}) (*ast.Function, error) {
 	f, ok := header.(*ast.Function)
 	if !ok {
 		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
