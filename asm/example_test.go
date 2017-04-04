@@ -23,9 +23,8 @@ func Example() {
 	//         &ir.Global{
 	//             Name: "seed",
 	//             Typ:  &types.PointerType{
-	//                 Name:      "",
-	//                 Elem:      &types.IntType{Name:"", Size:32},
-	//                 AddrSpace: 0,
+	//                 Name: "",
+	//                 Elem: &types.IntType{Name:"", Size:32},
 	//             },
 	//             Content: &types.IntType{Name:"", Size:32},
 	//             Init:    &constant.Int{
@@ -52,7 +51,6 @@ func Example() {
 	//                     },
 	//                     Variadic: false,
 	//                 },
-	//                 AddrSpace: 0,
 	//             },
 	//             Sig: &types.FuncType{
 	//                 Name:   "",
@@ -79,7 +77,6 @@ func Example() {
 	//                     },
 	//                     Variadic: false,
 	//                 },
-	//                 AddrSpace: 0,
 	//             },
 	//             Sig: &types.FuncType{
 	//                 Name:   "",

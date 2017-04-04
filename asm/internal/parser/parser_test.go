@@ -25,7 +25,6 @@ func TestParseString(t *testing.T) {
 		{path: "../testdata/switch.ll"},
 		{path: "../testdata/conversion.ll"},
 		{path: "../testdata/bitcast.ll"},
-		{path: "../testdata/addrspacecast.ll"},
 		{path: "../testdata/extern.ll"},
 		{path: "../testdata/const.ll"},
 		{path: "../testdata/va_args.ll"},
