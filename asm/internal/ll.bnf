@@ -732,7 +732,7 @@ ZeroInitializerConst
 	: "zeroinitializer"   << &astx.ZeroInitializerLit{}, nil >>
 ;
 
-// --- [ constant expressions ] ------------------------------------------------
+// === [ constant expressions ] ================================================
 
 ConstExpr
 	// Binary expressions
@@ -788,7 +788,7 @@ ConstExpr
 	| SelectExpr
 ;
 
-// ~~~ [ Binary expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Binary expressions ] --------------------------------------------------
 
 AddExpr
 	: "add" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAddExpr($2, $3, $5, $6) >>
@@ -838,7 +838,7 @@ FRemExpr
 	: "frem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFRemExpr($2, $3, $5, $6) >>
 ;
 
-// ~~~ [ Bitwise expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Bitwise expressions ] -------------------------------------------------
 
 ShlExpr
 	: "shl" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewShlExpr($2, $3, $5, $6) >>
@@ -864,7 +864,7 @@ XorExpr
 	: "xor" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewXorExpr($2, $3, $5, $6) >>
 ;
 
-// ~~~ [ Vector expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Vector expressions ] --------------------------------------------------
 
 // TODO: extractelement
 
@@ -872,13 +872,13 @@ XorExpr
 
 // TODO: shufflevector
 
-// ~~~ [ Aggregate expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Aggregate expressions ] -----------------------------------------------
 
 // TODO: extractvalue
 
 // TODO: insertvalue
 
-// ~~~ [ Memory expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Memory expressions ] --------------------------------------------------
 
 GetElementPtrExpr
 	: "getelementptr" OptInbounds "(" FirstClassType "," FirstClassType Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($3, $5, $6, $7) >>
@@ -903,7 +903,7 @@ ConstIndex
 	: IntType Constant   << astx.NewConstant($0, $1) >>
 ;
 
-// ~~~ [ Conversion expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Conversion expressions ] ----------------------------------------------
 
 TruncExpr
 	: "trunc" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewTruncExpr($2, $3, $5) >>
@@ -957,7 +957,7 @@ AddrSpaceCastExpr
 	: "addrspacecast" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewAddrSpaceCastExpr($2, $3, $5) >>
 ;
 
-// ~~~ [ Other expressions ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// --- [ Other expressions ] ---------------------------------------------------
 
 ICmpExpr
 	: "icmp" IntPred "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewICmpExpr($1, $3, $4, $6, $7) >>
