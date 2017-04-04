@@ -251,6 +251,9 @@ OptLinkage
 	| Linkage
 ;
 
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#linkage
 Linkage
 	: "appending"
 	| "available_externally"
@@ -268,6 +271,9 @@ OptExternLinkage
 	| ExternLinkage
 ;
 
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#linkage
 ExternLinkage
 	: "extern_weak"
 	| "external"
@@ -1164,12 +1170,15 @@ FastMathFlagList
 	| FastMathFlagList FastMathFlag
 ;
 
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#fast-math-flags
 FastMathFlag
-	: "nnan"
-	| "ninf"
-	| "nsz"
-	| "arcp"
+	: "arcp"
 	| "fast"
+	| "ninf"
+	| "nnan"
+	| "nsz"
 ;
 
 ExactFlags
@@ -1304,13 +1313,16 @@ OptSinglethread
 	| "singlethread"
 ;
 
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#ordering
 Ordering
-	: "unordered"
-	| "monotonic"
+	: "acq_rel"
 	| "acquire"
+	| "monotonic"
 	| "release"
-	| "acq_rel"
 	| "seq_cst"
+	| "unordered"
 ;
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1330,18 +1342,21 @@ AtomicRMWInst
 	: "atomicrmw" OptVolatile AtomicOperation FirstClassType Value "," FirstClassType Value OptSinglethread Ordering   << nil, nil >>
 ;
 
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#atomicrmw-instruction
 AtomicOperation
-	: "xchg"
-	| "add"
-	| "sub"
+	: "add"
 	| "and"
-	| "nand"
-	| "or"
-	| "xor"
 	| "max"
 	| "min"
+	| "nand"
+	| "or"
+	| "sub"
 	| "umax"
 	| "umin"
+	| "xchg"
+	| "xor"
 ;
 
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1648,17 +1663,47 @@ OptCallConv
 	| CallConv
 ;
 
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#callingconv
 CallConv
-	: "anyregcc"
+	: "amdgpu_cs"
+	| "amdgpu_gs"
+	| "amdgpu_kernel"
+	| "amdgpu_ps"
+	| "amdgpu_vs"
+	| "anyregcc"
+	| "arm_aapcs_vfpcc"
+	| "arm_aapcscc"
+	| "arm_apcscc"
+	| "avr_intrcc"
+	| "avr_signalcc"
 	| "cc" int_lit
 	| "ccc"
 	| "coldcc"
 	| "cxx_fast_tlscc"
 	| "fastcc"
+	| "ghccc"
+	| "hhvm_ccc"
+	| "hhvmcc"
+	| "intel_ocl_bicc"
+	| "msp430_intrcc"
 	| "preserve_allcc"
 	| "preserve_mostcc"
+	| "ptx_device"
+	| "ptx_kernel"
+	| "spir_func"
+	| "spir_kernel"
 	| "swiftcc"
 	| "webkit_jscc"
+	| "x86_64_sysvcc"
+	| "x86_64_win64cc"
+	| "x86_fastcallcc"
+	| "x86_intrcc"
+	| "x86_regcallcc"
+	| "x86_stdcallcc"
+	| "x86_thiscallcc"
+	| "x86_vectorcallcc"
 ;
 
 OptOperandBundle
