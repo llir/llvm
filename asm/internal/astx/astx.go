@@ -1847,6 +1847,58 @@ func NewXorInst(typ, xVal, yVal interface{}) (*ast.InstXor, error) {
 	return &ast.InstXor{X: x, Y: y}, nil
 }
 
+// --- [ Vector instructions ] -------------------------------------------------
+
+// NewExtractElementInst returns a new extractelement instruction based on the
+// given vector and index.
+func NewExtractElementInst(xTyp, xVal, indexTyp, indexVal interface{}) (*ast.InstExtractElement, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	index, err := NewValue(indexTyp, indexVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstExtractElement{X: x, Index: index}, nil
+}
+
+// NewInsertElementInst returns a new insertelement instruction based on the
+// given vector, element and index.
+func NewInsertElementInst(xTyp, xVal, elemTyp, elemVal, indexTyp, indexVal interface{}) (*ast.InstInsertElement, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	elem, err := NewValue(elemTyp, elemVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	index, err := NewValue(indexTyp, indexVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstInsertElement{X: x, Elem: elem, Index: index}, nil
+}
+
+// NewShuffleVectorInst returns a new shufflevector instruction based on the
+// given vectors and shuffle mask.
+func NewShuffleVectorInst(xTyp, xVal, yTyp, yVal, maskTyp, maskVal interface{}) (*ast.InstShuffleVector, error) {
+	x, err := NewValue(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewValue(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	mask, err := NewValue(maskTyp, maskVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstShuffleVector{X: x, Y: y, Mask: mask}, nil
+}
+
 // --- [ Memory instructions ] -------------------------------------------------
 
 // NewAllocaInst returns a new alloca instruction based on the given element

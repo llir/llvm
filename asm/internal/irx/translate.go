@@ -388,6 +388,23 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 					Name:   oldInst.Name,
 				}
 
+			// Vector instructions
+			case *ast.InstExtractElement:
+				inst = &ir.InstExtractElement{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
+			case *ast.InstInsertElement:
+				inst = &ir.InstInsertElement{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
+			case *ast.InstShuffleVector:
+				inst = &ir.InstShuffleVector{
+					Parent: block,
+					Name:   oldInst.Name,
+				}
+
 			// Memory instructions
 			case *ast.InstAlloca:
 				inst = &ir.InstAlloca{
@@ -696,6 +713,37 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+
+		// Vector instructions
+		case *ast.InstExtractElement:
+			inst, ok := v.(*ir.InstExtractElement)
+			if !ok {
+				panic(fmt.Errorf("invalid instruction type; expected *ir.InstExtractElement, got %T", v))
+			}
+			x := m.irValue(oldInst.X)
+			t, ok := x.Type().(*types.VectorType)
+			if !ok {
+				panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", x.Type()))
+			}
+			inst.Typ = t.Elem
+			inst.X = x
+			inst.Index = m.irValue(oldInst.Index)
+		case *ast.InstInsertElement:
+			inst, ok := v.(*ir.InstInsertElement)
+			if !ok {
+				panic(fmt.Errorf("invalid instruction type; expected *ir.InstInsertElement, got %T", v))
+			}
+			inst.X = m.irValue(oldInst.X)
+			inst.Elem = m.irValue(oldInst.Elem)
+			inst.Index = m.irValue(oldInst.Index)
+		case *ast.InstShuffleVector:
+			inst, ok := v.(*ir.InstShuffleVector)
+			if !ok {
+				panic(fmt.Errorf("invalid instruction type; expected *ir.InstShuffleVector, got %T", v))
+			}
+			inst.X = m.irValue(oldInst.X)
+			inst.Y = m.irValue(oldInst.Y)
+			inst.Mask = m.irValue(oldInst.Mask)
 
 		// Memory instructions
 		case *ast.InstAlloca:

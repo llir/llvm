@@ -275,6 +275,12 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.InstXor:
 		w.walkBeforeAfter(*n, before, after)
+	case **ast.InstExtractElement:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.InstInsertElement:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.InstShuffleVector:
+		w.walkBeforeAfter(*n, before, after)
 	case **ast.InstAlloca:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.InstLoad:
@@ -688,6 +694,17 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.InstXor:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
+	case *ast.InstExtractElement:
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Index, before, after)
+	case *ast.InstInsertElement:
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Elem, before, after)
+		w.walkBeforeAfter(&n.Index, before, after)
+	case *ast.InstShuffleVector:
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Y, before, after)
+		w.walkBeforeAfter(&n.Mask, before, after)
 	case *ast.InstAlloca:
 		w.walkBeforeAfter(&n.Elem, before, after)
 		if n.NElems != nil {

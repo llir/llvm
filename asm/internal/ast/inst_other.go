@@ -1,3 +1,8 @@
+// === [ Other instructions ] ==================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#other-operations
+
 package ast
 
 // --- [ icmp ] ----------------------------------------------------------------

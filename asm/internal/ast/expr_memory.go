@@ -1,3 +1,8 @@
+// === [ Memory expressions ] ==================================================
+//
+// References:
+//    http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
+
 package ast
 
 // --- [ getelementptr ] -------------------------------------------------------

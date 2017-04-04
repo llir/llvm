@@ -1216,19 +1216,19 @@ XorInst
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ExtractElementInst
-	: "extractelement" FirstClassType Value "," FirstClassType Value   << nil, nil >>
+	: "extractelement" FirstClassType Value "," FirstClassType Value   << astx.NewExtractElementInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InsertElementInst
-	: "insertelement" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << nil, nil >>
+	: "insertelement" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << astx.NewInsertElementInst($1, $2, $4, $5, $7, $8) >>
 ;
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ShuffleVectorInst
-	: "shufflevector" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << nil, nil >>
+	: "shufflevector" FirstClassType Value "," FirstClassType Value "," FirstClassType Value   << astx.NewShuffleVectorInst($1, $2, $4, $5, $7, $8) >>
 ;
 
 // --- [ Aggregate  instructions ] ---------------------------------------------
