@@ -246,61 +246,9 @@ Global
 	| GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant OptCommaAlign  << astx.NewGlobalDef($0, $4, $5, $6) >>
 ;
 
-OptLinkage
-	: empty
-	| Linkage
-;
-
-// From spec and src of v4.0.
-//
-// ref: http://llvm.org/docs/LangRef.html#linkage
-Linkage
-	: "appending"
-	| "available_externally"
-	| "common"
-	| "internal"
-	| "linkonce"
-	| "linkonce_odr"
-	| "private"
-	| "weak"
-	| "weak_odr"
-;
-
-OptExternLinkage
-	: empty
-	| ExternLinkage
-;
-
-// From spec and src of v4.0.
-//
-// ref: http://llvm.org/docs/LangRef.html#linkage
-ExternLinkage
-	: "extern_weak"
-	| "external"
-;
-
-OptUnnamedAddr
-	: empty
-	| UnnamedAddr
-;
-
-UnnamedAddr
-	: "local_unnamed_addr"
-	| "unnamed_addr"
-;
-
 Immutable
 	: "constant"   << true, nil >>
 	| "global"     << false, nil >>
-;
-
-OptCommaAlign
-	: empty
-	| "," Align
-;
-
-Align
-	: "align" int_lit
 ;
 
 // === [ Functions ] ===========================================================
@@ -315,43 +263,6 @@ FuncDef
 
 FuncHeader
 	: ParamAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncDecl($1, $2, $4) >>
-;
-
-ParamAttrs
-	: empty
-	| ParamAttrList
-;
-
-ParamAttrList
-	: ParamAttr
-	| ParamAttrList ParamAttr
-;
-
-// From spec and src of v4.0.
-//
-// ref: http://llvm.org/docs/LangRef.html#parameter-attributes
-ParamAttr
-	: string_lit
-	| string_lit "=" string_lit
-	| Align
-	| "byval"
-	| "dereferenceable" "(" int_lit ")"
-	| "dereferenceable_or_null" "(" int_lit ")"
-	| "inalloca"
-	| "inreg"
-	| "nest"
-	| "noalias"
-	| "nocapture"
-	| "nonnull"
-	| "readnone" // NOTE: accepted by lli but not part of spec in v4.0
-	| "readonly" // NOTE: accepted by lli but not part of spec in v4.0
-	| "returned"
-	| "signext"
-	| "sret"
-	| "swifterror"
-	| "swiftself"
-	| "writeonly" // NOTE: accepted by lli but not part of spec in v4.0
-	| "zeroext"
 ;
 
 Params
@@ -371,11 +282,6 @@ Param
 	| FirstClassType ParamAttrs LocalIdent   << astx.NewParam($0, $2) >>
 ;
 
-OptAlign
-	: empty
-	| Align
-;
-
 FuncBody
 	: "{" BasicBlocks "}"   << $1, nil >>
 ;
@@ -384,65 +290,6 @@ FuncBody
 
 AttrGroupDef
 	: "attributes" AttrGroupID "=" "{" FuncAttrs "}"   << nil, nil >>
-;
-
-FuncAttrs
-	: empty
-	| FuncAttrList
-;
-
-FuncAttrList
-	: FuncAttr
-	| FuncAttrList FuncAttr
-;
-
-// From spec and src of v4.0.
-//
-// ref: http://llvm.org/docs/LangRef.html#function-attributes
-FuncAttr
-	: string_lit
-	| string_lit "=" string_lit
-	| AttrGroupID
-	| "alignstack" "(" int_lit ")"
-	| "allocsize" "(" int_lit OptAllocSizeNElems ")"
-	| "alwaysinline"
-	| "argmemonly"
-	| "builtin"
-	| "cold"
-	| "convergent"
-	| "inaccessiblemem_or_argmemonly"
-	| "inaccessiblememonly"
-	| "inlinehint"
-	| "jumptable"
-	| "minsize"
-	| "naked"
-	| "nobuiltin"
-	| "noduplicate"
-	| "noimplicitfloat"
-	| "noinline"
-	| "nonlazybind"
-	| "norecurse"
-	| "noredzone"
-	| "noreturn"
-	| "nounwind"
-	| "optnone"
-	| "optsize"
-	| "readnone"
-	| "readonly"
-	| "returns_twice"
-	| "safestack"
-	| "sanitize_address"
-	| "sanitize_memory"
-	| "sanitize_thread"
-	| "ssp"
-	| "sspreq"
-	| "sspstrong"
-	| "uwtable"
-	| "writeonly"
-;
-
-OptAllocSizeNElems
-	: "," int_lit
 ;
 
 // === [ Metadata definitions ] ================================================
@@ -696,20 +543,6 @@ VectorConst
 	: "<" Elems ">"   << astx.NewVectorConst($1) >>
 ;
 
-Elems
-	: empty
-	| ElemList
-;
-
-ElemList
-	: Elem                << astx.NewConstantList($0) >>
-	| ElemList "," Elem   << astx.AppendConstant($0, $2) >>
-;
-
-Elem
-	: FirstClassType Value   << astx.NewConstant($0, $1) >>
-;
-
 // --- [ array constant ] ------------------------------------------------------
 
 ArrayConst
@@ -882,11 +715,6 @@ XorExpr
 
 GetElementPtrExpr
 	: "getelementptr" OptInbounds "(" FirstClassType "," FirstClassType Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($3, $5, $6, $7) >>
-;
-
-OptInbounds
-	: empty
-	| "inbounds"
 ;
 
 ConstIndices
@@ -1658,6 +1486,240 @@ InvokeTerm
 	: "invoke" OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs OptOperandBundle "to" LabelType LocalIdent "unwind" LabelType LocalIdent   << nil, nil >>
 ;
 
+OptOperandBundle
+	: empty
+	| OperandBundle
+;
+
+OperandBundle
+	: "[" TagValues "]"
+;
+
+TagValues
+	: empty
+	| TagValueList
+;
+
+TagValueList
+	: TagValue
+	| TagValueList "," TagValue
+;
+
+TagValue
+	: string_lit "(" Values ")"
+;
+
+Values
+	: empty
+	| ValueList
+;
+
+ValueList
+	: FirstClassType Value
+	| ValueList "," FirstClassType Value
+;
+
+// ~~~ [ resume ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ResumeTerm
+	: "resume" FirstClassType Value   << nil, nil >>
+;
+
+// ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CatchSwitchTerm
+	: "catchswitch" "within" ExceptionParent "[" Labels "]" "unwind" "to" "caller"          << nil, nil >>
+	| "catchswitch" "within" ExceptionParent "[" Labels "]" "unwind" LabelType LocalIdent   << nil, nil >>
+;
+
+// ~~~ [ catchret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CatchRetTerm
+	: "catchret" "from" Value "to" LabelType LocalIdent   << nil, nil >>
+;
+
+// ~~~ [ cleanupret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CleanupRetTerm
+	: "cleanupret" "from" Value "unwind" "to" "caller"          << nil, nil >>
+	| "cleanupret" "from" Value "unwind" LabelType LocalIdent   << nil, nil >>
+;
+
+// ~~~ [ unreachable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UnreachableTerm
+	: "unreachable"   << &ast.TermUnreachable{}, nil >>
+;
+
+// ### [ Helper productions ] ##################################################
+
+OptLinkage
+	: empty
+	| Linkage
+;
+
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#linkage
+Linkage
+	: "appending"
+	| "available_externally"
+	| "common"
+	| "internal"
+	| "linkonce"
+	| "linkonce_odr"
+	| "private"
+	| "weak"
+	| "weak_odr"
+;
+
+OptExternLinkage
+	: empty
+	| ExternLinkage
+;
+
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#linkage
+ExternLinkage
+	: "extern_weak"
+	| "external"
+;
+
+OptUnnamedAddr
+	: empty
+	| UnnamedAddr
+;
+
+UnnamedAddr
+	: "local_unnamed_addr"
+	| "unnamed_addr"
+;
+
+OptCommaAlign
+	: empty
+	| "," Align
+;
+
+OptAlign
+	: empty
+	| Align
+;
+
+Align
+	: "align" int_lit
+;
+
+ParamAttrs
+	: empty
+	| ParamAttrList
+;
+
+ParamAttrList
+	: ParamAttr
+	| ParamAttrList ParamAttr
+;
+
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#parameter-attributes
+ParamAttr
+	: string_lit
+	| string_lit "=" string_lit
+	| Align
+	| "byval"
+	| "dereferenceable" "(" int_lit ")"
+	| "dereferenceable_or_null" "(" int_lit ")"
+	| "inalloca"
+	| "inreg"
+	| "nest"
+	| "noalias"
+	| "nocapture"
+	| "nonnull"
+	| "readnone" // NOTE: accepted by lli but not part of spec in v4.0
+	| "readonly" // NOTE: accepted by lli but not part of spec in v4.0
+	| "returned"
+	| "signext"
+	| "sret"
+	| "swifterror"
+	| "swiftself"
+	| "writeonly" // NOTE: accepted by lli but not part of spec in v4.0
+	| "zeroext"
+;
+
+FuncAttrs
+	: empty
+	| FuncAttrList
+;
+
+FuncAttrList
+	: FuncAttr
+	| FuncAttrList FuncAttr
+;
+
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#function-attributes
+FuncAttr
+	: string_lit
+	| string_lit "=" string_lit
+	| AttrGroupID
+	| "alignstack" "(" int_lit ")"
+	| "allocsize" "(" int_lit OptAllocSizeNElems ")"
+	| "alwaysinline"
+	| "argmemonly"
+	| "builtin"
+	| "cold"
+	| "convergent"
+	| "inaccessiblemem_or_argmemonly"
+	| "inaccessiblememonly"
+	| "inlinehint"
+	| "jumptable"
+	| "minsize"
+	| "naked"
+	| "nobuiltin"
+	| "noduplicate"
+	| "noimplicitfloat"
+	| "noinline"
+	| "nonlazybind"
+	| "norecurse"
+	| "noredzone"
+	| "noreturn"
+	| "nounwind"
+	| "optnone"
+	| "optsize"
+	| "readnone"
+	| "readonly"
+	| "returns_twice"
+	| "safestack"
+	| "sanitize_address"
+	| "sanitize_memory"
+	| "sanitize_thread"
+	| "ssp"
+	| "sspreq"
+	| "sspstrong"
+	| "uwtable"
+	| "writeonly"
+;
+
+OptAllocSizeNElems
+	: "," int_lit
+;
+
+Elems
+	: empty
+	| ElemList
+;
+
+ElemList
+	: Elem                << astx.NewConstantList($0) >>
+	| ElemList "," Elem   << astx.AppendConstant($0, $2) >>
+;
+
+Elem
+	: FirstClassType Value   << astx.NewConstant($0, $1) >>
+;
+
 OptCallConv
 	: empty
 	| CallConv
@@ -1706,52 +1768,6 @@ CallConv
 	| "x86_vectorcallcc"
 ;
 
-OptOperandBundle
-	: empty
-	| OperandBundle
-;
-
-OperandBundle
-	: "[" TagValues "]"
-;
-
-TagValues
-	: empty
-	| TagValueList
-;
-
-TagValueList
-	: TagValue
-	| TagValueList "," TagValue
-;
-
-TagValue
-	: string_lit "(" Values ")"
-;
-
-Values
-	: empty
-	| ValueList
-;
-
-ValueList
-	: FirstClassType Value
-	| ValueList "," FirstClassType Value
-;
-
-// ~~~ [ resume ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-ResumeTerm
-	: "resume" FirstClassType Value   << nil, nil >>
-;
-
-// ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-CatchSwitchTerm
-	: "catchswitch" "within" ExceptionParent "[" Labels "]" "unwind" "to" "caller"          << nil, nil >>
-	| "catchswitch" "within" ExceptionParent "[" Labels "]" "unwind" LabelType LocalIdent   << nil, nil >>
-;
-
 Labels
 	: empty
 	| LabelList
@@ -1766,21 +1782,7 @@ Label
 	: LabelType LocalIdent
 ;
 
-// ~~~ [ catchret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-CatchRetTerm
-	: "catchret" "from" Value "to" LabelType LocalIdent   << nil, nil >>
-;
-
-// ~~~ [ cleanupret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-CleanupRetTerm
-	: "cleanupret" "from" Value "unwind" "to" "caller"          << nil, nil >>
-	| "cleanupret" "from" Value "unwind" LabelType LocalIdent   << nil, nil >>
-;
-
-// ~~~ [ unreachable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-UnreachableTerm
-	: "unreachable"   << &ast.TermUnreachable{}, nil >>
+OptInbounds
+	: empty
+	| "inbounds"
 ;
