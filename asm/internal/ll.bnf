@@ -201,7 +201,8 @@ TopLevelDecl
 	: SourceFilename
 	| TargetSpec
 	| TypeDef
-	| Global
+	| GlobalDecl
+	| GlobalDef
 	| FuncDecl
 	| FuncDef
 	| AttrGroupDef
@@ -239,11 +240,12 @@ TypeDef
 
 // === [ Global variables ] ====================================================
 
-Global
-	// global declaration.
-	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType OptCommaAlign        << astx.NewGlobalDecl($0, $4, $5) >>
-	// global definition.
-	| GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant OptCommaAlign  << astx.NewGlobalDef($0, $4, $5, $6) >>
+GlobalDecl
+	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType OptCommaAlign   << astx.NewGlobalDecl($0, $4, $5) >>
+;
+
+GlobalDef
+	: GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant OptCommaAlign   << astx.NewGlobalDef($0, $4, $5, $6) >>
 ;
 
 Immutable
@@ -335,7 +337,7 @@ MetadataNode
 	: Metadata
 	| MetadataID
 	| "!" string_lit
-	| Type Value
+	| Type Constant
 ;
 
 // === [ Identifiers ] =========================================================
