@@ -234,7 +234,47 @@ func (block *BasicBlock) NewXor(x, y value.Value) *InstXor {
 
 // --- [ Vector instructions ] -------------------------------------------------
 
+// NewExtractElement appends a new extractelement instruction to the basic block
+// based on the given vector and index.
+func (block *BasicBlock) NewExtractElement(x, index value.Value) *InstExtractElement {
+	inst := NewExtractElement(x, index)
+	block.AppendInst(inst)
+	return inst
+}
+
+// NewInsertElement appends a new insertelement instruction to the basic block
+// based on the given vector, element and index.
+func (block *BasicBlock) NewInsertElement(x, elem, index value.Value) *InstInsertElement {
+	inst := NewInsertElement(x, elem, index)
+	block.AppendInst(inst)
+	return inst
+}
+
+// NewShuffleVector appends a new shufflevector instruction to the basic block
+// based on the given vectors and shuffle mask.
+func (block *BasicBlock) NewShuffleVector(x, y, mask value.Value) *InstShuffleVector {
+	inst := NewShuffleVector(x, y, mask)
+	block.AppendInst(inst)
+	return inst
+}
+
 // --- [ Aggregate instructions ] ----------------------------------------------
+
+// NewExtractValue appends a new extractvalue instruction to the basic block
+// based on the given vector and indices.
+func (block *BasicBlock) NewExtractValue(x value.Value, indices []int64) *InstExtractValue {
+	inst := NewExtractValue(x, indices)
+	block.AppendInst(inst)
+	return inst
+}
+
+// NewInsertValue appends a new insertvalue instruction to the basic block based
+// on the given vector, element and indices.
+func (block *BasicBlock) NewInsertValue(x, elem value.Value, indices []int64) *InstInsertValue {
+	inst := NewInsertValue(x, elem, indices)
+	block.AppendInst(inst)
+	return inst
+}
 
 // --- [ Memory instructions ] -------------------------------------------------
 

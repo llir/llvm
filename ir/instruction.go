@@ -43,6 +43,21 @@ import "fmt"
 //    *ir.InstOr     (https://godoc.org/github.com/llir/llvm/ir#InstOr)
 //    *ir.InstXor    (https://godoc.org/github.com/llir/llvm/ir#InstXor)
 //
+// Vector instructions
+//
+//    *ir.InstExtractElement   (https://godoc.org/github.com/llir/llvm/ir#InstExtractElement)
+//    *ir.InstInsertElement    (https://godoc.org/github.com/llir/llvm/ir#InstInsertElement)
+//    *ir.InstShuffleVector    (https://godoc.org/github.com/llir/llvm/ir#InstShuffleVector)
+//
+// http://llvm.org/docs/LangRef.html#vector-operations
+//
+// Aggregate instructions
+//
+// http://llvm.org/docs/LangRef.html#aggregate-operations
+//
+//    *ir.InstExtractValue   (https://godoc.org/github.com/llir/llvm/ir#InstExtractValue)
+//    *ir.InstInsertValue    (https://godoc.org/github.com/llir/llvm/ir#InstInsertValue)
+//
 // Memory instructions
 //
 // http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
