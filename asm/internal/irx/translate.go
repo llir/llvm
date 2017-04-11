@@ -620,7 +620,16 @@ func (m *Module) metadataDef(oldMetadata *ast.Metadata) {
 func (m *Module) metadataNode(oldNode ast.MetadataNode) ir.MetadataNode {
 	switch oldNode := oldNode.(type) {
 	case *ast.Metadata:
-		return m.getMetadata(oldNode.ID)
+		if len(oldNode.ID) > 0 {
+			return m.getMetadata(oldNode.ID)
+		}
+		// Unnamed metadata literal.
+		md := &ir.Metadata{}
+		for _, node := range oldNode.Nodes {
+			n := m.metadataNode(node)
+			md.Nodes = append(md.Nodes, n)
+		}
+		return md
 	case *ast.MetadataString:
 		return &ir.MetadataString{
 			Val: oldNode.Val,
