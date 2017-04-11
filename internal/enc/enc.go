@@ -38,11 +38,11 @@ func Local(name string) string {
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func Metadata(name string) string {
-	isMetadataChar := func(b byte) bool {
+	valid := func(b byte) bool {
 		const metadataChar = tail + `\`
 		return strings.IndexByte(metadataChar, b) != -1
 	}
-	return "!" + Escape(name, isMetadataChar)
+	return "!" + Escape(name, valid)
 }
 
 const (
@@ -98,6 +98,15 @@ func EscapeIdent(s string) string {
 	}
 	// Add surrounding quotes.
 	return `"` + string(buf) + `"`
+}
+
+// EscapeString replaces any characters categorized as invalid in string
+// literals with corresponding hexadecimal escape sequence (\XX).
+func EscapeString(s string) string {
+	valid := func(b byte) bool {
+		return ' ' <= b && b <= '~' && b != '"' && b != '\\'
+	}
+	return Escape(s, valid)
 }
 
 // Escape replaces any characters categorized as invalid by the valid function

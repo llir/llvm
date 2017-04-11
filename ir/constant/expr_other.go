@@ -65,6 +65,10 @@ func (expr *ExprICmp) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprICmp) MetadataNode() {}
+
 // IntPred represents the set of integer predicates of the icmp expression.
 type IntPred int
 
@@ -155,6 +159,10 @@ func (*ExprFCmp) Immutable() {}
 func (expr *ExprFCmp) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFCmp) MetadataNode() {}
 
 // FloatPred represents the set of floating-point predicates of the fcmp
 // expression.
@@ -254,3 +262,7 @@ func (*ExprSelect) Immutable() {}
 func (expr *ExprSelect) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprSelect) MetadataNode() {}

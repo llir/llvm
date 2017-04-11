@@ -100,3 +100,7 @@ func (*ExprGetElementPtr) Immutable() {}
 func (expr *ExprGetElementPtr) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprGetElementPtr) MetadataNode() {}

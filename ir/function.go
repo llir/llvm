@@ -8,6 +8,7 @@ package ir
 import (
 	"bytes"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -22,7 +23,7 @@ import (
 // declaration. The body of a function definition consists of a set of basic
 // blocks, interconnected by control flow instructions.
 //
-// Functions may be referenced from terminators (e.g. call), and are thus
+// Functions may be referenced from instructions (e.g. call), and are thus
 // considered LLVM IR values of function type.
 type Function struct {
 	// Parent module of the function.
@@ -35,6 +36,9 @@ type Function struct {
 	Sig *types.FuncType
 	// Basic blocks of the function; or nil if defined externally.
 	Blocks []*BasicBlock
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// function.
+	Metadata map[string]*Metadata
 }
 
 // NewFunction returns a new function based on the given function name, return
@@ -43,9 +47,10 @@ func NewFunction(name string, ret types.Type, params ...*types.Param) *Function 
 	sig := types.NewFunc(ret, params...)
 	typ := types.NewPointer(sig)
 	return &Function{
-		Name: name,
-		Typ:  typ,
-		Sig:  sig,
+		Name:     name,
+		Typ:      typ,
+		Sig:      sig,
+		Metadata: make(map[string]*Metadata),
 	}
 }
 
@@ -107,10 +112,22 @@ func (f *Function) String() string {
 	}
 	sig.WriteString(")")
 
+	// Metadata.
+	var keys []string
+	for key := range f.Metadata {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	metadata := &bytes.Buffer{}
+	for _, key := range keys {
+		md := f.Metadata[key]
+		fmt.Fprintf(metadata, " %s %s", enc.Metadata(key), md.Ident())
+	}
+
 	// Function definition.
 	if len(f.Blocks) > 0 {
 		buf := &bytes.Buffer{}
-		fmt.Fprintf(buf, "define %s {\n", sig)
+		fmt.Fprintf(buf, "define %s%s {\n", sig, metadata)
 		for _, block := range f.Blocks {
 			fmt.Fprintln(buf, block)
 		}
@@ -119,7 +136,7 @@ func (f *Function) String() string {
 	}
 
 	// External function declaration.
-	return fmt.Sprintf("declare %s", sig)
+	return fmt.Sprintf("declare%s %s", metadata, sig)
 }
 
 // Params returns the parameters of the function.

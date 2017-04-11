@@ -57,6 +57,10 @@ func (c *Vector) Ident() string {
 // constant.Constant interface.
 func (*Vector) Immutable() {}
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Vector) MetadataNode() {}
+
 // --- [ array ] ---------------------------------------------------------------
 
 // Array represents an array constant.
@@ -96,7 +100,7 @@ func (c *Array) Ident() string {
 			b := byte(e.Int64())
 			buf = append(buf, b)
 		}
-		return fmt.Sprintf(`c"%s"`, enc.Escape(string(buf)))
+		return fmt.Sprintf(`c"%s"`, enc.EscapeString(string(buf)))
 	}
 	// Print regular arrays.
 	buf := &bytes.Buffer{}
@@ -116,6 +120,10 @@ func (c *Array) Ident() string {
 // Immutable ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*Array) Immutable() {}
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Array) MetadataNode() {}
 
 // --- [ struct ] --------------------------------------------------------------
 
@@ -170,6 +178,10 @@ func (c *Struct) Ident() string {
 // constant.Constant interface.
 func (*Struct) Immutable() {}
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Struct) MetadataNode() {}
+
 // --- [ zeroinitializer ] -----------------------------------------------------
 
 // ZeroInitializer represents a zeroinitializer constant.
@@ -197,3 +209,7 @@ func (c *ZeroInitializer) Ident() string {
 // Immutable ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*ZeroInitializer) Immutable() {}
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ZeroInitializer) MetadataNode() {}

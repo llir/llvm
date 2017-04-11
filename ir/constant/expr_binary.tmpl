@@ -55,4 +55,8 @@ func (*Expr{{ .Name }}) Immutable() {}
 func (expr *Expr{{ .Name }}) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Expr{{ .Name }}) MetadataNode() {}
 {{- end }}

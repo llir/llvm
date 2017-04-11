@@ -55,6 +55,10 @@ func (expr *ExprShl) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprShl) MetadataNode() {}
+
 // --- [ lshr ] ----------------------------------------------------------------
 
 // ExprLShr represents a logical shift right expression.
@@ -96,6 +100,10 @@ func (*ExprLShr) Immutable() {}
 func (expr *ExprLShr) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprLShr) MetadataNode() {}
 
 // --- [ ashr ] ----------------------------------------------------------------
 
@@ -139,6 +147,10 @@ func (expr *ExprAShr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprAShr) MetadataNode() {}
+
 // --- [ and ] -----------------------------------------------------------------
 
 // ExprAnd represents an AND expression.
@@ -180,6 +192,10 @@ func (*ExprAnd) Immutable() {}
 func (expr *ExprAnd) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprAnd) MetadataNode() {}
 
 // --- [ or ] ------------------------------------------------------------------
 
@@ -223,6 +239,10 @@ func (expr *ExprOr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprOr) MetadataNode() {}
+
 // --- [ xor ] -----------------------------------------------------------------
 
 // ExprXor represents an exclusive-OR expression.
@@ -264,3 +284,7 @@ func (*ExprXor) Immutable() {}
 func (expr *ExprXor) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprXor) MetadataNode() {}

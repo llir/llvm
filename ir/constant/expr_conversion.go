@@ -56,6 +56,10 @@ func (expr *ExprTrunc) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprTrunc) MetadataNode() {}
+
 // --- [ zext ] ----------------------------------------------------------------
 
 // ExprZExt represents a zero extension expression.
@@ -98,6 +102,10 @@ func (*ExprZExt) Immutable() {}
 func (expr *ExprZExt) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprZExt) MetadataNode() {}
 
 // --- [ sext ] ----------------------------------------------------------------
 
@@ -142,6 +150,10 @@ func (expr *ExprSExt) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprSExt) MetadataNode() {}
+
 // --- [ fptrunc ] -------------------------------------------------------------
 
 // ExprFPTrunc represents a floating-point truncation expression.
@@ -184,6 +196,10 @@ func (*ExprFPTrunc) Immutable() {}
 func (expr *ExprFPTrunc) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFPTrunc) MetadataNode() {}
 
 // --- [ fpext ] ---------------------------------------------------------------
 
@@ -228,6 +244,10 @@ func (expr *ExprFPExt) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFPExt) MetadataNode() {}
+
 // --- [ fptoui ] --------------------------------------------------------------
 
 // ExprFPToUI represents a floating-point to unsigned integer conversion expression.
@@ -270,6 +290,10 @@ func (*ExprFPToUI) Immutable() {}
 func (expr *ExprFPToUI) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFPToUI) MetadataNode() {}
 
 // --- [ fptosi ] --------------------------------------------------------------
 
@@ -314,6 +338,10 @@ func (expr *ExprFPToSI) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFPToSI) MetadataNode() {}
+
 // --- [ uitofp ] --------------------------------------------------------------
 
 // ExprUIToFP represents an unsigned integer to floating-point conversion expression.
@@ -356,6 +384,10 @@ func (*ExprUIToFP) Immutable() {}
 func (expr *ExprUIToFP) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprUIToFP) MetadataNode() {}
 
 // --- [ sitofp ] --------------------------------------------------------------
 
@@ -400,6 +432,10 @@ func (expr *ExprSIToFP) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprSIToFP) MetadataNode() {}
+
 // --- [ ptrtoint ] ------------------------------------------------------------
 
 // ExprPtrToInt represents a pointer to integer conversion expression.
@@ -442,6 +478,10 @@ func (*ExprPtrToInt) Immutable() {}
 func (expr *ExprPtrToInt) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprPtrToInt) MetadataNode() {}
 
 // --- [ inttoptr ] ------------------------------------------------------------
 
@@ -486,6 +526,10 @@ func (expr *ExprIntToPtr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprIntToPtr) MetadataNode() {}
+
 // --- [ bitcast ] -------------------------------------------------------------
 
 // ExprBitCast represents a bitcast expression.
@@ -529,6 +573,10 @@ func (expr *ExprBitCast) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprBitCast) MetadataNode() {}
+
 // --- [ addrspacecast ] -------------------------------------------------------
 
 // ExprAddrSpaceCast represents an address space cast expression.
@@ -571,3 +619,7 @@ func (*ExprAddrSpaceCast) Immutable() {}
 func (expr *ExprAddrSpaceCast) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprAddrSpaceCast) MetadataNode() {}

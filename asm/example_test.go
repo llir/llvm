@@ -31,7 +31,8 @@ func Example() {
 	//                 Typ: &types.IntType{(CYCLIC REFERENCE)},
 	//                 X:   &big.Int{},
 	//             },
-	//             IsConst: false,
+	//             IsConst:  false,
+	//             Metadata: {},
 	//         },
 	//     },
 	//     Funcs: {
@@ -63,7 +64,8 @@ func Example() {
 	//                 },
 	//                 Variadic: false,
 	//             },
-	//             Blocks: nil,
+	//             Blocks:   nil,
+	//             Metadata: {},
 	//         },
 	//         &ir.Function{
 	//             Parent: &ir.Module{(CYCLIC REFERENCE)},
@@ -149,6 +151,7 @@ func Example() {
 	//                     },
 	//                 },
 	//             },
+	//             Metadata: {},
 	//         },
 	//     },
 	// }

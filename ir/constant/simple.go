@@ -93,6 +93,10 @@ func (c *Int) Ident() string {
 // constant.Constant interface.
 func (*Int) Immutable() {}
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Int) MetadataNode() {}
+
 // Int64 returns the int64 representation of the integer constant.
 func (c *Int) Int64() int64 {
 	return c.X.Int64()
@@ -128,3 +132,7 @@ func (c *Null) Ident() string {
 // Immutable ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*Null) Immutable() {}
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Null) MetadataNode() {}

@@ -55,6 +55,10 @@ func (expr *ExprAdd) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprAdd) MetadataNode() {}
+
 // --- [ fadd ] ----------------------------------------------------------------
 
 // ExprFAdd represents a floating-point addition expression.
@@ -96,6 +100,10 @@ func (*ExprFAdd) Immutable() {}
 func (expr *ExprFAdd) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFAdd) MetadataNode() {}
 
 // --- [ sub ] -----------------------------------------------------------------
 
@@ -139,6 +147,10 @@ func (expr *ExprSub) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprSub) MetadataNode() {}
+
 // --- [ fsub ] ----------------------------------------------------------------
 
 // ExprFSub represents a floating-point subtraction expression.
@@ -180,6 +192,10 @@ func (*ExprFSub) Immutable() {}
 func (expr *ExprFSub) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFSub) MetadataNode() {}
 
 // --- [ mul ] -----------------------------------------------------------------
 
@@ -223,6 +239,10 @@ func (expr *ExprMul) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprMul) MetadataNode() {}
+
 // --- [ fmul ] ----------------------------------------------------------------
 
 // ExprFMul represents a floating-point multiplication expression.
@@ -264,6 +284,10 @@ func (*ExprFMul) Immutable() {}
 func (expr *ExprFMul) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFMul) MetadataNode() {}
 
 // --- [ udiv ] ----------------------------------------------------------------
 
@@ -307,6 +331,10 @@ func (expr *ExprUDiv) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprUDiv) MetadataNode() {}
+
 // --- [ sdiv ] ----------------------------------------------------------------
 
 // ExprSDiv represents a signed division expression.
@@ -348,6 +376,10 @@ func (*ExprSDiv) Immutable() {}
 func (expr *ExprSDiv) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprSDiv) MetadataNode() {}
 
 // --- [ fdiv ] ----------------------------------------------------------------
 
@@ -391,6 +423,10 @@ func (expr *ExprFDiv) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFDiv) MetadataNode() {}
+
 // --- [ urem ] ----------------------------------------------------------------
 
 // ExprURem represents an unsigned remainder expression.
@@ -432,6 +468,10 @@ func (*ExprURem) Immutable() {}
 func (expr *ExprURem) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprURem) MetadataNode() {}
 
 // --- [ srem ] ----------------------------------------------------------------
 
@@ -475,6 +515,10 @@ func (expr *ExprSRem) Simplify() Constant {
 	panic("not yet implemented")
 }
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprSRem) MetadataNode() {}
+
 // --- [ frem ] ----------------------------------------------------------------
 
 // ExprFRem represents a floating-point remainder expression.
@@ -516,3 +560,7 @@ func (*ExprFRem) Immutable() {}
 func (expr *ExprFRem) Simplify() Constant {
 	panic("not yet implemented")
 }
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*ExprFRem) MetadataNode() {}

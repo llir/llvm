@@ -176,6 +176,10 @@ func (c *Float) Ident() string {
 // constant.Constant interface.
 func (*Float) Immutable() {}
 
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// ir.MetadataNode interface.
+func (*Float) MetadataNode() {}
+
 // Float64 returns the float64 representation of the floating-point constant.
 func (c *Float) Float64() float64 {
 	x, _ := c.X.Float64()

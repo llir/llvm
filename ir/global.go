@@ -6,7 +6,9 @@
 package ir
 
 import (
+	"bytes"
 	"fmt"
+	"sort"
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
@@ -33,6 +35,9 @@ type Global struct {
 	Init constant.Constant
 	// Immutability of the global variable.
 	IsConst bool
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// global.
+	Metadata map[string]*Metadata
 }
 
 // NewGlobalDecl returns a new external global variable declaration based on the
@@ -40,9 +45,10 @@ type Global struct {
 func NewGlobalDecl(name string, content types.Type) *Global {
 	typ := types.NewPointer(content)
 	return &Global{
-		Name:    name,
-		Typ:     typ,
-		Content: content,
+		Name:     name,
+		Typ:      typ,
+		Content:  content,
+		Metadata: make(map[string]*Metadata),
 	}
 }
 
@@ -52,10 +58,11 @@ func NewGlobalDef(name string, init constant.Constant) *Global {
 	content := init.Type()
 	typ := types.NewPointer(content)
 	return &Global{
-		Name:    name,
-		Typ:     typ,
-		Content: content,
-		Init:    init,
+		Name:     name,
+		Typ:      typ,
+		Content:  content,
+		Init:     init,
+		Metadata: make(map[string]*Metadata),
 	}
 }
 
@@ -89,17 +96,32 @@ func (global *Global) String() string {
 	if global.IsConst {
 		imm = "constant"
 	}
+
+	// Metadata.
+	var keys []string
+	for key := range global.Metadata {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	metadata := &bytes.Buffer{}
+	for _, key := range keys {
+		md := global.Metadata[key]
+		fmt.Fprintf(metadata, ", %s %s", enc.Metadata(key), md.Ident())
+	}
+
 	if global.Init != nil {
 		// Global variable definition.
-		return fmt.Sprintf("%s = %s %s %s",
+		return fmt.Sprintf("%s = %s %s %s%s",
 			global.Ident(),
 			imm,
 			global.Init.Type(),
-			global.Init.Ident())
+			global.Init.Ident(),
+			metadata)
 	}
 	// External global variable declaration.
-	return fmt.Sprintf("%s = external %s %s",
+	return fmt.Sprintf("%s = external %s %s%s",
 		global.Ident(),
 		imm,
-		global.Content)
+		global.Content,
+		metadata)
 }

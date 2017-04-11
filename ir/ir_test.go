@@ -35,7 +35,12 @@ var (
 	_ ir.Instruction = &ir.InstOr{}
 	_ ir.Instruction = &ir.InstXor{}
 	// Vector instructions
+	_ ir.Instruction = &ir.InstExtractElement{}
+	_ ir.Instruction = &ir.InstInsertElement{}
+	_ ir.Instruction = &ir.InstShuffleVector{}
 	// Aggregate instructions
+	_ ir.Instruction = &ir.InstExtractValue{}
+	_ ir.Instruction = &ir.InstInsertValue{}
 	// Memory instructions
 	_ ir.Instruction = &ir.InstAlloca{}
 	_ ir.Instruction = &ir.InstLoad{}
@@ -99,7 +104,12 @@ var (
 	_ value.Named = &ir.InstOr{}
 	_ value.Named = &ir.InstXor{}
 	// Vector instructions
+	_ value.Named = &ir.InstExtractElement{}
+	_ value.Named = &ir.InstInsertElement{}
+	_ value.Named = &ir.InstShuffleVector{}
 	// Aggregate instructions
+	_ value.Named = &ir.InstExtractValue{}
+	_ value.Named = &ir.InstInsertValue{}
 	// Memory instructions
 	_ value.Named = &ir.InstAlloca{}
 	_ value.Named = &ir.InstLoad{}
@@ -124,4 +134,60 @@ var (
 	_ value.Named = &ir.InstPhi{}
 	_ value.Named = &ir.InstSelect{}
 	_ value.Named = &ir.InstCall{}
+)
+
+// Validate that the relevant types satisfy the ir.MetadataNode interface.
+var (
+	_ ir.MetadataNode = &ir.Metadata{}
+	_ ir.MetadataNode = &ir.MetadataString{}
+	// Simple constants.
+	_ ir.MetadataNode = &constant.Int{}
+	_ ir.MetadataNode = &constant.Float{}
+	_ ir.MetadataNode = &constant.Null{}
+	// Complex constants.
+	_ ir.MetadataNode = &constant.Vector{}
+	_ ir.MetadataNode = &constant.Array{}
+	_ ir.MetadataNode = &constant.Struct{}
+	_ ir.MetadataNode = &constant.ZeroInitializer{}
+	// Constant expressions.
+	// Binary instructions
+	_ ir.MetadataNode = &constant.ExprAdd{}
+	_ ir.MetadataNode = &constant.ExprFAdd{}
+	_ ir.MetadataNode = &constant.ExprSub{}
+	_ ir.MetadataNode = &constant.ExprFSub{}
+	_ ir.MetadataNode = &constant.ExprMul{}
+	_ ir.MetadataNode = &constant.ExprFMul{}
+	_ ir.MetadataNode = &constant.ExprUDiv{}
+	_ ir.MetadataNode = &constant.ExprSDiv{}
+	_ ir.MetadataNode = &constant.ExprFDiv{}
+	_ ir.MetadataNode = &constant.ExprURem{}
+	_ ir.MetadataNode = &constant.ExprSRem{}
+	_ ir.MetadataNode = &constant.ExprFRem{}
+	// Bitwise instructions
+	_ ir.MetadataNode = &constant.ExprShl{}
+	_ ir.MetadataNode = &constant.ExprLShr{}
+	_ ir.MetadataNode = &constant.ExprAShr{}
+	_ ir.MetadataNode = &constant.ExprAnd{}
+	_ ir.MetadataNode = &constant.ExprOr{}
+	_ ir.MetadataNode = &constant.ExprXor{}
+	// Memory instructions
+	_ ir.MetadataNode = &constant.ExprGetElementPtr{}
+	// Conversion instructions
+	_ ir.MetadataNode = &constant.ExprTrunc{}
+	_ ir.MetadataNode = &constant.ExprZExt{}
+	_ ir.MetadataNode = &constant.ExprSExt{}
+	_ ir.MetadataNode = &constant.ExprFPTrunc{}
+	_ ir.MetadataNode = &constant.ExprFPExt{}
+	_ ir.MetadataNode = &constant.ExprFPToUI{}
+	_ ir.MetadataNode = &constant.ExprFPToSI{}
+	_ ir.MetadataNode = &constant.ExprUIToFP{}
+	_ ir.MetadataNode = &constant.ExprSIToFP{}
+	_ ir.MetadataNode = &constant.ExprPtrToInt{}
+	_ ir.MetadataNode = &constant.ExprIntToPtr{}
+	_ ir.MetadataNode = &constant.ExprBitCast{}
+	_ ir.MetadataNode = &constant.ExprAddrSpaceCast{}
+	// Other instructions
+	_ ir.MetadataNode = &constant.ExprICmp{}
+	_ ir.MetadataNode = &constant.ExprFCmp{}
+	_ ir.MetadataNode = &constant.ExprSelect{}
 )
