@@ -286,7 +286,7 @@ func NewNamedMetadataDef(name, ids interface{}) (*ast.NamedMetadata, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid metadata name type; expected *astx.MetadataName, got %T", name)
 	}
-	is, ok := ids.([]*MetadataID)
+	is, ok := ids.([]*ast.MetadataIDDummy)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata IDs type; expected []*astx.MetadataID, got %T", ids)
 	}
@@ -294,7 +294,7 @@ func NewNamedMetadataDef(name, ids interface{}) (*ast.NamedMetadata, error) {
 		Name: n.name,
 	}
 	for _, i := range is {
-		dummy := &ast.MetadataIDDummy{ID: i.id}
+		dummy := &ast.MetadataIDDummy{ID: i.ID}
 		md.Metadata = append(md.Metadata, dummy)
 	}
 	return md, nil
@@ -302,21 +302,21 @@ func NewNamedMetadataDef(name, ids interface{}) (*ast.NamedMetadata, error) {
 
 // NewMetadataIDList returns a new metadata ID list based on the given metadata
 // ID.
-func NewMetadataIDList(id interface{}) ([]*MetadataID, error) {
-	i, ok := id.(*MetadataID)
+func NewMetadataIDList(id interface{}) ([]*ast.MetadataIDDummy, error) {
+	i, ok := id.(*ast.MetadataIDDummy)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata ID type; expected *astx.MetadataID, got %T", id)
 	}
-	return []*MetadataID{i}, nil
+	return []*ast.MetadataIDDummy{i}, nil
 }
 
 // AppendMetadataID appends the given metadata ID to the metadata ID list.
-func AppendMetadataID(ids, id interface{}) ([]*MetadataID, error) {
-	is, ok := ids.([]*MetadataID)
+func AppendMetadataID(ids, id interface{}) ([]*ast.MetadataIDDummy, error) {
+	is, ok := ids.([]*ast.MetadataIDDummy)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata ID list type; expected []*astx.MetadataID, got %T", ids)
 	}
-	i, ok := id.(*MetadataID)
+	i, ok := id.(*ast.MetadataIDDummy)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata ID type; expected *astx.MetadataID, got %T", id)
 	}
@@ -326,7 +326,7 @@ func AppendMetadataID(ids, id interface{}) ([]*MetadataID, error) {
 // NewMetadataDef returns a new metadata definition based on the given metadata
 // id and definition.
 func NewMetadataDef(id, md interface{}) (*ast.Metadata, error) {
-	i, ok := id.(*MetadataID)
+	i, ok := id.(*ast.MetadataIDDummy)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata ID type; expected *astx.MetadataID, got %T", id)
 	}
@@ -335,7 +335,7 @@ func NewMetadataDef(id, md interface{}) (*ast.Metadata, error) {
 		return nil, errors.Errorf("invalid metadata type; expected *ast.Metadata, got %T", md)
 	}
 	metadata := &ast.Metadata{
-		ID:    i.id,
+		ID:    i.ID,
 		Nodes: m.Nodes,
 	}
 	return metadata, nil
@@ -469,14 +469,8 @@ func NewMetadataName(name interface{}) (*MetadataName, error) {
 	return &MetadataName{name: s}, nil
 }
 
-// MetadataID represents a metadata ID.
-type MetadataID struct {
-	// Metadata ID the without "!" prefix.
-	id string
-}
-
 // NewMetadataID returns a new metadata id based on the given metadata id token.
-func NewMetadataID(id interface{}) (*MetadataID, error) {
+func NewMetadataID(id interface{}) (*ast.MetadataIDDummy, error) {
 	s, err := getTokenString(id)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -485,7 +479,7 @@ func NewMetadataID(id interface{}) (*MetadataID, error) {
 		return nil, errors.Errorf(`invalid metadata id %q; missing "!" prefix`, s)
 	}
 	s = s[1:]
-	return &MetadataID{id: s}, nil
+	return &ast.MetadataIDDummy{ID: s}, nil
 }
 
 // === [ Types ] ===============================================================

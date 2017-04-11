@@ -5,9 +5,11 @@
 //    1. Index type definitions.
 //    2. Index global variables.
 //    3. Index functions.
-//    4. Fix type definitions.
-//    5. Resolve named types.
-//    6. Resolve global identifiers.
+//    4. Index metadata.
+//    5. Fix type definitions.
+//    6. Resolve named types.
+//    7. Resolve global identifiers.
+//    8. Resolve metadata nodes.
 //
 // Per function.
 //
