@@ -59,17 +59,6 @@ func (pred IntPred) String() string {
 	return fmt.Sprintf("<unknown integer predicate %d>", int(pred))
 }
 
-// isValue ensures that only values can be assigned to the ast.Value interface.
-func (*ExprICmp) isValue() {}
-
-// isConstant ensures that only constants can be assigned to the ast.Constant
-// interface.
-func (*ExprICmp) isConstant() {}
-
-// isConstExpr ensures that only constant expressions can be assigned to the
-// ast.ConstExpr interface.
-func (*ExprICmp) isConstExpr() {}
-
 // --- [ fcmp ] ----------------------------------------------------------------
 
 // ExprFCmp represents an fcmp expression.
@@ -135,17 +124,6 @@ func (pred FloatPred) String() string {
 	return fmt.Sprintf("<unknown floating-point predicate %d>", int(pred))
 }
 
-// isValue ensures that only values can be assigned to the ast.Value interface.
-func (*ExprFCmp) isValue() {}
-
-// isConstant ensures that only constants can be assigned to the ast.Constant
-// interface.
-func (*ExprFCmp) isConstant() {}
-
-// isConstExpr ensures that only constant expressions can be assigned to the
-// ast.ConstExpr interface.
-func (*ExprFCmp) isConstExpr() {}
-
 // --- [ select ] --------------------------------------------------------------
 
 // ExprSelect represents a select expression.
@@ -162,12 +140,24 @@ type ExprSelect struct {
 }
 
 // isValue ensures that only values can be assigned to the ast.Value interface.
+func (*ExprICmp) isValue()   {}
+func (*ExprFCmp) isValue()   {}
 func (*ExprSelect) isValue() {}
 
 // isConstant ensures that only constants can be assigned to the ast.Constant
 // interface.
+func (*ExprICmp) isConstant()   {}
+func (*ExprFCmp) isConstant()   {}
 func (*ExprSelect) isConstant() {}
 
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
+func (*ExprICmp) isConstExpr()   {}
+func (*ExprFCmp) isConstExpr()   {}
 func (*ExprSelect) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprICmp) isMetadataNode()   {}
+func (*ExprFCmp) isMetadataNode()   {}
+func (*ExprSelect) isMetadataNode() {}

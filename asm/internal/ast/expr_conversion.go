@@ -33,6 +33,10 @@ func (*ExprTrunc) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprTrunc) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprTrunc) isMetadataNode() {}
+
 // --- [ zext ] ----------------------------------------------------------------
 
 // ExprZExt represents a zero extension expression.
@@ -58,6 +62,10 @@ func (*ExprZExt) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprZExt) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprZExt) isMetadataNode() {}
 
 // --- [ sext ] ----------------------------------------------------------------
 
@@ -85,6 +93,10 @@ func (*ExprSExt) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprSExt) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprSExt) isMetadataNode() {}
+
 // --- [ fptrunc ] -------------------------------------------------------------
 
 // ExprFPTrunc represents a floating-point truncation expression.
@@ -110,6 +122,10 @@ func (*ExprFPTrunc) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprFPTrunc) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFPTrunc) isMetadataNode() {}
 
 // --- [ fpext ] ---------------------------------------------------------------
 
@@ -137,6 +153,10 @@ func (*ExprFPExt) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprFPExt) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFPExt) isMetadataNode() {}
+
 // --- [ fptoui ] --------------------------------------------------------------
 
 // ExprFPToUI represents a floating-point to unsigned integer conversion expression.
@@ -162,6 +182,10 @@ func (*ExprFPToUI) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprFPToUI) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFPToUI) isMetadataNode() {}
 
 // --- [ fptosi ] --------------------------------------------------------------
 
@@ -189,6 +213,10 @@ func (*ExprFPToSI) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprFPToSI) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFPToSI) isMetadataNode() {}
+
 // --- [ uitofp ] --------------------------------------------------------------
 
 // ExprUIToFP represents an unsigned integer to floating-point conversion expression.
@@ -214,6 +242,10 @@ func (*ExprUIToFP) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprUIToFP) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprUIToFP) isMetadataNode() {}
 
 // --- [ sitofp ] --------------------------------------------------------------
 
@@ -241,6 +273,10 @@ func (*ExprSIToFP) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprSIToFP) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprSIToFP) isMetadataNode() {}
+
 // --- [ ptrtoint ] ------------------------------------------------------------
 
 // ExprPtrToInt represents a pointer to integer conversion expression.
@@ -266,6 +302,10 @@ func (*ExprPtrToInt) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprPtrToInt) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprPtrToInt) isMetadataNode() {}
 
 // --- [ inttoptr ] ------------------------------------------------------------
 
@@ -293,6 +333,10 @@ func (*ExprIntToPtr) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprIntToPtr) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprIntToPtr) isMetadataNode() {}
+
 // --- [ bitcast ] -------------------------------------------------------------
 
 // ExprBitCast represents a bitcast expression.
@@ -319,6 +363,10 @@ func (*ExprBitCast) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprBitCast) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprBitCast) isMetadataNode() {}
+
 // --- [ addrspacecast ] -------------------------------------------------------
 
 // ExprAddrSpaceCast represents an address space cast expression.
@@ -344,3 +392,7 @@ func (*ExprAddrSpaceCast) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprAddrSpaceCast) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprAddrSpaceCast) isMetadataNode() {}

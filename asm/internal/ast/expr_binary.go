@@ -31,6 +31,10 @@ func (*ExprAdd) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprAdd) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprAdd) isMetadataNode() {}
+
 // --- [ fadd ] ----------------------------------------------------------------
 
 // ExprFAdd represents a floating-point addition expression.
@@ -54,6 +58,10 @@ func (*ExprFAdd) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprFAdd) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFAdd) isMetadataNode() {}
 
 // --- [ sub ] -----------------------------------------------------------------
 
@@ -79,6 +87,10 @@ func (*ExprSub) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprSub) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprSub) isMetadataNode() {}
+
 // --- [ fsub ] ----------------------------------------------------------------
 
 // ExprFSub represents a floating-point subtraction expression.
@@ -102,6 +114,10 @@ func (*ExprFSub) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprFSub) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFSub) isMetadataNode() {}
 
 // --- [ mul ] -----------------------------------------------------------------
 
@@ -127,6 +143,10 @@ func (*ExprMul) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprMul) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprMul) isMetadataNode() {}
+
 // --- [ fmul ] ----------------------------------------------------------------
 
 // ExprFMul represents a floating-point multiplication expression.
@@ -150,6 +170,10 @@ func (*ExprFMul) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprFMul) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFMul) isMetadataNode() {}
 
 // --- [ udiv ] ----------------------------------------------------------------
 
@@ -175,6 +199,10 @@ func (*ExprUDiv) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprUDiv) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprUDiv) isMetadataNode() {}
+
 // --- [ sdiv ] ----------------------------------------------------------------
 
 // ExprSDiv represents a signed division expression.
@@ -198,6 +226,10 @@ func (*ExprSDiv) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprSDiv) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprSDiv) isMetadataNode() {}
 
 // --- [ fdiv ] ----------------------------------------------------------------
 
@@ -223,6 +255,10 @@ func (*ExprFDiv) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprFDiv) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFDiv) isMetadataNode() {}
+
 // --- [ urem ] ----------------------------------------------------------------
 
 // ExprURem represents an unsigned remainder expression.
@@ -246,6 +282,10 @@ func (*ExprURem) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprURem) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprURem) isMetadataNode() {}
 
 // --- [ srem ] ----------------------------------------------------------------
 
@@ -271,6 +311,10 @@ func (*ExprSRem) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprSRem) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprSRem) isMetadataNode() {}
+
 // --- [ frem ] ----------------------------------------------------------------
 
 // ExprFRem represents a floating-point remainder expression.
@@ -294,3 +338,7 @@ func (*ExprFRem) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprFRem) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprFRem) isMetadataNode() {}

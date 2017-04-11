@@ -43,6 +43,10 @@ func NewModule(decls interface{}) (*ast.Module, error) {
 			m.Globals = append(m.Globals, d)
 		case *ast.Function:
 			m.Funcs = append(m.Funcs, d)
+		case *ast.NamedMetadata:
+			m.NamedMetadata = append(m.NamedMetadata, d)
+		case *ast.Metadata:
+			m.Metadata = append(m.Metadata, d)
 		default:
 			dbg.Printf("support for %T not yet implemented", d)
 		}
@@ -86,7 +90,7 @@ func AppendTopLevelDecl(decls, decl interface{}) ([]TopLevelDecl, error) {
 	return append(ds, d), nil
 }
 
-// === [ Type definitions ] ====================================================
+// --- [ Type definitions ] ----------------------------------------------------
 
 // NewTypeDef returns a new type definition based on the given type name and
 // definition.
@@ -113,7 +117,7 @@ func NewTypeDefOpaque(name interface{}) (*ast.NamedType, error) {
 	return &ast.NamedType{Name: n.name, Def: t}, nil
 }
 
-// === [ Global variables ] ====================================================
+// --- [ Global variables ] ----------------------------------------------------
 
 // NewGlobalDecl returns a new global variable declaration based on the given
 // global variable name, immutability and type.
@@ -163,7 +167,7 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
 	return global, nil
 }
 
-// === [ Functions ] ===========================================================
+// --- [ Functions ] -----------------------------------------------------------
 
 // NewFuncDecl returns a new function declaration based on the given return
 // type, function name and parameters.
@@ -273,6 +277,115 @@ func NewParam(typ, name interface{}) (*ast.Param, error) {
 	return &ast.Param{Name: n, Type: t}, nil
 }
 
+// --- [ Metadata definitions ] ------------------------------------------------
+
+// NewNamedMetadataDef returns a new named metadata definition based on the
+// given metadata name and definition.
+func NewNamedMetadataDef(name, ids interface{}) (*ast.NamedMetadata, error) {
+	n, ok := name.(*MetadataName)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata name type; expected *astx.MetadataName, got %T", name)
+	}
+	is, ok := ids.([]*MetadataID)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata IDs type; expected []*astx.MetadataID, got %T", ids)
+	}
+	md := &ast.NamedMetadata{
+		Name: n.name,
+	}
+	for _, i := range is {
+		dummy := &ast.MetadataIDDummy{ID: i.id}
+		md.Metadata = append(md.Metadata, dummy)
+	}
+	return md, nil
+}
+
+// NewMetadataIDList returns a new metadata ID list based on the given metadata
+// ID.
+func NewMetadataIDList(id interface{}) ([]*MetadataID, error) {
+	i, ok := id.(*MetadataID)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata ID type; expected *astx.MetadataID, got %T", id)
+	}
+	return []*MetadataID{i}, nil
+}
+
+// AppendMetadataID appends the given metadata ID to the metadata ID list.
+func AppendMetadataID(ids, id interface{}) ([]*MetadataID, error) {
+	is, ok := ids.([]*MetadataID)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata ID list type; expected []*astx.MetadataID, got %T", ids)
+	}
+	i, ok := id.(*MetadataID)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata ID type; expected *astx.MetadataID, got %T", id)
+	}
+	return append(is, i), nil
+}
+
+// NewMetadataDef returns a new metadata definition based on the given metadata
+// id and definition.
+func NewMetadataDef(id, md interface{}) (*ast.Metadata, error) {
+	i, ok := id.(*MetadataID)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata ID type; expected *astx.MetadataID, got %T", id)
+	}
+	m, ok := md.(*ast.Metadata)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata type; expected *ast.Metadata, got %T", md)
+	}
+	metadata := &ast.Metadata{
+		ID:    i.id,
+		Nodes: m.Nodes,
+	}
+	return metadata, nil
+}
+
+// NewMetadata returns a new metadata based on the given metadata nodes.
+func NewMetadata(nodes interface{}) (*ast.Metadata, error) {
+	ns, ok := nodes.([]ast.MetadataNode)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata nodes type; expected []ast.MetadataNode, got %T", nodes)
+	}
+	metadata := &ast.Metadata{
+		Nodes: ns,
+	}
+	return metadata, nil
+}
+
+// NewMetadataNodeList returns a new metadata node list based on the given
+// metadata node.
+func NewMetadataNodeList(node interface{}) ([]ast.MetadataNode, error) {
+	n, ok := node.(ast.MetadataNode)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata node type; expected ast.MetadataNode, got %T", node)
+	}
+	return []ast.MetadataNode{n}, nil
+}
+
+// AppendMetadataNode appends the given metadata node to the metadata node list.
+func AppendMetadataNode(nodes, node interface{}) ([]ast.MetadataNode, error) {
+	ns, ok := nodes.([]ast.MetadataNode)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata node list type; expected []ast.MetadataNode, got %T", nodes)
+	}
+	n, ok := node.(ast.MetadataNode)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata node type; expected ast.MetadataNode, got %T", node)
+	}
+	return append(ns, n), nil
+}
+
+// NewMetadataString returns a new metadata string based on the given string token.
+func NewMetadataString(val interface{}) (*ast.MetadataString, error) {
+	v, err := getTokenString(val)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.MetadataString{Val: v}, nil
+
+}
+
 // === [ Identifiers ] =========================================================
 
 // GlobalIdent represents a global identifier.
@@ -333,6 +446,45 @@ func NewLabelIdent(ident interface{}) (*LabelIdent, error) {
 	}
 	s = s[:len(s)-1]
 	return &LabelIdent{name: s}, nil
+}
+
+// MetadataName represents a metadata name.
+type MetadataName struct {
+	// Metadata name the without "!" prefix.
+	name string
+}
+
+// NewMetadataName returns a new metadata name based on the given metadata name
+// token.
+func NewMetadataName(name interface{}) (*MetadataName, error) {
+	s, err := getTokenString(name)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if !strings.HasPrefix(s, "!") {
+		return nil, errors.Errorf(`invalid metadata name %q; missing "!" prefix`, s)
+	}
+	s = s[1:]
+	return &MetadataName{name: s}, nil
+}
+
+// MetadataID represents a metadata ID.
+type MetadataID struct {
+	// Metadata ID the without "!" prefix.
+	id string
+}
+
+// NewMetadataID returns a new metadata id based on the given metadata id token.
+func NewMetadataID(id interface{}) (*MetadataID, error) {
+	s, err := getTokenString(id)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if !strings.HasPrefix(s, "!") {
+		return nil, errors.Errorf(`invalid metadata id %q; missing "!" prefix`, s)
+	}
+	s = s[1:]
+	return &MetadataID{id: s}, nil
 }
 
 // === [ Types ] ===============================================================

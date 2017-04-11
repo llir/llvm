@@ -13,4 +13,8 @@ type Module struct {
 	Globals []*Global
 	// Functions of the module.
 	Funcs []*Function
+	// Named metadata of the module.
+	NamedMetadata []*NamedMetadata
+	// Metadata of the module.
+	Metadata []*Metadata
 }

@@ -32,3 +32,7 @@ func (*ExprGetElementPtr) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprGetElementPtr) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprGetElementPtr) isMetadataNode() {}

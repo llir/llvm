@@ -52,3 +52,11 @@ func (*ArrayConst) isConstant()           {}
 func (*CharArrayConst) isConstant()       {}
 func (*StructConst) isConstant()          {}
 func (*ZeroInitializerConst) isConstant() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*VectorConst) isMetadataNode()          {}
+func (*ArrayConst) isMetadataNode()           {}
+func (*CharArrayConst) isMetadataNode()       {}
+func (*StructConst) isMetadataNode()          {}
+func (*ZeroInitializerConst) isMetadataNode() {}

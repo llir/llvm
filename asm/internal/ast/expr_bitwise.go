@@ -31,6 +31,10 @@ func (*ExprShl) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprShl) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprShl) isMetadataNode() {}
+
 // --- [ lshr ] ----------------------------------------------------------------
 
 // ExprLShr represents a logical shift right expression.
@@ -54,6 +58,10 @@ func (*ExprLShr) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprLShr) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprLShr) isMetadataNode() {}
 
 // --- [ ashr ] ----------------------------------------------------------------
 
@@ -79,6 +87,10 @@ func (*ExprAShr) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprAShr) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprAShr) isMetadataNode() {}
+
 // --- [ and ] -----------------------------------------------------------------
 
 // ExprAnd represents an AND expression.
@@ -102,6 +114,10 @@ func (*ExprAnd) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprAnd) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprAnd) isMetadataNode() {}
 
 // --- [ or ] ------------------------------------------------------------------
 
@@ -127,6 +143,10 @@ func (*ExprOr) isConstant() {}
 // ast.ConstExpr interface.
 func (*ExprOr) isConstExpr() {}
 
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprOr) isMetadataNode() {}
+
 // --- [ xor ] -----------------------------------------------------------------
 
 // ExprXor represents an exclusive-OR expression.
@@ -150,3 +170,7 @@ func (*ExprXor) isConstant() {}
 // isConstExpr ensures that only constant expressions can be assigned to the
 // ast.ConstExpr interface.
 func (*ExprXor) isConstExpr() {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*ExprXor) isMetadataNode() {}

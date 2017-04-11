@@ -32,3 +32,9 @@ func (*NullConst) isValue()  {}
 func (*IntConst) isConstant()   {}
 func (*FloatConst) isConstant() {}
 func (*NullConst) isConstant()  {}
+
+// isMetadataNode ensures that only metadata nodes can be assigned to the
+// ast.MetadataNode interface.
+func (*IntConst) isMetadataNode()   {}
+func (*FloatConst) isMetadataNode() {}
+func (*NullConst) isMetadataNode()  {}
