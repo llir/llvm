@@ -33,8 +33,9 @@ import (
 // values.
 func fixModule(m *ast.Module) *ast.Module {
 	fix := &fixer{
-		globals: make(map[string]ast.NamedValue),
-		types:   make(map[string]*ast.NamedType),
+		globals:  make(map[string]ast.NamedValue),
+		types:    make(map[string]*ast.NamedType),
+		metadata: make(map[string]*ast.Metadata),
 	}
 
 	// Index type definitions.
@@ -62,6 +63,15 @@ func fixModule(m *ast.Module) *ast.Module {
 			panic(fmt.Errorf("global identifier %q already present; old `%v`, new `%v`", name, fix.globals[name], f))
 		}
 		fix.globals[name] = f
+	}
+
+	// Index metadata.
+	for _, md := range m.Metadata {
+		id := md.ID
+		if _, ok := fix.metadata[id]; ok {
+			panic(fmt.Errorf("metadata ID %q already present; old `%v`, new `%v`", id, fix.metadata[id], md))
+		}
+		fix.metadata[id] = md
 	}
 
 	// Fix type definitions.
@@ -143,6 +153,21 @@ func fixModule(m *ast.Module) *ast.Module {
 	for _, f := range m.Funcs {
 		fix.fixFunc(f)
 	}
+
+	// Resolve metadata nodes.
+	resolveMetadataNodes := func(node interface{}) {
+		p, ok := node.(*ast.MetadataNode)
+		if !ok {
+			return
+		}
+		old, ok := (*p).(*ast.MetadataIDDummy)
+		if !ok {
+			return
+		}
+		metadata := fix.getMetadata(old.ID)
+		*p = metadata
+	}
+	astutil.Walk(m, resolveMetadataNodes)
 
 	return m
 }
@@ -285,10 +310,17 @@ func (fix *fixer) fixFunc(f *ast.Function) {
 // A fixer keeps track of global and local identifiers to replace dummy values
 // with their real values.
 type fixer struct {
+	// Per module.
+
 	// types maps from type identifiers to their real types.
 	types map[string]*ast.NamedType
 	// globals maps global identifiers to their real values.
 	globals map[string]ast.NamedValue
+	// metadata maps metadata IDs to their real metadata.
+	metadata map[string]*ast.Metadata
+
+	// Per function.
+
 	// locals maps local identifiers to their real values.
 	locals map[string]ast.NamedValue
 }
@@ -309,6 +341,15 @@ func (fix *fixer) getGlobal(name string) ast.NamedValue {
 		panic(fmt.Errorf("unable to locate global identifier %q", name))
 	}
 	return global
+}
+
+// getMetadata returns the metadata of the given metadata ID.
+func (fix *fixer) getMetadata(id string) *ast.Metadata {
+	metadata, ok := fix.metadata[id]
+	if !ok {
+		panic(fmt.Errorf("unable to locate metadata ID %q", id))
+	}
+	return metadata
 }
 
 // getLocal returns the local value of the given local identifier.

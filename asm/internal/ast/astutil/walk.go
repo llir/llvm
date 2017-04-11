@@ -75,7 +75,7 @@ type walker struct {
 // traversal.
 func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{})) {
 	switch x.(type) {
-	case []*ast.Global, []*ast.Function, []*ast.Param, []ast.Type, []*ast.NamedType, []ast.Value, []ast.Constant, []*ast.BasicBlock, []ast.Instruction, []*ast.Incoming, []*ast.Case:
+	case []*ast.Global, []*ast.Function, []*ast.Param, []*ast.NamedMetadata, []*ast.Metadata, []ast.MetadataNode, []ast.Type, []*ast.NamedType, []ast.Value, []ast.Constant, []*ast.BasicBlock, []ast.Instruction, []*ast.Incoming, []*ast.Case:
 		// unhashable type.
 	case *ast.Function:
 		if w.funcScope {
@@ -98,6 +98,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 
 	switch n := x.(type) {
 	// pointers to interfaces
+	case *ast.MetadataNode:
+		w.walkBeforeAfter(*n, before, after)
 	case *ast.Type:
 		w.walkBeforeAfter(*n, before, after)
 	case *ast.Value:
@@ -121,6 +123,14 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case **ast.GlobalDummy:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.LocalDummy:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.Metadata:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.MetadataString:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.NamedMetadata:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.MetadataIDDummy:
 		w.walkBeforeAfter(*n, before, after)
 	// Types
 	case **ast.VoidType:
@@ -346,6 +356,12 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 
 	// pointers to slices
+	case *[]*ast.NamedMetadata:
+		w.walkBeforeAfter(*n, before, after)
+	case *[]*ast.Metadata:
+		w.walkBeforeAfter(*n, before, after)
+	case *[]ast.MetadataNode:
+		w.walkBeforeAfter(*n, before, after)
 	case *[]ast.Type:
 		w.walkBeforeAfter(*n, before, after)
 	case *[]*ast.NamedType:
@@ -380,6 +396,12 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		if n.Funcs != nil {
 			w.walkBeforeAfter(&n.Funcs, before, after)
 		}
+		if n.NamedMetadata != nil {
+			w.walkBeforeAfter(&n.NamedMetadata, before, after)
+		}
+		if n.Metadata != nil {
+			w.walkBeforeAfter(&n.Metadata, before, after)
+		}
 	case []*ast.Global:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
@@ -408,6 +430,26 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(&n.Type, before, after)
 	case *ast.LocalDummy:
 		w.walkBeforeAfter(&n.Type, before, after)
+	case []*ast.NamedMetadata:
+		for i := range n {
+			w.walkBeforeAfter(&n[i], before, after)
+		}
+	case []*ast.Metadata:
+		for i := range n {
+			w.walkBeforeAfter(&n[i], before, after)
+		}
+	case *ast.NamedMetadata:
+		w.walkBeforeAfter(&n.Metadata, before, after)
+	case *ast.Metadata:
+		w.walkBeforeAfter(&n.Nodes, before, after)
+	case *ast.MetadataString:
+		// nothing to do.
+	case []ast.MetadataNode:
+		for i := range n {
+			w.walkBeforeAfter(&n[i], before, after)
+		}
+	case *ast.MetadataIDDummy:
+		// nothing to do.
 	// Types
 	case []ast.Type:
 		for i := range n {
