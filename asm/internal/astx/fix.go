@@ -349,7 +349,7 @@ func (fix *fixer) getGlobal(name string) ast.NamedValue {
 func (fix *fixer) getMetadata(id string) *ast.Metadata {
 	metadata, ok := fix.metadata[id]
 	if !ok {
-		panic(fmt.Errorf("unable to locate metadata ID %q", id))
+		panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
 	}
 	return metadata
 }

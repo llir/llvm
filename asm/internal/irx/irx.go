@@ -5,6 +5,7 @@ package irx
 import (
 	"fmt"
 
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -67,7 +68,7 @@ func (m *Module) getGlobal(name string) value.Named {
 func (m *Module) getMetadata(id string) *ir.Metadata {
 	metadata, ok := m.metadata[id]
 	if !ok {
-		panic(fmt.Errorf("unable to locate metadata ID %q", id))
+		panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
 	}
 	return metadata
 }
