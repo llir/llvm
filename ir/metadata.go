@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -61,6 +62,9 @@ func (md *Metadata) Def() string {
 	for i, node := range md.Nodes {
 		if i != 0 {
 			buf.WriteString(", ")
+		}
+		if _, ok := node.(constant.Constant); ok {
+			fmt.Fprintf(buf, "%s ", node.Type())
 		}
 		buf.WriteString(node.Ident())
 	}
