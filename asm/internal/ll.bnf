@@ -210,13 +210,13 @@ TopLevelDecl
 	| MetadataDef
 ;
 
-// === [ Source filename ] =====================================================
+// --- [ Source filename ] -----------------------------------------------------
 
 SourceFilename
 	: "source_filename" "=" string_lit   << nil, nil >>
 ;
 
-// === [ Target specifiers ] ===================================================
+// --- [ Target specifiers ] ---------------------------------------------------
 
 TargetSpec
 	: "target" DataLayout     << nil, nil >>
@@ -231,14 +231,14 @@ TargetTriple
 	: "triple" "=" string_lit
 ;
 
-// === [ Type definitions ] ====================================================
+// --- [ Type definitions ] ----------------------------------------------------
 
 TypeDef
 	: LocalIdent "=" "type" Type       << astx.NewTypeDef($0, $3) >>
 	| LocalIdent "=" "type" "opaque"   << astx.NewTypeDefOpaque($0) >>
 ;
 
-// === [ Global variables ] ====================================================
+// --- [ Global variables ] ----------------------------------------------------
 
 GlobalDecl
 	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType OptCommaAlign   << astx.NewGlobalDecl($0, $4, $5) >>
@@ -253,7 +253,7 @@ Immutable
 	| "global"     << false, nil >>
 ;
 
-// === [ Functions ] ===========================================================
+// --- [ Functions ] -----------------------------------------------------------
 
 FuncDecl
 	: "declare" OptExternLinkage FuncHeader     << $2, nil >>
@@ -288,16 +288,16 @@ FuncBody
 	: "{" BasicBlocks "}"   << $1, nil >>
 ;
 
-// === [ Attribute group definitions ] =========================================
+// --- [ Attribute group definitions ] -----------------------------------------
 
 AttrGroupDef
 	: "attributes" AttrGroupID "=" "{" FuncAttrs "}"   << nil, nil >>
 ;
 
-// === [ Metadata definitions ] ================================================
+// --- [ Metadata definitions ] ------------------------------------------------
 
 NamedMetadataDef
-	: MetadataName "=" "!" "{" MetadataIDs "}"   << nil, nil >>
+	: MetadataName "=" "!" "{" MetadataIDs "}"   << astx.NewNamedMetadataDef($0, $4) >>
 ;
 
 MetadataIDs
@@ -306,12 +306,12 @@ MetadataIDs
 ;
 
 MetadataIDList
-	: MetadataID
-	| MetadataIDList "," MetadataID
+	: MetadataID                      << astx.NewMetadataIDList($0) >>
+	| MetadataIDList "," MetadataID   << astx.AppendMetadataID($0, $2) >>
 ;
 
 MetadataDef
-	: MetadataID "=" OptDistinct Metadata   << nil, nil >>
+	: MetadataID "=" OptDistinct Metadata   << astx.NewMetadataDef($0, $3) >>
 ;
 
 OptDistinct
@@ -320,7 +320,7 @@ OptDistinct
 ;
 
 Metadata
-	: "!" "{" MetadataNodes "}"
+	: "!" "{" MetadataNodes "}"   << astx.NewMetadata($2) >>
 ;
 
 MetadataNodes
@@ -329,15 +329,15 @@ MetadataNodes
 ;
 
 MetadataNodeList
-	: MetadataNode
-	| MetadataNodeList "," MetadataNode
+	: MetadataNode                        << astx.NewMetadataNodeList($0) >>
+	| MetadataNodeList "," MetadataNode   << astx.AppendMetadataNode($0, $2) >>
 ;
 
 MetadataNode
 	: Metadata
 	| MetadataID
-	| "!" string_lit
-	| Type Constant
+	| "!" string_lit   << astx.NewMetadataString($1) >>
+	| Type Constant    << astx.NewConstant($0, $1) >>
 ;
 
 // === [ Identifiers ] =========================================================
@@ -359,11 +359,11 @@ AttrGroupID
 ;
 
 MetadataName
-	: metadata_name
+	: metadata_name   << astx.NewMetadataName($0) >>
 ;
 
 MetadataID
-	: metadata_id
+	: metadata_id   << astx.NewMetadataID($0) >>
 ;
 
 // === [ Types ] ===============================================================
