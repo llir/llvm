@@ -28,6 +28,23 @@ func Local(name string) string {
 	return "%" + EscapeIdent(name)
 }
 
+// Metadata encodes a metadata name to its LLVM IR assembly representation.
+//
+// Examples:
+//    "foo" -> "!foo"
+//    "a b" -> `!a\20b`
+//    "世" -> `!\E4\B8\96`
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func Metadata(name string) string {
+	isMetadataChar := func(b byte) bool {
+		const metadataChar = tail + `\`
+		return strings.IndexByte(metadataChar, b) != -1
+	}
+	return "!" + Escape(name, isMetadataChar)
+}
+
 const (
 	// decimal specifies the decimal digit characters.
 	decimal = "0123456789"
@@ -83,15 +100,15 @@ func EscapeIdent(s string) string {
 	return `"` + string(buf) + `"`
 }
 
-// Escape replaces hexadecimal escape sequences (\xx) in s with their
-// corresponding characters.
-func Escape(s string) string {
+// Escape replaces any characters categorized as invalid by the valid function
+// with corresponding hexadecimal escape sequence (\XX).
+func Escape(s string, valid func(b byte) bool) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 		switch {
-		case !isPrint(b):
+		case !valid(b):
 			// Two extra bytes are required for each invalid byte; e.g.
 			//    "#" -> `\23`
 			//    "世" -> `\E4\B8\96`
@@ -111,7 +128,7 @@ func Escape(s string) string {
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 		switch {
-		case !isPrint(b):
+		case !valid(b):
 			buf[j] = '\\'
 			buf[j+1] = hextable[b>>4]
 			buf[j+2] = hextable[b&0x0F]
@@ -122,11 +139,6 @@ func Escape(s string) string {
 		}
 	}
 	return string(buf)
-}
-
-// isPrint reports whether the given byte is printable.
-func isPrint(b byte) bool {
-	return ' ' <= b && b <= '~' && b != '"' && b != '\\'
 }
 
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their
