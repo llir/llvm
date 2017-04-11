@@ -104,3 +104,18 @@ type NamedMetadata struct {
 	// Associated metadata.
 	Metadata []*Metadata
 }
+
+// Def returns the LLVM syntax representation of the definition of the named
+// metadata.
+func (md *NamedMetadata) Def() string {
+	buf := &bytes.Buffer{}
+	buf.WriteString("!{")
+	for i, metadata := range md.Metadata {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(metadata.Ident())
+	}
+	buf.WriteString("}")
+	return buf.String()
+}

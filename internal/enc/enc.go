@@ -1,6 +1,9 @@
 package enc
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // Global encodes a global name to its LLVM IR assembly representation.
 //
@@ -148,6 +151,23 @@ func Escape(s string, valid func(b byte) bool) string {
 		}
 	}
 	return string(buf)
+}
+
+// Unquote interprets s as a double-quoted string literal, returning the string
+// value that s quotes.
+func Unquote(s string) string {
+	if len(s) < 2 {
+		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
+	}
+	if !strings.HasPrefix(s, `"`) {
+		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character prefix", s))
+	}
+	if !strings.HasSuffix(s, `"`) {
+		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character suffix", s))
+	}
+	// Skip double-quotes.
+	s = s[1 : len(s)-1]
+	return Unescape(s)
 }
 
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their

@@ -382,6 +382,7 @@ func NewMetadataString(val interface{}) (*ast.MetadataString, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	v = enc.Unquote(v)
 	return &ast.MetadataString{Val: v}, nil
 
 }
@@ -1101,9 +1102,7 @@ func NewCharArrayConst(str interface{}) (*ast.CharArrayConst, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	// Skip double-quotes.
-	s = s[1 : len(s)-1]
-	s = enc.Unescape(s)
+	s = enc.Unquote(s)
 	c := &ast.CharArrayConst{Type: &ast.TypeDummy{}, Lit: s}
 	return c, nil
 }

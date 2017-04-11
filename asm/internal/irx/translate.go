@@ -92,6 +92,19 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		m.globals[name] = f
 	}
 
+	// Index metadata.
+	for _, old := range module.Metadata {
+		id := old.ID
+		if _, ok := m.metadata[id]; ok {
+			panic(fmt.Errorf("metadata ID %q already present; old `%v`, new `%v`", id, m.metadata[id], old))
+		}
+		md := &ir.Metadata{
+			ID: id,
+		}
+		m.Metadata = append(m.Metadata, md)
+		m.metadata[id] = md
+	}
+
 	// Fix type definitions.
 	for _, typ := range module.Types {
 		m.typeDef(typ)
@@ -105,6 +118,27 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 	// Fix functions.
 	for _, f := range module.Funcs {
 		m.funcDecl(f)
+	}
+
+	// Fix named metadata definitions.
+	for _, old := range module.NamedMetadata {
+		md := &ir.NamedMetadata{
+			Name: old.Name,
+		}
+		for _, oldMetadata := range old.Metadata {
+			old, ok := oldMetadata.(*ast.Metadata)
+			if !ok {
+				panic(fmt.Errorf("invalid metadata type; expected *ast.Metadata, got %T", oldMetadata))
+			}
+			metadata := m.getMetadata(old.ID)
+			md.Metadata = append(md.Metadata, metadata)
+		}
+		m.NamedMetadata = append(m.NamedMetadata, md)
+	}
+
+	// Fix metadata definition.
+	for _, md := range module.Metadata {
+		m.metadataDef(md)
 	}
 
 	if len(m.errs) > 0 {
@@ -566,6 +600,40 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 		oldBlock := oldFunc.Blocks[i]
 		block := f.Blocks[i]
 		m.basicBlock(oldBlock, block)
+	}
+}
+
+// === [ Metadata definitions ] ================================================
+
+// metadataDef translates the given metadata definition to LLVM IR, emitting
+// code to m.
+func (m *Module) metadataDef(oldMetadata *ast.Metadata) {
+	md := m.getMetadata(oldMetadata.ID)
+	for _, oldNode := range oldMetadata.Nodes {
+		node := m.metadataNode(oldNode)
+		md.Nodes = append(md.Nodes, node)
+	}
+}
+
+// metadataNode returns the corresponding LLVM IR metadata node of the given
+// metadata node.
+func (m *Module) metadataNode(oldNode ast.MetadataNode) ir.MetadataNode {
+	switch oldNode := oldNode.(type) {
+	case *ast.Metadata:
+		return m.getMetadata(oldNode.ID)
+	case *ast.MetadataString:
+		return &ir.MetadataString{
+			Val: oldNode.Val,
+		}
+	case ast.Constant:
+		c := m.irConstant(oldNode)
+		md, ok := c.(ir.MetadataNode)
+		if !ok {
+			panic(fmt.Sprintf("invalid metadata node type; expected ir.MetadataNode, got %T", c))
+		}
+		return md
+	default:
+		panic(fmt.Errorf("support for metadata node type %T not yet implemented", oldNode))
 	}
 }
 

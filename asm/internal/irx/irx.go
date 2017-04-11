@@ -14,13 +14,22 @@ import (
 type Module struct {
 	// Module being generated.
 	*ir.Module
+
+	// Per module.
+
 	// types maps from type identifiers to their corresponding LLVM IR types.
 	types map[string]types.Type
 	// globals maps global identifiers to their corresponding LLVM IR values.
 	globals map[string]value.Named
+	// metadata maps metadata IDs to their corresponding LLVM IR metadata.
+	metadata map[string]*ir.Metadata
+
+	// Per function.
+
 	// locals maps local identifiers to their corresponding LLVM IR values; reset
 	// once per function definition.
 	locals map[string]value.Named
+
 	// List of errors encountered during translation.
 	errs []error
 }
@@ -29,9 +38,10 @@ type Module struct {
 func NewModule() *Module {
 	m := ir.NewModule()
 	return &Module{
-		Module:  m,
-		types:   make(map[string]types.Type),
-		globals: make(map[string]value.Named),
+		Module:   m,
+		types:    make(map[string]types.Type),
+		globals:  make(map[string]value.Named),
+		metadata: make(map[string]*ir.Metadata),
 	}
 }
 
@@ -51,6 +61,15 @@ func (m *Module) getGlobal(name string) value.Named {
 		panic(fmt.Errorf("unable to locate global identifier %q", name))
 	}
 	return global
+}
+
+// getMetadata returns the metadata of the given metadata ID.
+func (m *Module) getMetadata(id string) *ir.Metadata {
+	metadata, ok := m.metadata[id]
+	if !ok {
+		panic(fmt.Errorf("unable to locate metadata ID %q", id))
+	}
+	return metadata
 }
 
 // getLocal returns the local value of the given local identifier.

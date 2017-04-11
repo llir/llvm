@@ -26,6 +26,10 @@ type Module struct {
 	Globals []*Global
 	// Functions of the module.
 	Funcs []*Function
+	// Named metadata of the module.
+	NamedMetadata []*NamedMetadata
+	// Metadata of the module.
+	Metadata []*Metadata
 }
 
 // NewModule returns a new LLVM IR module.
@@ -45,6 +49,14 @@ func (m *Module) String() string {
 	}
 	for _, f := range m.Funcs {
 		fmt.Fprintln(buf, f)
+	}
+	for _, md := range m.NamedMetadata {
+		name := enc.Metadata(md.Name)
+		fmt.Fprintf(buf, "%s = %s\n", name, md.Def())
+	}
+	for _, md := range m.Metadata {
+		id := enc.Metadata(md.ID)
+		fmt.Fprintf(buf, "%s = %s\n", id, md.Def())
 	}
 	return buf.String()
 }
