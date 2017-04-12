@@ -169,9 +169,31 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
 
 // --- [ Functions ] -----------------------------------------------------------
 
-// NewFuncDecl returns a new function declaration based on the given return
-// type, function name and parameters.
-func NewFuncDecl(ret, name, params interface{}) (*ast.Function, error) {
+// NewFuncDecl returns a new function declaration based on the given attached
+// metadata and function header.
+func NewFuncDecl(mds, header interface{}) (*ast.Function, error) {
+	f, ok := header.(*ast.Function)
+	if !ok {
+		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
+	}
+	ms, ok := mds.([]*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	}
+	unique := make(map[string]ast.MetadataNode)
+	for _, md := range ms {
+		if prev, ok := unique[md.Name]; ok {
+			return nil, errors.Errorf("metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+		}
+		unique[md.Name] = md.Metadata
+		f.Metadata = append(f.Metadata, md)
+	}
+	return f, nil
+}
+
+// NewFuncHeader returns a new function header based on the given return type,
+// function name and parameters.
+func NewFuncHeader(ret, name, params interface{}) (*ast.Function, error) {
 	r, ok := ret.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid function return type; expected ast.Type, got %T", ret)
@@ -200,11 +222,23 @@ func NewFuncDecl(ret, name, params interface{}) (*ast.Function, error) {
 }
 
 // NewFuncDef returns a new function definition based on the given function
-// header and body.
-func NewFuncDef(header, body interface{}) (*ast.Function, error) {
+// header, attached metadata and body.
+func NewFuncDef(header, mds, body interface{}) (*ast.Function, error) {
 	f, ok := header.(*ast.Function)
 	if !ok {
 		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
+	}
+	ms, ok := mds.([]*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	}
+	unique := make(map[string]ast.MetadataNode)
+	for _, md := range ms {
+		if prev, ok := unique[md.Name]; ok {
+			return nil, errors.Errorf("metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+		}
+		unique[md.Name] = md.Metadata
+		f.Metadata = append(f.Metadata, md)
 	}
 	blocks, ok := body.([]*ast.BasicBlock)
 	if !ok {
@@ -2682,4 +2716,42 @@ func getInt64(lit interface{}) (int64, error) {
 		return 0, errors.WithStack(err)
 	}
 	return n, nil
+}
+
+// NewAttachedMDList returns a new attached metadata list based on the given
+// attached metadata.
+func NewAttachedMDList(md interface{}) ([]*ast.AttachedMD, error) {
+	m, ok := md.(*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata type; expected *ast.AttachedMD, got %T", md)
+	}
+	return []*ast.AttachedMD{m}, nil
+}
+
+// AppendAttachedMD appends the given attached metadata to the attached metadata
+// list.
+func AppendAttachedMD(mds, md interface{}) ([]*ast.AttachedMD, error) {
+	ms, ok := mds.([]*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	}
+	m, ok := md.(*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata type; expected *ast.AttachedMD, got %T", md)
+	}
+	return append(ms, m), nil
+}
+
+// NewAttachedMD returns a new attached metadata based on the given metadata
+// name and metadata.
+func NewAttachedMD(name, metadata interface{}) (*ast.AttachedMD, error) {
+	n, ok := name.(*MetadataName)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata name type; expected *astx.MetadataName, got %T", name)
+	}
+	md, ok := metadata.(*ast.Metadata)
+	if !ok {
+		return nil, errors.Errorf("invalid metadata type; expected *ast.Metadata, got %T", md)
+	}
+	return &ast.AttachedMD{Name: n.name, Metadata: md}, nil
 }

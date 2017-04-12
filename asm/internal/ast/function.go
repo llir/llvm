@@ -18,6 +18,8 @@ type Function struct {
 	Sig *FuncType
 	// Basic blocks of the function; or nil if defined externally.
 	Blocks []*BasicBlock
+	// Metadata attached to the function.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.

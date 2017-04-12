@@ -52,6 +52,16 @@ type NamedMetadata struct {
 	Metadata []MetadataNode
 }
 
+// AttachedMD represents attached metadata.
+type AttachedMD struct {
+	// Name associated with the attached metadata (e.g. !dbg).
+	Name string
+	// Metadata; may be *ast.MetadataIDDummy or *ast.Metadata during translation,
+	// *ast.MetadataIDDummy are later replaced with corresponding *ast.Metadata
+	// by astx.fixModule.
+	Metadata MetadataNode
+}
+
 // isValue ensures that only values can be assigned to the ast.Value interface.
 func (*Metadata) isValue()       {}
 func (*MetadataString) isValue() {}

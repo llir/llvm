@@ -83,10 +83,11 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		}
 		typ := types.NewPointer(sig)
 		f := &ir.Function{
-			Parent: m.Module,
-			Name:   name,
-			Typ:    typ,
-			Sig:    sig,
+			Parent:   m.Module,
+			Name:     name,
+			Typ:      typ,
+			Sig:      sig,
+			Metadata: make(map[string]*ir.Metadata),
 		}
 		m.Funcs = append(m.Funcs, f)
 		m.globals[name] = f
@@ -284,6 +285,26 @@ func (m *Module) globalDecl(old *ast.Global) {
 // funcDecl translates the given function declaration to LLVM IR, emitting code
 // to m.
 func (m *Module) funcDecl(oldFunc *ast.Function) {
+	v := m.getGlobal(oldFunc.Name)
+	f, ok := v.(*ir.Function)
+	if !ok {
+		panic(fmt.Errorf("invalid function type for function %s; expected *ir.Function, got %T", enc.Global(oldFunc.Name), v))
+	}
+
+	// Fix attached metadata.
+	for _, oldMetadata := range oldFunc.Metadata {
+		key := oldMetadata.Name
+		metadata := m.metadataNode(oldMetadata.Metadata)
+		if prev, ok := f.Metadata[key]; ok {
+			panic(fmt.Errorf("metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
+		}
+		md, ok := metadata.(*ir.Metadata)
+		if !ok {
+			panic(fmt.Errorf("invalid metadata type; expected *ir.Metadata, got %T", metadata))
+		}
+		f.Metadata[key] = md
+	}
+
 	// Early exit if function declaration.
 	if len(oldFunc.Blocks) < 1 {
 		return
@@ -291,12 +312,6 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 
 	// Reset locals.
 	m.locals = make(map[string]value.Named)
-
-	v := m.getGlobal(oldFunc.Name)
-	f, ok := v.(*ir.Function)
-	if !ok {
-		panic(fmt.Errorf("invalid function type for function %s; expected *ir.Function, got %T", enc.Global(oldFunc.Name), v))
-	}
 
 	// Index function parameters.
 	for _, param := range f.Params() {

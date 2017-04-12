@@ -75,7 +75,7 @@ type walker struct {
 // traversal.
 func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{})) {
 	switch x.(type) {
-	case []*ast.Global, []*ast.Function, []*ast.Param, []*ast.NamedMetadata, []*ast.Metadata, []ast.MetadataNode, []ast.Type, []*ast.NamedType, []ast.Value, []ast.Constant, []*ast.BasicBlock, []ast.Instruction, []*ast.Incoming, []*ast.Case:
+	case []*ast.Global, []*ast.Function, []*ast.Param, []*ast.NamedMetadata, []*ast.Metadata, []ast.MetadataNode, []*ast.AttachedMD, []ast.Type, []*ast.NamedType, []ast.Value, []ast.Constant, []*ast.BasicBlock, []ast.Instruction, []*ast.Incoming, []*ast.Case:
 		// unhashable type.
 	case *ast.Function:
 		if w.funcScope {
@@ -131,6 +131,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case **ast.NamedMetadata:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.MetadataIDDummy:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.AttachedMD:
 		w.walkBeforeAfter(*n, before, after)
 	// Types
 	case **ast.VoidType:
@@ -362,6 +364,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case *[]ast.MetadataNode:
 		w.walkBeforeAfter(*n, before, after)
+	case *[]*ast.AttachedMD:
+		w.walkBeforeAfter(*n, before, after)
 	case *[]ast.Type:
 		w.walkBeforeAfter(*n, before, after)
 	case *[]*ast.NamedType:
@@ -420,6 +424,9 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		if n.Blocks != nil {
 			w.walkBeforeAfter(&n.Blocks, before, after)
 		}
+		if n.Metadata != nil {
+			w.walkBeforeAfter(&n.Metadata, before, after)
+		}
 	case []*ast.Param:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
@@ -448,6 +455,12 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
 		}
+	case []*ast.AttachedMD:
+		for i := range n {
+			w.walkBeforeAfter(&n[i], before, after)
+		}
+	case *ast.AttachedMD:
+		w.walkBeforeAfter(&n.Metadata, before, after)
 	case *ast.MetadataIDDummy:
 		// nothing to do.
 	// Types
