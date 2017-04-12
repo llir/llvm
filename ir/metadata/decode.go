@@ -10,6 +10,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Unmarshaler is the interface implemented by types that can unmarshal an LLVM
+// IR metadata description of themselves.
+type Unmarshaler interface {
+	// UnmarshalMetadata unmarshals the metadata node into the value.
+	UnmarshalMetadata(node Node) error
+}
+
 // Unmarshal parses the LLVM IR metadata node and stores the result in the value
 // pointed to by v.
 func Unmarshal(node Node, v interface{}) error {
@@ -41,7 +48,7 @@ func (d *decoder) unmarshal(node Node, v interface{}) error {
 	return nil
 }
 
-// value decodes a metadata node into the value.
+// value decodes the metadata node into the value.
 func (d *decoder) value(node Node, v reflect.Value) error {
 	u, rv := d.indirect(v)
 	if u != nil {
@@ -61,6 +68,7 @@ func (d *decoder) value(node Node, v reflect.Value) error {
 	}
 }
 
+// string decodes the metadata string into the value.
 func (d *decoder) string(node Node, v reflect.Value) error {
 	n, ok := node.(*Metadata)
 	if !ok {
@@ -80,6 +88,9 @@ func (d *decoder) string(node Node, v reflect.Value) error {
 // indirect walks down v allocating pointers as needed, until it gets to a non-
 // pointer. if it encounters an Unmarshaler, indirect stops and returns that.
 func (d *decoder) indirect(v reflect.Value) (Unmarshaler, reflect.Value) {
+	// Note, the indirect method has been copied (with minor modifications) from
+	// go/src/encoding/json/decode.go.
+
 	// If v is a named type and is addressable, start with its address, so that
 	// if the type has pointer methods, we find them.
 	if v.Kind() != reflect.Ptr && v.Type().Name() != "" && v.CanAddr() {
@@ -111,11 +122,4 @@ func (d *decoder) indirect(v reflect.Value) (Unmarshaler, reflect.Value) {
 		v = v.Elem()
 	}
 	return nil, v
-}
-
-// Unmarshaler is the interface implemented by types that can unmarshal an LLVM
-// IR metadata description of themselves.
-type Unmarshaler interface {
-	// UnmarshalMetadata unmarshals the metadata node into the value.
-	UnmarshalMetadata(node Node) error
 }

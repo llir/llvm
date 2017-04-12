@@ -2788,14 +2788,19 @@ func AppendAttachedMD(mds, md interface{}) ([]*ast.AttachedMD, error) {
 
 // NewAttachedMD returns a new attached metadata based on the given metadata
 // name and metadata.
-func NewAttachedMD(name, metadata interface{}) (*ast.AttachedMD, error) {
+func NewAttachedMD(name, md interface{}) (*ast.AttachedMD, error) {
 	n, ok := name.(*MetadataName)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata name type; expected *astx.MetadataName, got %T", name)
 	}
-	md, ok := metadata.(*ast.Metadata)
-	if !ok {
-		return nil, errors.Errorf("invalid metadata type; expected *ast.Metadata, got %T", md)
+	var node ast.MetadataNode
+	switch md := md.(type) {
+	case *ast.Metadata:
+		node = md
+	case *ast.MetadataIDDummy:
+		node = md
+	default:
+		return nil, errors.Errorf("invalid metadata type; expected *ast.Metadata or *ast.MetadataIDDummy, got %T", md)
 	}
-	return &ast.AttachedMD{Name: n.name, Metadata: md}, nil
+	return &ast.AttachedMD{Name: n.name, Metadata: node}, nil
 }
