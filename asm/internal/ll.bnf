@@ -241,16 +241,26 @@ TypeDef
 // --- [ Global variables ] ----------------------------------------------------
 
 GlobalDecl
-	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType OptCommaAlign   << astx.NewGlobalDecl($0, $4, $5) >>
+	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType GlobalOptions   << astx.NewGlobalDecl($0, $4, $5, $6) >>
 ;
 
 GlobalDef
-	: GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant OptCommaAlign   << astx.NewGlobalDef($0, $4, $5, $6) >>
+	: GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant GlobalOptions   << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
 ;
 
 Immutable
 	: "constant"   << true, nil >>
 	| "global"     << false, nil >>
+;
+
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 rune lookahead.
+//
+// Structured in this way to allow for naiive 1 rune lookahead parser
+// generators.
+GlobalOptions
+	: "," Align CommaAttachedMDs   << $2, nil >>
+	| CommaAttachedMDs             << $0, nil >>
 ;
 
 // --- [ Functions ] -----------------------------------------------------------
@@ -1801,4 +1811,14 @@ AttachedMDList
 
 AttachedMD
 	: MetadataName Metadata   << astx.NewAttachedMD($0, $1) >>
+;
+
+CommaAttachedMDs
+	: empty
+	| CommaAttachedMDList
+;
+
+CommaAttachedMDList
+	: "," AttachedMD                       << astx.NewAttachedMDList($1) >>
+	| CommaAttachedMDList "," AttachedMD   << astx.AppendAttachedMD($0, $2) >>
 ;
