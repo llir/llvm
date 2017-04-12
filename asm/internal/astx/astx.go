@@ -134,9 +134,14 @@ func NewGlobalDecl(name, immutable, typ, mds interface{}) (*ast.Global, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid content type; expected ast.Type, got %T", typ)
 	}
-	ms, ok := mds.([]*ast.AttachedMD)
-	if !ok {
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	var ms []*ast.AttachedMD
+	switch mds := mds.(type) {
+	case []*ast.AttachedMD:
+		ms = mds
+	case nil:
+		// no attached metadata.
+	default:
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
 	}
 	global := &ast.Global{Name: n.name, Content: t}
 	global.Immutable = imm
@@ -174,9 +179,14 @@ func NewGlobalDef(name, immutable, typ, val, mds interface{}) (*ast.Global, erro
 	if !ok {
 		return nil, errors.Errorf("invalid init type; expected ast.Constant, got %T", init)
 	}
-	ms, ok := mds.([]*ast.AttachedMD)
-	if !ok {
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	var ms []*ast.AttachedMD
+	switch mds := mds.(type) {
+	case []*ast.AttachedMD:
+		ms = mds
+	case nil:
+		// no attached metadata.
+	default:
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
 	}
 	global := &ast.Global{Name: n.name, Content: t, Init: i}
 	global.Immutable = imm
@@ -200,9 +210,14 @@ func NewFuncDecl(mds, header interface{}) (*ast.Function, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
 	}
-	ms, ok := mds.([]*ast.AttachedMD)
-	if !ok {
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	var ms []*ast.AttachedMD
+	switch mds := mds.(type) {
+	case []*ast.AttachedMD:
+		ms = mds
+	case nil:
+		// no attached metadata.
+	default:
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
 	}
 	unique := make(map[string]ast.MetadataNode)
 	for _, md := range ms {
@@ -252,9 +267,14 @@ func NewFuncDef(header, mds, body interface{}) (*ast.Function, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
 	}
-	ms, ok := mds.([]*ast.AttachedMD)
-	if !ok {
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	var ms []*ast.AttachedMD
+	switch mds := mds.(type) {
+	case []*ast.AttachedMD:
+		ms = mds
+	case nil:
+		// no attached metadata.
+	default:
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
 	}
 	unique := make(map[string]ast.MetadataNode)
 	for _, md := range ms {
