@@ -415,6 +415,9 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		if n.Init != nil {
 			w.walkBeforeAfter(&n.Init, before, after)
 		}
+		if n.Metadata != nil {
+			w.walkBeforeAfter(&n.Metadata, before, after)
+		}
 	case []*ast.Function:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)

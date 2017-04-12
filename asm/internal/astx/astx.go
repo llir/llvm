@@ -120,8 +120,8 @@ func NewTypeDefOpaque(name interface{}) (*ast.NamedType, error) {
 // --- [ Global variables ] ----------------------------------------------------
 
 // NewGlobalDecl returns a new global variable declaration based on the given
-// global variable name, immutability and type.
-func NewGlobalDecl(name, immutable, typ interface{}) (*ast.Global, error) {
+// global variable name, immutability, type and attached metadata.
+func NewGlobalDecl(name, immutable, typ, mds interface{}) (*ast.Global, error) {
 	n, ok := name.(*GlobalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid global name type; expected *astx.GlobalIdent, got %T", name)
@@ -134,14 +134,26 @@ func NewGlobalDecl(name, immutable, typ interface{}) (*ast.Global, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid content type; expected ast.Type, got %T", typ)
 	}
+	ms, ok := mds.([]*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	}
 	global := &ast.Global{Name: n.name, Content: t}
 	global.Immutable = imm
+	unique := make(map[string]ast.MetadataNode)
+	for _, md := range ms {
+		if prev, ok := unique[md.Name]; ok {
+			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+		}
+		unique[md.Name] = md.Metadata
+		global.Metadata = append(global.Metadata, md)
+	}
 	return global, nil
 }
 
 // NewGlobalDef returns a new global variable definition based on the given
-// global variable name, immutability, type and value.
-func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
+// global variable name, immutability, type, value and attached metadata.
+func NewGlobalDef(name, immutable, typ, val, mds interface{}) (*ast.Global, error) {
 	n, ok := name.(*GlobalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid global name type; expected *astx.GlobalIdent, got %T", name)
@@ -162,8 +174,20 @@ func NewGlobalDef(name, immutable, typ, val interface{}) (*ast.Global, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid init type; expected ast.Constant, got %T", init)
 	}
+	ms, ok := mds.([]*ast.AttachedMD)
+	if !ok {
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD, got %T", mds)
+	}
 	global := &ast.Global{Name: n.name, Content: t, Init: i}
 	global.Immutable = imm
+	unique := make(map[string]ast.MetadataNode)
+	for _, md := range ms {
+		if prev, ok := unique[md.Name]; ok {
+			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+		}
+		unique[md.Name] = md.Metadata
+		global.Metadata = append(global.Metadata, md)
+	}
 	return global, nil
 }
 
@@ -183,7 +207,7 @@ func NewFuncDecl(mds, header interface{}) (*ast.Function, error) {
 	unique := make(map[string]ast.MetadataNode)
 	for _, md := range ms {
 		if prev, ok := unique[md.Name]; ok {
-			return nil, errors.Errorf("metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
 		}
 		unique[md.Name] = md.Metadata
 		f.Metadata = append(f.Metadata, md)
@@ -235,7 +259,7 @@ func NewFuncDef(header, mds, body interface{}) (*ast.Function, error) {
 	unique := make(map[string]ast.MetadataNode)
 	for _, md := range ms {
 		if prev, ok := unique[md.Name]; ok {
-			return nil, errors.Errorf("metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
 		}
 		unique[md.Name] = md.Metadata
 		f.Metadata = append(f.Metadata, md)

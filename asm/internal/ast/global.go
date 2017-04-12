@@ -11,6 +11,8 @@ type Global struct {
 	Init Constant
 	// Immutability of the global variable.
 	Immutable bool
+	// Metadata attached to the global variable.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.

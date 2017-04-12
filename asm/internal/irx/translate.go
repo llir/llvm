@@ -59,7 +59,8 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 			panic(fmt.Errorf("global identifier %q already present; old `%v`, new `%v`", name, m.globals[name], old))
 		}
 		global := &ir.Global{
-			Name: name,
+			Name:     name,
+			Metadata: make(map[string]*ir.Metadata),
 		}
 		// Store preliminary content type.
 		content := m.irType(old.Content)
@@ -266,6 +267,21 @@ func (m *Module) globalDecl(old *ast.Global) {
 	if !ok {
 		panic(fmt.Errorf("invalid global type; expected *ir.Global, got %T", v))
 	}
+
+	// Fix attached metadata.
+	for _, oldMetadata := range old.Metadata {
+		key := oldMetadata.Name
+		metadata := m.metadataNode(oldMetadata.Metadata)
+		if prev, ok := global.Metadata[key]; ok {
+			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
+		}
+		md, ok := metadata.(*ir.Metadata)
+		if !ok {
+			panic(fmt.Errorf("invalid metadata type; expected *ir.Metadata, got %T", metadata))
+		}
+		global.Metadata[key] = md
+	}
+
 	if old.Init != nil {
 		init := m.irConstant(old.Init)
 		// TODO: Verify that two circularly referential globals both get the
@@ -296,7 +312,7 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 		key := oldMetadata.Name
 		metadata := m.metadataNode(oldMetadata.Metadata)
 		if prev, ok := f.Metadata[key]; ok {
-			panic(fmt.Errorf("metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
+			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
 		}
 		md, ok := metadata.(*ir.Metadata)
 		if !ok {
