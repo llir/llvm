@@ -2,6 +2,7 @@ package constant_test
 
 import (
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 )
 
 // Validate that the relevant types satisfy the constant.Constant interface.
@@ -60,4 +61,58 @@ var (
 	_ constant.Expr = &constant.ExprICmp{}
 	_ constant.Expr = &constant.ExprFCmp{}
 	_ constant.Expr = &constant.ExprSelect{}
+)
+
+// Validate that the relevant types satisfy the metadata.Node interface.
+var (
+	// Simple constants.
+	_ metadata.Node = &constant.Int{}
+	_ metadata.Node = &constant.Float{}
+	_ metadata.Node = &constant.Null{}
+	// Complex constants.
+	_ metadata.Node = &constant.Vector{}
+	_ metadata.Node = &constant.Array{}
+	_ metadata.Node = &constant.Struct{}
+	_ metadata.Node = &constant.ZeroInitializer{}
+	// Constant expressions.
+	// Binary instructions
+	_ metadata.Node = &constant.ExprAdd{}
+	_ metadata.Node = &constant.ExprFAdd{}
+	_ metadata.Node = &constant.ExprSub{}
+	_ metadata.Node = &constant.ExprFSub{}
+	_ metadata.Node = &constant.ExprMul{}
+	_ metadata.Node = &constant.ExprFMul{}
+	_ metadata.Node = &constant.ExprUDiv{}
+	_ metadata.Node = &constant.ExprSDiv{}
+	_ metadata.Node = &constant.ExprFDiv{}
+	_ metadata.Node = &constant.ExprURem{}
+	_ metadata.Node = &constant.ExprSRem{}
+	_ metadata.Node = &constant.ExprFRem{}
+	// Bitwise instructions
+	_ metadata.Node = &constant.ExprShl{}
+	_ metadata.Node = &constant.ExprLShr{}
+	_ metadata.Node = &constant.ExprAShr{}
+	_ metadata.Node = &constant.ExprAnd{}
+	_ metadata.Node = &constant.ExprOr{}
+	_ metadata.Node = &constant.ExprXor{}
+	// Memory instructions
+	_ metadata.Node = &constant.ExprGetElementPtr{}
+	// Conversion instructions
+	_ metadata.Node = &constant.ExprTrunc{}
+	_ metadata.Node = &constant.ExprZExt{}
+	_ metadata.Node = &constant.ExprSExt{}
+	_ metadata.Node = &constant.ExprFPTrunc{}
+	_ metadata.Node = &constant.ExprFPExt{}
+	_ metadata.Node = &constant.ExprFPToUI{}
+	_ metadata.Node = &constant.ExprFPToSI{}
+	_ metadata.Node = &constant.ExprUIToFP{}
+	_ metadata.Node = &constant.ExprSIToFP{}
+	_ metadata.Node = &constant.ExprPtrToInt{}
+	_ metadata.Node = &constant.ExprIntToPtr{}
+	_ metadata.Node = &constant.ExprBitCast{}
+	_ metadata.Node = &constant.ExprAddrSpaceCast{}
+	// Other instructions
+	_ metadata.Node = &constant.ExprICmp{}
+	_ metadata.Node = &constant.ExprFCmp{}
+	_ metadata.Node = &constant.ExprSelect{}
 )

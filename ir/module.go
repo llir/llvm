@@ -14,6 +14,7 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -27,9 +28,9 @@ type Module struct {
 	// Functions of the module.
 	Funcs []*Function
 	// Named metadata of the module.
-	NamedMetadata []*NamedMetadata
+	NamedMetadata []*metadata.Named
 	// Metadata of the module.
-	Metadata []*Metadata
+	Metadata []*metadata.Metadata
 }
 
 // NewModule returns a new LLVM IR module.

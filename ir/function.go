@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -38,7 +39,7 @@ type Function struct {
 	Blocks []*BasicBlock
 	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
 	// function.
-	Metadata map[string]*Metadata
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFunction returns a new function based on the given function name, return
@@ -50,7 +51,7 @@ func NewFunction(name string, ret types.Type, params ...*types.Param) *Function 
 		Name:     name,
 		Typ:      typ,
 		Sig:      sig,
-		Metadata: make(map[string]*Metadata),
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -77,6 +78,10 @@ func (f *Function) SetName(name string) {
 // Immutable ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*Function) Immutable() {}
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// metadata.Node interface.
+func (*Function) MetadataNode() {}
 
 // String returns the LLVM syntax representation of the function.
 func (f *Function) String() string {

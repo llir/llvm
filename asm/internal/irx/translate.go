@@ -28,6 +28,7 @@ import (
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -60,7 +61,7 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		}
 		global := &ir.Global{
 			Name:     name,
-			Metadata: make(map[string]*ir.Metadata),
+			Metadata: make(map[string]*metadata.Metadata),
 		}
 		// Store preliminary content type.
 		content := m.irType(old.Content)
@@ -88,7 +89,7 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 			Name:     name,
 			Typ:      typ,
 			Sig:      sig,
-			Metadata: make(map[string]*ir.Metadata),
+			Metadata: make(map[string]*metadata.Metadata),
 		}
 		m.Funcs = append(m.Funcs, f)
 		m.globals[name] = f
@@ -100,7 +101,7 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		if _, ok := m.metadata[id]; ok {
 			panic(fmt.Errorf("metadata ID %q already present; old `%v`, new `%v`", id, m.metadata[id], old))
 		}
-		md := &ir.Metadata{
+		md := &metadata.Metadata{
 			ID: id,
 		}
 		m.Metadata = append(m.Metadata, md)
@@ -124,7 +125,7 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 
 	// Fix named metadata definitions.
 	for _, old := range module.NamedMetadata {
-		md := &ir.NamedMetadata{
+		md := &metadata.Named{
 			Name: old.Name,
 		}
 		for _, oldMetadata := range old.Metadata {
@@ -271,13 +272,13 @@ func (m *Module) globalDecl(old *ast.Global) {
 	// Fix attached metadata.
 	for _, oldMetadata := range old.Metadata {
 		key := oldMetadata.Name
-		metadata := m.metadataNode(oldMetadata.Metadata)
+		node := m.metadataNode(oldMetadata.Metadata)
 		if prev, ok := global.Metadata[key]; ok {
 			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
 		}
-		md, ok := metadata.(*ir.Metadata)
+		md, ok := node.(*metadata.Metadata)
 		if !ok {
-			panic(fmt.Errorf("invalid metadata type; expected *ir.Metadata, got %T", metadata))
+			panic(fmt.Errorf("invalid metadata type; expected *metadata.Metadata, got %T", node))
 		}
 		global.Metadata[key] = md
 	}
@@ -310,13 +311,13 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 	// Fix attached metadata.
 	for _, oldMetadata := range oldFunc.Metadata {
 		key := oldMetadata.Name
-		metadata := m.metadataNode(oldMetadata.Metadata)
+		node := m.metadataNode(oldMetadata.Metadata)
 		if prev, ok := f.Metadata[key]; ok {
 			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
 		}
-		md, ok := metadata.(*ir.Metadata)
+		md, ok := node.(*metadata.Metadata)
 		if !ok {
-			panic(fmt.Errorf("invalid metadata type; expected *ir.Metadata, got %T", metadata))
+			panic(fmt.Errorf("invalid metadata type; expected *metadata.Metadata, got %T", node))
 		}
 		f.Metadata[key] = md
 	}
@@ -648,28 +649,28 @@ func (m *Module) metadataDef(oldMetadata *ast.Metadata) {
 
 // metadataNode returns the corresponding LLVM IR metadata node of the given
 // metadata node.
-func (m *Module) metadataNode(oldNode ast.MetadataNode) ir.MetadataNode {
+func (m *Module) metadataNode(oldNode ast.MetadataNode) metadata.Node {
 	switch oldNode := oldNode.(type) {
 	case *ast.Metadata:
 		if len(oldNode.ID) > 0 {
 			return m.getMetadata(oldNode.ID)
 		}
 		// Unnamed metadata literal.
-		md := &ir.Metadata{}
+		md := &metadata.Metadata{}
 		for _, node := range oldNode.Nodes {
 			n := m.metadataNode(node)
 			md.Nodes = append(md.Nodes, n)
 		}
 		return md
 	case *ast.MetadataString:
-		return &ir.MetadataString{
+		return &metadata.String{
 			Val: oldNode.Val,
 		}
 	case ast.Constant:
 		c := m.irConstant(oldNode)
-		md, ok := c.(ir.MetadataNode)
+		md, ok := c.(metadata.Node)
 		if !ok {
-			panic(fmt.Sprintf("invalid metadata node type; expected ir.MetadataNode, got %T", c))
+			panic(fmt.Sprintf("invalid metadata node type; expected metadata.Node, got %T", c))
 		}
 		return md
 	default:

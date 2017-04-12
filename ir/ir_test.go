@@ -3,6 +3,7 @@ package ir_test
 import (
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -138,56 +139,6 @@ var (
 
 // Validate that the relevant types satisfy the ir.MetadataNode interface.
 var (
-	_ ir.MetadataNode = &ir.Metadata{}
-	_ ir.MetadataNode = &ir.MetadataString{}
-	// Simple constants.
-	_ ir.MetadataNode = &constant.Int{}
-	_ ir.MetadataNode = &constant.Float{}
-	_ ir.MetadataNode = &constant.Null{}
-	// Complex constants.
-	_ ir.MetadataNode = &constant.Vector{}
-	_ ir.MetadataNode = &constant.Array{}
-	_ ir.MetadataNode = &constant.Struct{}
-	_ ir.MetadataNode = &constant.ZeroInitializer{}
-	// Constant expressions.
-	// Binary instructions
-	_ ir.MetadataNode = &constant.ExprAdd{}
-	_ ir.MetadataNode = &constant.ExprFAdd{}
-	_ ir.MetadataNode = &constant.ExprSub{}
-	_ ir.MetadataNode = &constant.ExprFSub{}
-	_ ir.MetadataNode = &constant.ExprMul{}
-	_ ir.MetadataNode = &constant.ExprFMul{}
-	_ ir.MetadataNode = &constant.ExprUDiv{}
-	_ ir.MetadataNode = &constant.ExprSDiv{}
-	_ ir.MetadataNode = &constant.ExprFDiv{}
-	_ ir.MetadataNode = &constant.ExprURem{}
-	_ ir.MetadataNode = &constant.ExprSRem{}
-	_ ir.MetadataNode = &constant.ExprFRem{}
-	// Bitwise instructions
-	_ ir.MetadataNode = &constant.ExprShl{}
-	_ ir.MetadataNode = &constant.ExprLShr{}
-	_ ir.MetadataNode = &constant.ExprAShr{}
-	_ ir.MetadataNode = &constant.ExprAnd{}
-	_ ir.MetadataNode = &constant.ExprOr{}
-	_ ir.MetadataNode = &constant.ExprXor{}
-	// Memory instructions
-	_ ir.MetadataNode = &constant.ExprGetElementPtr{}
-	// Conversion instructions
-	_ ir.MetadataNode = &constant.ExprTrunc{}
-	_ ir.MetadataNode = &constant.ExprZExt{}
-	_ ir.MetadataNode = &constant.ExprSExt{}
-	_ ir.MetadataNode = &constant.ExprFPTrunc{}
-	_ ir.MetadataNode = &constant.ExprFPExt{}
-	_ ir.MetadataNode = &constant.ExprFPToUI{}
-	_ ir.MetadataNode = &constant.ExprFPToSI{}
-	_ ir.MetadataNode = &constant.ExprUIToFP{}
-	_ ir.MetadataNode = &constant.ExprSIToFP{}
-	_ ir.MetadataNode = &constant.ExprPtrToInt{}
-	_ ir.MetadataNode = &constant.ExprIntToPtr{}
-	_ ir.MetadataNode = &constant.ExprBitCast{}
-	_ ir.MetadataNode = &constant.ExprAddrSpaceCast{}
-	// Other instructions
-	_ ir.MetadataNode = &constant.ExprICmp{}
-	_ ir.MetadataNode = &constant.ExprFCmp{}
-	_ ir.MetadataNode = &constant.ExprSelect{}
+	_ metadata.Node = &ir.Global{}
+	_ metadata.Node = &ir.Function{}
 )

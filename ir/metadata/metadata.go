@@ -3,29 +3,28 @@
 // References:
 //    http://llvm.org/docs/LangRef.html#metadata
 
-package ir
+package metadata
 
 import (
 	"bytes"
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
-	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
 
-// A MetadataNode represents an LLVM IR metadata node.
+// A Node represents an LLVM IR metadata node.
 //
-// MetadataNode may have one of the following underlying types.
+// Node may have one of the following underlying types.
 //
-//    *ir.Metadata         (https://godoc.org/github.com/llir/llvm/ir#Metadata)
-//    *ir.MetadataString   (https://godoc.org/github.com/llir/llvm/ir#MetadataString)
+//    *metadata.Metadata   (https://godoc.org/github.com/llir/llvm/ir/metadata#Metadata)
+//    *metadata.String     (https://godoc.org/github.com/llir/llvm/ir/metadata#String)
 //    constant.Constant    (https://godoc.org/github.com/llir/llvm/ir/constant#Constant)
-type MetadataNode interface {
+type Node interface {
 	value.Value
 	// MetadataNode ensures that only metadata nodes can be assigned to the
-	// ir.MetadataNode interface.
+	// metadata.Node interface.
 	MetadataNode()
 }
 
@@ -39,7 +38,7 @@ type Metadata struct {
 	// Metadata ID; or empty if metadata literal.
 	ID string
 	// Metadata nodes.
-	Nodes []MetadataNode
+	Nodes []Node
 }
 
 // Type returns the type of the metadata.
@@ -63,7 +62,7 @@ func (md *Metadata) Def() string {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		if _, ok := node.(constant.Constant); ok {
+		if !types.Equal(node.Type(), types.Metadata) {
 			fmt.Fprintf(buf, "%s ", node.Type())
 		}
 		buf.WriteString(node.Ident())
@@ -73,36 +72,36 @@ func (md *Metadata) Def() string {
 }
 
 // MetadataNode ensures that only metadata nodes can be assigned to the
-// ir.MetadataNode interface.
+// metadata.Node interface.
 func (*Metadata) MetadataNode() {}
 
 // --- [ metadata string ] -----------------------------------------------------
 
-// A MetadataString represents an LLVM IR metadata string.
-type MetadataString struct {
+// A String represents an LLVM IR metadata string.
+type String struct {
 	// String value.
 	Val string
 }
 
 // Ident returns the identifier associated with the metadata.
-func (md *MetadataString) Ident() string {
+func (md *String) Ident() string {
 	return fmt.Sprintf(`!"%s"`, enc.EscapeString(md.Val))
 }
 
 // Type returns the type of the metadata.
-func (md *MetadataString) Type() types.Type {
+func (md *String) Type() types.Type {
 	return types.Metadata
 }
 
 // MetadataNode ensures that only metadata nodes can be assigned to the
-// ir.MetadataNode interface.
-func (*MetadataString) MetadataNode() {}
+// metadata.Node interface.
+func (*String) MetadataNode() {}
 
 // --- [ named metadata ] ------------------------------------------------------
 
-// NamedMetadata represents a named collection of metadata, which belongs to a
+// Named represents a named collection of metadata, which belongs to a
 // module.
-type NamedMetadata struct {
+type Named struct {
 	// Metadata name.
 	Name string
 	// Associated metadata.
@@ -111,7 +110,7 @@ type NamedMetadata struct {
 
 // Def returns the LLVM syntax representation of the definition of the named
 // metadata.
-func (md *NamedMetadata) Def() string {
+func (md *Named) Def() string {
 	buf := &bytes.Buffer{}
 	buf.WriteString("!{")
 	for i, metadata := range md.Metadata {

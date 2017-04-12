@@ -12,6 +12,7 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -37,7 +38,7 @@ type Global struct {
 	IsConst bool
 	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
 	// global.
-	Metadata map[string]*Metadata
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewGlobalDecl returns a new external global variable declaration based on the
@@ -48,7 +49,7 @@ func NewGlobalDecl(name string, content types.Type) *Global {
 		Name:     name,
 		Typ:      typ,
 		Content:  content,
-		Metadata: make(map[string]*Metadata),
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -62,7 +63,7 @@ func NewGlobalDef(name string, init constant.Constant) *Global {
 		Typ:      typ,
 		Content:  content,
 		Init:     init,
-		Metadata: make(map[string]*Metadata),
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -89,6 +90,10 @@ func (global *Global) SetName(name string) {
 // Immutable ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*Global) Immutable() {}
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// metadata.Node interface.
+func (*Global) MetadataNode() {}
 
 // String returns the LLVM syntax representation of the global variable.
 func (global *Global) String() string {
