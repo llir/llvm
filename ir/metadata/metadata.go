@@ -3,6 +3,7 @@
 // References:
 //    http://llvm.org/docs/LangRef.html#metadata
 
+// Package metadata provides access to LLVM IR metadata.
 package metadata
 
 import (
