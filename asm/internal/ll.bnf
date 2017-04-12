@@ -1810,7 +1810,12 @@ AttachedMDList
 ;
 
 AttachedMD
-	: MetadataName Metadata   << astx.NewAttachedMD($0, $1) >>
+	: MetadataName MD   << astx.NewAttachedMD($0, $1) >>
+;
+
+MD
+	: Metadata
+	| MetadataID
 ;
 
 CommaAttachedMDs
