@@ -274,7 +274,7 @@ FuncDef
 ;
 
 FuncHeader
-	: ParamAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($1, $2, $4) >>
+	: OptCallConv ParamAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($0, $2, $3, $5) >>
 ;
 
 Params
@@ -1733,7 +1733,7 @@ Elem
 ;
 
 OptCallConv
-	: empty
+	: empty      << ast.CallConvNone, nil >>
 	| CallConv
 ;
 
@@ -1772,10 +1772,10 @@ CallConv
 	| "webkit_jscc"
 	| "x86_64_sysvcc"
 	| "x86_64_win64cc"
-	| "x86_fastcallcc"
+	| "x86_fastcallcc"     << ast.CallConvX86FastCall, nil >>
 	| "x86_intrcc"
 	| "x86_regcallcc"
-	| "x86_stdcallcc"
+	| "x86_stdcallcc"      << ast.CallConvX86StdCall, nil >>
 	| "x86_thiscallcc"
 	| "x86_vectorcallcc"
 ;
