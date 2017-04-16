@@ -16,6 +16,8 @@ type Function struct {
 	Name string
 	// Function signature.
 	Sig *FuncType
+	// Calling convention.
+	CallConv CallConv
 	// Basic blocks of the function; or nil if defined externally.
 	Blocks []*BasicBlock
 	// Metadata attached to the function.
@@ -101,3 +103,54 @@ func isID(name string) bool {
 	}
 	return len(name) > 0
 }
+
+// CallConv represents the set of calling conventions.
+type CallConv uint
+
+// TODO: Change calling convention enums to match the Haskell LLVM library.
+
+// Calling conventions.
+const (
+	CallConvNone CallConv = iota // no calling convention specified.
+
+	// amdgpu_cs
+	// amdgpu_gs
+	// amdgpu_kernel
+	// amdgpu_ps
+	// amdgpu_vs
+	// anyregcc
+	// arm_aapcs_vfpcc
+	// arm_aapcscc
+	// arm_apcscc
+	// avr_intrcc
+	// avr_signalcc
+	// cc int_lit
+	// ccc
+	// coldcc
+	// cxx_fast_tlscc
+	// fastcc
+	// ghccc
+	// hhvm_ccc
+	// hhvmcc
+	// intel_ocl_bicc
+	// msp430_intrcc
+	// preserve_allcc
+	// preserve_mostcc
+	// ptx_device
+	// ptx_kernel
+	// spir_func
+	// spir_kernel
+	// swiftcc
+	// webkit_jscc
+	// x86_64_sysvcc
+	// x86_64_win64cc
+
+	CallConvX86FastCall // x86_fastcallcc
+	// x86_intrcc
+	// x86_regcallcc
+
+	CallConvX86StdCall // x86_stdcallcc
+
+	// x86_thiscallcc
+	// x86_vectorcallcc
+)

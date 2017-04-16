@@ -35,6 +35,8 @@ type Function struct {
 	Typ *types.PointerType
 	// Function type.
 	Sig *types.FuncType
+	// Calling convention.
+	CallConv CallConv
 	// Basic blocks of the function; or nil if defined externally.
 	Blocks []*BasicBlock
 	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
@@ -89,6 +91,12 @@ func (f *Function) String() string {
 	// local variables.
 	assignIDs(f)
 
+	// Calling convention.
+	callconv := ""
+	if f.CallConv != CallConvNone {
+		callconv = fmt.Sprintf(" %s", f.CallConv)
+	}
+
 	// Function signature.
 	sig := &bytes.Buffer{}
 	fmt.Fprintf(sig, "%s %s(",
@@ -132,7 +140,7 @@ func (f *Function) String() string {
 	// Function definition.
 	if len(f.Blocks) > 0 {
 		buf := &bytes.Buffer{}
-		fmt.Fprintf(buf, "define %s%s {\n", sig, metadata)
+		fmt.Fprintf(buf, "define%s %s%s {\n", callconv, sig, metadata)
 		for _, block := range f.Blocks {
 			fmt.Fprintln(buf, block)
 		}
@@ -141,7 +149,7 @@ func (f *Function) String() string {
 	}
 
 	// External function declaration.
-	return fmt.Sprintf("declare%s %s", metadata, sig)
+	return fmt.Sprintf("declare%s%s %s", metadata, callconv, sig)
 }
 
 // Params returns the parameters of the function.
@@ -240,4 +248,67 @@ func isLocalID(name string) bool {
 		}
 	}
 	return len(name) > 0
+}
+
+// CallConv represents the set of calling conventions.
+type CallConv uint
+
+// TODO: Change calling convention enums to match the Haskell LLVM library.
+
+// Calling conventions.
+const (
+	CallConvNone CallConv = iota // no calling convention specified.
+
+	// amdgpu_cs
+	// amdgpu_gs
+	// amdgpu_kernel
+	// amdgpu_ps
+	// amdgpu_vs
+	// anyregcc
+	// arm_aapcs_vfpcc
+	// arm_aapcscc
+	// arm_apcscc
+	// avr_intrcc
+	// avr_signalcc
+	// cc int_lit
+	// ccc
+	// coldcc
+	// cxx_fast_tlscc
+	// fastcc
+	// ghccc
+	// hhvm_ccc
+	// hhvmcc
+	// intel_ocl_bicc
+	// msp430_intrcc
+	// preserve_allcc
+	// preserve_mostcc
+	// ptx_device
+	// ptx_kernel
+	// spir_func
+	// spir_kernel
+	// swiftcc
+	// webkit_jscc
+	// x86_64_sysvcc
+	// x86_64_win64cc
+
+	CallConvX86FastCall // x86_fastcallcc
+	// x86_intrcc
+	// x86_regcallcc
+
+	CallConvX86StdCall // x86_stdcallcc
+
+	// x86_thiscallcc
+	// x86_vectorcallcc
+)
+
+// String returns the LLVM syntax representation of the calling convention.
+func (cc CallConv) String() string {
+	m := map[CallConv]string{
+		CallConvX86FastCall: "x86_fastcallcc",
+		CallConvX86StdCall:  "x86_stdcallcc",
+	}
+	if s, ok := m[cc]; ok {
+		return s
+	}
+	return fmt.Sprintf("unknown calling convention %d", uint(cc))
 }

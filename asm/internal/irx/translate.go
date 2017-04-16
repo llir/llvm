@@ -308,6 +308,9 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 		panic(fmt.Errorf("invalid function type for function %s; expected *ir.Function, got %T", enc.Global(oldFunc.Name), v))
 	}
 
+	// Fix calling convention.
+	f.CallConv = ir.CallConv(oldFunc.CallConv)
+
 	// Fix attached metadata.
 	for _, oldMetadata := range oldFunc.Metadata {
 		key := oldMetadata.Name

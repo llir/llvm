@@ -232,7 +232,16 @@ func NewFuncDecl(mds, header interface{}) (*ast.Function, error) {
 
 // NewFuncHeader returns a new function header based on the given return type,
 // function name and parameters.
-func NewFuncHeader(ret, name, params interface{}) (*ast.Function, error) {
+func NewFuncHeader(callconv, ret, name, params interface{}) (*ast.Function, error) {
+	var cc ast.CallConv
+	switch callconv := callconv.(type) {
+	case ast.CallConv:
+		cc = callconv
+	case nil:
+		// no attached metadata.
+	default:
+		return nil, errors.Errorf("invalid calling convention type; expected ast.CallConv or nil, got %T", callconv)
+	}
 	r, ok := ret.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid function return type; expected ast.Type, got %T", ret)
@@ -254,8 +263,9 @@ func NewFuncHeader(ret, name, params interface{}) (*ast.Function, error) {
 		return nil, errors.Errorf("invalid function parameters type; expected *astx.Params or nil, got %T", params)
 	}
 	f := &ast.Function{
-		Name: n.name,
-		Sig:  sig,
+		Name:     n.name,
+		Sig:      sig,
+		CallConv: cc,
 	}
 	return f, nil
 }
