@@ -420,16 +420,16 @@ func (block *BasicBlock) NewAddrSpaceCast(from value.Value, to types.Type) *Inst
 
 // NewICmp appends a new icmp instruction to the basic block based on the given
 // integer condition code and operands.
-func (block *BasicBlock) NewICmp(cond IntPred, x, y value.Value) *InstICmp {
-	inst := NewICmp(cond, x, y)
+func (block *BasicBlock) NewICmp(pred IntPred, x, y value.Value) *InstICmp {
+	inst := NewICmp(pred, x, y)
 	block.AppendInst(inst)
 	return inst
 }
 
 // NewFCmp appends a new fcmp instruction to the basic block based on the given
 // floating-point condition code and operands.
-func (block *BasicBlock) NewFCmp(cond FloatPred, x, y value.Value) *InstFCmp {
-	inst := NewFCmp(cond, x, y)
+func (block *BasicBlock) NewFCmp(pred FloatPred, x, y value.Value) *InstFCmp {
+	inst := NewFCmp(pred, x, y)
 	block.AppendInst(inst)
 	return inst
 }
