@@ -146,11 +146,12 @@ const (
 	// x86_64_win64cc
 
 	CallConvX86FastCall // x86_fastcallcc
+
 	// x86_intrcc
 	// x86_regcallcc
 
-	CallConvX86StdCall // x86_stdcallcc
+	CallConvX86StdCall  // x86_stdcallcc
+	CallConvX86ThisCall // x86_thiscallcc
 
-	// x86_thiscallcc
 	// x86_vectorcallcc
 )

@@ -173,7 +173,7 @@ func (sem *sem) checkType(t types.Type) {
 			}
 		}
 	case *types.IntType:
-		// Any bit width from 1 bit to 2²³-1 can be specified.
+		// Any bit width from 1 bit to 2^23-1 can be specified.
 		//
 		// References:
 		//    http://llvm.org/docs/LangRef.html#integer-type
