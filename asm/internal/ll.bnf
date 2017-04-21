@@ -1776,7 +1776,7 @@ CallConv
 	| "x86_intrcc"
 	| "x86_regcallcc"
 	| "x86_stdcallcc"      << ast.CallConvX86StdCall, nil >>
-	| "x86_thiscallcc"
+	| "x86_thiscallcc"     << ast.CallConvX86ThisCall, nil >>
 	| "x86_vectorcallcc"
 ;
 
