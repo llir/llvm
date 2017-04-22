@@ -65,6 +65,7 @@ func Example() {
 	//                 },
 	//                 Variadic: false,
 	//             },
+	//             CallConv: 0x0,
 	//             Blocks:   nil,
 	//             Metadata: {
 	//             },
@@ -89,7 +90,8 @@ func Example() {
 	//                 },
 	//                 Variadic: false,
 	//             },
-	//             Blocks: {
+	//             CallConv: 0x0,
+	//             Blocks:   {
 	//                 &ir.BasicBlock{
 	//                     Parent: &ir.Function{(CYCLIC REFERENCE)},
 	//                     Name:   "0",

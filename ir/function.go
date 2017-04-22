@@ -257,57 +257,88 @@ type CallConv uint
 
 // Calling conventions.
 const (
-	CallConvNone CallConv = iota // no calling convention specified.
-
-	// amdgpu_cs
-	// amdgpu_gs
-	// amdgpu_kernel
-	// amdgpu_ps
-	// amdgpu_vs
-	// anyregcc
-	// arm_aapcs_vfpcc
-	// arm_aapcscc
-	// arm_apcscc
-	// avr_intrcc
-	// avr_signalcc
-	// cc int_lit
-	// ccc
-	// coldcc
-	// cxx_fast_tlscc
-	// fastcc
-	// ghccc
-	// hhvm_ccc
-	// hhvmcc
-	// intel_ocl_bicc
-	// msp430_intrcc
-	// preserve_allcc
-	// preserve_mostcc
-	// ptx_device
-	// ptx_kernel
-	// spir_func
-	// spir_kernel
-	// swiftcc
-	// webkit_jscc
-	// x86_64_sysvcc
-	// x86_64_win64cc
-
-	CallConvX86FastCall // x86_fastcallcc
-
-	// x86_intrcc
-	// x86_regcallcc
-
-	CallConvX86StdCall  // x86_stdcallcc
-	CallConvX86ThisCall // x86_thiscallcc
-
-	// x86_vectorcallcc
+	CallConvNone           CallConv = iota // no calling convention specified.
+	CallConvAMDGPU_CS                      // amdgpu_cs
+	CallConvAMDGPU_GS                      // amdgpu_gs
+	CallConvAMDGPU_Kernel                  // amdgpu_kernel
+	CallConvAMDGPU_PS                      // amdgpu_ps
+	CallConvAMDGPU_VS                      // amdgpu_vs
+	CallConvAnyReg                         // anyregcc
+	CallConvARM_AAPCS                      // arm_aapcscc
+	CallConvARM_AAPCS_VFP                  // arm_aapcs_vfpcc
+	CallConvARM_APCS                       // arm_apcscc
+	CallConvAVR_Builtin                    // cc 86
+	CallConvAVR_Intr                       // avr_intrcc
+	CallConvAVR_Signal                     // avr_signalcc
+	CallConvC                              // ccc
+	CallConvCold                           // coldcc
+	CallConvCXX_Fast_TLS                   // cxx_fast_tlscc
+	CallConvFast                           // fastcc
+	CallConvGHC                            // ghccc
+	CallConvHHVM                           // hhvmcc
+	CallConvHHVM_C                         // hhvm_ccc
+	CallConvHiPE                           // cc 11
+	CallConvIntel_OCL_BI                   // intel_ocl_bicc
+	CallConvMSP430_Intr                    // msp430_intrcc
+	CallConvPreserveAll                    // preserve_allcc
+	CallConvPreserveMost                   // preserve_mostcc
+	CallConvPTX_Device                     // ptx_device
+	CallConvPTX_Kernel                     // ptx_kernel
+	CallConvSPIR_Func                      // spir_func
+	CallConvSPIR_Kernel                    // spir_kernel
+	CallConvSwift                          // swiftcc
+	CallConvWebKit_JS                      // webkit_jscc
+	CallConvX86_64_SysV                    // x86_64_sysvcc
+	CallConvX86_64_Win64                   // x86_64_win64cc
+	CallConvX86_FastCall                   // x86_fastcallcc
+	CallConvX86_Intr                       // x86_intrcc
+	CallConvX86_RegCall                    // x86_regcallcc
+	CallConvX86_StdCall                    // x86_stdcallcc
+	CallConvX86_ThisCall                   // x86_thiscallcc
+	CallConvX86_VectorCall                 // x86_vectorcallcc
 )
 
 // String returns the LLVM syntax representation of the calling convention.
 func (cc CallConv) String() string {
 	m := map[CallConv]string{
-		CallConvX86FastCall: "x86_fastcallcc",
-		CallConvX86StdCall:  "x86_stdcallcc",
-		CallConvX86ThisCall: "x86_thiscallcc",
+		CallConvAMDGPU_CS:      "amdgpu_cs",
+		CallConvAMDGPU_GS:      "amdgpu_gs",
+		CallConvAMDGPU_Kernel:  "amdgpu_kernel",
+		CallConvAMDGPU_PS:      "amdgpu_ps",
+		CallConvAMDGPU_VS:      "amdgpu_vs",
+		CallConvAnyReg:         "anyregcc",
+		CallConvARM_AAPCS:      "arm_aapcscc",
+		CallConvARM_AAPCS_VFP:  "arm_aapcs_vfpcc",
+		CallConvARM_APCS:       "arm_apcscc",
+		CallConvAVR_Builtin:    "cc 86",
+		CallConvAVR_Intr:       "avr_intrcc",
+		CallConvAVR_Signal:     "avr_signalcc",
+		CallConvC:              "ccc",
+		CallConvCold:           "coldcc",
+		CallConvCXX_Fast_TLS:   "cxx_fast_tlscc",
+		CallConvFast:           "fastcc",
+		CallConvGHC:            "ghccc",
+		CallConvHHVM:           "hhvmcc",
+		CallConvHHVM_C:         "hhvm_ccc",
+		CallConvHiPE:           "cc 11",
+		CallConvIntel_OCL_BI:   "intel_ocl_bicc",
+		CallConvMSP430_Intr:    "msp430_intrcc",
+		CallConvPreserveAll:    "preserve_allcc",
+		CallConvPreserveMost:   "preserve_mostcc",
+		CallConvPTX_Device:     "ptx_device",
+		CallConvPTX_Kernel:     "ptx_kernel",
+		CallConvSPIR_Func:      "spir_func",
+		CallConvSPIR_Kernel:    "spir_kernel",
+		CallConvSwift:          "swiftcc",
+		CallConvWebKit_JS:      "webkit_jscc",
+		CallConvX86_64_SysV:    "x86_64_sysvcc",
+		CallConvX86_64_Win64:   "x86_64_win64cc",
+		CallConvX86_FastCall:   "x86_fastcallcc",
+		CallConvX86_Intr:       "x86_intrcc",
+		CallConvX86_RegCall:    "x86_regcallcc",
+		CallConvX86_StdCall:    "x86_stdcallcc",
+		CallConvX86_ThisCall:   "x86_thiscallcc",
+		CallConvX86_VectorCall: "x86_vectorcallcc",
 	}
 	if s, ok := m[cc]; ok {
 		return s
