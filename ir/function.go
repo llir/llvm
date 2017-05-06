@@ -288,7 +288,7 @@ const (
 	// spir_kernel
 	// swiftcc
 	// webkit_jscc
-	// x86_64_sysvcc
+	CallConvX86_64SysV // x86_64_sysvcc
 	// x86_64_win64cc
 
 	CallConvX86FastCall // x86_fastcallcc

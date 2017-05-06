@@ -504,6 +504,7 @@ NamedType
 Value
 	: LocalIdent
 	| Constant
+	| "undef"     << nil, nil >>
 ;
 
 // === [ Constants ] ===========================================================
@@ -569,6 +570,7 @@ CharArrayConst
 
 StructConst
 	: "{" Elems "}"   << astx.NewStructConst($1) >>
+	| "<" "{" Elems "}" ">"  << astx.NewStructConst($2) >>
 ;
 
 // --- [ zero initializer constant ] -------------------------------------------
@@ -916,73 +918,73 @@ ValueInstruction
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AddInst
-	: "add" OverflowFlags FirstClassType Value "," Value   << astx.NewAddInst($2, $3, $5) >>
+	: "add" OverflowFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewAddInst($2, $3, $5) >>
 ;
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FAddInst
-	: "fadd" FastMathFlags FirstClassType Value "," Value   << astx.NewFAddInst($2, $3, $5) >>
+	: "fadd" FastMathFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewFAddInst($2, $3, $5) >>
 ;
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SubInst
-	: "sub" OverflowFlags FirstClassType Value "," Value   << astx.NewSubInst($2, $3, $5) >>
+	: "sub" OverflowFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewSubInst($2, $3, $5) >>
 ;
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FSubInst
-	: "fsub" FastMathFlags FirstClassType Value "," Value   << astx.NewFSubInst($2, $3, $5) >>
+	: "fsub" FastMathFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewFSubInst($2, $3, $5) >>
 ;
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 MulInst
-	: "mul" OverflowFlags FirstClassType Value "," Value   << astx.NewMulInst($2, $3, $5) >>
+	: "mul" OverflowFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewMulInst($2, $3, $5) >>
 ;
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FMulInst
-	: "fmul" FastMathFlags FirstClassType Value "," Value   << astx.NewFMulInst($2, $3, $5) >>
+	: "fmul" FastMathFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewFMulInst($2, $3, $5) >>
 ;
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 UDivInst
-	: "udiv" FirstClassType Value "," Value   << astx.NewUDivInst($1, $2, $4) >>
+	: "udiv" FirstClassType Value "," Value CommaAttachedMDs  << astx.NewUDivInst($1, $2, $4) >>
 ;
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SDivInst
-	: "sdiv" ExactFlags FirstClassType Value "," Value   << astx.NewSDivInst($2, $3, $5) >>
+	: "sdiv" ExactFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewSDivInst($2, $3, $5) >>
 ;
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FDivInst
-	: "fdiv" FastMathFlags FirstClassType Value "," Value   << astx.NewFDivInst($2, $3, $5) >>
+	: "fdiv" FastMathFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewFDivInst($2, $3, $5) >>
 ;
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 URemInst
-	: "urem" ExactFlags FirstClassType Value "," Value   << astx.NewURemInst($2, $3, $5) >>
+	: "urem" ExactFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewURemInst($2, $3, $5) >>
 ;
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SRemInst
-	: "srem" FirstClassType Value "," Value   << astx.NewSRemInst($1, $2, $4) >>
+	: "srem" FirstClassType Value "," Value CommaAttachedMDs  << astx.NewSRemInst($1, $2, $4) >>
 ;
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FRemInst
-	: "frem" FastMathFlags FirstClassType Value "," Value   << astx.NewFRemInst($2, $3, $5) >>
+	: "frem" FastMathFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewFRemInst($2, $3, $5) >>
 ;
 
 OverflowFlags
@@ -1031,37 +1033,37 @@ ExactFlags
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ShlInst
-	: "shl" OverflowFlags FirstClassType Value "," Value   << astx.NewShlInst($2, $3, $5) >>
+	: "shl" OverflowFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewShlInst($2, $3, $5) >>
 ;
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LShrInst
-	: "lshr" ExactFlags FirstClassType Value "," Value   << astx.NewLShrInst($2, $3, $5) >>
+	: "lshr" ExactFlags FirstClassType Value "," Value CommaAttachedMDs  << astx.NewLShrInst($2, $3, $5) >>
 ;
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AShrInst
-	: "ashr" ExactFlags FirstClassType Value "," Value   << astx.NewAShrInst($2, $3, $5) >>
+	: "ashr" ExactFlags FirstClassType Value "," Value CommaAttachedMDs   << astx.NewAShrInst($2, $3, $5) >>
 ;
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AndInst
-	: "and" FirstClassType Value "," Value   << astx.NewAndInst($1, $2, $4) >>
+	: "and" FirstClassType Value "," Value CommaAttachedMDs  << astx.NewAndInst($1, $2, $4) >>
 ;
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 OrInst
-	: "or" FirstClassType Value "," Value   << astx.NewOrInst($1, $2, $4) >>
+	: "or" FirstClassType Value "," Value CommaAttachedMDs  << astx.NewOrInst($1, $2, $4) >>
 ;
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 XorInst
-	: "xor" FirstClassType Value "," Value   << astx.NewXorInst($1, $2, $4) >>
+	: "xor" FirstClassType Value "," Value CommaAttachedMDs  << astx.NewXorInst($1, $2, $4) >>
 ;
 
 // --- [ Vector instructions ] -------------------------------------------------
@@ -1207,7 +1209,7 @@ GetElementPtrInst
 
 Indices
 	: empty
-	| "," IndexList   << $1, nil >>
+	| "," IndexList CommaAttachedMDs  << $1, nil >>
 ;
 
 IndexList
@@ -1224,13 +1226,13 @@ Index
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TruncInst
-	: "trunc" FirstClassType Value "to" FirstClassType   << astx.NewTruncInst($1, $2, $4) >>
+	: "trunc" FirstClassType Value "to" FirstClassType CommaAttachedMDs   << astx.NewTruncInst($1, $2, $4) >>
 ;
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ZExtInst
-	: "zext" FirstClassType Value "to" FirstClassType   << astx.NewZExtInst($1, $2, $4) >>
+	: "zext" FirstClassType Value "to" FirstClassType CommaAttachedMDs  << astx.NewZExtInst($1, $2, $4) >>
 ;
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1284,13 +1286,13 @@ PtrToIntInst
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 IntToPtrInst
-	: "inttoptr" FirstClassType Value "to" FirstClassType   << astx.NewIntToPtrInst($1, $2, $4) >>
+	: "inttoptr" FirstClassType Value "to" FirstClassType CommaAttachedMDs  << astx.NewIntToPtrInst($1, $2, $4) >>
 ;
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BitCastInst
-	: "bitcast" FirstClassType Value "to" FirstClassType   << astx.NewBitCastInst($1, $2, $4) >>
+	: "bitcast" FirstClassType Value "to" FirstClassType CommaAttachedMDs  << astx.NewBitCastInst($1, $2, $4) >>
 ;
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1304,7 +1306,7 @@ AddrSpaceCastInst
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ICmpInst
-	: "icmp" IntPred FirstClassType Value "," Value   << astx.NewICmpInst($1, $2, $3, $5) >>
+	: "icmp" IntPred FirstClassType Value "," Value CommaAttachedMDs  << astx.NewICmpInst($1, $2, $3, $5) >>
 ;
 
 IntPred
@@ -1369,7 +1371,12 @@ SelectInst
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CallInst
-	: "call" FastMathFlags ParamAttrs Type Value "(" Args ")" FuncAttrs   << astx.NewCallInst($3, $4, $6) >>
+	: OptTail "call" FastMathFlags OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs CommaAttachedMDs   << astx.NewCallInst($5, $6, $8) >>
+;
+
+OptTail
+       : empty
+       | "tail"
 ;
 
 Args
@@ -1450,20 +1457,20 @@ Terminator
 // ~~~ [ ret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RetTerm
-	: "ret" VoidType               << &ast.TermRet{}, nil >>
+	: "ret" VoidType CommaAttachedMDs              << &ast.TermRet{}, nil >>
 	| "ret" FirstClassType Value   << astx.NewRetTerm($1, $2) >>
 ;
 
 // ~~~ [ br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BrTerm
-	: "br" LabelType LocalIdent   << astx.NewBrTerm($1, $2) >>
+	: "br" LabelType LocalIdent CommaAttachedMDs  << astx.NewBrTerm($1, $2) >>
 ;
 
 // ~~~ [ br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CondBrTerm
-	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent   << astx.NewCondBrTerm($1, $2, $4, $5, $7, $8) >>
+	: "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent CommaAttachedMDs  << astx.NewCondBrTerm($1, $2, $4, $5, $7, $8) >>
 ;
 
 // ~~~ [ switch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1610,7 +1617,7 @@ UnnamedAddr
 
 OptCommaAlign
 	: empty
-	| "," Align
+	| "," Align CommaAttachedMDs
 ;
 
 OptAlign
@@ -1719,8 +1726,7 @@ OptAllocSizeNElems
 ;
 
 Elems
-	: empty
-	| ElemList
+	: ElemList
 ;
 
 ElemList
@@ -1770,7 +1776,7 @@ CallConv
 	| "spir_kernel"
 	| "swiftcc"
 	| "webkit_jscc"
-	| "x86_64_sysvcc"
+	| "x86_64_sysvcc"      << ast.CallConvX86_64SysV, nil >>
 	| "x86_64_win64cc"
 	| "x86_fastcallcc"     << ast.CallConvX86FastCall, nil >>
 	| "x86_intrcc"
