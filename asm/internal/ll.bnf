@@ -241,11 +241,24 @@ TypeDef
 // --- [ Global variables ] ----------------------------------------------------
 
 GlobalDecl
-	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType GlobalOptions   << astx.NewGlobalDecl($0, $4, $5, $6) >>
+	: GlobalIdent "=" ExternLinkage GlobalOptions1 Immutable FirstClassType GlobalOptions2   << astx.NewGlobalDecl($0, $4, $5, $6) >>
 ;
 
 GlobalDef
-	: GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant GlobalOptions   << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
+	: GlobalIdent "=" OptLinkage GlobalOptions1 Immutable FirstClassType Constant GlobalOptions2   << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
+;
+
+GlobalOptions1
+	: OptVisibility OptDLLStorageClass OptTLSModel OptUnnamedAddr OptAddrSpace OptExternallyInitialized
+;
+
+OptExternallyInitialized
+	: empty
+	| ExternallyInitialized
+;
+
+ExternallyInitialized
+	: "externally_initialized"
 ;
 
 Immutable
@@ -258,7 +271,7 @@ Immutable
 //
 // Structured in this way to allow for naiive 1 rune lookahead parser
 // generators.
-GlobalOptions
+GlobalOptions2
 	: "," Align CommaAttachedMDs   << $2, nil >>
 	| CommaAttachedMDs             << $0, nil >>
 ;
@@ -274,7 +287,8 @@ FuncDef
 ;
 
 FuncHeader
-	: OptCallConv ParamAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($0, $2, $3, $5) >>
+	: OptVisibility OptDLLStorageClass OptCallConv ParamAttrs Type GlobalIdent
+		"(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($2, $4, $5, $7) >>
 ;
 
 Params
@@ -1598,6 +1612,47 @@ ExternLinkage
 	| "external"
 ;
 
+OptVisibility
+	: empty
+	| Visibility
+;
+
+// From spec of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#visibility-styles
+Visibility
+	: "default"
+	| "hidden"
+	| "protected"
+;
+
+OptDLLStorageClass
+	: empty
+	| DLLStorageClass
+;
+
+// From spec of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#dllstorageclass
+DLLStorageClass
+	: "dllimport"
+	| "dllexport"
+;
+
+OptTLSModel
+	: empty
+	| TLSModel
+;
+
+// From spec of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#tls-model
+TLSModel
+	: "localdynamic"
+	| "initialexec"
+	| "localexec"
+;
+
 OptUnnamedAddr
 	: empty
 	| UnnamedAddr
@@ -1818,6 +1873,8 @@ MD
 	| MetadataID
 ;
 
+// TODO: Rename to OptCommaAttachedMDList after
+// https://github.com/llir/llvm/pull/21 has been merged.
 CommaAttachedMDs
 	: empty
 	| CommaAttachedMDList
