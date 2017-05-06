@@ -1,5 +1,5 @@
 // Note, the AST traversal implementation of this package is heavily inspired by
-// go fix; which is governed by a BSD license.
+// go fix, which is governed by a BSD license.
 
 // Package astutil provides utility functions for interacting with ASTs of LLVM
 // IR assembly.

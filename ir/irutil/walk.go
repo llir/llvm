@@ -1,5 +1,5 @@
 // Note, the LLVM IR traversal implementation of this package is heavily
-// inspired by go fix; which is governed by a BSD license.
+// inspired by go fix, which is governed by a BSD license.
 
 // Package irutil provides LLVM IR utility functions.
 package irutil

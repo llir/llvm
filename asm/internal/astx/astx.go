@@ -103,7 +103,7 @@ func NewTypeDef(name, typ interface{}) (*ast.NamedType, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
 	}
-	return &ast.NamedType{Name: n.name, Def: t}, nil
+	return &ast.NamedType{Name: unquote(n.name), Def: t}, nil
 }
 
 // NewTypeDefOpaque returns a new opaque struct type definition based on the
@@ -114,7 +114,7 @@ func NewTypeDefOpaque(name interface{}) (*ast.NamedType, error) {
 		return nil, errors.Errorf("invalid type name type; expected *astx.LocalIdent, got %T", name)
 	}
 	t := &ast.StructType{Opaque: true}
-	return &ast.NamedType{Name: n.name, Def: t}, nil
+	return &ast.NamedType{Name: unquote(n.name), Def: t}, nil
 }
 
 // --- [ Global variables ] ----------------------------------------------------
@@ -143,7 +143,7 @@ func NewGlobalDecl(name, immutable, typ, mds interface{}) (*ast.Global, error) {
 	default:
 		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
 	}
-	global := &ast.Global{Name: n.name, Content: t}
+	global := &ast.Global{Name: unquote(n.name), Content: t}
 	global.Immutable = imm
 	unique := make(map[string]ast.MetadataNode)
 	for _, md := range ms {
@@ -188,7 +188,7 @@ func NewGlobalDef(name, immutable, typ, val, mds interface{}) (*ast.Global, erro
 	default:
 		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
 	}
-	global := &ast.Global{Name: n.name, Content: t, Init: i}
+	global := &ast.Global{Name: unquote(n.name), Content: t, Init: i}
 	global.Immutable = imm
 	unique := make(map[string]ast.MetadataNode)
 	for _, md := range ms {
@@ -263,7 +263,7 @@ func NewFuncHeader(callconv, ret, name, params interface{}) (*ast.Function, erro
 		return nil, errors.Errorf("invalid function parameters type; expected *astx.Params or nil, got %T", params)
 	}
 	f := &ast.Function{
-		Name:     n.name,
+		Name:     unquote(n.name),
 		Sig:      sig,
 		CallConv: cc,
 	}
@@ -471,7 +471,7 @@ func NewNamedMetadataDef(name, ids interface{}) (*ast.NamedMetadata, error) {
 		return nil, errors.Errorf("invalid metadata IDs type; expected []*astx.MetadataID, got %T", ids)
 	}
 	md := &ast.NamedMetadata{
-		Name: n.name,
+		Name: unquote(n.name),
 	}
 	for _, i := range is {
 		dummy := &ast.MetadataIDDummy{ID: i.ID}
@@ -783,7 +783,7 @@ func NewTypeIdent(name interface{}) (*ast.NamedTypeDummy, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type name type; expected *astx.LocalIdent, got %T", name)
 	}
-	return &ast.NamedTypeDummy{Name: n.name}, nil
+	return &ast.NamedTypeDummy{Name: unquote(n.name)}, nil
 }
 
 // === [ Values ] ==============================================================
@@ -1912,7 +1912,7 @@ func NewNamedInstruction(name, inst interface{}) (ast.Instruction, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid instruction type; expected namedInstruction, got %T", inst)
 	}
-	i.SetName(n.name)
+	i.SetName(unquote(n.name))
 	return i, nil
 }
 
@@ -2904,5 +2904,14 @@ func NewAttachedMD(name, md interface{}) (*ast.AttachedMD, error) {
 	default:
 		return nil, errors.Errorf("invalid metadata type; expected *ast.Metadata or *ast.MetadataIDDummy, got %T", md)
 	}
-	return &ast.AttachedMD{Name: n.name, Metadata: node}, nil
+	return &ast.AttachedMD{Name: unquote(n.name), Metadata: node}, nil
+}
+
+// unquote returns the unquoted version of the given string, if quoted, and the
+// original string otherwise.
+func unquote(s string) string {
+	if strings.HasPrefix(s, `"`) && strings.HasSuffix(s, `"`) {
+		return enc.Unquote(s)
+	}
+	return s
 }
