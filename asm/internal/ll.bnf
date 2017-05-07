@@ -241,11 +241,24 @@ TypeDef
 // --- [ Global variables ] ----------------------------------------------------
 
 GlobalDecl
-	: GlobalIdent "=" ExternLinkage OptUnnamedAddr Immutable FirstClassType GlobalOptions   << astx.NewGlobalDecl($0, $4, $5, $6) >>
+	: GlobalIdent "=" ExternLinkage GlobalOptions1 Immutable FirstClassType GlobalOptions2   << astx.NewGlobalDecl($0, $4, $5, $6) >>
 ;
 
 GlobalDef
-	: GlobalIdent "=" OptLinkage OptUnnamedAddr Immutable FirstClassType Constant GlobalOptions   << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
+	: GlobalIdent "=" OptLinkage GlobalOptions1 Immutable FirstClassType Constant GlobalOptions2   << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
+;
+
+GlobalOptions1
+	: OptVisibility OptDLLStorageClass OptTLSModel OptUnnamedAddr OptAddrSpace OptExternallyInitialized
+;
+
+OptExternallyInitialized
+	: empty
+	| ExternallyInitialized
+;
+
+ExternallyInitialized
+	: "externally_initialized"
 ;
 
 Immutable
@@ -258,7 +271,7 @@ Immutable
 //
 // Structured in this way to allow for naiive 1 rune lookahead parser
 // generators.
-GlobalOptions
+GlobalOptions2
 	: "," Align CommaAttachedMDs   << $2, nil >>
 	| CommaAttachedMDs             << $0, nil >>
 ;
@@ -274,7 +287,8 @@ FuncDef
 ;
 
 FuncHeader
-	: OptCallConv ParamAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($0, $2, $3, $5) >>
+	: OptVisibility OptDLLStorageClass OptCallConv ParamAttrs Type GlobalIdent
+		"(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($2, $4, $5, $7) >>
 ;
 
 Params
@@ -1605,6 +1619,47 @@ ExternLinkage
 	| "external"
 ;
 
+OptVisibility
+	: empty
+	| Visibility
+;
+
+// From spec of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#visibility-styles
+Visibility
+	: "default"
+	| "hidden"
+	| "protected"
+;
+
+OptDLLStorageClass
+	: empty
+	| DLLStorageClass
+;
+
+// From spec of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#dllstorageclass
+DLLStorageClass
+	: "dllimport"
+	| "dllexport"
+;
+
+OptTLSModel
+	: empty
+	| TLSModel
+;
+
+// From spec of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#tls-model
+TLSModel
+	: "localdynamic"
+	| "initialexec"
+	| "localexec"
+;
+
 OptUnnamedAddr
 	: empty
 	| UnnamedAddr
@@ -1747,43 +1802,43 @@ OptCallConv
 //
 // ref: http://llvm.org/docs/LangRef.html#callingconv
 CallConv
-	: "amdgpu_cs"
-	| "amdgpu_gs"
-	| "amdgpu_kernel"
-	| "amdgpu_ps"
-	| "amdgpu_vs"
-	| "anyregcc"
-	| "arm_aapcs_vfpcc"
-	| "arm_aapcscc"
-	| "arm_apcscc"
-	| "avr_intrcc"
-	| "avr_signalcc"
-	| "cc" int_lit
-	| "ccc"
-	| "coldcc"
-	| "cxx_fast_tlscc"
-	| "fastcc"
-	| "ghccc"
-	| "hhvm_ccc"
-	| "hhvmcc"
-	| "intel_ocl_bicc"
-	| "msp430_intrcc"
-	| "preserve_allcc"
-	| "preserve_mostcc"
-	| "ptx_device"
-	| "ptx_kernel"
-	| "spir_func"
-	| "spir_kernel"
-	| "swiftcc"
-	| "webkit_jscc"
-	| "x86_64_sysvcc"      << ast.CallConvX86_64SysV, nil >>
-	| "x86_64_win64cc"
-	| "x86_fastcallcc"     << ast.CallConvX86FastCall, nil >>
-	| "x86_intrcc"
-	| "x86_regcallcc"
-	| "x86_stdcallcc"      << ast.CallConvX86StdCall, nil >>
-	| "x86_thiscallcc"
-	| "x86_vectorcallcc"
+	: "amdgpu_cs"          << ast.CallConvAMDGPU_CS, nil >>
+	| "amdgpu_gs"          << ast.CallConvAMDGPU_GS, nil >>
+	| "amdgpu_kernel"      << ast.CallConvAMDGPU_Kernel, nil >>
+	| "amdgpu_ps"          << ast.CallConvAMDGPU_PS, nil >>
+	| "amdgpu_vs"          << ast.CallConvAMDGPU_VS, nil >>
+	| "anyregcc"           << ast.CallConvAnyReg, nil >>
+	| "arm_aapcs_vfpcc"    << ast.CallConvARM_AAPCS_VFP, nil >>
+	| "arm_aapcscc"        << ast.CallConvARM_AAPCS, nil >>
+	| "arm_apcscc"         << ast.CallConvARM_APCS, nil >>
+	| "avr_intrcc"         << ast.CallConvAVR_Intr, nil >>
+	| "avr_signalcc"       << ast.CallConvAVR_Signal, nil >>
+	| "cc" int_lit         << astx.NewCallConv($1) >>
+	| "ccc"                << ast.CallConvC, nil >>
+	| "coldcc"             << ast.CallConvCold, nil >>
+	| "cxx_fast_tlscc"     << ast.CallConvCXX_Fast_TLS, nil >>
+	| "fastcc"             << ast.CallConvFast, nil >>
+	| "ghccc"              << ast.CallConvGHC, nil >>
+	| "hhvm_ccc"           << ast.CallConvHHVM_C, nil >>
+	| "hhvmcc"             << ast.CallConvHHVM, nil >>
+	| "intel_ocl_bicc"     << ast.CallConvIntel_OCL_BI, nil >>
+	| "msp430_intrcc"      << ast.CallConvMSP430_Intr, nil >>
+	| "preserve_allcc"     << ast.CallConvPreserveAll, nil >>
+	| "preserve_mostcc"    << ast.CallConvPreserveMost, nil >>
+	| "ptx_device"         << ast.CallConvPTX_Device, nil >>
+	| "ptx_kernel"         << ast.CallConvPTX_Kernel, nil >>
+	| "spir_func"          << ast.CallConvSPIR_Func, nil >>
+	| "spir_kernel"        << ast.CallConvSPIR_Kernel, nil >>
+	| "swiftcc"            << ast.CallConvSwift, nil >>
+	| "webkit_jscc"        << ast.CallConvWebKit_JS, nil >>
+	| "x86_64_sysvcc"      << ast.CallConvX86_64_SysV, nil >>
+	| "x86_64_win64cc"     << ast.CallConvX86_64_Win64, nil >>
+	| "x86_fastcallcc"     << ast.CallConvX86_FastCall, nil >>
+	| "x86_intrcc"         << ast.CallConvX86_Intr, nil >>
+	| "x86_regcallcc"      << ast.CallConvX86_RegCall, nil >>
+	| "x86_stdcallcc"      << ast.CallConvX86_StdCall, nil >>
+	| "x86_thiscallcc"     << ast.CallConvX86_ThisCall, nil >>
+	| "x86_vectorcallcc"   << ast.CallConvX86_VectorCall, nil >>
 ;
 
 Labels
@@ -1824,6 +1879,8 @@ MD
 	| MetadataID
 ;
 
+// TODO: Rename to OptCommaAttachedMDList after
+// https://github.com/llir/llvm/pull/21 has been merged.
 CommaAttachedMDs
 	: empty
 	| CommaAttachedMDList
