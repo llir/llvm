@@ -22,7 +22,7 @@ install:
   - go get -t ./...
 
 before_script:
-  - export GOLINT_IGNORE="-not -wholename '*/internal/*' -not -name '*_string.go' -not -wholename '*/types/single.go' -not -wholename '*/types/types.go'"
+  - export GOLINT_IGNORE="-not -wholename '*/internal/*' -not -name '*_string.go' -not -wholename '*/types/single.go' -not -wholename '*/types/types.go' -not -wholename '*/ir/function.go'"
   - wget https://gist.github.com/mewmew/379014c9a2e6885e238d/raw/goclean.sh
   - chmod +x goclean.sh
 
