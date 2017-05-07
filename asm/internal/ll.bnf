@@ -267,9 +267,9 @@ Immutable
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
-// through the limitation of 1 rune lookahead.
+// through the limitation of 1 token lookahead.
 //
-// Structured in this way to allow for naiive 1 rune lookahead parser
+// Structured in this way to allow for naiive 1 token lookahead parser
 // generators.
 GlobalOptions2
 	: "," Align CommaAttachedMDs   << $2, nil >>
@@ -492,14 +492,28 @@ ArrayType
 
 // --- [ struct type ] ---------------------------------------------------------
 
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 token lookahead.
+//
+// Structured in this way to allow for naiive 1 token lookahead parser
+// generators.
+//
+// Original production rule.
+//
+//    StructType
+//       : "{" Fields "}"
+//       | "<" "{" Fields "}" ">"
+//    ;
+//
+//    Fields
+//       : empty
+//       | FieldList
+//    ;
 StructType
-	: "{" Fields "}"           << astx.NewStructType($1) >>
-	| "<" "{" Fields "}" ">"   << astx.NewStructType($2) >>
-;
-
-Fields
-	: empty
-	| FieldList
+	: "{" "}"                     << astx.NewStructType(nil) >>
+	| "{" FieldList "}"           << astx.NewStructType($1) >>
+	| "<" "{" "}" ">"             << astx.NewStructType(nil) >>
+	| "<" "{" FieldList "}" ">"   << astx.NewStructType($2) >>
 ;
 
 FieldList
@@ -582,9 +596,23 @@ CharArrayConst
 
 // --- [ struct constant ] -----------------------------------------------------
 
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 token lookahead.
+//
+// Structured in this way to allow for naiive 1 token lookahead parser
+// generators.
+//
+// Original production rule.
+//
+//    StructConst
+//       : "{" Elems "}"
+//       | "<" "{" Elems "}" ">"
+//    ;
 StructConst
-	: "{" Elems "}"   << astx.NewStructConst($1) >>
-	| "<" "{" Elems "}" ">"  << astx.NewStructConst($2) >>
+	: "{" "}"                   << astx.NewStructConst(nil) >>
+	| "{" ElemList "}"          << astx.NewStructConst($1) >>
+	| "<" "{" "}" ">"           << astx.NewStructConst(nil) >>
+	| "<" "{" ElemList "}" ">"  << astx.NewStructConst($2) >>
 ;
 
 // --- [ zero initializer constant ] -------------------------------------------
@@ -1128,9 +1156,9 @@ AllocaInst
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
-// through the limitation of 1 rune lookahead.
+// through the limitation of 1 token lookahead.
 //
-// Structured in this way to allow for naiive 1 rune lookahead parser
+// Structured in this way to allow for naiive 1 token lookahead parser
 // generators.
 AllocaOptions
 	: "," NElems OptCommaAlign   << $1, nil >>
@@ -1222,9 +1250,9 @@ GetElementPtrInst
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
-// through the limitation of 1 rune lookahead.
+// through the limitation of 1 token lookahead.
 //
-// Structured in this way to allow for naiive 1 rune lookahead parser
+// Structured in this way to allow for naiive 1 token lookahead parser
 // generators.
 Indices
 	: empty
@@ -1676,7 +1704,7 @@ UnnamedAddr
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
-// through the limitation of 1 rune lookahead.
+// through the limitation of 1 token lookahead.
 //
 // align and metadata should both be optional
 OptCommaAlign
@@ -1789,12 +1817,9 @@ OptAllocSizeNElems
 	: "," int_lit
 ;
 
-// TODO: Clean up when the parser generator no longer introduces ambiguities
-// through the limitation of 1 rune lookahead.
-//
-// empty causes conflict between Elems and Fields
 Elems
-	: ElemList
+	: empty
+	| ElemList
 ;
 
 ElemList
