@@ -1245,18 +1245,24 @@ AtomicOperation
 
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GetElementPtrInst
-	: "getelementptr" OptInbounds FirstClassType "," FirstClassType Value Indices   << astx.NewGetElementPtrInst($2, $4, $5, $6) >>
-;
-
 // TODO: Clean up when the parser generator no longer introduces ambiguities
 // through the limitation of 1 token lookahead.
 //
 // Structured in this way to allow for naiive 1 token lookahead parser
 // generators.
-Indices
-	: empty
-	| "," IndexList CommaAttachedMDs  << $1, nil >>
+//
+// Original production rule.
+//    GetElementPtrInst
+//       : "getelementptr" OptInbounds FirstClassType "," FirstClassType Value Indices CommaAttachedMDs   << astx.NewGetElementPtrInst($2, $4, $5, $6) >>
+//    ;
+//
+//    Indices
+//       : empty
+//       | "," IndexList   << $1, nil >>
+//    ;
+GetElementPtrInst
+	: "getelementptr" OptInbounds FirstClassType "," FirstClassType Value CommaAttachedMDs                 << astx.NewGetElementPtrInst($2, $4, $5, nil) >>
+	| "getelementptr" OptInbounds FirstClassType "," FirstClassType Value "," IndexList CommaAttachedMDs   << astx.NewGetElementPtrInst($2, $4, $5, $7) >>
 ;
 
 IndexList
