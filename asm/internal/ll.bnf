@@ -1221,6 +1221,11 @@ GetElementPtrInst
 	: "getelementptr" OptInbounds FirstClassType "," FirstClassType Value Indices   << astx.NewGetElementPtrInst($2, $4, $5, $6) >>
 ;
 
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 rune lookahead.
+//
+// Structured in this way to allow for naiive 1 rune lookahead parser
+// generators.
 Indices
 	: empty
 	| "," IndexList CommaAttachedMDs  << $1, nil >>
@@ -1670,6 +1675,10 @@ UnnamedAddr
 	| "unnamed_addr"
 ;
 
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 rune lookahead.
+//
+// align and metadata should both be optional
 OptCommaAlign
 	: empty
 	| "," Align CommaAttachedMDs
@@ -1780,6 +1789,10 @@ OptAllocSizeNElems
 	: "," int_lit
 ;
 
+// TODO: Clean up when the parser generator no longer introduces ambiguities
+// through the limitation of 1 rune lookahead.
+//
+// empty causes conflict between Elems and Fields
 Elems
 	: ElemList
 ;
