@@ -523,6 +523,9 @@ func NewMetadataDef(id, md interface{}) (*ast.Metadata, error) {
 
 // NewMetadata returns a new metadata based on the given metadata nodes.
 func NewMetadata(nodes interface{}) (*ast.Metadata, error) {
+	if nodes == nil {
+		return &ast.Metadata{}, nil
+	}
 	ns, ok := nodes.([]ast.MetadataNode)
 	if !ok {
 		return nil, errors.Errorf("invalid metadata nodes type; expected []ast.MetadataNode, got %T", nodes)
