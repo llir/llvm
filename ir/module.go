@@ -49,6 +49,9 @@ func (m *Module) String() string {
 		fmt.Fprintln(buf, global)
 	}
 	for _, f := range m.Funcs {
+		if len(buf.Bytes()) > 0 {
+			buf.WriteString("\n")
+		}
 		fmt.Fprintln(buf, f)
 	}
 	for _, md := range m.NamedMetadata {
