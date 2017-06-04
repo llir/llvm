@@ -42,10 +42,16 @@ func NewModule() *Module {
 func (m *Module) String() string {
 	buf := &bytes.Buffer{}
 	for _, typ := range m.Types {
+		if len(buf.Bytes()) > 0 {
+			buf.WriteString("\n")
+		}
 		name := enc.Local(typ.GetName())
 		fmt.Fprintf(buf, "%s = type %s\n", name, typ.Def())
 	}
 	for _, global := range m.Globals {
+		if len(buf.Bytes()) > 0 {
+			buf.WriteString("\n")
+		}
 		fmt.Fprintln(buf, global)
 	}
 	for _, f := range m.Funcs {
@@ -55,10 +61,16 @@ func (m *Module) String() string {
 		fmt.Fprintln(buf, f)
 	}
 	for _, md := range m.NamedMetadata {
+		if len(buf.Bytes()) > 0 {
+			buf.WriteString("\n")
+		}
 		name := enc.Metadata(md.Name)
 		fmt.Fprintf(buf, "%s = %s\n", name, md.Def())
 	}
 	for _, md := range m.Metadata {
+		if len(buf.Bytes()) > 0 {
+			buf.WriteString("\n")
+		}
 		id := enc.Metadata(md.ID)
 		fmt.Fprintf(buf, "%s = %s\n", id, md.Def())
 	}

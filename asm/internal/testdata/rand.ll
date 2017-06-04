@@ -1,5 +1,7 @@
 @seed = global i32 0
+
 declare i32 @abs(i32 %x)
+
 define i32 @rand() {
 ; <label>:0
 	%1 = load i32, i32* @seed

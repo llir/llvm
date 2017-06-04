@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/metadata"
@@ -42,6 +43,8 @@ type Function struct {
 	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
 	// function.
 	Metadata map[string]*metadata.Metadata
+	// mu prevents races on assignIDs.
+	mu sync.Mutex
 }
 
 // NewFunction returns a new function based on the given function name, return
@@ -89,7 +92,9 @@ func (*Function) MetadataNode() {}
 func (f *Function) String() string {
 	// Assign unique local IDs to unnamed function parameters, basic blocks and
 	// local variables.
+	f.mu.Lock()
 	assignIDs(f)
+	f.mu.Unlock()
 
 	// Calling convention.
 	callconv := ""
@@ -198,16 +203,20 @@ func NewParam(name string, typ types.Type) *types.Param {
 // variables of the function.
 func assignIDs(f *Function) {
 	id := 0
+	names := make(map[string]value.Value)
 	setName := func(n value.Named) {
 		name := n.GetName()
 		switch {
 		case isUnnamed(name):
-			n.SetName(strconv.Itoa(id))
+			name := strconv.Itoa(id)
+			n.SetName(name)
+			names[name] = n
 			id++
 		case isLocalID(name):
 			want := strconv.Itoa(id)
 			if name != want {
-				panic(fmt.Errorf("invalid local ID in function %s; expected %s, got %s", enc.Global(f.Name), enc.Local(want), enc.Local(name)))
+				//pretty.Println("names:", names)
+				panic(fmt.Errorf("invalid local ID in function %s; expected %s, got %s\n\t`%v`", enc.Global(f.Name), enc.Local(want), enc.Local(name), n))
 			}
 			id++
 		}

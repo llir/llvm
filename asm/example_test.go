@@ -69,6 +69,7 @@ func Example() {
 	//             Blocks:   nil,
 	//             Metadata: {
 	//             },
+	//             mu: sync.Mutex{},
 	//         },
 	//         &ir.Function{
 	//             Parent: &ir.Module{(CYCLIC REFERENCE)},
@@ -157,6 +158,7 @@ func Example() {
 	//             },
 	//             Metadata: {
 	//             },
+	//             mu: sync.Mutex{},
 	//         },
 	//     },
 	//     NamedMetadata: nil,

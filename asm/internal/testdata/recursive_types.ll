@@ -1,5 +1,7 @@
 %foo = type { %bar* }
+
 %bar = type { %foo* }
+
 define i32 @main() {
 ; <label>:0
 	%1 = alloca %foo

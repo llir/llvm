@@ -1,7 +1,11 @@
 %struct.foo = type { %struct.bar, i32 }
+
 %struct.bar = type { i32, i32 }
+
 %struct.qux = type { %struct.anon, i32 }
+
 %struct.anon = type { i32, i32 }
+
 define i32 @main() {
 ; <label>:0
 	%1 = alloca %struct.foo

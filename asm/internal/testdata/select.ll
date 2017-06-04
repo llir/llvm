@@ -1,4 +1,5 @@
 @x = global i32 3
+
 define i32 @main() {
 ; <label>:0
 	%1 = load i32, i32* @x
