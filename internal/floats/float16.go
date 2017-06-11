@@ -274,7 +274,7 @@ func NewFloat16FromString(s string) Float16 {
 // which contains 4 bytes in hexadecimal format.
 func NewFloat16FromBytes(b []byte) Float16 {
 	if len(b) != 4 {
-		panic(fmt.Errorf("invalid length of hexadecimal representation, expected 4, got %d", len(b)))
+		panic(fmt.Errorf("invalid length of float16 hexadecimal representation, expected 4, got %d", len(b)))
 	}
 	bits := uint16(unhex(b[0])<<12 | unhex(b[1])<<8 | unhex(b[2])<<4 | unhex(b[3])<<0)
 	return NewFloat16FromBits(bits)
