@@ -122,8 +122,10 @@ func (c *Float) Ident() string {
 		// The 80-bit format used by x86 is represented as 0xK followed by 20
 		// hexadecimal digits.
 
-		// TODO: Implement.
-		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", kind))
+		// TODO: Represent precise float80 using c.X.MantExp and
+		// floats.NewFloat80FromBits.
+		f := floats.NewFloat80FromFloat64(c.Float64())
+		return "0xK" + f.String()
 	case types.FloatKindDoubleDouble_128:
 		// The 128-bit format used by PowerPC (two adjacent doubles) is
 		// represented by 0xM followed by 32 hexadecimal digits.
