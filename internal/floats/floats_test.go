@@ -138,6 +138,7 @@ func TestFloat80Float64(t *testing.T) {
 		{in: "80000000000000000000", want: -0.0},  // -0
 		{in: "3FFF8000000000000000", want: 1.0},   // 1
 		{in: "40008000000000000000", want: 2.0},   // 2
+		{in: "4000C000000000000000", want: 3.0},   // 3
 		{in: "3FFC8000000000000000", want: 0.125}, // 0.125
 		//{in: "7FFEFFFFFFFFFFFFFFFF", want: 1.18973149535723176505e+4932}, // max normal
 		//{in: "00018000000000000000", want: 3.36210314311209350626e-4932}, // min positive normal
@@ -155,6 +156,45 @@ func TestFloat80Float64(t *testing.T) {
 		got := f.Float64()
 		if got != g.want {
 			t.Errorf("float64 mismatch for binary80 0x%s; expected %v, got %v", g.in, g.want, got)
+			continue
+		}
+	}
+}
+
+func TestNewFloat80FromFloat64(t *testing.T) {
+	golden := []struct {
+		// want
+		se uint16
+		m  uint64
+		// in
+		in float64
+	}{
+		{se: 0x0000, m: 0x0000000000000000, in: 0.0}, // +0
+		//{se: 0x8000, m: 0x0000000000000000, in: -0.0},  // -0
+		{se: 0x3FFF, m: 0x8000000000000000, in: 1.0},   // 1
+		{se: 0x4000, m: 0x8000000000000000, in: 2.0},   // 2
+		{se: 0x4000, m: 0xC000000000000000, in: 3.0},   // 3
+		{se: 0x3FFC, m: 0x8000000000000000, in: 0.125}, // 0.125
+		//{se: 0x7FFE, m: 0xFFFFFFFFFFFFFFFF, in: 1.18973149535723176505e+4932}, // max normal
+		//{se: 0x0001, m: 0x8000000000000000, in: 3.36210314311209350626e-4932}, // min positive normal
+		//{se: 0x0000, m: 0x7FFFFFFFFFFFFFFF, in: 3.36210314311209350608e-4932}, // max subnormal
+		//{se: 0x0000, m: 0x0000000000000001, in: 3.64519953188247460253e-4951}, // min positive subnormal
+		{se: 0x7FFF, m: 0x8000000000000000, in: math.Inf(1)},  // +inf
+		{se: 0xFFFF, m: 0x8000000000000000, in: math.Inf(-1)}, // -inf
+		//{se: 0x7FFF, m: 0xFFFFFFFFFFFFFFFF, in: math.NaN()},   // QNaN - quiet NaN with greatest fraction
+		//{se: 0x7FFF, m: 0xC000000000000000, in: math.NaN()},   // QNaN - quiet NaN with least fraction
+		//{se: 0x7FFF, m: 0xBFFFFFFFFFFFFFFF, in: math.NaN()},   // SNaN - signaling NaN with greatest fraction
+		//{se: 0x7FFF, m: 0x8000000000000001, in: math.NaN()},   // SNaN - signaling NaN with least fraction
+	}
+	for _, g := range golden {
+		f := NewFloat80FromFloat64(g.in)
+		se, m := f.Bits()
+		if se != g.se {
+			t.Errorf("binary80 se mismatch for float64 %v; expected 0x%04X, got 0x%04X", g.in, g.se, se)
+			continue
+		}
+		if m != g.m {
+			t.Errorf("binary80 m mismatch for float64 %v; expected 0x%016X, got 0x%016X", g.in, g.m, m)
 			continue
 		}
 	}

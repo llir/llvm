@@ -233,7 +233,7 @@ func NewFloat16FromFloat64(x float64) (f Float16, exact bool) {
 	// 5 bits: exponent.
 	//
 	// Exponent bias 1023 (binary64)
-	// Exponent bias 15  (binary16)
+	// Exponent bias 15   (binary16)
 	exp16 := int16(exp) - 1023 + 15
 	// 10 bits: fraction.
 	//

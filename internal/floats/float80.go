@@ -23,6 +23,12 @@ type Float80 struct {
 	m uint64
 }
 
+// Bits returns the IEEE 754 binary representation of f, with the sign and
+// exponent in se and the mantissa in m.
+func (f Float80) Bits() (se uint16, m uint64) {
+	return f.se, f.m
+}
+
 // Bytes returns the x86 extended precision binary representation of f as a byte
 // slice.
 func (f Float80) Bytes() []byte {
@@ -61,7 +67,7 @@ func (f Float80) Float64() float64 {
 	//
 	// References:
 	//    https://en.wikipedia.org/wiki/Double-precision_floating-point_format#Exponent_encoding
-	exp64 := exp - 16383 + 1023
+	exp64 := int64(exp) - 16383 + 1023
 	switch {
 	case exp == 0:
 		// exponent is all zeroes.
@@ -81,8 +87,55 @@ func (f Float80) Float64() float64 {
 	//
 	// References:
 	//    https://en.wikipedia.org/wiki/Double-precision_floating-point_format#IEEE_754_double-precision_binary_floating-point_format:_binary64
-	bits := sign<<63 | exp64<<52 | frac<<42
+	bits := sign<<63 | uint64(exp64)<<52 | frac>>11
 	return math.Float64frombits(bits)
+}
+
+// NewFloat80FromFloat64 returns the nearest 80-bit floating-point value for x.
+func NewFloat80FromFloat64(x float64) Float80 {
+	// Sign, exponent and fraction of binary64.
+	//
+	//    1 bit:   sign
+	//    11 bits: exponent
+	//    52 bits: fraction
+	bits := math.Float64bits(x)
+	// 1 bit: sign
+	sign := uint16(bits >> 63)
+	// 11 bits: exponent
+	exp := bits >> 52 & 0x7FF
+	// 52 bits: fraction
+	frac := bits & 0xFFFFFFFFFFFFF
+
+	if exp == 0 && frac == 0 {
+		// zero value.
+		return Float80{}
+	}
+
+	// Sign, exponent and fraction of binary80.
+	//
+	//    1 bit:   sign
+	//    15 bits: exponent
+	//    1 bit:   integer part
+	//    63 bits: fraction
+
+	// 15 bits: exponent.
+	//
+	// Exponent bias 1023  (binary64)
+	// Exponent bias 16383 (binary80)
+	exp80 := int64(exp) - 1023 + 16383
+	// 63 bits: fraction.
+	//
+	frac80 := frac << 11
+	switch {
+	case exp == 0:
+		exp80 = 0
+	case exp == 0x7FF:
+		exp80 = 0x7FFF
+	}
+	se := sign<<15 | uint16(exp80)
+	// Integer part set to specify normalized value.
+	m := 0x8000000000000000 | frac80
+	return NewFloat80FromBits(se, m)
 }
 
 // NewFloat80FromString returns a new 80-bit floating-point value based on s,
@@ -101,4 +154,13 @@ func NewFloat80FromBytes(b []byte) Float80 {
 	f.se = uint16(unhex(b[0])<<12 | unhex(b[1])<<8 | unhex(b[2])<<4 | unhex(b[3])<<0)
 	f.m = uint64(unhex(b[4])<<60 | unhex(b[5])<<56 | unhex(b[6])<<52 | unhex(b[7])<<48 | unhex(b[8])<<44 | unhex(b[9])<<40 | unhex(b[10])<<36 | unhex(b[11])<<32 | unhex(b[12])<<28 | unhex(b[13])<<24 | unhex(b[14])<<20 | unhex(b[15])<<16 | unhex(b[16])<<12 | unhex(b[17])<<8 | unhex(b[18])<<4 | unhex(b[19])<<0)
 	return f
+}
+
+// NewFloat80FromBits returns a new 80-bit floating-point value based on the
+// sign, exponent and mantissa bits.
+func NewFloat80FromBits(se uint16, m uint64) Float80 {
+	return Float80{
+		se: se,
+		m:  m,
+	}
 }
