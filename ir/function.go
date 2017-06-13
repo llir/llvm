@@ -112,7 +112,15 @@ func (f *Function) String() string {
 		if i != 0 {
 			sig.WriteString(", ")
 		}
-		fmt.Fprintf(sig, "%s %s", param.Type(), param.Ident())
+		// Use same output format as Clang. Don't output local ID for unnamed
+		// function parameters.
+		if len(param.Name) > 0 && !isLocalID(param.Name) {
+			fmt.Fprintf(sig, "%s %s",
+				param.Type(),
+				param.Ident())
+		} else {
+			sig.WriteString(param.Type().String())
+		}
 	}
 	if f.Sig.Variadic {
 		if len(params) > 0 {
