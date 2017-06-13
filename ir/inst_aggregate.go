@@ -175,7 +175,7 @@ func aggregateElemType(t types.Type, indices []int64) (types.Type, error) {
 	if len(indices) == 0 {
 		return t, nil
 	}
-	index := indices[1]
+	index := indices[0]
 	switch t := t.(type) {
 	case *types.ArrayType:
 		if index >= t.Len {
