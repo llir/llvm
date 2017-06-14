@@ -45,11 +45,11 @@ import "fmt"
 //
 // Vector instructions
 //
+// http://llvm.org/docs/LangRef.html#vector-operations
+//
 //    *ir.InstExtractElement   (https://godoc.org/github.com/llir/llvm/ir#InstExtractElement)
 //    *ir.InstInsertElement    (https://godoc.org/github.com/llir/llvm/ir#InstInsertElement)
 //    *ir.InstShuffleVector    (https://godoc.org/github.com/llir/llvm/ir#InstShuffleVector)
-//
-// http://llvm.org/docs/LangRef.html#vector-operations
 //
 // Aggregate instructions
 //
