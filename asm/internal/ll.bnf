@@ -95,6 +95,12 @@ attr_group_id
 	: '#' _id
 ;
 
+// --- [ Comdat identifiers ] --------------------------------------------------
+
+comdat_name
+	: '$' ( _name | _quoted_name )
+;
+
 // --- [ Metadata identifiers ] ------------------------------------------------
 
 metadata_name
@@ -249,11 +255,13 @@ TypeDef
 // Original production rule.
 //
 //    GlobalDecl
-//       : GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $4, $5, $7) >>
+//       : GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $4, $5, $7) >>
 //    ;
 GlobalDecl
-	: GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaAttachedMDList             << astx.NewGlobalDecl($0, $4, $5, $6) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Align OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $4, $5, $8) >>
+	: GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaAttachedMDList                        << astx.NewGlobalDecl($0, $4, $5, $6) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Align OptCommaAttachedMDList              << astx.NewGlobalDecl($0, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDecl($0, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $4, $5, $10) >>
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
@@ -265,11 +273,13 @@ GlobalDecl
 // Original production rule.
 //
 //    GlobalDef
-//       : GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDef($0, $4, $5, $6, $8) >>
+//       : GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDef($0, $4, $5, $6, $8) >>
 //    ;
 GlobalDef
-	: GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaAttachedMDList             << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Align OptCommaAttachedMDList   << astx.NewGlobalDef($0, $4, $5, $6, $9) >>
+	: GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaAttachedMDList                        << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Align OptCommaAttachedMDList              << astx.NewGlobalDef($0, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDef($0, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDef($0, $4, $5, $6, $11) >>
 ;
 
 GlobalOptions
@@ -302,7 +312,7 @@ FuncDef
 
 FuncHeader
 	: OptVisibility OptDLLStorageClass OptCallConv ParamAttrs Type GlobalIdent
-		"(" Params ")" OptUnnamedAddr FuncAttrs OptAlign   << astx.NewFuncHeader($2, $4, $5, $7) >>
+		"(" Params ")" OptUnnamedAddr FuncAttrs OptAlign OptComdat   << astx.NewFuncHeader($2, $4, $5, $7) >>
 ;
 
 Params
@@ -394,6 +404,10 @@ LabelIdent
 
 AttrGroupID
 	: attr_group_id
+;
+
+ComdatName
+	: comdat_name
 ;
 
 MetadataName
@@ -1754,6 +1768,16 @@ OptUnnamedAddr
 UnnamedAddr
 	: "local_unnamed_addr"
 	| "unnamed_addr"
+;
+
+OptComdat
+	: empty
+	| Comdat
+;
+
+Comdat
+	: "comdat"
+	| "comdat" "(" ComdatName ")"
 ;
 
 OptAlign
