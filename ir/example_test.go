@@ -8,8 +8,6 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
-// === [ Pseudo-random number generator example ] ==============================
-
 func Example() {
 	// This example produces LLVM IR code equivalent to the following C code,
 	// which implements a pseudo-random number generator.

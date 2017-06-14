@@ -2,16 +2,14 @@ package ir_test
 
 import (
 	"fmt"
-	"go/constant"
 	"log"
 
 	"github.com/llir/llvm/asm"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
-
-// === [ Evaluator example ] ===================================================
 
 func Example_evaluator() {
 	// Parse the LLVM IR assembly file `eval.ll`.
