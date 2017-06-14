@@ -104,7 +104,7 @@ pretty.Println(m)
 
 [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package--Evaluator).
 
-The following example program parses [eval.ll](testdata/eval.ll), evaluates the return value of the `@main` function and prints the result to standard output.
+The following example program parses [eval.ll](ir/testdata/eval.ll), evaluates the return value of the `@main` function and prints the result to standard output.
 
 ```go
 package main
