@@ -126,7 +126,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    // Evalute and print the return value of the `main` function.
+    // Evalute and print the return value of the `@main` function.
     for _, f := range m.Funcs {
         if f.Name == "main" {
             e := newEvaluator(f)
