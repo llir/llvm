@@ -206,7 +206,9 @@ TopLevelDeclList
 TopLevelDecl
 	: SourceFilename
 	| TargetSpec
+	| ModuleAsm
 	| TypeDef
+	| ComdatDef
 	| GlobalDecl
 	| GlobalDef
 	| FuncDecl
@@ -237,11 +239,35 @@ TargetTriple
 	: "triple" "=" string_lit
 ;
 
+// --- [ Module-level inline assembly ] ----------------------------------------
+
+// ref: http://llvm.org/docs/LangRef.html#module-level-inline-assembly
+ModuleAsm
+	: "module" "asm" string_lit   << nil, nil >>
+;
+
 // --- [ Type definitions ] ----------------------------------------------------
 
 TypeDef
 	: LocalIdent "=" "type" Type       << astx.NewTypeDef($0, $3) >>
 	| LocalIdent "=" "type" "opaque"   << astx.NewTypeDefOpaque($0) >>
+;
+
+// --- [ Comdat definitions ] --------------------------------------------------
+
+ComdatDef
+	: ComdatName "=" "comdat" SelectionKind   << nil, nil >>
+;
+
+// From spec and src of v4.0.
+//
+// ref: http://llvm.org/docs/LangRef.html#comdats
+SelectionKind
+	: "any"
+	| "exactmatch"
+	| "largest"
+	| "noduplicates"
+	| "samesize"
 ;
 
 // --- [ Global variables ] ----------------------------------------------------
