@@ -134,13 +134,12 @@ func main() {
             break
         }
     }
-
 }
 
 // evaluator is a function evaluator.
 type evaluator struct {
     // Function.
-    f   *ir.Function
+    f *ir.Function
     // Function arguments.
     args []value.Value
 }
