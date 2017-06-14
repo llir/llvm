@@ -150,7 +150,7 @@ func newEvaluator(f *ir.Function, args ...value.Value) *evaluator {
     return &evaluator{f: f, args: args}
 }
 
-// eval evalutes f and returns the corresponding 64-bit integer.
+// eval evalutes f and returns the corresponding 32-bit integer.
 func (e *evaluator) eval() uint32 {
     f := e.f
     if !types.Equal(f.Sig.Ret, types.I32) {
@@ -171,7 +171,7 @@ func (e *evaluator) eval() uint32 {
     panic(fmt.Errorf("unable to locate RET terminator in function %q", f.Name))
 }
 
-// evalInst evaluates inst and returns the corresponding 64-bit integer.
+// evalInst evaluates inst and returns the corresponding 32-bit integer.
 func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
     switch inst := inst.(type) {
     // Binary instructions.
@@ -226,7 +226,7 @@ func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
     }
 }
 
-// evalValue evalutes v and returns the corresponding 64-bit integer.
+// evalValue evalutes v and returns the corresponding 32-bit integer.
 func (e *evaluator) evalValue(v value.Value) uint32 {
     switch v := v.(type) {
     case ir.Instruction:
