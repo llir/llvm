@@ -18,8 +18,10 @@ func Example() {
 	// Output:
 	//
 	// &ir.Module{
-	//     Types:   nil,
-	//     Globals: {
+	//     DataLayout:   "",
+	//     TargetTriple: "",
+	//     Types:        nil,
+	//     Globals:      {
 	//         &ir.Global{
 	//             Name: "seed",
 	//             Typ:  &types.PointerType{

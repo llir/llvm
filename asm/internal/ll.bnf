@@ -227,16 +227,16 @@ SourceFilename
 // --- [ Target specifiers ] ---------------------------------------------------
 
 TargetSpec
-	: "target" DataLayout     << nil, nil >>
-	| "target" TargetTriple   << nil, nil >>
+	: "target" DataLayout     << $1, nil >>
+	| "target" TargetTriple   << $1, nil >>
 ;
 
 DataLayout
-	: "datalayout" "=" string_lit
+	: "datalayout" "=" string_lit   << astx.NewDataLayout($2) >>
 ;
 
 TargetTriple
-	: "triple" "=" string_lit
+	: "triple" "=" string_lit   << astx.NewTargetTriple($2) >>
 ;
 
 // --- [ Module-level inline assembly ] ----------------------------------------

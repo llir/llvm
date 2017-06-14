@@ -21,6 +21,10 @@ import (
 // A Module represents an LLVM IR module, which consists of top-level type
 // definitions, global variables, functions, and metadata.
 type Module struct {
+	// Data layout.
+	DataLayout string
+	// Target triple.
+	TargetTriple string
 	// Type definitions.
 	Types []types.Type
 	// Global variables of the module.
@@ -41,6 +45,12 @@ func NewModule() *Module {
 // String returns the LLVM syntax representation of the module.
 func (m *Module) String() string {
 	buf := &bytes.Buffer{}
+	if len(m.DataLayout) > 0 {
+		fmt.Fprintf(buf, "target datalayout = %q\n", m.DataLayout)
+	}
+	if len(m.TargetTriple) > 0 {
+		fmt.Fprintf(buf, "target triple = %q\n", m.TargetTriple)
+	}
 	for _, typ := range m.Types {
 		if len(buf.Bytes()) > 0 {
 			buf.WriteString("\n")

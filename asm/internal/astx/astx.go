@@ -37,6 +37,10 @@ func NewModule(decls interface{}) (*ast.Module, error) {
 	m := &ast.Module{}
 	for _, d := range ds {
 		switch d := d.(type) {
+		case *DataLayout:
+			m.DataLayout = d.s
+		case *TargetTriple:
+			m.TargetTriple = d.s
 		case *ast.NamedType:
 			m.Types = append(m.Types, d)
 		case *ast.Global:
@@ -88,6 +92,40 @@ func AppendTopLevelDecl(decls, decl interface{}) ([]TopLevelDecl, error) {
 		return nil, errors.Errorf("invalid top-level declaration type; expected astx.TopLevelDecl, got %T", decl)
 	}
 	return append(ds, d), nil
+}
+
+// --- [ Target specifiers ] ---------------------------------------------------
+
+// DataLayout specifies the data layout of a module.
+type DataLayout struct {
+	// Unquoted data layout string.
+	s string
+}
+
+// NewDataLayout returns a new data layout string based on the given string
+// token.
+func NewDataLayout(triple interface{}) (*DataLayout, error) {
+	s, err := getTokenString(triple)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &DataLayout{s: unquote(s)}, nil
+}
+
+// TargetTriple specifies the target triple of a module.
+type TargetTriple struct {
+	// Unquoted target triple string.
+	s string
+}
+
+// NewTargetTriple returns a new target triple string based on the given string
+// token.
+func NewTargetTriple(triple interface{}) (*TargetTriple, error) {
+	s, err := getTokenString(triple)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &TargetTriple{s: unquote(s)}, nil
 }
 
 // --- [ Type definitions ] ----------------------------------------------------

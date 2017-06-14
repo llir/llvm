@@ -7,6 +7,10 @@ package ast
 // A Module represents an LLVM IR module, which consists of top-level type
 // definitions, global variables, functions, and metadata.
 type Module struct {
+	// Data layout.
+	DataLayout string
+	// Target triple.
+	TargetTriple string
 	// Type definitions.
 	Types []*NamedType
 	// Global variables of the module.

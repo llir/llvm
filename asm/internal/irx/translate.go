@@ -41,6 +41,10 @@ import (
 func Translate(module *ast.Module) (*ir.Module, error) {
 	m := NewModule()
 
+	// Set target specifiers.
+	m.DataLayout = module.DataLayout
+	m.TargetTriple = module.TargetTriple
+
 	// Index type definitions.
 	for _, old := range module.Types {
 		name := old.Name
