@@ -20,8 +20,7 @@ var (
 
 // Validate that the relevant types satisfy the constant.Expr interface.
 var (
-	// Constant expressions.
-	// Binary instructions
+	// Binary expressions.
 	_ constant.Expr = &constant.ExprAdd{}
 	_ constant.Expr = &constant.ExprFAdd{}
 	_ constant.Expr = &constant.ExprSub{}
@@ -34,16 +33,23 @@ var (
 	_ constant.Expr = &constant.ExprURem{}
 	_ constant.Expr = &constant.ExprSRem{}
 	_ constant.Expr = &constant.ExprFRem{}
-	// Bitwise instructions
+	// Bitwise expressions.
 	_ constant.Expr = &constant.ExprShl{}
 	_ constant.Expr = &constant.ExprLShr{}
 	_ constant.Expr = &constant.ExprAShr{}
 	_ constant.Expr = &constant.ExprAnd{}
 	_ constant.Expr = &constant.ExprOr{}
 	_ constant.Expr = &constant.ExprXor{}
-	// Memory instructions
+	// Vector expressions.
+	_ constant.Expr = &constant.ExprExtractElement{}
+	_ constant.Expr = &constant.ExprInsertElement{}
+	_ constant.Expr = &constant.ExprShuffleVector{}
+	// Aggregate expressions.
+	_ constant.Expr = &constant.ExprExtractValue{}
+	_ constant.Expr = &constant.ExprInsertValue{}
+	// Memory expressions.
 	_ constant.Expr = &constant.ExprGetElementPtr{}
-	// Conversion instructions
+	// Conversion expressions.
 	_ constant.Expr = &constant.ExprTrunc{}
 	_ constant.Expr = &constant.ExprZExt{}
 	_ constant.Expr = &constant.ExprSExt{}
@@ -57,7 +63,7 @@ var (
 	_ constant.Expr = &constant.ExprIntToPtr{}
 	_ constant.Expr = &constant.ExprBitCast{}
 	_ constant.Expr = &constant.ExprAddrSpaceCast{}
-	// Other instructions
+	// Other expressions.
 	_ constant.Expr = &constant.ExprICmp{}
 	_ constant.Expr = &constant.ExprFCmp{}
 	_ constant.Expr = &constant.ExprSelect{}
@@ -74,8 +80,7 @@ var (
 	_ metadata.Node = &constant.Array{}
 	_ metadata.Node = &constant.Struct{}
 	_ metadata.Node = &constant.ZeroInitializer{}
-	// Constant expressions.
-	// Binary instructions
+	// Binary expressions.
 	_ metadata.Node = &constant.ExprAdd{}
 	_ metadata.Node = &constant.ExprFAdd{}
 	_ metadata.Node = &constant.ExprSub{}
@@ -88,16 +93,23 @@ var (
 	_ metadata.Node = &constant.ExprURem{}
 	_ metadata.Node = &constant.ExprSRem{}
 	_ metadata.Node = &constant.ExprFRem{}
-	// Bitwise instructions
+	// Bitwise expressions.
 	_ metadata.Node = &constant.ExprShl{}
 	_ metadata.Node = &constant.ExprLShr{}
 	_ metadata.Node = &constant.ExprAShr{}
 	_ metadata.Node = &constant.ExprAnd{}
 	_ metadata.Node = &constant.ExprOr{}
 	_ metadata.Node = &constant.ExprXor{}
-	// Memory instructions
+	// Vector expressions.
+	_ metadata.Node = &constant.ExprExtractElement{}
+	_ metadata.Node = &constant.ExprInsertElement{}
+	_ metadata.Node = &constant.ExprShuffleVector{}
+	// Aggregate expressions.
+	_ metadata.Node = &constant.ExprExtractValue{}
+	_ metadata.Node = &constant.ExprInsertValue{}
+	// Memory expressions.
 	_ metadata.Node = &constant.ExprGetElementPtr{}
-	// Conversion instructions
+	// Conversion expressions.
 	_ metadata.Node = &constant.ExprTrunc{}
 	_ metadata.Node = &constant.ExprZExt{}
 	_ metadata.Node = &constant.ExprSExt{}
@@ -111,7 +123,7 @@ var (
 	_ metadata.Node = &constant.ExprIntToPtr{}
 	_ metadata.Node = &constant.ExprBitCast{}
 	_ metadata.Node = &constant.ExprAddrSpaceCast{}
-	// Other instructions
+	// Other expressions.
 	_ metadata.Node = &constant.ExprICmp{}
 	_ metadata.Node = &constant.ExprFCmp{}
 	_ metadata.Node = &constant.ExprSelect{}

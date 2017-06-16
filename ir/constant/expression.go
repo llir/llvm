@@ -37,6 +37,21 @@ package constant
 //    *constant.ExprOr     (https://godoc.org/github.com/llir/llvm/ir/constant#ExprOr)
 //    *constant.ExprXor    (https://godoc.org/github.com/llir/llvm/ir/constant#ExprXor)
 //
+// Vector expressions
+//
+// http://llvm.org/docs/LangRef.html#vector-operations
+//
+//    *constant.ExprExtractElement   (https://godoc.org/github.com/llir/llvm/ir/constant#ExprExtractElement)
+//    *constant.ExprInsertElement    (https://godoc.org/github.com/llir/llvm/ir/constant#ExprInsertElement)
+//    *constant.ExprShuffleVector    (https://godoc.org/github.com/llir/llvm/ir/constant#ExprShuffleVector)
+//
+// Aggregate expressions
+//
+// http://llvm.org/docs/LangRef.html#aggregate-operations
+//
+//    *constant.ExprExtractValue   (https://godoc.org/github.com/llir/llvm/ir/constant#ExprExtractValue)
+//    *constant.ExprInsertValue    (https://godoc.org/github.com/llir/llvm/ir/constant#ExprInsertValue)
+//
 // Memory expressions
 //
 // http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations

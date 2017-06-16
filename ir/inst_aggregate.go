@@ -15,7 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// --- [ extractvalue ] ------------------------------------------------------
+// --- [ extractvalue ] --------------------------------------------------------
 
 // InstExtractValue represents an extractvalue instruction.
 //
@@ -92,7 +92,7 @@ func (inst *InstExtractValue) SetParent(parent *BasicBlock) {
 	inst.Parent = parent
 }
 
-// --- [ insertvalue ] ------------------------------------------------------
+// --- [ insertvalue ] ---------------------------------------------------------
 
 // InstInsertValue represents an insertvalue instruction.
 //

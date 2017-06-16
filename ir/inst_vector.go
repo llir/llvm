@@ -87,7 +87,7 @@ func (inst *InstExtractElement) SetParent(parent *BasicBlock) {
 	inst.Parent = parent
 }
 
-// --- [ insertelement ] ------------------------------------------------------
+// --- [ insertelement ] -------------------------------------------------------
 
 // InstInsertElement represents an insertelement instruction.
 //
@@ -159,7 +159,7 @@ func (inst *InstInsertElement) SetParent(parent *BasicBlock) {
 	inst.Parent = parent
 }
 
-// --- [ shufflevector ] ------------------------------------------------------
+// --- [ shufflevector ] -------------------------------------------------------
 
 // InstShuffleVector represents an shufflevector instruction.
 //
