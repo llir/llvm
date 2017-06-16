@@ -947,7 +947,7 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		val.Type = t
 		return val, nil
 
-	// Binary instructions
+	// Binary expressions
 	case *ast.ExprAdd:
 		// Constant expression type should be of dummy type.
 		if _, ok := val.Type.(*ast.TypeDummy); !ok {
@@ -1033,7 +1033,7 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		val.Type = t
 		return val, nil
 
-	// Bitwise instructions
+	// Bitwise expressions
 	case *ast.ExprShl:
 		// Constant expression type should be of dummy type.
 		if _, ok := val.Type.(*ast.TypeDummy); !ok {
@@ -1077,7 +1077,46 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		val.Type = t
 		return val, nil
 
-	// Memory instructions
+	// Aggregate expressions
+	case *ast.ExprExtractValue:
+		// Constant expression type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid extractvalue expression type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprInsertValue:
+		// Constant expression type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid insertvalue expression type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Vector expressions
+	case *ast.ExprExtractElement:
+		// Constant expression type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid extractelement expression type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprInsertElement:
+		// Constant expression type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid insertelement expression type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.ExprShuffleVector:
+		// Constant expression type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid shufflevector expression type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+
+	// Memory expressions
 	case *ast.ExprGetElementPtr:
 		// Constant expression type should be of dummy type.
 		if _, ok := val.Type.(*ast.TypeDummy); !ok {
@@ -1086,7 +1125,7 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		val.Type = t
 		return val, nil
 
-	// Conversion instructions
+	// Conversion expressions
 	case *ast.ExprTrunc:
 		// Constant expression type should be of dummy type.
 		if _, ok := val.Type.(*ast.TypeDummy); !ok {
@@ -1179,7 +1218,7 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		val.Type = t
 		return val, nil
 
-	// Other instructions
+	// Other expressions
 	case *ast.ExprICmp:
 		// Constant expression type should be of dummy type.
 		if _, ok := val.Type.(*ast.TypeDummy); !ok {
@@ -1582,6 +1621,98 @@ func NewXorExpr(xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprXor, error) {
 		return nil, errors.WithStack(err)
 	}
 	return &ast.ExprXor{Type: &ast.TypeDummy{}, X: x, Y: y}, nil
+}
+
+// --- [ Vector expressions ] --------------------------------------------------
+
+// NewExtractElementExpr returns a new extractelement expression based on the
+// given vector and index.
+func NewExtractElementExpr(xTyp, xVal, indexTyp, indexVal interface{}) (*ast.ExprExtractElement, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	index, err := NewConstant(indexTyp, indexVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprExtractElement{Type: &ast.TypeDummy{}, X: x, Index: index}, nil
+}
+
+// NewInsertElementExpr returns a new insertelement expression based on the
+// given vector, element and index.
+func NewInsertElementExpr(xTyp, xVal, elemTyp, elemVal, indexTyp, indexVal interface{}) (*ast.ExprInsertElement, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	elem, err := NewConstant(elemTyp, elemVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	index, err := NewConstant(indexTyp, indexVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprInsertElement{Type: &ast.TypeDummy{}, X: x, Elem: elem, Index: index}, nil
+}
+
+// NewShuffleVectorExpr returns a new shufflevector expression based on the
+// given vectors and shuffle mask.
+func NewShuffleVectorExpr(xTyp, xVal, yTyp, yVal, maskTyp, maskVal interface{}) (*ast.ExprShuffleVector, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := NewConstant(yTyp, yVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	mask, err := NewConstant(maskTyp, maskVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.ExprShuffleVector{Type: &ast.TypeDummy{}, X: x, Y: y, Mask: mask}, nil
+}
+
+// --- [ Aggregate  expressions ] ----------------------------------------------
+
+// NewExtractValueExpr returns a new extractvalue expression based on the
+// given aggregate value and indices.
+func NewExtractValueExpr(xTyp, xVal, indices interface{}) (*ast.ExprExtractValue, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	is, ok := indices.([]int64)
+	if !ok {
+		return nil, errors.Errorf("invalid indices type; expected []int64, got %T", indices)
+	}
+	if len(is) < 1 {
+		return nil, errors.Errorf("invalid indices length; expected > 0, got %d", len(is))
+	}
+	return &ast.ExprExtractValue{Type: &ast.TypeDummy{}, X: x, Indices: is}, nil
+}
+
+// NewInsertValueExpr returns a new insertvalue expression based on the
+// given aggregate value, element and indices.
+func NewInsertValueExpr(xTyp, xVal, elemTyp, elemVal, indices interface{}) (*ast.ExprInsertValue, error) {
+	x, err := NewConstant(xTyp, xVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	elem, err := NewConstant(elemTyp, elemVal)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	is, ok := indices.([]int64)
+	if !ok {
+		return nil, errors.Errorf("invalid indices type; expected []int64, got %T", indices)
+	}
+	if len(is) < 1 {
+		return nil, errors.Errorf("invalid indices length; expected > 0, got %d", len(is))
+	}
+	return &ast.ExprInsertValue{Type: &ast.TypeDummy{}, X: x, Elem: elem, Indices: is}, nil
 }
 
 // --- [ Memory expressions ] --------------------------------------------------

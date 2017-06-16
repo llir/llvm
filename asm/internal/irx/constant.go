@@ -233,6 +233,45 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		}
 		return c
 
+	// Aggregate expressions
+	case *ast.ExprExtractValue:
+		x := m.irConstant(old.X)
+		c := constant.NewExtractValue(x, old.Indices)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("extractvalue expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
+	case *ast.ExprInsertValue:
+		x, elem := m.irConstant(old.X), m.irConstant(old.Elem)
+		c := constant.NewInsertValue(x, elem, old.Indices)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("insertvalue expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
+
+	// Vector expressions
+	case *ast.ExprExtractElement:
+		x, index := m.irConstant(old.X), m.irConstant(old.Index)
+		c := constant.NewExtractElement(x, index)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("extractelement expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
+	case *ast.ExprInsertElement:
+		x, elem, index := m.irConstant(old.X), m.irConstant(old.Elem), m.irConstant(old.Index)
+		c := constant.NewInsertElement(x, elem, index)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("insertelement expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
+	case *ast.ExprShuffleVector:
+		x, y, mask := m.irConstant(old.X), m.irConstant(old.Y), m.irConstant(old.Mask)
+		c := constant.NewShuffleVector(x, y, mask)
+		if got, want := c.Type(), m.irType(old.Type); !got.Equal(want) {
+			m.errs = append(m.errs, errors.Errorf("shufflevector expression type mismatch; expected `%v`, got `%v`", want, got))
+		}
+		return c
+
 	// Memory expressions
 	case *ast.ExprGetElementPtr:
 		src := m.irConstant(old.Src)

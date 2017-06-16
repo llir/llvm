@@ -697,6 +697,10 @@ func (m *Module) metadataNode(oldNode ast.MetadataNode) metadata.Node {
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
+// --- [ Aggregate expressions ] -----------------------------------------------
+
+// --- [ Vector expressions ] --------------------------------------------------
+
 // --- [ Memory expressions ] --------------------------------------------------
 
 // --- [ Conversion expressions ] ----------------------------------------------

@@ -7,7 +7,7 @@ package ast
 
 // --- [ extractelement ] ------------------------------------------------------
 
-// InstExtractElement represents an extract element instruction.
+// InstExtractElement represents an extractelement instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#extractelement-instruction
@@ -39,7 +39,7 @@ func (*InstExtractElement) isInst() {}
 
 // --- [ insertelement ] -------------------------------------------------------
 
-// InstInsertElement represents an insert element instruction.
+// InstInsertElement represents an insertelement instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#insertelement-instruction
@@ -73,7 +73,7 @@ func (*InstInsertElement) isInst() {}
 
 // --- [ shufflevector ] -------------------------------------------------------
 
-// InstShuffleVector represents a shuffle vector instruction.
+// InstShuffleVector represents a shufflevector instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#shufflevector-instruction

@@ -708,16 +708,12 @@ ConstExpr
 	| OrExpr
 	| XorExpr
 	// Vector expressions
-
-	// TODO: extractelement
-	// TODO: insertelement
-	// TODO: shufflevector
-
+	| ExtractElementExpr
+	| InsertElementExpr
+	| ShuffleVectorExpr
 	// Aggregate expressions
-
-	// TODO: extractvalue
-	// TODO: insertvalue
-
+	| ExtractValueExpr
+	| InsertValueExpr
 	// Memory expressions
 	| GetElementPtrExpr
 	// Conversion expressions
@@ -818,17 +814,27 @@ XorExpr
 
 // --- [ Vector expressions ] --------------------------------------------------
 
-// TODO: extractelement
+ExtractElementExpr
+	: "extractelement" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewExtractElementExpr($2, $3, $5, $6) >>
+;
 
-// TODO: insertelement
+InsertElementExpr
+	: "insertelement" "(" FirstClassType Constant "," FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewInsertElementExpr($2, $3, $5, $6, $8, $9) >>
+;
 
-// TODO: shufflevector
+ShuffleVectorExpr
+	: "shufflevector" "(" FirstClassType Constant "," FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewShuffleVectorExpr($2, $3, $5, $6, $8, $9) >>
+;
 
 // --- [ Aggregate expressions ] -----------------------------------------------
 
-// TODO: extractvalue
+ExtractValueExpr
+	: "extractvalue" "(" FirstClassType Constant "," IntLitList ")"   << astx.NewExtractValueExpr($2, $3, $5) >>
+;
 
-// TODO: insertvalue
+InsertValueExpr
+	: "insertvalue" "(" FirstClassType Constant "," FirstClassType Constant "," IntLitList ")"   << astx.NewInsertValueExpr($2, $3, $5, $6, $8) >>
+;
 
 // --- [ Memory expressions ] --------------------------------------------------
 

@@ -7,7 +7,7 @@ package ast
 
 // --- [ extractvalue ] ------------------------------------------------------
 
-// InstExtractValue represents an extract value instruction.
+// InstExtractValue represents an extractvalue instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#extractvalue-instruction
@@ -39,7 +39,7 @@ func (*InstExtractValue) isInst() {}
 
 // --- [ insertvalue ] -------------------------------------------------------
 
-// InstInsertValue represents an insert value instruction.
+// InstInsertValue represents an insertvalue instruction.
 //
 // References:
 //    http://llvm.org/docs/LangRef.html#insertvalue-instruction
