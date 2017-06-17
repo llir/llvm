@@ -277,9 +277,3 @@ The [llvm/ir](https://godoc.org/github.com/llir/llvm/ir) package supports all in
 Primary focus of version 0.3: *data flow analysis*.
 
 Introduce API for use-def chains.
-
-## Public domain
-
-The source code and any original content of this repository is hereby released into the [public domain].
-
-[public domain]: https://creativecommons.org/publicdomain/zero/1.0/
