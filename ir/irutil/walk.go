@@ -193,6 +193,16 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **constant.ExprXor:
 		w.walkBeforeAfter(*n, before, after)
+	case **constant.ExprExtractElement:
+		w.walkBeforeAfter(*n, before, after)
+	case **constant.ExprInsertElement:
+		w.walkBeforeAfter(*n, before, after)
+	case **constant.ExprShuffleVector:
+		w.walkBeforeAfter(*n, before, after)
+	case **constant.ExprExtractValue:
+		w.walkBeforeAfter(*n, before, after)
+	case **constant.ExprInsertValue:
+		w.walkBeforeAfter(*n, before, after)
 	case **constant.ExprGetElementPtr:
 		w.walkBeforeAfter(*n, before, after)
 	case **constant.ExprTrunc:
@@ -511,6 +521,24 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *constant.ExprXor:
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
+	case *constant.ExprExtractElement:
+		w.walkBeforeAfter(&n.Typ, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Index, before, after)
+	case *constant.ExprInsertElement:
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Elem, before, after)
+		w.walkBeforeAfter(&n.Index, before, after)
+	case *constant.ExprShuffleVector:
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Y, before, after)
+		w.walkBeforeAfter(&n.Mask, before, after)
+	case *constant.ExprExtractValue:
+		w.walkBeforeAfter(&n.Typ, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+	case *constant.ExprInsertValue:
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Elem, before, after)
 	case *constant.ExprGetElementPtr:
 		w.walkBeforeAfter(&n.Typ, before, after)
 		w.walkBeforeAfter(&n.Elem, before, after)

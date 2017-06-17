@@ -213,6 +213,16 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.ExprXor:
 		w.walkBeforeAfter(*n, before, after)
+	case **ast.ExprExtractElement:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.ExprInsertElement:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.ExprShuffleVector:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.ExprExtractValue:
+		w.walkBeforeAfter(*n, before, after)
+	case **ast.ExprInsertValue:
+		w.walkBeforeAfter(*n, before, after)
 	case **ast.ExprGetElementPtr:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.ExprTrunc:
@@ -615,6 +625,27 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(&n.Type, before, after)
 		w.walkBeforeAfter(&n.X, before, after)
 		w.walkBeforeAfter(&n.Y, before, after)
+	case *ast.ExprExtractElement:
+		w.walkBeforeAfter(&n.Type, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Index, before, after)
+	case *ast.ExprInsertElement:
+		w.walkBeforeAfter(&n.Type, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Elem, before, after)
+		w.walkBeforeAfter(&n.Index, before, after)
+	case *ast.ExprShuffleVector:
+		w.walkBeforeAfter(&n.Type, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Y, before, after)
+		w.walkBeforeAfter(&n.Mask, before, after)
+	case *ast.ExprExtractValue:
+		w.walkBeforeAfter(&n.Type, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+	case *ast.ExprInsertValue:
+		w.walkBeforeAfter(&n.Type, before, after)
+		w.walkBeforeAfter(&n.X, before, after)
+		w.walkBeforeAfter(&n.Elem, before, after)
 	case *ast.ExprGetElementPtr:
 		w.walkBeforeAfter(&n.Type, before, after)
 		w.walkBeforeAfter(&n.Elem, before, after)

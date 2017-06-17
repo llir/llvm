@@ -32,6 +32,21 @@ package ast
 //    *ast.ExprOr
 //    *ast.ExprXor
 //
+// Vector expressions
+//
+// http://llvm.org/docs/LangRef.html#vector-operations
+//
+//    *ast.ExprExtractElement
+//    *ast.ExprInsertElement
+//    *ast.ExprShuffleVector
+//
+// Aggregate expressions
+//
+// http://llvm.org/docs/LangRef.html#aggregate-operations
+//
+//    *ast.ExprExtractValue
+//    *ast.ExprInsertValue
+//
 // Memory expressions
 //
 // http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations
