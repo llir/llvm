@@ -21,8 +21,7 @@ var (
 
 // Validate that the relevant types satisfy the ast.Constant interface.
 var (
-	// Constant expressions.
-	// Binary instructions
+	// Binary expressions
 	_ ast.Constant = &ast.ExprAdd{}
 	_ ast.Constant = &ast.ExprFAdd{}
 	_ ast.Constant = &ast.ExprSub{}
@@ -35,16 +34,23 @@ var (
 	_ ast.Constant = &ast.ExprURem{}
 	_ ast.Constant = &ast.ExprSRem{}
 	_ ast.Constant = &ast.ExprFRem{}
-	// Bitwise instructions
+	// Bitwise expressions
 	_ ast.Constant = &ast.ExprShl{}
 	_ ast.Constant = &ast.ExprLShr{}
 	_ ast.Constant = &ast.ExprAShr{}
 	_ ast.Constant = &ast.ExprAnd{}
 	_ ast.Constant = &ast.ExprOr{}
 	_ ast.Constant = &ast.ExprXor{}
-	// Memory instructions
+	// Vector expressions
+	_ ast.Constant = &ast.ExprExtractElement{}
+	_ ast.Constant = &ast.ExprInsertElement{}
+	_ ast.Constant = &ast.ExprShuffleVector{}
+	// Aggregate expressions
+	_ ast.Constant = &ast.ExprExtractValue{}
+	_ ast.Constant = &ast.ExprInsertValue{}
+	// Memory expressions
 	_ ast.Constant = &ast.ExprGetElementPtr{}
-	// Conversion instructions
+	// Conversion expressions
 	_ ast.Constant = &ast.ExprTrunc{}
 	_ ast.Constant = &ast.ExprZExt{}
 	_ ast.Constant = &ast.ExprSExt{}
@@ -58,7 +64,7 @@ var (
 	_ ast.Constant = &ast.ExprIntToPtr{}
 	_ ast.Constant = &ast.ExprBitCast{}
 	_ ast.Constant = &ast.ExprAddrSpaceCast{}
-	// Other instructions
+	// Other expressions
 	_ ast.Constant = &ast.ExprICmp{}
 	_ ast.Constant = &ast.ExprFCmp{}
 	_ ast.Constant = &ast.ExprSelect{}
@@ -87,7 +93,12 @@ var (
 	_ ast.Instruction = &ast.InstOr{}
 	_ ast.Instruction = &ast.InstXor{}
 	// Vector instructions
+	_ ast.Instruction = &ast.InstExtractElement{}
+	_ ast.Instruction = &ast.InstInsertElement{}
+	_ ast.Instruction = &ast.InstShuffleVector{}
 	// Aggregate instructions
+	_ ast.Instruction = &ast.InstExtractValue{}
+	_ ast.Instruction = &ast.InstInsertValue{}
 	// Memory instructions
 	_ ast.Instruction = &ast.InstAlloca{}
 	_ ast.Instruction = &ast.InstLoad{}
@@ -154,7 +165,12 @@ var (
 	_ ast.NamedValue = &ast.InstOr{}
 	_ ast.NamedValue = &ast.InstXor{}
 	// Vector instructions
+	_ ast.NamedValue = &ast.InstExtractElement{}
+	_ ast.NamedValue = &ast.InstInsertElement{}
+	_ ast.NamedValue = &ast.InstShuffleVector{}
 	// Aggregate instructions
+	_ ast.NamedValue = &ast.InstExtractValue{}
+	_ ast.NamedValue = &ast.InstInsertValue{}
 	// Memory instructions
 	_ ast.NamedValue = &ast.InstAlloca{}
 	_ ast.NamedValue = &ast.InstLoad{}
