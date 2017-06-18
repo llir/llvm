@@ -2,18 +2,12 @@ all: gen
 
 gen: ll.bnf
 	gocc -zip $<
-	# TODO: Remove once https://github.com/goccmack/gocc/issues/36 gets resolved.
-	find . -type f -name '*.go' | xargs goimports -w
 
 debug_lexer: ll.bnf
 	gocc -debug_lexer -v $<
-	# TODO: Remove once https://github.com/goccmack/gocc/issues/36 gets resolved.
-	find . -type f -name '*.go' | xargs goimports -w
 
 debug_parser: ll.bnf
 	gocc -debug_parser -v $<
-	# TODO: Remove once https://github.com/goccmack/gocc/issues/36 gets resolved.
-	find . -type f -name '*.go' | xargs goimports -w
 
 clean:
 	rm -f errors/errors.go
