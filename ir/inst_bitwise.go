@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -28,13 +29,17 @@ type InstShl struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
 	return &InstShl{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -61,11 +66,13 @@ func (inst *InstShl) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstShl) String() string {
-	return fmt.Sprintf("%s = shl %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = shl %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -91,13 +98,17 @@ type InstLShr struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
 func NewLShr(x, y value.Value) *InstLShr {
 	return &InstLShr{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -124,11 +135,13 @@ func (inst *InstLShr) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstLShr) String() string {
-	return fmt.Sprintf("%s = lshr %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = lshr %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -154,13 +167,17 @@ type InstAShr struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
 	return &InstAShr{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -187,11 +204,13 @@ func (inst *InstAShr) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstAShr) String() string {
-	return fmt.Sprintf("%s = ashr %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = ashr %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -217,13 +236,17 @@ type InstAnd struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewAnd returns a new and instruction based on the given operands.
 func NewAnd(x, y value.Value) *InstAnd {
 	return &InstAnd{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -250,11 +273,13 @@ func (inst *InstAnd) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstAnd) String() string {
-	return fmt.Sprintf("%s = and %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = and %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -280,13 +305,17 @@ type InstOr struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewOr returns a new or instruction based on the given operands.
 func NewOr(x, y value.Value) *InstOr {
 	return &InstOr{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -313,11 +342,13 @@ func (inst *InstOr) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstOr) String() string {
-	return fmt.Sprintf("%s = or %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = or %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -343,13 +374,17 @@ type InstXor struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewXor returns a new xor instruction based on the given operands.
 func NewXor(x, y value.Value) *InstXor {
 	return &InstXor{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -376,11 +411,13 @@ func (inst *InstXor) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstXor) String() string {
-	return fmt.Sprintf("%s = xor %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = xor %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

@@ -274,18 +274,7 @@ func (m *Module) globalDecl(old *ast.Global) {
 	}
 
 	// Fix attached metadata.
-	for _, oldMetadata := range old.Metadata {
-		key := oldMetadata.Name
-		node := m.metadataNode(oldMetadata.Metadata)
-		if prev, ok := global.Metadata[key]; ok {
-			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
-		}
-		md, ok := node.(*metadata.Metadata)
-		if !ok {
-			panic(fmt.Errorf("invalid metadata type; expected *metadata.Metadata, got %T", node))
-		}
-		global.Metadata[key] = md
-	}
+	global.Metadata = m.irMetadata(old.Metadata)
 
 	if old.Init != nil {
 		init := m.irConstant(old.Init)
@@ -316,18 +305,7 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 	f.CallConv = ir.CallConv(oldFunc.CallConv)
 
 	// Fix attached metadata.
-	for _, oldMetadata := range oldFunc.Metadata {
-		key := oldMetadata.Name
-		node := m.metadataNode(oldMetadata.Metadata)
-		if prev, ok := f.Metadata[key]; ok {
-			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
-		}
-		md, ok := node.(*metadata.Metadata)
-		if !ok {
-			panic(fmt.Errorf("invalid metadata type; expected *metadata.Metadata, got %T", node))
-		}
-		f.Metadata[key] = md
-	}
+	f.Metadata = m.irMetadata(oldFunc.Metadata)
 
 	// Early exit if function declaration.
 	if len(oldFunc.Blocks) < 1 {
@@ -724,6 +702,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFAdd:
 			inst, ok := v.(*ir.InstFAdd)
 			if !ok {
@@ -731,6 +710,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstSub:
 			inst, ok := v.(*ir.InstSub)
 			if !ok {
@@ -738,6 +718,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFSub:
 			inst, ok := v.(*ir.InstFSub)
 			if !ok {
@@ -745,6 +726,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstMul:
 			inst, ok := v.(*ir.InstMul)
 			if !ok {
@@ -752,6 +734,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFMul:
 			inst, ok := v.(*ir.InstFMul)
 			if !ok {
@@ -759,6 +742,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstUDiv:
 			inst, ok := v.(*ir.InstUDiv)
 			if !ok {
@@ -766,6 +750,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstSDiv:
 			inst, ok := v.(*ir.InstSDiv)
 			if !ok {
@@ -773,6 +758,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFDiv:
 			inst, ok := v.(*ir.InstFDiv)
 			if !ok {
@@ -780,6 +766,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstURem:
 			inst, ok := v.(*ir.InstURem)
 			if !ok {
@@ -787,6 +774,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstSRem:
 			inst, ok := v.(*ir.InstSRem)
 			if !ok {
@@ -794,6 +782,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFRem:
 			inst, ok := v.(*ir.InstFRem)
 			if !ok {
@@ -801,6 +790,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		// Bitwise instructions
 		case *ast.InstShl:
@@ -810,6 +800,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstLShr:
 			inst, ok := v.(*ir.InstLShr)
 			if !ok {
@@ -817,6 +808,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstAShr:
 			inst, ok := v.(*ir.InstAShr)
 			if !ok {
@@ -824,6 +816,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstAnd:
 			inst, ok := v.(*ir.InstAnd)
 			if !ok {
@@ -831,6 +824,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstOr:
 			inst, ok := v.(*ir.InstOr)
 			if !ok {
@@ -838,6 +832,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstXor:
 			inst, ok := v.(*ir.InstXor)
 			if !ok {
@@ -845,6 +840,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		// Vector instructions
 		case *ast.InstExtractElement:
@@ -860,6 +856,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.Typ = t.Elem
 			inst.X = x
 			inst.Index = m.irValue(oldInst.Index)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstInsertElement:
 			inst, ok := v.(*ir.InstInsertElement)
 			if !ok {
@@ -868,6 +865,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.X = m.irValue(oldInst.X)
 			inst.Elem = m.irValue(oldInst.Elem)
 			inst.Index = m.irValue(oldInst.Index)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstShuffleVector:
 			inst, ok := v.(*ir.InstShuffleVector)
 			if !ok {
@@ -876,6 +874,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
 			inst.Mask = m.irValue(oldInst.Mask)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		// Aggregate instructions
 		case *ast.InstExtractValue:
@@ -888,6 +887,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.Typ = typ
 			inst.X = x
 			inst.Indices = oldInst.Indices
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstInsertValue:
 			inst, ok := v.(*ir.InstInsertValue)
 			if !ok {
@@ -896,6 +896,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.X = m.irValue(oldInst.X)
 			inst.Elem = m.irValue(oldInst.Elem)
 			inst.Indices = oldInst.Indices
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		// Memory instructions
 		case *ast.InstAlloca:
@@ -910,6 +911,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			if oldInst.NElems != nil {
 				inst.NElems = m.irValue(oldInst.NElems)
 			}
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstLoad:
 			inst, ok := v.(*ir.InstLoad)
 			if !ok {
@@ -926,6 +928,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.Typ = typ
 			inst.Src = src
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstStore:
 			inst, ok := v.(*ir.InstStore)
 			if !ok {
@@ -933,6 +936,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.Src = m.irValue(oldInst.Src)
 			inst.Dst = m.irValue(oldInst.Dst)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstGetElementPtr:
 			inst, ok := v.(*ir.InstGetElementPtr)
 			if !ok {
@@ -982,6 +986,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.Elem = elem
 			inst.Src = src
 			inst.Indices = indices
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		// Conversion instructions
 		case *ast.InstTrunc:
@@ -991,6 +996,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstZExt:
 			inst, ok := v.(*ir.InstZExt)
 			if !ok {
@@ -998,6 +1004,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstSExt:
 			inst, ok := v.(*ir.InstSExt)
 			if !ok {
@@ -1005,6 +1012,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFPTrunc:
 			inst, ok := v.(*ir.InstFPTrunc)
 			if !ok {
@@ -1012,6 +1020,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFPExt:
 			inst, ok := v.(*ir.InstFPExt)
 			if !ok {
@@ -1019,6 +1028,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFPToUI:
 			inst, ok := v.(*ir.InstFPToUI)
 			if !ok {
@@ -1026,6 +1036,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFPToSI:
 			inst, ok := v.(*ir.InstFPToSI)
 			if !ok {
@@ -1033,6 +1044,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstUIToFP:
 			inst, ok := v.(*ir.InstUIToFP)
 			if !ok {
@@ -1040,6 +1052,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstSIToFP:
 			inst, ok := v.(*ir.InstSIToFP)
 			if !ok {
@@ -1047,6 +1060,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstPtrToInt:
 			inst, ok := v.(*ir.InstPtrToInt)
 			if !ok {
@@ -1054,6 +1068,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstIntToPtr:
 			inst, ok := v.(*ir.InstIntToPtr)
 			if !ok {
@@ -1061,6 +1076,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstBitCast:
 			inst, ok := v.(*ir.InstBitCast)
 			if !ok {
@@ -1068,6 +1084,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstAddrSpaceCast:
 			inst, ok := v.(*ir.InstAddrSpaceCast)
 			if !ok {
@@ -1075,6 +1092,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			}
 			inst.From = m.irValue(oldInst.From)
 			inst.To = m.irType(oldInst.To)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		// Other instructions
 		case *ast.InstICmp:
@@ -1093,6 +1111,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.Pred = pred
 			inst.X = x
 			inst.Y = y
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstFCmp:
 			inst, ok := v.(*ir.InstFCmp)
 			if !ok {
@@ -1109,6 +1128,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.Pred = pred
 			inst.X = x
 			inst.Y = y
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstPhi:
 			inst, ok := v.(*ir.InstPhi)
 			if !ok {
@@ -1128,6 +1148,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 				}
 				inst.Incs = append(inst.Incs, inc)
 			}
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstSelect:
 			inst, ok := v.(*ir.InstSelect)
 			if !ok {
@@ -1136,6 +1157,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			inst.Cond = m.irValue(oldInst.Cond)
 			inst.X = m.irValue(oldInst.X)
 			inst.Y = m.irValue(oldInst.Y)
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstCall:
 			inst, ok := v.(*ir.InstCall)
 			if !ok {
@@ -1157,6 +1179,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 				arg := m.irValue(oldArg)
 				inst.Args = append(inst.Args, arg)
 			}
+			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		default:
 			panic(fmt.Errorf("support for instruction %T not yet implemented", oldInst))
@@ -1172,6 +1195,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 		if oldTerm.X != nil {
 			term.X = m.irValue(oldTerm.X)
 		}
+		term.Metadata = m.irMetadata(oldTerm.Metadata)
 		block.Term = term
 	case *ast.TermBr:
 		term := &ir.TermBr{
@@ -1183,6 +1207,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			panic(fmt.Errorf("invalid target branch type, expected *ir.BasicBlock, got %T", v))
 		}
 		term.Target = target
+		term.Metadata = m.irMetadata(oldTerm.Metadata)
 		block.Term = term
 	case *ast.TermCondBr:
 		term := &ir.TermCondBr{
@@ -1203,6 +1228,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 		term.TargetTrue = targetTrue
 		term.TargetFalse = targetFalse
 		term.Successors = successors
+		term.Metadata = m.irMetadata(oldTerm.Metadata)
 		block.Term = term
 	case *ast.TermSwitch:
 		term := &ir.TermSwitch{
@@ -1235,11 +1261,13 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 			successors = append(successors, target)
 		}
 		term.Successors = successors
+		term.Metadata = m.irMetadata(oldTerm.Metadata)
 		block.Term = term
 	case *ast.TermUnreachable:
 		term := &ir.TermUnreachable{
 			Parent: block,
 		}
+		term.Metadata = m.irMetadata(oldTerm.Metadata)
 		block.Term = term
 	default:
 		panic(fmt.Errorf("support for terminator %T not yet implemented", oldTerm))

@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -28,13 +29,17 @@ type InstAdd struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewAdd returns a new add instruction based on the given operands.
 func NewAdd(x, y value.Value) *InstAdd {
 	return &InstAdd{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -61,11 +66,13 @@ func (inst *InstAdd) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstAdd) String() string {
-	return fmt.Sprintf("%s = add %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = add %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -91,13 +98,17 @@ type InstFAdd struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
 func NewFAdd(x, y value.Value) *InstFAdd {
 	return &InstFAdd{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -124,11 +135,13 @@ func (inst *InstFAdd) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFAdd) String() string {
-	return fmt.Sprintf("%s = fadd %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fadd %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -154,13 +167,17 @@ type InstSub struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewSub returns a new sub instruction based on the given operands.
 func NewSub(x, y value.Value) *InstSub {
 	return &InstSub{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -187,11 +204,13 @@ func (inst *InstSub) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSub) String() string {
-	return fmt.Sprintf("%s = sub %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = sub %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -217,13 +236,17 @@ type InstFSub struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
 func NewFSub(x, y value.Value) *InstFSub {
 	return &InstFSub{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -250,11 +273,13 @@ func (inst *InstFSub) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFSub) String() string {
-	return fmt.Sprintf("%s = fsub %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fsub %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -280,13 +305,17 @@ type InstMul struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewMul returns a new mul instruction based on the given operands.
 func NewMul(x, y value.Value) *InstMul {
 	return &InstMul{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -313,11 +342,13 @@ func (inst *InstMul) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstMul) String() string {
-	return fmt.Sprintf("%s = mul %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = mul %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -343,13 +374,17 @@ type InstFMul struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
 func NewFMul(x, y value.Value) *InstFMul {
 	return &InstFMul{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -376,11 +411,13 @@ func (inst *InstFMul) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFMul) String() string {
-	return fmt.Sprintf("%s = fmul %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fmul %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -406,13 +443,17 @@ type InstUDiv struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
 func NewUDiv(x, y value.Value) *InstUDiv {
 	return &InstUDiv{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -439,11 +480,13 @@ func (inst *InstUDiv) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstUDiv) String() string {
-	return fmt.Sprintf("%s = udiv %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = udiv %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -469,13 +512,17 @@ type InstSDiv struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
 func NewSDiv(x, y value.Value) *InstSDiv {
 	return &InstSDiv{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -502,11 +549,13 @@ func (inst *InstSDiv) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSDiv) String() string {
-	return fmt.Sprintf("%s = sdiv %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = sdiv %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -532,13 +581,17 @@ type InstFDiv struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
 func NewFDiv(x, y value.Value) *InstFDiv {
 	return &InstFDiv{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -565,11 +618,13 @@ func (inst *InstFDiv) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFDiv) String() string {
-	return fmt.Sprintf("%s = fdiv %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fdiv %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -595,13 +650,17 @@ type InstURem struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewURem returns a new urem instruction based on the given operands.
 func NewURem(x, y value.Value) *InstURem {
 	return &InstURem{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -628,11 +687,13 @@ func (inst *InstURem) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstURem) String() string {
-	return fmt.Sprintf("%s = urem %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = urem %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -658,13 +719,17 @@ type InstSRem struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
 func NewSRem(x, y value.Value) *InstSRem {
 	return &InstSRem{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -691,11 +756,13 @@ func (inst *InstSRem) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSRem) String() string {
-	return fmt.Sprintf("%s = srem %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = srem %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -721,13 +788,17 @@ type InstFRem struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
 func NewFRem(x, y value.Value) *InstFRem {
 	return &InstFRem{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -754,11 +825,13 @@ func (inst *InstFRem) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFRem) String() string {
-	return fmt.Sprintf("%s = frem %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = frem %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

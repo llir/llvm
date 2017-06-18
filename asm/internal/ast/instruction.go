@@ -32,6 +32,21 @@ package ast
 //    *ast.InstOr
 //    *ast.InstXor
 //
+// Vector instructions
+//
+// http://llvm.org/docs/LangRef.html#vector-operations
+//
+//    *ast.InstExtractElement
+//    *ast.InstInsertElement
+//    *ast.InstShuffleVector
+//
+// Aggregate instructions
+//
+// http://llvm.org/docs/LangRef.html#aggregate-operations
+//
+//    *ast.InstExtractValue
+//    *ast.InstInsertValue
+//
 // Memory instructions
 //
 // http://llvm.org/docs/LangRef.html#memory-access-and-addressing-operations

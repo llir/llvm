@@ -18,6 +18,8 @@ type InstExtractValue struct {
 	X Value
 	// Indices.
 	Indices []int64
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -52,6 +54,8 @@ type InstInsertValue struct {
 	Elem Value
 	// Indices.
 	Indices []int64
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.

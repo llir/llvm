@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -29,13 +30,17 @@ type Inst{{ .Name }} struct {
 	Name string
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // New{{ .Name }} returns a new {{ lower .Name }} instruction based on the given operands.
 func New{{ .Name }}(x, y value.Value) *Inst{{ .Name }} {
 	return &Inst{{ .Name }}{
-		X: x,
-		Y: y,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -63,11 +68,13 @@ func (inst *Inst{{ .Name }}) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *Inst{{ .Name }}) String() string {
-	return fmt.Sprintf("%s = {{ lower .Name }} %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = {{ lower .Name }} %s %s, %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

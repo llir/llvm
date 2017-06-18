@@ -18,6 +18,8 @@ type InstICmp struct {
 	Pred IntPred
 	// Operands.
 	X, Y Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -43,6 +45,8 @@ type InstFCmp struct {
 	Pred FloatPred
 	// Operands.
 	X, Y Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -68,6 +72,8 @@ type InstPhi struct {
 	Type Type
 	// Incoming values.
 	Incs []*Incoming
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -101,6 +107,8 @@ type InstSelect struct {
 	Cond Value
 	// Operands.
 	X, Y Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -128,6 +136,8 @@ type InstCall struct {
 	Callee Value
 	// Function arguments.
 	Args []Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.

@@ -11,6 +11,7 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -32,14 +33,18 @@ type InstAlloca struct {
 	Elem types.Type
 	// Number of elements; or nil if one element.
 	NElems value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
 func NewAlloca(elem types.Type) *InstAlloca {
 	typ := types.NewPointer(elem)
 	return &InstAlloca{
-		Typ:  typ,
-		Elem: elem,
+		Typ:      typ,
+		Elem:     elem,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -66,16 +71,19 @@ func (inst *InstAlloca) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstAlloca) String() string {
+	md := metadataString(inst.Metadata, ",")
 	if inst.NElems != nil {
-		return fmt.Sprintf("%s = alloca %s, %s %s",
+		return fmt.Sprintf("%s = alloca %s, %s %s%s",
 			inst.Ident(),
 			inst.Elem,
 			inst.NElems.Type(),
-			inst.NElems.Ident())
+			inst.NElems.Ident(),
+			md)
 	}
-	return fmt.Sprintf("%s = alloca %s",
+	return fmt.Sprintf("%s = alloca %s%s",
 		inst.Ident(),
-		inst.Elem)
+		inst.Elem,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -103,6 +111,9 @@ type InstLoad struct {
 	Typ types.Type
 	// Source address.
 	Src value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -112,8 +123,9 @@ func NewLoad(src value.Value) *InstLoad {
 		panic(fmt.Errorf("invalid source address type; expected *types.PointerType, got %T", src.Type()))
 	}
 	return &InstLoad{
-		Typ: t.Elem,
-		Src: src,
+		Typ:      t.Elem,
+		Src:      src,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -140,11 +152,13 @@ func (inst *InstLoad) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstLoad) String() string {
-	return fmt.Sprintf("%s = load %s, %s %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = load %s, %s %s%s",
 		inst.Ident(),
 		inst.Type(),
 		inst.Src.Type(),
-		inst.Src.Ident())
+		inst.Src.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -170,24 +184,30 @@ type InstStore struct {
 	Src value.Value
 	// Destination address.
 	Dst value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
 func NewStore(src, dst value.Value) *InstStore {
 	return &InstStore{
-		Src: src,
-		Dst: dst,
+		Src:      src,
+		Dst:      dst,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstStore) String() string {
-	return fmt.Sprintf("store %s %s, %s %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("store %s %s, %s %s%s",
 		inst.Src.Type(),
 		inst.Src.Ident(),
 		inst.Dst.Type(),
-		inst.Dst.Ident())
+		inst.Dst.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -225,6 +245,9 @@ type InstGetElementPtr struct {
 	Src value.Value
 	// Element indices.
 	Indices []value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
@@ -262,10 +285,11 @@ func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPt
 	}
 	typ := types.NewPointer(e)
 	return &InstGetElementPtr{
-		Typ:     typ,
-		Elem:    elem,
-		Src:     src,
-		Indices: indices,
+		Typ:      typ,
+		Elem:     elem,
+		Src:      src,
+		Indices:  indices,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -292,18 +316,20 @@ func (inst *InstGetElementPtr) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstGetElementPtr) String() string {
-	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s = getelementptr %s, %s %s",
-		inst.Ident(),
-		inst.Elem,
-		inst.Src.Type(),
-		inst.Src.Ident())
+	indices := &bytes.Buffer{}
 	for _, index := range inst.Indices {
-		fmt.Fprintf(buf, ", %s %s",
+		fmt.Fprintf(indices, ", %s %s",
 			index.Type(),
 			index.Ident())
 	}
-	return buf.String()
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = getelementptr %s, %s %s%s%s",
+		inst.Ident(),
+		inst.Elem,
+		inst.Src.Type(),
+		inst.Src.Ident(),
+		indices,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

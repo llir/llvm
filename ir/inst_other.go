@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -31,6 +32,9 @@ type InstICmp struct {
 	Pred IntPred
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewICmp returns a new icmp instruction based on the given integer predicate
@@ -41,10 +45,11 @@ func NewICmp(pred IntPred, x, y value.Value) *InstICmp {
 		typ = types.NewVector(types.I1, t.Len)
 	}
 	return &InstICmp{
-		Typ:  typ,
-		Pred: pred,
-		X:    x,
-		Y:    y,
+		Typ:      typ,
+		Pred:     pred,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -71,12 +76,14 @@ func (inst *InstICmp) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstICmp) String() string {
-	return fmt.Sprintf("%s = icmp %s %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = icmp %s %s %s, %s%s",
 		inst.Ident(),
 		inst.Pred,
 		inst.X.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -143,6 +150,9 @@ type InstFCmp struct {
 	Pred FloatPred
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -153,10 +163,11 @@ func NewFCmp(pred FloatPred, x, y value.Value) *InstFCmp {
 		typ = types.NewVector(types.I1, t.Len)
 	}
 	return &InstFCmp{
-		Typ:  typ,
-		Pred: pred,
-		X:    x,
-		Y:    y,
+		Typ:      typ,
+		Pred:     pred,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -183,12 +194,14 @@ func (inst *InstFCmp) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFCmp) String() string {
-	return fmt.Sprintf("%s = fcmp %s %s %s, %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fcmp %s %s %s, %s%s",
 		inst.Ident(),
 		inst.Pred,
 		inst.X.Type(),
 		inst.X.Ident(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -267,6 +280,9 @@ type InstPhi struct {
 	Typ types.Type
 	// Incoming values.
 	Incs []*Incoming
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -276,8 +292,9 @@ func NewPhi(incs ...*Incoming) *InstPhi {
 	}
 	typ := incs[0].X.Type()
 	return &InstPhi{
-		Typ:  typ,
-		Incs: incs,
+		Typ:      typ,
+		Incs:     incs,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -304,19 +321,21 @@ func (inst *InstPhi) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstPhi) String() string {
-	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "%s = phi %s ",
-		inst.Ident(),
-		inst.Type())
+	incs := &bytes.Buffer{}
 	for i, inc := range inst.Incs {
 		if i != 0 {
-			buf.WriteString(", ")
+			incs.WriteString(", ")
 		}
-		fmt.Fprintf(buf, "[ %s, %s ]",
+		fmt.Fprintf(incs, "[ %s, %s ]",
 			inc.X.Ident(),
 			inc.Pred.Ident())
 	}
-	return buf.String()
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = phi %s %s%s",
+		inst.Ident(),
+		inst.Type(),
+		incs,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -361,15 +380,19 @@ type InstSelect struct {
 	Cond value.Value
 	// Operands.
 	X, Y value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewSelect returns a new select instruction based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y value.Value) *InstSelect {
 	return &InstSelect{
-		Cond: cond,
-		X:    x,
-		Y:    y,
+		Cond:     cond,
+		X:        x,
+		Y:        y,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -396,14 +419,16 @@ func (inst *InstSelect) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSelect) String() string {
-	return fmt.Sprintf("%s = select %s %s, %s %s, %s %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = select %s %s, %s %s, %s %s%s",
 		inst.Ident(),
 		inst.Cond.Type(),
 		inst.Cond.Ident(),
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Y.Type(),
-		inst.Y.Ident())
+		inst.Y.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -441,6 +466,9 @@ type InstCall struct {
 	Sig *types.FuncType
 	// Function arguments.
 	Args []value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewCall returns a new call instruction based on the given callee and function
@@ -463,9 +491,10 @@ func NewCall(callee value.Value, args ...value.Value) *InstCall {
 		panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
 	}
 	return &InstCall{
-		Callee: callee,
-		Sig:    sig,
-		Args:   args,
+		Callee:   callee,
+		Sig:      sig,
+		Args:     args,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -492,9 +521,9 @@ func (inst *InstCall) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstCall) String() string {
-	buf := &bytes.Buffer{}
+	ident := &bytes.Buffer{}
 	if !inst.Type().Equal(types.Void) {
-		fmt.Fprintf(buf, "%s = ", inst.Ident())
+		fmt.Fprintf(ident, "%s = ", inst.Ident())
 	}
 	// Print callee signature instead of return type for variadic callees.
 	sig := inst.Sig
@@ -502,19 +531,22 @@ func (inst *InstCall) String() string {
 	if sig.Variadic {
 		ret = sig.String()
 	}
-	fmt.Fprintf(buf, "call %s %s(",
-		ret,
-		inst.Callee.Ident())
+	args := &bytes.Buffer{}
 	for i, arg := range inst.Args {
 		if i != 0 {
-			buf.WriteString(", ")
+			args.WriteString(", ")
 		}
-		fmt.Fprintf(buf, "%s %s",
+		fmt.Fprintf(args, "%s %s",
 			arg.Type(),
 			arg.Ident())
 	}
-	buf.WriteString(")")
-	return buf.String()
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%scall %s %s(%s)%s",
+		ident,
+		ret,
+		inst.Callee.Ident(),
+		args,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

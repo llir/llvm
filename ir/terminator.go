@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -43,24 +44,30 @@ type TermRet struct {
 	Parent *BasicBlock
 	// Return value; or nil if "void" return.
 	X value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
 // return value indicates a "void" return.
 func NewRet(x value.Value) *TermRet {
 	return &TermRet{
-		X: x,
+		X:        x,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermRet) String() string {
+	md := metadataString(term.Metadata, ",")
 	if term.X != nil {
-		return fmt.Sprintf("ret %s %s",
+		return fmt.Sprintf("ret %s %s%s",
 			term.X.Type(),
-			term.X.Ident())
+			term.X.Ident(),
+			md)
 	}
-	return "ret void"
+	return fmt.Sprintf("ret void%s", md)
 }
 
 // GetParent returns the parent basic block of the terminator.
@@ -92,6 +99,9 @@ type TermBr struct {
 	Target *BasicBlock
 	// Successors basic blocks.
 	Successors []*BasicBlock
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
@@ -101,12 +111,16 @@ func NewBr(target *BasicBlock) *TermBr {
 	return &TermBr{
 		Target:     target,
 		Successors: successors,
+		Metadata:   make(map[string]*metadata.Metadata),
 	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermBr) String() string {
-	return fmt.Sprintf("br label %s", term.Target.Ident())
+	md := metadataString(term.Metadata, ",")
+	return fmt.Sprintf("br label %s%s",
+		term.Target.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the terminator.
@@ -141,6 +155,9 @@ type TermCondBr struct {
 	TargetFalse *BasicBlock
 	// Successors basic blocks.
 	Successors []*BasicBlock
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
@@ -152,15 +169,18 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondB
 		TargetTrue:  targetTrue,
 		TargetFalse: targetFalse,
 		Successors:  successors,
+		Metadata:    make(map[string]*metadata.Metadata),
 	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermCondBr) String() string {
-	return fmt.Sprintf("br i1 %s, label %s, label %s",
+	md := metadataString(term.Metadata, ",")
+	return fmt.Sprintf("br i1 %s, label %s, label %s%s",
 		term.Cond.Ident(),
 		term.TargetTrue.Ident(),
-		term.TargetFalse.Ident())
+		term.TargetFalse.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the terminator.
@@ -195,6 +215,9 @@ type TermSwitch struct {
 	Cases []*Case
 	// Successors basic blocks.
 	Successors []*BasicBlock
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // TODO: Consider renaming x to control to avoid confusion between term.X() and
@@ -212,24 +235,26 @@ func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSw
 		TargetDefault: targetDefault,
 		Cases:         cases,
 		Successors:    successors,
+		Metadata:      make(map[string]*metadata.Metadata),
 	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermSwitch) String() string {
-	buf := &bytes.Buffer{}
-	fmt.Fprintf(buf, "switch %s %s, label %s [\n",
-		term.X.Type(),
-		term.X.Ident(),
-		term.TargetDefault.Ident())
+	cases := &bytes.Buffer{}
 	for _, c := range term.Cases {
-		fmt.Fprintf(buf, "\t\t%s %s, label %s\n",
+		fmt.Fprintf(cases, "\t\t%s %s, label %s\n",
 			c.X.Type(),
 			c.X.Ident(),
 			c.Target.Ident())
 	}
-	buf.WriteString("\t]")
-	return buf.String()
+	md := metadataString(term.Metadata, ",")
+	return fmt.Sprintf("switch %s %s, label %s [\n%s\t]%s",
+		term.X.Type(),
+		term.X.Ident(),
+		term.TargetDefault.Ident(),
+		cases,
+		md)
 }
 
 // GetParent returns the parent basic block of the terminator.
@@ -253,6 +278,9 @@ type Case struct {
 	X *constant.Int
 	// Case target branch.
 	Target *BasicBlock
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewCase returns a new switch case based on the given case comparand and
@@ -285,16 +313,22 @@ func NewCase(x *constant.Int, target *BasicBlock) *Case {
 type TermUnreachable struct {
 	// Parent basic block.
 	Parent *BasicBlock
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewUnreachable returns a new unreachable terminator.
 func NewUnreachable() *TermUnreachable {
-	return &TermUnreachable{}
+	return &TermUnreachable{
+		Metadata: make(map[string]*metadata.Metadata),
+	}
 }
 
 // String returns the LLVM syntax representation of the terminator.
 func (term *TermUnreachable) String() string {
-	return "unreachable"
+	md := metadataString(term.Metadata, ",")
+	return fmt.Sprintf("unreachable%s", md)
 }
 
 // GetParent returns the parent basic block of the terminator.

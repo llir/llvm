@@ -172,26 +172,11 @@ func NewGlobalDecl(name, immutable, typ, mds interface{}) (*ast.Global, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid content type; expected ast.Type, got %T", typ)
 	}
-	var ms []*ast.AttachedMD
-	switch mds := mds.(type) {
-	case []*ast.AttachedMD:
-		ms = mds
-	case nil:
-		// no attached metadata.
-	default:
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
-	global := &ast.Global{Name: unquote(n.name), Content: t}
-	global.Immutable = imm
-	unique := make(map[string]ast.MetadataNode)
-	for _, md := range ms {
-		if prev, ok := unique[md.Name]; ok {
-			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
-		}
-		unique[md.Name] = md.Metadata
-		global.Metadata = append(global.Metadata, md)
-	}
-	return global, nil
+	return &ast.Global{Name: unquote(n.name), Content: t, Immutable: imm, Metadata: metadata}, nil
 }
 
 // NewGlobalDef returns a new global variable definition based on the given
@@ -217,26 +202,11 @@ func NewGlobalDef(name, immutable, typ, val, mds interface{}) (*ast.Global, erro
 	if !ok {
 		return nil, errors.Errorf("invalid init type; expected ast.Constant, got %T", init)
 	}
-	var ms []*ast.AttachedMD
-	switch mds := mds.(type) {
-	case []*ast.AttachedMD:
-		ms = mds
-	case nil:
-		// no attached metadata.
-	default:
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
-	global := &ast.Global{Name: unquote(n.name), Content: t, Init: i}
-	global.Immutable = imm
-	unique := make(map[string]ast.MetadataNode)
-	for _, md := range ms {
-		if prev, ok := unique[md.Name]; ok {
-			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
-		}
-		unique[md.Name] = md.Metadata
-		global.Metadata = append(global.Metadata, md)
-	}
-	return global, nil
+	return &ast.Global{Name: unquote(n.name), Content: t, Init: i, Immutable: imm, Metadata: metadata}, nil
 }
 
 // --- [ Functions ] -----------------------------------------------------------
@@ -248,23 +218,11 @@ func NewFuncDecl(mds, header interface{}) (*ast.Function, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
 	}
-	var ms []*ast.AttachedMD
-	switch mds := mds.(type) {
-	case []*ast.AttachedMD:
-		ms = mds
-	case nil:
-		// no attached metadata.
-	default:
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
-	unique := make(map[string]ast.MetadataNode)
-	for _, md := range ms {
-		if prev, ok := unique[md.Name]; ok {
-			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
-		}
-		unique[md.Name] = md.Metadata
-		f.Metadata = append(f.Metadata, md)
-	}
+	f.Metadata = metadata
 	return f, nil
 }
 
@@ -315,28 +273,16 @@ func NewFuncDef(header, mds, body interface{}) (*ast.Function, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid function header type; expected *ast.Function, got %T", header)
 	}
-	var ms []*ast.AttachedMD
-	switch mds := mds.(type) {
-	case []*ast.AttachedMD:
-		ms = mds
-	case nil:
-		// no attached metadata.
-	default:
-		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
-	}
-	unique := make(map[string]ast.MetadataNode)
-	for _, md := range ms {
-		if prev, ok := unique[md.Name]; ok {
-			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
-		}
-		unique[md.Name] = md.Metadata
-		f.Metadata = append(f.Metadata, md)
-	}
 	blocks, ok := body.([]*ast.BasicBlock)
 	if !ok {
 		return nil, errors.Errorf("invalid function body type; expected []*ast.BasicBlock, got %T", body)
 	}
 	f.Blocks = blocks
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	f.Metadata = metadata
 	return f, nil
 }
 
@@ -2090,9 +2036,9 @@ func NewNamedInstruction(name, inst interface{}) (ast.Instruction, error) {
 
 // --- [ Binary instructions ] -------------------------------------------------
 
-// NewAddInst returns a new add instruction based on the given type and
-// operands.
-func NewAddInst(typ, xVal, yVal interface{}) (*ast.InstAdd, error) {
+// NewAddInst returns a new add instruction based on the given type, operands
+// and attached metadata.
+func NewAddInst(typ, xVal, yVal, mds interface{}) (*ast.InstAdd, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2101,12 +2047,16 @@ func NewAddInst(typ, xVal, yVal interface{}) (*ast.InstAdd, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstAdd{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAdd{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewFAddInst returns a new fadd instruction based on the given type and
-// operands.
-func NewFAddInst(typ, xVal, yVal interface{}) (*ast.InstFAdd, error) {
+// NewFAddInst returns a new fadd instruction based on the given type, operands
+// and attached metadata.
+func NewFAddInst(typ, xVal, yVal, mds interface{}) (*ast.InstFAdd, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2115,12 +2065,16 @@ func NewFAddInst(typ, xVal, yVal interface{}) (*ast.InstFAdd, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFAdd{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFAdd{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewSubInst returns a new sub instruction based on the given type and
-// operands.
-func NewSubInst(typ, xVal, yVal interface{}) (*ast.InstSub, error) {
+// NewSubInst returns a new sub instruction based on the given type, operands
+// and attached metadata.
+func NewSubInst(typ, xVal, yVal, mds interface{}) (*ast.InstSub, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2129,12 +2083,16 @@ func NewSubInst(typ, xVal, yVal interface{}) (*ast.InstSub, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstSub{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSub{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewFSubInst returns a new fsub instruction based on the given type and
-// operands.
-func NewFSubInst(typ, xVal, yVal interface{}) (*ast.InstFSub, error) {
+// NewFSubInst returns a new fsub instruction based on the given type, operands
+// and attached metadata.
+func NewFSubInst(typ, xVal, yVal, mds interface{}) (*ast.InstFSub, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2143,12 +2101,16 @@ func NewFSubInst(typ, xVal, yVal interface{}) (*ast.InstFSub, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFSub{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFSub{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewMulInst returns a new mul instruction based on the given type and
-// operands.
-func NewMulInst(typ, xVal, yVal interface{}) (*ast.InstMul, error) {
+// NewMulInst returns a new mul instruction based on the given type, operands
+// and attached metadata.
+func NewMulInst(typ, xVal, yVal, mds interface{}) (*ast.InstMul, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2157,12 +2119,16 @@ func NewMulInst(typ, xVal, yVal interface{}) (*ast.InstMul, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstMul{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstMul{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewFMulInst returns a new fmul instruction based on the given type and
-// operands.
-func NewFMulInst(typ, xVal, yVal interface{}) (*ast.InstFMul, error) {
+// NewFMulInst returns a new fmul instruction based on the given type, operands
+// and attached metadata.
+func NewFMulInst(typ, xVal, yVal, mds interface{}) (*ast.InstFMul, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2171,12 +2137,16 @@ func NewFMulInst(typ, xVal, yVal interface{}) (*ast.InstFMul, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFMul{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFMul{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewUDivInst returns a new udiv instruction based on the given type and
-// operands.
-func NewUDivInst(typ, xVal, yVal interface{}) (*ast.InstUDiv, error) {
+// NewUDivInst returns a new udiv instruction based on the given type, operands
+// and attached metadata.
+func NewUDivInst(typ, xVal, yVal, mds interface{}) (*ast.InstUDiv, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2185,12 +2155,16 @@ func NewUDivInst(typ, xVal, yVal interface{}) (*ast.InstUDiv, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstUDiv{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstUDiv{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewSDivInst returns a new sdiv instruction based on the given type and
-// operands.
-func NewSDivInst(typ, xVal, yVal interface{}) (*ast.InstSDiv, error) {
+// NewSDivInst returns a new sdiv instruction based on the given type, operands
+// and attached metadata.
+func NewSDivInst(typ, xVal, yVal, mds interface{}) (*ast.InstSDiv, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2199,12 +2173,16 @@ func NewSDivInst(typ, xVal, yVal interface{}) (*ast.InstSDiv, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstSDiv{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSDiv{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewFDivInst returns a new fdiv instruction based on the given type and
-// operands.
-func NewFDivInst(typ, xVal, yVal interface{}) (*ast.InstFDiv, error) {
+// NewFDivInst returns a new fdiv instruction based on the given type, operands
+// and attached metadata.
+func NewFDivInst(typ, xVal, yVal, mds interface{}) (*ast.InstFDiv, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2213,12 +2191,16 @@ func NewFDivInst(typ, xVal, yVal interface{}) (*ast.InstFDiv, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFDiv{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFDiv{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewURemInst returns a new urem instruction based on the given type and
-// operands.
-func NewURemInst(typ, xVal, yVal interface{}) (*ast.InstURem, error) {
+// NewURemInst returns a new urem instruction based on the given type, operands
+// and attached metadata.
+func NewURemInst(typ, xVal, yVal, mds interface{}) (*ast.InstURem, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2227,12 +2209,16 @@ func NewURemInst(typ, xVal, yVal interface{}) (*ast.InstURem, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstURem{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstURem{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewSRemInst returns a new srem instruction based on the given type and
-// operands.
-func NewSRemInst(typ, xVal, yVal interface{}) (*ast.InstSRem, error) {
+// NewSRemInst returns a new srem instruction based on the given type, operands
+// and attached metadata.
+func NewSRemInst(typ, xVal, yVal, mds interface{}) (*ast.InstSRem, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2241,12 +2227,16 @@ func NewSRemInst(typ, xVal, yVal interface{}) (*ast.InstSRem, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstSRem{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSRem{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewFRemInst returns a new frem instruction based on the given type and
-// operands.
-func NewFRemInst(typ, xVal, yVal interface{}) (*ast.InstFRem, error) {
+// NewFRemInst returns a new frem instruction based on the given type, operands
+// and attached metadata.
+func NewFRemInst(typ, xVal, yVal, mds interface{}) (*ast.InstFRem, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2255,14 +2245,18 @@ func NewFRemInst(typ, xVal, yVal interface{}) (*ast.InstFRem, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFRem{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFRem{X: x, Y: y, Metadata: metadata}, nil
 }
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
-// NewShlInst returns a new shl instruction based on the given type and
-// operands.
-func NewShlInst(typ, xVal, yVal interface{}) (*ast.InstShl, error) {
+// NewShlInst returns a new shl instruction based on the given type, operands
+// and attached metadata.
+func NewShlInst(typ, xVal, yVal, mds interface{}) (*ast.InstShl, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2271,12 +2265,16 @@ func NewShlInst(typ, xVal, yVal interface{}) (*ast.InstShl, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstShl{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstShl{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewLShrInst returns a new lshr instruction based on the given type and
-// operands.
-func NewLShrInst(typ, xVal, yVal interface{}) (*ast.InstLShr, error) {
+// NewLShrInst returns a new lshr instruction based on the given type, operands
+// and attached metadata.
+func NewLShrInst(typ, xVal, yVal, mds interface{}) (*ast.InstLShr, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2285,12 +2283,16 @@ func NewLShrInst(typ, xVal, yVal interface{}) (*ast.InstLShr, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstLShr{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstLShr{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewAShrInst returns a new ashr instruction based on the given type and
-// operands.
-func NewAShrInst(typ, xVal, yVal interface{}) (*ast.InstAShr, error) {
+// NewAShrInst returns a new ashr instruction based on the given type, operands
+// and attached metadata.
+func NewAShrInst(typ, xVal, yVal, mds interface{}) (*ast.InstAShr, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2299,12 +2301,16 @@ func NewAShrInst(typ, xVal, yVal interface{}) (*ast.InstAShr, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstAShr{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAShr{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewAndInst returns a new and instruction based on the given type and
-// operands.
-func NewAndInst(typ, xVal, yVal interface{}) (*ast.InstAnd, error) {
+// NewAndInst returns a new and instruction based on the given type, operands
+// and attached metadata.
+func NewAndInst(typ, xVal, yVal, mds interface{}) (*ast.InstAnd, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2313,12 +2319,16 @@ func NewAndInst(typ, xVal, yVal interface{}) (*ast.InstAnd, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstAnd{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAnd{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewOrInst returns a new or instruction based on the given type and
-// operands.
-func NewOrInst(typ, xVal, yVal interface{}) (*ast.InstOr, error) {
+// NewOrInst returns a new or instruction based on the given type, operands and
+// attached metadata.
+func NewOrInst(typ, xVal, yVal, mds interface{}) (*ast.InstOr, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2327,12 +2337,16 @@ func NewOrInst(typ, xVal, yVal interface{}) (*ast.InstOr, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstOr{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstOr{X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewXorInst returns a new xor instruction based on the given type and
-// operands.
-func NewXorInst(typ, xVal, yVal interface{}) (*ast.InstXor, error) {
+// NewXorInst returns a new xor instruction based on the given type, operands
+// and attached metadata.
+func NewXorInst(typ, xVal, yVal, mds interface{}) (*ast.InstXor, error) {
 	x, err := NewValue(typ, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2341,14 +2355,18 @@ func NewXorInst(typ, xVal, yVal interface{}) (*ast.InstXor, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstXor{X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstXor{X: x, Y: y, Metadata: metadata}, nil
 }
 
 // --- [ Vector instructions ] -------------------------------------------------
 
 // NewExtractElementInst returns a new extractelement instruction based on the
-// given vector and index.
-func NewExtractElementInst(xTyp, xVal, indexTyp, indexVal interface{}) (*ast.InstExtractElement, error) {
+// given vector, index and attached metadata.
+func NewExtractElementInst(xTyp, xVal, indexTyp, indexVal, mds interface{}) (*ast.InstExtractElement, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2357,12 +2375,16 @@ func NewExtractElementInst(xTyp, xVal, indexTyp, indexVal interface{}) (*ast.Ins
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstExtractElement{X: x, Index: index}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstExtractElement{X: x, Index: index, Metadata: metadata}, nil
 }
 
 // NewInsertElementInst returns a new insertelement instruction based on the
-// given vector, element and index.
-func NewInsertElementInst(xTyp, xVal, elemTyp, elemVal, indexTyp, indexVal interface{}) (*ast.InstInsertElement, error) {
+// given vector, element, index and attached metadata.
+func NewInsertElementInst(xTyp, xVal, elemTyp, elemVal, indexTyp, indexVal, mds interface{}) (*ast.InstInsertElement, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2375,12 +2397,16 @@ func NewInsertElementInst(xTyp, xVal, elemTyp, elemVal, indexTyp, indexVal inter
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstInsertElement{X: x, Elem: elem, Index: index}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstInsertElement{X: x, Elem: elem, Index: index, Metadata: metadata}, nil
 }
 
 // NewShuffleVectorInst returns a new shufflevector instruction based on the
-// given vectors and shuffle mask.
-func NewShuffleVectorInst(xTyp, xVal, yTyp, yVal, maskTyp, maskVal interface{}) (*ast.InstShuffleVector, error) {
+// given vectors, shuffle mask and attached metadata.
+func NewShuffleVectorInst(xTyp, xVal, yTyp, yVal, maskTyp, maskVal, mds interface{}) (*ast.InstShuffleVector, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2393,14 +2419,18 @@ func NewShuffleVectorInst(xTyp, xVal, yTyp, yVal, maskTyp, maskVal interface{}) 
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstShuffleVector{X: x, Y: y, Mask: mask}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstShuffleVector{X: x, Y: y, Mask: mask, Metadata: metadata}, nil
 }
 
 // --- [ Aggregate instructions ] ----------------------------------------------
 
 // NewExtractValueInst returns a new extractvalue instruction based on the
-// given aggregate value and indices.
-func NewExtractValueInst(xTyp, xVal, indices interface{}) (*ast.InstExtractValue, error) {
+// given aggregate value, indices and attached metadata.
+func NewExtractValueInst(xTyp, xVal, indices, mds interface{}) (*ast.InstExtractValue, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2412,7 +2442,11 @@ func NewExtractValueInst(xTyp, xVal, indices interface{}) (*ast.InstExtractValue
 	if len(is) < 1 {
 		return nil, errors.Errorf("invalid indices length; expected > 0, got %d", len(is))
 	}
-	return &ast.InstExtractValue{X: x, Indices: is}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstExtractValue{X: x, Indices: is, Metadata: metadata}, nil
 }
 
 // NewIntLitList returns a new integer literal list based on the given integer
@@ -2439,8 +2473,8 @@ func AppendIntLit(is, i interface{}) ([]int64, error) {
 }
 
 // NewInsertValueInst returns a new insertvalue instruction based on the
-// given aggregate value, element and indices.
-func NewInsertValueInst(xTyp, xVal, elemTyp, elemVal, indices interface{}) (*ast.InstInsertValue, error) {
+// given aggregate value, element, indices and attached metadata.
+func NewInsertValueInst(xTyp, xVal, elemTyp, elemVal, indices, mds interface{}) (*ast.InstInsertValue, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2456,14 +2490,18 @@ func NewInsertValueInst(xTyp, xVal, elemTyp, elemVal, indices interface{}) (*ast
 	if len(is) < 1 {
 		return nil, errors.Errorf("invalid indices length; expected > 0, got %d", len(is))
 	}
-	return &ast.InstInsertValue{X: x, Elem: elem, Indices: is}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstInsertValue{X: x, Elem: elem, Indices: is, Metadata: metadata}, nil
 }
 
 // --- [ Memory instructions ] -------------------------------------------------
 
 // NewAllocaInst returns a new alloca instruction based on the given element
-// type and number of elements.
-func NewAllocaInst(elem, nelems interface{}) (*ast.InstAlloca, error) {
+// type, number of elements and attached metadata.
+func NewAllocaInst(elem, nelems, mds interface{}) (*ast.InstAlloca, error) {
 	e, ok := elem.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
@@ -2477,12 +2515,17 @@ func NewAllocaInst(elem, nelems interface{}) (*ast.InstAlloca, error) {
 	default:
 		return nil, errors.Errorf("invalid number of elements type; expected ast.Value or nil, got %T", nelems)
 	}
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	inst.Metadata = metadata
 	return inst, nil
 }
 
 // NewLoadInst returns a new load instruction based on the given element type,
-// source address type and value.
-func NewLoadInst(elem, srcTyp, srcVal interface{}) (*ast.InstLoad, error) {
+// source address type, value and attached metadata.
+func NewLoadInst(elem, srcTyp, srcVal, mds interface{}) (*ast.InstLoad, error) {
 	e, ok := elem.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
@@ -2493,12 +2536,16 @@ func NewLoadInst(elem, srcTyp, srcVal interface{}) (*ast.InstLoad, error) {
 	}
 	// Store e in InstLoad to evaluate against src.Type().Elem() after type
 	// resolution.
-	return &ast.InstLoad{Elem: e, Src: src}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstLoad{Elem: e, Src: src, Metadata: metadata}, nil
 }
 
 // NewStoreInst returns a new store instruction based on the given element type,
-// source address type and value.
-func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ast.InstStore, error) {
+// source address type, value and attached metadata.
+func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal, mds interface{}) (*ast.InstStore, error) {
 	src, err := NewValue(srcTyp, srcVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2507,12 +2554,17 @@ func NewStoreInst(srcTyp, srcVal, dstTyp, dstVal interface{}) (*ast.InstStore, e
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstStore{Src: src, Dst: dst}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstStore{Src: src, Dst: dst, Metadata: metadata}, nil
 }
 
 // NewGetElementPtrInst returns a new getelementptr instruction based on the
-// given element type, source address type and value, and element indices.
-func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ast.InstGetElementPtr, error) {
+// given element type, source address type and value, element indices and
+// attached metadata.
+func NewGetElementPtrInst(elem, srcTyp, srcVal, indices, mds interface{}) (*ast.InstGetElementPtr, error) {
 	e, ok := elem.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
@@ -2532,14 +2584,18 @@ func NewGetElementPtrInst(elem, srcTyp, srcVal, indices interface{}) (*ast.InstG
 	}
 	// Store e in InstGetElementPtr to evaluate against src.Type().Elem() after
 	// type resolution.
-	return &ast.InstGetElementPtr{Elem: e, Src: src, Indices: is}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstGetElementPtr{Elem: e, Src: src, Indices: is, Metadata: metadata}, nil
 }
 
 // --- [ Conversion instructions ] ---------------------------------------------
 
-// NewTruncInst returns a new trunc instruction based on the given source value
-// and target type.
-func NewTruncInst(fromTyp, fromVal, to interface{}) (*ast.InstTrunc, error) {
+// NewTruncInst returns a new trunc instruction based on the given source value,
+// target type and attached metadata.
+func NewTruncInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstTrunc, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2548,12 +2604,16 @@ func NewTruncInst(fromTyp, fromVal, to interface{}) (*ast.InstTrunc, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstTrunc{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstTrunc{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewZExtInst returns a new zext instruction based on the given source value
-// and target type.
-func NewZExtInst(fromTyp, fromVal, to interface{}) (*ast.InstZExt, error) {
+// NewZExtInst returns a new zext instruction based on the given source value,
+// target type and attached metadata.
+func NewZExtInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstZExt, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2562,12 +2622,16 @@ func NewZExtInst(fromTyp, fromVal, to interface{}) (*ast.InstZExt, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstZExt{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstZExt{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewSExtInst returns a new sext instruction based on the given source value
-// and target type.
-func NewSExtInst(fromTyp, fromVal, to interface{}) (*ast.InstSExt, error) {
+// NewSExtInst returns a new sext instruction based on the given source value,
+// target type and attached metadata.
+func NewSExtInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstSExt, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2576,12 +2640,16 @@ func NewSExtInst(fromTyp, fromVal, to interface{}) (*ast.InstSExt, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstSExt{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSExt{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewFPTruncInst returns a new fptrunc instruction based on the given source value
-// and target type.
-func NewFPTruncInst(fromTyp, fromVal, to interface{}) (*ast.InstFPTrunc, error) {
+// NewFPTruncInst returns a new fptrunc instruction based on the given source
+// value, target type and attached metadata.
+func NewFPTruncInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstFPTrunc, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2590,12 +2658,16 @@ func NewFPTruncInst(fromTyp, fromVal, to interface{}) (*ast.InstFPTrunc, error) 
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstFPTrunc{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFPTrunc{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewFPExtInst returns a new fpext instruction based on the given source value
-// and target type.
-func NewFPExtInst(fromTyp, fromVal, to interface{}) (*ast.InstFPExt, error) {
+// NewFPExtInst returns a new fpext instruction based on the given source value,
+// target type and attached metadata.
+func NewFPExtInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstFPExt, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2604,12 +2676,16 @@ func NewFPExtInst(fromTyp, fromVal, to interface{}) (*ast.InstFPExt, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstFPExt{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFPExt{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewFPToUIInst returns a new fptoui instruction based on the given source value
-// and target type.
-func NewFPToUIInst(fromTyp, fromVal, to interface{}) (*ast.InstFPToUI, error) {
+// NewFPToUIInst returns a new fptoui instruction based on the given source
+// value, target type and attached metadata.
+func NewFPToUIInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstFPToUI, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2618,12 +2694,16 @@ func NewFPToUIInst(fromTyp, fromVal, to interface{}) (*ast.InstFPToUI, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstFPToUI{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFPToUI{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewFPToSIInst returns a new fptosi instruction based on the given source value
-// and target type.
-func NewFPToSIInst(fromTyp, fromVal, to interface{}) (*ast.InstFPToSI, error) {
+// NewFPToSIInst returns a new fptosi instruction based on the given source
+// value, target type and attached metadata.
+func NewFPToSIInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstFPToSI, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2632,12 +2712,16 @@ func NewFPToSIInst(fromTyp, fromVal, to interface{}) (*ast.InstFPToSI, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstFPToSI{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFPToSI{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewUIToFPInst returns a new uitofp instruction based on the given source value
-// and target type.
-func NewUIToFPInst(fromTyp, fromVal, to interface{}) (*ast.InstUIToFP, error) {
+// NewUIToFPInst returns a new uitofp instruction based on the given source
+// value, target type and attached metadata.
+func NewUIToFPInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstUIToFP, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2646,12 +2730,16 @@ func NewUIToFPInst(fromTyp, fromVal, to interface{}) (*ast.InstUIToFP, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstUIToFP{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstUIToFP{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewSIToFPInst returns a new sitofp instruction based on the given source value
-// and target type.
-func NewSIToFPInst(fromTyp, fromVal, to interface{}) (*ast.InstSIToFP, error) {
+// NewSIToFPInst returns a new sitofp instruction based on the given source
+// value, target type and attached metadata.
+func NewSIToFPInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstSIToFP, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2660,12 +2748,16 @@ func NewSIToFPInst(fromTyp, fromVal, to interface{}) (*ast.InstSIToFP, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstSIToFP{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSIToFP{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewPtrToIntInst returns a new ptrtoint instruction based on the given source value
-// and target type.
-func NewPtrToIntInst(fromTyp, fromVal, to interface{}) (*ast.InstPtrToInt, error) {
+// NewPtrToIntInst returns a new ptrtoint instruction based on the given source
+// value, target type and attached metadata.
+func NewPtrToIntInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstPtrToInt, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2674,12 +2766,16 @@ func NewPtrToIntInst(fromTyp, fromVal, to interface{}) (*ast.InstPtrToInt, error
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstPtrToInt{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstPtrToInt{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewIntToPtrInst returns a new inttoptr instruction based on the given source value
-// and target type.
-func NewIntToPtrInst(fromTyp, fromVal, to interface{}) (*ast.InstIntToPtr, error) {
+// NewIntToPtrInst returns a new inttoptr instruction based on the given source
+// value, target type and attached metadata.
+func NewIntToPtrInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstIntToPtr, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2688,12 +2784,16 @@ func NewIntToPtrInst(fromTyp, fromVal, to interface{}) (*ast.InstIntToPtr, error
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstIntToPtr{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstIntToPtr{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewBitCastInst returns a new bitcast instruction based on the given source value
-// and target type.
-func NewBitCastInst(fromTyp, fromVal, to interface{}) (*ast.InstBitCast, error) {
+// NewBitCastInst returns a new bitcast instruction based on the given source
+// value, target type and attached metadata.
+func NewBitCastInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstBitCast, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2702,12 +2802,16 @@ func NewBitCastInst(fromTyp, fromVal, to interface{}) (*ast.InstBitCast, error) 
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstBitCast{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstBitCast{From: from, To: t, Metadata: metadata}, nil
 }
 
-// NewAddrSpaceCastInst returns a new addrspacecast instruction based on the given source value
-// and target type.
-func NewAddrSpaceCastInst(fromTyp, fromVal, to interface{}) (*ast.InstAddrSpaceCast, error) {
+// NewAddrSpaceCastInst returns a new addrspacecast instruction based on the
+// given source value, target type and attached metadata.
+func NewAddrSpaceCastInst(fromTyp, fromVal, to, mds interface{}) (*ast.InstAddrSpaceCast, error) {
 	from, err := NewValue(fromTyp, fromVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2716,14 +2820,18 @@ func NewAddrSpaceCastInst(fromTyp, fromVal, to interface{}) (*ast.InstAddrSpaceC
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", to)
 	}
-	return &ast.InstAddrSpaceCast{From: from, To: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstAddrSpaceCast{From: from, To: t, Metadata: metadata}, nil
 }
 
 // --- [ Other instructions ] --------------------------------------------------
 
 // NewICmpInst returns a new icmp instruction based on the given integer
-// predicate, type and operands.
-func NewICmpInst(pred, typ, xVal, yVal interface{}) (*ast.InstICmp, error) {
+// predicate, type, operands and attached metadata.
+func NewICmpInst(pred, typ, xVal, yVal, mds interface{}) (*ast.InstICmp, error) {
 	p, ok := pred.(ast.IntPred)
 	if !ok {
 		return nil, errors.Errorf("invalid integer predicate type; expected ast.IntPred, got %T", pred)
@@ -2736,12 +2844,16 @@ func NewICmpInst(pred, typ, xVal, yVal interface{}) (*ast.InstICmp, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstICmp{Pred: p, X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstICmp{Pred: p, X: x, Y: y, Metadata: metadata}, nil
 }
 
 // NewFCmpInst returns a new fcmp instruction based on the given floating-point
-// predicate, type and operands.
-func NewFCmpInst(pred, typ, xVal, yVal interface{}) (*ast.InstFCmp, error) {
+// predicate, type, operands and attached metadata.
+func NewFCmpInst(pred, typ, xVal, yVal, mds interface{}) (*ast.InstFCmp, error) {
 	p, ok := pred.(ast.FloatPred)
 	if !ok {
 		return nil, errors.Errorf("invalid floating-point predicate type; expected ast.FloatPred, got %T", pred)
@@ -2754,11 +2866,16 @@ func NewFCmpInst(pred, typ, xVal, yVal interface{}) (*ast.InstFCmp, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstFCmp{Pred: p, X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstFCmp{Pred: p, X: x, Y: y, Metadata: metadata}, nil
 }
 
-// NewPhiInst returns a new phi instruction based on the given incoming values.
-func NewPhiInst(typ, incs interface{}) (*ast.InstPhi, error) {
+// NewPhiInst returns a new phi instruction based on the given incoming values
+// and attached metadata.
+func NewPhiInst(typ, incs, mds interface{}) (*ast.InstPhi, error) {
 	t, ok := typ.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid type; expected ast.Type, got %T", typ)
@@ -2774,7 +2891,11 @@ func NewPhiInst(typ, incs interface{}) (*ast.InstPhi, error) {
 		}
 		inc.X = x
 	}
-	return &ast.InstPhi{Type: t, Incs: is}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstPhi{Type: t, Incs: is, Metadata: metadata}, nil
 }
 
 // NewIncomingList returns a new incoming value list based on the given incoming
@@ -2818,9 +2939,9 @@ func NewIncoming(x, pred interface{}) (*ast.Incoming, error) {
 	return &ast.Incoming{X: xx, Pred: p}, nil
 }
 
-// NewSelect returns a new select instruction based on the given selection
-// condition type and value, and operands.
-func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ast.InstSelect, error) {
+// NewSelectInst returns a new select instruction based on the given selection
+// condition type and value, operands and attached metadata.
+func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal, mds interface{}) (*ast.InstSelect, error) {
 	cond, err := NewValue(condTyp, condVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2833,12 +2954,16 @@ func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ast.I
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstSelect{Cond: cond, X: x, Y: y}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstSelect{Cond: cond, X: x, Y: y, Metadata: metadata}, nil
 }
 
 // NewCallInst returns a new call instruction based on the given return type,
-// callee name, and function arguments.
-func NewCallInst(retTyp, callee, args interface{}) (*ast.InstCall, error) {
+// callee name, function arguments and attached metadata.
+func NewCallInst(retTyp, callee, args, mds interface{}) (*ast.InstCall, error) {
 	r, ok := retTyp.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid return type; expected ast.Type, got %T", retTyp)
@@ -2878,28 +3003,39 @@ func NewCallInst(retTyp, callee, args interface{}) (*ast.InstCall, error) {
 	default:
 		return nil, errors.Errorf("invalid function arguments type; expected []ast.Value or nil, got %T", args)
 	}
-	return &ast.InstCall{Type: r, Callee: c, Args: as}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.InstCall{Type: r, Callee: c, Args: as, Metadata: metadata}, nil
 }
 
 // === [ Terminators ] =========================================================
 
 // --- [ ret ] -----------------------------------------------------------------
 
-// NewRetTerm returns a new ret terminator based on the given return type and
-// value.
-func NewRetTerm(xTyp, xVal interface{}) (*ast.TermRet, error) {
-	x, err := NewValue(xTyp, xVal)
+// NewRetTerm returns a new ret terminator based on the given return type,
+// value and attached metadata.
+func NewRetTerm(xTyp, xVal, mds interface{}) (*ast.TermRet, error) {
+	metadata, err := uniqueMetadata(mds)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.TermRet{X: x}, nil
+	if xTyp != nil && xVal != nil {
+		x, err := NewValue(xTyp, xVal)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ast.TermRet{X: x, Metadata: metadata}, nil
+	}
+	return &ast.TermRet{Metadata: metadata}, nil
 }
 
 // --- [ br ] ------------------------------------------------------------------
 
 // NewBrTerm returns a new unconditional br terminator based on the given target
-// branch.
-func NewBrTerm(targetTyp, targetVal interface{}) (*ast.TermBr, error) {
+// branch and attached metadata.
+func NewBrTerm(targetTyp, targetVal, mds interface{}) (*ast.TermBr, error) {
 	target, err := NewValue(targetTyp, targetVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2908,14 +3044,19 @@ func NewBrTerm(targetTyp, targetVal interface{}) (*ast.TermBr, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid target branch type; expected ast.NamedValue, got %T", target)
 	}
-	return &ast.TermBr{Target: t}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.TermBr{Target: t, Metadata: metadata}, nil
 }
 
 // --- [ conditional br ] ------------------------------------------------------
 
 // NewCondBrTerm returns a new conditional br terminator based on the given
-// branching condition type and value, and conditional target branches.
-func NewCondBrTerm(condTyp, condVal, targetTrueTyp, targetTrueVal, targetFalseTyp, targetFalseVal interface{}) (*ast.TermCondBr, error) {
+// branching condition type and value, conditional target branches and attached
+// metadata.
+func NewCondBrTerm(condTyp, condVal, targetTrueTyp, targetTrueVal, targetFalseTyp, targetFalseVal, mds interface{}) (*ast.TermCondBr, error) {
 	cond, err := NewValue(condTyp, condVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2936,14 +3077,19 @@ func NewCondBrTerm(condTyp, condVal, targetTrueTyp, targetTrueVal, targetFalseTy
 	if !ok {
 		return nil, errors.Errorf("invalid false target branch type; expected ast.NamedValue, got %T", targetFalse)
 	}
-	return &ast.TermCondBr{Cond: cond, TargetTrue: tTrue, TargetFalse: tFalse}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.TermCondBr{Cond: cond, TargetTrue: tTrue, TargetFalse: tFalse, Metadata: metadata}, nil
 }
 
 // --- [ switch ] --------------------------------------------------------------
 
 // NewSwitchTerm returns a new switch terminator based on the given control
-// variable type and value, default target branch and switch cases.
-func NewSwitchTerm(xTyp, xVal, targetDefaultTyp, targetDefaultVal, cases interface{}) (*ast.TermSwitch, error) {
+// variable type and value, default target branch, switch cases and attached
+// metadata.
+func NewSwitchTerm(xTyp, xVal, targetDefaultTyp, targetDefaultVal, cases, mds interface{}) (*ast.TermSwitch, error) {
 	x, err := NewValue(xTyp, xVal)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -2965,7 +3111,11 @@ func NewSwitchTerm(xTyp, xVal, targetDefaultTyp, targetDefaultVal, cases interfa
 	default:
 		return nil, errors.Errorf("invalid switch cases type; expected []*ast.Case or nil, got %T", cases)
 	}
-	return &ast.TermSwitch{X: x, TargetDefault: tDefault, Cases: cs}, nil
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.TermSwitch{X: x, TargetDefault: tDefault, Cases: cs, Metadata: metadata}, nil
 }
 
 // NewCaseList returns a new switch case list based on the given case.
@@ -2990,8 +3140,8 @@ func AppendCase(cases, switchCase interface{}) ([]*ast.Case, error) {
 	return append(cs, c), nil
 }
 
-// NewCase returns a new switch case based on the given case comparand and
-// target branch.
+// NewCase returns a new switch case based on the given case comparand, target
+// branch and attached metadata.
 func NewCase(xTyp, xVal, targetTyp, targetVal interface{}) (*ast.Case, error) {
 	xValue, err := NewValue(xTyp, xVal)
 	if err != nil {
@@ -3010,6 +3160,16 @@ func NewCase(xTyp, xVal, targetTyp, targetVal interface{}) (*ast.Case, error) {
 		return nil, errors.Errorf("invalid target branch type; expected ast.NamedValue, got %T", target)
 	}
 	return &ast.Case{X: x, Target: t}, nil
+}
+
+// NewUnreachableTerm returns a new unreachable terminator based on the given
+// attached metadata.
+func NewUnreachableTerm(mds interface{}) (*ast.TermUnreachable, error) {
+	metadata, err := uniqueMetadata(mds)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ast.TermUnreachable{Metadata: metadata}, nil
 }
 
 // ### [ Helper functions ] ####################################################
@@ -3086,4 +3246,29 @@ func unquote(s string) string {
 		return enc.Unquote(s)
 	}
 	return s
+}
+
+// uniqueMetadata returns the unique metadata of a value based on the given list
+// of attached metadata.
+func uniqueMetadata(mds interface{}) ([]*ast.AttachedMD, error) {
+	var ms []*ast.AttachedMD
+	switch mds := mds.(type) {
+	case []*ast.AttachedMD:
+		ms = mds
+	case nil:
+		// no attached metadata.
+		return nil, nil
+	default:
+		return nil, errors.Errorf("invalid attached metadata list type; expected []*ast.AttachedMD or nil, got %T", mds)
+	}
+	unique := make(map[string]ast.MetadataNode)
+	var metadata []*ast.AttachedMD
+	for _, md := range ms {
+		if prev, ok := unique[md.Name]; ok {
+			return nil, errors.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", md.Name, prev, md.Metadata)
+		}
+		unique[md.Name] = md.Metadata
+		metadata = append(metadata, md)
+	}
+	return metadata, nil
 }

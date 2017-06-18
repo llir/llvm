@@ -5,7 +5,10 @@ import (
 
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/metadata"
 )
+
+// ### [ Helper functions ] ####################################################
 
 // irIntPred returns the corresponding LLVM IR integer predicate of the given
 // integer predicate.
@@ -73,4 +76,23 @@ func irFloatPred(cond ast.FloatPred) ir.FloatPred {
 		return ir.FloatTrue
 	}
 	panic(fmt.Errorf("support for floating-point predicate %v not yet implemented", cond))
+}
+
+// irMetadata returns the corresponding LLVM IR metadata of the given list of
+// attached metadata.
+func (m *Module) irMetadata(oldMDs []*ast.AttachedMD) map[string]*metadata.Metadata {
+	mds := make(map[string]*metadata.Metadata)
+	for _, oldMD := range oldMDs {
+		key := oldMD.Name
+		node := m.metadataNode(oldMD.Metadata)
+		if prev, ok := mds[key]; ok {
+			panic(fmt.Errorf("attached metadata for metadata name %q already present; previous `%v`, new `%v`", key, prev, m.Metadata))
+		}
+		md, ok := node.(*metadata.Metadata)
+		if !ok {
+			panic(fmt.Errorf("invalid metadata type; expected *metadata.Metadata, got %T", node))
+		}
+		mds[key] = md
+	}
+	return mds
 }

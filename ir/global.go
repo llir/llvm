@@ -6,9 +6,7 @@
 package ir
 
 import (
-	"bytes"
 	"fmt"
-	"sort"
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
@@ -101,19 +99,7 @@ func (global *Global) String() string {
 	if global.IsConst {
 		imm = "constant"
 	}
-
-	// Metadata.
-	var keys []string
-	for key := range global.Metadata {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	metadata := &bytes.Buffer{}
-	for _, key := range keys {
-		md := global.Metadata[key]
-		fmt.Fprintf(metadata, ", %s %s", enc.Metadata(key), md.Ident())
-	}
-
+	md := metadataString(global.Metadata, ",")
 	if global.Init != nil {
 		// Global variable definition.
 		return fmt.Sprintf("%s = %s %s %s%s",
@@ -121,12 +107,12 @@ func (global *Global) String() string {
 			imm,
 			global.Init.Type(),
 			global.Init.Ident(),
-			metadata)
+			md)
 	}
 	// External global variable declaration.
 	return fmt.Sprintf("%s = external %s %s%s",
 		global.Ident(),
 		imm,
 		global.Content,
-		metadata)
+		md)
 }

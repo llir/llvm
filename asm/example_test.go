@@ -100,10 +100,12 @@ func Example() {
 	//                     Name:   "0",
 	//                     Insts:  {
 	//                         &ir.InstLoad{
-	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             Name:   "1",
-	//                             Typ:    &types.IntType{(CYCLIC REFERENCE)},
-	//                             Src:    &ir.Global{(CYCLIC REFERENCE)},
+	//                             Parent:   &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Name:     "1",
+	//                             Typ:      &types.IntType{(CYCLIC REFERENCE)},
+	//                             Src:      &ir.Global{(CYCLIC REFERENCE)},
+	//                             Metadata: {
+	//                             },
 	//                         },
 	//                         &ir.InstMul{
 	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
@@ -115,6 +117,8 @@ func Example() {
 	//                                     neg: false,
 	//                                     abs: {0x15a4e35},
 	//                                 },
+	//                             },
+	//                             Metadata: {
 	//                             },
 	//                         },
 	//                         &ir.InstAdd{
@@ -128,11 +132,15 @@ func Example() {
 	//                                     abs: {0x1},
 	//                                 },
 	//                             },
+	//                             Metadata: {
+	//                             },
 	//                         },
 	//                         &ir.InstStore{
-	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
-	//                             Src:    &ir.InstAdd{(CYCLIC REFERENCE)},
-	//                             Dst:    &ir.Global{(CYCLIC REFERENCE)},
+	//                             Parent:   &ir.BasicBlock{(CYCLIC REFERENCE)},
+	//                             Src:      &ir.InstAdd{(CYCLIC REFERENCE)},
+	//                             Dst:      &ir.Global{(CYCLIC REFERENCE)},
+	//                             Metadata: {
+	//                             },
 	//                         },
 	//                         &ir.InstCall{
 	//                             Parent: &ir.BasicBlock{(CYCLIC REFERENCE)},
@@ -141,6 +149,8 @@ func Example() {
 	//                             Sig:    &types.FuncType{(CYCLIC REFERENCE)},
 	//                             Args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
+	//                             },
+	//                             Metadata: {
 	//                             },
 	//                         },
 	//                     },
@@ -154,6 +164,10 @@ func Example() {
 	//                             Args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
+	//                             Metadata: {
+	//                             },
+	//                         },
+	//                         Metadata: {
 	//                         },
 	//                     },
 	//                 },

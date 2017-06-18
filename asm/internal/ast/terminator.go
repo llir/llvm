@@ -28,6 +28,8 @@ type Terminator interface {
 type TermRet struct {
 	// Return value; or nil if "void" return.
 	X Value
+	// Metadata attached to the terminator.
+	Metadata []*AttachedMD
 }
 
 // --- [ br ] ------------------------------------------------------------------
@@ -39,6 +41,8 @@ type TermRet struct {
 type TermBr struct {
 	// Target branch.
 	Target NamedValue
+	// Metadata attached to the terminator.
+	Metadata []*AttachedMD
 }
 
 // --- [ conditional br ] ------------------------------------------------------
@@ -54,6 +58,8 @@ type TermCondBr struct {
 	TargetTrue NamedValue
 	// Target branch when condition is false.
 	TargetFalse NamedValue
+	// Metadata attached to the terminator.
+	Metadata []*AttachedMD
 }
 
 // --- [ switch ] --------------------------------------------------------------
@@ -69,6 +75,8 @@ type TermSwitch struct {
 	TargetDefault NamedValue
 	// Switch cases.
 	Cases []*Case
+	// Metadata attached to the terminator.
+	Metadata []*AttachedMD
 }
 
 // Case represents a case of a switch terminator.
@@ -98,6 +106,8 @@ type Case struct {
 // References:
 //    http://llvm.org/docs/LangRef.html#unreachable-instruction
 type TermUnreachable struct {
+	// Metadata attached to the terminator.
+	Metadata []*AttachedMD
 }
 
 // isTerm ensures that only terminators can be assigned to the ast.Terminator

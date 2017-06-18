@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -30,6 +31,9 @@ type InstExtractElement struct {
 	X value.Value
 	// Index.
 	Index value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewExtractElement returns a new extractelement instruction based on the given
@@ -40,9 +44,10 @@ func NewExtractElement(x, index value.Value) *InstExtractElement {
 		panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", x.Type()))
 	}
 	return &InstExtractElement{
-		Typ:   t.Elem,
-		X:     x,
-		Index: index,
+		Typ:      t.Elem,
+		X:        x,
+		Index:    index,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -69,12 +74,14 @@ func (inst *InstExtractElement) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractElement) String() string {
-	return fmt.Sprintf("%s = extractelement %s %s, %s %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = extractelement %s %s, %s %s%s",
 		inst.Ident(),
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Index.Type(),
-		inst.Index.Ident())
+		inst.Index.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -104,15 +111,19 @@ type InstInsertElement struct {
 	Elem value.Value
 	// Index.
 	Index value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewInsertElement returns a new insertelement instruction based on the given
 // vector, element and index.
 func NewInsertElement(x, elem, index value.Value) *InstInsertElement {
 	return &InstInsertElement{
-		X:     x,
-		Elem:  elem,
-		Index: index,
+		X:        x,
+		Elem:     elem,
+		Index:    index,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -139,14 +150,16 @@ func (inst *InstInsertElement) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstInsertElement) String() string {
-	return fmt.Sprintf("%s = insertelement %s %s, %s %s, %s %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = insertelement %s %s, %s %s, %s %s%s",
 		inst.Ident(),
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Elem.Type(),
 		inst.Elem.Ident(),
 		inst.Index.Type(),
-		inst.Index.Ident())
+		inst.Index.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -176,15 +189,19 @@ type InstShuffleVector struct {
 	Y value.Value
 	// Shuffle mask.
 	Mask value.Value
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given
 // vectors and shuffle mask.
 func NewShuffleVector(x, y, mask value.Value) *InstShuffleVector {
 	return &InstShuffleVector{
-		X:    x,
-		Y:    y,
-		Mask: mask,
+		X:        x,
+		Y:        y,
+		Mask:     mask,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -211,14 +228,16 @@ func (inst *InstShuffleVector) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstShuffleVector) String() string {
-	return fmt.Sprintf("%s = shufflevector %s %s, %s %s, %s %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = shufflevector %s %s, %s %s, %s %s%s",
 		inst.Ident(),
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Y.Type(),
 		inst.Y.Ident(),
 		inst.Mask.Type(),
-		inst.Mask.Ident())
+		inst.Mask.Ident(),
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

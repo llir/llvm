@@ -18,6 +18,8 @@ type InstAlloca struct {
 	Elem Type
 	// Number of elements; or nil if one element.
 	NElems Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -43,6 +45,8 @@ type InstLoad struct {
 	Elem Type
 	// Source address.
 	Src Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -66,6 +70,8 @@ type InstStore struct {
 	Src Value
 	// Destination address.
 	Dst Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // --- [ fence ] ---------------------------------------------------------------
@@ -89,6 +95,8 @@ type InstGetElementPtr struct {
 	Src Value
 	// Element indices.
 	Indices []Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.

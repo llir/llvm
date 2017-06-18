@@ -18,6 +18,8 @@ type InstExtractElement struct {
 	X Value
 	// Index.
 	Index Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -52,6 +54,8 @@ type InstInsertElement struct {
 	Elem Value
 	// Index.
 	Index Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.
@@ -86,6 +90,8 @@ type InstShuffleVector struct {
 	Y Value
 	// Shuffle mask.
 	Mask Value
+	// Metadata attached to the instruction.
+	Metadata []*AttachedMD
 }
 
 // GetName returns the name of the value.

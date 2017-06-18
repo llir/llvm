@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -30,13 +31,17 @@ type InstTrunc struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 	return &InstTrunc{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -63,11 +68,13 @@ func (inst *InstTrunc) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstTrunc) String() string {
-	return fmt.Sprintf("%s = trunc %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = trunc %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -95,13 +102,17 @@ type InstZExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewZExt returns a new zext instruction based on the given source value and target type.
 func NewZExt(from value.Value, to types.Type) *InstZExt {
 	return &InstZExt{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -128,11 +139,13 @@ func (inst *InstZExt) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstZExt) String() string {
-	return fmt.Sprintf("%s = zext %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = zext %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -160,13 +173,17 @@ type InstSExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewSExt returns a new sext instruction based on the given source value and target type.
 func NewSExt(from value.Value, to types.Type) *InstSExt {
 	return &InstSExt{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -193,11 +210,13 @@ func (inst *InstSExt) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSExt) String() string {
-	return fmt.Sprintf("%s = sext %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = sext %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -225,13 +244,17 @@ type InstFPTrunc struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value and target type.
 func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 	return &InstFPTrunc{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -258,11 +281,13 @@ func (inst *InstFPTrunc) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPTrunc) String() string {
-	return fmt.Sprintf("%s = fptrunc %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fptrunc %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -290,13 +315,17 @@ type InstFPExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and target type.
 func NewFPExt(from value.Value, to types.Type) *InstFPExt {
 	return &InstFPExt{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -323,11 +352,13 @@ func (inst *InstFPExt) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPExt) String() string {
-	return fmt.Sprintf("%s = fpext %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fpext %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -355,13 +386,17 @@ type InstFPToUI struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value and target type.
 func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 	return &InstFPToUI{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -388,11 +423,13 @@ func (inst *InstFPToUI) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToUI) String() string {
-	return fmt.Sprintf("%s = fptoui %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fptoui %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -420,13 +457,17 @@ type InstFPToSI struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value and target type.
 func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 	return &InstFPToSI{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -453,11 +494,13 @@ func (inst *InstFPToSI) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToSI) String() string {
-	return fmt.Sprintf("%s = fptosi %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = fptosi %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -485,13 +528,17 @@ type InstUIToFP struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value and target type.
 func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 	return &InstUIToFP{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -518,11 +565,13 @@ func (inst *InstUIToFP) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstUIToFP) String() string {
-	return fmt.Sprintf("%s = uitofp %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = uitofp %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -550,13 +599,17 @@ type InstSIToFP struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value and target type.
 func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 	return &InstSIToFP{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -583,11 +636,13 @@ func (inst *InstSIToFP) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstSIToFP) String() string {
-	return fmt.Sprintf("%s = sitofp %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = sitofp %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -615,13 +670,17 @@ type InstPtrToInt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 	return &InstPtrToInt{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -648,11 +707,13 @@ func (inst *InstPtrToInt) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstPtrToInt) String() string {
-	return fmt.Sprintf("%s = ptrtoint %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = ptrtoint %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -680,13 +741,17 @@ type InstIntToPtr struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source value and target type.
 func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 	return &InstIntToPtr{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -713,11 +778,13 @@ func (inst *InstIntToPtr) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstIntToPtr) String() string {
-	return fmt.Sprintf("%s = inttoptr %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = inttoptr %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -745,13 +812,17 @@ type InstBitCast struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value and target type.
 func NewBitCast(from value.Value, to types.Type) *InstBitCast {
 	return &InstBitCast{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -778,11 +849,13 @@ func (inst *InstBitCast) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstBitCast) String() string {
-	return fmt.Sprintf("%s = bitcast %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = bitcast %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -810,13 +883,17 @@ type InstAddrSpaceCast struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given source value and target type.
 func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 	return &InstAddrSpaceCast{
-		From: from,
-		To:   to,
+		From:     from,
+		To:       to,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -843,11 +920,13 @@ func (inst *InstAddrSpaceCast) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstAddrSpaceCast) String() string {
-	return fmt.Sprintf("%s = addrspacecast %s %s to %s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = addrspacecast %s %s to %s%s",
 		inst.Ident(),
 		inst.From.Type(),
 		inst.From.Ident(),
-		inst.To)
+		inst.To,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.

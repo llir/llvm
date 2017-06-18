@@ -8,7 +8,6 @@ package ir
 import (
 	"bytes"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -131,21 +130,12 @@ func (f *Function) String() string {
 	sig.WriteString(")")
 
 	// Metadata.
-	var keys []string
-	for key := range f.Metadata {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	metadata := &bytes.Buffer{}
-	for _, key := range keys {
-		md := f.Metadata[key]
-		fmt.Fprintf(metadata, " %s %s", enc.Metadata(key), md.Ident())
-	}
+	md := metadataString(f.Metadata, "")
 
 	// Function definition.
 	if len(f.Blocks) > 0 {
 		buf := &bytes.Buffer{}
-		fmt.Fprintf(buf, "define%s %s%s {\n", callconv, sig, metadata)
+		fmt.Fprintf(buf, "define%s %s%s {\n", callconv, sig, md)
 		for _, block := range f.Blocks {
 			fmt.Fprintln(buf, block)
 		}
@@ -154,7 +144,7 @@ func (f *Function) String() string {
 	}
 
 	// External function declaration.
-	return fmt.Sprintf("declare%s%s %s", metadata, callconv, sig)
+	return fmt.Sprintf("declare%s%s %s", md, callconv, sig)
 }
 
 // Params returns the parameters of the function.

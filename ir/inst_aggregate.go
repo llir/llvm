@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -32,6 +33,9 @@ type InstExtractValue struct {
 	X value.Value
 	// Indices.
 	Indices []int64
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewExtractValue returns a new extractvalue instruction based on the given
@@ -42,9 +46,10 @@ func NewExtractValue(x value.Value, indices []int64) *InstExtractValue {
 		panic(err)
 	}
 	return &InstExtractValue{
-		Typ:     typ,
-		X:       x,
-		Indices: indices,
+		Typ:      typ,
+		X:        x,
+		Indices:  indices,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -71,15 +76,17 @@ func (inst *InstExtractValue) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractValue) String() string {
-	buf := &bytes.Buffer{}
+	indices := &bytes.Buffer{}
 	for _, index := range inst.Indices {
-		fmt.Fprintf(buf, ", %d", index)
+		fmt.Fprintf(indices, ", %d", index)
 	}
-	return fmt.Sprintf("%s = extractvalue %s %s%s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = extractvalue %s %s%s%s",
 		inst.Ident(),
 		inst.X.Type(),
 		inst.X.Ident(),
-		buf)
+		indices,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
@@ -109,15 +116,19 @@ type InstInsertValue struct {
 	Elem value.Value
 	// Indices.
 	Indices []int64
+	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
+	// instruction.
+	Metadata map[string]*metadata.Metadata
 }
 
 // NewInsertValue returns a new insertvalue instruction based on the given
 // vector, element and indices.
 func NewInsertValue(x, elem value.Value, indices []int64) *InstInsertValue {
 	return &InstInsertValue{
-		X:       x,
-		Elem:    elem,
-		Indices: indices,
+		X:        x,
+		Elem:     elem,
+		Indices:  indices,
+		Metadata: make(map[string]*metadata.Metadata),
 	}
 }
 
@@ -144,17 +155,19 @@ func (inst *InstInsertValue) SetName(name string) {
 
 // String returns the LLVM syntax representation of the instruction.
 func (inst *InstInsertValue) String() string {
-	buf := &bytes.Buffer{}
+	indices := &bytes.Buffer{}
 	for _, index := range inst.Indices {
-		fmt.Fprintf(buf, ", %d", index)
+		fmt.Fprintf(indices, ", %d", index)
 	}
-	return fmt.Sprintf("%s = insertvalue %s %s, %s %s%s",
+	md := metadataString(inst.Metadata, ",")
+	return fmt.Sprintf("%s = insertvalue %s %s, %s %s%s%s",
 		inst.Ident(),
 		inst.X.Type(),
 		inst.X.Ident(),
 		inst.Elem.Type(),
 		inst.Elem.Ident(),
-		buf)
+		indices,
+		md)
 }
 
 // GetParent returns the parent basic block of the instruction.
