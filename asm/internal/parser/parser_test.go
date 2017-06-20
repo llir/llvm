@@ -18,6 +18,7 @@ func TestParseString(t *testing.T) {
 		{path: "../../testdata/inst_binary.ll"},
 		{path: "../../testdata/inst_bitwise.ll"},
 		{path: "../../testdata/inst_vector.ll"},
+		{path: "../../testdata/inst_aggregate.ll"},
 	}
 	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
