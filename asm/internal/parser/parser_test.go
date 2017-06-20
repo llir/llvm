@@ -12,7 +12,11 @@ func TestParseString(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
+		// Empty module.
+		{path: "../../testdata/empty.ll"},
+		// Instructions.
 		{path: "../../testdata/inst_binary.ll"},
+		{path: "../../testdata/inst_bitwise.ll"},
 	}
 	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
