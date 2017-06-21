@@ -22,6 +22,12 @@ define i32 @add_4() {
 	ret i32 %result
 }
 
+define i32 @add_5() {
+; <label>:0
+	%result = add i32 30, 12, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
 define double @fadd_1() {
 ; <label>:0
 	%result = fadd double 30.0, 12.0
@@ -41,6 +47,12 @@ define double @fadd_3() {
 }
 
 define double @fadd_4() {
+; <label>:0
+	%result = fadd double 30.0, 12.0, !baz !{!"qux"}, !foo !{!"bar"}
+	ret double %result
+}
+
+define double @fadd_5() {
 ; <label>:0
 	%result = fadd double 30.0, 12.0, !baz !{!"qux"}, !foo !{!"bar"}
 	ret double %result
@@ -70,6 +82,12 @@ define i32 @sub_4() {
 	ret i32 %result
 }
 
+define i32 @sub_5() {
+; <label>:0
+	%result = sub i32 50, 8, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
 define double @fsub_1() {
 ; <label>:0
 	%result = fsub double 50.0, 8.0
@@ -89,6 +107,12 @@ define double @fsub_3() {
 }
 
 define double @fsub_4() {
+; <label>:0
+	%result = fsub double 50.0, 8.0, !baz !{!"qux"}, !foo !{!"bar"}
+	ret double %result
+}
+
+define double @fsub_5() {
 ; <label>:0
 	%result = fsub double 50.0, 8.0, !baz !{!"qux"}, !foo !{!"bar"}
 	ret double %result
@@ -118,6 +142,12 @@ define i32 @mul_4() {
 	ret i32 %result
 }
 
+define i32 @mul_5() {
+; <label>:0
+	%result = mul i32 21, 2, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
 define double @fmul_1() {
 ; <label>:0
 	%result = fmul double 21.0, 2.0
@@ -137,6 +167,12 @@ define double @fmul_3() {
 }
 
 define double @fmul_4() {
+; <label>:0
+	%result = fmul double 21.0, 2.0, !baz !{!"qux"}, !foo !{!"bar"}
+	ret double %result
+}
+
+define double @fmul_5() {
 ; <label>:0
 	%result = fmul double 21.0, 2.0, !baz !{!"qux"}, !foo !{!"bar"}
 	ret double %result
@@ -166,6 +202,12 @@ define i32 @udiv_4() {
 	ret i32 %result
 }
 
+define i32 @udiv_5() {
+; <label>:0
+	%result = udiv i32 84, 2, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
 define i32 @sdiv_1() {
 ; <label>:0
 	%result = sdiv i32 -84, -2
@@ -190,6 +232,12 @@ define i32 @sdiv_4() {
 	ret i32 %result
 }
 
+define i32 @sdiv_5() {
+; <label>:0
+	%result = sdiv i32 -84, -2, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
 define double @fdiv_1() {
 ; <label>:0
 	%result = fdiv double 84.0, 2.0
@@ -209,6 +257,12 @@ define double @fdiv_3() {
 }
 
 define double @fdiv_4() {
+; <label>:0
+	%result = fdiv double 84.0, 2.0, !baz !{!"qux"}, !foo !{!"bar"}
+	ret double %result
+}
+
+define double @fdiv_5() {
 ; <label>:0
 	%result = fdiv double 84.0, 2.0, !baz !{!"qux"}, !foo !{!"bar"}
 	ret double %result
@@ -269,6 +323,12 @@ define double @frem_3() {
 }
 
 define double @frem_4() {
+; <label>:0
+	%result = frem double 85.0, 43.0, !baz !{!"qux"}, !foo !{!"bar"}
+	ret double %result
+}
+
+define double @frem_5() {
 ; <label>:0
 	%result = frem double 85.0, 43.0, !baz !{!"qux"}, !foo !{!"bar"}
 	ret double %result

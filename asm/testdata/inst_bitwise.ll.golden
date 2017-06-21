@@ -22,6 +22,12 @@ define i32 @shl_4() {
 	ret i32 %result
 }
 
+define i32 @shl_5() {
+; <label>:0
+	%result = shl i32 21, 1, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
 define i32 @lshr_1() {
 ; <label>:0
 	%result = lshr i32 84, 1
@@ -41,6 +47,12 @@ define i32 @lshr_3() {
 }
 
 define i32 @lshr_4() {
+; <label>:0
+	%result = lshr i32 84, 1, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
+define i32 @lshr_5() {
 ; <label>:0
 	%result = lshr i32 84, 1, !baz !{!"qux"}, !foo !{!"bar"}
 	ret i32 %result
@@ -73,6 +85,12 @@ define i32 @ashr_4() {
 define i32 @ashr_5() {
 ; <label>:0
 	%result = ashr i32 -84, 1
+	ret i32 %result
+}
+
+define i32 @ashr_6() {
+; <label>:0
+	%result = ashr i32 84, 1, !baz !{!"qux"}, !foo !{!"bar"}
 	ret i32 %result
 }
 

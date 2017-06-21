@@ -26,6 +26,12 @@ define i32 @add_4() {
 	ret i32 %result
 }
 
+define i32 @add_5() {
+	; Full instruction.
+	%result = add nsw nuw i32 30, 12, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
 ; ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define double @fadd_1() {
@@ -49,6 +55,12 @@ define double @fadd_3() {
 define double @fadd_4() {
 	; Metadata.
 	%result = fadd double 30.0, 12.0, !foo !{!"bar"}, !baz !{!"qux"}
+	ret double %result
+}
+
+define double @fadd_5() {
+	; Full instruction.
+	%result = fadd arcp fast ninf nnan nsz double 30.0, 12.0, !foo !{!"bar"}, !baz !{!"qux"}
 	ret double %result
 }
 
@@ -78,6 +90,12 @@ define i32 @sub_4() {
 	ret i32 %result
 }
 
+define i32 @sub_5() {
+	; Full instruction.
+	%result = sub nsw nuw i32 50, 8, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
 ; ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define double @fsub_1() {
@@ -101,6 +119,12 @@ define double @fsub_3() {
 define double @fsub_4() {
 	; Metadata.
 	%result = fsub double 50.0, 8.0, !foo !{!"bar"}, !baz !{!"qux"}
+	ret double %result
+}
+
+define double @fsub_5() {
+	; Full instruction.
+	%result = fsub arcp fast ninf nnan nsz double 50.0, 8.0, !foo !{!"bar"}, !baz !{!"qux"}
 	ret double %result
 }
 
@@ -130,6 +154,12 @@ define i32 @mul_4() {
 	ret i32 %result
 }
 
+define i32 @mul_5() {
+	; Full instruction.
+	%result = mul nsw nuw i32 21, 2, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
 ; ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define double @fmul_1() {
@@ -153,6 +183,12 @@ define double @fmul_3() {
 define double @fmul_4() {
 	; Metadata.
 	%result = fmul double 21.0, 2.0, !foo !{!"bar"}, !baz !{!"qux"}
+	ret double %result
+}
+
+define double @fmul_5() {
+	; Full instruction.
+	%result = fmul arcp fast ninf nnan nsz double 21.0, 2.0, !foo !{!"bar"}, !baz !{!"qux"}
 	ret double %result
 }
 
@@ -182,6 +218,12 @@ define i32 @udiv_4() {
 	ret i32 %result
 }
 
+define i32 @udiv_5() {
+	; Full instruction.
+	%result = udiv exact i32 84, 2, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
 ; ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define i32 @sdiv_1() {
@@ -208,6 +250,12 @@ define i32 @sdiv_4() {
 	ret i32 %result
 }
 
+define i32 @sdiv_5() {
+	; Full instruction.
+	%result = sdiv exact i32 -84, -2, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
 ; ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define double @fdiv_1() {
@@ -231,6 +279,12 @@ define double @fdiv_3() {
 define double @fdiv_4() {
 	; Metadata.
 	%result = fdiv double 84.0, 2.0, !foo !{!"bar"}, !baz !{!"qux"}
+	ret double %result
+}
+
+define double @fdiv_5() {
+	; Full instruction.
+	%result = fdiv arcp fast ninf nnan nsz double 84.0, 2.0, !foo !{!"bar"}, !baz !{!"qux"}
 	ret double %result
 }
 
@@ -297,5 +351,11 @@ define double @frem_3() {
 define double @frem_4() {
 	; Metadata.
 	%result = frem double 85.0, 43.0, !foo !{!"bar"}, !baz !{!"qux"}
+	ret double %result
+}
+
+define double @frem_5() {
+	; Full instruction.
+	%result = frem arcp fast ninf nnan nsz double 85.0, 43.0, !foo !{!"bar"}, !baz !{!"qux"}
 	ret double %result
 }

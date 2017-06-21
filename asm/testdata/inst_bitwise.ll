@@ -26,6 +26,12 @@ define i32 @shl_4() {
 	ret i32 %result
 }
 
+define i32 @shl_5() {
+	; Full instruction.
+	%result = shl nsw nuw i32 21, 1, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
 ; ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define i32 @lshr_1() {
@@ -49,6 +55,12 @@ define i32 @lshr_3() {
 define i32 @lshr_4() {
 	; Metadata.
 	%result = lshr i32 84, 1, !foo !{!"bar"}, !baz !{!"qux"}
+	ret i32 %result
+}
+
+define i32 @lshr_5() {
+	; Full instruction.
+	%result = lshr exact i32 84, 1, !foo !{!"bar"}, !baz !{!"qux"}
 	ret i32 %result
 }
 
@@ -81,6 +93,12 @@ define i32 @ashr_4() {
 define i32 @ashr_5() {
 	; Negative operand.
 	%result = ashr i32 -84, 1
+	ret i32 %result
+}
+
+define i32 @ashr_6() {
+	; Full instruction.
+	%result = ashr exact i32 84, 1, !foo !{!"bar"}, !baz !{!"qux"}
 	ret i32 %result
 }
 
