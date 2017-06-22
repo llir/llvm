@@ -136,6 +136,8 @@ type InstCall struct {
 	Callee Value
 	// Function arguments.
 	Args []Value
+	// Calling convention.
+	CallConv CallConv
 	// Metadata attached to the instruction.
 	Metadata []*AttachedMD
 }

@@ -1179,6 +1179,7 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 				arg := m.irValue(oldArg)
 				inst.Args = append(inst.Args, arg)
 			}
+			inst.CallConv = ir.CallConv(oldInst.CallConv)
 			inst.Metadata = m.irMetadata(oldInst.Metadata)
 
 		default:

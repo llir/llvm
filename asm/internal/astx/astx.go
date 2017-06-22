@@ -2963,7 +2963,11 @@ func NewSelectInst(condTyp, condVal, xTyp, xVal, yTyp, yVal, mds interface{}) (*
 
 // NewCallInst returns a new call instruction based on the given return type,
 // callee name, function arguments and attached metadata.
-func NewCallInst(retTyp, callee, args, mds interface{}) (*ast.InstCall, error) {
+func NewCallInst(callconv, retTyp, callee, args, mds interface{}) (*ast.InstCall, error) {
+	cconv, ok := callconv.(ast.CallConv)
+	if !ok {
+		return nil, errors.Errorf("invalid calling convention type; expected ast.CallConv, got %T", callconv)
+	}
 	r, ok := retTyp.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid return type; expected ast.Type, got %T", retTyp)
@@ -3007,7 +3011,7 @@ func NewCallInst(retTyp, callee, args, mds interface{}) (*ast.InstCall, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.InstCall{Type: r, Callee: c, Args: as, Metadata: metadata}, nil
+	return &ast.InstCall{Type: r, Callee: c, Args: as, CallConv: cconv, Metadata: metadata}, nil
 }
 
 // === [ Terminators ] =========================================================

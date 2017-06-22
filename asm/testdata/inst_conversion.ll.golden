@@ -118,9 +118,14 @@ define i64 @ptrtoint_2(i8* %x) {
 	ret i64 %result
 }
 
+define void @f() {
+; <label>:0
+	ret void
+}
+
 define i64 @ptrtoint_3() {
 ; <label>:0
-	%result = ptrtoint i64 ()* @ptrtoint_3 to i64
+	%result = ptrtoint void ()* @f to i64
 	ret i64 %result
 }
 

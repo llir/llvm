@@ -140,9 +140,13 @@ define i64 @ptrtoint_2(i8* %x) {
 	ret i64 %result
 }
 
+define void @f() {
+	ret void
+}
+
 define i64 @ptrtoint_3() {
 	; Global operand.
-	%result = ptrtoint i64 ()* @ptrtoint_3 to i64
+	%result = ptrtoint void ()* @f to i64
 	ret i64 %result
 }
 
