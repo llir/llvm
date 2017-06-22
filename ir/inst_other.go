@@ -466,6 +466,8 @@ type InstCall struct {
 	Sig *types.FuncType
 	// Function arguments.
 	Args []value.Value
+	// Calling convention.
+	CallConv CallConv
 	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
 	// instruction.
 	Metadata map[string]*metadata.Metadata
@@ -526,6 +528,10 @@ func (inst *InstCall) String() string {
 		fmt.Fprintf(ident, "%s = ", inst.Ident())
 	}
 	// Print callee signature instead of return type for variadic callees.
+	callconv := &bytes.Buffer{}
+	if inst.CallConv != CallConvNone {
+		fmt.Fprintf(callconv, " %s", inst.CallConv)
+	}
 	sig := inst.Sig
 	ret := sig.Ret.String()
 	if sig.Variadic {
@@ -541,8 +547,9 @@ func (inst *InstCall) String() string {
 			arg.Ident())
 	}
 	md := metadataString(inst.Metadata, ",")
-	return fmt.Sprintf("%scall %s %s(%s)%s",
+	return fmt.Sprintf("%scall%s %s %s(%s)%s",
 		ident,
+		callconv,
 		ret,
 		inst.Callee.Ident(),
 		args,
