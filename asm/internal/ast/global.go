@@ -11,6 +11,8 @@ type Global struct {
 	Init Constant
 	// Immutability of the global variable.
 	Immutable bool
+	// Address space; or 0 for default address space.
+	AddrSpace int
 	// Metadata attached to the global variable.
 	Metadata []*AttachedMD
 }

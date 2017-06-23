@@ -281,17 +281,17 @@ SelectionKind
 // Original production rule.
 //
 //    GlobalDecl
-//       : GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $4, $5, $9) >>
+//       : GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $3, $4, $5, $9) >>
 //    ;
 GlobalDecl
-	: GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaAttachedMDList                                    << astx.NewGlobalDecl($0, $4, $5, $6) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Align OptCommaAttachedMDList                          << astx.NewGlobalDecl($0, $4, $5, $8) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDecl($0, $4, $5, $8) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDecl($0, $4, $5, $10) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section OptCommaAttachedMDList                        << astx.NewGlobalDecl($0, $4, $5, $8) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDecl($0, $4, $5, $10) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDecl($0, $4, $5, $10) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $4, $5, $12) >>
+	: GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaAttachedMDList                                    << astx.NewGlobalDecl($0, $3, $4, $5, $6) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Align OptCommaAttachedMDList                          << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section OptCommaAttachedMDList                        << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $3, $4, $5, $12) >>
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
@@ -303,21 +303,21 @@ GlobalDecl
 // Original production rule.
 //
 //    GlobalDef
-//       : GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDef($0, $4, $5, $6, $10) >>
+//       : GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDef($0, $3, $4, $5, $6, $10) >>
 //    ;
 GlobalDef
-	: GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaAttachedMDList                                    << astx.NewGlobalDef($0, $4, $5, $6, $7) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Align OptCommaAttachedMDList                          << astx.NewGlobalDef($0, $4, $5, $6, $9) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDef($0, $4, $5, $6, $9) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDef($0, $4, $5, $6, $11) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section OptCommaAttachedMDList                        << astx.NewGlobalDef($0, $4, $5, $6, $9) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDef($0, $4, $5, $6, $11) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDef($0, $4, $5, $6, $11) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDef($0, $4, $5, $6, $13) >>
+	: GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaAttachedMDList                                    << astx.NewGlobalDef($0, $3, $4, $5, $6, $7) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Align OptCommaAttachedMDList                          << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section OptCommaAttachedMDList                        << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDef($0, $3, $4, $5, $6, $13) >>
 ;
 
 GlobalOptions
-	: OptVisibility OptDLLStorageClass OptTLSModel OptUnnamedAddr OptAddrSpace OptExternallyInitialized
+	: OptVisibility OptDLLStorageClass OptThreadLocal OptUnnamedAddr OptAddrSpace OptExternallyInitialized   << $4, nil >>
 ;
 
 OptExternallyInitialized
@@ -1793,14 +1793,19 @@ DLLStorageClass
 	| "dllexport"
 ;
 
-OptTLSModel
+OptThreadLocal
 	: empty
-	| TLSModel
+	| ThreadLocal
 ;
 
 // From spec of v4.0.
 //
-// ref: http://llvm.org/docs/LangRef.html#tls-model
+// ref: http://llvm.org/docs/LangRef.html#thread-local-storage-models
+ThreadLocal
+	: "thread_local"
+	| "thread_local" "(" TLSModel ")"
+;
+
 TLSModel
 	: "localdynamic"
 	| "initialexec"

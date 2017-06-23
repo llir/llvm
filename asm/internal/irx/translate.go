@@ -286,7 +286,9 @@ func (m *Module) globalDecl(old *ast.Global) {
 	} else {
 		global.Content = m.irType(old.Content)
 	}
-	global.Typ = types.NewPointer(global.Content)
+	typ := types.NewPointer(global.Content)
+	typ.AddrSpace = old.AddrSpace
+	global.Typ = typ
 	global.IsConst = old.Immutable
 }
 

@@ -1,0 +1,63 @@
+@g1 = global i32 0
+
+@g2 = constant i32 0
+
+@g3 = external global i32
+
+@g4 = external global i32
+
+@g5 = global i32 0
+
+@g6 = global i32 0
+
+@g7 = global i32 0
+
+@g8 = global i32 0
+
+@g9 = global i32 0
+
+@g10 = global i32 0
+
+@g11 = global i32 0
+
+@g12 = global i32 0
+
+@g13 = global i32 0
+
+@g14 = global i32 0
+
+@g15 = global i32 0
+
+@g16 = global i32 0
+
+@g17 = global i32 0
+
+@g18 = global i32 0
+
+@g19 = global i32 0
+
+@g20 = global i32 0
+
+@g21 = global i32 0
+
+@g22 = global i32 0
+
+@g23 = global i32 0
+
+@g24 = global i32 0
+
+@g25 = addrspace(1) global i32 0
+
+@g26 = global i32 0
+
+@g27 = global i32 0
+
+@g28 = global i32 0
+
+@g29 = global i32 0
+
+@g30 = global i32 0
+
+@g31 = global i32 0, !baz !{!"qux"}, !foo !{!"bar"}
+
+@g32 = addrspace(1) global i32 0, !baz !{!"qux"}, !foo !{!"bar"}

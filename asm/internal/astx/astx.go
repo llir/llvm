@@ -158,11 +158,20 @@ func NewTypeDefOpaque(name interface{}) (*ast.NamedType, error) {
 // --- [ Global variables ] ----------------------------------------------------
 
 // NewGlobalDecl returns a new global variable declaration based on the given
-// global variable name, immutability, type and attached metadata.
-func NewGlobalDecl(name, immutable, typ, mds interface{}) (*ast.Global, error) {
+// global variable name, address space, immutability, type and attached
+// metadata.
+func NewGlobalDecl(name, addrspace, immutable, typ, mds interface{}) (*ast.Global, error) {
 	n, ok := name.(*GlobalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid global name type; expected *astx.GlobalIdent, got %T", name)
+	}
+	var space int
+	if addrspace != nil {
+		x, err := getInt64(addrspace)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		space = int(x)
 	}
 	imm, ok := immutable.(bool)
 	if !ok {
@@ -176,15 +185,24 @@ func NewGlobalDecl(name, immutable, typ, mds interface{}) (*ast.Global, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.Global{Name: unquote(n.name), Content: t, Immutable: imm, Metadata: metadata}, nil
+	return &ast.Global{Name: unquote(n.name), Content: t, Immutable: imm, AddrSpace: space, Metadata: metadata}, nil
 }
 
 // NewGlobalDef returns a new global variable definition based on the given
-// global variable name, immutability, type, value and attached metadata.
-func NewGlobalDef(name, immutable, typ, val, mds interface{}) (*ast.Global, error) {
+// global variable name, address space, immutability, type, value and attached
+// metadata.
+func NewGlobalDef(name, addrspace, immutable, typ, val, mds interface{}) (*ast.Global, error) {
 	n, ok := name.(*GlobalIdent)
 	if !ok {
 		return nil, errors.Errorf("invalid global name type; expected *astx.GlobalIdent, got %T", name)
+	}
+	var space int
+	if addrspace != nil {
+		x, err := getInt64(addrspace)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		space = int(x)
 	}
 	imm, ok := immutable.(bool)
 	if !ok {
@@ -206,7 +224,7 @@ func NewGlobalDef(name, immutable, typ, val, mds interface{}) (*ast.Global, erro
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ast.Global{Name: unquote(n.name), Content: t, Init: i, Immutable: imm, Metadata: metadata}, nil
+	return &ast.Global{Name: unquote(n.name), Content: t, Init: i, Immutable: imm, AddrSpace: space, Metadata: metadata}, nil
 }
 
 // --- [ Functions ] -----------------------------------------------------------
@@ -712,7 +730,8 @@ func NewFuncType(ret, params interface{}) (*ast.FuncType, error) {
 	return sig, nil
 }
 
-// NewPointerType returns a new pointer type based on the given element type.
+// NewPointerType returns a new pointer type based on the given element type and
+// address space.
 func NewPointerType(elem, addrspace interface{}) (*ast.PointerType, error) {
 	var space int
 	if addrspace != nil {
