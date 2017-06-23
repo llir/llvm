@@ -16,6 +16,7 @@ var (
 	_ constant.Constant = &constant.Array{}
 	_ constant.Constant = &constant.Struct{}
 	_ constant.Constant = &constant.ZeroInitializer{}
+	_ constant.Constant = &constant.Undef{}
 )
 
 // Validate that the relevant types satisfy the constant.Expr interface.
@@ -80,6 +81,7 @@ var (
 	_ metadata.Node = &constant.Array{}
 	_ metadata.Node = &constant.Struct{}
 	_ metadata.Node = &constant.ZeroInitializer{}
+	_ metadata.Node = &constant.Undef{}
 	// Binary expressions.
 	_ metadata.Node = &constant.ExprAdd{}
 	_ metadata.Node = &constant.ExprFAdd{}

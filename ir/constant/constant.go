@@ -38,6 +38,10 @@ import (
 //    *ir.Global     (https://godoc.org/github.com/llir/llvm/ir#Global)
 //    *ir.Function   (https://godoc.org/github.com/llir/llvm/ir#Function)
 //
+// Undefined value constants
+//
+//    *constant.Undef   (https://godoc.org/github.com/llir/llvm/ir/constant#Undef)
+//
 // Constant expressions
 //
 // http://llvm.org/docs/LangRef.html#constant-expressions
