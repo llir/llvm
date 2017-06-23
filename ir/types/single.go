@@ -147,6 +147,8 @@ type PointerType struct {
 	Name string
 	// Element type.
 	Elem Type
+	// Address space; or 0 for default address space.
+	AddrSpace int
 }
 
 // NewPointer returns a new pointer type based on the given element type.
@@ -164,6 +166,9 @@ func (t *PointerType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *PointerType) Def() string {
+	if t.AddrSpace != 0 {
+		return fmt.Sprintf("%s addrspace(%d)*", t.Elem, t.AddrSpace)
+	}
 	return fmt.Sprintf("%s*", t.Elem)
 }
 
