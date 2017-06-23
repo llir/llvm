@@ -156,6 +156,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **constant.ZeroInitializer:
 		w.walkBeforeAfter(*n, before, after)
+	case **constant.Undef:
+		w.walkBeforeAfter(*n, before, after)
 	// Constant expressions
 	case **constant.ExprAdd:
 		w.walkBeforeAfter(*n, before, after)
@@ -465,6 +467,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 			w.walkBeforeAfter(&n.Fields, before, after)
 		}
 	case *constant.ZeroInitializer:
+		w.walkBeforeAfter(&n.Typ, before, after)
+	case *constant.Undef:
 		w.walkBeforeAfter(&n.Typ, before, after)
 	// Constant expressions
 	case *constant.ExprAdd:

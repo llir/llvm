@@ -78,6 +78,8 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		return c
 	case *ast.ZeroInitializerConst:
 		return constant.NewZeroInitializer(m.irType(old.Type))
+	case *ast.UndefConst:
+		return constant.NewUndef(m.irType(old.Type))
 
 	// Global variable and function addresses
 	case *ast.Global:

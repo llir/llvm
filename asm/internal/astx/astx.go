@@ -846,6 +846,8 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		return &ast.NullConst{Type: t}, nil
 	case *ZeroInitializerLit:
 		return &ast.ZeroInitializerConst{Type: t}, nil
+	case *UndefLit:
+		return &ast.UndefConst{Type: t}, nil
 
 	// Replace *ast.TypeDummy with real type; as used by incoming values of phi
 	// instructions.
@@ -1345,6 +1347,10 @@ func NewStructConst(fields interface{}) (*ast.StructConst, error) {
 
 // ZeroInitializerLit represents a zeroinitializer literal.
 type ZeroInitializerLit struct {
+}
+
+// UndefLit represents an undef literal.
+type UndefLit struct {
 }
 
 // --- [ Binary expressions ] --------------------------------------------------

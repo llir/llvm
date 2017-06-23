@@ -27,6 +27,10 @@ package ast
 //    *ast.Global
 //    *ast.Function
 //
+// Undefined value constants
+//
+//    *ast.UndefConst
+//
 // Constant expressions
 //
 // http://llvm.org/docs/LangRef.html#constant-expressions

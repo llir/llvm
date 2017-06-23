@@ -14,6 +14,7 @@ var (
 	_ ast.Constant = &ast.CharArrayConst{}
 	_ ast.Constant = &ast.StructConst{}
 	_ ast.Constant = &ast.ZeroInitializerConst{}
+	_ ast.Constant = &ast.UndefConst{}
 	// Global variable and function addresses
 	_ ast.Constant = &ast.Global{}
 	_ ast.Constant = &ast.Function{}
