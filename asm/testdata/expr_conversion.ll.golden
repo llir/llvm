@@ -75,7 +75,7 @@ define <4 x i8> @bitcast_1() {
 	ret <4 x i8> bitcast (i32 707406378 to <4 x i8>)
 }
 
-define i8* @addrspacecast_1() {
+define i8 addrspace(2)* @addrspacecast_1() {
 ; <label>:0
-	ret i8* addrspacecast (i8* null to i8*)
+	ret i8 addrspace(2)* addrspacecast (i8 addrspace(1)* null to i8 addrspace(2)*)
 }

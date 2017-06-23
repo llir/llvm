@@ -25,8 +25,9 @@ func Example() {
 	//         &ir.Global{
 	//             Name: "seed",
 	//             Typ:  &types.PointerType{
-	//                 Name: "",
-	//                 Elem: &types.IntType{Name:"", Size:32},
+	//                 Name:      "",
+	//                 Elem:      &types.IntType{Name:"", Size:32},
+	//                 AddrSpace: 0,
 	//             },
 	//             Content: &types.IntType{Name:"", Size:32},
 	//             Init:    &constant.Int{
@@ -55,6 +56,7 @@ func Example() {
 	//                     },
 	//                     Variadic: false,
 	//                 },
+	//                 AddrSpace: 0,
 	//             },
 	//             Sig: &types.FuncType{
 	//                 Name:   "",
@@ -85,6 +87,7 @@ func Example() {
 	//                     },
 	//                     Variadic: false,
 	//                 },
+	//                 AddrSpace: 0,
 	//             },
 	//             Sig: &types.FuncType{
 	//                 Name:   "",
@@ -150,6 +153,7 @@ func Example() {
 	//                             Args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
+	//                             CallConv: 0x0,
 	//                             Metadata: {
 	//                             },
 	//                         },
@@ -164,6 +168,7 @@ func Example() {
 	//                             Args:   {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
+	//                             CallConv: 0x0,
 	//                             Metadata: {
 	//                             },
 	//                         },

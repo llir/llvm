@@ -713,12 +713,20 @@ func NewFuncType(ret, params interface{}) (*ast.FuncType, error) {
 }
 
 // NewPointerType returns a new pointer type based on the given element type.
-func NewPointerType(elem interface{}) (*ast.PointerType, error) {
+func NewPointerType(elem, addrspace interface{}) (*ast.PointerType, error) {
+	var space int
+	if addrspace != nil {
+		x, err := getInt64(addrspace)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		space = int(x)
+	}
 	e, ok := elem.(ast.Type)
 	if !ok {
 		return nil, errors.Errorf("invalid element type; expected ast.Type, got %T", elem)
 	}
-	return &ast.PointerType{Elem: e}, nil
+	return &ast.PointerType{Elem: e, AddrSpace: space}, nil
 }
 
 // NewVectorType returns a new vector type based on the given vector length and

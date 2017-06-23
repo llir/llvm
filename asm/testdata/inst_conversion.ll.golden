@@ -159,14 +159,14 @@ define <4 x i8> @bitcast_2() {
 	ret <4 x i8> %result
 }
 
-define i8* @addrspacecast_1() {
+define i8 addrspace(2)* @addrspacecast_1() {
 ; <label>:0
-	%result = addrspacecast i8* null to i8*
-	ret i8* %result
+	%result = addrspacecast i8 addrspace(1)* null to i8 addrspace(2)*
+	ret i8 addrspace(2)* %result
 }
 
-define i8* @addrspacecast_2() {
+define i8 addrspace(2)* @addrspacecast_2() {
 ; <label>:0
-	%result = addrspacecast i8* null to i8*, !baz !{!"qux"}, !foo !{!"bar"}
-	ret i8* %result
+	%result = addrspacecast i8 addrspace(1)* null to i8 addrspace(2)*, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i8 addrspace(2)* %result
 }

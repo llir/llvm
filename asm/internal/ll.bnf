@@ -521,12 +521,12 @@ FloatType
 // --- [ pointer type ] --------------------------------------------------------
 
 PointerType
-	: Type OptAddrSpace "*"   << astx.NewPointerType($0) >>
+	: Type OptAddrSpace "*"   << astx.NewPointerType($0, $1) >>
 ;
 
 OptAddrSpace
 	: empty
-	| "addrspace" "(" IntLit ")"
+	| "addrspace" "(" IntLit ")"   << $2, nil >>
 ;
 
 // --- [ vector type ] ---------------------------------------------------------

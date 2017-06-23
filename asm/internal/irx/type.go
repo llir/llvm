@@ -40,7 +40,9 @@ func (m *Module) irType(old ast.Type) types.Type {
 			panic(fmt.Errorf("support for %v not yet implemented", old.Kind))
 		}
 	case *ast.PointerType:
-		return types.NewPointer(m.irType(old.Elem))
+		typ := types.NewPointer(m.irType(old.Elem))
+		typ.AddrSpace = old.AddrSpace
+		return typ
 	case *ast.VectorType:
 		return types.NewVector(m.irType(old.Elem), old.Len)
 	case *ast.LabelType:
