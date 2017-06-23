@@ -1,10 +1,12 @@
 package parser_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
 
 	"github.com/llir/llvm/asm"
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 func TestParseString(t *testing.T) {
@@ -30,9 +32,12 @@ func TestParseString(t *testing.T) {
 		{path: "../../testdata/inst_memory.ll"},
 		{path: "../../testdata/inst_conversion.ll"},
 		{path: "../../testdata/inst_other.ll"},
+		// Terminators.
+		{path: "../../testdata/term.ll"},
 		// Pseudo-random number generator.
 		{path: "../../testdata/rand.ll"},
 	}
+	dmp := diffmatchpatch.New()
 	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)
 		if err != nil {
@@ -52,7 +57,10 @@ func TestParseString(t *testing.T) {
 		}
 		got := m.String()
 		if want != got {
+			diffs := dmp.DiffMain(want, got, false)
+			fmt.Println(dmp.DiffPrettyText(diffs))
 			t.Errorf("%q: module mismatch; expected `%v`, got `%v`", g.path, want, got)
+			continue
 		}
 	}
 }
