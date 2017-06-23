@@ -16,6 +16,8 @@ func TestParseString(t *testing.T) {
 	}{
 		// Empty module.
 		{path: "../../testdata/empty.ll"},
+		// Top-level declarations.
+		{path: "../../testdata/module.ll"},
 		// Constant expressions.
 		{path: "../../testdata/expr_binary.ll"},
 		{path: "../../testdata/expr_bitwise.ll"},
