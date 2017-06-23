@@ -14,6 +14,14 @@ func TestParseString(t *testing.T) {
 	}{
 		// Empty module.
 		{path: "../../testdata/empty.ll"},
+		// Constant expressions.
+		{path: "../../testdata/expr_binary.ll"},
+		{path: "../../testdata/expr_bitwise.ll"},
+		{path: "../../testdata/expr_vector.ll"},
+		{path: "../../testdata/expr_aggregate.ll"},
+		{path: "../../testdata/expr_memory.ll"},
+		{path: "../../testdata/expr_conversion.ll"},
+		{path: "../../testdata/expr_other.ll"},
 		// Instructions.
 		{path: "../../testdata/inst_binary.ll"},
 		{path: "../../testdata/inst_bitwise.ll"},
