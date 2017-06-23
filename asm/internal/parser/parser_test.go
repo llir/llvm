@@ -30,6 +30,8 @@ func TestParseString(t *testing.T) {
 		{path: "../../testdata/inst_memory.ll"},
 		{path: "../../testdata/inst_conversion.ll"},
 		{path: "../../testdata/inst_other.ll"},
+		// Pseudo-random number generator.
+		{path: "../../testdata/rand.ll"},
 	}
 	for _, g := range golden {
 		buf, err := ioutil.ReadFile(g.path)

@@ -104,7 +104,7 @@ pretty.Println(m)
 
 [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package--Evaluator).
 
-The following example program parses [eval.ll](ir/testdata/eval.ll), evaluates the return value of the `@main` function and prints the result to standard output.
+The following example program parses [eval.ll](ir/testdata/eval.ll), evaluates the return value of the `@main` function and prints the result to standard output. The result should be 42.
 
 ```go
 package main
@@ -271,6 +271,8 @@ Lexers and parsers for LLVM IR assembly are automatically generated from a [BNF 
 A high-level API for parsing LLVM IR assembly is provided by [llvm/asm](https://godoc.org/github.com/llir/llvm/asm).
 
 The [llvm/ir](https://godoc.org/github.com/llir/llvm/ir) package supports all instructions of LLVM IR, except the instructions used for concurrency and exception handling.
+
+See [v0.2.md](v0.2.md) for extended release notes.
 
 ### Version 0.3 (to be released)
 
