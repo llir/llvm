@@ -92,7 +92,7 @@ fmt.Println(m)
 
 ```go
 // Parse the LLVM IR assembly file `rand.ll`.
-m, err := asm.ParseFile("internal/testdata/rand.ll")
+m, err := asm.ParseFile("testdata/rand.ll")
 if err != nil {
     log.Fatal(err)
 }
