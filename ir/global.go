@@ -6,6 +6,7 @@
 package ir
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
@@ -100,18 +101,24 @@ func (global *Global) String() string {
 		imm = "constant"
 	}
 	md := metadataString(global.Metadata, ",")
+	addrspace := &bytes.Buffer{}
+	if global.Typ.AddrSpace != 0 {
+		fmt.Fprintf(addrspace, " addrspace(%d)", global.Typ.AddrSpace)
+	}
 	if global.Init != nil {
 		// Global variable definition.
-		return fmt.Sprintf("%s = %s %s %s%s",
+		return fmt.Sprintf("%s =%s %s %s %s%s",
 			global.Ident(),
+			addrspace,
 			imm,
 			global.Init.Type(),
 			global.Init.Ident(),
 			md)
 	}
 	// External global variable declaration.
-	return fmt.Sprintf("%s = external %s %s%s",
+	return fmt.Sprintf("%s = external%s %s %s%s",
 		global.Ident(),
+		addrspace,
 		imm,
 		global.Content,
 		md)
