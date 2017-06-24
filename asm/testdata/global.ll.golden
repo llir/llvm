@@ -48,7 +48,7 @@
 
 @g25 = addrspace(1) global i32 0
 
-@g26 = global i32 0
+@g26 = external addrspace(1) global i32
 
 @g27 = global i32 0
 
@@ -58,6 +58,8 @@
 
 @g30 = global i32 0
 
-@g31 = global i32 0, !baz !{!"qux"}, !foo !{!"bar"}
+@g31 = global i32 0
 
-@g32 = addrspace(1) global i32 0, !baz !{!"qux"}, !foo !{!"bar"}
+@g32 = global i32 0, !baz !{!"qux"}, !foo !{!"bar"}
+
+@g33 = addrspace(1) global i32 0, !baz !{!"qux"}, !foo !{!"bar"}

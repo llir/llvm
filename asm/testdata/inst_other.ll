@@ -195,31 +195,68 @@ define void @call_6() {
 	%10 = call avr_intrcc i32 @f()
 	%11 = call avr_signalcc i32 @f()
 	%12 = call cc 0 i32 @f()
-	%13 = call ccc i32 @f()
-	%14 = call coldcc i32 @f()
-	%15 = call cxx_fast_tlscc i32 @f()
-	%16 = call fastcc i32 @f()
-	%17 = call ghccc i32 @f()
-	%18 = call hhvm_ccc i32 @f()
-	%19 = call hhvmcc i32 @f()
-	%20 = call intel_ocl_bicc i32 @f()
-	%21 = call msp430_intrcc i32 @f()
-	%22 = call preserve_allcc i32 @f()
-	%23 = call preserve_mostcc i32 @f()
-	%24 = call ptx_device i32 @f()
-	%25 = call ptx_kernel i32 @f()
-	%26 = call spir_func i32 @f()
-	%27 = call spir_kernel i32 @f()
-	%28 = call swiftcc i32 @f()
-	%29 = call webkit_jscc i32 @f()
-	%30 = call x86_64_sysvcc i32 @f()
-	%31 = call x86_64_win64cc i32 @f()
-	%32 = call x86_fastcallcc i32 @f()
-	%33 = call x86_intrcc i32 @f()
-	%34 = call x86_regcallcc i32 @f()
-	%35 = call x86_stdcallcc i32 @f()
-	%36 = call x86_thiscallcc i32 @f()
-	%37 = call x86_vectorcallcc i32 @f()
+	%13 = call cc 8 i32 @f()
+	%14 = call cc 9 i32 @f()
+	%15 = call cc 10 i32 @f()
+	%16 = call cc 11 i32 @f()
+	%17 = call cc 12 i32 @f()
+	%18 = call cc 13 i32 @f()
+	%19 = call cc 14 i32 @f()
+	%20 = call cc 15 i32 @f()
+	%21 = call cc 16 i32 @f()
+	%22 = call cc 17 i32 @f()
+	%23 = call cc 64 i32 @f()
+	%24 = call cc 65 i32 @f()
+	%25 = call cc 66 i32 @f()
+	%26 = call cc 67 i32 @f()
+	%27 = call cc 68 i32 @f()
+	%28 = call cc 69 i32 @f()
+	%29 = call cc 70 i32 @f()
+	%30 = call cc 71 i32 @f()
+	%31 = call cc 72 i32 @f()
+	%32 = call cc 75 i32 @f()
+	%33 = call cc 76 i32 @f()
+	%34 = call cc 77 i32 @f()
+	%35 = call cc 78 i32 @f()
+	%36 = call cc 79 i32 @f()
+	%37 = call cc 80 i32 @f()
+	%38 = call cc 81 i32 @f()
+	%39 = call cc 82 i32 @f()
+	%40 = call cc 83 i32 @f()
+	%41 = call cc 84 i32 @f()
+	%42 = call cc 85 i32 @f()
+	%43 = call cc 86 i32 @f()
+	%44 = call cc 87 i32 @f()
+	%45 = call cc 88 i32 @f()
+	%46 = call cc 89 i32 @f()
+	%47 = call cc 90 i32 @f()
+	%48 = call cc 91 i32 @f()
+	%49 = call cc 92 i32 @f()
+	%50 = call ccc i32 @f()
+	%51 = call coldcc i32 @f()
+	%52 = call cxx_fast_tlscc i32 @f()
+	%53 = call fastcc i32 @f()
+	%54 = call ghccc i32 @f()
+	%55 = call hhvm_ccc i32 @f()
+	%56 = call hhvmcc i32 @f()
+	%57 = call intel_ocl_bicc i32 @f()
+	%58 = call msp430_intrcc i32 @f()
+	%59 = call preserve_allcc i32 @f()
+	%60 = call preserve_mostcc i32 @f()
+	%61 = call ptx_device i32 @f()
+	%62 = call ptx_kernel i32 @f()
+	%63 = call spir_func i32 @f()
+	%64 = call spir_kernel i32 @f()
+	%65 = call swiftcc i32 @f()
+	%66 = call webkit_jscc i32 @f()
+	%67 = call x86_64_sysvcc i32 @f()
+	%68 = call x86_64_win64cc i32 @f()
+	%69 = call x86_fastcallcc i32 @f()
+	%70 = call x86_intrcc i32 @f()
+	%71 = call x86_regcallcc i32 @f()
+	%72 = call x86_stdcallcc i32 @f()
+	%73 = call x86_thiscallcc i32 @f()
+	%74 = call x86_vectorcallcc i32 @f()
 	ret void
 }
 
@@ -297,19 +334,29 @@ define i32 @call_15() {
 	ret i32 %result
 }
 
-define i32 @call_16() {
+define void @l() {
+	ret void
+}
+
+define void @call_16() {
+	; Callee with void return type.
+	call void @l()
+	ret void
+}
+
+define i32 @call_17() {
 	; Metadata.
 	%result = call i32 @f(), !foo !{!"bar"}, !baz !{!"qux"}
 	ret i32 %result
 }
 
-define double @l(double %x, double %y) {
+define double @m(double %x, double %y) {
 	ret double 42.0
 }
 
-define double @call_17() {
+define double @call_18() {
 	; Full instruction.
-	%result = tail call arcp fast ninf nnan nsz ccc "foo" "bar"="baz" align 8 dereferenceable(11) dereferenceable_or_null(22) inreg noalias double @l(double 11.0, double 22.0) "foo" "bar"="baz" #0 alignstack(8) allocsize(8) allocsize(8, 16) alwaysinline argmemonly builtin cold convergent inaccessiblemem_or_argmemonly inaccessiblememonly inlinehint jumptable minsize naked nobuiltin noduplicate noimplicitfloat noinline nonlazybind norecurse noredzone noreturn nounwind optnone optsize readnone readonly returns_twice safestack sanitize_address sanitize_memory sanitize_thread ssp sspreq sspstrong uwtable writeonly, !foo !{!"bar"}, !baz !{!"qux"}
+	%result = tail call arcp fast ninf nnan nsz ccc "foo" "bar"="baz" align 8 dereferenceable(11) dereferenceable_or_null(22) inreg noalias double @m(double 11.0, double 22.0) "foo" "bar"="baz" #0 alignstack(8) allocsize(8) allocsize(8, 16) alwaysinline argmemonly builtin cold convergent inaccessiblemem_or_argmemonly inaccessiblememonly inlinehint jumptable minsize naked nobuiltin noduplicate noimplicitfloat noinline nonlazybind norecurse noredzone noreturn nounwind optnone optsize readnone readonly returns_twice safestack sanitize_address sanitize_memory sanitize_thread ssp sspreq sspstrong uwtable writeonly, !foo !{!"bar"}, !baz !{!"qux"}
 	ret double %result
 }
 

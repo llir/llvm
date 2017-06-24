@@ -184,31 +184,68 @@ define void @call_6() {
 	%10 = call avr_intrcc i32 @f()
 	%11 = call avr_signalcc i32 @f()
 	%12 = call ccc i32 @f()
-	%13 = call ccc i32 @f()
+	%13 = call fastcc i32 @f()
 	%14 = call coldcc i32 @f()
-	%15 = call cxx_fast_tlscc i32 @f()
-	%16 = call fastcc i32 @f()
-	%17 = call ghccc i32 @f()
-	%18 = call hhvm_ccc i32 @f()
-	%19 = call hhvmcc i32 @f()
-	%20 = call intel_ocl_bicc i32 @f()
-	%21 = call msp430_intrcc i32 @f()
-	%22 = call preserve_allcc i32 @f()
-	%23 = call preserve_mostcc i32 @f()
-	%24 = call ptx_device i32 @f()
-	%25 = call ptx_kernel i32 @f()
-	%26 = call spir_func i32 @f()
-	%27 = call spir_kernel i32 @f()
-	%28 = call swiftcc i32 @f()
-	%29 = call webkit_jscc i32 @f()
-	%30 = call x86_64_sysvcc i32 @f()
-	%31 = call x86_64_win64cc i32 @f()
-	%32 = call x86_fastcallcc i32 @f()
-	%33 = call x86_intrcc i32 @f()
-	%34 = call x86_regcallcc i32 @f()
-	%35 = call x86_stdcallcc i32 @f()
-	%36 = call x86_thiscallcc i32 @f()
+	%15 = call ghccc i32 @f()
+	%16 = call cc 11 i32 @f()
+	%17 = call webkit_jscc i32 @f()
+	%18 = call anyregcc i32 @f()
+	%19 = call preserve_mostcc i32 @f()
+	%20 = call preserve_allcc i32 @f()
+	%21 = call swiftcc i32 @f()
+	%22 = call cxx_fast_tlscc i32 @f()
+	%23 = call x86_stdcallcc i32 @f()
+	%24 = call x86_fastcallcc i32 @f()
+	%25 = call arm_apcscc i32 @f()
+	%26 = call arm_aapcscc i32 @f()
+	%27 = call arm_aapcs_vfpcc i32 @f()
+	%28 = call msp430_intrcc i32 @f()
+	%29 = call x86_thiscallcc i32 @f()
+	%30 = call ptx_kernel i32 @f()
+	%31 = call ptx_device i32 @f()
+	%32 = call spir_func i32 @f()
+	%33 = call spir_kernel i32 @f()
+	%34 = call intel_ocl_bicc i32 @f()
+	%35 = call x86_64_sysvcc i32 @f()
+	%36 = call x86_64_win64cc i32 @f()
 	%37 = call x86_vectorcallcc i32 @f()
+	%38 = call hhvmcc i32 @f()
+	%39 = call hhvm_ccc i32 @f()
+	%40 = call x86_intrcc i32 @f()
+	%41 = call avr_intrcc i32 @f()
+	%42 = call avr_signalcc i32 @f()
+	%43 = call cc 86 i32 @f()
+	%44 = call amdgpu_vs i32 @f()
+	%45 = call amdgpu_gs i32 @f()
+	%46 = call amdgpu_ps i32 @f()
+	%47 = call amdgpu_cs i32 @f()
+	%48 = call amdgpu_kernel i32 @f()
+	%49 = call x86_regcallcc i32 @f()
+	%50 = call ccc i32 @f()
+	%51 = call coldcc i32 @f()
+	%52 = call cxx_fast_tlscc i32 @f()
+	%53 = call fastcc i32 @f()
+	%54 = call ghccc i32 @f()
+	%55 = call hhvm_ccc i32 @f()
+	%56 = call hhvmcc i32 @f()
+	%57 = call intel_ocl_bicc i32 @f()
+	%58 = call msp430_intrcc i32 @f()
+	%59 = call preserve_allcc i32 @f()
+	%60 = call preserve_mostcc i32 @f()
+	%61 = call ptx_device i32 @f()
+	%62 = call ptx_kernel i32 @f()
+	%63 = call spir_func i32 @f()
+	%64 = call spir_kernel i32 @f()
+	%65 = call swiftcc i32 @f()
+	%66 = call webkit_jscc i32 @f()
+	%67 = call x86_64_sysvcc i32 @f()
+	%68 = call x86_64_win64cc i32 @f()
+	%69 = call x86_fastcallcc i32 @f()
+	%70 = call x86_intrcc i32 @f()
+	%71 = call x86_regcallcc i32 @f()
+	%72 = call x86_stdcallcc i32 @f()
+	%73 = call x86_thiscallcc i32 @f()
+	%74 = call x86_vectorcallcc i32 @f()
 	ret void
 }
 
@@ -288,19 +325,30 @@ define i32 @call_15() {
 	ret i32 %result
 }
 
-define i32 @call_16() {
+define void @l() {
+; <label>:0
+	ret void
+}
+
+define void @call_16() {
+; <label>:0
+	call void @l()
+	ret void
+}
+
+define i32 @call_17() {
 ; <label>:0
 	%result = call i32 @f(), !baz !{!"qux"}, !foo !{!"bar"}
 	ret i32 %result
 }
 
-define double @l(double %x, double %y) {
+define double @m(double %x, double %y) {
 ; <label>:0
 	ret double 42.0
 }
 
-define double @call_17() {
+define double @call_18() {
 ; <label>:0
-	%result = call ccc double @l(double 11.0, double 22.0), !baz !{!"qux"}, !foo !{!"bar"}
+	%result = call ccc double @m(double 11.0, double 22.0), !baz !{!"qux"}, !foo !{!"bar"}
 	ret double %result
 }

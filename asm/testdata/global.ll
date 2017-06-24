@@ -43,22 +43,23 @@ $com1 = comdat exactmatch
 
 ; Address space.
 @g25 = addrspace(1) global i32 0
+@g26 = external addrspace(1) global i32
 
 ; Externally initialized.
-@g26 = externally_initialized global i32 0
+@g27 = externally_initialized global i32 0
 
 ; Section.
-@g27 = global i32 0, section "foo"
+@g28 = global i32 0, section "foo"
 
 ; Comdat.
-@g28 = global i32 0, comdat
-@g29 = global i32 0, comdat($com1)
+@g29 = global i32 0, comdat
+@g30 = global i32 0, comdat($com1)
 
 ; Align.
-@g30 = global i32 0, align 8
+@g31 = global i32 0, align 8
 
 ; Metadata.
-@g31 = global i32 0, !foo !{!"bar"}, !baz !{!"qux"}
+@g32 = global i32 0, !foo !{!"bar"}, !baz !{!"qux"}
 
 ; Full global definition.
-@g32 = common default dllexport thread_local(localdynamic) unnamed_addr addrspace(1) externally_initialized global i32 0, section "foo", comdat($com1), align 8, !foo !{!"bar"}, !baz !{!"qux"}
+@g33 = common default dllexport thread_local(localdynamic) unnamed_addr addrspace(1) externally_initialized global i32 0, section "foo", comdat($com1), align 8, !foo !{!"bar"}, !baz !{!"qux"}
