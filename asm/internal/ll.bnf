@@ -374,7 +374,7 @@ FuncBody
 // --- [ Attribute group definitions ] -----------------------------------------
 
 AttrGroupDef
-	: "attributes" AttrGroupID "=" "{" FuncAttrs "}"   << nil, nil >>
+	: "attributes" AttrGroupID "=" "{" FuncAttrList "}"   << nil, nil >>
 ;
 
 // --- [ Metadata definitions ] ------------------------------------------------
@@ -1949,6 +1949,7 @@ FuncAttr
 	: string_lit
 	| string_lit "=" string_lit
 	| AttrGroupID
+	| "alignstack" "=" IntLit // NOTE: only valid in attribute group definitions.
 	| "alignstack" "(" IntLit ")"
 	| "allocsize" "(" IntLit ")"
 	| "allocsize" "(" IntLit "," IntLit ")"

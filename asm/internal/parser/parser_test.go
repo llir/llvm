@@ -19,7 +19,7 @@ func TestParseString(t *testing.T) {
 		// Top-level declarations.
 		{path: "../../testdata/module.ll"},
 		{path: "../../testdata/global.ll"},
-		//{path: "../../testdata/func.ll"}, // TODO: add function test cases.
+		{path: "../../testdata/func.ll"},
 		//{path: "../../testdata/metadata.ll"}, // TODO: add metadata test cases.
 		// Types.
 		//{path: "../../testdata/type.ll"}, // TODO: add type test cases.
