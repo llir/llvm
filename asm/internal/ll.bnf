@@ -368,7 +368,7 @@ Param
 ;
 
 FuncBody
-	: "{" BasicBlocks "}"   << $1, nil >>
+	: "{" BasicBlockList "}"   << $1, nil >>
 ;
 
 // --- [ Attribute group definitions ] -----------------------------------------
@@ -931,11 +931,6 @@ SelectExpr
 ;
 
 // === [ Basic blocks ] ========================================================
-
-BasicBlocks
-	: empty
-	| BasicBlockList
-;
 
 BasicBlockList
 	: BasicBlock                  << astx.NewBasicBlockList($0) >>
