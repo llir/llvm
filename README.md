@@ -252,17 +252,7 @@ func (e *evaluator) evalValue(v value.Value) uint32 {
 
 ## Release history
 
-### Version 0.1 (2015-04-19)
-
-Initial release.
-
-Preliminary work on the `llvm/ir` package which provides an in-memory representation of LLVM IR in pure Go.
-
-Hand-written lexer and preliminary work on a recursive descent parser for LLVM IR assembly.
-
-## Roadmap
-
-### Version 0.2 (to be released)
+### Version 0.2 (2017-06-24)
 
 Primary focus of version 0.2: *read and write support of LLVM IR assembly*.
 
@@ -272,7 +262,19 @@ A high-level API for parsing LLVM IR assembly is provided by [llvm/asm](https://
 
 The [llvm/ir](https://godoc.org/github.com/llir/llvm/ir) package supports all instructions of LLVM IR, except the instructions used for concurrency and exception handling.
 
+The llir/llvm packages are now go-getable, as the Gocc generated source code has been added to the source tree.
+
 See [v0.2.md](v0.2.md) for extended release notes.
+
+### Version 0.1 (2015-04-19)
+
+Initial release.
+
+Preliminary work on the `llvm/ir` package which provides an in-memory representation of LLVM IR in pure Go.
+
+Hand-written lexer and preliminary work on a recursive descent parser for LLVM IR assembly.
+
+## Roadmap
 
 ### Version 0.3 (to be released)
 
