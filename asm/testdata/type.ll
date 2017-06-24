@@ -5,46 +5,48 @@
 
 ; Function type
 %t2 = type i32 (i32)
+%t3 = type i32 (i32, i32)
+%t4 = type i32 (...)
 
 ; Integer type
-%t3 = type i32
+%t5 = type i32
 
 ; Floating-point type
-%t4 = type double
+%t6 = type double
 
 ; MMX type
 ; TODO: add test case for MMX type.
-;%t5 = type x86_mmx
+;%t7 = type x86_mmx
 
 ; Pointer type
-%t6 = type i32*
-%t7 = type i32 addrspace(2)*
+%t8 = type i32*
+%t9 = type i32 addrspace(2)*
 
 ; Vector type
-%t8 = type <2 x i32>
+%t10 = type <2 x i32>
 
 ; Label type
-%t9 = type label
+%t11 = type label
 
 ; Token type
 ; TODO: add test case for token type.
-;%t10 = type token
+;%t12 = type token
 
 ; Metadata type
-%t11 = type metadata
+%t13 = type metadata
 
 ; Array type
-%t12 = type [2 x i32]
+%t14 = type [2 x i32]
 
 ; Struct type
-%t13 = type {}
-%t14 = type { i32, double }
+%t15 = type {}
+%t16 = type { i32, double }
 
 ; Packed struct type
-%t15 = type <{}>
-%t16 = type <{ i32, i8, i32 }>
+%t17 = type <{}>
+%t18 = type <{ i32, i8, i32 }>
 
-%t17 = type %t3
+%t19 = type %t5
 
 ; --- [ Void type ] ------------------------------------------------------------
 
@@ -114,19 +116,19 @@ declare <{ i32, i8, i32 }> @f25()
 
 ; --- [ Named type ] -----------------------------------------------------------
 
-declare %t3 @f26()
-declare %t4 @f27()
+declare %t5 @f26()
+declare %t6 @f27()
 ; TODO: add test case for MMX type.
-;declare %t5 @f28()
-declare %t6 @f29()
-declare %t7 @f30()
-declare %t8 @f31()
+;declare %t7 @f28()
+declare %t8 @f29()
+declare %t9 @f30()
+declare %t10 @f31()
 ; TODO: add test case for token type.
-;declare %t10 @f32()
-declare void @f33(%t11 %x)
-declare %t12 @f34()
-declare %t13 @f35()
-declare %t14 @f36()
-declare %t15 @f37()
-declare %t16 @f38()
-declare %t17 @f39()
+;declare %t12 @f32()
+declare void @f33(%t13 %x)
+declare %t14 @f34()
+declare %t15 @f35()
+declare %t16 @f36()
+declare %t17 @f37()
+declare %t18 @f38()
+declare %t19 @f39()

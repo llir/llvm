@@ -88,11 +88,13 @@
 
 @g47 = global { i32, { i8 } } { i32 42, { i8 } { i8 42 } }
 
-@g48 = global { i32, i8, i32 } { i32 42, i8 5, i32 11 }
+@g48 = global {} {}
 
-@g49 = global { i32, i8, { i32, i32 }, i8 } zeroinitializer
+@g49 = global { i32, i8, i32 } { i32 42, i8 5, i32 11 }
 
-@g50 = global i8* undef
+@g50 = global { i32, i8, { i32, i32 }, i8 } zeroinitializer
+
+@g51 = global i8* undef
 
 define void @f1() {
 ; <label>:0

@@ -84,15 +84,16 @@
 @g47 = global { i32, { i8 } } { i32 42, { i8 } { i8 42 } }
 
 ; Packed.
-@g48 = global <{ i32, i8, i32 }> <{ i32 42, i8 5, i32 11 }>
+@g48 = global <{}> <{}>
+@g49 = global <{ i32, i8, i32 }> <{ i32 42, i8 5, i32 11 }>
 
 ; --- [ Zero initializer constant ] --------------------------------------------
 
-@g49 = global { i32, i8, { i32, i32 }, i8 } zeroinitializer
+@g50 = global { i32, i8, { i32, i32 }, i8 } zeroinitializer
 
 ; --- [ Undefined value constant ] ---------------------------------------------
 
-@g50 = global i8* undef
+@g51 = global i8* undef
 
 define void @f1() {
 	ret void

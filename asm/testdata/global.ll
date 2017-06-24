@@ -63,3 +63,15 @@ $com1 = comdat exactmatch
 
 ; Full global definition.
 @g33 = common default dllexport thread_local(localdynamic) unnamed_addr addrspace(1) externally_initialized global i32 0, section "foo", comdat($com1), align 8, !foo !{!"bar"}, !baz !{!"qux"}
+
+; Permutations of global declarations and definitions.
+@g34 = external global i32, align 8
+@g35 = external global i32, comdat($com1), align 8
+@g36 = external global i32, comdat($com1)
+@g37 = external global i32, section "foo", align 8
+@g38 = external global i32, section "foo", comdat($com1), align 8
+@g39 = external global i32, section "foo", comdat($com1)
+@g40 = external global i32, section "foo"
+@g41 = global i32 42 ,comdat($com1), align 8
+@g42 = global i32 42 ,section "foo", align 8
+@g43 = global i32 42 ,section "foo", comdat($com1)
