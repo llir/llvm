@@ -468,8 +468,13 @@ func NewNamedMetadataDef(name, ids interface{}) (*ast.NamedMetadata, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid metadata name type; expected *astx.MetadataName, got %T", name)
 	}
-	is, ok := ids.([]*ast.MetadataIDDummy)
-	if !ok {
+	var is []*ast.MetadataIDDummy
+	switch ids := ids.(type) {
+	case []*ast.MetadataIDDummy:
+		is = ids
+	case nil:
+		// no metadata IDs.
+	default:
 		return nil, errors.Errorf("invalid metadata IDs type; expected []*astx.MetadataID, got %T", ids)
 	}
 	md := &ast.NamedMetadata{
