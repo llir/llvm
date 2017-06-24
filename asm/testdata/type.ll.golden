@@ -6,19 +6,25 @@
 
 %t6 = type i32*
 
-%t7 = type <2 x i32>
+%t7 = type i32 addrspace(2)*
 
-%t8 = type label
+%t8 = type <2 x i32>
 
-%t10 = type metadata
+%t9 = type label
 
-%t11 = type [2 x i32]
+%t11 = type metadata
 
-%t12 = type { i32, double }
+%t12 = type [2 x i32]
 
-%t13 = type { i32, i8, i32 }
+%t13 = type {}
 
-%t14 = type i32
+%t14 = type { i32, double }
+
+%t15 = type {}
+
+%t16 = type { i32, i8, i32 }
+
+%t17 = type i32
 
 declare void @f1()
 
@@ -65,24 +71,36 @@ declare void @f19(metadata %x)
 
 declare [2 x i32] @f20()
 
-declare { i32 } @f21()
+declare {} @f21()
 
-declare { i32, i8, [2 x i32], { i32, <2 x i8> } } @f22()
+declare { i32 } @f22()
 
-declare { i32, i8, i32 } @f23()
+declare { i32, i8, [2 x i32], { i32, <2 x i8> } } @f23()
 
-declare %t3 @f25()
+declare {} @f24()
 
-declare %t4 @f26()
+declare { i32, i8, i32 } @f25()
 
-declare %t6 @f28()
+declare %t3 @f26()
 
-declare %t7 @f29()
+declare %t4 @f27()
 
-declare void @f32(%t10 %x)
+declare %t6 @f29()
 
-declare %t11 @f33()
+declare %t7 @f30()
+
+declare %t8 @f31()
+
+declare void @f33(%t11 %x)
 
 declare %t12 @f34()
 
 declare %t13 @f35()
+
+declare %t14 @f36()
+
+declare %t15 @f37()
+
+declare %t16 @f38()
+
+declare %t17 @f39()

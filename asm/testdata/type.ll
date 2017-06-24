@@ -18,30 +18,33 @@
 
 ; Pointer type
 %t6 = type i32*
+%t7 = type i32 addrspace(2)*
 
 ; Vector type
-%t7 = type <2 x i32>
+%t8 = type <2 x i32>
 
 ; Label type
-%t8 = type label
+%t9 = type label
 
 ; Token type
 ; TODO: add test case for token type.
-;%t9 = type token
+;%t10 = type token
 
 ; Metadata type
-%t10 = type metadata
+%t11 = type metadata
 
 ; Array type
-%t11 = type [2 x i32]
+%t12 = type [2 x i32]
 
 ; Struct type
-%t12 = type { i32, double }
+%t13 = type {}
+%t14 = type { i32, double }
 
 ; Packed struct type
-%t13 = type <{ i32, i8, i32 }>
+%t15 = type <{}>
+%t16 = type <{ i32, i8, i32 }>
 
-%t14 = type %t3
+%t17 = type %t3
 
 ; --- [ Void type ] ------------------------------------------------------------
 
@@ -103,21 +106,27 @@ declare [2 x i32] @f20()
 
 ; --- [ Struct type ] ----------------------------------------------------------
 
-declare { i32 } @f21()
-declare { i32, i8, [2 x i32], { i32, <2 x i8> } } @f22()
-declare <{ i32, i8, i32 }> @f23()
+declare {} @f21()
+declare { i32 } @f22()
+declare { i32, i8, [2 x i32], { i32, <2 x i8> } } @f23()
+declare <{}> @f24()
+declare <{ i32, i8, i32 }> @f25()
 
 ; --- [ Named type ] -----------------------------------------------------------
 
-declare %t3 @f25()
-declare %t4 @f26()
+declare %t3 @f26()
+declare %t4 @f27()
 ; TODO: add test case for MMX type.
-;declare %t5 @f27()
-declare %t6 @f28()
-declare %t7 @f29()
+;declare %t5 @f28()
+declare %t6 @f29()
+declare %t7 @f30()
+declare %t8 @f31()
 ; TODO: add test case for token type.
-;declare %t9 @f31()
-declare void @f32(%t10 %x)
-declare %t11 @f33()
+;declare %t10 @f32()
+declare void @f33(%t11 %x)
 declare %t12 @f34()
 declare %t13 @f35()
+declare %t14 @f36()
+declare %t15 @f37()
+declare %t16 @f38()
+declare %t17 @f39()
