@@ -252,7 +252,7 @@ func NewFuncHeader(callconv, ret, name, params interface{}) (*ast.Function, erro
 	case ast.CallConv:
 		cc = callconv
 	case nil:
-		// no attached metadata.
+		// no calling convention.
 	default:
 		return nil, errors.Errorf("invalid calling convention type; expected ast.CallConv or nil, got %T", callconv)
 	}
@@ -918,6 +918,13 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		// zeroinitializer constant type should be of dummy type.
 		if _, ok := val.Type.(*ast.TypeDummy); !ok {
 			return nil, errors.Errorf("invalid zeroinitializer constant type, expected *ast.TypeDummy, got %T", val.Type)
+		}
+		val.Type = t
+		return val, nil
+	case *ast.UndefConst:
+		// undef constant type should be of dummy type.
+		if _, ok := val.Type.(*ast.TypeDummy); !ok {
+			return nil, errors.Errorf("invalid undef constant type, expected *ast.TypeDummy, got %T", val.Type)
 		}
 		val.Type = t
 		return val, nil
