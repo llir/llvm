@@ -24,7 +24,7 @@ func TestRoundTrip(t *testing.T) {
 		// Types.
 		//{path: "../../testdata/type.ll"}, // TODO: add type test cases.
 		// Constants.
-		//{path: "../../testdata/const.ll"}, // TODO: add constant test cases.
+		{path: "../../testdata/const.ll"},
 		// Constant expressions.
 		{path: "../../testdata/expr_binary.ll"},
 		{path: "../../testdata/expr_bitwise.ll"},

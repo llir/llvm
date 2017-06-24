@@ -613,7 +613,7 @@ Constant
 	| ConstExpr
 ;
 
-// --- [ integer constant ] ----------------------------------------------------
+// --- [ Integer constant ] ----------------------------------------------------
 
 IntConst
 	: IntLit
@@ -629,25 +629,25 @@ BoolLit
 	| "false"   << astx.NewBoolLit($0) >>
 ;
 
-// --- [ floating-point constant ] ---------------------------------------------
+// --- [ Floating-point constant ] ---------------------------------------------
 
 FloatConst
 	: float_lit   << astx.NewFloatLit($0) >>
 ;
 
-// --- [ pointer constant ] ----------------------------------------------------
+// --- [ Pointer constant ] ----------------------------------------------------
 
 NullConst
 	: "null"   << &astx.NullLit{}, nil >>
 ;
 
-// --- [ vector constant ] -----------------------------------------------------
+// --- [ Vector constant ] -----------------------------------------------------
 
 VectorConst
-	: "<" Elems ">"   << astx.NewVectorConst($1) >>
+	: "<" ElemList ">"   << astx.NewVectorConst($1) >>
 ;
 
-// --- [ array constant ] ------------------------------------------------------
+// --- [ Array constant ] ------------------------------------------------------
 
 ArrayConst
 	: "[" Elems "]"   << astx.NewArrayConst($1) >>
@@ -657,7 +657,7 @@ CharArrayConst
 	: "c" string_lit   << astx.NewCharArrayConst($1) >>
 ;
 
-// --- [ struct constant ] -----------------------------------------------------
+// --- [ Struct constant ] -----------------------------------------------------
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
 // through the limitation of 1 token lookahead.
@@ -678,13 +678,13 @@ StructConst
 	| "<" "{" ElemList "}" ">"  << astx.NewStructConst($2) >>
 ;
 
-// --- [ zero initializer constant ] -------------------------------------------
+// --- [ Zero initializer constant ] -------------------------------------------
 
 ZeroInitializerConst
 	: "zeroinitializer"   << &astx.ZeroInitializerLit{}, nil >>
 ;
 
-// --- [ undefined value constant ] --------------------------------------------
+// --- [ Undefined value constant ] --------------------------------------------
 
 UndefConst
 	: "undef"   << &astx.UndefLit{}, nil >>

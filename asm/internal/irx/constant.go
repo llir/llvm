@@ -33,6 +33,21 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		}
 		return c
 	case *ast.ArrayConst:
+		// Handle empty array constants.
+		if len(old.Elems) == 0 {
+			typ := m.irType(old.Type)
+			t, ok := typ.(*types.ArrayType)
+			if !ok {
+				m.errs = append(m.errs, errors.Errorf("invalid array type; expected *types.ArrayType, got %T", typ))
+			}
+			if t.Len != 0 {
+				m.errs = append(m.errs, errors.Errorf("invalid number of array elements; expected 0, got %d", t.Len))
+			}
+			c := &constant.Array{
+				Typ: t,
+			}
+			return c
+		}
 		var elems []constant.Constant
 		for _, oldElem := range old.Elems {
 			elems = append(elems, m.irConstant(oldElem))
@@ -43,6 +58,22 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 		}
 		return c
 	case *ast.CharArrayConst:
+		// Handle empty character array constants.
+		if len(old.Lit) == 0 {
+			typ := m.irType(old.Type)
+			t, ok := typ.(*types.ArrayType)
+			if !ok {
+				m.errs = append(m.errs, errors.Errorf("invalid array type; expected *types.ArrayType, got %T", typ))
+			}
+			if t.Len != 0 {
+				m.errs = append(m.errs, errors.Errorf("invalid number of array elements; expected 0, got %d", t.Len))
+			}
+			c := &constant.Array{
+				Typ:       t,
+				CharArray: true,
+			}
+			return c
+		}
 		var elems []constant.Constant
 		for i := 0; i < len(old.Lit); i++ {
 			b := int64(old.Lit[i])

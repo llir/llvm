@@ -1329,8 +1329,13 @@ func NewVectorConst(elems interface{}) (*ast.VectorConst, error) {
 
 // NewArrayConst returns a new array constant based on the given elements.
 func NewArrayConst(elems interface{}) (*ast.ArrayConst, error) {
-	es, ok := elems.([]ast.Constant)
-	if !ok {
+	var es []ast.Constant
+	switch elems := elems.(type) {
+	case []ast.Constant:
+		es = elems
+	case nil:
+		// no array elements.
+	default:
 		return nil, errors.Errorf("invalid array elements type; expected []ast.Constant, got %T", elems)
 	}
 	return &ast.ArrayConst{Type: &ast.TypeDummy{}, Elems: es}, nil
@@ -1350,8 +1355,13 @@ func NewCharArrayConst(str interface{}) (*ast.CharArrayConst, error) {
 
 // NewStructConst returns a new struct constant based on the given fields.
 func NewStructConst(fields interface{}) (*ast.StructConst, error) {
-	fs, ok := fields.([]ast.Constant)
-	if !ok {
+	var fs []ast.Constant
+	switch fields := fields.(type) {
+	case []ast.Constant:
+		fs = fields
+	case nil:
+		// no struct fields.
+	default:
 		return nil, errors.Errorf("invalid struct fields type; expected []ast.Constant, got %T", fields)
 	}
 	return &ast.StructConst{Type: &ast.TypeDummy{}, Fields: fs}, nil
