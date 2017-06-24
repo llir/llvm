@@ -22,7 +22,7 @@ func TestRoundTrip(t *testing.T) {
 		{path: "../../testdata/func.ll"},
 		{path: "../../testdata/metadata.ll"},
 		// Types.
-		//{path: "../../testdata/type.ll"}, // TODO: add type test cases.
+		{path: "../../testdata/type.ll"},
 		// Constants.
 		{path: "../../testdata/const.ll"},
 		// Constant expressions.

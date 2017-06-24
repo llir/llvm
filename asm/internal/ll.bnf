@@ -473,13 +473,13 @@ FirstClassType
 	| NamedType
 ;
 
-// --- [ void type ] -----------------------------------------------------------
+// --- [ Void type ] -----------------------------------------------------------
 
 VoidType
 	: "void"   << &ast.VoidType{}, nil >>
 ;
 
-// --- [ function type ] -------------------------------------------------------
+// --- [ Function type ] -------------------------------------------------------
 
 FuncType
 	: Type "(" ParamTypes ")"   << astx.NewFuncType($0, $2) >>
@@ -501,13 +501,13 @@ ParamType
 	: FirstClassType   << astx.NewParam($0, nil) >>
 ;
 
-// --- [ integer type ] --------------------------------------------------------
+// --- [ Integer type ] --------------------------------------------------------
 
 IntType
 	: int_type   << astx.NewIntType($0) >>
 ;
 
-// --- [ floating-point type ] -------------------------------------------------
+// --- [ Floating-point type ] -------------------------------------------------
 
 FloatType
 	: "half"        << &ast.FloatType{Kind: ast.FloatKindIEEE_16}, nil >>
@@ -518,7 +518,7 @@ FloatType
 	| "ppc_fp128"   << &ast.FloatType{Kind: ast.FloatKindDoubleDouble_128}, nil >>
 ;
 
-// --- [ pointer type ] --------------------------------------------------------
+// --- [ Pointer type ] --------------------------------------------------------
 
 PointerType
 	: Type OptAddrSpace "*"   << astx.NewPointerType($0, $1) >>
@@ -529,25 +529,25 @@ OptAddrSpace
 	| "addrspace" "(" IntLit ")"   << $2, nil >>
 ;
 
-// --- [ vector type ] ---------------------------------------------------------
+// --- [ Vector type ] ---------------------------------------------------------
 
 VectorType
 	: "<" IntLit "x" FirstClassType ">"   << astx.NewVectorType($1, $3) >>
 ;
 
-// --- [ label type ] ----------------------------------------------------------
+// --- [ Label type ] ----------------------------------------------------------
 
 LabelType
 	: "label"   << &ast.LabelType{}, nil >>
 ;
 
-// --- [ metadata type ] -------------------------------------------------------
+// --- [ Metadata type ] -------------------------------------------------------
 
 MetadataType
 	: "metadata"   << &ast.MetadataType{}, nil >>
 ;
 
-// --- [ array type ] ----------------------------------------------------------
+// --- [ Array type ] ----------------------------------------------------------
 
 ArrayType
 	: "[" IntLit "x" FirstClassType "]"   << astx.NewArrayType($1, $3) >>
@@ -584,7 +584,7 @@ FieldList
 	| FieldList "," FirstClassType   << astx.AppendType($0, $2) >>
 ;
 
-// --- [ named type ] ----------------------------------------------------------
+// --- [ Named type ] ----------------------------------------------------------
 
 NamedType
 	: LocalIdent   << astx.NewTypeIdent($0) >>
@@ -690,7 +690,7 @@ UndefConst
 	: "undef"   << &astx.UndefLit{}, nil >>
 ;
 
-// === [ constant expressions ] ================================================
+// === [ Constant expressions ] ================================================
 
 ConstExpr
 	// Binary expressions
