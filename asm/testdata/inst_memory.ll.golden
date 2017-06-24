@@ -1,3 +1,5 @@
+@x = global i32 42
+
 define i32* @alloca_1() {
 ; <label>:0
 	%result = alloca i32
@@ -34,9 +36,9 @@ define i32 @load_1(i32* %x) {
 	ret i32 %result
 }
 
-define i32 @load_2(i32* %x) {
+define i32 @load_2() {
 ; <label>:0
-	%result = load i32, i32* %x
+	%result = load i32, i32* @x
 	ret i32 %result
 }
 
@@ -48,11 +50,17 @@ define i32 @load_3(i32* %x) {
 
 define i32 @load_4(i32* %x) {
 ; <label>:0
-	%result = load i32, i32* %x, !baz !{!"qux"}, !foo !{!"bar"}
+	%result = load i32, i32* %x
 	ret i32 %result
 }
 
 define i32 @load_5(i32* %x) {
+; <label>:0
+	%result = load i32, i32* %x, !baz !{!"qux"}, !foo !{!"bar"}
+	ret i32 %result
+}
+
+define i32 @load_6(i32* %x) {
 ; <label>:0
 	%result = load i32, i32* %x, !baz !{!"qux"}, !foo !{!"bar"}
 	ret i32 %result
@@ -64,9 +72,9 @@ define void @store_1(i32* %x) {
 	ret void
 }
 
-define void @store_2(i32* %x) {
+define void @store_2() {
 ; <label>:0
-	store i32 42, i32* %x
+	store i32 42, i32* @x
 	ret void
 }
 
@@ -78,11 +86,17 @@ define void @store_3(i32* %x) {
 
 define void @store_4(i32* %x) {
 ; <label>:0
-	store i32 42, i32* %x, !baz !{!"qux"}, !foo !{!"bar"}
+	store i32 42, i32* %x
 	ret void
 }
 
 define void @store_5(i32* %x) {
+; <label>:0
+	store i32 42, i32* %x, !baz !{!"qux"}, !foo !{!"bar"}
+	ret void
+}
+
+define void @store_6(i32* %x) {
 ; <label>:0
 	store i32 42, i32* %x, !baz !{!"qux"}, !foo !{!"bar"}
 	ret void

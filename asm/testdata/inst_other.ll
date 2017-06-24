@@ -1,5 +1,7 @@
 ; --- [ Other instructions ] ---------------------------------------------------
 
+@g1 = global i32 42
+
 ; ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define i1 @icmp_1() {
@@ -93,7 +95,7 @@ define i1 @fcmp_6() {
 define i32 @phi_1(i1 %cond) {
 entry:
 	; Plain instruction.
-	%result = phi i32 [42, %entry]
+	%result = phi i32 [ 42, %entry ]
 	ret i32 %result
 }
 
@@ -105,11 +107,28 @@ bar:
 	br label %baz
 baz:
 	; Multiple incoming branches.
-	%result = phi i32 [42, %foo], [37, %bar]
+	%result = phi i32 [ 42, %foo ], [ 37, %bar ]
 	ret i32 %result
 }
 
-define i32 @phi_3(i1 %cond) {
+define void @phi_3(i1 %cond) {
+	br i1 %cond, label %foo, label %bar
+foo:
+	%x = fadd double 32.0, 10.0
+	br label %baz
+bar:
+	br label %baz
+baz:
+	; Incoming values of various types.
+	%1 = phi i32 [ 42, %foo ], [ 37, %bar ]
+	%2 = phi i32* [ null, %foo ], [ @g1, %bar ]
+	%3 = phi double [ %x, %foo ], [ 11.0, %bar ]
+	%4 = phi { i32 } [ { i32 42 }, %foo ], [ zeroinitializer, %bar ]
+	%5 = phi void ()* [ undef, %foo ], [ @j, %bar ]
+	ret void
+}
+
+define i32 @phi_4(i1 %cond) {
 	br i1 %cond, label %foo, label %bar
 foo:
 	br label %baz
@@ -117,7 +136,7 @@ bar:
 	br label %baz
 baz:
 	; Metadata.
-	%result = phi i32 [42, %foo], [37, %bar], !foo !{!"bar"}, !baz !{!"qux"}
+	%result = phi i32 [ 42, %foo ], [ 37, %bar ], !foo !{!"bar"}, !baz !{!"qux"}
 	ret i32 %result
 }
 

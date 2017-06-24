@@ -38,10 +38,10 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 			typ := m.irType(old.Type)
 			t, ok := typ.(*types.ArrayType)
 			if !ok {
-				m.errs = append(m.errs, errors.Errorf("invalid array type; expected *types.ArrayType, got %T", typ))
+				panic(errors.Errorf("invalid array type; expected *types.ArrayType, got %T", typ))
 			}
 			if t.Len != 0 {
-				m.errs = append(m.errs, errors.Errorf("invalid number of array elements; expected 0, got %d", t.Len))
+				panic(errors.Errorf("invalid number of array elements; expected 0, got %d", t.Len))
 			}
 			c := &constant.Array{
 				Typ: t,
@@ -63,10 +63,10 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 			typ := m.irType(old.Type)
 			t, ok := typ.(*types.ArrayType)
 			if !ok {
-				m.errs = append(m.errs, errors.Errorf("invalid array type; expected *types.ArrayType, got %T", typ))
+				panic(errors.Errorf("invalid array type; expected *types.ArrayType, got %T", typ))
 			}
 			if t.Len != 0 {
-				m.errs = append(m.errs, errors.Errorf("invalid number of array elements; expected 0, got %d", t.Len))
+				panic(errors.Errorf("invalid number of array elements; expected 0, got %d", t.Len))
 			}
 			c := &constant.Array{
 				Typ:       t,
@@ -309,7 +309,7 @@ func (m *Module) irConstant(old ast.Constant) constant.Constant {
 	case *ast.ExprGetElementPtr:
 		src := m.irConstant(old.Src)
 		if srcType, ok := src.Type().(*types.PointerType); !ok {
-			m.errs = append(m.errs, errors.Errorf("invalid source type; expected *types.PointerType, got %T", src.Type()))
+			panic(errors.Errorf("invalid source type; expected *types.PointerType, got %T", src.Type()))
 		} else if got, want := srcType.Elem, m.irType(old.Elem); !got.Equal(want) {
 			m.errs = append(m.errs, errors.Errorf("source element type mismatch; expected `%v`, got `%v`", want, got))
 		}

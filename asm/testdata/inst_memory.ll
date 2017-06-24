@@ -1,5 +1,7 @@
 ; --- [ Memory instructions ] --------------------------------------------------
 
+@x = global i32 42
+
 ; ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 define i32* @alloca_1() {
@@ -40,25 +42,31 @@ define i32 @load_1(i32* %x) {
 	ret i32 %result
 }
 
-define i32 @load_2(i32* %x) {
+define i32 @load_2() {
+	; Global operand.
+	%result = load i32, i32* @x
+	ret i32 %result
+}
+
+define i32 @load_3(i32* %x) {
 	; Volatile.
 	%result = load volatile i32, i32* %x
 	ret i32 %result
 }
 
-define i32 @load_3(i32* %x) {
+define i32 @load_4(i32* %x) {
 	; Alignment operand.
 	%result = load i32, i32* %x, align 8
 	ret i32 %result
 }
 
-define i32 @load_4(i32* %x) {
+define i32 @load_5(i32* %x) {
 	; Metadata.
 	%result = load i32, i32* %x, !foo !{!"bar"}, !baz !{!"qux"}
 	ret i32 %result
 }
 
-define i32 @load_5(i32* %x) {
+define i32 @load_6(i32* %x) {
 	; Full instruction.
 	%result = load volatile i32, i32* %x, align 8, !foo !{!"bar"}, !baz !{!"qux"}
 	ret i32 %result
@@ -72,25 +80,31 @@ define void @store_1(i32* %x) {
 	ret void
 }
 
-define void @store_2(i32* %x) {
+define void @store_2() {
+	; Global operand.
+	store i32 42, i32* @x
+	ret void
+}
+
+define void @store_3(i32* %x) {
 	; Volatile.
 	store volatile i32 42, i32* %x
 	ret void
 }
 
-define void @store_3(i32* %x) {
+define void @store_4(i32* %x) {
 	; Alignment operand.
 	store i32 42, i32* %x, align 8
 	ret void
 }
 
-define void @store_4(i32* %x) {
+define void @store_5(i32* %x) {
 	; Metadata.
 	store i32 42, i32* %x, !foo !{!"bar"}, !baz !{!"qux"}
 	ret void
 }
 
-define void @store_5(i32* %x) {
+define void @store_6(i32* %x) {
 	; Full instruction.
 	store volatile i32 42, i32* %x, align 8, !foo !{!"bar"}, !baz !{!"qux"}
 	ret void
