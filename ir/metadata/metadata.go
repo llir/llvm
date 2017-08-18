@@ -110,7 +110,7 @@ type Constant struct {
 
 // Ident returns the identifier associated with the metadata.
 func (md *Constant) Ident() string {
-	return fmt.Sprintf("%s %s %s", md.Type(), md.X.Type(), md.X.Ident())
+	return fmt.Sprintf("%s %s", md.X.Type(), md.X.Ident())
 }
 
 // Type returns the type of the metadata.
