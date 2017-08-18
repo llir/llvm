@@ -576,12 +576,14 @@ func NewMetadataString(val interface{}) (*ast.MetadataString, error) {
 	return &ast.MetadataString{Val: v}, nil
 }
 
-// NewMetadataArg returns a new metadata argument based on the given metadata
+// NewMetadataValue returns a new metadata value based on the given metadata
 // node.
-func NewMetadataArg(node interface{}) (ast.MetadataNode, error) {
+func NewMetadataValue(node interface{}) (ast.MetadataNode, error) {
 	switch n := node.(type) {
+	case *ast.LocalDummy:
+		return &ast.MetadataValue{X: n}, nil
 	case ast.Constant:
-		return &ast.MetadataConstant{X: n}, nil
+		return &ast.MetadataValue{X: n}, nil
 	case ast.MetadataNode:
 		return n, nil
 	default:

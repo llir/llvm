@@ -654,9 +654,9 @@ func (m *Module) metadataNode(oldNode ast.MetadataNode) metadata.Node {
 		return &metadata.String{
 			Val: oldNode.Val,
 		}
-	case *ast.MetadataConstant:
-		return &metadata.Constant{
-			X: m.irConstant(oldNode.X),
+	case *ast.MetadataValue:
+		return &metadata.Value{
+			X: m.irValue(oldNode.X),
 		}
 	case ast.Constant:
 		c := m.irConstant(oldNode)

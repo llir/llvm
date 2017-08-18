@@ -9,6 +9,7 @@ import (
 
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -105,6 +106,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *value.Value:
 		w.walkBeforeAfter(*n, before, after)
 	case *value.Named:
+		w.walkBeforeAfter(*n, before, after)
+	case *metadata.Node:
 		w.walkBeforeAfter(*n, before, after)
 	case *constant.Constant:
 		w.walkBeforeAfter(*n, before, after)
@@ -347,6 +350,13 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case **ir.Case:
 		w.walkBeforeAfter(*n, before, after)
 	case **ir.TermUnreachable:
+		w.walkBeforeAfter(*n, before, after)
+	// Metadata
+	case **metadata.Metadata:
+		w.walkBeforeAfter(*n, before, after)
+	case **metadata.String:
+		w.walkBeforeAfter(*n, before, after)
+	case **metadata.Value:
 		w.walkBeforeAfter(*n, before, after)
 
 	// pointers to slices
@@ -798,6 +808,16 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(&n.Target, before, after)
 	case *ir.TermUnreachable:
 		// nothing to do.
+
+	// Metadata
+	case *metadata.Metadata:
+		for i := range n.Nodes {
+			w.walkBeforeAfter(&n.Nodes[i], before, after)
+		}
+	case *metadata.String:
+		// Nothing to do.
+	case *metadata.Value:
+		w.walkBeforeAfter(&n.X, before, after)
 
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", x))

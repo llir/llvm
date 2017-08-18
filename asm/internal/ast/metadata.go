@@ -11,7 +11,7 @@ package ast
 //
 //    *ast.Metadata
 //    *ast.MetadataString
-//    *ast.MetadataConstant
+//    *ast.MetadataValue
 //    ast.Constant
 type MetadataNode interface {
 	Value
@@ -41,12 +41,12 @@ type MetadataString struct {
 	Val string
 }
 
-// --- [ metadata constant ] ---------------------------------------------------
+// --- [ metadata value ] ------------------------------------------------------
 
-// A MetadataConstant represents an LLVM IR metadata constant.
-type MetadataConstant struct {
-	// Constant value.
-	X Constant
+// A MetadataValue represents an LLVM IR metadata value.
+type MetadataValue struct {
+	// Value.
+	X Value
 }
 
 // --- [ named metadata ] ------------------------------------------------------
@@ -72,15 +72,15 @@ type AttachedMD struct {
 }
 
 // isValue ensures that only values can be assigned to the ast.Value interface.
-func (*Metadata) isValue()         {}
-func (*MetadataString) isValue()   {}
-func (*MetadataConstant) isValue() {}
+func (*Metadata) isValue()       {}
+func (*MetadataString) isValue() {}
+func (*MetadataValue) isValue()  {}
 
 // isMetadataNode ensures that only metadata nodes can be assigned to the
 // ast.MetadataNode interface.
-func (*Metadata) isMetadataNode()         {}
-func (*MetadataString) isMetadataNode()   {}
-func (*MetadataConstant) isMetadataNode() {}
+func (*Metadata) isMetadataNode()       {}
+func (*MetadataString) isMetadataNode() {}
+func (*MetadataValue) isMetadataNode()  {}
 
 // ### [ dummy ] ###############################################################
 
