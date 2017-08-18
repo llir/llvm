@@ -158,7 +158,6 @@ func fixModule(m *ast.Module) *ast.Module {
 
 	// Resolve metadata nodes.
 	resolveMetadataNodes := func(node interface{}) {
-		fmt.Printf("node: %T\n", node)
 		switch p := node.(type) {
 		case *ast.MetadataNode:
 			if old, ok := (*p).(*ast.MetadataIDDummy); ok {
