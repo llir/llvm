@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -21,6 +22,7 @@ import (
 //
 //    *metadata.Metadata   (https://godoc.org/github.com/llir/llvm/ir/metadata#Metadata)
 //    *metadata.String     (https://godoc.org/github.com/llir/llvm/ir/metadata#String)
+//    *metadata.Constant   (https://godoc.org/github.com/llir/llvm/ir/metadata#Constant)
 //    constant.Constant    (https://godoc.org/github.com/llir/llvm/ir/constant#Constant)
 type Node interface {
 	value.Value
@@ -97,6 +99,28 @@ func (md *String) Type() types.Type {
 // MetadataNode ensures that only metadata nodes can be assigned to the
 // metadata.Node interface.
 func (*String) MetadataNode() {}
+
+// --- [ metadata constant ] ---------------------------------------------------
+
+// A Constant represents an LLVM IR metadata constant.
+type Constant struct {
+	// Constant value.
+	X constant.Constant
+}
+
+// Ident returns the identifier associated with the metadata.
+func (md *Constant) Ident() string {
+	return fmt.Sprintf("%s %s %s", md.Type(), md.X.Type(), md.X.Ident())
+}
+
+// Type returns the type of the metadata.
+func (md *Constant) Type() types.Type {
+	return types.Metadata
+}
+
+// MetadataNode ensures that only metadata nodes can be assigned to the
+// metadata.Node interface.
+func (*Constant) MetadataNode() {}
 
 // --- [ named metadata ] ------------------------------------------------------
 

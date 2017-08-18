@@ -10,6 +10,7 @@ import "github.com/llir/llvm/ir/types"
 //
 //    constant.Constant   (https://godoc.org/github.com/llir/llvm/ir/constant#Constant)
 //    value.Named         (https://godoc.org/github.com/llir/llvm/ir/value#Named)
+//    metadata.Node       (https://godoc.org/github.com/llir/llvm/ir/metadata#Node)
 type Value interface {
 	// Type returns the type of the value.
 	Type() types.Type
