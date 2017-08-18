@@ -281,17 +281,17 @@ SelectionKind
 // Original production rule.
 //
 //    GlobalDecl
-//       : GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $3, $4, $5, $9) >>
+//       : GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $3, $4, $5, $9) >>
 //    ;
 GlobalDecl
-	: GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType OptCommaAttachedMDList                                    << astx.NewGlobalDecl($0, $3, $4, $5, $6) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Align OptCommaAttachedMDList                          << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section OptCommaAttachedMDList                        << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
-	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable FirstClassType "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $3, $4, $5, $12) >>
+	: GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType OptCommaAttachedMDList                                    << astx.NewGlobalDecl($0, $3, $4, $5, $6) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Align OptCommaAttachedMDList                          << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Section OptCommaAttachedMDList                        << astx.NewGlobalDecl($0, $3, $4, $5, $8) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDecl($0, $3, $4, $5, $10) >>
+	| GlobalIdent "=" ExternLinkage GlobalOptions Immutable ConcreteType "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDecl($0, $3, $4, $5, $12) >>
 ;
 
 // TODO: Clean up when the parser generator no longer introduces ambiguities
@@ -303,17 +303,17 @@ GlobalDecl
 // Original production rule.
 //
 //    GlobalDef
-//       : GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDef($0, $3, $4, $5, $6, $10) >>
+//       : GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant OptCommaSection OptCommaComdat OptCommaAlign OptCommaAttachedMDList   << astx.NewGlobalDef($0, $3, $4, $5, $6, $10) >>
 //    ;
 GlobalDef
-	: GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant OptCommaAttachedMDList                                    << astx.NewGlobalDef($0, $3, $4, $5, $6, $7) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Align OptCommaAttachedMDList                          << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section OptCommaAttachedMDList                        << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
-	| GlobalIdent "=" OptLinkage GlobalOptions Immutable FirstClassType Constant "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDef($0, $3, $4, $5, $6, $13) >>
+	: GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant OptCommaAttachedMDList                                    << astx.NewGlobalDef($0, $3, $4, $5, $6, $7) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Align OptCommaAttachedMDList                          << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Comdat OptCommaAttachedMDList                         << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Comdat "," Align OptCommaAttachedMDList               << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Section OptCommaAttachedMDList                        << astx.NewGlobalDef($0, $3, $4, $5, $6, $9) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Section "," Align OptCommaAttachedMDList              << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Section "," Comdat OptCommaAttachedMDList             << astx.NewGlobalDef($0, $3, $4, $5, $6, $11) >>
+	| GlobalIdent "=" OptLinkage GlobalOptions Immutable ConcreteType Constant "," Section "," Comdat "," Align OptCommaAttachedMDList   << astx.NewGlobalDef($0, $3, $4, $5, $6, $13) >>
 ;
 
 GlobalOptions
@@ -462,12 +462,16 @@ Type
 ;
 
 FirstClassType
+	: ConcreteType
+	| MetadataType
+;
+
+ConcreteType
 	: IntType
 	| FloatType
 	| PointerType
 	| VectorType
 	| LabelType
-	| MetadataType
 	| ArrayType
 	| StructType
 	| NamedType
@@ -532,7 +536,7 @@ OptAddrSpace
 // --- [ Vector type ] ---------------------------------------------------------
 
 VectorType
-	: "<" IntLit "x" FirstClassType ">"   << astx.NewVectorType($1, $3) >>
+	: "<" IntLit "x" ConcreteType ">"   << astx.NewVectorType($1, $3) >>
 ;
 
 // --- [ Label type ] ----------------------------------------------------------
@@ -550,7 +554,7 @@ MetadataType
 // --- [ Array type ] ----------------------------------------------------------
 
 ArrayType
-	: "[" IntLit "x" FirstClassType "]"   << astx.NewArrayType($1, $3) >>
+	: "[" IntLit "x" ConcreteType "]"   << astx.NewArrayType($1, $3) >>
 ;
 
 // --- [ struct type ] ---------------------------------------------------------
@@ -580,8 +584,8 @@ StructType
 ;
 
 FieldList
-	: FirstClassType                 << astx.NewTypeList($0) >>
-	| FieldList "," FirstClassType   << astx.AppendType($0, $2) >>
+	: ConcreteType                 << astx.NewTypeList($0) >>
+	| FieldList "," ConcreteType   << astx.AppendType($0, $2) >>
 ;
 
 // --- [ Named type ] ----------------------------------------------------------
@@ -745,107 +749,107 @@ ConstExpr
 // --- [ Binary expressions ] --------------------------------------------------
 
 AddExpr
-	: "add" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAddExpr($2, $3, $5, $6) >>
+	: "add" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewAddExpr($2, $3, $5, $6) >>
 ;
 
 FAddExpr
-	: "fadd" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFAddExpr($2, $3, $5, $6) >>
+	: "fadd" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewFAddExpr($2, $3, $5, $6) >>
 ;
 
 SubExpr
-	: "sub" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSubExpr($2, $3, $5, $6) >>
+	: "sub" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewSubExpr($2, $3, $5, $6) >>
 ;
 
 FSubExpr
-	: "fsub" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFSubExpr($2, $3, $5, $6) >>
+	: "fsub" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewFSubExpr($2, $3, $5, $6) >>
 ;
 
 MulExpr
-	: "mul" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewMulExpr($2, $3, $5, $6) >>
+	: "mul" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewMulExpr($2, $3, $5, $6) >>
 ;
 
 FMulExpr
-	: "fmul" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFMulExpr($2, $3, $5, $6) >>
+	: "fmul" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewFMulExpr($2, $3, $5, $6) >>
 ;
 
 UDivExpr
-	: "udiv" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewUDivExpr($2, $3, $5, $6) >>
+	: "udiv" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewUDivExpr($2, $3, $5, $6) >>
 ;
 
 SDivExpr
-	: "sdiv" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSDivExpr($2, $3, $5, $6) >>
+	: "sdiv" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewSDivExpr($2, $3, $5, $6) >>
 ;
 
 FDivExpr
-	: "fdiv" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFDivExpr($2, $3, $5, $6) >>
+	: "fdiv" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewFDivExpr($2, $3, $5, $6) >>
 ;
 
 URemExpr
-	: "urem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewURemExpr($2, $3, $5, $6) >>
+	: "urem" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewURemExpr($2, $3, $5, $6) >>
 ;
 
 SRemExpr
-	: "srem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSRemExpr($2, $3, $5, $6) >>
+	: "srem" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewSRemExpr($2, $3, $5, $6) >>
 ;
 
 FRemExpr
-	: "frem" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFRemExpr($2, $3, $5, $6) >>
+	: "frem" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewFRemExpr($2, $3, $5, $6) >>
 ;
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
 ShlExpr
-	: "shl" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewShlExpr($2, $3, $5, $6) >>
+	: "shl" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewShlExpr($2, $3, $5, $6) >>
 ;
 
 LShrExpr
-	: "lshr" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewLShrExpr($2, $3, $5, $6) >>
+	: "lshr" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewLShrExpr($2, $3, $5, $6) >>
 ;
 
 AShrExpr
-	: "ashr" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAShrExpr($2, $3, $5, $6) >>
+	: "ashr" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewAShrExpr($2, $3, $5, $6) >>
 ;
 
 AndExpr
-	: "and" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewAndExpr($2, $3, $5, $6) >>
+	: "and" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewAndExpr($2, $3, $5, $6) >>
 ;
 
 OrExpr
-	: "or" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewOrExpr($2, $3, $5, $6) >>
+	: "or" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewOrExpr($2, $3, $5, $6) >>
 ;
 
 XorExpr
-	: "xor" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewXorExpr($2, $3, $5, $6) >>
+	: "xor" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewXorExpr($2, $3, $5, $6) >>
 ;
 
 // --- [ Vector expressions ] --------------------------------------------------
 
 ExtractElementExpr
-	: "extractelement" "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewExtractElementExpr($2, $3, $5, $6) >>
+	: "extractelement" "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewExtractElementExpr($2, $3, $5, $6) >>
 ;
 
 InsertElementExpr
-	: "insertelement" "(" FirstClassType Constant "," FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewInsertElementExpr($2, $3, $5, $6, $8, $9) >>
+	: "insertelement" "(" ConcreteType Constant "," ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewInsertElementExpr($2, $3, $5, $6, $8, $9) >>
 ;
 
 ShuffleVectorExpr
-	: "shufflevector" "(" FirstClassType Constant "," FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewShuffleVectorExpr($2, $3, $5, $6, $8, $9) >>
+	: "shufflevector" "(" ConcreteType Constant "," ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewShuffleVectorExpr($2, $3, $5, $6, $8, $9) >>
 ;
 
 // --- [ Aggregate expressions ] -----------------------------------------------
 
 ExtractValueExpr
-	: "extractvalue" "(" FirstClassType Constant "," IntLitList ")"   << astx.NewExtractValueExpr($2, $3, $5) >>
+	: "extractvalue" "(" ConcreteType Constant "," IntLitList ")"   << astx.NewExtractValueExpr($2, $3, $5) >>
 ;
 
 InsertValueExpr
-	: "insertvalue" "(" FirstClassType Constant "," FirstClassType Constant "," IntLitList ")"   << astx.NewInsertValueExpr($2, $3, $5, $6, $8) >>
+	: "insertvalue" "(" ConcreteType Constant "," ConcreteType Constant "," IntLitList ")"   << astx.NewInsertValueExpr($2, $3, $5, $6, $8) >>
 ;
 
 // --- [ Memory expressions ] --------------------------------------------------
 
 GetElementPtrExpr
-	: "getelementptr" OptInbounds "(" FirstClassType "," FirstClassType Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($3, $5, $6, $7) >>
+	: "getelementptr" OptInbounds "(" ConcreteType "," ConcreteType Constant ConstIndices ")"   << astx.NewGetElementPtrExpr($3, $5, $6, $7) >>
 ;
 
 ConstIndices
@@ -865,69 +869,69 @@ ConstIndex
 // --- [ Conversion expressions ] ----------------------------------------------
 
 TruncExpr
-	: "trunc" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewTruncExpr($2, $3, $5) >>
+	: "trunc" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewTruncExpr($2, $3, $5) >>
 ;
 
 ZExtExpr
-	: "zext" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewZExtExpr($2, $3, $5) >>
+	: "zext" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewZExtExpr($2, $3, $5) >>
 ;
 
 SExtExpr
-	: "sext" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewSExtExpr($2, $3, $5) >>
+	: "sext" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewSExtExpr($2, $3, $5) >>
 ;
 
 FPTruncExpr
-	: "fptrunc" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPTruncExpr($2, $3, $5) >>
+	: "fptrunc" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewFPTruncExpr($2, $3, $5) >>
 ;
 
 FPExtExpr
-	: "fpext" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPExtExpr($2, $3, $5) >>
+	: "fpext" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewFPExtExpr($2, $3, $5) >>
 ;
 
 FPToUIExpr
-	: "fptoui" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPToUIExpr($2, $3, $5) >>
+	: "fptoui" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewFPToUIExpr($2, $3, $5) >>
 ;
 
 FPToSIExpr
-	: "fptosi" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewFPToSIExpr($2, $3, $5) >>
+	: "fptosi" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewFPToSIExpr($2, $3, $5) >>
 ;
 
 UIToFPExpr
-	: "uitofp" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewUIToFPExpr($2, $3, $5) >>
+	: "uitofp" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewUIToFPExpr($2, $3, $5) >>
 ;
 
 SIToFPExpr
-	: "sitofp" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewSIToFPExpr($2, $3, $5) >>
+	: "sitofp" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewSIToFPExpr($2, $3, $5) >>
 ;
 
 PtrToIntExpr
-	: "ptrtoint" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewPtrToIntExpr($2, $3, $5) >>
+	: "ptrtoint" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewPtrToIntExpr($2, $3, $5) >>
 ;
 
 IntToPtrExpr
-	: "inttoptr" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewIntToPtrExpr($2, $3, $5) >>
+	: "inttoptr" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewIntToPtrExpr($2, $3, $5) >>
 ;
 
 BitCastExpr
-	: "bitcast" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewBitCastExpr($2, $3, $5) >>
+	: "bitcast" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewBitCastExpr($2, $3, $5) >>
 ;
 
 AddrSpaceCastExpr
-	: "addrspacecast" "(" FirstClassType Constant "to" FirstClassType ")"   << astx.NewAddrSpaceCastExpr($2, $3, $5) >>
+	: "addrspacecast" "(" ConcreteType Constant "to" ConcreteType ")"   << astx.NewAddrSpaceCastExpr($2, $3, $5) >>
 ;
 
 // --- [ Other expressions ] ---------------------------------------------------
 
 ICmpExpr
-	: "icmp" IntPred "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewICmpExpr($1, $3, $4, $6, $7) >>
+	: "icmp" IntPred "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewICmpExpr($1, $3, $4, $6, $7) >>
 ;
 
 FCmpExpr
-	: "fcmp" FloatPred "(" FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewFCmpExpr($1, $3, $4, $6, $7) >>
+	: "fcmp" FloatPred "(" ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewFCmpExpr($1, $3, $4, $6, $7) >>
 ;
 
 SelectExpr
-	: "select" "(" FirstClassType Constant "," FirstClassType Constant "," FirstClassType Constant ")"   << astx.NewSelectExpr($2, $3, $5, $6, $8, $9) >>
+	: "select" "(" ConcreteType Constant "," ConcreteType Constant "," ConcreteType Constant ")"   << astx.NewSelectExpr($2, $3, $5, $6, $8, $9) >>
 ;
 
 // === [ Basic blocks ] ========================================================
@@ -1030,73 +1034,73 @@ ValueInstruction
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AddInst
-	: "add" OverflowFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewAddInst($2, $3, $5, $6) >>
+	: "add" OverflowFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewAddInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FAddInst
-	: "fadd" FastMathFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewFAddInst($2, $3, $5, $6) >>
+	: "fadd" FastMathFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewFAddInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SubInst
-	: "sub" OverflowFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewSubInst($2, $3, $5, $6) >>
+	: "sub" OverflowFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewSubInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FSubInst
-	: "fsub" FastMathFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewFSubInst($2, $3, $5, $6) >>
+	: "fsub" FastMathFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewFSubInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 MulInst
-	: "mul" OverflowFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewMulInst($2, $3, $5, $6) >>
+	: "mul" OverflowFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewMulInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FMulInst
-	: "fmul" FastMathFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewFMulInst($2, $3, $5, $6) >>
+	: "fmul" FastMathFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewFMulInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 UDivInst
-	: "udiv" OptExact FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewUDivInst($2, $3, $5, $6) >>
+	: "udiv" OptExact ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewUDivInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SDivInst
-	: "sdiv" OptExact FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewSDivInst($2, $3, $5, $6) >>
+	: "sdiv" OptExact ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewSDivInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FDivInst
-	: "fdiv" FastMathFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewFDivInst($2, $3, $5, $6) >>
+	: "fdiv" FastMathFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewFDivInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 URemInst
-	: "urem" FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewURemInst($1, $2, $4, $5) >>
+	: "urem" ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewURemInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SRemInst
-	: "srem" FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewSRemInst($1, $2, $4, $5) >>
+	: "srem" ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewSRemInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FRemInst
-	: "frem" FastMathFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewFRemInst($2, $3, $5, $6) >>
+	: "frem" FastMathFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewFRemInst($2, $3, $5, $6) >>
 ;
 
 OverflowFlags
@@ -1145,37 +1149,37 @@ OptExact
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ShlInst
-	: "shl" OverflowFlags FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewShlInst($2, $3, $5, $6) >>
+	: "shl" OverflowFlags ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewShlInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LShrInst
-	: "lshr" OptExact FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewLShrInst($2, $3, $5, $6) >>
+	: "lshr" OptExact ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewLShrInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AShrInst
-	: "ashr" OptExact FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewAShrInst($2, $3, $5, $6) >>
+	: "ashr" OptExact ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewAShrInst($2, $3, $5, $6) >>
 ;
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AndInst
-	: "and" FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewAndInst($1, $2, $4, $5) >>
+	: "and" ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewAndInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 OrInst
-	: "or" FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewOrInst($1, $2, $4, $5) >>
+	: "or" ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewOrInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 XorInst
-	: "xor" FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewXorInst($1, $2, $4, $5) >>
+	: "xor" ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewXorInst($1, $2, $4, $5) >>
 ;
 
 // --- [ Vector instructions ] -------------------------------------------------
@@ -1183,19 +1187,19 @@ XorInst
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ExtractElementInst
-	: "extractelement" FirstClassType Value "," FirstClassType Value OptCommaAttachedMDList   << astx.NewExtractElementInst($1, $2, $4, $5, $6) >>
+	: "extractelement" ConcreteType Value "," ConcreteType Value OptCommaAttachedMDList   << astx.NewExtractElementInst($1, $2, $4, $5, $6) >>
 ;
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InsertElementInst
-	: "insertelement" FirstClassType Value "," FirstClassType Value "," FirstClassType Value OptCommaAttachedMDList   << astx.NewInsertElementInst($1, $2, $4, $5, $7, $8, $9) >>
+	: "insertelement" ConcreteType Value "," ConcreteType Value "," ConcreteType Value OptCommaAttachedMDList   << astx.NewInsertElementInst($1, $2, $4, $5, $7, $8, $9) >>
 ;
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ShuffleVectorInst
-	: "shufflevector" FirstClassType Value "," FirstClassType Value "," FirstClassType Value OptCommaAttachedMDList   << astx.NewShuffleVectorInst($1, $2, $4, $5, $7, $8, $9) >>
+	: "shufflevector" ConcreteType Value "," ConcreteType Value "," ConcreteType Value OptCommaAttachedMDList   << astx.NewShuffleVectorInst($1, $2, $4, $5, $7, $8, $9) >>
 ;
 
 // --- [ Aggregate  instructions ] ---------------------------------------------
@@ -1203,7 +1207,7 @@ ShuffleVectorInst
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ExtractValueInst
-	: "extractvalue" FirstClassType Value "," IntLitList OptCommaAttachedMDList   << astx.NewExtractValueInst($1, $2, $4, $5) >>
+	: "extractvalue" ConcreteType Value "," IntLitList OptCommaAttachedMDList   << astx.NewExtractValueInst($1, $2, $4, $5) >>
 ;
 
 IntLitList
@@ -1214,7 +1218,7 @@ IntLitList
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InsertValueInst
-	: "insertvalue" FirstClassType Value "," FirstClassType Value "," IntLitList OptCommaAttachedMDList   << astx.NewInsertValueInst($1, $2, $4, $5, $7, $8) >>
+	: "insertvalue" ConcreteType Value "," ConcreteType Value "," IntLitList OptCommaAttachedMDList   << astx.NewInsertValueInst($1, $2, $4, $5, $7, $8) >>
 ;
 
 // --- [ Memory instructions ] -------------------------------------------------
@@ -1230,7 +1234,7 @@ InsertValueInst
 // Original production rule.
 //
 //    AllocaInst
-//       : "alloca" FirstClassType OptCommaNElems OptCommaAlign OptCommaAttachedMDList   << astx.NewAllocaInst($1, $2, $4) >>
+//       : "alloca" ConcreteType OptCommaNElems OptCommaAlign OptCommaAttachedMDList   << astx.NewAllocaInst($1, $2, $4) >>
 //    ;
 //
 //    OptCommaNElems
@@ -1238,14 +1242,14 @@ InsertValueInst
 //       | "," NElems   << $1 >>
 //    ;
 AllocaInst
-	: "alloca" FirstClassType OptCommaAttachedMDList                        << astx.NewAllocaInst($1, nil, $2) >>
-	| "alloca" FirstClassType "," Align OptCommaAttachedMDList              << astx.NewAllocaInst($1, nil, $4) >>
-	| "alloca" FirstClassType "," NElems OptCommaAttachedMDList             << astx.NewAllocaInst($1, $3, $4) >>
-	| "alloca" FirstClassType "," NElems "," Align OptCommaAttachedMDList   << astx.NewAllocaInst($1, $3, $6) >>
+	: "alloca" ConcreteType OptCommaAttachedMDList                        << astx.NewAllocaInst($1, nil, $2) >>
+	| "alloca" ConcreteType "," Align OptCommaAttachedMDList              << astx.NewAllocaInst($1, nil, $4) >>
+	| "alloca" ConcreteType "," NElems OptCommaAttachedMDList             << astx.NewAllocaInst($1, $3, $4) >>
+	| "alloca" ConcreteType "," NElems "," Align OptCommaAttachedMDList   << astx.NewAllocaInst($1, $3, $6) >>
 ;
 
 NElems
-	: FirstClassType Value   << astx.NewValue($0, $1) >>
+	: ConcreteType Value   << astx.NewValue($0, $1) >>
 ;
 
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1259,11 +1263,11 @@ NElems
 // Original production rule.
 //
 //    LoadInst
-//       : "load" OptVolatile FirstClassType "," PointerType Value OptCommaAlign OptCommaAttachedMDList   << astx.NewLoadInst($2, $4, $5, $7) >>
+//       : "load" OptVolatile ConcreteType "," PointerType Value OptCommaAlign OptCommaAttachedMDList   << astx.NewLoadInst($2, $4, $5, $7) >>
 //    ;
 LoadInst
-	: "load" OptVolatile FirstClassType "," PointerType Value OptCommaAttachedMDList             << astx.NewLoadInst($2, $4, $5, $6) >>
-	| "load" OptVolatile FirstClassType "," PointerType Value "," Align OptCommaAttachedMDList   << astx.NewLoadInst($2, $4, $5, $8) >>
+	: "load" OptVolatile ConcreteType "," PointerType Value OptCommaAttachedMDList             << astx.NewLoadInst($2, $4, $5, $6) >>
+	| "load" OptVolatile ConcreteType "," PointerType Value "," Align OptCommaAttachedMDList   << astx.NewLoadInst($2, $4, $5, $8) >>
 ;
 
 OptVolatile
@@ -1282,11 +1286,11 @@ OptVolatile
 // Original production rule.
 //
 //    StoreInst
-//       : "store" OptVolatile FirstClassType Value "," PointerType Value OptCommaAlign OptCommaAttachedMDList   << astx.NewStoreInst($2, $3, $5, $6, $8) >>
+//       : "store" OptVolatile ConcreteType Value "," PointerType Value OptCommaAlign OptCommaAttachedMDList   << astx.NewStoreInst($2, $3, $5, $6, $8) >>
 //    ;
 StoreInst
-	: "store" OptVolatile FirstClassType Value "," PointerType Value OptCommaAttachedMDList             << astx.NewStoreInst($2, $3, $5, $6, $7) >>
-	| "store" OptVolatile FirstClassType Value "," PointerType Value "," Align OptCommaAttachedMDList   << astx.NewStoreInst($2, $3, $5, $6, $9) >>
+	: "store" OptVolatile ConcreteType Value "," PointerType Value OptCommaAttachedMDList             << astx.NewStoreInst($2, $3, $5, $6, $7) >>
+	| "store" OptVolatile ConcreteType Value "," PointerType Value "," Align OptCommaAttachedMDList   << astx.NewStoreInst($2, $3, $5, $6, $9) >>
 ;
 
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1315,7 +1319,7 @@ Ordering
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CmpXchgInst
-	: "cmpxchg" OptWeak OptVolatile FirstClassType Value "," FirstClassType Value "," FirstClassType Value OptSinglethread Ordering Ordering OptCommaAttachedMDList   << nil, nil >>
+	: "cmpxchg" OptWeak OptVolatile ConcreteType Value "," ConcreteType Value "," ConcreteType Value OptSinglethread Ordering Ordering OptCommaAttachedMDList   << nil, nil >>
 ;
 
 OptWeak
@@ -1326,7 +1330,7 @@ OptWeak
 // ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AtomicRMWInst
-	: "atomicrmw" OptVolatile AtomicOperation FirstClassType Value "," FirstClassType Value OptSinglethread Ordering OptCommaAttachedMDList   << nil, nil >>
+	: "atomicrmw" OptVolatile AtomicOperation ConcreteType Value "," ConcreteType Value OptSinglethread Ordering OptCommaAttachedMDList   << nil, nil >>
 ;
 
 // From spec and src of v4.0.
@@ -1356,7 +1360,7 @@ AtomicOperation
 //
 // Original production rule.
 //    GetElementPtrInst
-//       : "getelementptr" OptInbounds FirstClassType "," FirstClassType Value Indices OptCommaAttachedMDList   << astx.NewGetElementPtrInst($2, $4, $5, $6, $7) >>
+//       : "getelementptr" OptInbounds ConcreteType "," ConcreteType Value Indices OptCommaAttachedMDList   << astx.NewGetElementPtrInst($2, $4, $5, $6, $7) >>
 //    ;
 //
 //    Indices
@@ -1364,8 +1368,8 @@ AtomicOperation
 //       | "," IndexList   << $1, nil >>
 //    ;
 GetElementPtrInst
-	: "getelementptr" OptInbounds FirstClassType "," FirstClassType Value OptCommaAttachedMDList                 << astx.NewGetElementPtrInst($2, $4, $5, nil, $6) >>
-	| "getelementptr" OptInbounds FirstClassType "," FirstClassType Value "," IndexList OptCommaAttachedMDList   << astx.NewGetElementPtrInst($2, $4, $5, $7, $8) >>
+	: "getelementptr" OptInbounds ConcreteType "," ConcreteType Value OptCommaAttachedMDList                 << astx.NewGetElementPtrInst($2, $4, $5, nil, $6) >>
+	| "getelementptr" OptInbounds ConcreteType "," ConcreteType Value "," IndexList OptCommaAttachedMDList   << astx.NewGetElementPtrInst($2, $4, $5, $7, $8) >>
 ;
 
 IndexList
@@ -1382,79 +1386,79 @@ Index
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TruncInst
-	: "trunc" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewTruncInst($1, $2, $4, $5) >>
+	: "trunc" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewTruncInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ZExtInst
-	: "zext" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewZExtInst($1, $2, $4, $5) >>
+	: "zext" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewZExtInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SExtInst
-	: "sext" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewSExtInst($1, $2, $4, $5) >>
+	: "sext" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewSExtInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FPTruncInst
-	: "fptrunc" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewFPTruncInst($1, $2, $4, $5) >>
+	: "fptrunc" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewFPTruncInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FPExtInst
-	: "fpext" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewFPExtInst($1, $2, $4, $5) >>
+	: "fpext" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewFPExtInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FPToUIInst
-	: "fptoui" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewFPToUIInst($1, $2, $4, $5) >>
+	: "fptoui" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewFPToUIInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FPToSIInst
-	: "fptosi" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewFPToSIInst($1, $2, $4, $5) >>
+	: "fptosi" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewFPToSIInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 UIToFPInst
-	: "uitofp" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewUIToFPInst($1, $2, $4, $5) >>
+	: "uitofp" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewUIToFPInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SIToFPInst
-	: "sitofp" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewSIToFPInst($1, $2, $4, $5) >>
+	: "sitofp" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewSIToFPInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PtrToIntInst
-	: "ptrtoint" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewPtrToIntInst($1, $2, $4, $5) >>
+	: "ptrtoint" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewPtrToIntInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 IntToPtrInst
-	: "inttoptr" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewIntToPtrInst($1, $2, $4, $5) >>
+	: "inttoptr" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewIntToPtrInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BitCastInst
-	: "bitcast" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewBitCastInst($1, $2, $4, $5) >>
+	: "bitcast" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewBitCastInst($1, $2, $4, $5) >>
 ;
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AddrSpaceCastInst
-	: "addrspacecast" FirstClassType Value "to" FirstClassType OptCommaAttachedMDList   << astx.NewAddrSpaceCastInst($1, $2, $4, $5) >>
+	: "addrspacecast" ConcreteType Value "to" ConcreteType OptCommaAttachedMDList   << astx.NewAddrSpaceCastInst($1, $2, $4, $5) >>
 ;
 
 // --- [ Other instructions ] --------------------------------------------------
@@ -1462,7 +1466,7 @@ AddrSpaceCastInst
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ICmpInst
-	: "icmp" IntPred FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewICmpInst($1, $2, $3, $5, $6) >>
+	: "icmp" IntPred ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewICmpInst($1, $2, $3, $5, $6) >>
 ;
 
 IntPred
@@ -1481,7 +1485,7 @@ IntPred
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 FCmpInst
-	: "fcmp" FastMathFlags FloatPred FirstClassType Value "," Value OptCommaAttachedMDList   << astx.NewFCmpInst($2, $3, $4, $6, $7) >>
+	: "fcmp" FastMathFlags FloatPred ConcreteType Value "," Value OptCommaAttachedMDList   << astx.NewFCmpInst($2, $3, $4, $6, $7) >>
 ;
 
 FloatPred
@@ -1506,7 +1510,7 @@ FloatPred
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PhiInst
-	: "phi" FirstClassType IncomingList OptCommaAttachedMDList   << astx.NewPhiInst($1, $2, $3) >>
+	: "phi" ConcreteType IncomingList OptCommaAttachedMDList   << astx.NewPhiInst($1, $2, $3) >>
 ;
 
 IncomingList
@@ -1521,7 +1525,7 @@ Incoming
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SelectInst
-	: "select" FirstClassType Value "," FirstClassType Value "," FirstClassType Value OptCommaAttachedMDList   << astx.NewSelectInst($1, $2, $4, $5, $7, $8, $9) >>
+	: "select" ConcreteType Value "," ConcreteType Value "," ConcreteType Value OptCommaAttachedMDList   << astx.NewSelectInst($1, $2, $4, $5, $7, $8, $9) >>
 ;
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1552,20 +1556,21 @@ ArgList
 ;
 
 Arg
-	: FirstClassType ParamAttrs Value   << astx.NewValue($0, $2) >>
+	: ConcreteType ParamAttrs Value   << astx.NewValue($0, $2) >>
+	| MetadataType MetadataNode       << astx.NewMetadataArg($1) >>
 ;
 
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 VAArgInst
-	: "va_arg" FirstClassType Value "," FirstClassType OptCommaAttachedMDList   << nil, nil >>
+	: "va_arg" ConcreteType Value "," ConcreteType OptCommaAttachedMDList   << nil, nil >>
 ;
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LandingPadInst
-	: "landingpad" FirstClassType ClauseList OptCommaAttachedMDList          << nil, nil >>
-	| "landingpad" FirstClassType "cleanup" Clauses OptCommaAttachedMDList   << nil, nil >>
+	: "landingpad" ConcreteType ClauseList OptCommaAttachedMDList          << nil, nil >>
+	| "landingpad" ConcreteType "cleanup" Clauses OptCommaAttachedMDList   << nil, nil >>
 ;
 
 Clauses
@@ -1579,8 +1584,8 @@ ClauseList
 ;
 
 Clause
-	: "catch" FirstClassType Value
-	| "filter" FirstClassType ArrayConst
+	: "catch" ConcreteType Value
+	| "filter" ConcreteType ArrayConst
 ;
 
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1619,8 +1624,8 @@ Terminator
 // ~~~ [ ret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RetTerm
-	: "ret" VoidType OptCommaAttachedMDList               << astx.NewRetTerm(nil, nil, $2) >>
-	| "ret" FirstClassType Value OptCommaAttachedMDList   << astx.NewRetTerm($1, $2, $3) >>
+	: "ret" VoidType OptCommaAttachedMDList             << astx.NewRetTerm(nil, nil, $2) >>
+	| "ret" ConcreteType Value OptCommaAttachedMDList   << astx.NewRetTerm($1, $2, $3) >>
 ;
 
 // ~~~ [ br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1658,7 +1663,7 @@ Case
 // ~~~ [ indirectbr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 IndirectBrTerm
-	: "indirectbr" FirstClassType Value "," "[" Labels "]" OptCommaAttachedMDList   << nil, nil >>
+	: "indirectbr" ConcreteType Value "," "[" Labels "]" OptCommaAttachedMDList   << nil, nil >>
 ;
 
 // ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1696,14 +1701,14 @@ Values
 ;
 
 ValueList
-	: FirstClassType Value
-	| ValueList "," FirstClassType Value
+	: ConcreteType Value
+	| ValueList "," ConcreteType Value
 ;
 
 // ~~~ [ resume ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ResumeTerm
-	: "resume" FirstClassType Value OptCommaAttachedMDList   << nil, nil >>
+	: "resume" ConcreteType Value OptCommaAttachedMDList   << nil, nil >>
 ;
 
 // ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1867,7 +1872,7 @@ OptPrefix
 
 // ref: http://llvm.org/docs/LangRef.html#prefix-data
 Prefix
-	: "prefix" FirstClassType Constant
+	: "prefix" ConcreteType Constant
 ;
 
 OptPrologue
@@ -1877,7 +1882,7 @@ OptPrologue
 
 // ref: http://llvm.org/docs/LangRef.html#prologue-data
 Prologue
-	: "prologue" FirstClassType Constant
+	: "prologue" ConcreteType Constant
 ;
 
 OptPersonality
@@ -1887,7 +1892,7 @@ OptPersonality
 
 // ref: http://llvm.org/docs/LangRef.html#personality-function
 Personality
-	: "personality" FirstClassType Constant
+	: "personality" ConcreteType Constant
 ;
 
 ParamAttrs
@@ -1995,7 +2000,7 @@ ElemList
 ;
 
 Elem
-	: FirstClassType Value   << astx.NewConstant($0, $1) >>
+	: ConcreteType Value   << astx.NewConstant($0, $1) >>
 ;
 
 OptCallConv

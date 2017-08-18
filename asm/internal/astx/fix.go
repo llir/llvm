@@ -158,16 +158,19 @@ func fixModule(m *ast.Module) *ast.Module {
 
 	// Resolve metadata nodes.
 	resolveMetadataNodes := func(node interface{}) {
-		p, ok := node.(*ast.MetadataNode)
-		if !ok {
-			return
+		fmt.Printf("node: %T\n", node)
+		switch p := node.(type) {
+		case *ast.MetadataNode:
+			if old, ok := (*p).(*ast.MetadataIDDummy); ok {
+				metadata := fix.getMetadata(old.ID)
+				*p = metadata
+			}
+		case *ast.Value:
+			if old, ok := (*p).(*ast.MetadataIDDummy); ok {
+				metadata := fix.getMetadata(old.ID)
+				*p = metadata
+			}
 		}
-		old, ok := (*p).(*ast.MetadataIDDummy)
-		if !ok {
-			return
-		}
-		metadata := fix.getMetadata(old.ID)
-		*p = metadata
 	}
 	astutil.Walk(m, resolveMetadataNodes)
 

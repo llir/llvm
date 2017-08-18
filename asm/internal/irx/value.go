@@ -25,6 +25,9 @@ func (m *Module) irValue(old ast.Value) value.Value {
 		default:
 			panic(fmt.Errorf("support for named value %T not yet implemented", old))
 		}
+	// Metadata node.
+	case ast.MetadataNode:
+		return m.irMetadataNode(old)
 	default:
 		panic(fmt.Errorf("support for value %T not yet implemented", old))
 	}

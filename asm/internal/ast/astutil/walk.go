@@ -128,6 +128,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.MetadataString:
 		w.walkBeforeAfter(*n, before, after)
+	case **ast.MetadataConstant:
+		w.walkBeforeAfter(*n, before, after)
 	case **ast.NamedMetadata:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.MetadataIDDummy:
@@ -466,6 +468,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(&n.Nodes, before, after)
 	case *ast.MetadataString:
 		// nothing to do.
+	case *ast.MetadataConstant:
+		w.walkBeforeAfter(&n.X, before, after)
 	case []ast.MetadataNode:
 		for i := range n {
 			w.walkBeforeAfter(&n[i], before, after)
