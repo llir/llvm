@@ -34,8 +34,10 @@ func Example() {
 	//                 Typ: &types.IntType{(CYCLIC REFERENCE)},
 	//                 X:   &big.Int{},
 	//             },
-	//             IsConst:  false,
-	//             Metadata: {
+	//             IsConst:     false,
+	//             LinkageType: 0,
+	//             UnnamedAddr: 0,
+	//             Metadata:    {
 	//             },
 	//         },
 	//     },

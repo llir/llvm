@@ -6,14 +6,67 @@
 package ir
 
 import (
-	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 )
+
+type LinkageType int
+
+const (
+	// Extern at position 0 so it's used as the default
+
+	External LinkageType = iota
+	Private
+	Internal
+	AvailableExternally
+	LinkOnce
+	Weak
+	Common
+	Appending
+	ExternWeak
+	LinkOnceODR
+	WeakODR
+)
+
+var linkageNames = []string{
+	External:            "external",
+	Private:             "private",
+	Internal:            "internal",
+	AvailableExternally: "available_externally",
+	LinkOnce:            "linkonce",
+	Weak:                "weak",
+	Common:              "common",
+	Appending:           "appending",
+	ExternWeak:          "extern_weak",
+	LinkOnceODR:         "linkonce_odr",
+	WeakODR:             "weak_odr",
+}
+
+func (t LinkageType) String() string {
+	return linkageNames[t]
+}
+
+type UnnamedAddrType int
+
+const (
+	UnnamedAddr = iota + 1
+	LocalUnnamedAddr
+)
+
+var unnamedAddrNames = []string{
+	0:                "",
+	UnnamedAddr:      "unnamed_addr",
+	LocalUnnamedAddr: "local_unnamed_addr",
+}
+
+func (t UnnamedAddrType) String() string {
+	return unnamedAddrNames[t]
+}
 
 // A Global represents an LLVM IR global variable definition or external global
 // variable declaration.
@@ -35,6 +88,9 @@ type Global struct {
 	Init constant.Constant
 	// Immutability of the global variable.
 	IsConst bool
+	// Linkage type of the global variable.
+	LinkageType LinkageType
+	UnnamedAddr UnnamedAddrType
 	// Map from metadata identifier (e.g. !dbg) to metadata associated with the
 	// global.
 	Metadata map[string]*metadata.Metadata
@@ -96,30 +152,40 @@ func (*Global) MetadataNode() {}
 
 // String returns the LLVM syntax representation of the global variable.
 func (global *Global) String() string {
-	imm := "global"
-	if global.IsConst {
-		imm = "constant"
-	}
+	// @<GlobalVarName> = [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal]
+	//                [(unnamed_addr|local_unnamed_addr)] [AddrSpace]
+	//                [ExternallyInitialized]
+	//                <global | constant> <Type> [<InitializerConstant>]
+	//                [, section "name"] [, comdat [($name)]]
+	//                [, align <Alignment>] (, !name !N)*
+
 	md := metadataString(global.Metadata, ",")
-	addrspace := &bytes.Buffer{}
+	var attributes []string
+	if global.LinkageType != External || global.Init == nil {
+		attributes = append(attributes, global.LinkageType.String())
+	}
 	if global.Typ.AddrSpace != 0 {
-		fmt.Fprintf(addrspace, " addrspace(%d)", global.Typ.AddrSpace)
+		attributes = append(attributes, fmt.Sprintf("addrspace(%d)", global.Typ.AddrSpace))
+	}
+	if s := global.UnnamedAddr.String(); s != "" {
+		attributes = append(attributes, s)
+	}
+	if global.IsConst {
+		attributes = append(attributes, "constant")
+	} else {
+		attributes = append(attributes, "global")
 	}
 	if global.Init != nil {
 		// Global variable definition.
-		return fmt.Sprintf("%s =%s %s %s %s%s",
-			global.Ident(),
-			addrspace,
-			imm,
-			global.Init.Type(),
-			global.Init.Ident(),
-			md)
+		attributes = append(attributes, global.Init.Type().String(), global.Init.Ident())
+	} else {
+		// External global variable declaration.
+		attributes = append(attributes, global.Content.String())
 	}
-	// External global variable declaration.
-	return fmt.Sprintf("%s = external%s %s %s%s",
+
+	attrString := strings.Join(attributes, " ")
+	return fmt.Sprintf("%s = %s%s",
 		global.Ident(),
-		addrspace,
-		imm,
-		global.Content,
+		attrString,
 		md)
 }
