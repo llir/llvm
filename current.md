@@ -253,7 +253,9 @@ The `ir` checkbox tracks support for an in-memory representation of the language
 
 # Global variables
 
-Global variables (ref [ir.Global](https://godoc.org/github.com/llir/llvm/ir#Global))
+Global variables (ref [LangRef.html#global-variables](http://llvm.org/docs/LangRef.html#global-variables))
+- [x] asm
+- [x] ir (ref [ir.Global](https://godoc.org/github.com/llir/llvm/ir#Global))
 
 * Linkage type
     - [x] asm
@@ -291,7 +293,9 @@ Global variables (ref [ir.Global](https://godoc.org/github.com/llir/llvm/ir#Glob
 
 # Functions
 
-Functions (ref [ir.Function](https://godoc.org/github.com/llir/llvm/ir#Function))
+Functions (ref [LangRef.html#functions](http://llvm.org/docs/LangRef.html#functions))
+- [x] asm
+- [x] ir (ref [ir.Function](https://godoc.org/github.com/llir/llvm/ir#Function))
 
 * Linkage type
     - [x] asm
