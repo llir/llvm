@@ -1977,7 +1977,7 @@ func NewFCmpExpr(pred, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprFCmp, error
 	return &ast.ExprFCmp{Type: &ast.TypeDummy{}, Pred: p, X: x, Y: y}, nil
 }
 
-// NewSeExpr returns a new select expression based on the given selection
+// NewSelectExpr returns a new select expression based on the given selection
 // condition type and value, and operands.
 func NewSelectExpr(condTyp, condVal, xTyp, xVal, yTyp, yVal interface{}) (*ast.ExprSelect, error) {
 	cond, err := NewConstant(condTyp, condVal)
