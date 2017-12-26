@@ -291,7 +291,7 @@ func NewFloat16FromBits(bits uint16) Float16 {
 // panics if b is not a hexadecimal digit.
 func unhex(b byte) uint64 {
 	// This is an adapted copy of the unhex function from the strconv package,
-	// which is goverend by a BSD-style license.
+	// which is governed by a BSD-style license.
 	switch {
 	case '0' <= b && b <= '9':
 		return uint64(b - '0')

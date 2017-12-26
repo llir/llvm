@@ -45,7 +45,7 @@ func WalkBeforeAfter(x interface{}, before, after func(interface{})) {
 // y in the tree but also with a pointer to each ast.Type, ast.Value, and
 // *ast.BasicBlock, in a bottom-up traversal.
 //
-// Special precausion is taken during traversal to stay within the scope of the
+// Special precaution is taken during traversal to stay within the scope of the
 // function.
 func WalkFuncBeforeAfter(f *ast.Function, before, after func(interface{})) {
 	w := &walker{

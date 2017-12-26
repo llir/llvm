@@ -207,7 +207,7 @@ func Unescape(s string) string {
 // returns false if b is not a hexadecimal digit.
 func unhex(b byte) (v byte, ok bool) {
 	// This is an adapted copy of the unhex function from the strconv package,
-	// which is goverend by a BSD-style license.
+	// which is governed by a BSD-style license.
 	switch {
 	case '0' <= b && b <= '9':
 		return b - '0', true
