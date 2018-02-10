@@ -7,6 +7,7 @@ package constant
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 	"strings"
 
@@ -83,21 +84,22 @@ func NewFloatFromString(s string, typ types.Type) *Float {
 	case strings.HasPrefix(s, "0x"):
 		//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
 		// TODO: Validate implementation.
-		/*
-			s = s[len("0x"):]
-			var bits uint64
-			for i := 0; i < len(s); i++ {
-				if i != 0 {
-					bits <<= 8
-				}
-				b := uint64(s[len(s)-i-1])
-				bits |= b
+		s = s[len("0x"):]
+		var bits uint64
+		for i := 0; i < len(s); i++ {
+			if i != 0 {
+				bits <<= 8
 			}
-				x := math.Float64frombits(bits)
-				c.X = big.NewFloat(x)
-		*/
-		c.X = &big.Float{}
-		c.X.SetString("0.0") // TODO: Remove placehold zero value.
+			b, ok := unhex(s[len(s)-i-1])
+			if !ok {
+				panic(fmt.Errorf("invalid hexadecimal digit %q in %q", b, s))
+			}
+			bits |= uint64(b)
+		}
+		x := math.Float64frombits(bits)
+		c.X = big.NewFloat(x)
+		//c.X = &big.Float{}
+		//c.X.SetString("0.0") // TODO: Remove placehold zero value.
 		return c
 	}
 
@@ -196,4 +198,20 @@ func (*Float) MetadataNode() {}
 func (c *Float) Float64() float64 {
 	x, _ := c.X.Float64()
 	return x
+}
+
+// unhex returns the numeric value represented by the hexadecimal digit b. It
+// returns false if b is not a hexadecimal digit.
+func unhex(b byte) (v byte, ok bool) {
+	// This is an adapted copy of the unhex function from the strconv package,
+	// which is governed by a BSD-style license.
+	switch {
+	case '0' <= b && b <= '9':
+		return b - '0', true
+	case 'a' <= b && b <= 'f':
+		return b - 'a' + 10, true
+	case 'A' <= b && b <= 'F':
+		return b - 'A' + 10, true
+	}
+	return 0, false
 }
