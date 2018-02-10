@@ -6,6 +6,7 @@ import (
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/metadata"
+	"github.com/llir/llvm/ir/types"
 )
 
 // ### [ Helper functions ] ####################################################
@@ -95,4 +96,34 @@ func (m *Module) irMetadata(oldMDs []*ast.AttachedMD) map[string]*metadata.Metad
 		mds[key] = md
 	}
 	return mds
+}
+
+// newEmptyNamedType returns an empty type definition for the given named type.
+func newEmptyNamedType(old ast.Type) types.Type {
+	switch old := old.(type) {
+	case *ast.VoidType:
+		return &types.VoidType{}
+	case *ast.FuncType:
+		return &types.FuncType{}
+	case *ast.IntType:
+		return &types.IntType{}
+	case *ast.FloatType:
+		return &types.FloatType{}
+	case *ast.PointerType:
+		return &types.PointerType{}
+	case *ast.VectorType:
+		return &types.VectorType{}
+	case *ast.LabelType:
+		return &types.LabelType{}
+	case *ast.MetadataType:
+		return &types.MetadataType{}
+	case *ast.ArrayType:
+		return &types.ArrayType{}
+	case *ast.StructType:
+		return &types.StructType{}
+	case *ast.NamedType:
+		return newEmptyNamedType(old.Def)
+	default:
+		panic(fmt.Errorf("support for type %T not yet implemented", old))
+	}
 }

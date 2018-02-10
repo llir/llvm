@@ -7,9 +7,12 @@
 //       - Store preliminary content type.
 //    3. Index function.
 //       - Store type.
-//    4. Fix type definitions.
-//    5. Fix globals.
-//    6. Fix functions.
+//    4. Index metadata.
+//    5. Fix type definitions.
+//    6. Fix globals.
+//    7. Fix named metadata definition.
+//    8. Fix metadata definition.
+//    9. Fix functions.
 //
 // Per function.
 //
@@ -63,14 +66,14 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		if _, ok := m.globals[name]; ok {
 			panic(fmt.Errorf("global identifier %q already present; old `%v`, new `%v`", name, m.globals[name], old))
 		}
+		// Store preliminary content type (for circular dependencies).
+		content := m.irType(old.Content)
 		global := &ir.Global{
 			Name:     name,
+			Typ:      types.NewPointer(content),
+			Content:  content,
 			Metadata: make(map[string]*metadata.Metadata),
 		}
-		// Store preliminary content type.
-		content := m.irType(old.Content)
-		global.Typ = types.NewPointer(content)
-		global.Content = content
 		m.Globals = append(m.Globals, global)
 		m.globals[name] = global
 	}
@@ -122,11 +125,6 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		m.globalDecl(global)
 	}
 
-	// Fix functions.
-	for _, f := range module.Funcs {
-		m.funcDecl(f)
-	}
-
 	// Fix named metadata definitions.
 	for _, old := range module.NamedMetadata {
 		md := &metadata.Named{
@@ -148,41 +146,16 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		m.metadataDef(md)
 	}
 
+	// Fix functions.
+	for _, f := range module.Funcs {
+		m.funcDecl(f)
+	}
+
 	if len(m.errs) > 0 {
 		// TODO: Return a list of all errors.
 		return nil, m.errs[0]
 	}
 	return m.Module, nil
-}
-
-// newEmptyNamedType returns an empty type definition for the given named type.
-func newEmptyNamedType(old ast.Type) types.Type {
-	switch old := old.(type) {
-	case *ast.VoidType:
-		return &types.VoidType{}
-	case *ast.FuncType:
-		return &types.FuncType{}
-	case *ast.IntType:
-		return &types.IntType{}
-	case *ast.FloatType:
-		return &types.FloatType{}
-	case *ast.PointerType:
-		return &types.PointerType{}
-	case *ast.VectorType:
-		return &types.VectorType{}
-	case *ast.LabelType:
-		return &types.LabelType{}
-	case *ast.MetadataType:
-		return &types.MetadataType{}
-	case *ast.ArrayType:
-		return &types.ArrayType{}
-	case *ast.StructType:
-		return &types.StructType{}
-	case *ast.NamedType:
-		return newEmptyNamedType(old.Def)
-	default:
-		panic(fmt.Errorf("support for type %T not yet implemented", old))
-	}
 }
 
 // === [ Type definitions ] ====================================================
@@ -274,14 +247,8 @@ func (m *Module) globalDecl(old *ast.Global) {
 		panic(fmt.Errorf("invalid global type; expected *ir.Global, got %T", v))
 	}
 
-	// Fix attached metadata.
-	global.Metadata = m.irMetadata(old.Metadata)
-
 	if old.Init != nil {
 		init := m.irConstant(old.Init)
-		// TODO: Verify that two circularly referential globals both get the
-		// correct type; more specifically that neither get global.Content == nil
-		// after resolution.
 		global.Content = init.Type()
 		global.Init = init
 	} else {
@@ -291,6 +258,9 @@ func (m *Module) globalDecl(old *ast.Global) {
 	typ.AddrSpace = old.AddrSpace
 	global.Typ = typ
 	global.IsConst = old.Immutable
+
+	// Fix attached metadata.
+	global.Metadata = m.irMetadata(old.Metadata)
 }
 
 // === [ Functions ] ===========================================================
