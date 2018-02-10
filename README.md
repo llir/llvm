@@ -264,8 +264,6 @@ The [llvm/ir](https://godoc.org/github.com/llir/llvm/ir) package supports all in
 
 The llir/llvm packages are now go-getable, as the Gocc generated source code has been added to the source tree.
 
-See [v0.2.md](v0.2.md) for extended release notes.
-
 ### Version 0.1 (2015-04-19)
 
 Initial release.
@@ -281,6 +279,8 @@ Hand-written lexer and preliminary work on a recursive descent parser for LLVM I
 Primary focus of version 0.3: *data flow analysis*.
 
 Introduce API for use-def chains.
+
+See [v0.3_draft.md](v0.3_draft.md) for extended release notes.
 
 ## License
 
