@@ -583,8 +583,13 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 			if inst, ok := inst.(value.Named); ok {
 				// Ignore local value if of type void.
 				if oldInst, ok := oldInst.(*ast.InstCall); ok {
-					if _, ok := oldInst.Type.(*ast.VoidType); ok {
+					switch t := oldInst.Type.(type) {
+					case *ast.VoidType:
 						continue
+					case *ast.FuncType:
+						if _, ok := t.Ret.(*ast.VoidType); ok {
+							continue
+						}
 					}
 				}
 				m.locals[inst.GetName()] = inst
@@ -719,27 +724,36 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstCall, got %T", v))
 			}
 			// Handle calls to void functions.
-			if _, ok := old.Type.(*ast.VoidType); ok {
-				// TODO: Call m.instCall to reuse code.
-				callee := m.irValue(old.Callee)
-				typ, ok := callee.Type().(*types.PointerType)
-				if !ok {
-					panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+			switch t := old.Type.(type) {
+			case *ast.VoidType:
+			case *ast.FuncType:
+				if _, ok := t.Ret.(*ast.VoidType); !ok {
+					// handled by resolveInst.
+					continue
 				}
-				sig, ok := typ.Elem.(*types.FuncType)
-				if !ok {
-					panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
-				}
-				inst.Callee = callee
-				inst.Sig = sig
-				// TODO: Validate old.Type against inst.Sig.
-				for _, oldArg := range old.Args {
-					arg := m.irValue(oldArg)
-					inst.Args = append(inst.Args, arg)
-				}
-				inst.CallConv = ir.CallConv(old.CallConv)
-				inst.Metadata = m.irMetadata(old.Metadata)
+			default:
+				// handled by resolveInst.
+				continue
 			}
+			// TODO: Call m.instCall to reuse code.
+			callee := m.irValue(old.Callee)
+			typ, ok := callee.Type().(*types.PointerType)
+			if !ok {
+				panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+			}
+			sig, ok := typ.Elem.(*types.FuncType)
+			if !ok {
+				panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
+			}
+			inst.Callee = callee
+			inst.Sig = sig
+			// TODO: Validate old.Type against inst.Sig.
+			for _, oldArg := range old.Args {
+				arg := m.irValue(oldArg)
+				inst.Args = append(inst.Args, arg)
+			}
+			inst.CallConv = ir.CallConv(old.CallConv)
+			inst.Metadata = m.irMetadata(old.Metadata)
 		}
 	}
 

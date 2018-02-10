@@ -92,8 +92,9 @@ func (f *Function) String() string {
 	// Assign unique local IDs to unnamed function parameters, basic blocks and
 	// local variables.
 	f.mu.Lock()
+	// using defer as assignIDs has been known to panic if any field is nil.
+	defer f.mu.Unlock()
 	assignIDs(f)
-	f.mu.Unlock()
 
 	// Calling convention.
 	callconv := ""
