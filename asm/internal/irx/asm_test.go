@@ -46,6 +46,8 @@ func TestRoundTrip(t *testing.T) {
 		{path: "../../testdata/term.ll"},
 		// Pseudo-random number generator.
 		{path: "../../testdata/rand.ll"},
+		// Inline assembly.
+		//{path: "../../testdata/inline_asm.ll"},
 		// Fixed bugs.
 		{path: "../../testdata/fixedbugs/issue_27.ll"},
 	}

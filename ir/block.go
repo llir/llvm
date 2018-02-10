@@ -460,6 +460,7 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 //    *constant.ExprBitCast
 //    *ir.InstBitCast
 //    *ir.InstLoad
+//    *ir.InlineAsm
 func (block *BasicBlock) NewCall(callee value.Named, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	block.AppendInst(inst)

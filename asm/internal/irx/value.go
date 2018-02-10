@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/llvm/asm/internal/ast"
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -24,6 +25,13 @@ func (m *Module) irValue(old ast.Value) value.Value {
 			return m.getLocal(old.GetName())
 		default:
 			panic(fmt.Errorf("support for named value %T not yet implemented", old))
+		}
+	// Inline assmebly.
+	case *ast.InlineAsm:
+		return &ir.InlineAsm{
+			Asm:         old.Asm,
+			Constraints: old.Constraints,
+			Typ:         m.irType(old.Type),
 		}
 	// Metadata node.
 	case ast.MetadataNode:

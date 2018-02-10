@@ -344,3 +344,23 @@ func (cc CallConv) String() string {
 	}
 	return fmt.Sprintf("unknown calling convention %d", uint(cc))
 }
+
+// InlineAsm represents an inline assembly statement.
+type InlineAsm struct {
+	// Assembly instructions.
+	Asm string
+	// Comma-separated list of constraints.
+	Constraints string
+	// Function signature or return type of the inline assembly.
+	Typ types.Type
+}
+
+// Type returns the type of the value.
+func (asm *InlineAsm) Type() types.Type {
+	return asm.Typ
+}
+
+// Ident returns the identifier associated with the value.
+func (asm *InlineAsm) Ident() string {
+	return fmt.Sprintf("asm %q, %q", asm.Asm, asm.Constraints)
+}

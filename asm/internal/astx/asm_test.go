@@ -18,8 +18,8 @@ func TestRoundTrip(t *testing.T) {
 		{path: "../../testdata/empty.ll"},
 		// Top-level declarations.
 		{path: "../../testdata/module.ll"},
-		{path: "../../testdata/global_circular.ll"},
 		{path: "../../testdata/global.ll"},
+		{path: "../../testdata/global_circular.ll"},
 		{path: "../../testdata/func.ll"},
 		{path: "../../testdata/metadata.ll"},
 		// Types.
@@ -46,6 +46,8 @@ func TestRoundTrip(t *testing.T) {
 		{path: "../../testdata/term.ll"},
 		// Pseudo-random number generator.
 		{path: "../../testdata/rand.ll"},
+		// Inline assembly.
+		{path: "../../testdata/inline_asm.ll"},
 		// Fixed bugs.
 		{path: "../../testdata/fixedbugs/issue_27.ll"},
 	}

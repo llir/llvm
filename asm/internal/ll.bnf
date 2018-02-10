@@ -1536,7 +1536,7 @@ SelectInst
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CallInst
-	: OptTail "call" FastMathFlags OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs OptCommaAttachedMDList   << astx.NewCallInst($3, $5, $6, $8, $11) >>
+	: OptTail "call" FastMathFlags OptCallConv ParamAttrs Type Callee "(" Args ")" FuncAttrs OptCommaAttachedMDList   << astx.NewCallInst($3, $5, $6, $8, $11) >>
 ;
 
 OptTail
@@ -1548,6 +1548,11 @@ Tail
 	: "tail"
 	| "musttail"
 	| "notail"
+;
+
+Callee
+	: Value
+	| InlineAsm
 ;
 
 Args
@@ -1674,7 +1679,7 @@ IndirectBrTerm
 // ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 InvokeTerm
-	: "invoke" OptCallConv ParamAttrs Type Value "(" Args ")" FuncAttrs OptOperandBundle "to" LabelType LocalIdent "unwind" LabelType LocalIdent OptCommaAttachedMDList   << nil, nil >>
+	: "invoke" OptCallConv ParamAttrs Type Callee "(" Args ")" FuncAttrs OptOperandBundle "to" LabelType LocalIdent "unwind" LabelType LocalIdent OptCommaAttachedMDList   << nil, nil >>
 ;
 
 OptOperandBundle
@@ -2054,6 +2059,25 @@ CallConv
 	| "x86_stdcallcc"      << ast.CallConvX86_StdCall, nil >>
 	| "x86_thiscallcc"     << ast.CallConvX86_ThisCall, nil >>
 	| "x86_vectorcallcc"   << ast.CallConvX86_VectorCall, nil >>
+;
+
+InlineAsm
+	: "asm" OptSideEffect OptAlignStack OptIntelDialect string_lit "," string_lit   << astx.NewInlineAsm($4, $6) >>
+;
+
+OptSideEffect
+	: empty
+	| "sideeffect"
+;
+
+OptAlignStack
+	: empty
+	| "alignstack"
+;
+
+OptIntelDialect
+	: empty
+	| "inteldialect"
 ;
 
 Labels

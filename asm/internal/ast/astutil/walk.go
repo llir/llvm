@@ -124,6 +124,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.LocalDummy:
 		w.walkBeforeAfter(*n, before, after)
+	case **ast.InlineAsm:
+		w.walkBeforeAfter(*n, before, after)
 	case **ast.Metadata:
 		w.walkBeforeAfter(*n, before, after)
 	case **ast.MetadataString:
@@ -453,6 +455,8 @@ func (w *walker) walkBeforeAfter(x interface{}, before, after func(interface{}))
 	case *ast.GlobalDummy:
 		w.walkBeforeAfter(&n.Type, before, after)
 	case *ast.LocalDummy:
+		w.walkBeforeAfter(&n.Type, before, after)
+	case *ast.InlineAsm:
 		w.walkBeforeAfter(&n.Type, before, after)
 	case []*ast.NamedMetadata:
 		for i := range n {

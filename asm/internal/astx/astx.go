@@ -459,6 +459,21 @@ func NewCallConv(id interface{}) (ast.CallConv, error) {
 	}
 }
 
+// NewInlineAsm returns a new inline assembly statement.
+func NewInlineAsm(asm, constraints interface{}) (*ast.InlineAsm, error) {
+	a, err := getTokenString(asm)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	a = enc.Unquote(a)
+	c, err := getTokenString(constraints)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	c = enc.Unquote(c)
+	return &ast.InlineAsm{Asm: a, Constraints: c}, nil
+}
+
 // --- [ Metadata definitions ] ------------------------------------------------
 
 // NewNamedMetadataDef returns a new named metadata definition based on the
@@ -867,6 +882,10 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		return &ast.ZeroInitializerConst{Type: t}, nil
 	case *UndefLit:
 		return &ast.UndefConst{Type: t}, nil
+	// Inline assmebly.
+	case *ast.InlineAsm:
+		val.Type = t
+		return val, nil
 
 	// Replace *ast.TypeDummy with real type; as used by incoming values of phi
 	// instructions.
@@ -1241,6 +1260,7 @@ func NewValue(typ, val interface{}) (ast.Value, error) {
 		}
 		val.Type = t
 		return val, nil
+
 	default:
 		panic(fmt.Errorf("support for value type %T not yet implemented", val))
 	}

@@ -151,3 +151,16 @@ const (
 	CallConvX86_ThisCall                   // x86_thiscallcc
 	CallConvX86_VectorCall                 // x86_vectorcallcc
 )
+
+// InlineAsm represents an inline assembly statement.
+type InlineAsm struct {
+	// Assembly instructions.
+	Asm string
+	// Comma-separated list of constraints.
+	Constraints string
+	// Function signature or return type of the inline assembly.
+	Type Type
+}
+
+// isValue ensures that only values can be assigned to the ast.Value interface.
+func (*InlineAsm) isValue() {}

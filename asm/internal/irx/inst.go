@@ -876,22 +876,47 @@ func (m *Module) instCall(old *ast.InstCall, resolved, unresolved map[ast.NamedV
 	if !ok {
 		panic(fmt.Errorf("invalid instruction type for instruction %s; expected *ir.InstCall, got %T", enc.Local(old.Name), v))
 	}
-	callee := m.irValue(old.Callee)
-	typ, ok := callee.Type().(*types.PointerType)
-	if !ok {
-		panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+	var (
+		typ *types.PointerType
+		sig *types.FuncType
+	)
+	var args []value.Value
+	for _, oldArg := range old.Args {
+		arg := m.irValue(oldArg)
+		args = append(args, arg)
 	}
-	sig, ok := typ.Elem.(*types.FuncType)
-	if !ok {
-		panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
+	callee := m.irValue(old.Callee)
+	if c, ok := callee.(*ir.InlineAsm); ok {
+		switch t := c.Typ.(type) {
+		case *types.FuncType:
+			sig = t
+		default:
+			// Result type stored in t, get parameters for function signature from
+			// arguments. Not perfect, but the best we can do. In particular, this
+			// approach is known to fail for variadic parameters.
+			var params []*types.Param
+			for _, arg := range args {
+				param := types.NewParam("", arg.Type())
+				params = append(params, param)
+			}
+			sig = types.NewFunc(t, params...)
+		}
+		typ = types.NewPointer(sig)
+	} else {
+		var ok bool
+		typ, ok = callee.Type().(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+		}
+		sig, ok = typ.Elem.(*types.FuncType)
+		if !ok {
+			panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
+		}
 	}
 	inst.Callee = callee
 	inst.Sig = sig
 	// TODO: Validate old.Type against inst.Sig.
-	for _, oldArg := range old.Args {
-		arg := m.irValue(oldArg)
-		inst.Args = append(inst.Args, arg)
-	}
+	inst.Args = args
 	inst.CallConv = ir.CallConv(old.CallConv)
 	inst.Metadata = m.irMetadata(old.Metadata)
 	return true

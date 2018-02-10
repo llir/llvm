@@ -461,6 +461,7 @@ type InstCall struct {
 	//    *constant.ExprBitCast
 	//    *ir.InstBitCast
 	//    *ir.InstLoad
+	//    *ir.InlineAsm
 	Callee value.Value
 	// Callee signature.
 	Sig *types.FuncType
