@@ -7,7 +7,6 @@ package constant
 
 import (
 	"fmt"
-	"math"
 	"math/big"
 	"strings"
 
@@ -84,17 +83,21 @@ func NewFloatFromString(s string, typ types.Type) *Float {
 	case strings.HasPrefix(s, "0x"):
 		//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
 		// TODO: Validate implementation.
-		s = s[len("0x"):]
-		var bits uint64
-		for i := 0; i < len(s); i++ {
-			if i != 0 {
-				bits <<= 8
+		/*
+			s = s[len("0x"):]
+			var bits uint64
+			for i := 0; i < len(s); i++ {
+				if i != 0 {
+					bits <<= 8
+				}
+				b := uint64(s[len(s)-i-1])
+				bits |= b
 			}
-			b := uint64(s[len(s)-i-1])
-			bits |= b
-		}
-		x := math.Float64frombits(bits)
-		c.X = big.NewFloat(x)
+				x := math.Float64frombits(bits)
+				c.X = big.NewFloat(x)
+		*/
+		c.X = &big.Float{}
+		c.X.SetString("0.0") // TODO: Remove placehold zero value.
 		return c
 	}
 
