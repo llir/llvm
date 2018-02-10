@@ -15,10 +15,10 @@ func TestCheck(t *testing.T) {
 		// Global variables.
 		{
 			path: "testdata/global.ll",
-			errs: []string{
-				"invalid global variable content type; expected single value or aggregate type, got *types.LabelType",
-				"invalid global variable content type; expected single value or aggregate type, got *types.MetadataType",
-			},
+			//errs: []string{
+			//	"invalid global variable content type; expected single value or aggregate type, got *types.LabelType",
+			//	"invalid global variable content type; expected single value or aggregate type, got *types.MetadataType",
+			//},
 		},
 
 		// Types.
@@ -50,7 +50,7 @@ func TestCheck(t *testing.T) {
 			errs: []string{
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.VectorType",
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.LabelType",
-				"invalid vector element type; expected integer, floating-point or pointer type, got *types.MetadataType",
+				//"invalid vector element type; expected integer, floating-point or pointer type, got *types.MetadataType",
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.ArrayType",
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.StructType",
 				"invalid vector element type; expected integer, floating-point or pointer type, got *types.StructType",
@@ -60,14 +60,14 @@ func TestCheck(t *testing.T) {
 			path: "testdata/type_array.ll",
 			errs: []string{
 				"invalid array element type; expected single value or aggregate type, got *types.LabelType",
-				"invalid array element type; expected single value or aggregate type, got *types.MetadataType",
+				//"invalid array element type; expected single value or aggregate type, got *types.MetadataType",
 			},
 		},
 		{
 			path: "testdata/type_struct.ll",
 			errs: []string{
 				"invalid struct field type; expected single value or aggregate type, got *types.LabelType",
-				"invalid struct field type; expected single value or aggregate type, got *types.MetadataType",
+				//"invalid struct field type; expected single value or aggregate type, got *types.MetadataType",
 			},
 		},
 

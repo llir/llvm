@@ -19,13 +19,14 @@
 //    1. Index function parameters.
 //    2. Index basic blocks.
 //    3. Index local variables produced by instructions.
-//       - Store preliminary type.
-//    4. Fix basic blocks.
+//    4. Resolve locals.
+//    5. Fix basic blocks.
 
 package irx
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/llir/llvm/asm/internal/ast"
 	"github.com/llir/llvm/internal/enc"
@@ -34,7 +35,6 @@ import (
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
-	"github.com/pkg/errors"
 )
 
 // === [ Modules ] =============================================================
@@ -287,14 +287,20 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 
 	// Reset locals.
 	m.locals = make(map[string]value.Named)
+	// track resolved and unresolved local values.
+	var (
+		resolved   = make(map[ast.NamedValue]value.Named)
+		unresolved = make(map[ast.NamedValue]value.Named)
+	)
 
 	// Index function parameters.
-	for _, param := range f.Params() {
+	for i, param := range f.Params() {
 		name := param.Name
 		if _, ok := m.locals[name]; ok {
 			panic(fmt.Errorf("local identifier %q already present for function %s; old `%v`, new `%v`", name, f.Ident(), m.locals[name], param))
 		}
 		m.locals[name] = param
+		resolved[oldFunc.Sig.Params[i]] = param
 	}
 
 	// Index basic blocks.
@@ -309,6 +315,7 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 		}
 		f.Blocks = append(f.Blocks, block)
 		m.locals[name] = block
+		resolved[old] = block
 	}
 
 	// Index local variables produced by instructions.
@@ -581,7 +588,31 @@ func (m *Module) funcDecl(oldFunc *ast.Function) {
 					}
 				}
 				m.locals[inst.GetName()] = inst
+				oi, ok := oldInst.(ast.NamedValue)
+				if !ok {
+					panic(fmt.Errorf("invalid old instruction type; expected ast.NamedValue, got %T", oldInst))
+				}
+				unresolved[oi] = inst
 			}
+		}
+	}
+
+	// Resolve locals (as they can have circular dependencies).
+	for len(unresolved) > 0 {
+		prev := len(unresolved)
+		for old, local := range unresolved {
+			if m.resolveInst(old, resolved, unresolved) {
+				delete(unresolved, old)
+				resolved[old] = local
+			}
+		}
+		if len(unresolved) == prev {
+			var names []string
+			for old := range unresolved {
+				names = append(names, old.GetName())
+			}
+			sort.Strings(names)
+			panic(fmt.Errorf("unable to resolve %d local values; %v", len(unresolved), names))
 		}
 	}
 
@@ -666,501 +697,49 @@ func (m *Module) metadataNode(oldNode ast.MetadataNode) metadata.Node {
 
 // basicBlock translates the given basic block to LLVM IR, emitting code to m.
 func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
-	// Fix instructions.
+	// Fix instructions not producing values.
 	for i := 0; i < len(oldBlock.Insts); i++ {
-		oldInst := oldBlock.Insts[i]
+		old := oldBlock.Insts[i]
 		v := block.Insts[i]
-		switch oldInst := oldInst.(type) {
-		// Binary instructions
-		case *ast.InstAdd:
-			inst, ok := v.(*ir.InstAdd)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAdd, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFAdd:
-			inst, ok := v.(*ir.InstFAdd)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFAdd, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstSub:
-			inst, ok := v.(*ir.InstSub)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSub, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFSub:
-			inst, ok := v.(*ir.InstFSub)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFSub, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstMul:
-			inst, ok := v.(*ir.InstMul)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstMul, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFMul:
-			inst, ok := v.(*ir.InstFMul)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFMul, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstUDiv:
-			inst, ok := v.(*ir.InstUDiv)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstUDiv, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstSDiv:
-			inst, ok := v.(*ir.InstSDiv)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSDiv, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFDiv:
-			inst, ok := v.(*ir.InstFDiv)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFDiv, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstURem:
-			inst, ok := v.(*ir.InstURem)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstURem, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstSRem:
-			inst, ok := v.(*ir.InstSRem)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSRem, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFRem:
-			inst, ok := v.(*ir.InstFRem)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFRem, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-
-		// Bitwise instructions
-		case *ast.InstShl:
-			inst, ok := v.(*ir.InstShl)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstShl, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstLShr:
-			inst, ok := v.(*ir.InstLShr)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstLShr, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstAShr:
-			inst, ok := v.(*ir.InstAShr)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAShr, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstAnd:
-			inst, ok := v.(*ir.InstAnd)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAnd, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstOr:
-			inst, ok := v.(*ir.InstOr)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstOr, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstXor:
-			inst, ok := v.(*ir.InstXor)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstXor, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-
-		// Vector instructions
-		case *ast.InstExtractElement:
-			inst, ok := v.(*ir.InstExtractElement)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstExtractElement, got %T", v))
-			}
-			x := m.irValue(oldInst.X)
-			t, ok := x.Type().(*types.VectorType)
-			if !ok {
-				panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", x.Type()))
-			}
-			inst.Typ = t.Elem
-			inst.X = x
-			inst.Index = m.irValue(oldInst.Index)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstInsertElement:
-			inst, ok := v.(*ir.InstInsertElement)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstInsertElement, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Elem = m.irValue(oldInst.Elem)
-			inst.Index = m.irValue(oldInst.Index)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstShuffleVector:
-			inst, ok := v.(*ir.InstShuffleVector)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstShuffleVector, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Mask = m.irValue(oldInst.Mask)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-
-		// Aggregate instructions
-		case *ast.InstExtractValue:
-			inst, ok := v.(*ir.InstExtractValue)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstExtractValue, got %T", v))
-			}
-			x := m.irValue(oldInst.X)
-			typ := aggregateElemType(x.Type(), oldInst.Indices)
-			inst.Typ = typ
-			inst.X = x
-			inst.Indices = oldInst.Indices
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstInsertValue:
-			inst, ok := v.(*ir.InstInsertValue)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstInsertValue, got %T", v))
-			}
-			inst.X = m.irValue(oldInst.X)
-			inst.Elem = m.irValue(oldInst.Elem)
-			inst.Indices = oldInst.Indices
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-
+		switch old := old.(type) {
 		// Memory instructions
-		case *ast.InstAlloca:
-			inst, ok := v.(*ir.InstAlloca)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAlloca, got %T", v))
-			}
-			elem := m.irType(oldInst.Elem)
-			typ := types.NewPointer(elem)
-			inst.Typ = typ
-			inst.Elem = elem
-			if oldInst.NElems != nil {
-				inst.NElems = m.irValue(oldInst.NElems)
-			}
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstLoad:
-			inst, ok := v.(*ir.InstLoad)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstLoad, got %T", v))
-			}
-			src := m.irValue(oldInst.Src)
-			srcType, ok := src.Type().(*types.PointerType)
-			if !ok {
-				panic(fmt.Errorf("invalid source type; expected *types.PointerType, got %T", src.Type()))
-			}
-			typ := srcType.Elem
-			if got, want := typ, m.irType(oldInst.Elem); !got.Equal(want) {
-				m.errs = append(m.errs, errors.Errorf("source element type mismatch; expected `%v`, got `%v`", want, got))
-			}
-			inst.Typ = typ
-			inst.Src = src
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstStore:
 			inst, ok := v.(*ir.InstStore)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstStore, got %T", v))
 			}
-			inst.Src = m.irValue(oldInst.Src)
-			inst.Dst = m.irValue(oldInst.Dst)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstGetElementPtr:
-			inst, ok := v.(*ir.InstGetElementPtr)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstGetElementPtr, got %T", v))
-			}
-			src := m.irValue(oldInst.Src)
-			srcType, ok := src.Type().(*types.PointerType)
-			if !ok {
-				m.errs = append(m.errs, errors.Errorf("invalid source type; expected *types.PointerType, got %T", src.Type()))
-			}
-			elem := srcType.Elem
-			if got, want := elem, m.irType(oldInst.Elem); !got.Equal(want) {
-				m.errs = append(m.errs, errors.Errorf("source element type mismatch; expected `%v`, got `%v`", want, got))
-			}
-			var indices []value.Value
-			for _, oldIndex := range oldInst.Indices {
-				index := m.irValue(oldIndex)
-				indices = append(indices, index)
-			}
-			e := elem
-			for i, index := range indices {
-				if i == 0 {
-					// Ignore checking the 0th index as it simply follows the pointer of
-					// src.
-					//
-					// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
-					continue
-				}
-				switch t := e.(type) {
-				case *types.PointerType:
-					// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
-					panic("unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep")
-				case *types.ArrayType:
-					e = t.Elem
-				case *types.StructType:
-					idx, ok := index.(*constant.Int)
-					if !ok {
-						panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
-					}
-					e = t.Fields[idx.Int64()]
-				default:
-					panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
-				}
-			}
-			typ := types.NewPointer(e)
-			inst.Typ = typ
-			inst.Elem = elem
-			inst.Src = src
-			inst.Indices = indices
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-
-		// Conversion instructions
-		case *ast.InstTrunc:
-			inst, ok := v.(*ir.InstTrunc)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstTrunc, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstZExt:
-			inst, ok := v.(*ir.InstZExt)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstZExt, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstSExt:
-			inst, ok := v.(*ir.InstSExt)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSExt, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFPTrunc:
-			inst, ok := v.(*ir.InstFPTrunc)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPTrunc, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFPExt:
-			inst, ok := v.(*ir.InstFPExt)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPExt, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFPToUI:
-			inst, ok := v.(*ir.InstFPToUI)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPToUI, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFPToSI:
-			inst, ok := v.(*ir.InstFPToSI)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFPToSI, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstUIToFP:
-			inst, ok := v.(*ir.InstUIToFP)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstUIToFP, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstSIToFP:
-			inst, ok := v.(*ir.InstSIToFP)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSIToFP, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstPtrToInt:
-			inst, ok := v.(*ir.InstPtrToInt)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstPtrToInt, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstIntToPtr:
-			inst, ok := v.(*ir.InstIntToPtr)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstIntToPtr, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstBitCast:
-			inst, ok := v.(*ir.InstBitCast)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstBitCast, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstAddrSpaceCast:
-			inst, ok := v.(*ir.InstAddrSpaceCast)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstAddrSpaceCast, got %T", v))
-			}
-			inst.From = m.irValue(oldInst.From)
-			inst.To = m.irType(oldInst.To)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
+			inst.Src = m.irValue(old.Src)
+			inst.Dst = m.irValue(old.Dst)
+			inst.Metadata = m.irMetadata(old.Metadata)
 
 		// Other instructions
-		case *ast.InstICmp:
-			inst, ok := v.(*ir.InstICmp)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstICmp, got %T", v))
-			}
-			pred := irIntPred(oldInst.Pred)
-			x := m.irValue(oldInst.X)
-			y := m.irValue(oldInst.Y)
-			var typ types.Type = types.I1
-			if t, ok := x.Type().(*types.VectorType); ok {
-				typ = types.NewVector(types.I1, t.Len)
-			}
-			inst.Typ = typ
-			inst.Pred = pred
-			inst.X = x
-			inst.Y = y
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstFCmp:
-			inst, ok := v.(*ir.InstFCmp)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstFCmp, got %T", v))
-			}
-			pred := irFloatPred(oldInst.Pred)
-			x := m.irValue(oldInst.X)
-			y := m.irValue(oldInst.Y)
-			var typ types.Type = types.I1
-			if t, ok := x.Type().(*types.VectorType); ok {
-				typ = types.NewVector(types.I1, t.Len)
-			}
-			inst.Typ = typ
-			inst.Pred = pred
-			inst.X = x
-			inst.Y = y
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstPhi:
-			inst, ok := v.(*ir.InstPhi)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstPhi, got %T", v))
-			}
-			inst.Typ = m.irType(oldInst.Type)
-			for _, oldInc := range oldInst.Incs {
-				x := m.irValue(oldInc.X)
-				v := m.getLocal(oldInc.Pred.GetName())
-				pred, ok := v.(*ir.BasicBlock)
-				if !ok {
-					panic(fmt.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v))
-				}
-				inc := &ir.Incoming{
-					X:    x,
-					Pred: pred,
-				}
-				inst.Incs = append(inst.Incs, inc)
-			}
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-		case *ast.InstSelect:
-			inst, ok := v.(*ir.InstSelect)
-			if !ok {
-				panic(fmt.Errorf("invalid instruction type; expected *ir.InstSelect, got %T", v))
-			}
-			inst.Cond = m.irValue(oldInst.Cond)
-			inst.X = m.irValue(oldInst.X)
-			inst.Y = m.irValue(oldInst.Y)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
 		case *ast.InstCall:
 			inst, ok := v.(*ir.InstCall)
 			if !ok {
 				panic(fmt.Errorf("invalid instruction type; expected *ir.InstCall, got %T", v))
 			}
-			callee := m.irValue(oldInst.Callee)
-			typ, ok := callee.Type().(*types.PointerType)
-			if !ok {
-				panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+			// Handle calls to void functions.
+			if _, ok := old.Type.(*ast.VoidType); ok {
+				// TODO: Call m.instCall to reuse code.
+				callee := m.irValue(old.Callee)
+				typ, ok := callee.Type().(*types.PointerType)
+				if !ok {
+					panic(fmt.Errorf("invalid callee type, expected *types.PointerType, got %T", callee.Type()))
+				}
+				sig, ok := typ.Elem.(*types.FuncType)
+				if !ok {
+					panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
+				}
+				inst.Callee = callee
+				inst.Sig = sig
+				// TODO: Validate old.Type against inst.Sig.
+				for _, oldArg := range old.Args {
+					arg := m.irValue(oldArg)
+					inst.Args = append(inst.Args, arg)
+				}
+				inst.CallConv = ir.CallConv(old.CallConv)
+				inst.Metadata = m.irMetadata(old.Metadata)
 			}
-			sig, ok := typ.Elem.(*types.FuncType)
-			if !ok {
-				panic(fmt.Errorf("invalid callee signature type, expected *types.FuncType, got %T", typ.Elem))
-			}
-			inst.Callee = callee
-			inst.Sig = sig
-			// TODO: Validate oldInst.Type against inst.Sig.
-			for _, oldArg := range oldInst.Args {
-				arg := m.irValue(oldArg)
-				inst.Args = append(inst.Args, arg)
-			}
-			inst.CallConv = ir.CallConv(oldInst.CallConv)
-			inst.Metadata = m.irMetadata(oldInst.Metadata)
-
-		default:
-			panic(fmt.Errorf("support for instruction %T not yet implemented", oldInst))
 		}
 	}
 
@@ -1254,14 +833,115 @@ func (m *Module) basicBlock(oldBlock *ast.BasicBlock, block *ir.BasicBlock) {
 
 // === [ Instructions ] ========================================================
 
-// --- [ Binary instructions ] -------------------------------------------------
+// resolveInst resolves the given local value, by recursively resolving its
+// operands.
+func (m *Module) resolveInst(old ast.NamedValue, resolved, unresolved map[ast.NamedValue]value.Named) bool {
+	switch old := old.(type) {
+	// Binary instructions
+	case *ast.InstAdd:
+		return m.instAdd(old, resolved, unresolved)
+	case *ast.InstFAdd:
+		return m.instFAdd(old, resolved, unresolved)
+	case *ast.InstSub:
+		return m.instSub(old, resolved, unresolved)
+	case *ast.InstFSub:
+		return m.instFSub(old, resolved, unresolved)
+	case *ast.InstMul:
+		return m.instMul(old, resolved, unresolved)
+	case *ast.InstFMul:
+		return m.instFMul(old, resolved, unresolved)
+	case *ast.InstUDiv:
+		return m.instUDiv(old, resolved, unresolved)
+	case *ast.InstSDiv:
+		return m.instSDiv(old, resolved, unresolved)
+	case *ast.InstFDiv:
+		return m.instFDiv(old, resolved, unresolved)
+	case *ast.InstURem:
+		return m.instURem(old, resolved, unresolved)
+	case *ast.InstSRem:
+		return m.instSRem(old, resolved, unresolved)
+	case *ast.InstFRem:
+		return m.instFRem(old, resolved, unresolved)
 
-// --- [ Bitwise instructions ] ------------------------------------------------
+	// Bitwise instructions
+	case *ast.InstShl:
+		return m.instShl(old, resolved, unresolved)
+	case *ast.InstLShr:
+		return m.instLShr(old, resolved, unresolved)
+	case *ast.InstAShr:
+		return m.instAShr(old, resolved, unresolved)
+	case *ast.InstAnd:
+		return m.instAnd(old, resolved, unresolved)
+	case *ast.InstOr:
+		return m.instOr(old, resolved, unresolved)
+	case *ast.InstXor:
+		return m.instXor(old, resolved, unresolved)
 
-// --- [ Memory instructions ] -------------------------------------------------
+	// Vector instructions
+	case *ast.InstExtractElement:
+		return m.instExtractElement(old, resolved, unresolved)
+	case *ast.InstInsertElement:
+		return m.instInsertElement(old, resolved, unresolved)
+	case *ast.InstShuffleVector:
+		return m.instShuffleVector(old, resolved, unresolved)
 
-// --- [ Conversion instructions ] ---------------------------------------------
+	// Aggregate instructions
+	case *ast.InstExtractValue:
+		return m.instExtractValue(old, resolved, unresolved)
+	case *ast.InstInsertValue:
+		return m.instInsertValue(old, resolved, unresolved)
 
-// --- [ Other instructions ] --------------------------------------------------
+	// Memory instructions
+	case *ast.InstAlloca:
+		return m.instAlloca(old, resolved, unresolved)
+	case *ast.InstLoad:
+		return m.instLoad(old, resolved, unresolved)
+	case *ast.InstGetElementPtr:
+		return m.instGetElementPtr(old, resolved, unresolved)
+
+	// Conversion instructions
+	case *ast.InstTrunc:
+		return m.instTrunc(old, resolved, unresolved)
+	case *ast.InstZExt:
+		return m.instZExt(old, resolved, unresolved)
+	case *ast.InstSExt:
+		return m.instSExt(old, resolved, unresolved)
+	case *ast.InstFPTrunc:
+		return m.instFPTrunc(old, resolved, unresolved)
+	case *ast.InstFPExt:
+		return m.instFPExt(old, resolved, unresolved)
+	case *ast.InstFPToUI:
+		return m.instFPToUI(old, resolved, unresolved)
+	case *ast.InstFPToSI:
+		return m.instFPToSI(old, resolved, unresolved)
+	case *ast.InstUIToFP:
+		return m.instUIToFP(old, resolved, unresolved)
+	case *ast.InstSIToFP:
+		return m.instSIToFP(old, resolved, unresolved)
+	case *ast.InstPtrToInt:
+		return m.instPtrToInt(old, resolved, unresolved)
+	case *ast.InstIntToPtr:
+		return m.instIntToPtr(old, resolved, unresolved)
+	case *ast.InstBitCast:
+		return m.instBitCast(old, resolved, unresolved)
+	case *ast.InstAddrSpaceCast:
+		return m.instAddrSpaceCast(old, resolved, unresolved)
+
+	// Other instructions
+	case *ast.InstICmp:
+		return m.instICmp(old, resolved, unresolved)
+	case *ast.InstFCmp:
+		return m.instFCmp(old, resolved, unresolved)
+	case *ast.InstPhi:
+		return m.instPhi(old, resolved, unresolved)
+	case *ast.InstSelect:
+		return m.instSelect(old, resolved, unresolved)
+	case *ast.InstCall:
+		return m.instCall(old, resolved, unresolved)
+
+	default:
+		panic(fmt.Errorf("support for instruction %T not yet implemented", old))
+	}
+}
 
 // === [ Terminators ] =========================================================

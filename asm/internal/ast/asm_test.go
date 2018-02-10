@@ -47,7 +47,7 @@ func TestRoundTrip(t *testing.T) {
 		// Pseudo-random number generator.
 		{path: "../../testdata/rand.ll"},
 		// Fixed bugs.
-		//{path: "../../testdata/fixedbugs/issue_11.ll"},
+		{path: "../../testdata/fixedbugs/issue_27.ll"},
 	}
 	dmp := diffmatchpatch.New()
 	for _, g := range golden {

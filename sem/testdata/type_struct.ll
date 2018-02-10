@@ -8,7 +8,7 @@
 @e = external global {i32*}      ; valid
 @f = external global {<5 x i32>} ; valid
 @g = external global {label}     ; error: invalid struct field type; expected single value or aggregate type, got *types.LabelType
-@h = external global {metadata}  ; error: invalid struct field type; expected single value or aggregate type, got *types.MetadataType
+;@h = external global {metadata}  ; error: invalid struct field type; expected single value or aggregate type, got *types.MetadataType
 @i = external global {[5 x i32]} ; valid
 @j = external global {{i32, i8}} ; valid
 @k = external global {%t}        ; valid
