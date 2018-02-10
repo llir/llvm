@@ -157,7 +157,7 @@ _sci_lit
 //   HexHalfConstant   0xH[0-9A-Fa-f]+    // 4 hex digits
 
 _float_hex_lit
-	:  '0' 'x'      _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
+	:  '0' 'x'      _hex_digit { _hex_digit }
 	|  '0' 'x' 'K'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
 	|  '0' 'x' 'L'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit
 	|  '0' 'x' 'M'  _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit _hex_digit

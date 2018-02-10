@@ -7,6 +7,7 @@ package constant
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 	"strings"
 
@@ -82,12 +83,18 @@ func NewFloatFromString(s string, typ types.Type) *Float {
 		return c
 	case strings.HasPrefix(s, "0x"):
 		//   HexFPConstant     0x[0-9A-Fa-f]+     // 16 hex digits
-
-		// TODO: Implement support for the 0x floating-point representation format.
-		c.X = &big.Float{}
-		c.X.SetString("0.0") // TODO: Remove placehold zero value.
-		//panic(fmt.Errorf("support for floating-point constant 0x representation not yet implemented; unable to parse floating-point constant %q", s))
+		// TODO: Validate implementation.
 		s = s[len("0x"):]
+		var bits uint64
+		for i := 0; i < len(s); i++ {
+			if i != 0 {
+				bits <<= 8
+			}
+			b := uint64(s[len(s)-i-1])
+			bits |= b
+		}
+		x := math.Float64frombits(bits)
+		c.X = big.NewFloat(x)
 		return c
 	}
 
