@@ -516,6 +516,8 @@ func (m *Module) instGetElementPtr(old *ast.InstGetElementPtr, resolved, unresol
 		case *types.PointerType:
 			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
 			panic("unable to index into element of pointer type; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep")
+		case *types.VectorType:
+			e = t.Elem
 		case *types.ArrayType:
 			e = t.Elem
 		case *types.StructType:
