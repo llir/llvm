@@ -276,11 +276,15 @@ Hand-written lexer and preliminary work on a recursive descent parser for LLVM I
 
 ### Version 0.3 (to be released)
 
-Primary focus of version 0.3: *data flow analysis*.
+Primary focus of version 0.3: *grammar covering the entire LLVM IR language*.
+
+The grammar for LLVM IR is now complete and covers the entire LLVM IR language, based on the source code of the official LLVM project as of 2018-02-19 (rev [llvm-mirror/llvm@db070bb](https://github.com/llvm-mirror/llvm/commit/db070bbdacd303ae7da129f59beaf35024d94c53)).
+
+### Version 0.4 (to be released)
+
+Primary focus of version 0.4: *data flow analysis*.
 
 Introduce API for use-def chains.
-
-See [v0.3_draft.md](v0.3_draft.md) for extended release notes.
 
 ## License
 
