@@ -48,6 +48,8 @@ func NewInsertElement(x, elem, index value.Value) *InsertElement {
 
 // ShuffleVector is an LLVM IR shufflevector instruction.
 type ShuffleVector struct {
+	// Name of local variable associated with the result.
+	LocalName string
 	// Vectors.
 	X, Y value.Value
 	// Shuffle mask.
