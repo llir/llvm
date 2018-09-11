@@ -22,6 +22,22 @@ func NewTrunc(from Constant, to types.Type) *Trunc {
 	return &Trunc{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *Trunc) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *Trunc) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *Trunc) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ZExt is an LLVM IR zext expression.
@@ -36,6 +52,22 @@ type ZExt struct {
 // target type.
 func NewZExt(from Constant, to types.Type) *ZExt {
 	return &ZExt{From: from, To: to}
+}
+
+// Type returns the type of the constant expression.
+func (e *ZExt) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *ZExt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *ZExt) Simplify() Constant {
+	panic("not yet implemented")
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,6 +86,22 @@ func NewSExt(from Constant, to types.Type) *SExt {
 	return &SExt{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *SExt) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *SExt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *SExt) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // FPTrunc is an LLVM IR fptrunc expression.
@@ -68,6 +116,22 @@ type FPTrunc struct {
 // and target type.
 func NewFPTrunc(from Constant, to types.Type) *FPTrunc {
 	return &FPTrunc{From: from, To: to}
+}
+
+// Type returns the type of the constant expression.
+func (e *FPTrunc) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *FPTrunc) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *FPTrunc) Simplify() Constant {
+	panic("not yet implemented")
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,6 +150,22 @@ func NewFPExt(from Constant, to types.Type) *FPExt {
 	return &FPExt{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *FPExt) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *FPExt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *FPExt) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // FPToUI is an LLVM IR fptoui expression.
@@ -100,6 +180,22 @@ type FPToUI struct {
 // target type.
 func NewFPToUI(from Constant, to types.Type) *FPToUI {
 	return &FPToUI{From: from, To: to}
+}
+
+// Type returns the type of the constant expression.
+func (e *FPToUI) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *FPToUI) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *FPToUI) Simplify() Constant {
+	panic("not yet implemented")
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,6 +214,22 @@ func NewFPToSI(from Constant, to types.Type) *FPToSI {
 	return &FPToSI{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *FPToSI) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *FPToSI) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *FPToSI) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // UIToFP is an LLVM IR uitofp expression.
@@ -132,6 +244,22 @@ type UIToFP struct {
 // target type.
 func NewUIToFP(from Constant, to types.Type) *UIToFP {
 	return &UIToFP{From: from, To: to}
+}
+
+// Type returns the type of the constant expression.
+func (e *UIToFP) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *UIToFP) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *UIToFP) Simplify() Constant {
+	panic("not yet implemented")
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,6 +278,22 @@ func NewSIToFP(from Constant, to types.Type) *SIToFP {
 	return &SIToFP{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *SIToFP) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *SIToFP) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *SIToFP) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // PtrToInt is an LLVM IR ptrtoint expression.
@@ -164,6 +308,22 @@ type PtrToInt struct {
 // and target type.
 func NewPtrToInt(from Constant, to types.Type) *PtrToInt {
 	return &PtrToInt{From: from, To: to}
+}
+
+// Type returns the type of the constant expression.
+func (e *PtrToInt) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *PtrToInt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *PtrToInt) Simplify() Constant {
+	panic("not yet implemented")
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,6 +342,22 @@ func NewIntToPtr(from Constant, to types.Type) *IntToPtr {
 	return &IntToPtr{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *IntToPtr) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *IntToPtr) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *IntToPtr) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // BitCast is an LLVM IR bitcast expression.
@@ -198,6 +374,22 @@ func NewBitCast(from Constant, to types.Type) *BitCast {
 	return &BitCast{From: from, To: to}
 }
 
+// Type returns the type of the constant expression.
+func (e *BitCast) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *BitCast) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *BitCast) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // AddrSpaceCast is an LLVM IR addrspacecast expression.
@@ -212,4 +404,20 @@ type AddrSpaceCast struct {
 // source value and target type.
 func NewAddrSpaceCast(from Constant, to types.Type) *AddrSpaceCast {
 	return &AddrSpaceCast{From: from, To: to}
+}
+
+// Type returns the type of the constant expression.
+func (e *AddrSpaceCast) Type() types.Type {
+	return e.To
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *AddrSpaceCast) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *AddrSpaceCast) Simplify() Constant {
+	panic("not yet implemented")
 }
