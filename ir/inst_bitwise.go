@@ -11,7 +11,7 @@ type Shl struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewShl returns a new shl instruction based on the given operands.
@@ -26,7 +26,7 @@ type LShr struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
@@ -41,7 +41,7 @@ type AShr struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
@@ -56,7 +56,7 @@ type And struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewAnd returns a new and instruction based on the given operands.
@@ -71,7 +71,7 @@ type Or struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewOr returns a new or instruction based on the given operands.
@@ -86,7 +86,7 @@ type Xor struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewXor returns a new xor instruction based on the given operands.
