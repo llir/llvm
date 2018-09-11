@@ -6,8 +6,8 @@ import "github.com/llir/l/ir/value"
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ExtractValue is an LLVM IR extractvalue instruction.
-type ExtractValue struct {
+// InstExtractValue is an LLVM IR extractvalue instruction.
+type InstExtractValue struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Aggregate value.
@@ -18,14 +18,14 @@ type ExtractValue struct {
 
 // NewExtractValue returns a new extractvalue instruction based on the given
 // aggregate value and indicies.
-func NewExtractValue(x value.Value, indices ...int64) *ExtractValue {
-	return &ExtractValue{X: x, Indices: indices}
+func NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
+	return &InstExtractValue{X: x, Indices: indices}
 }
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// InsertValue is an LLVM IR insertvalue instruction.
-type InsertValue struct {
+// InstInsertValue is an LLVM IR insertvalue instruction.
+type InstInsertValue struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Aggregate value.
@@ -38,6 +38,6 @@ type InsertValue struct {
 
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.
-func NewInsertValue(x, elem value.Value, indices ...int64) *InsertValue {
-	return &InsertValue{X: x, Elem: elem, Indices: indices}
+func NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
+	return &InstInsertValue{X: x, Elem: elem, Indices: indices}
 }

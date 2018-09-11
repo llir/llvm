@@ -9,8 +9,8 @@ import (
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Trunc is an LLVM IR trunc instruction.
-type Trunc struct {
+// InstTrunc is an LLVM IR trunc instruction.
+type InstTrunc struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -21,14 +21,14 @@ type Trunc struct {
 
 // NewTrunc returns a new trunc instruction based on the given source value and
 // target type.
-func NewTrunc(from value.Value, to types.Type) *Trunc {
-	return &Trunc{From: from, To: to}
+func NewTrunc(from value.Value, to types.Type) *InstTrunc {
+	return &InstTrunc{From: from, To: to}
 }
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ZExt is an LLVM IR zext instruction.
-type ZExt struct {
+// InstZExt is an LLVM IR zext instruction.
+type InstZExt struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -39,14 +39,14 @@ type ZExt struct {
 
 // NewZExt returns a new zext instruction based on the given source value and
 // target type.
-func NewZExt(from value.Value, to types.Type) *ZExt {
-	return &ZExt{From: from, To: to}
+func NewZExt(from value.Value, to types.Type) *InstZExt {
+	return &InstZExt{From: from, To: to}
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SExt is an LLVM IR sext instruction.
-type SExt struct {
+// InstSExt is an LLVM IR sext instruction.
+type InstSExt struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -57,14 +57,14 @@ type SExt struct {
 
 // NewSExt returns a new sext instruction based on the given source value and
 // target type.
-func NewSExt(from value.Value, to types.Type) *SExt {
-	return &SExt{From: from, To: to}
+func NewSExt(from value.Value, to types.Type) *InstSExt {
+	return &InstSExt{From: from, To: to}
 }
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPTrunc is an LLVM IR fptrunc instruction.
-type FPTrunc struct {
+// InstFPTrunc is an LLVM IR fptrunc instruction.
+type InstFPTrunc struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -75,14 +75,14 @@ type FPTrunc struct {
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value
 // and target type.
-func NewFPTrunc(from value.Value, to types.Type) *FPTrunc {
-	return &FPTrunc{From: from, To: to}
+func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
+	return &InstFPTrunc{From: from, To: to}
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPExt is an LLVM IR fpext instruction.
-type FPExt struct {
+// InstFPExt is an LLVM IR fpext instruction.
+type InstFPExt struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -93,14 +93,14 @@ type FPExt struct {
 
 // NewFPExt returns a new fpext instruction based on the given source value and
 // target type.
-func NewFPExt(from value.Value, to types.Type) *FPExt {
-	return &FPExt{From: from, To: to}
+func NewFPExt(from value.Value, to types.Type) *InstFPExt {
+	return &InstFPExt{From: from, To: to}
 }
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPToUI is an LLVM IR fptoui instruction.
-type FPToUI struct {
+// InstFPToUI is an LLVM IR fptoui instruction.
+type InstFPToUI struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -111,14 +111,14 @@ type FPToUI struct {
 
 // NewFPToUI returns a new fptoui instruction based on the given source value
 // and target type.
-func NewFPToUI(from value.Value, to types.Type) *FPToUI {
-	return &FPToUI{From: from, To: to}
+func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
+	return &InstFPToUI{From: from, To: to}
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPToSI is an LLVM IR fptosi instruction.
-type FPToSI struct {
+// InstFPToSI is an LLVM IR fptosi instruction.
+type InstFPToSI struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -129,14 +129,14 @@ type FPToSI struct {
 
 // NewFPToSI returns a new fptosi instruction based on the given source value
 // and target type.
-func NewFPToSI(from value.Value, to types.Type) *FPToSI {
-	return &FPToSI{From: from, To: to}
+func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
+	return &InstFPToSI{From: from, To: to}
 }
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// UIToFP is an LLVM IR uitofp instruction.
-type UIToFP struct {
+// InstUIToFP is an LLVM IR uitofp instruction.
+type InstUIToFP struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -147,14 +147,14 @@ type UIToFP struct {
 
 // NewUIToFP returns a new uitofp instruction based on the given source value
 // and target type.
-func NewUIToFP(from value.Value, to types.Type) *UIToFP {
-	return &UIToFP{From: from, To: to}
+func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
+	return &InstUIToFP{From: from, To: to}
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SIToFP is an LLVM IR sitofp instruction.
-type SIToFP struct {
+// InstSIToFP is an LLVM IR sitofp instruction.
+type InstSIToFP struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -165,14 +165,14 @@ type SIToFP struct {
 
 // NewSIToFP returns a new sitofp instruction based on the given source value
 // and target type.
-func NewSIToFP(from value.Value, to types.Type) *SIToFP {
-	return &SIToFP{From: from, To: to}
+func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
+	return &InstSIToFP{From: from, To: to}
 }
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// PtrToInt is an LLVM IR ptrtoint instruction.
-type PtrToInt struct {
+// InstPtrToInt is an LLVM IR ptrtoint instruction.
+type InstPtrToInt struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -183,14 +183,14 @@ type PtrToInt struct {
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
 // value and target type.
-func NewPtrToInt(from value.Value, to types.Type) *PtrToInt {
-	return &PtrToInt{From: from, To: to}
+func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
+	return &InstPtrToInt{From: from, To: to}
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// IntToPtr is an LLVM IR inttoptr instruction.
-type IntToPtr struct {
+// InstIntToPtr is an LLVM IR inttoptr instruction.
+type InstIntToPtr struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -201,14 +201,14 @@ type IntToPtr struct {
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source
 // value and target type.
-func NewIntToPtr(from value.Value, to types.Type) *IntToPtr {
-	return &IntToPtr{From: from, To: to}
+func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
+	return &InstIntToPtr{From: from, To: to}
 }
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// BitCast is an LLVM IR bitcast instruction.
-type BitCast struct {
+// InstBitCast is an LLVM IR bitcast instruction.
+type InstBitCast struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -219,14 +219,14 @@ type BitCast struct {
 
 // NewBitCast returns a new bitcast instruction based on the given source value
 // and target type.
-func NewBitCast(from value.Value, to types.Type) *BitCast {
-	return &BitCast{From: from, To: to}
+func NewBitCast(from value.Value, to types.Type) *InstBitCast {
+	return &InstBitCast{From: from, To: to}
 }
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// AddrSpaceCast is an LLVM IR addrspacecast instruction.
-type AddrSpaceCast struct {
+// InstAddrSpaceCast is an LLVM IR addrspacecast instruction.
+type InstAddrSpaceCast struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Value before conversion.
@@ -237,6 +237,6 @@ type AddrSpaceCast struct {
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given
 // source value and target type.
-func NewAddrSpaceCast(from value.Value, to types.Type) *AddrSpaceCast {
-	return &AddrSpaceCast{From: from, To: to}
+func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
+	return &InstAddrSpaceCast{From: from, To: to}
 }

@@ -7,67 +7,67 @@ type Instruction interface {
 }
 
 // Binary instructions.
-func (*Add) isInstruction()  {}
-func (*FAdd) isInstruction() {}
-func (*Sub) isInstruction()  {}
-func (*FSub) isInstruction() {}
-func (*Mul) isInstruction()  {}
-func (*FMul) isInstruction() {}
-func (*UDiv) isInstruction() {}
-func (*SDiv) isInstruction() {}
-func (*FDiv) isInstruction() {}
-func (*URem) isInstruction() {}
-func (*SRem) isInstruction() {}
-func (*FRem) isInstruction() {}
+func (*InstAdd) isInstruction()  {}
+func (*InstFAdd) isInstruction() {}
+func (*InstSub) isInstruction()  {}
+func (*InstFSub) isInstruction() {}
+func (*InstMul) isInstruction()  {}
+func (*InstFMul) isInstruction() {}
+func (*InstUDiv) isInstruction() {}
+func (*InstSDiv) isInstruction() {}
+func (*InstFDiv) isInstruction() {}
+func (*InstURem) isInstruction() {}
+func (*InstSRem) isInstruction() {}
+func (*InstFRem) isInstruction() {}
 
 // Bitwise instructions.
-func (*Shl) isInstruction()  {}
-func (*LShr) isInstruction() {}
-func (*AShr) isInstruction() {}
-func (*And) isInstruction()  {}
-func (*Or) isInstruction()   {}
-func (*Xor) isInstruction()  {}
+func (*InstShl) isInstruction()  {}
+func (*InstLShr) isInstruction() {}
+func (*InstAShr) isInstruction() {}
+func (*InstAnd) isInstruction()  {}
+func (*InstOr) isInstruction()   {}
+func (*InstXor) isInstruction()  {}
 
 // Vector instructions.
-func (*ExtractElement) isInstruction() {}
-func (*InsertElement) isInstruction()  {}
-func (*ShuffleVector) isInstruction()  {}
+func (*InstExtractElement) isInstruction() {}
+func (*InstInsertElement) isInstruction()  {}
+func (*InstShuffleVector) isInstruction()  {}
 
 // Aggregate instructions.
-func (*ExtractValue) isInstruction() {}
-func (*InsertValue) isInstruction()  {}
+func (*InstExtractValue) isInstruction() {}
+func (*InstInsertValue) isInstruction()  {}
 
 // Memory instructions.
-func (*Alloca) isInstruction()        {}
-func (*Load) isInstruction()          {}
-func (*Store) isInstruction()         {}
-func (*Fence) isInstruction()         {}
-func (*CmpXchg) isInstruction()       {}
-func (*AtomicRMW) isInstruction()     {}
-func (*GetElementPtr) isInstruction() {}
+func (*InstAlloca) isInstruction()        {}
+func (*InstLoad) isInstruction()          {}
+func (*InstStore) isInstruction()         {}
+func (*InstFence) isInstruction()         {}
+func (*InstCmpXchg) isInstruction()       {}
+func (*InstAtomicRMW) isInstruction()     {}
+func (*InstGetElementPtr) isInstruction() {}
 
 // Conversion instructions.
-func (*Trunc) isInstruction()         {}
-func (*ZExt) isInstruction()          {}
-func (*SExt) isInstruction()          {}
-func (*FPTrunc) isInstruction()       {}
-func (*FPExt) isInstruction()         {}
-func (*FPToUI) isInstruction()        {}
-func (*FPToSI) isInstruction()        {}
-func (*UIToFP) isInstruction()        {}
-func (*SIToFP) isInstruction()        {}
-func (*PtrToInt) isInstruction()      {}
-func (*IntToPtr) isInstruction()      {}
-func (*BitCast) isInstruction()       {}
-func (*AddrSpaceCast) isInstruction() {}
+func (*InstTrunc) isInstruction()         {}
+func (*InstZExt) isInstruction()          {}
+func (*InstSExt) isInstruction()          {}
+func (*InstFPTrunc) isInstruction()       {}
+func (*InstFPExt) isInstruction()         {}
+func (*InstFPToUI) isInstruction()        {}
+func (*InstFPToSI) isInstruction()        {}
+func (*InstUIToFP) isInstruction()        {}
+func (*InstSIToFP) isInstruction()        {}
+func (*InstPtrToInt) isInstruction()      {}
+func (*InstIntToPtr) isInstruction()      {}
+func (*InstBitCast) isInstruction()       {}
+func (*InstAddrSpaceCast) isInstruction() {}
 
 // Other instructions.
-func (*ICmp) isInstruction()       {}
-func (*FCmp) isInstruction()       {}
-func (*Phi) isInstruction()        {}
-func (*Select) isInstruction()     {}
-func (*Call) isInstruction()       {}
-func (*VAArg) isInstruction()      {}
-func (*LandingPad) isInstruction() {}
-func (*CatchPad) isInstruction()   {}
-func (*CleanupPad) isInstruction() {}
+func (*InstICmp) isInstruction()       {}
+func (*InstFCmp) isInstruction()       {}
+func (*InstPhi) isInstruction()        {}
+func (*InstSelect) isInstruction()     {}
+func (*InstCall) isInstruction()       {}
+func (*InstVAArg) isInstruction()      {}
+func (*InstLandingPad) isInstruction() {}
+func (*InstCatchPad) isInstruction()   {}
+func (*InstCleanupPad) isInstruction() {}

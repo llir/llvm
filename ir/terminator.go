@@ -14,47 +14,47 @@ type Terminator interface {
 
 // --- [ ret ] -----------------------------------------------------------------
 
-// Ret is an LLVM IR ret terminator.
-type Ret struct {
+// TermRet is an LLVM IR ret terminator.
+type TermRet struct {
 	// Return value; or nil if void return.
 	X value.Value
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
 // return value indicates a void return.
-func NewRet(x value.Value) *Ret {
-	return &Ret{X: x}
+func NewRet(x value.Value) *TermRet {
+	return &TermRet{X: x}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (*Ret) Succs() []*BasicBlock {
+func (*TermRet) Succs() []*BasicBlock {
 	// no successors.
 	return nil
 }
 
 // --- [ br ] ------------------------------------------------------------------
 
-// Br is an unconditional LLVM IR br terminator.
-type Br struct {
+// TermBr is an unconditional LLVM IR br terminator.
+type TermBr struct {
 	// Target basic block.
 	Target *BasicBlock
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
 // basic block.
-func NewBr(target *BasicBlock) *Br {
-	return &Br{Target: target}
+func NewBr(target *BasicBlock) *TermBr {
+	return &TermBr{Target: target}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *Br) Succs() []*BasicBlock {
+func (term *TermBr) Succs() []*BasicBlock {
 	return []*BasicBlock{term.Target}
 }
 
 // --- [ conditional br ] ------------------------------------------------------
 
-// CondBr is a conditional LLVM IR br terminator.
-type CondBr struct {
+// TermCondBr is a conditional LLVM IR br terminator.
+type TermCondBr struct {
 	// Branching condition.
 	Cond value.Value
 	// True condition target basic block.
@@ -65,35 +65,35 @@ type CondBr struct {
 
 // NewCondBr returns a new conditional br terminator based on the given
 // branching condition and conditional target basic blocks.
-func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *CondBr {
-	return &CondBr{Cond: cond, TargetTrue: targetTrue, TargetFalse: targetFalse}
+func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
+	return &TermCondBr{Cond: cond, TargetTrue: targetTrue, TargetFalse: targetFalse}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *CondBr) Succs() []*BasicBlock {
+func (term *TermCondBr) Succs() []*BasicBlock {
 	return []*BasicBlock{term.TargetTrue, term.TargetFalse}
 }
 
 // --- [ switch ] --------------------------------------------------------------
 
-// Switch is an LLVM IR switch terminator.
-type Switch struct {
+// TermSwitch is an LLVM IR switch terminator.
+type TermSwitch struct {
 	// Control variable.
 	X value.Value
 	// Default target basic block.
 	TargetDefault *BasicBlock
-	// Switch cases.
+	// TermSwitch cases.
 	Cases []*Case
 }
 
 // NewSwitch returns a new switch terminator based on the given control
 // variable, default target basic block and switch cases.
-func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *Switch {
-	return &Switch{X: x, TargetDefault: targetDefault, Cases: cases}
+func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
+	return &TermSwitch{X: x, TargetDefault: targetDefault, Cases: cases}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *Switch) Succs() []*BasicBlock {
+func (term *TermSwitch) Succs() []*BasicBlock {
 	succs := make([]*BasicBlock, 0, 1+len(term.Cases))
 	succs = append(succs, term.TargetDefault)
 	for _, c := range term.Cases {
@@ -118,8 +118,8 @@ func NewCase(x Constant, target *BasicBlock) *Case {
 
 // --- [ indirectbr ] ----------------------------------------------------------
 
-// IndirectBr is an LLVM IR indirectbr terminator.
-type IndirectBr struct {
+// TermIndirectBr is an LLVM IR indirectbr terminator.
+type TermIndirectBr struct {
 	// Target address.
 	Addr *BlockAddress
 	// Set of valid target basic blocks.
@@ -129,19 +129,19 @@ type IndirectBr struct {
 // NewIndirectBr returns a new indirectbr terminator based on the given target
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
-func NewIndirectBr(addr *BlockAddress, validTargets ...*BasicBlock) *IndirectBr {
-	return &IndirectBr{Addr: addr, ValidTargets: validTargets}
+func NewIndirectBr(addr *BlockAddress, validTargets ...*BasicBlock) *TermIndirectBr {
+	return &TermIndirectBr{Addr: addr, ValidTargets: validTargets}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *IndirectBr) Succs() []*BasicBlock {
+func (term *TermIndirectBr) Succs() []*BasicBlock {
 	return term.ValidTargets
 }
 
 // --- [ invoke ] --------------------------------------------------------------
 
-// Invoke is an LLVM IR invoke terminator.
-type Invoke struct {
+// TermInvoke is an LLVM IR invoke terminator.
+type TermInvoke struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Callee.
@@ -158,39 +158,39 @@ type Invoke struct {
 // NewInvoke returns a new invoke terminator based on the given callee, function
 // arguments and control flow return points for normal and exceptional
 // execution.
-func NewInvoke(callee value.Value, args []ll.Arg, normal, exception *BasicBlock) *Invoke {
-	return &Invoke{Callee: callee, Args: args, Normal: normal, Exception: exception}
+func NewInvoke(callee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
+	return &TermInvoke{Callee: callee, Args: args, Normal: normal, Exception: exception}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *Invoke) Succs() []*BasicBlock {
+func (term *TermInvoke) Succs() []*BasicBlock {
 	return []*BasicBlock{term.Normal, term.Exception}
 }
 
 // --- [ resume ] --------------------------------------------------------------
 
-// Resume is an LLVM IR resume terminator.
-type Resume struct {
+// TermResume is an LLVM IR resume terminator.
+type TermResume struct {
 	// Exception argument to propagate.
 	X value.Value
 }
 
 // NewResume returns a new resume terminator based on the given exception
 // argument to propagate.
-func NewResume(x value.Value) *Resume {
-	return &Resume{X: x}
+func NewResume(x value.Value) *TermResume {
+	return &TermResume{X: x}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *Resume) Succs() []*BasicBlock {
+func (term *TermResume) Succs() []*BasicBlock {
 	// no successors.
 	return nil
 }
 
 // --- [ catchswitch ] ---------------------------------------------------------
 
-// CatchSwitch is an LLVM IR catchswitch terminator.
-type CatchSwitch struct {
+// TermCatchSwitch is an LLVM IR catchswitch terminator.
+type TermCatchSwitch struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
@@ -203,12 +203,12 @@ type CatchSwitch struct {
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
 // exception scope, exception handlers and unwind target.
-func NewCatchSwitch(scope ll.ExceptionScope, handlers []*BasicBlock, unwindTarget ll.UnwindTarget) *CatchSwitch {
-	return &CatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
+func NewCatchSwitch(scope ll.ExceptionScope, handlers []*BasicBlock, unwindTarget ll.UnwindTarget) *TermCatchSwitch {
+	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *CatchSwitch) Succs() []*BasicBlock {
+func (term *TermCatchSwitch) Succs() []*BasicBlock {
 	if unwindTarget, ok := term.UnwindTarget.(*BasicBlock); ok {
 		return append(term.Handlers, unwindTarget)
 	}
@@ -217,43 +217,43 @@ func (term *CatchSwitch) Succs() []*BasicBlock {
 
 // --- [ catchret ] ------------------------------------------------------------
 
-// CatchRet is an LLVM IR catchret terminator.
-type CatchRet struct {
+// TermCatchRet is an LLVM IR catchret terminator.
+type TermCatchRet struct {
 	// Exit catchpad.
-	From *CatchPad
+	From *InstCatchPad
 	// Target basic block to transfer control flow to.
 	To *BasicBlock
 }
 
 // NewCatchRet returns a new catchret terminator based on the given exit
 // catchpad and target basic block.
-func NewCatchRet(from *CatchPad, to *BasicBlock) *CatchRet {
-	return &CatchRet{From: from, To: to}
+func NewCatchRet(from *InstCatchPad, to *BasicBlock) *TermCatchRet {
+	return &TermCatchRet{From: from, To: to}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *CatchRet) Succs() []*BasicBlock {
+func (term *TermCatchRet) Succs() []*BasicBlock {
 	return []*BasicBlock{term.To}
 }
 
 // --- [ cleanupret ] ----------------------------------------------------------
 
-// CleanupRet is an LLVM IR cleanupret terminator.
-type CleanupRet struct {
+// TermCleanupRet is an LLVM IR cleanupret terminator.
+type TermCleanupRet struct {
 	// Exit cleanuppad.
-	From *CleanupPad
+	From *InstCleanupPad
 	// Unwind target; basic block or caller function.
 	To ll.UnwindTarget
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
 // cleanuppad and unwind target.
-func NewCleanupRet(from *CleanupPad, to ll.UnwindTarget) *CleanupRet {
-	return &CleanupRet{From: from, To: to}
+func NewCleanupRet(from *InstCleanupPad, to ll.UnwindTarget) *TermCleanupRet {
+	return &TermCleanupRet{From: from, To: to}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *CleanupRet) Succs() []*BasicBlock {
+func (term *TermCleanupRet) Succs() []*BasicBlock {
 	if unwindTarget, ok := term.To.(*BasicBlock); ok {
 		return []*BasicBlock{unwindTarget}
 	}
@@ -262,17 +262,17 @@ func (term *CleanupRet) Succs() []*BasicBlock {
 
 // --- [ unreachable ] ---------------------------------------------------------
 
-// Unreachable is an LLVM IR unreachable terminator.
-type Unreachable struct {
+// TermUnreachable is an LLVM IR unreachable terminator.
+type TermUnreachable struct {
 }
 
 // NewUnreachable returns a new unreachable terminator.
-func NewUnreachable() *Unreachable {
-	return &Unreachable{}
+func NewUnreachable() *TermUnreachable {
+	return &TermUnreachable{}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *Unreachable) Succs() []*BasicBlock {
+func (term *TermUnreachable) Succs() []*BasicBlock {
 	// no successors.
 	return nil
 }

@@ -10,8 +10,8 @@ import (
 
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ICmp is an LLVM IR icmp instruction.
-type ICmp struct {
+// InstICmp is an LLVM IR icmp instruction.
+type InstICmp struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Integer comparison condition.
@@ -22,14 +22,14 @@ type ICmp struct {
 
 // NewICmp returns a new icmp instruction based on the given integer comparison
 // condition and integer scalar or vector operands.
-func NewICmp(cond ll.ICond, x, y value.Value) *ICmp {
-	return &ICmp{Cond: cond, X: x, Y: y}
+func NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
+	return &InstICmp{Cond: cond, X: x, Y: y}
 }
 
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FCmp is an LLVM IR fcmp instruction.
-type FCmp struct {
+// InstFCmp is an LLVM IR fcmp instruction.
+type InstFCmp struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Floating-point comparison condition.
@@ -40,14 +40,14 @@ type FCmp struct {
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
 // comparison condition and floating-point scalar or vector operands.
-func NewFCmp(cond ll.FCond, x, y value.Value) *FCmp {
-	return &FCmp{Cond: cond, X: x, Y: y}
+func NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
+	return &InstFCmp{Cond: cond, X: x, Y: y}
 }
 
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Phi is an LLVM IR phi instruction.
-type Phi struct {
+// InstPhi is an LLVM IR phi instruction.
+type InstPhi struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Incoming values.
@@ -55,8 +55,8 @@ type Phi struct {
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
-func NewPhi(incs ...*Incoming) *Phi {
-	return &Phi{Incs: incs}
+func NewPhi(incs ...*Incoming) *InstPhi {
+	return &InstPhi{Incs: incs}
 }
 
 // Incoming is an incoming value of a phi instruction.
@@ -75,8 +75,8 @@ func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Select is an LLVM IR select instruction.
-type Select struct {
+// InstSelect is an LLVM IR select instruction.
+type InstSelect struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Selection condition.
@@ -87,14 +87,14 @@ type Select struct {
 
 // NewSelect returns a new select instruction based on the given selection
 // condition and operands.
-func NewSelect(cond, x, y value.Value) *Select {
-	return &Select{Cond: cond, X: x, Y: x}
+func NewSelect(cond, x, y value.Value) *InstSelect {
+	return &InstSelect{Cond: cond, X: x, Y: x}
 }
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Call is an LLVM IR call instruction.
-type Call struct {
+// InstCall is an LLVM IR call instruction.
+type InstCall struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Callee.
@@ -106,14 +106,14 @@ type Call struct {
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
-func NewCall(callee value.Value, args ...ll.Arg) *Call {
-	return &Call{Callee: callee, Args: args}
+func NewCall(callee value.Value, args ...ll.Arg) *InstCall {
+	return &InstCall{Callee: callee, Args: args}
 }
 
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// VAArg is an LLVM IR va_arg instruction.
-type VAArg struct {
+// InstVAArg is an LLVM IR va_arg instruction.
+type InstVAArg struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Variable argument list.
@@ -124,14 +124,14 @@ type VAArg struct {
 
 // NewVAArg returns a new va_arg instruction based on the given variable
 // argument list and argument type.
-func NewVAArg(list value.Value, argType types.Type) *VAArg {
-	return &VAArg{List: list, ArgType: argType}
+func NewVAArg(list value.Value, argType types.Type) *InstVAArg {
+	return &InstVAArg{List: list, ArgType: argType}
 }
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// LandingPad is an LLVM IR landingpad instruction.
-type LandingPad struct {
+// InstLandingPad is an LLVM IR landingpad instruction.
+type InstLandingPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Result type.
@@ -145,14 +145,14 @@ type LandingPad struct {
 
 // NewLandingPad returns a new landingpad instruction based on the given filter
 // and catch clauses.
-func NewLandingPad(clauses ...*ll.Clause) *LandingPad {
-	return &LandingPad{Clauses: clauses}
+func NewLandingPad(clauses ...*ll.Clause) *InstLandingPad {
+	return &InstLandingPad{Clauses: clauses}
 }
 
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// CatchPad is an LLVM IR catchpad instruction.
-type CatchPad struct {
+// InstCatchPad is an LLVM IR catchpad instruction.
+type InstCatchPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
@@ -163,14 +163,14 @@ type CatchPad struct {
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
 // scope and exception arguments.
-func NewCatchPad(scope value.Value, args ...ll.Arg) *CatchPad {
-	return &CatchPad{Scope: scope, Args: args}
+func NewCatchPad(scope value.Value, args ...ll.Arg) *InstCatchPad {
+	return &InstCatchPad{Scope: scope, Args: args}
 }
 
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// CleanupPad is an LLVM IR cleanuppad instruction.
-type CleanupPad struct {
+// InstCleanupPad is an LLVM IR cleanuppad instruction.
+type InstCleanupPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
@@ -181,6 +181,6 @@ type CleanupPad struct {
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
 // exception scope and exception arguments.
-func NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *CleanupPad {
-	return &CleanupPad{Scope: scope, Args: args}
+func NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *InstCleanupPad {
+	return &InstCleanupPad{Scope: scope, Args: args}
 }
