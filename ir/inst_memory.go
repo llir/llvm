@@ -1,4 +1,4 @@
-package instruction
+package ir
 
 import (
 	"github.com/llir/l/ir/ll"

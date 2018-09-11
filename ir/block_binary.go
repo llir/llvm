@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/instruction"
 	"github.com/llir/l/ir/value"
 )
 
@@ -10,8 +9,8 @@ import (
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewAdd returns a new add instruction based on the given operands.
-func (block *BasicBlock) NewAdd(x, y value.Value) *instruction.Add {
-	inst := instruction.NewAdd(x, y)
+func (block *BasicBlock) NewAdd(x, y value.Value) *Add {
+	inst := NewAdd(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -19,8 +18,8 @@ func (block *BasicBlock) NewAdd(x, y value.Value) *instruction.Add {
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFAdd returns a new fadd instruction based on the given operands.
-func (block *BasicBlock) NewFAdd(x, y value.Value) *instruction.FAdd {
-	inst := instruction.NewFAdd(x, y)
+func (block *BasicBlock) NewFAdd(x, y value.Value) *FAdd {
+	inst := NewFAdd(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -28,8 +27,8 @@ func (block *BasicBlock) NewFAdd(x, y value.Value) *instruction.FAdd {
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewSub returns a new sub instruction based on the given operands.
-func (block *BasicBlock) NewSub(x, y value.Value) *instruction.Sub {
-	inst := instruction.NewSub(x, y)
+func (block *BasicBlock) NewSub(x, y value.Value) *Sub {
+	inst := NewSub(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -37,8 +36,8 @@ func (block *BasicBlock) NewSub(x, y value.Value) *instruction.Sub {
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFSub returns a new fsub instruction based on the given operands.
-func (block *BasicBlock) NewFSub(x, y value.Value) *instruction.FSub {
-	inst := instruction.NewFSub(x, y)
+func (block *BasicBlock) NewFSub(x, y value.Value) *FSub {
+	inst := NewFSub(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -46,8 +45,8 @@ func (block *BasicBlock) NewFSub(x, y value.Value) *instruction.FSub {
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewMul returns a new mul instruction based on the given operands.
-func (block *BasicBlock) NewMul(x, y value.Value) *instruction.Mul {
-	inst := instruction.NewMul(x, y)
+func (block *BasicBlock) NewMul(x, y value.Value) *Mul {
+	inst := NewMul(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -55,8 +54,8 @@ func (block *BasicBlock) NewMul(x, y value.Value) *instruction.Mul {
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFMul returns a new fmul instruction based on the given operands.
-func (block *BasicBlock) NewFMul(x, y value.Value) *instruction.FMul {
-	inst := instruction.NewFMul(x, y)
+func (block *BasicBlock) NewFMul(x, y value.Value) *FMul {
+	inst := NewFMul(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -64,8 +63,8 @@ func (block *BasicBlock) NewFMul(x, y value.Value) *instruction.FMul {
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewUDiv returns a new udiv instruction based on the given operands.
-func (block *BasicBlock) NewUDiv(x, y value.Value) *instruction.UDiv {
-	inst := instruction.NewUDiv(x, y)
+func (block *BasicBlock) NewUDiv(x, y value.Value) *UDiv {
+	inst := NewUDiv(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -73,8 +72,8 @@ func (block *BasicBlock) NewUDiv(x, y value.Value) *instruction.UDiv {
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
-func (block *BasicBlock) NewSDiv(x, y value.Value) *instruction.SDiv {
-	inst := instruction.NewSDiv(x, y)
+func (block *BasicBlock) NewSDiv(x, y value.Value) *SDiv {
+	inst := NewSDiv(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -82,8 +81,8 @@ func (block *BasicBlock) NewSDiv(x, y value.Value) *instruction.SDiv {
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
-func (block *BasicBlock) NewFDiv(x, y value.Value) *instruction.FDiv {
-	inst := instruction.NewFDiv(x, y)
+func (block *BasicBlock) NewFDiv(x, y value.Value) *FDiv {
+	inst := NewFDiv(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -91,8 +90,8 @@ func (block *BasicBlock) NewFDiv(x, y value.Value) *instruction.FDiv {
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewURem returns a new urem instruction based on the given operands.
-func (block *BasicBlock) NewURem(x, y value.Value) *instruction.URem {
-	inst := instruction.NewURem(x, y)
+func (block *BasicBlock) NewURem(x, y value.Value) *URem {
+	inst := NewURem(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -100,8 +99,8 @@ func (block *BasicBlock) NewURem(x, y value.Value) *instruction.URem {
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewSRem returns a new srem instruction based on the given operands.
-func (block *BasicBlock) NewSRem(x, y value.Value) *instruction.SRem {
-	inst := instruction.NewSRem(x, y)
+func (block *BasicBlock) NewSRem(x, y value.Value) *SRem {
+	inst := NewSRem(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -109,8 +108,8 @@ func (block *BasicBlock) NewSRem(x, y value.Value) *instruction.SRem {
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFRem returns a new frem instruction based on the given operands.
-func (block *BasicBlock) NewFRem(x, y value.Value) *instruction.FRem {
-	inst := instruction.NewFRem(x, y)
+func (block *BasicBlock) NewFRem(x, y value.Value) *FRem {
+	inst := NewFRem(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

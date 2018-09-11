@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/instruction"
 	"github.com/llir/l/ir/value"
 )
 
@@ -11,8 +10,8 @@ import (
 
 // NewExtractValue returns a new extractvalue instruction based on the given
 // aggregate value and indicies.
-func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *instruction.ExtractValue {
-	inst := instruction.NewExtractValue(x, indices...)
+func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *ExtractValue {
+	inst := NewExtractValue(x, indices...)
 	block.Insts = append(block.Insts)
 	return inst
 }
@@ -21,8 +20,8 @@ func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *instr
 
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.
-func (block *BasicBlock) NewInsertValue(x, elem value.Value, indices ...int64) *instruction.InsertValue {
-	inst := instruction.NewInsertValue(x, elem, indices...)
+func (block *BasicBlock) NewInsertValue(x, elem value.Value, indices ...int64) *InsertValue {
+	inst := NewInsertValue(x, elem, indices...)
 	block.Insts = append(block.Insts)
 	return inst
 }

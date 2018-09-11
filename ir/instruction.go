@@ -1,4 +1,4 @@
-package instruction
+package ir
 
 type Instruction interface {
 	// isInstruction ensures that only instructions can be assigned to the
