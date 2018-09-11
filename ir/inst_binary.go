@@ -11,7 +11,7 @@ type Add struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewAdd returns a new add instruction based on the given operands.
@@ -26,7 +26,7 @@ type FAdd struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // floating-point scalars or vectors
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
@@ -41,7 +41,7 @@ type Sub struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewSub returns a new sub instruction based on the given operands.
@@ -56,7 +56,7 @@ type FSub struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // floating-point scalars or vectors
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
@@ -71,7 +71,7 @@ type Mul struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewMul returns a new mul instruction based on the given operands.
@@ -86,7 +86,7 @@ type FMul struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // floating-point scalars or vectors
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
@@ -101,7 +101,7 @@ type UDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
@@ -116,7 +116,7 @@ type SDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
@@ -131,7 +131,7 @@ type FDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // floating-point scalars or vectors
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
@@ -146,7 +146,7 @@ type URem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewURem returns a new urem instruction based on the given operands.
@@ -161,7 +161,7 @@ type SRem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalars or vectors
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
@@ -176,7 +176,7 @@ type FRem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value
+	X, Y value.Value // floating-point scalars or vectors
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
