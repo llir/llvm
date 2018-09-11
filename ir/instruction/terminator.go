@@ -2,6 +2,12 @@ package instruction
 
 // === [ Terminators ] =========================================================
 
+type Terminator interface {
+	// isTerminator ensures that only terminators can be assigned to the
+	// instruction.Terminator interface.
+	isTerminator()
+}
+
 // --- [ ret ] -----------------------------------------------------------------
 
 // Ret is an LLVM IR ret terminator.
@@ -65,3 +71,16 @@ type CleanupRet struct {
 // Unreachable is an LLVM IR unreachable terminator.
 type Unreachable struct {
 }
+
+// Terminators.
+func (*Ret) isTerminator()         {}
+func (*Br) isTerminator()          {}
+func (*CondBr) isTerminator()      {}
+func (*Switch) isTerminator()      {}
+func (*IndirectBr) isTerminator()  {}
+func (*Invoke) isTerminator()      {}
+func (*Resume) isTerminator()      {}
+func (*CatchSwitch) isTerminator() {}
+func (*CatchRet) isTerminator()    {}
+func (*CleanupRet) isTerminator()  {}
+func (*Unreachable) isTerminator() {}
