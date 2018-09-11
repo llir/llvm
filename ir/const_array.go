@@ -2,25 +2,25 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
-// Array is an array constant.
-type Array struct {
-	// Array elements.
+// ConstArray is an array constant.
+type ConstArray struct {
+	// ConstArray elements.
 	Elems []Constant
 }
 
 // NewArray returns a new array constant based on the given array elements.
-func NewArray(elems ...Constant) *Array {
-	return &Array{Elems: elems}
+func NewArray(elems ...Constant) *ConstArray {
+	return &ConstArray{Elems: elems}
 }
 
 // Type returns the type of the constant.
-func (c *Array) Type() types.Type {
+func (c *ConstArray) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant.
-func (c *Array) Ident() string {
+func (c *ConstArray) Ident() string {
 	panic("not yet implemented")
 }
 
-// TODO: define CharArray struct, or add Char bool to Array type?
+// TODO: define CharArray struct, or add Char bool to ConstArray type?

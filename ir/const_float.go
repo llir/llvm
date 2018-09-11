@@ -6,8 +6,8 @@ import (
 	"github.com/llir/l/ir/types"
 )
 
-// Float is a floating-point constant.
-type Float struct {
+// ConstFloat is a floating-point constant.
+type ConstFloat struct {
 	// Floating-point type.
 	Typ *types.FloatType
 	// Floating-point constant.
@@ -18,7 +18,7 @@ type Float struct {
 
 // NewFloatFromFloat64 returns a new floating-point constant based on the given
 // floating-point type and double precision floating-point value.
-func NewFloatFromFloat64(typ *types.FloatType, x float64) *Float {
+func NewFloatFromFloat64(typ *types.FloatType, x float64) *ConstFloat {
 	panic("not yet implemented")
 }
 
@@ -37,16 +37,16 @@ func NewFloatFromFloat64(typ *types.FloatType, x float64) *Float {
 //         0xL[0-9A-Fa-f]{32} // HexFP128
 //         0xM[0-9A-Fa-f]{32} // HexPPC128
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
-func NewFloatFromString(typ *types.FloatType, s string) *Float {
+func NewFloatFromString(typ *types.FloatType, s string) *ConstFloat {
 	panic("not yet implemented")
 }
 
 // Type returns the type of the constant.
-func (c *Float) Type() types.Type {
+func (c *ConstFloat) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant.
-func (c *Float) Ident() string {
+func (c *ConstFloat) Ident() string {
 	panic("not yet implemented")
 }

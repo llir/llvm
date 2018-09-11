@@ -121,7 +121,7 @@ func NewCase(x Constant, target *BasicBlock) *Case {
 // TermIndirectBr is an LLVM IR indirectbr terminator.
 type TermIndirectBr struct {
 	// Target address.
-	Addr *BlockAddress
+	Addr *ConstBlockAddress
 	// Set of valid target basic blocks.
 	ValidTargets []*BasicBlock
 }
@@ -129,7 +129,7 @@ type TermIndirectBr struct {
 // NewIndirectBr returns a new indirectbr terminator based on the given target
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
-func NewIndirectBr(addr *BlockAddress, validTargets ...*BasicBlock) *TermIndirectBr {
+func NewIndirectBr(addr *ConstBlockAddress, validTargets ...*BasicBlock) *TermIndirectBr {
 	return &TermIndirectBr{Addr: addr, ValidTargets: validTargets}
 }
 

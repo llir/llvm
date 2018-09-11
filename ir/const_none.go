@@ -2,16 +2,16 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
-// None is a none token constant.
-type None struct {
+// ConstNone is a none token constant.
+type ConstNone struct {
 }
 
 // Type returns the type of the constant.
-func (*None) Type() types.Type {
+func (*ConstNone) Type() types.Type {
 	return types.Token
 }
 
 // Ident returns the identifier associated with the constant.
-func (*None) Ident() string {
+func (*ConstNone) Ident() string {
 	return "none"
 }
