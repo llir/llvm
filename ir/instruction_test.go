@@ -1,4 +1,4 @@
-package instruction
+package ir
 
 // Assert that each instruction implements the instruction.Instruction
 // interface.

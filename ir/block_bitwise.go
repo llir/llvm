@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/instruction"
 	"github.com/llir/l/ir/value"
 )
 
@@ -10,8 +9,8 @@ import (
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewShl returns a new shl instruction based on the given operands.
-func (block *BasicBlock) NewShl(x, y value.Value) *instruction.Shl {
-	inst := instruction.NewShl(x, y)
+func (block *BasicBlock) NewShl(x, y value.Value) *Shl {
+	inst := NewShl(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -19,8 +18,8 @@ func (block *BasicBlock) NewShl(x, y value.Value) *instruction.Shl {
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewLShr returns a new lshr instruction based on the given operands.
-func (block *BasicBlock) NewLShr(x, y value.Value) *instruction.LShr {
-	inst := instruction.NewLShr(x, y)
+func (block *BasicBlock) NewLShr(x, y value.Value) *LShr {
+	inst := NewLShr(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -28,8 +27,8 @@ func (block *BasicBlock) NewLShr(x, y value.Value) *instruction.LShr {
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewAShr returns a new ashr instruction based on the given operands.
-func (block *BasicBlock) NewAShr(x, y value.Value) *instruction.AShr {
-	inst := instruction.NewAShr(x, y)
+func (block *BasicBlock) NewAShr(x, y value.Value) *AShr {
+	inst := NewAShr(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -37,8 +36,8 @@ func (block *BasicBlock) NewAShr(x, y value.Value) *instruction.AShr {
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewAnd returns a new and instruction based on the given operands.
-func (block *BasicBlock) NewAnd(x, y value.Value) *instruction.And {
-	inst := instruction.NewAnd(x, y)
+func (block *BasicBlock) NewAnd(x, y value.Value) *And {
+	inst := NewAnd(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -46,8 +45,8 @@ func (block *BasicBlock) NewAnd(x, y value.Value) *instruction.And {
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewOr returns a new or instruction based on the given operands.
-func (block *BasicBlock) NewOr(x, y value.Value) *instruction.Or {
-	inst := instruction.NewOr(x, y)
+func (block *BasicBlock) NewOr(x, y value.Value) *Or {
+	inst := NewOr(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -55,8 +54,8 @@ func (block *BasicBlock) NewOr(x, y value.Value) *instruction.Or {
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewXor returns a new xor instruction based on the given operands.
-func (block *BasicBlock) NewXor(x, y value.Value) *instruction.Xor {
-	inst := instruction.NewXor(x, y)
+func (block *BasicBlock) NewXor(x, y value.Value) *Xor {
+	inst := NewXor(x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
