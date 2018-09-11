@@ -11,7 +11,7 @@ import (
 // ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewAlloca returns a new alloca instruction based on the given element type.
-func (block *BasicBlock) NewAlloca(elemType types.Type) *Alloca {
+func (block *BasicBlock) NewAlloca(elemType types.Type) *InstAlloca {
 	inst := NewAlloca(elemType)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -20,7 +20,7 @@ func (block *BasicBlock) NewAlloca(elemType types.Type) *Alloca {
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewLoad returns a new load instruction based on the given source address.
-func (block *BasicBlock) NewLoad(src value.Value) *Load {
+func (block *BasicBlock) NewLoad(src value.Value) *InstLoad {
 	inst := NewLoad(src)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -30,7 +30,7 @@ func (block *BasicBlock) NewLoad(src value.Value) *Load {
 
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
-func (block *BasicBlock) NewStore(src, dst value.Value) *Store {
+func (block *BasicBlock) NewStore(src, dst value.Value) *InstStore {
 	inst := NewStore(src, dst)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -39,7 +39,7 @@ func (block *BasicBlock) NewStore(src, dst value.Value) *Store {
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
-func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *Fence {
+func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *InstFence {
 	inst := NewFence(ordering)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -50,7 +50,7 @@ func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *Fence {
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
 // value to compare against, new value to store, and atomic orderings for
 // success and failure.
-func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure ll.AtomicOrdering) *CmpXchg {
+func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure ll.AtomicOrdering) *InstCmpXchg {
 	inst := NewCmpXchg(ptr, cmp, new, success, failure)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -60,7 +60,7 @@ func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure 
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
 // operation, destination address, operand and atomic ordering.
-func (block *BasicBlock) NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, ordering ll.AtomicOrdering) *AtomicRMW {
+func (block *BasicBlock) NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, ordering ll.AtomicOrdering) *InstAtomicRMW {
 	inst := NewAtomicRMW(op, dst, x, ordering)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -70,7 +70,7 @@ func (block *BasicBlock) NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, orderi
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
 // source address and element indices.
-func (block *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *GetElementPtr {
+func (block *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
 	inst := NewGetElementPtr(src, indices...)
 	block.Insts = append(block.Insts, inst)
 	return inst

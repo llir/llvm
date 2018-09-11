@@ -10,7 +10,7 @@ import (
 
 // NewExtractElement returns a new extractelement instruction based on the given
 // vector and element index.
-func (block *BasicBlock) NewExtractElement(x, index value.Value) *ExtractElement {
+func (block *BasicBlock) NewExtractElement(x, index value.Value) *InstExtractElement {
 	inst := NewExtractElement(x, index)
 	block.Insts = append(block.Insts)
 	return inst
@@ -20,7 +20,7 @@ func (block *BasicBlock) NewExtractElement(x, index value.Value) *ExtractElement
 
 // NewInsertElement returns a new insertelement instruction based on the given
 // vector, element and element index.
-func (block *BasicBlock) NewInsertElement(x, elem, index value.Value) *InsertElement {
+func (block *BasicBlock) NewInsertElement(x, elem, index value.Value) *InstInsertElement {
 	inst := NewInsertElement(x, elem, index)
 	block.Insts = append(block.Insts)
 	return inst
@@ -30,7 +30,7 @@ func (block *BasicBlock) NewInsertElement(x, elem, index value.Value) *InsertEle
 
 // NewShuffleVector returns a new shufflevector instruction based on the given
 // vectors and shuffle mask.
-func (block *BasicBlock) NewShuffleVector(x, y, mask value.Value) *ShuffleVector {
+func (block *BasicBlock) NewShuffleVector(x, y, mask value.Value) *InstShuffleVector {
 	inst := NewShuffleVector(x, y, mask)
 	block.Insts = append(block.Insts)
 	return inst

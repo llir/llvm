@@ -6,8 +6,8 @@ import "github.com/llir/l/ir/value"
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Add is an LLVM IR add instruction.
-type Add struct {
+// InstAdd is an LLVM IR add instruction.
+type InstAdd struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -15,14 +15,14 @@ type Add struct {
 }
 
 // NewAdd returns a new add instruction based on the given operands.
-func NewAdd(x, y value.Value) *Add {
-	return &Add{X: x, Y: y}
+func NewAdd(x, y value.Value) *InstAdd {
+	return &InstAdd{X: x, Y: y}
 }
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FAdd is an LLVM IR fadd instruction.
-type FAdd struct {
+// InstFAdd is an LLVM IR fadd instruction.
+type InstFAdd struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -30,14 +30,14 @@ type FAdd struct {
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
-func NewFAdd(x, y value.Value) *FAdd {
-	return &FAdd{X: x, Y: y}
+func NewFAdd(x, y value.Value) *InstFAdd {
+	return &InstFAdd{X: x, Y: y}
 }
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Sub is an LLVM IR sub instruction.
-type Sub struct {
+// InstSub is an LLVM IR sub instruction.
+type InstSub struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -45,14 +45,14 @@ type Sub struct {
 }
 
 // NewSub returns a new sub instruction based on the given operands.
-func NewSub(x, y value.Value) *Sub {
-	return &Sub{X: x, Y: y}
+func NewSub(x, y value.Value) *InstSub {
+	return &InstSub{X: x, Y: y}
 }
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FSub is an LLVM IR fsub instruction.
-type FSub struct {
+// InstFSub is an LLVM IR fsub instruction.
+type InstFSub struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -60,14 +60,14 @@ type FSub struct {
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
-func NewFSub(x, y value.Value) *FSub {
-	return &FSub{X: x, Y: y}
+func NewFSub(x, y value.Value) *InstFSub {
+	return &InstFSub{X: x, Y: y}
 }
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Mul is an LLVM IR mul instruction.
-type Mul struct {
+// InstMul is an LLVM IR mul instruction.
+type InstMul struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -75,14 +75,14 @@ type Mul struct {
 }
 
 // NewMul returns a new mul instruction based on the given operands.
-func NewMul(x, y value.Value) *Mul {
-	return &Mul{X: x, Y: y}
+func NewMul(x, y value.Value) *InstMul {
+	return &InstMul{X: x, Y: y}
 }
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FMul is an LLVM IR fmul instruction.
-type FMul struct {
+// InstFMul is an LLVM IR fmul instruction.
+type InstFMul struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -90,14 +90,14 @@ type FMul struct {
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
-func NewFMul(x, y value.Value) *FMul {
-	return &FMul{X: x, Y: y}
+func NewFMul(x, y value.Value) *InstFMul {
+	return &InstFMul{X: x, Y: y}
 }
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// UDiv is an LLVM IR udiv instruction.
-type UDiv struct {
+// InstUDiv is an LLVM IR udiv instruction.
+type InstUDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -105,14 +105,14 @@ type UDiv struct {
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
-func NewUDiv(x, y value.Value) *UDiv {
-	return &UDiv{X: x, Y: y}
+func NewUDiv(x, y value.Value) *InstUDiv {
+	return &InstUDiv{X: x, Y: y}
 }
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SDiv is an LLVM IR sdiv instruction.
-type SDiv struct {
+// InstSDiv is an LLVM IR sdiv instruction.
+type InstSDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -120,14 +120,14 @@ type SDiv struct {
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
-func NewSDiv(x, y value.Value) *SDiv {
-	return &SDiv{X: x, Y: y}
+func NewSDiv(x, y value.Value) *InstSDiv {
+	return &InstSDiv{X: x, Y: y}
 }
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FDiv is an LLVM IR fdiv instruction.
-type FDiv struct {
+// InstFDiv is an LLVM IR fdiv instruction.
+type InstFDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -135,14 +135,14 @@ type FDiv struct {
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
-func NewFDiv(x, y value.Value) *FDiv {
-	return &FDiv{X: x, Y: y}
+func NewFDiv(x, y value.Value) *InstFDiv {
+	return &InstFDiv{X: x, Y: y}
 }
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// URem is an LLVM IR urem instruction.
-type URem struct {
+// InstURem is an LLVM IR urem instruction.
+type InstURem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -150,14 +150,14 @@ type URem struct {
 }
 
 // NewURem returns a new urem instruction based on the given operands.
-func NewURem(x, y value.Value) *URem {
-	return &URem{X: x, Y: y}
+func NewURem(x, y value.Value) *InstURem {
+	return &InstURem{X: x, Y: y}
 }
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SRem is an LLVM IR srem instruction.
-type SRem struct {
+// InstSRem is an LLVM IR srem instruction.
+type InstSRem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -165,14 +165,14 @@ type SRem struct {
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
-func NewSRem(x, y value.Value) *SRem {
-	return &SRem{X: x, Y: y}
+func NewSRem(x, y value.Value) *InstSRem {
+	return &InstSRem{X: x, Y: y}
 }
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FRem is an LLVM IR frem instruction.
-type FRem struct {
+// InstFRem is an LLVM IR frem instruction.
+type InstFRem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -180,6 +180,6 @@ type FRem struct {
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
-func NewFRem(x, y value.Value) *FRem {
-	return &FRem{X: x, Y: y}
+func NewFRem(x, y value.Value) *InstFRem {
+	return &InstFRem{X: x, Y: y}
 }

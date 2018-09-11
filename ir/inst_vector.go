@@ -8,8 +8,8 @@ import (
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ExtractElement is an LLVM IR extractelement instruction.
-type ExtractElement struct {
+// InstExtractElement is an LLVM IR extractelement instruction.
+type InstExtractElement struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Vector.
@@ -20,14 +20,14 @@ type ExtractElement struct {
 
 // NewExtractElement returns a new extractelement instruction based on the given
 // vector and element index.
-func NewExtractElement(x, index value.Value) *ExtractElement {
-	return &ExtractElement{X: x, Index: index}
+func NewExtractElement(x, index value.Value) *InstExtractElement {
+	return &InstExtractElement{X: x, Index: index}
 }
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// InsertElement is an LLVM IR insertelement instruction.
-type InsertElement struct {
+// InstInsertElement is an LLVM IR insertelement instruction.
+type InstInsertElement struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Vector.
@@ -40,14 +40,14 @@ type InsertElement struct {
 
 // NewInsertElement returns a new insertelement instruction based on the given
 // vector, element and element index.
-func NewInsertElement(x, elem, index value.Value) *InsertElement {
-	return &InsertElement{X: x, Elem: elem, Index: index}
+func NewInsertElement(x, elem, index value.Value) *InstInsertElement {
+	return &InstInsertElement{X: x, Elem: elem, Index: index}
 }
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ShuffleVector is an LLVM IR shufflevector instruction.
-type ShuffleVector struct {
+// InstShuffleVector is an LLVM IR shufflevector instruction.
+type InstShuffleVector struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Vectors.
@@ -58,6 +58,6 @@ type ShuffleVector struct {
 
 // NewShuffleVector returns a new shufflevector instruction based on the given
 // vectors and shuffle mask.
-func NewShuffleVector(x, y, mask value.Value) *ShuffleVector {
-	return &ShuffleVector{X: x, Y: y, Mask: mask}
+func NewShuffleVector(x, y, mask value.Value) *InstShuffleVector {
+	return &InstShuffleVector{X: x, Y: y, Mask: mask}
 }

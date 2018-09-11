@@ -6,8 +6,8 @@ import "github.com/llir/l/ir/value"
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Shl is an LLVM IR shl instruction.
-type Shl struct {
+// InstShl is an LLVM IR shl instruction.
+type InstShl struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -15,14 +15,14 @@ type Shl struct {
 }
 
 // NewShl returns a new shl instruction based on the given operands.
-func NewShl(x, y value.Value) *Shl {
-	return &Shl{X: x, Y: y}
+func NewShl(x, y value.Value) *InstShl {
+	return &InstShl{X: x, Y: y}
 }
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// LShr is an LLVM IR lshr instruction.
-type LShr struct {
+// InstLShr is an LLVM IR lshr instruction.
+type InstLShr struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -30,14 +30,14 @@ type LShr struct {
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
-func NewLShr(x, y value.Value) *LShr {
-	return &LShr{X: x, Y: y}
+func NewLShr(x, y value.Value) *InstLShr {
+	return &InstLShr{X: x, Y: y}
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// AShr is an LLVM IR ashr instruction.
-type AShr struct {
+// InstAShr is an LLVM IR ashr instruction.
+type InstAShr struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -45,14 +45,14 @@ type AShr struct {
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
-func NewAShr(x, y value.Value) *AShr {
-	return &AShr{X: x, Y: y}
+func NewAShr(x, y value.Value) *InstAShr {
+	return &InstAShr{X: x, Y: y}
 }
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// And is an LLVM IR and instruction.
-type And struct {
+// InstAnd is an LLVM IR and instruction.
+type InstAnd struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -60,14 +60,14 @@ type And struct {
 }
 
 // NewAnd returns a new and instruction based on the given operands.
-func NewAnd(x, y value.Value) *And {
-	return &And{X: x, Y: y}
+func NewAnd(x, y value.Value) *InstAnd {
+	return &InstAnd{X: x, Y: y}
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Or is an LLVM IR or instruction.
-type Or struct {
+// InstOr is an LLVM IR or instruction.
+type InstOr struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -75,14 +75,14 @@ type Or struct {
 }
 
 // NewOr returns a new or instruction based on the given operands.
-func NewOr(x, y value.Value) *Or {
-	return &Or{X: x, Y: y}
+func NewOr(x, y value.Value) *InstOr {
+	return &InstOr{X: x, Y: y}
 }
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Xor is an LLVM IR xor instruction.
-type Xor struct {
+// InstXor is an LLVM IR xor instruction.
+type InstXor struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
@@ -90,6 +90,6 @@ type Xor struct {
 }
 
 // NewXor returns a new xor instruction based on the given operands.
-func NewXor(x, y value.Value) *Xor {
-	return &Xor{X: x, Y: y}
+func NewXor(x, y value.Value) *InstXor {
+	return &InstXor{X: x, Y: y}
 }
