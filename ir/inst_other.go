@@ -51,12 +51,26 @@ type Phi struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Incoming values.
-	Incs []*ll.Incoming
+	Incs []*Incoming
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
-func NewPhi(incs ...*ll.Incoming) *Phi {
+func NewPhi(incs ...*Incoming) *Phi {
 	return &Phi{Incs: incs}
+}
+
+// Incoming is an incoming value of a phi instruction.
+type Incoming struct {
+	// Incoming value.
+	X value.Value
+	// Predecessor basic block of the incoming value.
+	Pred *BasicBlock
+}
+
+// NewIncoming returns a new incoming value based on the given value and
+// predecessor basic block.
+func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
+	return &Incoming{X: x, Pred: pred}
 }
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,6 +98,7 @@ type Call struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Callee.
+	// TODO: specify the set of underlying types of Callee.
 	Callee value.Value
 	// Function arguments.
 	Args []ll.Arg
@@ -141,7 +156,7 @@ type CatchPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope value.Value // TODO: assess if Scope is a good name. figure out the specific set of underlying types.
+	Scope value.Value // TODO: assess if Scope is a good name. figure out the specific set of underlying types. rename to From?
 	// Exception arguments.
 	Args []ll.Arg
 }
@@ -159,7 +174,7 @@ type CleanupPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope ll.ExceptionScope // TODO: rename to parent?
+	Scope ll.ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
 	Args []ll.Arg
 }
