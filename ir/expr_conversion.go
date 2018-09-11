@@ -1,4 +1,4 @@
-package constant
+package ir
 
 import (
 	"github.com/llir/l/ir/types"
@@ -8,416 +8,416 @@ import (
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Trunc is an LLVM IR trunc expression.
-type Trunc struct {
+// TruncExpr is an LLVM IR trunc expression.
+type TruncExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewTrunc returns a new trunc expression based on the given source value and
-// target type.
-func NewTrunc(from Constant, to types.Type) *Trunc {
-	return &Trunc{From: from, To: to}
+// NewTruncExpr returns a new trunc expression based on the given source value
+// and target type.
+func NewTruncExpr(from Constant, to types.Type) *TruncExpr {
+	return &TruncExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *Trunc) Type() types.Type {
+func (e *TruncExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Trunc) Ident() string {
+func (e *TruncExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Trunc) Simplify() Constant {
+func (e *TruncExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ZExt is an LLVM IR zext expression.
-type ZExt struct {
+// ZExtExpr is an LLVM IR zext expression.
+type ZExtExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewZExt returns a new zext expression based on the given source value and
+// NewZExtExpr returns a new zext expression based on the given source value and
 // target type.
-func NewZExt(from Constant, to types.Type) *ZExt {
-	return &ZExt{From: from, To: to}
+func NewZExtExpr(from Constant, to types.Type) *ZExtExpr {
+	return &ZExtExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *ZExt) Type() types.Type {
+func (e *ZExtExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *ZExt) Ident() string {
+func (e *ZExtExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *ZExt) Simplify() Constant {
+func (e *ZExtExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SExt is an LLVM IR sext expression.
-type SExt struct {
+// SExtExpr is an LLVM IR sext expression.
+type SExtExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewSExt returns a new sext expression based on the given source value and
+// NewSExtExpr returns a new sext expression based on the given source value and
 // target type.
-func NewSExt(from Constant, to types.Type) *SExt {
-	return &SExt{From: from, To: to}
+func NewSExtExpr(from Constant, to types.Type) *SExtExpr {
+	return &SExtExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *SExt) Type() types.Type {
+func (e *SExtExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *SExt) Ident() string {
+func (e *SExtExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *SExt) Simplify() Constant {
+func (e *SExtExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPTrunc is an LLVM IR fptrunc expression.
-type FPTrunc struct {
+// FPTruncExpr is an LLVM IR fptrunc expression.
+type FPTruncExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPTrunc returns a new fptrunc expression based on the given source value
-// and target type.
-func NewFPTrunc(from Constant, to types.Type) *FPTrunc {
-	return &FPTrunc{From: from, To: to}
+// NewFPTruncExpr returns a new fptrunc expression based on the given source
+// value and target type.
+func NewFPTruncExpr(from Constant, to types.Type) *FPTruncExpr {
+	return &FPTruncExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *FPTrunc) Type() types.Type {
+func (e *FPTruncExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FPTrunc) Ident() string {
+func (e *FPTruncExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FPTrunc) Simplify() Constant {
+func (e *FPTruncExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPExt is an LLVM IR fpext expression.
-type FPExt struct {
+// FPExtExpr is an LLVM IR fpext expression.
+type FPExtExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPExt returns a new fpext expression based on the given source value and
-// target type.
-func NewFPExt(from Constant, to types.Type) *FPExt {
-	return &FPExt{From: from, To: to}
+// NewFPExtExpr returns a new fpext expression based on the given source value
+// and target type.
+func NewFPExtExpr(from Constant, to types.Type) *FPExtExpr {
+	return &FPExtExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *FPExt) Type() types.Type {
+func (e *FPExtExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FPExt) Ident() string {
+func (e *FPExtExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FPExt) Simplify() Constant {
+func (e *FPExtExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPToUI is an LLVM IR fptoui expression.
-type FPToUI struct {
+// FPToUIExpr is an LLVM IR fptoui expression.
+type FPToUIExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPToUI returns a new fptoui expression based on the given source value and
-// target type.
-func NewFPToUI(from Constant, to types.Type) *FPToUI {
-	return &FPToUI{From: from, To: to}
+// NewFPToUIExpr returns a new fptoui expression based on the given source value
+// and target type.
+func NewFPToUIExpr(from Constant, to types.Type) *FPToUIExpr {
+	return &FPToUIExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *FPToUI) Type() types.Type {
+func (e *FPToUIExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FPToUI) Ident() string {
+func (e *FPToUIExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FPToUI) Simplify() Constant {
+func (e *FPToUIExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FPToSI is an LLVM IR fptosi expression.
-type FPToSI struct {
+// FPToSIExpr is an LLVM IR fptosi expression.
+type FPToSIExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPToSI returns a new fptosi expression based on the given source value and
-// target type.
-func NewFPToSI(from Constant, to types.Type) *FPToSI {
-	return &FPToSI{From: from, To: to}
+// NewFPToSIExpr returns a new fptosi expression based on the given source value
+// and target type.
+func NewFPToSIExpr(from Constant, to types.Type) *FPToSIExpr {
+	return &FPToSIExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *FPToSI) Type() types.Type {
+func (e *FPToSIExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FPToSI) Ident() string {
+func (e *FPToSIExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FPToSI) Simplify() Constant {
+func (e *FPToSIExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// UIToFP is an LLVM IR uitofp expression.
-type UIToFP struct {
+// UIToFPExpr is an LLVM IR uitofp expression.
+type UIToFPExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewUIToFP returns a new uitofp expression based on the given source value and
-// target type.
-func NewUIToFP(from Constant, to types.Type) *UIToFP {
-	return &UIToFP{From: from, To: to}
+// NewUIToFPExpr returns a new uitofp expression based on the given source value
+// and target type.
+func NewUIToFPExpr(from Constant, to types.Type) *UIToFPExpr {
+	return &UIToFPExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *UIToFP) Type() types.Type {
+func (e *UIToFPExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *UIToFP) Ident() string {
+func (e *UIToFPExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *UIToFP) Simplify() Constant {
+func (e *UIToFPExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SIToFP is an LLVM IR sitofp expression.
-type SIToFP struct {
+// SIToFPExpr is an LLVM IR sitofp expression.
+type SIToFPExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewSIToFP returns a new sitofp expression based on the given source value and
-// target type.
-func NewSIToFP(from Constant, to types.Type) *SIToFP {
-	return &SIToFP{From: from, To: to}
+// NewSIToFPExpr returns a new sitofp expression based on the given source value
+// and target type.
+func NewSIToFPExpr(from Constant, to types.Type) *SIToFPExpr {
+	return &SIToFPExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *SIToFP) Type() types.Type {
+func (e *SIToFPExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *SIToFP) Ident() string {
+func (e *SIToFPExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *SIToFP) Simplify() Constant {
+func (e *SIToFPExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// PtrToInt is an LLVM IR ptrtoint expression.
-type PtrToInt struct {
+// PtrToIntExpr is an LLVM IR ptrtoint expression.
+type PtrToIntExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewPtrToInt returns a new ptrtoint expression based on the given source value
-// and target type.
-func NewPtrToInt(from Constant, to types.Type) *PtrToInt {
-	return &PtrToInt{From: from, To: to}
+// NewPtrToIntExpr returns a new ptrtoint expression based on the given source
+// value and target type.
+func NewPtrToIntExpr(from Constant, to types.Type) *PtrToIntExpr {
+	return &PtrToIntExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *PtrToInt) Type() types.Type {
+func (e *PtrToIntExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *PtrToInt) Ident() string {
+func (e *PtrToIntExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *PtrToInt) Simplify() Constant {
+func (e *PtrToIntExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// IntToPtr is an LLVM IR inttoptr expression.
-type IntToPtr struct {
+// IntToPtrExpr is an LLVM IR inttoptr expression.
+type IntToPtrExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewIntToPtr returns a new inttoptr expression based on the given source value
-// and target type.
-func NewIntToPtr(from Constant, to types.Type) *IntToPtr {
-	return &IntToPtr{From: from, To: to}
+// NewIntToPtrExpr returns a new inttoptr expression based on the given source
+// value and target type.
+func NewIntToPtrExpr(from Constant, to types.Type) *IntToPtrExpr {
+	return &IntToPtrExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *IntToPtr) Type() types.Type {
+func (e *IntToPtrExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *IntToPtr) Ident() string {
+func (e *IntToPtrExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *IntToPtr) Simplify() Constant {
+func (e *IntToPtrExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// BitCast is an LLVM IR bitcast expression.
-type BitCast struct {
+// BitCastExpr is an LLVM IR bitcast expression.
+type BitCastExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewBitCast returns a new bitcast expression based on the given source value
-// and target type.
-func NewBitCast(from Constant, to types.Type) *BitCast {
-	return &BitCast{From: from, To: to}
+// NewBitCastExpr returns a new bitcast expression based on the given source
+// value and target type.
+func NewBitCastExpr(from Constant, to types.Type) *BitCastExpr {
+	return &BitCastExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *BitCast) Type() types.Type {
+func (e *BitCastExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *BitCast) Ident() string {
+func (e *BitCastExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *BitCast) Simplify() Constant {
+func (e *BitCastExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// AddrSpaceCast is an LLVM IR addrspacecast expression.
-type AddrSpaceCast struct {
+// AddrSpaceCastExpr is an LLVM IR addrspacecast expression.
+type AddrSpaceCastExpr struct {
 	// Value before conversion.
 	From Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewAddrSpaceCast returns a new addrspacecast expression based on the given
-// source value and target type.
-func NewAddrSpaceCast(from Constant, to types.Type) *AddrSpaceCast {
-	return &AddrSpaceCast{From: from, To: to}
+// NewAddrSpaceCastExpr returns a new addrspacecast expression based on the
+// given source value and target type.
+func NewAddrSpaceCastExpr(from Constant, to types.Type) *AddrSpaceCastExpr {
+	return &AddrSpaceCastExpr{From: from, To: to}
 }
 
 // Type returns the type of the constant expression.
-func (e *AddrSpaceCast) Type() types.Type {
+func (e *AddrSpaceCastExpr) Type() types.Type {
 	return e.To
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *AddrSpaceCast) Ident() string {
+func (e *AddrSpaceCastExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *AddrSpaceCast) Simplify() Constant {
+func (e *AddrSpaceCastExpr) Simplify() Constant {
 	panic("not yet implemented")
 }

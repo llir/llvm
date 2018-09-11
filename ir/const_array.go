@@ -1,4 +1,4 @@
-package constant
+package ir
 
 import "github.com/llir/l/ir/types"
 

@@ -1,4 +1,4 @@
-package constant
+package ir
 
 import "github.com/llir/l/ir/types"
 
@@ -6,348 +6,348 @@ import "github.com/llir/l/ir/types"
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Add is an LLVM IR add expression.
-type Add struct {
+// AddExpr is an LLVM IR add expression.
+type AddExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewAdd returns a new add expression based on the given operands.
-func NewAdd(x, y Constant) *Add {
-	return &Add{X: x, Y: y}
+// NewAddExpr returns a new add expression based on the given operands.
+func NewAddExpr(x, y Constant) *AddExpr {
+	return &AddExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *Add) Type() types.Type {
+func (e *AddExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Add) Ident() string {
+func (e *AddExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Add) Simplify() Constant {
+func (e *AddExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FAdd is an LLVM IR fadd expression.
-type FAdd struct {
+// FAddExpr is an LLVM IR fadd expression.
+type FAddExpr struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
 }
 
-// NewFAdd returns a new fadd expression based on the given operands.
-func NewFAdd(x, y Constant) *FAdd {
-	return &FAdd{X: x, Y: y}
+// NewFAddExpr returns a new fadd expression based on the given operands.
+func NewFAddExpr(x, y Constant) *FAddExpr {
+	return &FAddExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *FAdd) Type() types.Type {
+func (e *FAddExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FAdd) Ident() string {
+func (e *FAddExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FAdd) Simplify() Constant {
+func (e *FAddExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Sub is an LLVM IR sub expression.
-type Sub struct {
+// SubExpr is an LLVM IR sub expression.
+type SubExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewSub returns a new sub expression based on the given operands.
-func NewSub(x, y Constant) *Sub {
-	return &Sub{X: x, Y: y}
+// NewSubExpr returns a new sub expression based on the given operands.
+func NewSubExpr(x, y Constant) *SubExpr {
+	return &SubExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *Sub) Type() types.Type {
+func (e *SubExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Sub) Ident() string {
+func (e *SubExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Sub) Simplify() Constant {
+func (e *SubExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FSub is an LLVM IR fsub expression.
-type FSub struct {
+// FSubExpr is an LLVM IR fsub expression.
+type FSubExpr struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
 }
 
-// NewFSub returns a new fsub expression based on the given operands.
-func NewFSub(x, y Constant) *FSub {
-	return &FSub{X: x, Y: y}
+// NewFSubExpr returns a new fsub expression based on the given operands.
+func NewFSubExpr(x, y Constant) *FSubExpr {
+	return &FSubExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *FSub) Type() types.Type {
+func (e *FSubExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FSub) Ident() string {
+func (e *FSubExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FSub) Simplify() Constant {
+func (e *FSubExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Mul is an LLVM IR mul expression.
-type Mul struct {
+// MulExpr is an LLVM IR mul expression.
+type MulExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewMul returns a new mul expression based on the given operands.
-func NewMul(x, y Constant) *Mul {
-	return &Mul{X: x, Y: y}
+// NewMulExpr returns a new mul expression based on the given operands.
+func NewMulExpr(x, y Constant) *MulExpr {
+	return &MulExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *Mul) Type() types.Type {
+func (e *MulExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Mul) Ident() string {
+func (e *MulExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Mul) Simplify() Constant {
+func (e *MulExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FMul is an LLVM IR fmul expression.
-type FMul struct {
+// FMulExpr is an LLVM IR fmul expression.
+type FMulExpr struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
 }
 
-// NewFMul returns a new fmul expression based on the given operands.
-func NewFMul(x, y Constant) *FMul {
-	return &FMul{X: x, Y: y}
+// NewFMulExpr returns a new fmul expression based on the given operands.
+func NewFMulExpr(x, y Constant) *FMulExpr {
+	return &FMulExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *FMul) Type() types.Type {
+func (e *FMulExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FMul) Ident() string {
+func (e *FMulExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FMul) Simplify() Constant {
+func (e *FMulExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// UDiv is an LLVM IR udiv expression.
-type UDiv struct {
+// UDivExpr is an LLVM IR udiv expression.
+type UDivExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewUDiv returns a new udiv expression based on the given operands.
-func NewUDiv(x, y Constant) *UDiv {
-	return &UDiv{X: x, Y: y}
+// NewUDivExpr returns a new udiv expression based on the given operands.
+func NewUDivExpr(x, y Constant) *UDivExpr {
+	return &UDivExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *UDiv) Type() types.Type {
+func (e *UDivExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *UDiv) Ident() string {
+func (e *UDivExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *UDiv) Simplify() Constant {
+func (e *UDivExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SDiv is an LLVM IR sdiv expression.
-type SDiv struct {
+// SDivExpr is an LLVM IR sdiv expression.
+type SDivExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewSDiv returns a new sdiv expression based on the given operands.
-func NewSDiv(x, y Constant) *SDiv {
-	return &SDiv{X: x, Y: y}
+// NewSDivExpr returns a new sdiv expression based on the given operands.
+func NewSDivExpr(x, y Constant) *SDivExpr {
+	return &SDivExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *SDiv) Type() types.Type {
+func (e *SDivExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *SDiv) Ident() string {
+func (e *SDivExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *SDiv) Simplify() Constant {
+func (e *SDivExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FDiv is an LLVM IR fdiv expression.
-type FDiv struct {
+// FDivExpr is an LLVM IR fdiv expression.
+type FDivExpr struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
 }
 
-// NewFDiv returns a new fdiv expression based on the given operands.
-func NewFDiv(x, y Constant) *FDiv {
-	return &FDiv{X: x, Y: y}
+// NewFDivExpr returns a new fdiv expression based on the given operands.
+func NewFDivExpr(x, y Constant) *FDivExpr {
+	return &FDivExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *FDiv) Type() types.Type {
+func (e *FDivExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FDiv) Ident() string {
+func (e *FDivExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FDiv) Simplify() Constant {
+func (e *FDivExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// URem is an LLVM IR urem expression.
-type URem struct {
+// URemExpr is an LLVM IR urem expression.
+type URemExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewURem returns a new urem expression based on the given operands.
-func NewURem(x, y Constant) *URem {
-	return &URem{X: x, Y: y}
+// NewURemExpr returns a new urem expression based on the given operands.
+func NewURemExpr(x, y Constant) *URemExpr {
+	return &URemExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *URem) Type() types.Type {
+func (e *URemExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *URem) Ident() string {
+func (e *URemExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *URem) Simplify() Constant {
+func (e *URemExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// SRem is an LLVM IR srem expression.
-type SRem struct {
+// SRemExpr is an LLVM IR srem expression.
+type SRemExpr struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
 }
 
-// NewSRem returns a new srem expression based on the given operands.
-func NewSRem(x, y Constant) *SRem {
-	return &SRem{X: x, Y: y}
+// NewSRemExpr returns a new srem expression based on the given operands.
+func NewSRemExpr(x, y Constant) *SRemExpr {
+	return &SRemExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *SRem) Type() types.Type {
+func (e *SRemExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *SRem) Ident() string {
+func (e *SRemExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *SRem) Simplify() Constant {
+func (e *SRemExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// FRem is an LLVM IR frem expression.
-type FRem struct {
+// FRemExpr is an LLVM IR frem expression.
+type FRemExpr struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
 }
 
-// NewFRem returns a new frem expression based on the given operands.
-func NewFRem(x, y Constant) *FRem {
-	return &FRem{X: x, Y: y}
+// NewFRemExpr returns a new frem expression based on the given operands.
+func NewFRemExpr(x, y Constant) *FRemExpr {
+	return &FRemExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *FRem) Type() types.Type {
+func (e *FRemExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *FRem) Ident() string {
+func (e *FRemExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *FRem) Simplify() Constant {
+func (e *FRemExpr) Simplify() Constant {
 	panic("not yet implemented")
 }

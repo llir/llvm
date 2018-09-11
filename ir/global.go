@@ -15,7 +15,3 @@ func (g *Global) Type() types.Type {
 func (g *Global) Ident() string {
 	panic("not yet implemented")
 }
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Global) IsConstant() {}
