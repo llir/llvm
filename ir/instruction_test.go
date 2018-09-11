@@ -1,7 +1,6 @@
 package ir
 
-// Assert that each instruction implements the instruction.Instruction
-// interface.
+// Assert that each instruction implements the ir.Instruction interface.
 var (
 	// Binary instructions.
 	_ Instruction = (*Add)(nil)
@@ -64,7 +63,7 @@ var (
 	_ Instruction = (*CleanupPad)(nil)
 )
 
-// Assert that each terminator implements the instruction.Terminator interface.
+// Assert that each terminator implements the ir.Terminator interface.
 var (
 	// Terminators.
 	_ Terminator = (*Ret)(nil)

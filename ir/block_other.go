@@ -31,7 +31,7 @@ func (block *BasicBlock) NewFCmp(cond ll.FCond, x, y value.Value) *FCmp {
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewPhi returns a new phi instruction based on the given incoming values.
-func (block *BasicBlock) NewPhi(incs ...*ll.Incoming) *Phi {
+func (block *BasicBlock) NewPhi(incs ...*Incoming) *Phi {
 	inst := NewPhi(incs...)
 	block.Insts = append(block.Insts, inst)
 	return inst
