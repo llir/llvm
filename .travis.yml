@@ -1,28 +1,29 @@
 language: go
+
 go:
-  - 1.8
+  - "1.10"
+  - "1.11"
+  - tip
 
 notifications:
   email: false
 
 env:
   global:
+    # Coveralls.io token.
     - secure: "YZKB1SLTzPJMOdXp5U3xwEsh4++Xe8EeVK8SZVEQkn/y4xCbzmbdo6BJ4B/eGBG6bK4DLzFD3sb6uaUB2bHlVUXnR8YHbetjps6PUwLYtX9UdcBjB7UN5tdQs1d8k2qg7vPNtKVEY4kJHFURijc4Kk+zlNbq1oGJcEfm6gz+zGg="
-    - PATH=$HOME/gopath/bin:$PATH
-
-before_install:
-  - go get golang.org/x/tools/cmd/cover
-  - go get golang.org/x/tools/cmd/goimports
-  - go get github.com/golang/lint/golint
-  - go get github.com/mattn/goveralls
 
 install:
   - go get -t ./...
 
 before_script:
-  - export GOLINT_IGNORE="-not -wholename '*/internal/*' -not -name '*_string.go' -not -wholename '*/types/single.go' -not -wholename '*/types/types.go' -not -wholename '*/ir/function.go'"
-  - wget https://gist.github.com/mewmew/379014c9a2e6885e238d/raw/goclean.sh
-  - chmod +x goclean.sh
+  - go get -u golang.org/x/tools/cmd/cover
+  - go get -u golang.org/x/tools/cmd/goimports
+  - go get -u github.com/golang/lint/golint
+  - go get -u github.com/mattn/goveralls
+  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+  - wget https://raw.githubusercontent.com/mewmew/ci/master/ci_checks.sh
+  - chmod +x ci_checks.sh
 
 script:
-  - ./goclean.sh
+  - ./ci_checks.sh
