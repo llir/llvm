@@ -1,5 +1,7 @@
 package constant
 
+import "github.com/llir/l/ir/types"
+
 // --- [ Vector expressions ] --------------------------------------------------
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,6 +18,22 @@ type ExtractElement struct {
 // vector and element index.
 func NewExtractElement(x, index Constant) *ExtractElement {
 	return &ExtractElement{X: x, Index: index}
+}
+
+// Type returns the type of the constant expression.
+func (e *ExtractElement) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *ExtractElement) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *ExtractElement) Simplify() Constant {
+	panic("not yet implemented")
 }
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,6 +54,22 @@ func NewInsertElement(x, elem, index Constant) *InsertElement {
 	return &InsertElement{X: x, Elem: elem, Index: index}
 }
 
+// Type returns the type of the constant expression.
+func (e *InsertElement) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *InsertElement) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *InsertElement) Simplify() Constant {
+	panic("not yet implemented")
+}
+
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ShuffleVector is an LLVM IR shufflevector expression.
@@ -50,4 +84,20 @@ type ShuffleVector struct {
 // vectors and shuffle mask.
 func NewShuffleVector(x, y, mask Constant) *ShuffleVector {
 	return &ShuffleVector{X: x, Y: y, Mask: mask}
+}
+
+// Type returns the type of the constant expression.
+func (e *ShuffleVector) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the constant expression.
+func (e *ShuffleVector) Ident() string {
+	panic("not yet implemented")
+}
+
+// Simplify returns an equivalent (and potentially simplified) constant of the
+// constant expression.
+func (e *ShuffleVector) Simplify() Constant {
+	panic("not yet implemented")
 }

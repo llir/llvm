@@ -2,20 +2,20 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
-// Function is an LLVM IR function.
-type Function struct {
+// Global is a global variable declaration or definition.
+type Global struct {
 }
 
 // Type returns the type of the value.
-func (f *Function) Type() types.Type {
+func (g *Global) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the value.
-func (f *Function) Ident() string {
+func (g *Global) Ident() string {
 	panic("not yet implemented")
 }
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
-func (*Function) IsConstant() {}
+func (*Global) IsConstant() {}
