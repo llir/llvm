@@ -32,7 +32,7 @@ type InsertElement struct {
 	LocalName string
 	// Vector.
 	X value.Value
-	// Element.
+	// Element to insert.
 	Elem value.Value
 	// Element index.
 	Index value.Value
