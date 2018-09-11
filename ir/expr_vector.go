@@ -6,8 +6,8 @@ import "github.com/llir/l/ir/types"
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ExtractElementExpr is an LLVM IR extractelement expression.
-type ExtractElementExpr struct {
+// ExprExtractElement is an LLVM IR extractelement expression.
+type ExprExtractElement struct {
 	// Vector.
 	X Constant
 	// Element index.
@@ -16,30 +16,30 @@ type ExtractElementExpr struct {
 
 // NewExtractElementExpr returns a new extractelement expression based on the
 // given vector and element index.
-func NewExtractElementExpr(x, index Constant) *ExtractElementExpr {
-	return &ExtractElementExpr{X: x, Index: index}
+func NewExtractElementExpr(x, index Constant) *ExprExtractElement {
+	return &ExprExtractElement{X: x, Index: index}
 }
 
 // Type returns the type of the constant expression.
-func (e *ExtractElementExpr) Type() types.Type {
+func (e *ExprExtractElement) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *ExtractElementExpr) Ident() string {
+func (e *ExprExtractElement) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *ExtractElementExpr) Simplify() Constant {
+func (e *ExprExtractElement) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// InsertElementExpr is an LLVM IR insertelement expression.
-type InsertElementExpr struct {
+// ExprInsertElement is an LLVM IR insertelement expression.
+type ExprInsertElement struct {
 	// Vector.
 	X Constant
 	// Element to insert.
@@ -50,30 +50,30 @@ type InsertElementExpr struct {
 
 // NewInsertElementExpr returns a new insertelement expression based on the
 // given vector, element and element index.
-func NewInsertElementExpr(x, elem, index Constant) *InsertElementExpr {
-	return &InsertElementExpr{X: x, Elem: elem, Index: index}
+func NewInsertElementExpr(x, elem, index Constant) *ExprInsertElement {
+	return &ExprInsertElement{X: x, Elem: elem, Index: index}
 }
 
 // Type returns the type of the constant expression.
-func (e *InsertElementExpr) Type() types.Type {
+func (e *ExprInsertElement) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *InsertElementExpr) Ident() string {
+func (e *ExprInsertElement) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *InsertElementExpr) Simplify() Constant {
+func (e *ExprInsertElement) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ShuffleVectorExpr is an LLVM IR shufflevector expression.
-type ShuffleVectorExpr struct {
+// ExprShuffleVector is an LLVM IR shufflevector expression.
+type ExprShuffleVector struct {
 	// Vectors.
 	X, Y Constant
 	// Shuffle mask.
@@ -82,22 +82,22 @@ type ShuffleVectorExpr struct {
 
 // NewShuffleVectorExpr returns a new shufflevector expression based on the
 // given vectors and shuffle mask.
-func NewShuffleVectorExpr(x, y, mask Constant) *ShuffleVectorExpr {
-	return &ShuffleVectorExpr{X: x, Y: y, Mask: mask}
+func NewShuffleVectorExpr(x, y, mask Constant) *ExprShuffleVector {
+	return &ExprShuffleVector{X: x, Y: y, Mask: mask}
 }
 
 // Type returns the type of the constant expression.
-func (e *ShuffleVectorExpr) Type() types.Type {
+func (e *ExprShuffleVector) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *ShuffleVectorExpr) Ident() string {
+func (e *ExprShuffleVector) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *ShuffleVectorExpr) Simplify() Constant {
+func (e *ExprShuffleVector) Simplify() Constant {
 	panic("not yet implemented")
 }

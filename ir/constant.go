@@ -27,55 +27,55 @@ func (*Undef) isConstant()           {}
 func (*BlockAddress) isConstant()    {}
 
 // Binary expressions.
-func (*AddExpr) isConstant()  {}
-func (*FAddExpr) isConstant() {}
-func (*SubExpr) isConstant()  {}
-func (*FSubExpr) isConstant() {}
-func (*MulExpr) isConstant()  {}
-func (*FMulExpr) isConstant() {}
-func (*UDivExpr) isConstant() {}
-func (*SDivExpr) isConstant() {}
-func (*FDivExpr) isConstant() {}
-func (*URemExpr) isConstant() {}
-func (*SRemExpr) isConstant() {}
-func (*FRemExpr) isConstant() {}
+func (*ExprAdd) isConstant()  {}
+func (*ExprFAdd) isConstant() {}
+func (*ExprSub) isConstant()  {}
+func (*ExprFSub) isConstant() {}
+func (*ExprMul) isConstant()  {}
+func (*ExprFMul) isConstant() {}
+func (*ExprUDiv) isConstant() {}
+func (*ExprSDiv) isConstant() {}
+func (*ExprFDiv) isConstant() {}
+func (*ExprURem) isConstant() {}
+func (*ExprSRem) isConstant() {}
+func (*ExprFRem) isConstant() {}
 
 // Bitwise expressions.
-func (*ShlExpr) isConstant()  {}
-func (*LShrExpr) isConstant() {}
-func (*AShrExpr) isConstant() {}
-func (*AndExpr) isConstant()  {}
-func (*OrExpr) isConstant()   {}
-func (*XorExpr) isConstant()  {}
+func (*ExprShl) isConstant()  {}
+func (*ExprLShr) isConstant() {}
+func (*ExprAShr) isConstant() {}
+func (*ExprAnd) isConstant()  {}
+func (*ExprOr) isConstant()   {}
+func (*ExprXor) isConstant()  {}
 
 // Vector expressions.
-func (*ExtractElementExpr) isConstant() {}
-func (*InsertElementExpr) isConstant()  {}
-func (*ShuffleVectorExpr) isConstant()  {}
+func (*ExprExtractElement) isConstant() {}
+func (*ExprInsertElement) isConstant()  {}
+func (*ExprShuffleVector) isConstant()  {}
 
 // Aggregate expressions.
-func (*ExtractValueExpr) isConstant() {}
-func (*InsertValueExpr) isConstant()  {}
+func (*ExprExtractValue) isConstant() {}
+func (*ExprInsertValue) isConstant()  {}
 
 // Memory expressions.
-func (*GetElementPtrExpr) isConstant() {}
+func (*ExprGetElementPtr) isConstant() {}
 
 // Conversion expressions.
-func (*TruncExpr) isConstant()         {}
-func (*ZExtExpr) isConstant()          {}
-func (*SExtExpr) isConstant()          {}
-func (*FPTruncExpr) isConstant()       {}
-func (*FPExtExpr) isConstant()         {}
-func (*FPToUIExpr) isConstant()        {}
-func (*FPToSIExpr) isConstant()        {}
-func (*UIToFPExpr) isConstant()        {}
-func (*SIToFPExpr) isConstant()        {}
-func (*PtrToIntExpr) isConstant()      {}
-func (*IntToPtrExpr) isConstant()      {}
-func (*BitCastExpr) isConstant()       {}
-func (*AddrSpaceCastExpr) isConstant() {}
+func (*ExprTrunc) isConstant()         {}
+func (*ExprZExt) isConstant()          {}
+func (*ExprSExt) isConstant()          {}
+func (*ExprFPTrunc) isConstant()       {}
+func (*ExprFPExt) isConstant()         {}
+func (*ExprFPToUI) isConstant()        {}
+func (*ExprFPToSI) isConstant()        {}
+func (*ExprUIToFP) isConstant()        {}
+func (*ExprSIToFP) isConstant()        {}
+func (*ExprPtrToInt) isConstant()      {}
+func (*ExprIntToPtr) isConstant()      {}
+func (*ExprBitCast) isConstant()       {}
+func (*ExprAddrSpaceCast) isConstant() {}
 
 // Other expressions.
-func (*ICmpExpr) isConstant()   {}
-func (*FCmpExpr) isConstant()   {}
-func (*SelectExpr) isConstant() {}
+func (*ExprICmp) isConstant()   {}
+func (*ExprFCmp) isConstant()   {}
+func (*ExprSelect) isConstant() {}
