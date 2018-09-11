@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/constant"
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/value"
 )
@@ -53,7 +52,7 @@ func (block *BasicBlock) NewSwitch(x value.Value, targetDefault *BasicBlock, cas
 // NewIndirectBr returns a new indirectbr terminator based on the given target
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
-func (block *BasicBlock) NewIndirectBr(addr *constant.BlockAddress, validTargets ...*BasicBlock) *IndirectBr {
+func (block *BasicBlock) NewIndirectBr(addr *BlockAddress, validTargets ...*BasicBlock) *IndirectBr {
 	term := NewIndirectBr(addr, validTargets...)
 	block.Term = term
 	return term

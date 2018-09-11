@@ -1,4 +1,4 @@
-package constant
+package ir
 
 // An Expression is a constant expression.
 type Expression interface {

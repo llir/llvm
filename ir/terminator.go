@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/constant"
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/value"
 )
@@ -106,14 +105,14 @@ func (term *Switch) Succs() []*BasicBlock {
 // Case is a switch case.
 type Case struct {
 	// Case comparand.
-	X constant.Constant // integer constant or interger constant expression
+	X Constant // integer constant or interger constant expression
 	// Case target basic block.
 	Target *BasicBlock
 }
 
 // NewCase returns a new switch case based on the given case comparand and
 // target basic block.
-func NewCase(x constant.Constant, target *BasicBlock) *Case {
+func NewCase(x Constant, target *BasicBlock) *Case {
 	return &Case{X: x, Target: target}
 }
 
@@ -122,7 +121,7 @@ func NewCase(x constant.Constant, target *BasicBlock) *Case {
 // IndirectBr is an LLVM IR indirectbr terminator.
 type IndirectBr struct {
 	// Target address.
-	Addr *constant.BlockAddress
+	Addr *BlockAddress
 	// Set of valid target basic blocks.
 	ValidTargets []*BasicBlock
 }
@@ -130,7 +129,7 @@ type IndirectBr struct {
 // NewIndirectBr returns a new indirectbr terminator based on the given target
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
-func NewIndirectBr(addr *constant.BlockAddress, validTargets ...*BasicBlock) *IndirectBr {
+func NewIndirectBr(addr *BlockAddress, validTargets ...*BasicBlock) *IndirectBr {
 	return &IndirectBr{Addr: addr, ValidTargets: validTargets}
 }
 

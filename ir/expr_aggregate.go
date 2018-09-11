@@ -1,4 +1,4 @@
-package constant
+package ir
 
 import "github.com/llir/l/ir/types"
 
@@ -6,40 +6,40 @@ import "github.com/llir/l/ir/types"
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// ExtractValue is an LLVM IR extractvalue expression.
-type ExtractValue struct {
+// ExtractValueExpr is an LLVM IR extractvalue expression.
+type ExtractValueExpr struct {
 	// Aggregate value.
 	X Constant
 	// Element indices.
 	Indices []int64
 }
 
-// NewExtractValue returns a new extractvalue expression based on the given
+// NewExtractValueExpr returns a new extractvalue expression based on the given
 // aggregate value and indicies.
-func NewExtractValue(x Constant, indices ...int64) *ExtractValue {
-	return &ExtractValue{X: x, Indices: indices}
+func NewExtractValueExpr(x Constant, indices ...int64) *ExtractValueExpr {
+	return &ExtractValueExpr{X: x, Indices: indices}
 }
 
 // Type returns the type of the constant expression.
-func (e *ExtractValue) Type() types.Type {
+func (e *ExtractValueExpr) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *ExtractValue) Ident() string {
+func (e *ExtractValueExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *ExtractValue) Simplify() Constant {
+func (e *ExtractValueExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// InsertValue is an LLVM IR insertvalue expression.
-type InsertValue struct {
+// InsertValueExpr is an LLVM IR insertvalue expression.
+type InsertValueExpr struct {
 	// Aggregate value.
 	X Constant
 	// Element to insert.
@@ -48,24 +48,24 @@ type InsertValue struct {
 	Indices []int64
 }
 
-// NewInsertValue returns a new insertvalue expression based on the given
+// NewInsertValueExpr returns a new insertvalue expression based on the given
 // aggregate value, element and indicies.
-func NewInsertValue(x, elem Constant, indices ...int64) *InsertValue {
-	return &InsertValue{X: x, Elem: elem, Indices: indices}
+func NewInsertValueExpr(x, elem Constant, indices ...int64) *InsertValueExpr {
+	return &InsertValueExpr{X: x, Elem: elem, Indices: indices}
 }
 
 // Type returns the type of the constant expression.
-func (e *InsertValue) Type() types.Type {
+func (e *InsertValueExpr) Type() types.Type {
 	panic("not yet implemented")
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *InsertValue) Ident() string {
+func (e *InsertValueExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *InsertValue) Simplify() Constant {
+func (e *InsertValueExpr) Simplify() Constant {
 	panic("not yet implemented")
 }

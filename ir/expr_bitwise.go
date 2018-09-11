@@ -1,4 +1,4 @@
-package constant
+package ir
 
 import "github.com/llir/l/ir/types"
 
@@ -6,174 +6,174 @@ import "github.com/llir/l/ir/types"
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Shl is an LLVM IR shl expression.
-type Shl struct {
+// ShlExpr is an LLVM IR shl expression.
+type ShlExpr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
 }
 
-// NewShl returns a new shl expression based on the given operands.
-func NewShl(x, y Constant) *Shl {
-	return &Shl{X: x, Y: y}
+// NewShlExpr returns a new shl expression based on the given operands.
+func NewShlExpr(x, y Constant) *ShlExpr {
+	return &ShlExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *Shl) Type() types.Type {
+func (e *ShlExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Shl) Ident() string {
+func (e *ShlExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Shl) Simplify() Constant {
+func (e *ShlExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// LShr is an LLVM IR lshr expression.
-type LShr struct {
+// LShrExpr is an LLVM IR lshr expression.
+type LShrExpr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
 }
 
-// NewLShr returns a new lshr expression based on the given operands.
-func NewLShr(x, y Constant) *LShr {
-	return &LShr{X: x, Y: y}
+// NewLShrExpr returns a new lshr expression based on the given operands.
+func NewLShrExpr(x, y Constant) *LShrExpr {
+	return &LShrExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *LShr) Type() types.Type {
+func (e *LShrExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *LShr) Ident() string {
+func (e *LShrExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *LShr) Simplify() Constant {
+func (e *LShrExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// AShr is an LLVM IR ashr expression.
-type AShr struct {
+// AShrExpr is an LLVM IR ashr expression.
+type AShrExpr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
 }
 
-// NewAShr returns a new ashr expression based on the given operands.
-func NewAShr(x, y Constant) *AShr {
-	return &AShr{X: x, Y: y}
+// NewAShrExpr returns a new ashr expression based on the given operands.
+func NewAShrExpr(x, y Constant) *AShrExpr {
+	return &AShrExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *AShr) Type() types.Type {
+func (e *AShrExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *AShr) Ident() string {
+func (e *AShrExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *AShr) Simplify() Constant {
+func (e *AShrExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// And is an LLVM IR and expression.
-type And struct {
+// AndExpr is an LLVM IR and expression.
+type AndExpr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
 }
 
-// NewAnd returns a new and expression based on the given operands.
-func NewAnd(x, y Constant) *And {
-	return &And{X: x, Y: y}
+// NewAndExpr returns a new and expression based on the given operands.
+func NewAndExpr(x, y Constant) *AndExpr {
+	return &AndExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *And) Type() types.Type {
+func (e *AndExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *And) Ident() string {
+func (e *AndExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *And) Simplify() Constant {
+func (e *AndExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Or is an LLVM IR or expression.
-type Or struct {
+// OrExpr is an LLVM IR or expression.
+type OrExpr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
 }
 
-// NewOr returns a new or expression based on the given operands.
-func NewOr(x, y Constant) *Or {
-	return &Or{X: x, Y: y}
+// NewOrExpr returns a new or expression based on the given operands.
+func NewOrExpr(x, y Constant) *OrExpr {
+	return &OrExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *Or) Type() types.Type {
+func (e *OrExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Or) Ident() string {
+func (e *OrExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Or) Simplify() Constant {
+func (e *OrExpr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Xor is an LLVM IR xor expression.
-type Xor struct {
+// XorExpr is an LLVM IR xor expression.
+type XorExpr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
 }
 
-// NewXor returns a new xor expression based on the given operands.
-func NewXor(x, y Constant) *Xor {
-	return &Xor{X: x, Y: y}
+// NewXorExpr returns a new xor expression based on the given operands.
+func NewXorExpr(x, y Constant) *XorExpr {
+	return &XorExpr{X: x, Y: y}
 }
 
 // Type returns the type of the constant expression.
-func (e *Xor) Type() types.Type {
+func (e *XorExpr) Type() types.Type {
 	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
-func (e *Xor) Ident() string {
+func (e *XorExpr) Ident() string {
 	panic("not yet implemented")
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant of the
 // constant expression.
-func (e *Xor) Simplify() Constant {
+func (e *XorExpr) Simplify() Constant {
 	panic("not yet implemented")
 }

@@ -1,4 +1,4 @@
-package constant
+package ir
 
 import (
 	"math/big"

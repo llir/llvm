@@ -15,7 +15,3 @@ func (f *Function) Type() types.Type {
 func (f *Function) Ident() string {
 	panic("not yet implemented")
 }
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Function) IsConstant() {}
