@@ -13,18 +13,18 @@ type Constant interface {
 
 // isConstant ensures that only constants can be assigned to the ir.Constant
 // interface.
-func (*Int) isConstant()             {}
-func (*Float) isConstant()           {}
-func (*Null) isConstant()            {}
-func (*None) isConstant()            {}
-func (*Struct) isConstant()          {}
-func (*Array) isConstant()           {}
-func (*Vector) isConstant()          {}
-func (*ZeroInitializer) isConstant() {}
+func (*ConstInt) isConstant()             {}
+func (*ConstFloat) isConstant()           {}
+func (*ConstNull) isConstant()            {}
+func (*ConstNone) isConstant()            {}
+func (*ConstStruct) isConstant()          {}
+func (*ConstArray) isConstant()           {}
+func (*ConstVector) isConstant()          {}
+func (*ConstZeroInitializer) isConstant() {}
 func (*Global) isConstant()          {}
 func (*Function) isConstant()        {}
-func (*Undef) isConstant()           {}
-func (*BlockAddress) isConstant()    {}
+func (*ConstUndef) isConstant()           {}
+func (*ConstBlockAddress) isConstant()    {}
 
 // Binary expressions.
 func (*ExprAdd) isConstant()  {}
