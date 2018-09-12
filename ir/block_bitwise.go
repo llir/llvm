@@ -8,7 +8,8 @@ import (
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewShl returns a new shl instruction based on the given operands.
+// NewShl appends a new shl instruction to the basic block based on the given
+// operands.
 func (block *BasicBlock) NewShl(x, y value.Value) *InstShl {
 	inst := NewShl(x, y)
 	block.Insts = append(block.Insts, inst)
@@ -17,7 +18,8 @@ func (block *BasicBlock) NewShl(x, y value.Value) *InstShl {
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewLShr returns a new lshr instruction based on the given operands.
+// NewLShr appends a new lshr instruction to the basic block based on the given
+// operands.
 func (block *BasicBlock) NewLShr(x, y value.Value) *InstLShr {
 	inst := NewLShr(x, y)
 	block.Insts = append(block.Insts, inst)
@@ -26,7 +28,8 @@ func (block *BasicBlock) NewLShr(x, y value.Value) *InstLShr {
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewAShr returns a new ashr instruction based on the given operands.
+// NewAShr appends a new ashr instruction to the basic block based on the given
+// operands.
 func (block *BasicBlock) NewAShr(x, y value.Value) *InstAShr {
 	inst := NewAShr(x, y)
 	block.Insts = append(block.Insts, inst)
@@ -35,7 +38,8 @@ func (block *BasicBlock) NewAShr(x, y value.Value) *InstAShr {
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewAnd returns a new and instruction based on the given operands.
+// NewAnd appends a new and instruction to the basic block based on the given
+// operands.
 func (block *BasicBlock) NewAnd(x, y value.Value) *InstAnd {
 	inst := NewAnd(x, y)
 	block.Insts = append(block.Insts, inst)
@@ -44,7 +48,8 @@ func (block *BasicBlock) NewAnd(x, y value.Value) *InstAnd {
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewOr returns a new or instruction based on the given operands.
+// NewOr appends a new or instruction to the basic block based on the given
+// operands.
 func (block *BasicBlock) NewOr(x, y value.Value) *InstOr {
 	inst := NewOr(x, y)
 	block.Insts = append(block.Insts, inst)
@@ -53,7 +58,8 @@ func (block *BasicBlock) NewOr(x, y value.Value) *InstOr {
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewXor returns a new xor instruction based on the given operands.
+// NewXor appends a new xor instruction to the basic block based on the given
+// operands.
 func (block *BasicBlock) NewXor(x, y value.Value) *InstXor {
 	inst := NewXor(x, y)
 	block.Insts = append(block.Insts, inst)

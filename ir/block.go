@@ -1,6 +1,9 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"github.com/llir/l/internal/enc"
+	"github.com/llir/l/ir/types"
+)
 
 // BasicBlock is an LLVM IR basic block.
 type BasicBlock struct {
@@ -25,7 +28,7 @@ func (block *BasicBlock) Type() types.Type {
 
 // Ident returns the identifier associated with the basic block.
 func (block *BasicBlock) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(block.LocalName)
 }
 
 // Name returns the name of the basic block.

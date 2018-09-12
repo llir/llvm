@@ -9,8 +9,8 @@ import (
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewTrunc returns a new trunc instruction based on the given source value and
-// target type.
+// NewTrunc appends a new trunc instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewTrunc(from value.Value, to types.Type) *InstTrunc {
 	inst := NewTrunc(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -19,8 +19,8 @@ func (block *BasicBlock) NewTrunc(from value.Value, to types.Type) *InstTrunc {
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewZExt returns a new zext instruction based on the given source value and
-// target type.
+// NewZExt appends a new zext instruction to the basic block based on the given
+// source value and target type.
 func (block *BasicBlock) NewZExt(from value.Value, to types.Type) *InstZExt {
 	inst := NewZExt(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -29,8 +29,8 @@ func (block *BasicBlock) NewZExt(from value.Value, to types.Type) *InstZExt {
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewSExt returns a new sext instruction based on the given source value and
-// target type.
+// NewSExt appends a new sext instruction to the basic block based on the given
+// source value and target type.
 func (block *BasicBlock) NewSExt(from value.Value, to types.Type) *InstSExt {
 	inst := NewSExt(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -39,8 +39,8 @@ func (block *BasicBlock) NewSExt(from value.Value, to types.Type) *InstSExt {
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewFPTrunc returns a new fptrunc instruction based on the given source value
-// and target type.
+// NewFPTrunc appends a new fptrunc instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 	inst := NewFPTrunc(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -49,8 +49,8 @@ func (block *BasicBlock) NewFPTrunc(from value.Value, to types.Type) *InstFPTrun
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewFPExt returns a new fpext instruction based on the given source value and
-// target type.
+// NewFPExt appends a new fpext instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewFPExt(from value.Value, to types.Type) *InstFPExt {
 	inst := NewFPExt(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -59,8 +59,8 @@ func (block *BasicBlock) NewFPExt(from value.Value, to types.Type) *InstFPExt {
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewFPToUI returns a new fptoui instruction based on the given source value
-// and target type.
+// NewFPToUI appends a new fptoui instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 	inst := NewFPToUI(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -69,8 +69,8 @@ func (block *BasicBlock) NewFPToUI(from value.Value, to types.Type) *InstFPToUI 
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewFPToSI returns a new fptosi instruction based on the given source value
-// and target type.
+// NewFPToSI appends a new fptosi instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 	inst := NewFPToSI(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -79,8 +79,8 @@ func (block *BasicBlock) NewFPToSI(from value.Value, to types.Type) *InstFPToSI 
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewUIToFP returns a new uitofp instruction based on the given source value
-// and target type.
+// NewUIToFP appends a new uitofp instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 	inst := NewUIToFP(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -89,8 +89,8 @@ func (block *BasicBlock) NewUIToFP(from value.Value, to types.Type) *InstUIToFP 
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewSIToFP returns a new sitofp instruction based on the given source value
-// and target type.
+// NewSIToFP appends a new sitofp instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 	inst := NewSIToFP(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -99,8 +99,8 @@ func (block *BasicBlock) NewSIToFP(from value.Value, to types.Type) *InstSIToFP 
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewPtrToInt returns a new ptrtoint instruction based on the given source
-// value and target type.
+// NewPtrToInt appends a new ptrtoint instruction to the basic block based on
+// the given source value and target type.
 func (block *BasicBlock) NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 	inst := NewPtrToInt(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -109,8 +109,8 @@ func (block *BasicBlock) NewPtrToInt(from value.Value, to types.Type) *InstPtrTo
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewIntToPtr returns a new inttoptr instruction based on the given source
-// value and target type.
+// NewIntToPtr appends a new inttoptr instruction to the basic block based on
+// the given source value and target type.
 func (block *BasicBlock) NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 	inst := NewIntToPtr(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -119,8 +119,8 @@ func (block *BasicBlock) NewIntToPtr(from value.Value, to types.Type) *InstIntTo
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewBitCast returns a new bitcast instruction based on the given source value
-// and target type.
+// NewBitCast appends a new bitcast instruction to the basic block based on the
+// given source value and target type.
 func (block *BasicBlock) NewBitCast(from value.Value, to types.Type) *InstBitCast {
 	inst := NewBitCast(from, to)
 	block.Insts = append(block.Insts, inst)
@@ -129,8 +129,8 @@ func (block *BasicBlock) NewBitCast(from value.Value, to types.Type) *InstBitCas
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewAddrSpaceCast returns a new addrspacecast instruction based on the given
-// source value and target type.
+// NewAddrSpaceCast appends a new addrspacecast instruction to the basic block
+// based on the given source value and target type.
 func (block *BasicBlock) NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 	inst := NewAddrSpaceCast(from, to)
 	block.Insts = append(block.Insts, inst)
