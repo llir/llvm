@@ -8,5 +8,6 @@ type Type interface {
 
 // Convenience types.
 var (
+	Label = &LabelType{}
 	Token = &TokenType{}
 )

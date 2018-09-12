@@ -2,11 +2,13 @@ package ir
 
 import (
 	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
 
 // === [ Terminators ] =========================================================
 
+// Terminator is an LLVM IR terminator instruction (control flow instruction).
 type Terminator interface {
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*BasicBlock
@@ -144,9 +146,9 @@ func (term *TermIndirectBr) Succs() []*BasicBlock {
 type TermInvoke struct {
 	// Name of local variable associated with the result.
 	LocalName string
-	// Callee.
-	// TODO: specify the set of underlying types of Callee.
-	Callee value.Value
+	// Invokee (callee function).
+	// TODO: specify the set of underlying types of Invokee.
+	Invokee value.Value
 	// Function arguments.
 	Args []ll.Arg
 	// Normal control flow return point.
@@ -155,11 +157,31 @@ type TermInvoke struct {
 	Exception *BasicBlock
 }
 
-// NewInvoke returns a new invoke terminator based on the given callee, function
+// NewInvoke returns a new invoke terminator based on the given invokee, function
 // arguments and control flow return points for normal and exceptional
 // execution.
-func NewInvoke(callee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
-	return &TermInvoke{Callee: callee, Args: args, Normal: normal, Exception: exception}
+func NewInvoke(invokee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
+	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
+}
+
+// Type returns the type of the terminator.
+func (term *TermInvoke) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the terminator.
+func (term *TermInvoke) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the terminator.
+func (term *TermInvoke) Name() string {
+	return term.LocalName
+}
+
+// SetName sets the name of the terminator.
+func (term *TermInvoke) SetName(name string) {
+	term.LocalName = name
 }
 
 // Succs returns the successor basic blocks of the terminator.
@@ -205,6 +227,26 @@ type TermCatchSwitch struct {
 // exception scope, exception handlers and unwind target.
 func NewCatchSwitch(scope ll.ExceptionScope, handlers []*BasicBlock, unwindTarget ll.UnwindTarget) *TermCatchSwitch {
 	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
+}
+
+// Type returns the type of the terminator.
+func (term *TermCatchSwitch) Type() types.Type {
+	return types.Token
+}
+
+// Ident returns the identifier associated with the terminator.
+func (term *TermCatchSwitch) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the terminator.
+func (term *TermCatchSwitch) Name() string {
+	return term.LocalName
+}
+
+// SetName sets the name of the terminator.
+func (term *TermCatchSwitch) SetName(name string) {
+	term.LocalName = name
 }
 
 // Succs returns the successor basic blocks of the terminator.

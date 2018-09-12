@@ -3,67 +3,82 @@ package ir
 import "github.com/llir/l/ir/value"
 
 // Assert that each value implements the value.Value interface.
+//
+// Constants.
+// Checked in constant_test.go as ir.Constant embeds value.Value.
+//
+// Named values.
+// Checked in value_test.go as value.Named embeds value.Value.
+
+// Assert that each named value implements the value.Named interface.
 var (
+	// TODO: add metadata value?
+
+	// Other values.
+	_ value.Named = (*Global)(nil)
+	_ value.Named = (*Function)(nil)
+	_ value.Named = (*BasicBlock)(nil)
+
+	// Instructions.
 	// Binary instructions.
-	_ value.Value = (*InstAdd)(nil)
-	_ value.Value = (*InstFAdd)(nil)
-	_ value.Value = (*InstSub)(nil)
-	_ value.Value = (*InstFSub)(nil)
-	_ value.Value = (*InstMul)(nil)
-	_ value.Value = (*InstFMul)(nil)
-	_ value.Value = (*InstUDiv)(nil)
-	_ value.Value = (*InstSDiv)(nil)
-	_ value.Value = (*InstFDiv)(nil)
-	_ value.Value = (*InstURem)(nil)
-	_ value.Value = (*InstSRem)(nil)
-	_ value.Value = (*InstFRem)(nil)
+	_ value.Named = (*InstAdd)(nil)
+	_ value.Named = (*InstFAdd)(nil)
+	_ value.Named = (*InstSub)(nil)
+	_ value.Named = (*InstFSub)(nil)
+	_ value.Named = (*InstMul)(nil)
+	_ value.Named = (*InstFMul)(nil)
+	_ value.Named = (*InstUDiv)(nil)
+	_ value.Named = (*InstSDiv)(nil)
+	_ value.Named = (*InstFDiv)(nil)
+	_ value.Named = (*InstURem)(nil)
+	_ value.Named = (*InstSRem)(nil)
+	_ value.Named = (*InstFRem)(nil)
 	// Bitwise instructions.
-	_ value.Value = (*InstShl)(nil)
-	_ value.Value = (*InstLShr)(nil)
-	_ value.Value = (*InstAShr)(nil)
-	_ value.Value = (*InstAnd)(nil)
-	_ value.Value = (*InstOr)(nil)
-	_ value.Value = (*InstXor)(nil)
+	_ value.Named = (*InstShl)(nil)
+	_ value.Named = (*InstLShr)(nil)
+	_ value.Named = (*InstAShr)(nil)
+	_ value.Named = (*InstAnd)(nil)
+	_ value.Named = (*InstOr)(nil)
+	_ value.Named = (*InstXor)(nil)
 	// Vector instructions.
-	_ value.Value = (*InstExtractElement)(nil)
-	_ value.Value = (*InstInsertElement)(nil)
-	_ value.Value = (*InstShuffleVector)(nil)
+	_ value.Named = (*InstExtractElement)(nil)
+	_ value.Named = (*InstInsertElement)(nil)
+	_ value.Named = (*InstShuffleVector)(nil)
 	// Aggregate instructions.
-	_ value.Value = (*InstExtractValue)(nil)
-	_ value.Value = (*InstInsertValue)(nil)
+	_ value.Named = (*InstExtractValue)(nil)
+	_ value.Named = (*InstInsertValue)(nil)
 	// Memory instructions.
-	_ value.Value = (*InstAlloca)(nil)
-	_ value.Value = (*InstLoad)(nil)
-	//_ value.Value = (*InstStore)(nil)
-	//_ value.Value = (*InstFence)(nil)
-	_ value.Value = (*InstCmpXchg)(nil)
-	_ value.Value = (*InstAtomicRMW)(nil)
-	_ value.Value = (*InstGetElementPtr)(nil)
+	_ value.Named = (*InstAlloca)(nil)
+	_ value.Named = (*InstLoad)(nil)
+	_ value.Named = (*InstCmpXchg)(nil)
+	_ value.Named = (*InstAtomicRMW)(nil)
+	_ value.Named = (*InstGetElementPtr)(nil)
 	// Conversion instructions.
-	_ value.Value = (*InstTrunc)(nil)
-	_ value.Value = (*InstZExt)(nil)
-	_ value.Value = (*InstSExt)(nil)
-	_ value.Value = (*InstFPTrunc)(nil)
-	_ value.Value = (*InstFPExt)(nil)
-	_ value.Value = (*InstFPToUI)(nil)
-	_ value.Value = (*InstFPToSI)(nil)
-	_ value.Value = (*InstUIToFP)(nil)
-	_ value.Value = (*InstSIToFP)(nil)
-	_ value.Value = (*InstPtrToInt)(nil)
-	_ value.Value = (*InstIntToPtr)(nil)
-	_ value.Value = (*InstBitCast)(nil)
-	_ value.Value = (*InstAddrSpaceCast)(nil)
+	_ value.Named = (*InstTrunc)(nil)
+	_ value.Named = (*InstZExt)(nil)
+	_ value.Named = (*InstSExt)(nil)
+	_ value.Named = (*InstFPTrunc)(nil)
+	_ value.Named = (*InstFPExt)(nil)
+	_ value.Named = (*InstFPToUI)(nil)
+	_ value.Named = (*InstFPToSI)(nil)
+	_ value.Named = (*InstUIToFP)(nil)
+	_ value.Named = (*InstSIToFP)(nil)
+	_ value.Named = (*InstPtrToInt)(nil)
+	_ value.Named = (*InstIntToPtr)(nil)
+	_ value.Named = (*InstBitCast)(nil)
+	_ value.Named = (*InstAddrSpaceCast)(nil)
 	// Other instructions.
-	_ value.Value = (*InstICmp)(nil)
-	_ value.Value = (*InstFCmp)(nil)
-	_ value.Value = (*InstPhi)(nil)
-	_ value.Value = (*InstSelect)(nil)
-	_ value.Value = (*InstCall)(nil)
-	_ value.Value = (*InstVAArg)(nil)
-	_ value.Value = (*InstLandingPad)(nil)
-	_ value.Value = (*InstCatchPad)(nil)
-	_ value.Value = (*InstCleanupPad)(nil)
+	_ value.Named = (*InstICmp)(nil)
+	_ value.Named = (*InstFCmp)(nil)
+	_ value.Named = (*InstPhi)(nil)
+	_ value.Named = (*InstSelect)(nil)
+	_ value.Named = (*InstCall)(nil)
+	_ value.Named = (*InstVAArg)(nil)
+	_ value.Named = (*InstLandingPad)(nil)
+	_ value.Named = (*InstCatchPad)(nil)
+	_ value.Named = (*InstCleanupPad)(nil)
+
 	// Terminators.
-	_ value.Value = (*TermInvoke)(nil)
-	_ value.Value = (*TermCatchSwitch)(nil)
+	_ value.Named = (*TermInvoke)(nil)
+	_ value.Named = (*TermCatchSwitch)(nil) // token result used by catchpad
 )

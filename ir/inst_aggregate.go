@@ -1,6 +1,9 @@
 package ir
 
-import "github.com/llir/l/ir/value"
+import (
+	"github.com/llir/l/ir/types"
+	"github.com/llir/l/ir/value"
+)
 
 // --- [ Aggregate instructions ] ----------------------------------------------
 
@@ -22,6 +25,26 @@ func NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
 	return &InstExtractValue{X: x, Indices: indices}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstExtractValue) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstExtractValue) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstExtractValue) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstExtractValue) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstInsertValue is an LLVM IR insertvalue instruction.
@@ -40,4 +63,24 @@ type InstInsertValue struct {
 // aggregate value, element and indicies.
 func NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
 	return &InstInsertValue{X: x, Elem: elem, Indices: indices}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstInsertValue) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstInsertValue) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstInsertValue) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstInsertValue) SetName(name string) {
+	inst.LocalName = name
 }

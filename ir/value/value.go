@@ -17,5 +17,5 @@ type Named interface {
 	// Name returns the name of the value.
 	Name() string
 	// SetName sets the name of the value.
-	SetName() string
+	SetName(name string)
 }

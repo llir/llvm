@@ -25,6 +25,26 @@ func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 	return &InstTrunc{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstTrunc) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstTrunc) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstTrunc) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstTrunc) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstZExt is an LLVM IR zext instruction.
@@ -41,6 +61,26 @@ type InstZExt struct {
 // target type.
 func NewZExt(from value.Value, to types.Type) *InstZExt {
 	return &InstZExt{From: from, To: to}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstZExt) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstZExt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstZExt) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstZExt) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,6 +101,26 @@ func NewSExt(from value.Value, to types.Type) *InstSExt {
 	return &InstSExt{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstSExt) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstSExt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstSExt) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstSExt) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPTrunc is an LLVM IR fptrunc instruction.
@@ -77,6 +137,26 @@ type InstFPTrunc struct {
 // and target type.
 func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 	return &InstFPTrunc{From: from, To: to}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstFPTrunc) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstFPTrunc) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstFPTrunc) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstFPTrunc) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,6 +177,26 @@ func NewFPExt(from value.Value, to types.Type) *InstFPExt {
 	return &InstFPExt{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstFPExt) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstFPExt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstFPExt) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstFPExt) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPToUI is an LLVM IR fptoui instruction.
@@ -113,6 +213,26 @@ type InstFPToUI struct {
 // and target type.
 func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 	return &InstFPToUI{From: from, To: to}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstFPToUI) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstFPToUI) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstFPToUI) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstFPToUI) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,6 +253,26 @@ func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 	return &InstFPToSI{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstFPToSI) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstFPToSI) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstFPToSI) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstFPToSI) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstUIToFP is an LLVM IR uitofp instruction.
@@ -149,6 +289,26 @@ type InstUIToFP struct {
 // and target type.
 func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 	return &InstUIToFP{From: from, To: to}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstUIToFP) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstUIToFP) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstUIToFP) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstUIToFP) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -169,6 +329,26 @@ func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 	return &InstSIToFP{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstSIToFP) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstSIToFP) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstSIToFP) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstSIToFP) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstPtrToInt is an LLVM IR ptrtoint instruction.
@@ -185,6 +365,26 @@ type InstPtrToInt struct {
 // value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 	return &InstPtrToInt{From: from, To: to}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstPtrToInt) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstPtrToInt) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstPtrToInt) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstPtrToInt) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,6 +405,26 @@ func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 	return &InstIntToPtr{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstIntToPtr) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstIntToPtr) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstIntToPtr) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstIntToPtr) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstBitCast is an LLVM IR bitcast instruction.
@@ -223,6 +443,26 @@ func NewBitCast(from value.Value, to types.Type) *InstBitCast {
 	return &InstBitCast{From: from, To: to}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstBitCast) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstBitCast) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstBitCast) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstBitCast) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAddrSpaceCast is an LLVM IR addrspacecast instruction.
@@ -239,4 +479,24 @@ type InstAddrSpaceCast struct {
 // source value and target type.
 func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 	return &InstAddrSpaceCast{From: from, To: to}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstAddrSpaceCast) Type() types.Type {
+	return inst.To
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstAddrSpaceCast) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstAddrSpaceCast) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstAddrSpaceCast) SetName(name string) {
+	inst.LocalName = name
 }
