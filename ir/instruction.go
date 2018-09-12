@@ -1,5 +1,7 @@
 package ir
 
+// Instruction is an LLVM IR instruction. Most instructions may be used as
+// values (they implement the value.Named interface).
 type Instruction interface {
 	// isInstruction ensures that only instructions can be assigned to the
 	// instruction.Instruction interface.

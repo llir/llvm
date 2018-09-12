@@ -26,6 +26,26 @@ func NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
 	return &InstICmp{Cond: cond, X: x, Y: y}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstICmp) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstICmp) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstICmp) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstICmp) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFCmp is an LLVM IR fcmp instruction.
@@ -44,6 +64,26 @@ func NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
 	return &InstFCmp{Cond: cond, X: x, Y: y}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstFCmp) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstFCmp) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstFCmp) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstFCmp) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstPhi is an LLVM IR phi instruction.
@@ -57,6 +97,26 @@ type InstPhi struct {
 // NewPhi returns a new phi instruction based on the given incoming values.
 func NewPhi(incs ...*Incoming) *InstPhi {
 	return &InstPhi{Incs: incs}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstPhi) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstPhi) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstPhi) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstPhi) SetName(name string) {
+	inst.LocalName = name
 }
 
 // Incoming is an incoming value of a phi instruction.
@@ -91,6 +151,26 @@ func NewSelect(cond, x, y value.Value) *InstSelect {
 	return &InstSelect{Cond: cond, X: x, Y: x}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstSelect) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstSelect) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstSelect) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstSelect) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCall is an LLVM IR call instruction.
@@ -108,6 +188,26 @@ type InstCall struct {
 // arguments.
 func NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 	return &InstCall{Callee: callee, Args: args}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstCall) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstCall) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstCall) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstCall) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,6 +228,26 @@ func NewVAArg(list value.Value, argType types.Type) *InstVAArg {
 	return &InstVAArg{List: list, ArgType: argType}
 }
 
+// Type returns the type of the instruction.
+func (inst *InstVAArg) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstVAArg) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstVAArg) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstVAArg) SetName(name string) {
+	inst.LocalName = name
+}
+
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLandingPad is an LLVM IR landingpad instruction.
@@ -143,10 +263,30 @@ type InstLandingPad struct {
 	Clauses []*ll.Clause
 }
 
-// NewLandingPad returns a new landingpad instruction based on the given filter
-// and catch clauses.
-func NewLandingPad(clauses ...*ll.Clause) *InstLandingPad {
-	return &InstLandingPad{Clauses: clauses}
+// NewLandingPad returns a new landingpad instruction based on the given result
+// type and filter/catch clauses.
+func NewLandingPad(resultType types.Type, clauses ...*ll.Clause) *InstLandingPad {
+	return &InstLandingPad{ResultType: resultType, Clauses: clauses}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstLandingPad) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstLandingPad) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstLandingPad) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstLandingPad) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,15 +296,35 @@ type InstCatchPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope value.Value // TODO: assess if Scope is a good name. figure out the specific set of underlying types. rename to From?
+	Scope *TermCatchSwitch // TODO: rename to From or Within?
 	// Exception arguments.
 	Args []ll.Arg
 }
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
 // scope and exception arguments.
-func NewCatchPad(scope value.Value, args ...ll.Arg) *InstCatchPad {
+func NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *InstCatchPad {
 	return &InstCatchPad{Scope: scope, Args: args}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstCatchPad) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstCatchPad) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstCatchPad) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstCatchPad) SetName(name string) {
+	inst.LocalName = name
 }
 
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,4 +343,24 @@ type InstCleanupPad struct {
 // exception scope and exception arguments.
 func NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *InstCleanupPad {
 	return &InstCleanupPad{Scope: scope, Args: args}
+}
+
+// Type returns the type of the instruction.
+func (inst *InstCleanupPad) Type() types.Type {
+	panic("not yet implemented")
+}
+
+// Ident returns the identifier associated with the instruction.
+func (inst *InstCleanupPad) Ident() string {
+	panic("not yet implemented")
+}
+
+// Name returns the name of the instruction.
+func (inst *InstCleanupPad) Name() string {
+	return inst.LocalName
+}
+
+// SetName sets the name of the instruction.
+func (inst *InstCleanupPad) SetName(name string) {
+	inst.LocalName = name
 }

@@ -2,6 +2,10 @@ package ir
 
 // Assert that each constant implements the ir.Constant interface.
 var (
+	// Constant expressions.
+	// Checked in expression_test.go as ir.Expression embeds ir.Constant.
+
+	// Constants.
 	_ Constant = (*ConstInt)(nil)
 	_ Constant = (*ConstFloat)(nil)
 	_ Constant = (*ConstNull)(nil)

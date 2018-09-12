@@ -69,10 +69,10 @@ func (block *BasicBlock) NewVAArg(list value.Value, argType types.Type) *InstVAA
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewLandingPad returns a new landingpad instruction based on the given filter
-// and catch clauses.
-func (block *BasicBlock) NewLandingPad(clauses ...*ll.Clause) *InstLandingPad {
-	inst := NewLandingPad(clauses...)
+// NewLandingPad returns a new landingpad instruction based on the given result
+// type and filter/catch clauses.
+func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*ll.Clause) *InstLandingPad {
+	inst := NewLandingPad(resultType, clauses...)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -81,7 +81,7 @@ func (block *BasicBlock) NewLandingPad(clauses ...*ll.Clause) *InstLandingPad {
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
 // scope and exception arguments.
-func (block *BasicBlock) NewCatchPad(scope value.Value, args ...ll.Arg) *InstCatchPad {
+func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *InstCatchPad {
 	inst := NewCatchPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
