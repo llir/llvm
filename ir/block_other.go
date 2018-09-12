@@ -10,8 +10,8 @@ import (
 
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewICmp returns a new icmp instruction based on the given integer comparison
-// condition and integer scalar or vector operands.
+// NewICmp appends a new icmp instruction to the basic block based on the given
+// integer comparison condition and integer scalar or vector operands.
 func (block *BasicBlock) NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
 	inst := NewICmp(cond, x, y)
 	block.Insts = append(block.Insts, inst)
@@ -20,8 +20,9 @@ func (block *BasicBlock) NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
 
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewFCmp returns a new fcmp instruction based on the given floating-point
-// comparison condition and floating-point scalar or vector operands.
+// NewFCmp appends a new fcmp instruction to the basic block based on the given
+// floating-point comparison condition and floating-point scalar or vector
+// operands.
 func (block *BasicBlock) NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
 	inst := NewFCmp(cond, x, y)
 	block.Insts = append(block.Insts, inst)
@@ -30,7 +31,8 @@ func (block *BasicBlock) NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
 
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewPhi returns a new phi instruction based on the given incoming values.
+// NewPhi appends a new phi instruction to the basic block based on the given
+// incoming values.
 func (block *BasicBlock) NewPhi(incs ...*Incoming) *InstPhi {
 	inst := NewPhi(incs...)
 	block.Insts = append(block.Insts, inst)
@@ -39,8 +41,8 @@ func (block *BasicBlock) NewPhi(incs ...*Incoming) *InstPhi {
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewSelect returns a new select instruction based on the given selection
-// condition and operands.
+// NewSelect appends a new select instruction to the basic block based on the
+// given selection condition and operands.
 func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 	inst := NewSelect(cond, x, x)
 	block.Insts = append(block.Insts, inst)
@@ -49,8 +51,8 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewCall returns a new call instruction based on the given callee and function
-// arguments.
+// NewCall appends a new call instruction to the basic block based on the given
+// callee and function arguments.
 func (block *BasicBlock) NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 	inst := NewCall(callee, args...)
 	block.Insts = append(block.Insts, inst)
@@ -59,8 +61,8 @@ func (block *BasicBlock) NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewVAArg returns a new va_arg instruction based on the given variable
-// argument list and argument type.
+// NewVAArg appends a new va_arg instruction to the basic block based on the
+// given variable argument list and argument type.
 func (block *BasicBlock) NewVAArg(list value.Value, argType types.Type) *InstVAArg {
 	inst := NewVAArg(list, argType)
 	block.Insts = append(block.Insts, inst)
@@ -69,8 +71,8 @@ func (block *BasicBlock) NewVAArg(list value.Value, argType types.Type) *InstVAA
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewLandingPad returns a new landingpad instruction based on the given result
-// type and filter/catch clauses.
+// NewLandingPad appends a new landingpad instruction to the basic block based
+// on the given result type and filter/catch clauses.
 func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*ll.Clause) *InstLandingPad {
 	inst := NewLandingPad(resultType, clauses...)
 	block.Insts = append(block.Insts, inst)
@@ -79,8 +81,8 @@ func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*ll.Cla
 
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewCatchPad returns a new catchpad instruction based on the given exception
-// scope and exception arguments.
+// NewCatchPad appends a new catchpad instruction to the basic block based on
+// the given exception scope and exception arguments.
 func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *InstCatchPad {
 	inst := NewCatchPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
@@ -89,8 +91,8 @@ func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *In
 
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewCleanupPad returns a new cleanuppad instruction based on the given
-// exception scope and exception arguments.
+// NewCleanupPad appends a new cleanuppad instruction to the basic block based
+// on the given exception scope and exception arguments.
 func (block *BasicBlock) NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *InstCleanupPad {
 	inst := NewCleanupPad(scope, args...)
 	block.Insts = append(block.Insts, inst)

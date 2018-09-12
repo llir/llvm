@@ -10,7 +10,8 @@ import (
 
 // ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewAlloca returns a new alloca instruction based on the given element type.
+// NewAlloca appends a new alloca instruction to the basic block based on the
+// given element type.
 func (block *BasicBlock) NewAlloca(elemType types.Type) *InstAlloca {
 	inst := NewAlloca(elemType)
 	block.Insts = append(block.Insts, inst)
@@ -19,7 +20,8 @@ func (block *BasicBlock) NewAlloca(elemType types.Type) *InstAlloca {
 
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewLoad returns a new load instruction based on the given source address.
+// NewLoad appends a new load instruction to the basic block based on the given
+// source address.
 func (block *BasicBlock) NewLoad(src value.Value) *InstLoad {
 	inst := NewLoad(src)
 	block.Insts = append(block.Insts, inst)
@@ -28,8 +30,8 @@ func (block *BasicBlock) NewLoad(src value.Value) *InstLoad {
 
 // ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewStore returns a new store instruction based on the given source value and
-// destination address.
+// NewStore appends a new store instruction to the basic block based on the
+// given source value and destination address.
 func (block *BasicBlock) NewStore(src, dst value.Value) *InstStore {
 	inst := NewStore(src, dst)
 	block.Insts = append(block.Insts, inst)
@@ -38,7 +40,8 @@ func (block *BasicBlock) NewStore(src, dst value.Value) *InstStore {
 
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewFence returns a new fence instruction based on the given atomic ordering.
+// NewFence appends a new fence instruction to the basic block based on the
+// given atomic ordering.
 func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *InstFence {
 	inst := NewFence(ordering)
 	block.Insts = append(block.Insts, inst)
@@ -47,9 +50,9 @@ func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *InstFence {
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewCmpXchg returns a new cmpxchg instruction based on the given address,
-// value to compare against, new value to store, and atomic orderings for
-// success and failure.
+// NewCmpXchg appends a new cmpxchg instruction to the basic block based on the
+// given address, value to compare against, new value to store, and atomic
+// orderings for success and failure.
 func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure ll.AtomicOrdering) *InstCmpXchg {
 	inst := NewCmpXchg(ptr, cmp, new, success, failure)
 	block.Insts = append(block.Insts, inst)
@@ -58,8 +61,8 @@ func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure 
 
 // ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
-// operation, destination address, operand and atomic ordering.
+// NewAtomicRMW appends a new atomicrmw instruction to the basic block based on
+// the given atomic operation, destination address, operand and atomic ordering.
 func (block *BasicBlock) NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, ordering ll.AtomicOrdering) *InstAtomicRMW {
 	inst := NewAtomicRMW(op, dst, x, ordering)
 	block.Insts = append(block.Insts, inst)
@@ -68,8 +71,8 @@ func (block *BasicBlock) NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, orderi
 
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NewGetElementPtr returns a new getelementptr instruction based on the given
-// source address and element indices.
+// NewGetElementPtr appends a new getelementptr instruction to the basic block
+// based on the given source address and element indices.
 func (block *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
 	inst := NewGetElementPtr(src, indices...)
 	block.Insts = append(block.Insts, inst)

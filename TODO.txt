@@ -1,4 +1,4 @@
 - [x] validate that ir/instruction.XFoo uses same casing as the Haskell binding.
    ref: https://hackage.haskell.org/package/llvm-hs-pure-6.2.1/docs/LLVM-AST-Instruction.html
-- [ ] update doc of (*BasicBlock) NewInstFoo to state that instructions are appended to the block.
+- [x] update doc of (*BasicBlock) NewInstFoo to state that instructions are appended to the block.
 - [ ] see if IsUnwindTarget may be unexported.
