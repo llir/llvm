@@ -32,6 +32,44 @@ func Local(name string) string {
 	return "%" + EscapeIdent(name)
 }
 
+// Label encodes a label name to its LLVM IR assembly representation.
+//
+// Examples:
+//    "foo" -> "foo:"
+//    "a b" -> `"a\20b":`
+//    "世" -> `"\E4\B8\96":`
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func Label(name string) string {
+	return EscapeIdent(name) + ":"
+}
+
+// AttrGroupID encodes a attribute group ID to its LLVM IR assembly
+// representation.
+//
+// Examples:
+//    "42" -> "#42"
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func AttrGroupID(id string) string {
+	return "#" + id
+}
+
+// Comdat encodes a comdat name to its LLVM IR assembly representation.
+//
+// Examples:
+//    "foo" -> $%foo"
+//    "a b" -> `$"a\20b"`
+//    "世" -> `$"\E4\B8\96"`
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func Comdat(name string) string {
+	return "$" + EscapeIdent(name)
+}
+
 // Metadata encodes a metadata name to its LLVM IR assembly representation.
 //
 // Examples:
@@ -174,23 +212,6 @@ func Escape(s string, valid func(b byte) bool) string {
 	return string(buf)
 }
 
-// Unquote interprets s as a double-quoted string literal, returning the string
-// value that s quotes.
-func Unquote(s string) string {
-	if len(s) < 2 {
-		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
-	}
-	if !strings.HasPrefix(s, `"`) {
-		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character prefix", s))
-	}
-	if !strings.HasSuffix(s, `"`) {
-		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character suffix", s))
-	}
-	// Skip double-quotes.
-	s = s[1 : len(s)-1]
-	return Unescape(s)
-}
-
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their
 // corresponding characters.
 func Unescape(s string) string {
@@ -222,6 +243,28 @@ func Unescape(s string) string {
 		j++
 	}
 	return string(buf[:j])
+}
+
+// Quote returns s as a double-quoted string literal.
+func Quote(s string) string {
+	return `"` + EscapeString(s) + `"`
+}
+
+// Unquote interprets s as a double-quoted string literal, returning the string
+// value that s quotes.
+func Unquote(s string) string {
+	if len(s) < 2 {
+		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
+	}
+	if !strings.HasPrefix(s, `"`) {
+		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character prefix", s))
+	}
+	if !strings.HasSuffix(s, `"`) {
+		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character suffix", s))
+	}
+	// Skip double-quotes.
+	s = s[1 : len(s)-1]
+	return Unescape(s)
 }
 
 // unhex returns the numeric value represented by the hexadecimal digit b. It
