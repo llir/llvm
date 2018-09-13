@@ -80,7 +80,7 @@ package ir
 //    *ir.ExprSelect   // https://godoc.org/github.com/llir/l/ir#ExprSelect
 type Expression interface {
 	Constant
-	// Simplify returns an equivalent (and potentially simplified) constant of
+	// Simplify returns an equivalent (and potentially simplified) constant to
 	// the constant expression.
 	Simplify() Constant
 }
