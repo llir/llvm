@@ -27,7 +27,7 @@ func (e *ExprShl) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprShl) Simplify() Constant {
 	panic("not yet implemented")
@@ -56,7 +56,7 @@ func (e *ExprLShr) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprLShr) Simplify() Constant {
 	panic("not yet implemented")
@@ -85,7 +85,7 @@ func (e *ExprAShr) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAShr) Simplify() Constant {
 	panic("not yet implemented")
@@ -114,7 +114,7 @@ func (e *ExprAnd) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAnd) Simplify() Constant {
 	panic("not yet implemented")
@@ -143,7 +143,7 @@ func (e *ExprOr) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprOr) Simplify() Constant {
 	panic("not yet implemented")
@@ -172,7 +172,7 @@ func (e *ExprXor) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprXor) Simplify() Constant {
 	panic("not yet implemented")

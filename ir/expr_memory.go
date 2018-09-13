@@ -30,7 +30,7 @@ func (e *ExprGetElementPtr) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprGetElementPtr) Simplify() Constant {
 	panic("not yet implemented")

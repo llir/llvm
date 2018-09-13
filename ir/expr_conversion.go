@@ -32,7 +32,7 @@ func (e *ExprTrunc) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprTrunc) Simplify() Constant {
 	panic("not yet implemented")
@@ -64,7 +64,7 @@ func (e *ExprZExt) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprZExt) Simplify() Constant {
 	panic("not yet implemented")
@@ -96,7 +96,7 @@ func (e *ExprSExt) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSExt) Simplify() Constant {
 	panic("not yet implemented")
@@ -128,7 +128,7 @@ func (e *ExprFPTrunc) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPTrunc) Simplify() Constant {
 	panic("not yet implemented")
@@ -160,7 +160,7 @@ func (e *ExprFPExt) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPExt) Simplify() Constant {
 	panic("not yet implemented")
@@ -192,7 +192,7 @@ func (e *ExprFPToUI) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPToUI) Simplify() Constant {
 	panic("not yet implemented")
@@ -224,7 +224,7 @@ func (e *ExprFPToSI) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPToSI) Simplify() Constant {
 	panic("not yet implemented")
@@ -256,7 +256,7 @@ func (e *ExprUIToFP) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprUIToFP) Simplify() Constant {
 	panic("not yet implemented")
@@ -288,7 +288,7 @@ func (e *ExprSIToFP) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSIToFP) Simplify() Constant {
 	panic("not yet implemented")
@@ -320,7 +320,7 @@ func (e *ExprPtrToInt) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprPtrToInt) Simplify() Constant {
 	panic("not yet implemented")
@@ -352,7 +352,7 @@ func (e *ExprIntToPtr) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprIntToPtr) Simplify() Constant {
 	panic("not yet implemented")
@@ -384,7 +384,7 @@ func (e *ExprBitCast) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprBitCast) Simplify() Constant {
 	panic("not yet implemented")
@@ -416,7 +416,7 @@ func (e *ExprAddrSpaceCast) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAddrSpaceCast) Simplify() Constant {
 	panic("not yet implemented")

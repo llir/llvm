@@ -27,7 +27,7 @@ func (e *ExprAdd) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAdd) Simplify() Constant {
 	panic("not yet implemented")
@@ -56,7 +56,7 @@ func (e *ExprFAdd) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFAdd) Simplify() Constant {
 	panic("not yet implemented")
@@ -85,7 +85,7 @@ func (e *ExprSub) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSub) Simplify() Constant {
 	panic("not yet implemented")
@@ -114,7 +114,7 @@ func (e *ExprFSub) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFSub) Simplify() Constant {
 	panic("not yet implemented")
@@ -143,7 +143,7 @@ func (e *ExprMul) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprMul) Simplify() Constant {
 	panic("not yet implemented")
@@ -172,7 +172,7 @@ func (e *ExprFMul) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFMul) Simplify() Constant {
 	panic("not yet implemented")
@@ -201,7 +201,7 @@ func (e *ExprUDiv) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprUDiv) Simplify() Constant {
 	panic("not yet implemented")
@@ -230,7 +230,7 @@ func (e *ExprSDiv) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSDiv) Simplify() Constant {
 	panic("not yet implemented")
@@ -259,7 +259,7 @@ func (e *ExprFDiv) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFDiv) Simplify() Constant {
 	panic("not yet implemented")
@@ -288,7 +288,7 @@ func (e *ExprURem) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprURem) Simplify() Constant {
 	panic("not yet implemented")
@@ -317,7 +317,7 @@ func (e *ExprSRem) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSRem) Simplify() Constant {
 	panic("not yet implemented")
@@ -346,7 +346,7 @@ func (e *ExprFRem) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFRem) Simplify() Constant {
 	panic("not yet implemented")

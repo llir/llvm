@@ -30,7 +30,7 @@ func (e *ExprExtractElement) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprExtractElement) Simplify() Constant {
 	panic("not yet implemented")
@@ -64,7 +64,7 @@ func (e *ExprInsertElement) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprInsertElement) Simplify() Constant {
 	panic("not yet implemented")
@@ -96,7 +96,7 @@ func (e *ExprShuffleVector) Ident() string {
 	panic("not yet implemented")
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant of the
+// Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprShuffleVector) Simplify() Constant {
 	panic("not yet implemented")
