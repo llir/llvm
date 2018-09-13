@@ -9,15 +9,18 @@ import "github.com/llir/l/ir/value"
 //
 // Named values.
 // Checked in value_test.go as value.Named embeds value.Value.
+//
+// TODO: add literal metadata value?
 
 // Assert that each named value implements the value.Named interface.
 var (
-	// TODO: add metadata value?
-
 	// Other values.
 	_ value.Named = (*Global)(nil)
 	_ value.Named = (*Function)(nil)
+	_ value.Named = (*Param)(nil)
 	_ value.Named = (*BasicBlock)(nil)
+
+	// TODO: add named metadata value?
 
 	// Instructions.
 	// Binary instructions.

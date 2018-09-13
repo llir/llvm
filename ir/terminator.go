@@ -8,7 +8,25 @@ import (
 
 // === [ Terminators ] =========================================================
 
-// Terminator is an LLVM IR terminator instruction (control flow instruction).
+// Terminator is an LLVM IR terminator instruction (a control flow instruction).
+//
+// A Terminator has one of the following underlying types.
+//
+// Terminators
+//
+// https://llvm.org/docs/LangRef.html#terminator-instructions
+//
+//    *ir.TermRet           // https://godoc.org/github.com/llir/l/ir#TermRet
+//    *ir.TermBr            // https://godoc.org/github.com/llir/l/ir#TermBr
+//    *ir.TermCondBr        // https://godoc.org/github.com/llir/l/ir#TermCondBr
+//    *ir.TermSwitch        // https://godoc.org/github.com/llir/l/ir#TermSwitch
+//    *ir.TermIndirectBr    // https://godoc.org/github.com/llir/l/ir#TermIndirectBr
+//    *ir.TermInvoke        // https://godoc.org/github.com/llir/l/ir#TermInvoke
+//    *ir.TermResume        // https://godoc.org/github.com/llir/l/ir#TermResume
+//    *ir.TermCatchSwitch   // https://godoc.org/github.com/llir/l/ir#TermCatchSwitch
+//    *ir.TermCatchRet      // https://godoc.org/github.com/llir/l/ir#TermCatchRet
+//    *ir.TermCleanupRet    // https://godoc.org/github.com/llir/l/ir#TermCleanupRet
+//    *ir.TermUnreachable   // https://godoc.org/github.com/llir/l/ir#TermUnreachable
 type Terminator interface {
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*BasicBlock

@@ -2,13 +2,13 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
-// ConstUndef is an undefined constant.
+// ConstUndef is an undefined value.
 type ConstUndef struct {
 	// Constant type.
 	Typ types.Type
 }
 
-// NewUndef returns a new undefined constant based on the given type.
+// NewUndef returns a new undefined value based on the given type.
 func NewUndef(typ types.Type) *ConstUndef {
 	return &ConstUndef{Typ: typ}
 }
