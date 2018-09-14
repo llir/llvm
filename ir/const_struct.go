@@ -4,9 +4,9 @@ import "github.com/llir/l/ir/types"
 
 // --- [ Struct constants ] ----------------------------------------------------
 
-// ConstStruct is a struct constant.
+// ConstStruct is an LLVM IR struct constant.
 type ConstStruct struct {
-	// ConstStruct fields.
+	// Struct fields.
 	Fields []Constant
 }
 

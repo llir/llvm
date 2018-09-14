@@ -8,7 +8,7 @@ import (
 
 // --- [ Integer constants ] ---------------------------------------------------
 
-// ConstInt is an integer constant.
+// ConstInt is an LLVM IR integer constant.
 type ConstInt struct {
 	// Integer type.
 	Typ *types.IntType
@@ -16,10 +16,10 @@ type ConstInt struct {
 	X *big.Int
 }
 
-// NewIntFromInt64 returns a new integer constant based on the given integer
-// type and 64-bit interger value.
-func NewIntFromInt64(typ *types.IntType, x int64) *ConstInt {
-	panic("not yet implemented")
+// NewInt returns a new integer constant based on the given integer type and
+// 64-bit interger value.
+func NewInt(typ *types.IntType, x int64) *ConstInt {
+	return &ConstInt{Typ: types.I1, X: big.NewInt(x)}
 }
 
 // NewIntFromString returns a new integer constant based on the given integer
@@ -39,7 +39,7 @@ func NewIntFromString(typ *types.IntType, s string) *ConstInt {
 
 // Type returns the type of the constant.
 func (c *ConstInt) Type() types.Type {
-	panic("not yet implemented")
+	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.

@@ -4,9 +4,9 @@ import "github.com/llir/l/ir/types"
 
 // --- [ Vector constants ] ----------------------------------------------------
 
-// ConstVector is a vector constant.
+// ConstVector is an LLVM IR vector constant.
 type ConstVector struct {
-	// ConstVector elements.
+	// Vector elements.
 	Elems []Constant
 }
 

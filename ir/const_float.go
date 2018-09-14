@@ -8,7 +8,7 @@ import (
 
 // --- [ Floating-point constants ] --------------------------------------------
 
-// ConstFloat is a floating-point constant.
+// ConstFloat is an LLVM IR floating-point constant.
 type ConstFloat struct {
 	// Floating-point type.
 	Typ *types.FloatType
@@ -18,9 +18,9 @@ type ConstFloat struct {
 	NaN bool
 }
 
-// NewFloatFromFloat64 returns a new floating-point constant based on the given
+// NewFloat returns a new floating-point constant based on the given
 // floating-point type and double precision floating-point value.
-func NewFloatFromFloat64(typ *types.FloatType, x float64) *ConstFloat {
+func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 	panic("not yet implemented")
 }
 
@@ -45,7 +45,7 @@ func NewFloatFromString(typ *types.FloatType, s string) *ConstFloat {
 
 // Type returns the type of the constant.
 func (c *ConstFloat) Type() types.Type {
-	panic("not yet implemented")
+	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.

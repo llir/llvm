@@ -4,9 +4,9 @@ import "github.com/llir/l/ir/types"
 
 // --- [ Array constants ] -----------------------------------------------------
 
-// ConstArray is an array constant.
+// ConstArray is an LLVM IR array constant.
 type ConstArray struct {
-	// ConstArray elements.
+	// Array elements.
 	Elems []Constant
 }
 
@@ -27,7 +27,7 @@ func (c *ConstArray) Ident() string {
 
 // --- [ Character array constants ] -------------------------------------------
 
-// ConstCharArray is a character array constant.
+// ConstCharArray is an LLVM IR character array constant.
 type ConstCharArray struct {
 	// Character array contents.
 	X string // TODO: check if LLVM IR strings are UTF-8 encoded. If not, change type to []byte.

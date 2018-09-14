@@ -6,7 +6,7 @@ import (
 
 // --- [ blockaddress constants ] ----------------------------------------------
 
-// ConstBlockAddress is a blockaddress constant.
+// ConstBlockAddress is an LLVM IR blockaddress constant.
 type ConstBlockAddress struct {
 	// Parent function.
 	Func *Function
