@@ -12,6 +12,7 @@ var (
 	_ Constant = (*ConstNone)(nil)
 	_ Constant = (*ConstStruct)(nil)
 	_ Constant = (*ConstArray)(nil)
+	_ Constant = (*ConstCharArray)(nil)
 	_ Constant = (*ConstVector)(nil)
 	_ Constant = (*ConstZeroInitializer)(nil)
 	_ Constant = (*Global)(nil)

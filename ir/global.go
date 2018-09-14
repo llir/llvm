@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// === [ Global variables ] ====================================================
+
 // Global is a global variable declaration or definition.
 type Global struct {
 	// Global variable name.

@@ -6,6 +6,8 @@ import (
 	"github.com/llir/l/ir/types"
 )
 
+// --- [ Floating-point constants ] --------------------------------------------
+
 // ConstFloat is a floating-point constant.
 type ConstFloat struct {
 	// Floating-point type.

@@ -7,6 +7,8 @@ import (
 
 func (*BasicBlock) IsUnwindTarget() {}
 
+// --- [ Function parameters ] -------------------------------------------------
+
 // Param is an LLVM IR function parameter.
 type Param struct {
 	// Parameter type.
