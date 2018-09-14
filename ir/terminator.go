@@ -178,6 +178,8 @@ type TermInvoke struct {
 // NewInvoke returns a new invoke terminator based on the given invokee, function
 // arguments and control flow return points for normal and exceptional
 // execution.
+//
+// TODO: specify the set of underlying types of invokee.
 func NewInvoke(invokee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
 	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
 }
@@ -238,7 +240,7 @@ type TermCatchSwitch struct {
 	// Exception handlers.
 	Handlers []*BasicBlock
 	// Unwind target; basic block or caller function.
-	UnwindTarget ll.UnwindTarget // TODO: rename to To?
+	UnwindTarget ll.UnwindTarget // TODO: rename to To? rename to DefaultTarget?
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
