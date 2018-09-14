@@ -6,6 +6,8 @@ import (
 	"github.com/llir/l/ir/types"
 )
 
+// --- [ Integer constants ] ---------------------------------------------------
+
 // ConstInt is an integer constant.
 type ConstInt struct {
 	// Integer type.

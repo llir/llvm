@@ -4,6 +4,8 @@ import (
 	"github.com/llir/l/ir/types"
 )
 
+// --- [ blockaddress constants ] ----------------------------------------------
+
 // ConstBlockAddress is a blockaddress constant.
 type ConstBlockAddress struct {
 	// Parent function.

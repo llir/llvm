@@ -5,9 +5,9 @@ import (
 	"github.com/llir/l/ir/value"
 )
 
-// === [ Terminators ] =========================================================
+// --- [ Terminators ] ---------------------------------------------------------
 
-// --- [ ret ] -----------------------------------------------------------------
+// ~~~ [ ret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewRet sets the terminator of the basic block to a new ret terminator based
 // on the given return value. A nil return value indicates a void return.
@@ -17,7 +17,7 @@ func (block *BasicBlock) NewRet(x value.Value) *TermRet {
 	return term
 }
 
-// --- [ br ] ------------------------------------------------------------------
+// ~~~ [ br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewBr sets the terminator of the basic block to a new unconditional br
 // terminator based on the given target basic block.
@@ -27,7 +27,7 @@ func (block *BasicBlock) NewBr(target *BasicBlock) *TermBr {
 	return term
 }
 
-// --- [ conditional br ] ------------------------------------------------------
+// ~~~ [ conditional br ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCondBr sets the terminator of the basic block to a new conditional br
 // terminator based on the given branching condition and conditional target
@@ -38,7 +38,7 @@ func (block *BasicBlock) NewCondBr(cond value.Value, targetTrue, targetFalse *Ba
 	return term
 }
 
-// --- [ switch ] --------------------------------------------------------------
+// ~~~ [ switch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewSwitch sets the terminator of the basic block to a new switch terminator
 // based on the given control variable, default target basic block and switch
@@ -49,7 +49,7 @@ func (block *BasicBlock) NewSwitch(x value.Value, targetDefault *BasicBlock, cas
 	return term
 }
 
-// --- [ indirectbr ] ----------------------------------------------------------
+// ~~~ [ indirectbr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewIndirectBr sets the terminator of the basic block to a new indirectbr
 // terminator based on the given target address (derived from a blockaddress
@@ -60,7 +60,7 @@ func (block *BasicBlock) NewIndirectBr(addr *ConstBlockAddress, validTargets ...
 	return term
 }
 
-// --- [ invoke ] --------------------------------------------------------------
+// ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewInvoke sets the terminator of the basic block to a new invoke terminator
 // based on the given callee, function arguments and control flow return points
@@ -71,7 +71,7 @@ func (block *BasicBlock) NewInvoke(callee value.Value, args []ll.Arg, normal, ex
 	return term
 }
 
-// --- [ resume ] --------------------------------------------------------------
+// ~~~ [ resume ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewResume sets the terminator of the basic block to a new resume terminator
 // based on the given exception argument to propagate.
@@ -81,7 +81,7 @@ func (block *BasicBlock) NewResume(x value.Value) *TermResume {
 	return term
 }
 
-// --- [ catchswitch ] ---------------------------------------------------------
+// ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCatchSwitch sets the terminator of the basic block to a new catchswitch
 // terminator based on the given exception scope, exception handlers and unwind
@@ -92,7 +92,7 @@ func (block *BasicBlock) NewCatchSwitch(scope ll.ExceptionScope, handlers []*Bas
 	return term
 }
 
-// --- [ catchret ] ------------------------------------------------------------
+// ~~~ [ catchret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCatchRet sets the terminator of the basic block to a new catchret
 // terminator based on the given exit catchpad and target basic block.
@@ -102,7 +102,7 @@ func (block *BasicBlock) NewCatchRet(from *InstCatchPad, to *BasicBlock) *TermCa
 	return term
 }
 
-// --- [ cleanupret ] ----------------------------------------------------------
+// ~~~ [ cleanupret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCleanupRet sets the terminator of the basic block to a new cleanupret
 // terminator based on the given exit cleanuppad and unwind target.
@@ -112,7 +112,7 @@ func (block *BasicBlock) NewCleanupRet(from *InstCleanupPad, to ll.UnwindTarget)
 	return term
 }
 
-// --- [ unreachable ] ---------------------------------------------------------
+// ~~~ [ unreachable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewUnreachable sets the terminator of the basic block to a new unreachable
 // terminator.

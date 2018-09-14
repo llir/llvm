@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// --- [ Null pointer constants ] ----------------------------------------------
+
 // ConstNull is a null pointer constant.
 type ConstNull struct {
 	// Pointer type.

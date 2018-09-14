@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// --- [ Undefined values ] ----------------------------------------------------
+
 // ConstUndef is an undefined value.
 type ConstUndef struct {
 	// Constant type.

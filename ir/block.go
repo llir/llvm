@@ -5,7 +5,10 @@ import (
 	"github.com/llir/l/ir/types"
 )
 
-// BasicBlock is an LLVM IR basic block.
+// === [ Basic blocks ] ========================================================
+
+// BasicBlock is an LLVM IR basic block; a sequence of non-branching
+// instructions terminated by a control flow instruction.
 type BasicBlock struct {
 	// Name of local variable associated with the basic block.
 	LocalName string

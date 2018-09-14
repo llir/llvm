@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// --- [ zeroinitializer constants ] -------------------------------------------
+
 // ConstZeroInitializer is a zeroinitializer constant.
 type ConstZeroInitializer struct {
 	// Constant type.

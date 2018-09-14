@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// --- [ Vector constants ] ----------------------------------------------------
+
 // ConstVector is a vector constant.
 type ConstVector struct {
 	// ConstVector elements.

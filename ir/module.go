@@ -3,6 +3,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// === [ Modules ] =============================================================
+
 // Module is an LLVM IR module.
 type Module struct {
 	// Type definitions.

@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// --- [ Struct constants ] ----------------------------------------------------
+
 // ConstStruct is a struct constant.
 type ConstStruct struct {
 	// ConstStruct fields.

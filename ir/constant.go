@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/value"
 
+// === [ Constants ] ===========================================================
+
 // Constant is an LLVM IR constant; a value that is immutable at runtime, such
 // as an integer or floating-point literal, or the address of a function or
 // global variable.
@@ -23,6 +25,7 @@ import "github.com/llir/l/ir/value"
 //
 //    *ir.ConstStruct            // https://godoc.org/github.com/llir/l/ir#ConstStruct
 //    *ir.ConstArray             // https://godoc.org/github.com/llir/l/ir#ConstArray
+//    *ir.ConstCharArray         // https://godoc.org/github.com/llir/l/ir#ConstCharArray
 //    *ir.ConstVector            // https://godoc.org/github.com/llir/l/ir#ConstVector
 //    *ir.ConstZeroInitializer   // https://godoc.org/github.com/llir/l/ir#ConstZeroInitializer
 //    TODO: include metadata node?
@@ -66,6 +69,7 @@ func (*ConstNull) isConstant()            {}
 func (*ConstNone) isConstant()            {}
 func (*ConstStruct) isConstant()          {}
 func (*ConstArray) isConstant()           {}
+func (*ConstCharArray) isConstant()       {}
 func (*ConstVector) isConstant()          {}
 func (*ConstZeroInitializer) isConstant() {}
 func (*Global) isConstant()               {}

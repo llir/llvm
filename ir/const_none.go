@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// --- [ Token constants ] -----------------------------------------------------
+
 // ConstNone is a none token constant.
 type ConstNone struct {
 }

@@ -1,5 +1,7 @@
 package ir
 
+// === [ Instructions ] ========================================================
+
 // Instruction is an LLVM IR instruction. All instructions (except store and
 // fence) implement the value.Named interface and may thus be used directly as
 // values.

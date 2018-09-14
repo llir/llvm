@@ -1,5 +1,7 @@
 package ir
 
+// === [ Expressions ] =========================================================
+
 // Expression is an LLVM IR constant expression.
 //
 // An Expression has one of the following underlying types.

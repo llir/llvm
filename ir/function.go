@@ -2,6 +2,8 @@ package ir
 
 import "github.com/llir/l/ir/types"
 
+// === [ Functions ] ===========================================================
+
 // Function is an LLVM IR function.
 type Function struct {
 	// Function name.
