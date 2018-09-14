@@ -4,7 +4,7 @@ import "github.com/llir/l/ir/types"
 
 // --- [ Token constants ] -----------------------------------------------------
 
-// ConstNone is a none token constant.
+// ConstNone is an LLVM IR none token constant.
 type ConstNone struct {
 }
 

@@ -4,7 +4,7 @@ import "github.com/llir/l/ir/types"
 
 // --- [ zeroinitializer constants ] -------------------------------------------
 
-// ConstZeroInitializer is a zeroinitializer constant.
+// ConstZeroInitializer is an LLVM IR zeroinitializer constant.
 type ConstZeroInitializer struct {
 	// Constant type.
 	Typ types.Type

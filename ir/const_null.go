@@ -4,7 +4,7 @@ import "github.com/llir/l/ir/types"
 
 // --- [ Null pointer constants ] ----------------------------------------------
 
-// ConstNull is a null pointer constant.
+// ConstNull is an LLVM IR null pointer constant.
 type ConstNull struct {
 	// Pointer type.
 	Typ *types.PointerType

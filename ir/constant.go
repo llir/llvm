@@ -1,8 +1,20 @@
 package ir
 
-import "github.com/llir/l/ir/value"
+import (
+	"github.com/llir/l/ir/types"
+	"github.com/llir/l/ir/value"
+)
 
 // === [ Constants ] ===========================================================
+
+// Convenience constants.
+var (
+	// None token constant.
+	None = &ConstNone{} // none
+	// Boolean constants.
+	True  = NewInt(types.I1, 1) // true
+	False = NewInt(types.I1, 0) // false
+)
 
 // Constant is an LLVM IR constant; a value that is immutable at runtime, such
 // as an integer or floating-point literal, or the address of a function or
