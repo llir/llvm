@@ -63,10 +63,12 @@ func (block *BasicBlock) NewIndirectBr(addr *ConstBlockAddress, validTargets ...
 // ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewInvoke sets the terminator of the basic block to a new invoke terminator
-// based on the given callee, function arguments and control flow return points
+// based on the given invokee, function arguments and control flow return points
 // for normal and exceptional execution.
-func (block *BasicBlock) NewInvoke(callee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
-	term := NewInvoke(callee, args, normal, exception)
+//
+// TODO: specify the set of underlying types of invokee.
+func (block *BasicBlock) NewInvoke(invokee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
+	term := NewInvoke(invokee, args, normal, exception)
 	block.Term = term
 	return term
 }

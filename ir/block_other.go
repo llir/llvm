@@ -53,6 +53,8 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
+//
+// TODO: specify the set of underlying types of callee.
 func (block *BasicBlock) NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 	inst := NewCall(callee, args...)
 	block.Insts = append(block.Insts, inst)
@@ -63,8 +65,8 @@ func (block *BasicBlock) NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 
 // NewVAArg appends a new va_arg instruction to the basic block based on the
 // given variable argument list and argument type.
-func (block *BasicBlock) NewVAArg(list value.Value, argType types.Type) *InstVAArg {
-	inst := NewVAArg(list, argType)
+func (block *BasicBlock) NewVAArg(vaList value.Value, argType types.Type) *InstVAArg {
+	inst := NewVAArg(vaList, argType)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

@@ -186,6 +186,8 @@ type InstCall struct {
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
+//
+// TODO: specify the set of underlying types of callee.
 func NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 	return &InstCall{Callee: callee, Args: args}
 }
@@ -217,15 +219,15 @@ type InstVAArg struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Variable argument list.
-	List value.Value
+	VAList value.Value
 	// Argument type.
 	ArgType types.Type
 }
 
 // NewVAArg returns a new va_arg instruction based on the given variable
 // argument list and argument type.
-func NewVAArg(list value.Value, argType types.Type) *InstVAArg {
-	return &InstVAArg{List: list, ArgType: argType}
+func NewVAArg(vaList value.Value, argType types.Type) *InstVAArg {
+	return &InstVAArg{VAList: vaList, ArgType: argType}
 }
 
 // Type returns the type of the instruction.
@@ -296,7 +298,7 @@ type InstCatchPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope *TermCatchSwitch // TODO: rename to From or Within?
+	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
 	// Exception arguments.
 	Args []ll.Arg
 }
