@@ -43,3 +43,8 @@ func (block *BasicBlock) Name() string {
 func (block *BasicBlock) SetName(name string) {
 	block.LocalName = name
 }
+
+// Def returns the LLVM syntax representation of the basic block definition.
+func (block *BasicBlock) Def() string {
+	panic("not yet implemented")
+}

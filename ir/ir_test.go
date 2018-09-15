@@ -29,7 +29,7 @@ func TestModuleString(t *testing.T) {
 		},
 	}
 	for _, g := range golden {
-		got := strings.TrimSpace(g.in.String())
+		got := strings.TrimSpace(g.in.Def())
 		if g.want != got {
 			t.Errorf("module mismatch; expected `%v`, got `%v`", g.want, got)
 		}

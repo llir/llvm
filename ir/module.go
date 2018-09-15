@@ -20,8 +20,8 @@ type Module struct {
 	Funcs []*Function
 }
 
-// String returns the string representation of the module.
-func (m *Module) String() string {
+// Def returns the LLVM syntax representation of the module.
+func (m *Module) Def() string {
 	buf := &strings.Builder{}
 	// Type definitions.
 	for _, t := range m.TypeDefs {
@@ -29,6 +29,6 @@ func (m *Module) String() string {
 		// LocalIdent "=" "type" Type
 		fmt.Fprintf(buf, "%v = type %v\n", t, t.Def())
 	}
-	// TODO: implement Module.String.
+	// TODO: implement Module.Def.
 	return buf.String()
 }
