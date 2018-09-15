@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ zeroinitializer constants ] -------------------------------------------
 
@@ -14,6 +18,12 @@ type ConstZeroInitializer struct {
 // type.
 func NewZeroInitializer(typ types.Type) *ConstZeroInitializer {
 	return &ConstZeroInitializer{Typ: typ}
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstZeroInitializer) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

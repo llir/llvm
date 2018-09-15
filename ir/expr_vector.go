@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Vector expressions ] --------------------------------------------------
 
@@ -18,6 +22,12 @@ type ExprExtractElement struct {
 // given vector and element index.
 func NewExtractElementExpr(x, index Constant) *ExprExtractElement {
 	return &ExprExtractElement{X: x, Index: index}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprExtractElement) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -54,6 +64,12 @@ func NewInsertElementExpr(x, elem, index Constant) *ExprInsertElement {
 	return &ExprInsertElement{X: x, Elem: elem, Index: index}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprInsertElement) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprInsertElement) Type() types.Type {
 	panic("not yet implemented")
@@ -84,6 +100,12 @@ type ExprShuffleVector struct {
 // given vectors and shuffle mask.
 func NewShuffleVectorExpr(x, y, mask Constant) *ExprShuffleVector {
 	return &ExprShuffleVector{X: x, Y: y, Mask: mask}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprShuffleVector) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.

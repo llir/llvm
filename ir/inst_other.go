@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -24,6 +26,12 @@ type InstICmp struct {
 // condition and integer scalar or vector operands.
 func NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
 	return &InstICmp{Cond: cond, X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstICmp) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -64,6 +72,12 @@ func NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
 	return &InstFCmp{Cond: cond, X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFCmp) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstFCmp) Type() types.Type {
 	panic("not yet implemented")
@@ -97,6 +111,12 @@ type InstPhi struct {
 // NewPhi returns a new phi instruction based on the given incoming values.
 func NewPhi(incs ...*Incoming) *InstPhi {
 	return &InstPhi{Incs: incs}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstPhi) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -151,6 +171,12 @@ func NewSelect(cond, x, y value.Value) *InstSelect {
 	return &InstSelect{Cond: cond, X: x, Y: x}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstSelect) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstSelect) Type() types.Type {
 	panic("not yet implemented")
@@ -192,6 +218,12 @@ func NewCall(callee value.Value, args ...ll.Arg) *InstCall {
 	return &InstCall{Callee: callee, Args: args}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstCall) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstCall) Type() types.Type {
 	panic("not yet implemented")
@@ -228,6 +260,12 @@ type InstVAArg struct {
 // argument list and argument type.
 func NewVAArg(vaList value.Value, argType types.Type) *InstVAArg {
 	return &InstVAArg{VAList: vaList, ArgType: argType}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstVAArg) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -271,6 +309,12 @@ func NewLandingPad(resultType types.Type, clauses ...*ll.Clause) *InstLandingPad
 	return &InstLandingPad{ResultType: resultType, Clauses: clauses}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstLandingPad) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstLandingPad) Type() types.Type {
 	panic("not yet implemented")
@@ -309,6 +353,12 @@ func NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *InstCatchPad {
 	return &InstCatchPad{Scope: scope, Args: args}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstCatchPad) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstCatchPad) Type() types.Type {
 	panic("not yet implemented")
@@ -345,6 +395,12 @@ type InstCleanupPad struct {
 // exception scope and exception arguments.
 func NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *InstCleanupPad {
 	return &InstCleanupPad{Scope: scope, Args: args}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstCleanupPad) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -23,6 +25,12 @@ type InstAlloca struct {
 // NewAlloca returns a new alloca instruction based on the given element type.
 func NewAlloca(elemType types.Type) *InstAlloca {
 	return &InstAlloca{ElemType: elemType}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstAlloca) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -58,6 +66,12 @@ type InstLoad struct {
 // NewLoad returns a new load instruction based on the given source address.
 func NewLoad(src value.Value) *InstLoad {
 	return &InstLoad{Src: src}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstLoad) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -96,6 +110,12 @@ func NewStore(src, dst value.Value) *InstStore {
 	return &InstStore{Src: src, Dst: dst}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstStore) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstStore) Type() types.Type {
 	panic("not yet implemented")
@@ -117,6 +137,12 @@ type InstFence struct {
 // NewFence returns a new fence instruction based on the given atomic ordering.
 func NewFence(ordering ll.AtomicOrdering) *InstFence {
 	return &InstFence{Ordering: ordering}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFence) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -152,6 +178,12 @@ type InstCmpXchg struct {
 // success and failure.
 func NewCmpXchg(ptr, cmp, new value.Value, success, failure ll.AtomicOrdering) *InstCmpXchg {
 	return &InstCmpXchg{Ptr: ptr, Cmp: cmp, New: new, Success: success, Failure: failure}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstCmpXchg) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -196,6 +228,12 @@ func NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, ordering ll.AtomicOrdering
 	return &InstAtomicRMW{Op: op, Dst: dst, X: x, Ordering: ordering}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstAtomicRMW) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstAtomicRMW) Type() types.Type {
 	panic("not yet implemented")
@@ -232,6 +270,12 @@ type InstGetElementPtr struct {
 // source address and element indices.
 func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
 	return &InstGetElementPtr{Src: src, Indices: indices}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstGetElementPtr) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

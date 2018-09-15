@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 )
 
@@ -18,6 +20,12 @@ type ConstBlockAddress struct {
 // function and basic block.
 func NewBlockAddress(f *Function, block *BasicBlock) *ConstBlockAddress {
 	return &ConstBlockAddress{Func: f, Block: block}
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstBlockAddress) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

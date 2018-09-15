@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -23,6 +25,12 @@ type InstExtractValue struct {
 // aggregate value and indicies.
 func NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
 	return &InstExtractValue{X: x, Indices: indices}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstExtractValue) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -63,6 +71,12 @@ type InstInsertValue struct {
 // aggregate value, element and indicies.
 func NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
 	return &InstInsertValue{X: x, Elem: elem, Indices: indices}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstInsertValue) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

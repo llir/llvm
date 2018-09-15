@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Vector constants ] ----------------------------------------------------
 
@@ -13,6 +17,12 @@ type ConstVector struct {
 // NewVector returns a new vector constant based on the given vector elements.
 func NewVector(elems ...Constant) *ConstVector {
 	return &ConstVector{Elems: elems}
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstVector) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

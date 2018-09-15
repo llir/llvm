@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
 )
@@ -25,6 +27,12 @@ type Function struct {
 // type and function parameters.
 func NewFunction(name string, retType types.Type, params ...*Param) *Function {
 	return &Function{FuncName: name, RetType: retType, Params: params}
+}
+
+// String returns the LLVM syntax representation of the function as a type-value
+// pair.
+func (f *Function) String() string {
+	return fmt.Sprintf("%v %v", f.Type(), f.Ident())
 }
 
 // Type returns the type of the function.

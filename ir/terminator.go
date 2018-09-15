@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -184,6 +186,12 @@ func NewInvoke(invokee value.Value, args []ll.Arg, normal, exception *BasicBlock
 	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
 }
 
+// String returns the LLVM syntax representation of the terminator as a type-
+// value pair.
+func (term *TermInvoke) String() string {
+	return fmt.Sprintf("%v %v", term.Type(), term.Ident())
+}
+
 // Type returns the type of the terminator.
 func (term *TermInvoke) Type() types.Type {
 	panic("not yet implemented")
@@ -247,6 +255,12 @@ type TermCatchSwitch struct {
 // exception scope, exception handlers and unwind target.
 func NewCatchSwitch(scope ll.ExceptionScope, handlers []*BasicBlock, unwindTarget ll.UnwindTarget) *TermCatchSwitch {
 	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
+}
+
+// String returns the LLVM syntax representation of the terminator as a type-
+// value pair.
+func (term *TermCatchSwitch) String() string {
+	return fmt.Sprintf("%v %v", term.Type(), term.Ident())
 }
 
 // Type returns the type of the terminator.

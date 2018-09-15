@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
 )
@@ -29,6 +31,12 @@ func NewGlobalDecl(name string, contentType types.Type) *Global {
 // global variable name and initial value.
 func NewGlobalDef(name string, init Constant) *Global {
 	return &Global{GlobalName: name, ContentType: init.Type(), Init: init}
+}
+
+// String returns the LLVM syntax representation of the global variable as a
+// type-value pair.
+func (g *Global) String() string {
+	return fmt.Sprintf("%v %v", g.Type(), g.Ident())
 }
 
 // Type returns the type of the global variable.

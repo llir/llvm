@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -20,6 +22,12 @@ type InstAdd struct {
 // NewAdd returns a new add instruction based on the given operands.
 func NewAdd(x, y value.Value) *InstAdd {
 	return &InstAdd{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstAdd) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -57,6 +65,13 @@ func NewFAdd(x, y value.Value) *InstFAdd {
 	return &InstFAdd{X: x, Y: y}
 }
 
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFAdd) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstFAdd) Type() types.Type {
 	panic("not yet implemented")
@@ -90,6 +105,13 @@ type InstSub struct {
 // NewSub returns a new sub instruction based on the given operands.
 func NewSub(x, y value.Value) *InstSub {
 	return &InstSub{X: x, Y: y}
+}
+
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstSub) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -127,6 +149,13 @@ func NewFSub(x, y value.Value) *InstFSub {
 	return &InstFSub{X: x, Y: y}
 }
 
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFSub) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstFSub) Type() types.Type {
 	panic("not yet implemented")
@@ -160,6 +189,13 @@ type InstMul struct {
 // NewMul returns a new mul instruction based on the given operands.
 func NewMul(x, y value.Value) *InstMul {
 	return &InstMul{X: x, Y: y}
+}
+
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstMul) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -197,6 +233,13 @@ func NewFMul(x, y value.Value) *InstFMul {
 	return &InstFMul{X: x, Y: y}
 }
 
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFMul) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstFMul) Type() types.Type {
 	panic("not yet implemented")
@@ -230,6 +273,13 @@ type InstUDiv struct {
 // NewUDiv returns a new udiv instruction based on the given operands.
 func NewUDiv(x, y value.Value) *InstUDiv {
 	return &InstUDiv{X: x, Y: y}
+}
+
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstUDiv) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -267,6 +317,13 @@ func NewSDiv(x, y value.Value) *InstSDiv {
 	return &InstSDiv{X: x, Y: y}
 }
 
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstSDiv) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstSDiv) Type() types.Type {
 	panic("not yet implemented")
@@ -300,6 +357,13 @@ type InstFDiv struct {
 // NewFDiv returns a new fdiv instruction based on the given operands.
 func NewFDiv(x, y value.Value) *InstFDiv {
 	return &InstFDiv{X: x, Y: y}
+}
+
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFDiv) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -337,6 +401,13 @@ func NewURem(x, y value.Value) *InstURem {
 	return &InstURem{X: x, Y: y}
 }
 
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstURem) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstURem) Type() types.Type {
 	panic("not yet implemented")
@@ -372,6 +443,13 @@ func NewSRem(x, y value.Value) *InstSRem {
 	return &InstSRem{X: x, Y: y}
 }
 
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstSRem) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstSRem) Type() types.Type {
 	panic("not yet implemented")
@@ -405,6 +483,13 @@ type InstFRem struct {
 // NewFRem returns a new frem instruction based on the given operands.
 func NewFRem(x, y value.Value) *InstFRem {
 	return &InstFRem{X: x, Y: y}
+}
+
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFRem) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

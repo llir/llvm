@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 )
@@ -21,6 +23,12 @@ type ExprICmp struct {
 // comparison condition and integer scalar or vector operands.
 func NewICmpExpr(cond ll.ICond, x, y Constant) *ExprICmp {
 	return &ExprICmp{Cond: cond, X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprICmp) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -55,6 +63,12 @@ func NewFCmpExpr(cond ll.FCond, x, y Constant) *ExprFCmp {
 	return &ExprFCmp{Cond: cond, X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFCmp) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprFCmp) Type() types.Type {
 	panic("not yet implemented")
@@ -85,6 +99,12 @@ type ExprSelect struct {
 // condition and operands.
 func NewSelectExpr(cond, x, y Constant) *ExprSelect {
 	return &ExprSelect{Cond: cond, X: x, Y: x}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprSelect) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.

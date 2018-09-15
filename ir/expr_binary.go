@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Binary expressions ] --------------------------------------------------
 
@@ -15,6 +19,12 @@ type ExprAdd struct {
 // NewAddExpr returns a new add expression based on the given operands.
 func NewAddExpr(x, y Constant) *ExprAdd {
 	return &ExprAdd{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprAdd) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -46,6 +56,12 @@ func NewFAddExpr(x, y Constant) *ExprFAdd {
 	return &ExprFAdd{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFAdd) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprFAdd) Type() types.Type {
 	return e.X.Type()
@@ -73,6 +89,12 @@ type ExprSub struct {
 // NewSubExpr returns a new sub expression based on the given operands.
 func NewSubExpr(x, y Constant) *ExprSub {
 	return &ExprSub{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprSub) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -104,6 +126,12 @@ func NewFSubExpr(x, y Constant) *ExprFSub {
 	return &ExprFSub{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFSub) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprFSub) Type() types.Type {
 	return e.X.Type()
@@ -131,6 +159,12 @@ type ExprMul struct {
 // NewMulExpr returns a new mul expression based on the given operands.
 func NewMulExpr(x, y Constant) *ExprMul {
 	return &ExprMul{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprMul) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -162,6 +196,12 @@ func NewFMulExpr(x, y Constant) *ExprFMul {
 	return &ExprFMul{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFMul) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprFMul) Type() types.Type {
 	return e.X.Type()
@@ -189,6 +229,12 @@ type ExprUDiv struct {
 // NewUDivExpr returns a new udiv expression based on the given operands.
 func NewUDivExpr(x, y Constant) *ExprUDiv {
 	return &ExprUDiv{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprUDiv) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -220,6 +266,12 @@ func NewSDivExpr(x, y Constant) *ExprSDiv {
 	return &ExprSDiv{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprSDiv) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprSDiv) Type() types.Type {
 	return e.X.Type()
@@ -247,6 +299,12 @@ type ExprFDiv struct {
 // NewFDivExpr returns a new fdiv expression based on the given operands.
 func NewFDivExpr(x, y Constant) *ExprFDiv {
 	return &ExprFDiv{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFDiv) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -278,6 +336,12 @@ func NewURemExpr(x, y Constant) *ExprURem {
 	return &ExprURem{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprURem) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprURem) Type() types.Type {
 	return e.X.Type()
@@ -307,6 +371,12 @@ func NewSRemExpr(x, y Constant) *ExprSRem {
 	return &ExprSRem{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprSRem) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprSRem) Type() types.Type {
 	return e.X.Type()
@@ -334,6 +404,12 @@ type ExprFRem struct {
 // NewFRemExpr returns a new frem expression based on the given operands.
 func NewFRemExpr(x, y Constant) *ExprFRem {
 	return &ExprFRem{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFRem) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
