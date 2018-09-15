@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Aggregate expressions ] -----------------------------------------------
 
@@ -18,6 +22,12 @@ type ExprExtractValue struct {
 // aggregate value and indicies.
 func NewExtractValueExpr(x Constant, indices ...int64) *ExprExtractValue {
 	return &ExprExtractValue{X: x, Indices: indices}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprExtractValue) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -52,6 +62,12 @@ type ExprInsertValue struct {
 // aggregate value, element and indicies.
 func NewInsertValueExpr(x, elem Constant, indices ...int64) *ExprInsertValue {
 	return &ExprInsertValue{X: x, Elem: elem, Indices: indices}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprInsertValue) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.

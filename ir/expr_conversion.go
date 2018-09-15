@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 )
 
@@ -20,6 +22,12 @@ type ExprTrunc struct {
 // and target type.
 func NewTruncExpr(from Constant, to types.Type) *ExprTrunc {
 	return &ExprTrunc{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprTrunc) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -54,6 +62,12 @@ func NewZExtExpr(from Constant, to types.Type) *ExprZExt {
 	return &ExprZExt{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprZExt) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprZExt) Type() types.Type {
 	return e.To
@@ -84,6 +98,12 @@ type ExprSExt struct {
 // target type.
 func NewSExtExpr(from Constant, to types.Type) *ExprSExt {
 	return &ExprSExt{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprSExt) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -118,6 +138,12 @@ func NewFPTruncExpr(from Constant, to types.Type) *ExprFPTrunc {
 	return &ExprFPTrunc{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFPTrunc) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprFPTrunc) Type() types.Type {
 	return e.To
@@ -148,6 +174,12 @@ type ExprFPExt struct {
 // and target type.
 func NewFPExtExpr(from Constant, to types.Type) *ExprFPExt {
 	return &ExprFPExt{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFPExt) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -182,6 +214,12 @@ func NewFPToUIExpr(from Constant, to types.Type) *ExprFPToUI {
 	return &ExprFPToUI{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFPToUI) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprFPToUI) Type() types.Type {
 	return e.To
@@ -212,6 +250,12 @@ type ExprFPToSI struct {
 // and target type.
 func NewFPToSIExpr(from Constant, to types.Type) *ExprFPToSI {
 	return &ExprFPToSI{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprFPToSI) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -246,6 +290,12 @@ func NewUIToFPExpr(from Constant, to types.Type) *ExprUIToFP {
 	return &ExprUIToFP{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprUIToFP) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprUIToFP) Type() types.Type {
 	return e.To
@@ -276,6 +326,12 @@ type ExprSIToFP struct {
 // and target type.
 func NewSIToFPExpr(from Constant, to types.Type) *ExprSIToFP {
 	return &ExprSIToFP{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprSIToFP) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -310,6 +366,12 @@ func NewPtrToIntExpr(from Constant, to types.Type) *ExprPtrToInt {
 	return &ExprPtrToInt{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprPtrToInt) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprPtrToInt) Type() types.Type {
 	return e.To
@@ -340,6 +402,12 @@ type ExprIntToPtr struct {
 // value and target type.
 func NewIntToPtrExpr(from Constant, to types.Type) *ExprIntToPtr {
 	return &ExprIntToPtr{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprIntToPtr) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -374,6 +442,12 @@ func NewBitCastExpr(from Constant, to types.Type) *ExprBitCast {
 	return &ExprBitCast{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprBitCast) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprBitCast) Type() types.Type {
 	return e.To
@@ -404,6 +478,12 @@ type ExprAddrSpaceCast struct {
 // given source value and target type.
 func NewAddrSpaceCastExpr(from Constant, to types.Type) *ExprAddrSpaceCast {
 	return &ExprAddrSpaceCast{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprAddrSpaceCast) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.

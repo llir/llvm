@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Null pointer constants ] ----------------------------------------------
 
@@ -13,6 +17,12 @@ type ConstNull struct {
 // NewNull returns a new null pointer constant based on the given pointer type.
 func NewNull(typ *types.PointerType) *ConstNull {
 	return &ConstNull{Typ: typ}
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstNull) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

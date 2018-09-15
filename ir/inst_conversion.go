@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -23,6 +25,12 @@ type InstTrunc struct {
 // target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 	return &InstTrunc{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstTrunc) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -63,6 +71,12 @@ func NewZExt(from value.Value, to types.Type) *InstZExt {
 	return &InstZExt{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstZExt) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstZExt) Type() types.Type {
 	return inst.To
@@ -99,6 +113,12 @@ type InstSExt struct {
 // target type.
 func NewSExt(from value.Value, to types.Type) *InstSExt {
 	return &InstSExt{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstSExt) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -139,6 +159,12 @@ func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 	return &InstFPTrunc{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFPTrunc) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstFPTrunc) Type() types.Type {
 	return inst.To
@@ -175,6 +201,12 @@ type InstFPExt struct {
 // target type.
 func NewFPExt(from value.Value, to types.Type) *InstFPExt {
 	return &InstFPExt{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFPExt) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -215,6 +247,12 @@ func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 	return &InstFPToUI{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFPToUI) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstFPToUI) Type() types.Type {
 	return inst.To
@@ -251,6 +289,12 @@ type InstFPToSI struct {
 // and target type.
 func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 	return &InstFPToSI{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFPToSI) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -291,6 +335,12 @@ func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 	return &InstUIToFP{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstUIToFP) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstUIToFP) Type() types.Type {
 	return inst.To
@@ -327,6 +377,12 @@ type InstSIToFP struct {
 // and target type.
 func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 	return &InstSIToFP{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstSIToFP) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -367,6 +423,12 @@ func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 	return &InstPtrToInt{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstPtrToInt) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstPtrToInt) Type() types.Type {
 	return inst.To
@@ -403,6 +465,12 @@ type InstIntToPtr struct {
 // value and target type.
 func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 	return &InstIntToPtr{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstIntToPtr) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -443,6 +511,12 @@ func NewBitCast(from value.Value, to types.Type) *InstBitCast {
 	return &InstBitCast{From: from, To: to}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstBitCast) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstBitCast) Type() types.Type {
 	return inst.To
@@ -479,6 +553,12 @@ type InstAddrSpaceCast struct {
 // source value and target type.
 func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 	return &InstAddrSpaceCast{From: from, To: to}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstAddrSpaceCast) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

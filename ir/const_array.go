@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Array constants ] -----------------------------------------------------
 
@@ -13,6 +17,12 @@ type ConstArray struct {
 // NewArray returns a new array constant based on the given array elements.
 func NewArray(elems ...Constant) *ConstArray {
 	return &ConstArray{Elems: elems}
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstArray) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
@@ -37,6 +47,12 @@ type ConstCharArray struct {
 // contents.
 func NewCharArray(x string) *ConstCharArray {
 	return &ConstCharArray{X: x}
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstCharArray) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

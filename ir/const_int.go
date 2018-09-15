@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/llir/l/ir/types"
@@ -35,6 +36,12 @@ func NewInt(typ *types.IntType, x int64) *ConstInt {
 //         TODO: add support for hexadecimal integer literal notation.
 func NewIntFromString(typ *types.IntType, s string) *ConstInt {
 	panic("not yet implemented")
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstInt) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

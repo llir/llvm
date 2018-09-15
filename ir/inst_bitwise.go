@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -20,6 +22,12 @@ type InstShl struct {
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
 	return &InstShl{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstShl) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -57,6 +65,12 @@ func NewLShr(x, y value.Value) *InstLShr {
 	return &InstLShr{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstLShr) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstLShr) Type() types.Type {
 	panic("not yet implemented")
@@ -90,6 +104,12 @@ type InstAShr struct {
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
 	return &InstAShr{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstAShr) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -127,6 +147,12 @@ func NewAnd(x, y value.Value) *InstAnd {
 	return &InstAnd{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstAnd) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstAnd) Type() types.Type {
 	panic("not yet implemented")
@@ -162,6 +188,12 @@ func NewOr(x, y value.Value) *InstOr {
 	return &InstOr{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstOr) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstOr) Type() types.Type {
 	panic("not yet implemented")
@@ -195,6 +227,12 @@ type InstXor struct {
 // NewXor returns a new xor instruction based on the given operands.
 func NewXor(x, y value.Value) *InstXor {
 	return &InstXor{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstXor) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

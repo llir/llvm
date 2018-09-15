@@ -1,6 +1,10 @@
 package ir
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
@@ -15,6 +19,12 @@ type ExprShl struct {
 // NewShlExpr returns a new shl expression based on the given operands.
 func NewShlExpr(x, y Constant) *ExprShl {
 	return &ExprShl{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprShl) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -46,6 +56,12 @@ func NewLShrExpr(x, y Constant) *ExprLShr {
 	return &ExprLShr{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprLShr) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprLShr) Type() types.Type {
 	return e.X.Type()
@@ -73,6 +89,12 @@ type ExprAShr struct {
 // NewAShrExpr returns a new ashr expression based on the given operands.
 func NewAShrExpr(x, y Constant) *ExprAShr {
 	return &ExprAShr{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprAShr) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -104,6 +126,12 @@ func NewAndExpr(x, y Constant) *ExprAnd {
 	return &ExprAnd{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprAnd) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprAnd) Type() types.Type {
 	return e.X.Type()
@@ -133,6 +161,12 @@ func NewOrExpr(x, y Constant) *ExprOr {
 	return &ExprOr{X: x, Y: y}
 }
 
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprOr) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+}
+
 // Type returns the type of the constant expression.
 func (e *ExprOr) Type() types.Type {
 	return e.X.Type()
@@ -160,6 +194,12 @@ type ExprXor struct {
 // NewXorExpr returns a new xor expression based on the given operands.
 func NewXorExpr(x, y Constant) *ExprXor {
 	return &ExprXor{X: x, Y: y}
+}
+
+// String returns the LLVM syntax representation of the constant expression as a
+// type-value pair.
+func (e *ExprXor) String() string {
+	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.

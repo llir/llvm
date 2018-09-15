@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/llir/l/internal/enc"
@@ -17,6 +18,12 @@ type Param struct {
 	Typ types.Type
 	// Parameter name.
 	ParamName string
+}
+
+// String returns the LLVM syntax representation of the function parameter as a
+// type-value pair.
+func (p *Param) String() string {
+	return fmt.Sprintf("%v %v", p.Type(), p.Ident())
 }
 
 // Type returns the type of the function parameter.

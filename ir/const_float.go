@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/llir/l/ir/types"
@@ -41,6 +42,12 @@ func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
 func NewFloatFromString(typ *types.FloatType, s string) *ConstFloat {
 	panic("not yet implemented")
+}
+
+// String returns the LLVM syntax representation of the constant as a type-value
+// pair.
+func (c *ConstFloat) String() string {
+	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.

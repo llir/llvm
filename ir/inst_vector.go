@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -23,6 +25,12 @@ type InstExtractElement struct {
 // vector and element index.
 func NewExtractElement(x, index value.Value) *InstExtractElement {
 	return &InstExtractElement{X: x, Index: index}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstExtractElement) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -65,6 +73,12 @@ func NewInsertElement(x, elem, index value.Value) *InstInsertElement {
 	return &InstInsertElement{X: x, Elem: elem, Index: index}
 }
 
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstInsertElement) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+}
+
 // Type returns the type of the instruction.
 func (inst *InstInsertElement) Type() types.Type {
 	panic("not yet implemented")
@@ -101,6 +115,12 @@ type InstShuffleVector struct {
 // vectors and shuffle mask.
 func NewShuffleVector(x, y, mask value.Value) *InstShuffleVector {
 	return &InstShuffleVector{X: x, Y: y, Mask: mask}
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstShuffleVector) String() string {
+	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.

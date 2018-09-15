@@ -1,7 +1,11 @@
 // Package value provides a definition of LLVM IR values.
 package value
 
-import "github.com/llir/l/ir/types"
+import (
+	"fmt"
+
+	"github.com/llir/l/ir/types"
+)
 
 // Value is an LLVM IR value.
 //
@@ -11,6 +15,9 @@ import "github.com/llir/l/ir/types"
 //    value.Named   // https://godoc.org/github.com/llir/l/ir/value#Named
 //    TODO: add literal metadata value?
 type Value interface {
+	// String returns the LLVM syntax representation of the value as a type-value
+	// pair.
+	fmt.Stringer
 	// Type returns the type of the value.
 	Type() types.Type
 	// Ident returns the identifier associated with the value.

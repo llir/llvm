@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
 )
@@ -22,6 +24,12 @@ type BasicBlock struct {
 // label name indicates an unnamed basic block.
 func NewBlock(name string) *BasicBlock {
 	return &BasicBlock{LocalName: name}
+}
+
+// String returns the LLVM syntax representation of the basic block as a
+// type-value pair.
+func (block *BasicBlock) String() string {
+	return fmt.Sprintf("%v %v", block.Type(), block.Ident())
 }
 
 // Type returns the type of the basic block.
