@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"strings"
+
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
 )
@@ -35,4 +37,21 @@ func (p *Param) Name() string {
 // SetName sets the name of the function parameter.
 func (p *Param) SetName(name string) {
 	p.ParamName = name
+}
+
+// ### [ Helper functions ] ####################################################
+
+// isUnnamed reports whether the given identifier is unnamed.
+func isUnnamed(name string) bool {
+	return len(name) == 0
+}
+
+// isLocalID reports whether the given identifier is a local ID (e.g. "%42").
+func isLocalID(name string) bool {
+	for _, r := range name {
+		if strings.IndexRune("0123456789", r) == -1 {
+			return false
+		}
+	}
+	return len(name) > 0
 }
