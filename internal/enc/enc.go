@@ -2,7 +2,6 @@
 package enc
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 )
@@ -170,16 +169,16 @@ func EscapeIdent(s string) string {
 
 // EscapeString replaces any characters in s categorized as invalid in string
 // literals with corresponding hexadecimal escape sequence (\XX).
-func EscapeString(s []byte) []byte {
+func EscapeString(s []byte) string {
 	valid := func(b byte) bool {
 		return ' ' <= b && b <= '~' && b != '"' && b != '\\'
 	}
-	return Escape(s, valid)
+	return string(Escape(s, valid))
 }
 
 // Escape replaces any characters in s categorized as invalid by the valid
 // function with corresponding hexadecimal escape sequence (\XX).
-func Escape(s []byte, valid func(b byte) bool) []byte {
+func Escape(s []byte, valid func(b byte) bool) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -191,7 +190,7 @@ func Escape(s []byte, valid func(b byte) bool) []byte {
 		}
 	}
 	if extra == 0 {
-		return s
+		return string(s)
 	}
 
 	// Replace invalid characters.
@@ -210,14 +209,14 @@ func Escape(s []byte, valid func(b byte) bool) []byte {
 		buf[j+2] = hextable[b&0x0F]
 		j += 3
 	}
-	return buf
+	return string(buf)
 }
 
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their
 // corresponding characters.
-func Unescape(s []byte) []byte {
-	if !bytes.ContainsRune(s, '\\') {
-		return s
+func Unescape(s string) []byte {
+	if !strings.ContainsRune(s, '\\') {
+		return []byte(s)
 	}
 	j := 0
 	buf := []byte(s)
@@ -247,22 +246,20 @@ func Unescape(s []byte) []byte {
 }
 
 // Quote returns s as a double-quoted string literal.
-func Quote(s []byte) []byte {
-	buf := []byte{'"'}
-	buf = append(buf, EscapeString(s)...)
-	return append(buf, '"')
+func Quote(s []byte) string {
+	return `"` + string(EscapeString(s)) + `"`
 }
 
 // Unquote interprets s as a double-quoted string literal, returning the string
 // value that s quotes.
-func Unquote(s []byte) []byte {
+func Unquote(s string) []byte {
 	if len(s) < 2 {
 		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
 	}
-	if !bytes.HasPrefix(s, []byte(`"`)) {
+	if !strings.HasPrefix(s, `"`) {
 		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character prefix", s))
 	}
-	if !bytes.HasSuffix(s, []byte(`"`)) {
+	if !strings.HasSuffix(s, `"`) {
 		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character suffix", s))
 	}
 	// Skip double-quotes.
