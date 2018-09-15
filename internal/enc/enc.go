@@ -2,6 +2,7 @@
 package enc
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 )
@@ -84,7 +85,7 @@ func Metadata(name string) string {
 		const metadataCharset = tail + `\`
 		return strings.IndexByte(metadataCharset, b) != -1
 	}
-	return "!" + Escape(name, valid)
+	return "!" + string(Escape([]byte(name), valid))
 }
 
 const (
@@ -167,18 +168,18 @@ func EscapeIdent(s string) string {
 	return `"` + string(buf) + `"`
 }
 
-// EscapeString replaces any characters categorized as invalid in string
+// EscapeString replaces any characters in s categorized as invalid in string
 // literals with corresponding hexadecimal escape sequence (\XX).
-func EscapeString(s string) string {
+func EscapeString(s []byte) []byte {
 	valid := func(b byte) bool {
 		return ' ' <= b && b <= '~' && b != '"' && b != '\\'
 	}
 	return Escape(s, valid)
 }
 
-// Escape replaces any characters categorized as invalid by the valid function
-// with corresponding hexadecimal escape sequence (\XX).
-func Escape(s string, valid func(b byte) bool) string {
+// Escape replaces any characters in s categorized as invalid by the valid
+// function with corresponding hexadecimal escape sequence (\XX).
+func Escape(s []byte, valid func(b byte) bool) []byte {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
@@ -209,13 +210,13 @@ func Escape(s string, valid func(b byte) bool) string {
 		buf[j+2] = hextable[b&0x0F]
 		j += 3
 	}
-	return string(buf)
+	return buf
 }
 
 // Unescape replaces hexadecimal escape sequences (\xx) in s with their
 // corresponding characters.
-func Unescape(s string) string {
-	if !strings.ContainsRune(s, '\\') {
+func Unescape(s []byte) []byte {
+	if !bytes.ContainsRune(s, '\\') {
 		return s
 	}
 	j := 0
@@ -242,24 +243,26 @@ func Unescape(s string) string {
 		}
 		j++
 	}
-	return string(buf[:j])
+	return buf[:j]
 }
 
 // Quote returns s as a double-quoted string literal.
-func Quote(s string) string {
-	return `"` + EscapeString(s) + `"`
+func Quote(s []byte) []byte {
+	buf := []byte{'"'}
+	buf = append(buf, EscapeString(s)...)
+	return append(buf, '"')
 }
 
 // Unquote interprets s as a double-quoted string literal, returning the string
 // value that s quotes.
-func Unquote(s string) string {
+func Unquote(s []byte) []byte {
 	if len(s) < 2 {
 		panic(fmt.Errorf("invalid length of quoted string; expected >= 2, got %d", len(s)))
 	}
-	if !strings.HasPrefix(s, `"`) {
+	if !bytes.HasPrefix(s, []byte(`"`)) {
 		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character prefix", s))
 	}
-	if !strings.HasSuffix(s, `"`) {
+	if !bytes.HasSuffix(s, []byte(`"`)) {
 		panic(fmt.Errorf("invalid quoted string `%s`; missing quote character suffix", s))
 	}
 	// Skip double-quotes.

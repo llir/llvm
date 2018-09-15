@@ -1,6 +1,7 @@
 package enc
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -192,35 +193,35 @@ func TestMetadata(t *testing.T) {
 
 func TestEscapeString(t *testing.T) {
 	golden := []struct {
-		s    string
-		want string
+		s    []byte
+		want []byte
 	}{
 		// i=0
-		{s: "foo", want: "foo"},
+		{s: []byte("foo"), want: []byte("foo")},
 		// i=1
-		{s: "a b", want: `a b`},
+		{s: []byte("a b"), want: []byte(`a b`)},
 		// i=2
-		{s: "$a", want: "$a"},
+		{s: []byte("$a"), want: []byte("$a")},
 		// i=3
-		{s: "-a", want: "-a"},
+		{s: []byte("-a"), want: []byte("-a")},
 		// i=4
-		{s: ".a", want: ".a"},
+		{s: []byte(".a"), want: []byte(".a")},
 		// i=5
-		{s: "_a", want: "_a"},
+		{s: []byte("_a"), want: []byte("_a")},
 		// i=6
-		{s: "#a", want: `#a`},
+		{s: []byte("#a"), want: []byte(`#a`)},
 		// i=7
-		{s: "a b#c", want: `a b#c`},
+		{s: []byte("a b#c"), want: []byte(`a b#c`)},
 		// i=8
-		{s: "2", want: "2"},
+		{s: []byte("2"), want: []byte("2")},
 		// i=9
-		{s: "foo世bar", want: `foo\E4\B8\96bar`},
+		{s: []byte("foo世bar"), want: []byte(`foo\E4\B8\96bar`)},
 		// i=10
-		{s: `foo \ bar`, want: `foo \5C bar`},
+		{s: []byte(`foo \ bar`), want: []byte(`foo \5C bar`)},
 	}
 	for i, g := range golden {
 		got := EscapeString(g.s)
-		if g.want != got {
+		if !reflect.DeepEqual(g.want, got) {
 			t.Errorf("i=%d: string mismatch; expected %q, got %q", i, g.want, got)
 		}
 	}
@@ -228,31 +229,31 @@ func TestEscapeString(t *testing.T) {
 
 func TestEscape(t *testing.T) {
 	golden := []struct {
-		s    string
-		want string
+		s    []byte
+		want []byte
 	}{
 		// i=0
-		{s: "foo", want: "foo"},
+		{s: []byte("foo"), want: []byte("foo")},
 		// i=1
-		{s: "a b", want: `a b`},
+		{s: []byte("a b"), want: []byte(`a b`)},
 		// i=2
-		{s: "$a", want: "$a"},
+		{s: []byte("$a"), want: []byte("$a")},
 		// i=3
-		{s: "-a", want: "-a"},
+		{s: []byte("-a"), want: []byte("-a")},
 		// i=4
-		{s: ".a", want: ".a"},
+		{s: []byte(".a"), want: []byte(".a")},
 		// i=5
-		{s: "_a", want: "_a"},
+		{s: []byte("_a"), want: []byte("_a")},
 		// i=6
-		{s: "#a", want: `#a`},
+		{s: []byte("#a"), want: []byte(`#a`)},
 		// i=7
-		{s: "a b#c", want: `a b#c`},
+		{s: []byte("a b#c"), want: []byte(`a b#c`)},
 		// i=8
-		{s: "2", want: "2"},
+		{s: []byte("2"), want: []byte("2")},
 		// i=9
-		{s: "foo世bar", want: `foo\E4\B8\96bar`},
+		{s: []byte("foo世bar"), want: []byte(`foo\E4\B8\96bar`)},
 		// i=10
-		{s: `foo \ bar`, want: `foo \5C bar`},
+		{s: []byte(`foo \ bar`), want: []byte(`foo \5C bar`)},
 	}
 	// isPrint reports whether the given byte is printable in ASCII.
 	isPrint := func(b byte) bool {
@@ -260,7 +261,7 @@ func TestEscape(t *testing.T) {
 	}
 	for i, g := range golden {
 		got := Escape(g.s, isPrint)
-		if g.want != got {
+		if !reflect.DeepEqual(g.want, got) {
 			t.Errorf("i=%d: string mismatch; expected %q, got %q", i, g.want, got)
 		}
 	}
@@ -268,37 +269,37 @@ func TestEscape(t *testing.T) {
 
 func TestUnescape(t *testing.T) {
 	golden := []struct {
-		s    string
-		want string
+		s    []byte
+		want []byte
 	}{
 		// i=0
-		{s: "foo", want: "foo"},
+		{s: []byte("foo"), want: []byte("foo")},
 		// i=1
-		{s: `a\20b`, want: "a b"},
+		{s: []byte(`a\20b`), want: []byte("a b")},
 		// i=2
-		{s: "$a", want: "$a"},
+		{s: []byte("$a"), want: []byte("$a")},
 		// i=3
-		{s: "-a", want: "-a"},
+		{s: []byte("-a"), want: []byte("-a")},
 		// i=4
-		{s: ".a", want: ".a"},
+		{s: []byte(".a"), want: []byte(".a")},
 		// i=5
-		{s: "_a", want: "_a"},
+		{s: []byte("_a"), want: []byte("_a")},
 		// i=6
-		{s: `\23a`, want: "#a"},
+		{s: []byte(`\23a`), want: []byte("#a")},
 		// i=7
-		{s: `a\20b\23c`, want: "a b#c"},
+		{s: []byte(`a\20b\23c`), want: []byte("a b#c")},
 		// i=8
-		{s: "2", want: "2"},
+		{s: []byte("2"), want: []byte("2")},
 		// i=9
-		{s: `foo\E4\B8\96bar`, want: "foo世bar"},
+		{s: []byte(`foo\E4\B8\96bar`), want: []byte("foo世bar")},
 		// i=10
-		{s: `foo \5C bar`, want: `foo \ bar`},
+		{s: []byte(`foo \5C bar`), want: []byte(`foo \ bar`)},
 		// i=11
-		{s: `foo \\ bar`, want: `foo \ bar`},
+		{s: []byte(`foo \\ bar`), want: []byte(`foo \ bar`)},
 	}
 	for i, g := range golden {
 		got := Unescape(g.s)
-		if g.want != got {
+		if !reflect.DeepEqual(g.want, got) {
 			t.Errorf("i=%d: string mismatch; expected %q, got %q", i, g.want, got)
 		}
 	}
@@ -306,35 +307,35 @@ func TestUnescape(t *testing.T) {
 
 func TestQuote(t *testing.T) {
 	golden := []struct {
-		s    string
-		want string
+		s    []byte
+		want []byte
 	}{
 		// i=0
-		{s: "foo", want: `"foo"`},
+		{s: []byte("foo"), want: []byte(`"foo"`)},
 		// i=1
-		{s: "a b", want: `"a b"`},
+		{s: []byte("a b"), want: []byte(`"a b"`)},
 		// i=2
-		{s: "$a", want: `"$a"`},
+		{s: []byte("$a"), want: []byte(`"$a"`)},
 		// i=3
-		{s: "-a", want: `"-a"`},
+		{s: []byte("-a"), want: []byte(`"-a"`)},
 		// i=4
-		{s: ".a", want: `".a"`},
+		{s: []byte(".a"), want: []byte(`".a"`)},
 		// i=5
-		{s: "_a", want: `"_a"`},
+		{s: []byte("_a"), want: []byte(`"_a"`)},
 		// i=6
-		{s: "#a", want: `"#a"`},
+		{s: []byte("#a"), want: []byte(`"#a"`)},
 		// i=7
-		{s: "a b#c", want: `"a b#c"`},
+		{s: []byte("a b#c"), want: []byte(`"a b#c"`)},
 		// i=8
-		{s: "2", want: `"2"`},
+		{s: []byte("2"), want: []byte(`"2"`)},
 		// i=9
-		{s: "foo世bar", want: `"foo\E4\B8\96bar"`},
+		{s: []byte("foo世bar"), want: []byte(`"foo\E4\B8\96bar"`)},
 		// i=10
-		{s: `foo \ bar`, want: `"foo \5C bar"`},
+		{s: []byte(`foo \ bar`), want: []byte(`"foo \5C bar"`)},
 	}
 	for i, g := range golden {
 		got := Quote(g.s)
-		if g.want != got {
+		if !reflect.DeepEqual(g.want, got) {
 			t.Errorf("i=%d: string mismatch; expected %q, got %q", i, g.want, got)
 		}
 	}
@@ -342,37 +343,37 @@ func TestQuote(t *testing.T) {
 
 func TestUnquote(t *testing.T) {
 	golden := []struct {
-		s    string
-		want string
+		s    []byte
+		want []byte
 	}{
 		// i=0
-		{s: `"foo"`, want: "foo"},
+		{s: []byte(`"foo"`), want: []byte("foo")},
 		// i=1
-		{s: `"a\20b"`, want: "a b"},
+		{s: []byte(`"a\20b"`), want: []byte("a b")},
 		// i=2
-		{s: `"$a"`, want: "$a"},
+		{s: []byte(`"$a"`), want: []byte("$a")},
 		// i=3
-		{s: `"-a"`, want: "-a"},
+		{s: []byte(`"-a"`), want: []byte("-a")},
 		// i=4
-		{s: `".a"`, want: ".a"},
+		{s: []byte(`".a"`), want: []byte(".a")},
 		// i=5
-		{s: `"_a"`, want: "_a"},
+		{s: []byte(`"_a"`), want: []byte("_a")},
 		// i=6
-		{s: `"\23a"`, want: "#a"},
+		{s: []byte(`"\23a"`), want: []byte("#a")},
 		// i=7
-		{s: `"a\20b\23c"`, want: "a b#c"},
+		{s: []byte(`"a\20b\23c"`), want: []byte("a b#c")},
 		// i=8
-		{s: `"2"`, want: "2"},
+		{s: []byte(`"2"`), want: []byte("2")},
 		// i=9
-		{s: `"foo\E4\B8\96bar"`, want: "foo世bar"},
+		{s: []byte(`"foo\E4\B8\96bar"`), want: []byte("foo世bar")},
 		// i=10
-		{s: `"foo \5C bar"`, want: `foo \ bar`},
+		{s: []byte(`"foo \5C bar"`), want: []byte(`foo \ bar`)},
 		// i=11
-		{s: `"foo \\ bar"`, want: `foo \ bar`},
+		{s: []byte(`"foo \\ bar"`), want: []byte(`foo \ bar`)},
 	}
 	for i, g := range golden {
 		got := Unquote(g.s)
-		if g.want != got {
+		if !reflect.DeepEqual(g.want, got) {
 			t.Errorf("i=%d: string mismatch; expected %q, got %q", i, g.want, got)
 		}
 	}
