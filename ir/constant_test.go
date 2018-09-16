@@ -4,6 +4,7 @@ package ir
 var (
 	// Constant expressions.
 	// Checked in expression_test.go as ir.Expression embeds ir.Constant.
+	_ Constant = Expression(nil)
 
 	// Constants.
 	_ Constant = (*ConstInt)(nil)

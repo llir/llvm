@@ -1,16 +1,20 @@
 package ir
 
-import "github.com/llir/l/ir/value"
+import (
+	"github.com/llir/l/ir/value"
+)
 
 // Assert that each value implements the value.Value interface.
-//
-// Constants.
-// Checked in constant_test.go as ir.Constant embeds value.Value.
-//
-// Named values.
-// Checked in value_test.go as value.Named embeds value.Value.
-//
-// TODO: add literal metadata value?
+var (
+	// Constants.
+	// Checked in constant_test.go as ir.Constant embeds value.Value.
+	_ value.Value = Constant(nil)
+	// Named values.
+	// Checked in value_test.go as value.Named embeds value.Value.
+	_ value.Value = value.Named(nil)
+
+	// TODO: add literal metadata value?
+)
 
 // Assert that each named value implements the value.Named interface.
 var (

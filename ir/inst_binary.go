@@ -32,7 +32,7 @@ func (inst *InstAdd) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstAdd) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -64,7 +64,6 @@ type InstFAdd struct {
 func NewFAdd(x, y value.Value) *InstFAdd {
 	return &InstFAdd{X: x, Y: y}
 }
-
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
@@ -107,7 +106,6 @@ func NewSub(x, y value.Value) *InstSub {
 	return &InstSub{X: x, Y: y}
 }
 
-
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstSub) String() string {
@@ -148,7 +146,6 @@ type InstFSub struct {
 func NewFSub(x, y value.Value) *InstFSub {
 	return &InstFSub{X: x, Y: y}
 }
-
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
@@ -191,7 +188,6 @@ func NewMul(x, y value.Value) *InstMul {
 	return &InstMul{X: x, Y: y}
 }
 
-
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstMul) String() string {
@@ -232,7 +228,6 @@ type InstFMul struct {
 func NewFMul(x, y value.Value) *InstFMul {
 	return &InstFMul{X: x, Y: y}
 }
-
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
@@ -275,7 +270,6 @@ func NewUDiv(x, y value.Value) *InstUDiv {
 	return &InstUDiv{X: x, Y: y}
 }
 
-
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstUDiv) String() string {
@@ -316,7 +310,6 @@ type InstSDiv struct {
 func NewSDiv(x, y value.Value) *InstSDiv {
 	return &InstSDiv{X: x, Y: y}
 }
-
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
@@ -359,7 +352,6 @@ func NewFDiv(x, y value.Value) *InstFDiv {
 	return &InstFDiv{X: x, Y: y}
 }
 
-
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstFDiv) String() string {
@@ -400,7 +392,6 @@ type InstURem struct {
 func NewURem(x, y value.Value) *InstURem {
 	return &InstURem{X: x, Y: y}
 }
-
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
@@ -443,7 +434,6 @@ func NewSRem(x, y value.Value) *InstSRem {
 	return &InstSRem{X: x, Y: y}
 }
 
-
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstSRem) String() string {
@@ -484,7 +474,6 @@ type InstFRem struct {
 func NewFRem(x, y value.Value) *InstFRem {
 	return &InstFRem{X: x, Y: y}
 }
-
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
