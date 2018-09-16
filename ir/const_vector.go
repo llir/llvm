@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/ir/types"
 )
@@ -10,13 +11,16 @@ import (
 
 // ConstVector is an LLVM IR vector constant.
 type ConstVector struct {
+	// Vector type.
+	Typ *types.VectorType
 	// Vector elements.
 	Elems []Constant
 }
 
-// NewVector returns a new vector constant based on the given vector elements.
-func NewVector(elems ...Constant) *ConstVector {
-	return &ConstVector{Elems: elems}
+// NewVector returns a new vector constant based on the given vector type and
+// elements.
+func NewVector(typ *types.VectorType, elems ...Constant) *ConstVector {
+	return &ConstVector{Typ: typ, Elems: elems}
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
@@ -27,10 +31,20 @@ func (c *ConstVector) String() string {
 
 // Type returns the type of the constant.
 func (c *ConstVector) Type() types.Type {
-	panic("not yet implemented")
+	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
 func (c *ConstVector) Ident() string {
-	panic("not yet implemented")
+	// "<" TypeConsts ">"
+	buf := &strings.Builder{}
+	buf.WriteString("<")
+	for i, elem := range c.Elems {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(elem.String())
+	}
+	buf.WriteString(">")
+	return buf.String()
 }

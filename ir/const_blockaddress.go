@@ -30,10 +30,11 @@ func (c *ConstBlockAddress) String() string {
 
 // Type returns the type of the constant.
 func (c *ConstBlockAddress) Type() types.Type {
-	panic("not yet implemented")
+	return types.I8Ptr
 }
 
 // Ident returns the identifier associated with the constant.
 func (c *ConstBlockAddress) Ident() string {
-	panic("not yet implemented")
+	// "blockaddress" "(" GlobalIdent "," LocalIdent ")"
+	return fmt.Sprintf("blockaddress(%v, %v)", c.Func.Ident(), c.Block.Ident())
 }

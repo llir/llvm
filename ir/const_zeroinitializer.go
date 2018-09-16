@@ -10,7 +10,7 @@ import (
 
 // ConstZeroInitializer is an LLVM IR zeroinitializer constant.
 type ConstZeroInitializer struct {
-	// Constant type.
+	// zeroinitializer type.
 	Typ types.Type
 }
 

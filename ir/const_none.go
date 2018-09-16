@@ -25,5 +25,6 @@ func (*ConstNone) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (*ConstNone) Ident() string {
+	// "none"
 	return "none"
 }

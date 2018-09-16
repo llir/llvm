@@ -2,3 +2,14 @@
    ref: https://hackage.haskell.org/package/llvm-hs-pure-6.2.1/docs/LLVM-AST-Instruction.html
 - [x] update doc of (*BasicBlock) NewInstFoo to state that instructions are appended to the block.
 - [ ] see if IsUnwindTarget may be unexported.
+- [ ] consider reworking implementations of value.Value and ir.Constant, to make value.Value a superset of ir.Constant
+   - pro: the methods of ir.Constant would all make sense.
+   - pro: if the methods of ir.Constant (and value.Value, etc) are exported, then its easier to provide dummy
+     implementations used during parsing.
+   - con: ir.Value could no longer be used throughout for values, perhaps rename
+     ir.Constant and use that interface for values, then rename value.Value to
+     e.g. value.Named; what values are not named and not constants? Which
+     interface do they fit into.
+  - con: currently, as value.Named does not implement ir.Constant, then the
+    semantic checker gets an easier job; as only constants may be used in the
+    place of constants.

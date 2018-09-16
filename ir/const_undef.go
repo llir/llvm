@@ -10,7 +10,7 @@ import (
 
 // ConstUndef is an LLVM IR undefined value.
 type ConstUndef struct {
-	// Constant type.
+	// Undefined value type.
 	Typ types.Type
 }
 
@@ -32,5 +32,6 @@ func (c *ConstUndef) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (*ConstUndef) Ident() string {
+	// "undef"
 	return "undef"
 }

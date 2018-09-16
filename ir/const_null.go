@@ -32,5 +32,6 @@ func (c *ConstNull) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (*ConstNull) Ident() string {
+	// "null"
 	return "null"
 }

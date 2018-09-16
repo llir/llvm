@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/ir/types"
 )
@@ -10,13 +11,16 @@ import (
 
 // ConstStruct is an LLVM IR struct constant.
 type ConstStruct struct {
+	// Struct type.
+	Typ *types.StructType
 	// Struct fields.
 	Fields []Constant
 }
 
-// NewStruct returns a new struct constant based on the given struct fields.
-func NewStruct(fields ...Constant) *ConstStruct {
-	return &ConstStruct{Fields: fields}
+// NewStruct returns a new struct constant based on the given struct type and
+// fields.
+func NewStruct(typ *types.StructType, fields ...Constant) *ConstStruct {
+	return &ConstStruct{Typ: typ, Fields: fields}
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
@@ -27,10 +31,27 @@ func (c *ConstStruct) String() string {
 
 // Type returns the type of the constant.
 func (c *ConstStruct) Type() types.Type {
-	panic("not yet implemented")
+	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
 func (c *ConstStruct) Ident() string {
-	panic("not yet implemented")
+	// "{" Elems "}"
+	// "<" "{" Elems "}" ">"
+	buf := &strings.Builder{}
+	if c.Typ.Packed {
+		buf.WriteString("<")
+	}
+	buf.WriteString("{ ")
+	for i, field := range c.Fields {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(field.String())
+	}
+	buf.WriteString(" }")
+	if c.Typ.Packed {
+		buf.WriteString(">")
+	}
+	return buf.String()
 }
