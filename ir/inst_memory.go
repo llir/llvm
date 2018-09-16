@@ -260,6 +260,8 @@ func (inst *InstAtomicRMW) SetName(name string) {
 type InstGetElementPtr struct {
 	// Name of local variable associated with the result.
 	LocalName string
+	// Element type.
+	ElemType types.Type
 	// Source address.
 	Src value.Value
 	// Element indicies.
@@ -267,9 +269,9 @@ type InstGetElementPtr struct {
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
-// source address and element indices.
-func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
-	return &InstGetElementPtr{Src: src, Indices: indices}
+// element type, source address and element indices.
+func NewGetElementPtr(elemType types.Type, src value.Value, indices ...value.Value) *InstGetElementPtr {
+	return &InstGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -280,7 +282,8 @@ func (inst *InstGetElementPtr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstGetElementPtr) Type() types.Type {
-	panic("not yet implemented")
+	// TODO: cache type?
+	return types.NewPointer(inst.ElemType)
 }
 
 // Ident returns the identifier associated with the instruction.

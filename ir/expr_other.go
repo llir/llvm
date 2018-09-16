@@ -38,7 +38,8 @@ func (e *ExprICmp) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprICmp) Ident() string {
-	panic("not yet implemented")
+	// "icmp" IPred "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("icmp %v (%v, %v)", e.Cond, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -76,7 +77,8 @@ func (e *ExprFCmp) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFCmp) Ident() string {
-	panic("not yet implemented")
+	// "fcmp" FPred "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("fcmp %v (%v, %v)", e.Cond, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -109,12 +111,13 @@ func (e *ExprSelect) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprSelect) Type() types.Type {
-	panic("not yet implemented")
+	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSelect) Ident() string {
-	panic("not yet implemented")
+	// "select" "(" Type Constant "," Type Constant "," Type Constant ")"
+	return fmt.Sprintf("select (%v, %v, %v)", e.Cond, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/ir/types"
 )
@@ -37,7 +38,14 @@ func (e *ExprExtractValue) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprExtractValue) Ident() string {
-	panic("not yet implemented")
+	// "extractvalue" "(" Type Constant Indices ")"
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "extractvalue (%v", e.X)
+	for _, index := range e.Indices {
+		fmt.Fprintf(buf, ", %v", index)
+	}
+	buf.WriteString(")")
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -77,7 +85,14 @@ func (e *ExprInsertValue) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprInsertValue) Ident() string {
-	panic("not yet implemented")
+	// "insertvalue" "(" Type Constant "," Type Constant Indices ")"
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "insertvalue (%v, %v", e.X, e.Elem)
+	for _, index := range e.Indices {
+		fmt.Fprintf(buf, ", %v", index)
+	}
+	buf.WriteString(")")
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

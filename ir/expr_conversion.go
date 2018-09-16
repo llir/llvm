@@ -37,7 +37,8 @@ func (e *ExprTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprTrunc) Ident() string {
-	panic("not yet implemented")
+	// "trunc" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("trunc (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -75,7 +76,8 @@ func (e *ExprZExt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprZExt) Ident() string {
-	panic("not yet implemented")
+	// "zext" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("zext (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -113,7 +115,8 @@ func (e *ExprSExt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSExt) Ident() string {
-	panic("not yet implemented")
+	// "sext" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("sext (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -151,7 +154,8 @@ func (e *ExprFPTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPTrunc) Ident() string {
-	panic("not yet implemented")
+	// "fptrunc" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("fptrunc (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -189,7 +193,8 @@ func (e *ExprFPExt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPExt) Ident() string {
-	panic("not yet implemented")
+	// "fpext" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("fpext (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -227,7 +232,8 @@ func (e *ExprFPToUI) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPToUI) Ident() string {
-	panic("not yet implemented")
+	// "fptoui" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("fptoui (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -265,7 +271,8 @@ func (e *ExprFPToSI) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPToSI) Ident() string {
-	panic("not yet implemented")
+	// "fptosi" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("fptosi (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -303,7 +310,8 @@ func (e *ExprUIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprUIToFP) Ident() string {
-	panic("not yet implemented")
+	// "uitofp" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("uitofp (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -341,7 +349,8 @@ func (e *ExprSIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSIToFP) Ident() string {
-	panic("not yet implemented")
+	// "sitofp" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("sitofp (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -379,7 +388,8 @@ func (e *ExprPtrToInt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprPtrToInt) Ident() string {
-	panic("not yet implemented")
+	// "ptrtoint" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("ptrtoint (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -417,7 +427,8 @@ func (e *ExprIntToPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprIntToPtr) Ident() string {
-	panic("not yet implemented")
+	// "inttoptr" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("inttoptr (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -455,7 +466,8 @@ func (e *ExprBitCast) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprBitCast) Ident() string {
-	panic("not yet implemented")
+	// "bitcast" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("bitcast (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -493,7 +505,8 @@ func (e *ExprAddrSpaceCast) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprAddrSpaceCast) Ident() string {
-	panic("not yet implemented")
+	// "addrspacecast" "(" Type Constant "to" Type ")"
+	return fmt.Sprintf("addrspacecast (%v to %v)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

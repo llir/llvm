@@ -124,6 +124,8 @@ func (term *TermSwitch) Succs() []*BasicBlock {
 	return succs
 }
 
+// ~~~ [ Switch case ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Case is a switch case.
 type Case struct {
 	// Case comparand.

@@ -13,3 +13,6 @@
   - con: currently, as value.Named does not implement ir.Constant, then the
     semantic checker gets an easier job; as only constants may be used in the
     place of constants.
+- [ ] consider breaking the generated parser and lexer into a dedicated repo, so
+      that the repo size of llir/llvm may be kept low, and then we can force push to
+      the parser repo with new parsers and lexers generated from the grammar.

@@ -32,12 +32,15 @@ func (e *ExprExtractElement) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprExtractElement) Type() types.Type {
-	panic("not yet implemented")
+	// TODO: cache type?
+	typ := e.X.Type().(*types.VectorType)
+	return typ.ElemType
 }
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprExtractElement) Ident() string {
-	panic("not yet implemented")
+	// "extractelement" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("extractelement (%v, %v)", e.X, e.Index)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -72,12 +75,15 @@ func (e *ExprInsertElement) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprInsertElement) Type() types.Type {
-	panic("not yet implemented")
+	// TODO: cache type?
+	typ := e.X.Type().(*types.VectorType)
+	return types.NewVector(typ.Len+1, typ.ElemType)
 }
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprInsertElement) Ident() string {
-	panic("not yet implemented")
+	// "insertelement" "(" Type Constant "," Type Constant "," Type Constant ")"
+	return fmt.Sprintf("insertelement (%v, %v, %v)", e.X, e.Elem, e.Index)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -110,12 +116,13 @@ func (e *ExprShuffleVector) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprShuffleVector) Type() types.Type {
-	panic("not yet implemented")
+	return e.Mask.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprShuffleVector) Ident() string {
-	panic("not yet implemented")
+	// "shufflevector" "(" Type Constant "," Type Constant "," Type Constant ")"
+	return fmt.Sprintf("shufflevector (%v, %v, %v)", e.X, e.Y, e.Mask)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
