@@ -2,7 +2,9 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 )
 
@@ -14,6 +16,11 @@ import (
 type ExprShl struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
+
+	// extra.
+
+	// (optional) Integer overflow flags.
+	OverflowFlags []ll.OverflowFlag
 }
 
 // NewShlExpr returns a new shl expression based on the given operands.
@@ -34,7 +41,14 @@ func (e *ExprShl) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprShl) Ident() string {
-	panic("not yet implemented")
+	// "shl" OverflowFlags "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("shl")
+	for _, flag := range e.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -49,6 +63,12 @@ func (e *ExprShl) Simplify() Constant {
 type ExprLShr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
+
+	// extra.
+
+	// (optional) The result is a poison value if any of the bits shifted out are
+	// non-zero.
+	Exact bool
 }
 
 // NewLShrExpr returns a new lshr expression based on the given operands.
@@ -69,7 +89,14 @@ func (e *ExprLShr) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprLShr) Ident() string {
-	panic("not yet implemented")
+	// "lshr" OptExact "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("lshr")
+	if e.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -84,6 +111,12 @@ func (e *ExprLShr) Simplify() Constant {
 type ExprAShr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
+
+	// extra.
+
+	// (optional) The result is a poison value if any of the bits shifted out are
+	// non-zero.
+	Exact bool
 }
 
 // NewAShrExpr returns a new ashr expression based on the given operands.
@@ -104,7 +137,14 @@ func (e *ExprAShr) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprAShr) Ident() string {
-	panic("not yet implemented")
+	// "ashr" OptExact "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("ashr")
+	if e.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -139,7 +179,8 @@ func (e *ExprAnd) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprAnd) Ident() string {
-	panic("not yet implemented")
+	// "and" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("and (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -174,7 +215,8 @@ func (e *ExprOr) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprOr) Ident() string {
-	panic("not yet implemented")
+	// "or" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("or (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -209,7 +251,8 @@ func (e *ExprXor) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprXor) Ident() string {
-	panic("not yet implemented")
+	// "xor" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("xor (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

@@ -139,6 +139,8 @@ func (inst *InstPhi) SetName(name string) {
 	inst.LocalName = name
 }
 
+// ___ [ Incoming value ] ______________________________________________________
+
 // Incoming is an incoming value of a phi instruction.
 type Incoming struct {
 	// Incoming value.

@@ -2,7 +2,9 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 )
 
@@ -14,6 +16,11 @@ import (
 type ExprAdd struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// (optional) Integer overflow flags.
+	OverflowFlags []ll.OverflowFlag
 }
 
 // NewAddExpr returns a new add expression based on the given operands.
@@ -34,7 +41,14 @@ func (e *ExprAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprAdd) Ident() string {
-	panic("not yet implemented")
+	// "add" OverflowFlags "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("add")
+	for _, flag := range e.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -69,7 +83,8 @@ func (e *ExprFAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFAdd) Ident() string {
-	panic("not yet implemented")
+	// "fadd" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("fadd (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -84,6 +99,11 @@ func (e *ExprFAdd) Simplify() Constant {
 type ExprSub struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// (optional) Integer overflow flags.
+	OverflowFlags []ll.OverflowFlag
 }
 
 // NewSubExpr returns a new sub expression based on the given operands.
@@ -104,7 +124,14 @@ func (e *ExprSub) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSub) Ident() string {
-	panic("not yet implemented")
+	// "sub" OverflowFlags "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("sub")
+	for _, flag := range e.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -139,7 +166,8 @@ func (e *ExprFSub) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFSub) Ident() string {
-	panic("not yet implemented")
+	// "fsub" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("fsub (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -154,6 +182,11 @@ func (e *ExprFSub) Simplify() Constant {
 type ExprMul struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// (optional) Integer overflow flags.
+	OverflowFlags []ll.OverflowFlag
 }
 
 // NewMulExpr returns a new mul expression based on the given operands.
@@ -174,7 +207,14 @@ func (e *ExprMul) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprMul) Ident() string {
-	panic("not yet implemented")
+	// "mul" OverflowFlags "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("mul")
+	for _, flag := range e.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -209,7 +249,8 @@ func (e *ExprFMul) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFMul) Ident() string {
-	panic("not yet implemented")
+	// "fmul" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("fmul (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -224,6 +265,11 @@ func (e *ExprFMul) Simplify() Constant {
 type ExprUDiv struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// (optional) The result is a poison value if X is not a multiple of Y.
+	Exact bool
 }
 
 // NewUDivExpr returns a new udiv expression based on the given operands.
@@ -244,7 +290,14 @@ func (e *ExprUDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprUDiv) Ident() string {
-	panic("not yet implemented")
+	// "udiv" OptExact "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("udiv")
+	if e.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -259,6 +312,11 @@ func (e *ExprUDiv) Simplify() Constant {
 type ExprSDiv struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// (optional) The result is a poison value if the result would be rounded.
+	Exact bool
 }
 
 // NewSDivExpr returns a new sdiv expression based on the given operands.
@@ -279,7 +337,14 @@ func (e *ExprSDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSDiv) Ident() string {
-	panic("not yet implemented")
+	// "sdiv" OptExact "(" Type Constant "," Type Constant ")"
+	buf := &strings.Builder{}
+	buf.WriteString("sdiv")
+	if e.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	return buf.String()
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -314,7 +379,8 @@ func (e *ExprFDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFDiv) Ident() string {
-	panic("not yet implemented")
+	// "fdiv" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("fdiv (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -349,7 +415,8 @@ func (e *ExprURem) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprURem) Ident() string {
-	panic("not yet implemented")
+	// "urem" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("urem (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -384,7 +451,8 @@ func (e *ExprSRem) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSRem) Ident() string {
-	panic("not yet implemented")
+	// "srem" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("srem (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -419,7 +487,8 @@ func (e *ExprFRem) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFRem) Ident() string {
-	panic("not yet implemented")
+	// "frem" "(" Type Constant "," Type Constant ")"
+	return fmt.Sprintf("frem (%v, %v)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
