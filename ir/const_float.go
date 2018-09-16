@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 
 	"github.com/llir/l/ir/types"
@@ -22,7 +23,11 @@ type ConstFloat struct {
 // NewFloat returns a new floating-point constant based on the given
 // floating-point type and double precision floating-point value.
 func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
-	panic("not yet implemented")
+	if math.IsNaN(x) {
+		// TODO: store sign of NaN?
+		return &ConstFloat{Typ: typ, NaN: true}
+	}
+	return &ConstFloat{Typ: typ, X: big.NewFloat(x)}
 }
 
 // NewFloatFromString returns a new floating-point constant based on the given
@@ -57,5 +62,6 @@ func (c *ConstFloat) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *ConstFloat) Ident() string {
+	// float_lit
 	panic("not yet implemented")
 }
