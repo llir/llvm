@@ -52,5 +52,7 @@ func (c *ConstInt) Type() types.Type {
 // Ident returns the identifier associated with the constant.
 func (c *ConstInt) Ident() string {
 	// int_lit
+	// "true"
+	// "false"
 	panic("not yet implemented")
 }

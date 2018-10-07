@@ -33,5 +33,6 @@ func (c *ConstZeroInitializer) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *ConstZeroInitializer) Ident() string {
+	// "zeroinitializer"
 	return "zeroinitializer"
 }
