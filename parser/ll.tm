@@ -7,7 +7,9 @@ package = "github.com/mewmew/l-tm/parser"
 
 :: lexer
 
+'asm' : /asm/
 'datalayout' : /datalayout/
+'module' : /module/
 'source_filename' : /source_filename/
 'target' : /target/
 'triple' : /triple/
@@ -52,7 +54,7 @@ Module
 TopLevelEntity
 	: SourceFilename
 	| TargetDefinition
-	#| ModuleAsm
+	| ModuleAsm
 	#| TypeDef
 	#| ComdatDef
 	#| GlobalDecl
@@ -92,4 +94,16 @@ SourceFilename
 TargetDefinition
 	: 'target' 'datalayout' '=' StringLit
 	| 'target' 'triple' '=' StringLit
+;
+
+# ~~~ [ Module-level Inline Assembly ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#module-level-inline-assembly
+
+# ref: ParseModuleAsm
+#
+#   ::= 'module' 'asm' STRINGCONSTANT
+
+ModuleAsm
+	: 'module' 'asm' StringLit
 ;
