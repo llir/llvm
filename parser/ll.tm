@@ -7,6 +7,10 @@ package = "github.com/mewmew/l-tm/parser"
 
 :: lexer
 
+# TODO: move to the right place.
+
+int_type_tok : /i[0-9]+/
+
 # TODO: fix def of int_lit_tok
 
 #   Integer           [-]?[0-9]+
@@ -90,6 +94,7 @@ metadata_id_tok : /[!]{_id}/
 'distinct' : /distinct/
 'dllexport' : /dllexport/
 'dllimport' : /dllimport/
+'double' : /double/
 'dso_local' : /dso_local/
 'dso_preemptable' : /dso_preemptable/
 'exactmatch' : /exactmatch/
@@ -97,9 +102,12 @@ metadata_id_tok : /[!]{_id}/
 'external' : /external/
 'externally_initialized' : /externally_initialized/
 'fastcc' : /fastcc/
+'float' : /float/
+'fp128' : /fp128/
 'gc' : /gc/
 'ghccc' : /ghccc/
 'global' : /global/
+'half' : /half/
 'hhvm_ccc' : /hhvm_ccc/
 'hhvmcc' : /hhvmcc/
 'hidden' : /hidden/
@@ -113,12 +121,14 @@ metadata_id_tok : /[!]{_id}/
 'intel_ocl_bicc' : /intel_ocl_bicc/
 'internal' : /internal/
 'jumptable' : /jumptable/
+'label' : /label/
 'largest' : /largest/
 'linkonce_odr' : /linkonce_odr/
 'linkonce' : /linkonce/
 'local_unnamed_addr' : /local_unnamed_addr/
 'localdynamic' : /localdynamic/
 'localexec' : /localexec/
+'metadata' : /metadata/
 'minsize' : /minsize/
 'module' : /module/
 'msp430_intrcc' : /msp430_intrcc/
@@ -137,9 +147,11 @@ metadata_id_tok : /[!]{_id}/
 'noredzone' : /noredzone/
 'noreturn' : /noreturn/
 'nounwind' : /nounwind/
+'opaque' : /opaque/
 'optnone' : /optnone/
 'optsize' : /optsize/
 'personality' : /personality/
+'ppc_fp128' : /ppc_fp128/
 'prefix' : /prefix/
 'preserve_allcc' : /preserve_allcc/
 'preserve_mostcc' : /preserve_mostcc/
@@ -174,20 +186,25 @@ metadata_id_tok : /[!]{_id}/
 'swiftself' : /swiftself/
 'target' : /target/
 'thread_local' : /thread_local/
+'token' : /token/
 'triple' : /triple/
 'type' : /type/
 'unnamed_addr' : /unnamed_addr/
 'uselistorder_bb' : /uselistorder_bb/
 'uselistorder' : /uselistorder/
 'uwtable' : /uwtable/
+'void' : /void/
 'weak_odr' : /weak_odr/
 'weak' : /weak/
 'webkit_jscc' : /webkit_jscc/
 'win64cc' : /win64cc/
 'writeonly' : /writeonly/
+'x' : /x/
 'x86_64_sysvcc' : /x86_64_sysvcc/
 'x86_fastcallcc' : /x86_fastcallcc/
+'x86_fp80' : /x86_fp80/
 'x86_intrcc' : /x86_intrcc/
+'x86_mmx' : /x86_mmx/
 'x86_regcallcc' : /x86_regcallcc/
 'x86_stdcallcc' : /x86_stdcallcc/
 'x86_thiscallcc' : /x86_thiscallcc/
@@ -204,9 +221,14 @@ placeholder3 : /placeholder3/
 '...' : /\.\.\./
 '(' : /[(]/
 ')' : /[)]/
+'[' : /[\[]/
+']' : /[\]]/
 '{' : /[{]/
 '}' : /[}]/
+'*' : /[*]/
+'<' : /[<]/
 '=' : /[=]/
+'>' : /[>]/
 
 # TODO: figure out how to handle string_lit_tok correctly.
 string_lit_tok : /"[^"]"/
@@ -315,16 +337,6 @@ ModuleAsm
 TypeDef
 	: LocalIdent '=' 'type' OpaqueType
 	| LocalIdent '=' 'type' Type
-;
-
-# TODO: fix placeholders.
-
-OpaqueType
-   : placeholder1
-;
-
-Type
-   : placeholder2
 ;
 
 # ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -615,6 +627,167 @@ MetadataName
 MetadataID
 	: metadata_id_tok
 ;
+
+# === [ Types ] ================================================================
+
+# ref: ParseType
+#
+#  TYPEKEYWORD("void",      Type::getVoidTy(Context));
+#  TYPEKEYWORD("half",      Type::getHalfTy(Context));
+#  TYPEKEYWORD("float",     Type::getFloatTy(Context));
+#  TYPEKEYWORD("double",    Type::getDoubleTy(Context));
+#  TYPEKEYWORD("x86_fp80",  Type::getX86_FP80Ty(Context));
+#  TYPEKEYWORD("fp128",     Type::getFP128Ty(Context));
+#  TYPEKEYWORD("ppc_fp128", Type::getPPC_FP128Ty(Context));
+#  TYPEKEYWORD("label",     Type::getLabelTy(Context));
+#  TYPEKEYWORD("metadata",  Type::getMetadataTy(Context));
+#  TYPEKEYWORD("x86_mmx",   Type::getX86_MMXTy(Context));
+#  TYPEKEYWORD("token",     Type::getTokenTy(Context));
+
+Type
+	: VoidType
+	| FuncType
+	| FirstClassType
+;
+
+FirstClassType
+	: ConcreteType
+	| MetadataType
+;
+
+ConcreteType
+	: IntType
+	# Type ::= 'float' | 'void' (etc)
+	| FloatType
+	# Type ::= Type '*'
+	# Type ::= Type 'addrspace' '(' uint32 ')' '*'
+	| PointerType
+	# Type ::= '<' ... '>'
+	| VectorType
+	| LabelType
+	# Type ::= '[' ... ']'
+	| ArrayType
+	# Type ::= StructType
+	| StructType
+	# Type ::= %foo
+	# Type ::= %4
+	| NamedType
+	| MMXType
+	| TokenType
+;
+
+# --- [ Void Types ] -----------------------------------------------------------
+
+VoidType
+	: 'void'
+;
+
+# --- [ Function Types ] -------------------------------------------------------
+
+# ref: ParseFunctionType
+#
+#  ::= Type ArgumentList OptionalAttrs
+
+FuncType
+	: Type '(' Params ')'
+;
+
+# --- [ Integer Types ] --------------------------------------------------------
+
+IntType
+	: int_type_tok
+;
+
+# --- [ Floating-point Types ] -------------------------------------------------
+
+FloatType
+	: FloatKind
+;
+
+FloatKind
+	: 'half'
+	| 'float'
+	| 'double'
+	| 'x86_fp80'
+	| 'fp128'
+	| 'ppc_fp128'
+;
+
+# --- [ MMX Types ] ------------------------------------------------------------
+
+MMXType
+	: 'x86_mmx'
+;
+
+# --- [ Pointer Types ] --------------------------------------------------------
+
+PointerType
+	: Type AddrSpaceopt '*'
+;
+
+# --- [ Vector Types ] ---------------------------------------------------------
+
+# ref: ParseArrayVectorType
+#
+#     ::= '<' APSINTVAL 'x' Types '>'
+
+VectorType
+	: '<' int_lit_tok 'x' Type '>' # TODO: unsigned int lit?
+;
+
+# --- [ Label Types ] ----------------------------------------------------------
+
+LabelType
+	: 'label'
+;
+
+# --- [ Token Types ] ----------------------------------------------------------
+
+TokenType
+	: 'token'
+;
+
+# --- [ Metadata Types ] -------------------------------------------------------
+
+MetadataType
+	: 'metadata'
+;
+
+# --- [ Array Types ] ----------------------------------------------------------
+
+# ref: ParseArrayVectorType
+#
+#     ::= '[' APSINTVAL 'x' Types ']'
+
+ArrayType
+	: '[' int_lit_tok 'x' Type ']' # TODO: unsigned int lit?
+;
+
+# --- [ Structure Types ] ------------------------------------------------------
+
+# ref: ParseStructBody
+#
+#   StructType
+#     ::= '{' '}'
+#     ::= '{' Type (',' Type)* '}'
+#     ::= '<' '{' '}' '>'
+#     ::= '<' '{' Type (',' Type)* '}' '>'
+
+StructType
+	: '{' (Type separator ',')* '}'
+	| '<' '{' (Type separator ',')* '}' '>'
+;
+
+OpaqueType
+	: 'opaque'
+;
+
+# --- [ Named Types ] ----------------------------------------------------------
+
+NamedType
+	: LocalIdent
+;
+
 
 # ///////////////////////////////
 
