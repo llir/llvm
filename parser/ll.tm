@@ -3,6 +3,9 @@ language llvm(go);
 lang = "llvm"
 package = "github.com/mewmew/l-tm/parser"
 
+# TODO: check when to use Fooopt and when to use Foo? (as based on the AST
+# they produce)
+
 # ### [ Lexical part ] #########################################################
 
 :: lexer
@@ -587,7 +590,7 @@ Personality
 #   ::= '{' BasicBlock+ UseListOrderDirective* '}'
 
 FunctionBody
-	: '{' BasicBlockList UseListOrder* '}'
+	: '{' BasicBlock+ UseListOrder* '}'
 ;
 
 # ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1481,7 +1484,25 @@ SelectExpr
 	: 'select' '(' Type Constant ',' Type Constant ',' Type Constant ')'
 ;
 
+# === [ Basic Blocks ] =========================================================
+
+# ref: ParseBasicBlock
+#
+#   ::= LabelStr? Instruction*
+
+BasicBlock
+	: LabelIdent? Instruction* Terminator
+;
+
 # ///////////////////////////////
+
+Instruction
+   : placeholder1
+;
+
+Terminator
+   : placeholder2
+;
 
 # TODO: fix placeholders.
 
@@ -1499,10 +1520,6 @@ SpecializedMDNode
 
 DIExpression
    : placeholder3
-;
-
-BasicBlockList
-   : placeholder1
 ;
 
 # TODO: move Constant to where it belongs.
