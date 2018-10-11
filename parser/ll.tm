@@ -7,6 +7,10 @@ package = "github.com/mewmew/l-tm/parser"
 
 :: lexer
 
+# TODO: fix def of float_lit_tok
+
+float_lit_tok : /3\.14/
+
 # TODO: move to the right place.
 
 int_type_tok : /i[0-9]+/
@@ -74,8 +78,10 @@ metadata_id_tok : /[!]{_id}/
 'available_externally' : /available_externally/
 'avr_intrcc' : /avr_intrcc/
 'avr_signalcc' : /avr_signalcc/
+'blockaddress' : /blockaddress/
 'builtin' : /builtin/
 'byval' : /byval/
+'c' : /c/
 'cc' : /cc/
 'ccc' : /ccc/
 'cold' : /cold/
@@ -101,6 +107,7 @@ metadata_id_tok : /[!]{_id}/
 'extern_weak' : /extern_weak/
 'external' : /external/
 'externally_initialized' : /externally_initialized/
+'false' : /false/
 'fastcc' : /fastcc/
 'float' : /float/
 'fp128' : /fp128/
@@ -142,12 +149,14 @@ metadata_id_tok : /[!]{_id}/
 'noduplicates' : /noduplicates/
 'noimplicitfloat' : /noimplicitfloat/
 'noinline' : /noinline/
+'none' : /none/
 'nonlazybind' : /nonlazybind/
 'nonnull' : /nonnull/
 'norecurse' : /norecurse/
 'noredzone' : /noredzone/
 'noreturn' : /noreturn/
 'nounwind' : /nounwind/
+'null' : /null/
 'opaque' : /opaque/
 'optnone' : /optnone/
 'optsize' : /optsize/
@@ -190,7 +199,9 @@ metadata_id_tok : /[!]{_id}/
 'thread_local' : /thread_local/
 'token' : /token/
 'triple' : /triple/
+'true' : /true/
 'type' : /type/
+'undef' : /undef/
 'unnamed_addr' : /unnamed_addr/
 'uselistorder_bb' : /uselistorder_bb/
 'uselistorder' : /uselistorder/
@@ -212,6 +223,7 @@ metadata_id_tok : /[!]{_id}/
 'x86_thiscallcc' : /x86_thiscallcc/
 'x86_vectorcallcc' : /x86_vectorcallcc/
 'zeroext' : /zeroext/
+'zeroinitializer' : /zeroinitializer/
 
 # TODO: remove placeholders.
 placeholder1 : /placeholder1/
@@ -245,11 +257,6 @@ string_lit_tok : /"[^"]"/
 :: parser
 
 input : Module;
-
-# TODO: move these to their corresponding place in ll.bnf.
-StringLit
-   : string_lit_tok
-;
 
 # === [ Module ] ===============================================================
 
@@ -775,9 +782,12 @@ ArrayType
 #     ::= '<' '{' '}' '>'
 #     ::= '<' '{' Type (',' Type)* '}' '>'
 
+# NOTE: To prevent reduce/reduce conflicts, the alternatives of StructType are
+# expanded.
+
 StructType
-	: '{' (Type separator ',')* '}'
-	| '<' '{' (Type separator ',')* '}' '>'
+	: '{' (Type separator ',')+? '}'
+	| '<' '{' (Type separator ',')+? '}' '>'
 ;
 
 OpaqueType
@@ -827,9 +837,180 @@ IntelDialect
 	: 'inteldialect'
 ;
 
+# === [ Constants ] ============================================================
+
+# https://llvm.org/docs/LangRef.html#constants
+
+# ref: ParseValID
+
+Constant
+	: BoolConst
+	| IntConst
+	| FloatConst
+	| NullConst
+	| NoneConst
+	| StructConst
+	| ArrayConst
+	| CharArrayConst
+	| VectorConst
+	| ZeroInitializerConst
+	# @42
+	# @foo
+	| GlobalIdent
+	| UndefConst
+	| BlockAddressConst
+	| ConstantExpr
+;
+
+# --- [ Boolean Constants ] ----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+BoolConst
+	: BoolLit
+;
+
+BoolLit
+	: 'true'
+	| 'false'
+;
+
+# --- [ Integer Constants ] ----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+IntConst
+	: int_lit_tok
+;
+
+IntLit
+	: int_lit_tok
+;
+
+# --- [ Floating-point Constants ] ---------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+FloatConst
+	: float_lit_tok
+;
+
+# --- [ Null Pointer Constants ] -----------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+NullConst
+	: 'null'
+;
+
+# --- [ Token Constants ] ------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+NoneConst
+	: 'none'
+;
+
+# --- [ Structure Constants ] --------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+#
+#  ::= '{' ConstVector '}'
+#  ::= '<' '{' ConstVector '}' '>' --> Packed Struct.
+
+# NOTE: To prevent reduce/reduce conflicts, the alternatives of StructConst are
+# expanded.
+
+StructConst
+	: '{' '}'
+	| '{' (Type Constant separator ',')+ '}'
+	| '<' '{' '}' '>'
+	| '<' '{' (Type Constant separator ',')+ '}' '>'
+;
+
+# --- [ Array Constants ] ------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+#
+#  c "foo"
+
+ArrayConst
+	: '[' (Type Constant separator ',')* ']'
+;
+
+CharArrayConst
+	: 'c' StringLit
+;
+
+StringLit
+	: string_lit_tok
+;
+
+# --- [ Vector Constants ] -----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+#
+#  ::= '<' ConstVector '>'         --> Vector.
+
+VectorConst
+	: '<' (Type Constant separator ',')* '>'
+;
+
+# --- [ Zero Initialization Constants ] ----------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+
+ZeroInitializerConst
+	: 'zeroinitializer'
+;
+
+# --- [ Undefined Values ] -----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#undefined-values
+
+# ref: ParseValID
+
+UndefConst
+	: 'undef'
+;
+
+# --- [ Addresses of Basic Blocks ] --------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#addresses-of-basic-blocks
+
+# ref: ParseValID
+#
+#  ::= 'blockaddress' '(' @foo ',' %bar ')'
+
+BlockAddressConst
+	: 'blockaddress' '(' GlobalIdent ',' LocalIdent ')'
+;
+
 # ///////////////////////////////
 
 # TODO: fix placeholders.
+
+ConstantExpr
+   : placeholder3
+;
 
 MDTuple
    : placeholder1
@@ -848,10 +1029,6 @@ BasicBlockList
 ;
 
 # TODO: move Constant to where it belongs.
-
-Constant
-   : placeholder2
-;
 
 # === [ Metadata Nodes and Metadata Strings ] ==================================
 
