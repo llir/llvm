@@ -171,6 +171,8 @@ metadata_id_tok : /[!]{_id}/
 'triple' : /triple/
 'type' : /type/
 'unnamed_addr' : /unnamed_addr/
+'uselistorder_bb' : /uselistorder_bb/
+'uselistorder' : /uselistorder/
 'uwtable' : /uwtable/
 'weak_odr' : /weak_odr/
 'weak' : /weak/
@@ -273,8 +275,8 @@ TopLevelEntity
 	| AttrGroupDef
 	| NamedMetadataDef
 	| MetadataDef
-	#| UseListOrder
-	#| UseListOrderBB
+	| UseListOrder
+	| UseListOrderBB
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -516,7 +518,7 @@ Personality
 #   ::= '{' BasicBlock+ UseListOrderDirective* '}'
 
 FunctionBody
-	: '{' BasicBlockList UseListOrders '}'
+	: '{' BasicBlockList UseListOrder* '}'
 ;
 
 # ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -568,6 +570,28 @@ Distinct
 	: 'distinct'
 ;
 
+# ~~~ [ Use-list Order Directives ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#use-list-order-directives
+
+# ref: ParseUseListOrder
+#
+#   ::= 'uselistorder' Type Value ',' UseListOrderIndexes
+#  UseListOrderIndexes
+#   ::= '{' uint32 (',' uint32)+ '}'
+
+UseListOrder
+	: 'uselistorder' Type Value ',' '{' (int_lit_tok separator ',')+ '}' # TODO: use unsigned int lit?
+;
+
+# ref: ParseUseListOrderBB
+#
+#   ::= 'uselistorder_bb' @foo ',' %bar ',' UseListOrderIndexes
+
+UseListOrderBB
+	: 'uselistorder_bb' GlobalIdent ',' LocalIdent ',' '{' (int_lit_tok separator ',')+ '}' # TODO: use unsigned int lit?
+;
+
 # ///////////////////////////////
 
 # TODO: fix placeholders.
@@ -588,13 +612,13 @@ BasicBlockList
    : placeholder1
 ;
 
-UseListOrders
-   : placeholder2
-;
-
 # TODO: move Constant to where it belongs.
 
 Constant
+   : placeholder1
+;
+
+Value
    : placeholder1
 ;
 
