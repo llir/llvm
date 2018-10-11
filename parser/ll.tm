@@ -13,7 +13,8 @@ package = "github.com/mewmew/l-tm/parser"
 
 int_lit_tok : /[-]?[0-9]+/
 
-# TODO: fix proper definition of _name and _id.
+# TODO: fix proper definition of _escape_name, _name and _id.
+_escape_name = /bar/
 _name = /foo/
 _id = /42/
 
@@ -32,6 +33,10 @@ _local_id = /[%]{_id}/
 attr_group_id_tok : /[#]{_id}/
 
 comdat_name_tok : /[$]{_name}/
+
+metadata_name_tok : /[!]{_escape_name}/
+
+metadata_id_tok : /[!]{_id}/
 
 'addrspace' : /addrspace/
 'alias' : /alias/
@@ -76,6 +81,7 @@ comdat_name_tok : /[$]{_name}/
 'define' : /define/
 'dereferenceable_or_null' : /dereferenceable_or_null/
 'dereferenceable' : /dereferenceable/
+'distinct' : /distinct/
 'dllexport' : /dllexport/
 'dllimport' : /dllimport/
 'dso_local' : /dso_local/
@@ -183,8 +189,10 @@ comdat_name_tok : /[$]{_name}/
 # TODO: remove placeholders.
 placeholder1 : /placeholder1/
 placeholder2 : /placeholder2/
+placeholder3 : /placeholder3/
 
 ',' : /[,]/
+'!' : /[!]/
 '...' : /\.\.\./
 '(' : /[(]/
 ')' : /[)]/
@@ -227,6 +235,14 @@ ComdatName
    : comdat_name_tok
 ;
 
+MetadataName
+   : metadata_name_tok
+;
+
+MetadataID
+   : metadata_id_tok
+;
+
 # === [ Module ] ===============================================================
 
 # https://llvm.org/docs/LangRef.html#module-structure
@@ -254,9 +270,9 @@ TopLevelEntity
 	| IndirectSymbolDef
 	| FunctionDecl
 	| FunctionDef
-	#| AttrGroupDef
-	#| NamedMetadataDef
-	#| MetadataDef
+	| AttrGroupDef
+	| NamedMetadataDef
+	| MetadataDef
 	#| UseListOrder
 	#| UseListOrderBB
 ;
@@ -515,7 +531,58 @@ AttrGroupDef
 	: 'attributes' AttrGroupID '=' '{' FuncAttr* '}'
 ;
 
+# ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#named-metadata
+
+# ref: ParseNamedMetadata
+#
+#   !foo = !{ !1, !2 }
+
+NamedMetadataDef
+	: MetadataName '=' '!' '{' (MetadataNode separator ',')* '}'
+;
+
+MetadataNode
+	: MetadataID
+	# Parse DIExpressions inline as a special case. They are still MDNodes, so
+	# they can still appear in named metadata. Remove this logic if they become
+	# plain Metadata.
+	| DIExpression
+;
+
+# ~~~ [ Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#metadata-nodes-and-metadata-strings
+
+# ref: ParseStandaloneMetadata
+#
+#   !42 = !{...}
+
+MetadataDef
+	: MetadataID '=' Distinctopt MDTuple
+	| MetadataID '=' Distinctopt SpecializedMDNode
+;
+
+Distinct
+	: 'distinct'
+;
+
 # ///////////////////////////////
+
+# TODO: fix placeholders.
+
+MDTuple
+   : placeholder1
+;
+
+SpecializedMDNode
+   : placeholder2
+;
+
+DIExpression
+   : placeholder3
+;
 
 BasicBlockList
    : placeholder1
