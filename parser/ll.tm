@@ -39,19 +39,42 @@ comdat_name_tok : /[$]{_name}/
 'alignstack' : /alignstack/
 'allocsize' : /allocsize/
 'alwaysinline' : /alwaysinline/
+'amdgpu_cs' : /amdgpu_cs/
+'amdgpu_es' : /amdgpu_es/
+'amdgpu_gs' : /amdgpu_gs/
+'amdgpu_hs' : /amdgpu_hs/
+'amdgpu_kernel' : /amdgpu_kernel/
+'amdgpu_ls' : /amdgpu_ls/
+'amdgpu_ps' : /amdgpu_ps/
+'amdgpu_vs' : /amdgpu_vs/
 'any' : /any/
+'anyregcc' : /anyregcc/
 'appending' : /appending/
 'argmemonly' : /argmemonly/
+'arm_aapcs_vfpcc' : /arm_aapcs_vfpcc/
+'arm_aapcscc' : /arm_aapcscc/
+'arm_apcscc' : /arm_apcscc/
 'asm' : /asm/
 'available_externally' : /available_externally/
+'avr_intrcc' : /avr_intrcc/
+'avr_signalcc' : /avr_signalcc/
 'builtin' : /builtin/
+'byval' : /byval/
+'cc' : /cc/
+'ccc' : /ccc/
 'cold' : /cold/
+'coldcc' : /coldcc/
 'comdat' : /comdat/
 'common' : /common/
 'constant' : /constant/
 'convergent' : /convergent/
+'cxx_fast_tlscc' : /cxx_fast_tlscc/
 'datalayout' : /datalayout/
+'declare' : /declare/
 'default' : /default/
+'define' : /define/
+'dereferenceable_or_null' : /dereferenceable_or_null/
+'dereferenceable' : /dereferenceable/
 'dllexport' : /dllexport/
 'dllimport' : /dllimport/
 'dso_local' : /dso_local/
@@ -60,13 +83,21 @@ comdat_name_tok : /[$]{_name}/
 'extern_weak' : /extern_weak/
 'external' : /external/
 'externally_initialized' : /externally_initialized/
+'fastcc' : /fastcc/
+'gc' : /gc/
+'ghccc' : /ghccc/
 'global' : /global/
+'hhvm_ccc' : /hhvm_ccc/
+'hhvmcc' : /hhvmcc/
 'hidden' : /hidden/
 'ifunc' : /ifunc/
 'inaccessiblemem_or_argmemonly' : /inaccessiblemem_or_argmemonly/
 'inaccessiblememonly' : /inaccessiblememonly/
+'inalloca' : /inalloca/
 'initialexec' : /initialexec/
 'inlinehint' : /inlinehint/
+'inreg' : /inreg/
+'intel_ocl_bicc' : /intel_ocl_bicc/
 'internal' : /internal/
 'jumptable' : /jumptable/
 'largest' : /largest/
@@ -77,23 +108,36 @@ comdat_name_tok : /[$]{_name}/
 'localexec' : /localexec/
 'minsize' : /minsize/
 'module' : /module/
+'msp430_intrcc' : /msp430_intrcc/
 'naked' : /naked/
+'nest' : /nest/
+'noalias' : /noalias/
 'nobuiltin' : /nobuiltin/
+'nocapture' : /nocapture/
 'noduplicate' : /noduplicate/
 'noduplicates' : /noduplicates/
 'noimplicitfloat' : /noimplicitfloat/
 'noinline' : /noinline/
 'nonlazybind' : /nonlazybind/
+'nonnull' : /nonnull/
 'norecurse' : /norecurse/
 'noredzone' : /noredzone/
 'noreturn' : /noreturn/
 'nounwind' : /nounwind/
 'optnone' : /optnone/
 'optsize' : /optsize/
+'personality' : /personality/
+'prefix' : /prefix/
+'preserve_allcc' : /preserve_allcc/
+'preserve_mostcc' : /preserve_mostcc/
 'private' : /private/
+'prologue' : /prologue/
 'protected' : /protected/
+'ptx_device' : /ptx_device/
+'ptx_kernel' : /ptx_kernel/
 'readnone' : /readnone/
 'readonly' : /readonly/
+'returned' : /returned/
 'returns_twice' : /returns_twice/
 'safestack' : /safestack/
 'samesize' : /samesize/
@@ -102,12 +146,19 @@ comdat_name_tok : /[$]{_name}/
 'sanitize_memory' : /sanitize_memory/
 'sanitize_thread' : /sanitize_thread/
 'section' : /section/
+'signext' : /signext/
 'source_filename' : /source_filename/
 'speculatable' : /speculatable/
+'spir_func' : /spir_func/
+'spir_kernel' : /spir_kernel/
+'sret' : /sret/
 'ssp' : /ssp/
 'sspreq' : /sspreq/
 'sspstrong' : /sspstrong/
 'strictfp' : /strictfp/
+'swiftcc' : /swiftcc/
+'swifterror' : /swifterror/
+'swiftself' : /swiftself/
 'target' : /target/
 'thread_local' : /thread_local/
 'triple' : /triple/
@@ -116,16 +167,29 @@ comdat_name_tok : /[$]{_name}/
 'uwtable' : /uwtable/
 'weak_odr' : /weak_odr/
 'weak' : /weak/
+'webkit_jscc' : /webkit_jscc/
+'win64cc' : /win64cc/
 'writeonly' : /writeonly/
+'x86_64_sysvcc' : /x86_64_sysvcc/
+'x86_fastcallcc' : /x86_fastcallcc/
+'x86_intrcc' : /x86_intrcc/
+'x86_regcallcc' : /x86_regcallcc/
+'x86_stdcallcc' : /x86_stdcallcc/
+'x86_thiscallcc' : /x86_thiscallcc/
+'x86_vectorcallcc' : /x86_vectorcallcc/
+'zeroext' : /zeroext/
 
 # TODO: remove placeholders.
 placeholder1 : /placeholder1/
 placeholder2 : /placeholder2/
 
-',' : /,/
+',' : /[,]/
+'...' : /\.\.\./
 '(' : /[(]/
 ')' : /[)]/
-'=' : /=/
+'{' : /[{]/
+'}' : /[}]/
+'=' : /[=]/
 
 # TODO: figure out how to handle string_lit_tok correctly.
 string_lit_tok : /"[^"]"/
@@ -187,8 +251,8 @@ TopLevelEntity
 	| GlobalDecl
 	| GlobalDef
 	| IndirectSymbolDef
-	#| FunctionDecl
-	#| FunctionDef
+	| FunctionDecl
+	| FunctionDef
 	#| AttrGroupDef
 	#| NamedMetadataDef
 	#| MetadataDef
@@ -376,7 +440,77 @@ IndirectSymbolKind
 	| 'ifunc'
 ;
 
+# ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#functions
+
+# ref: ParseDeclare
+#
+#   ::= 'declare' FunctionHeader
+
+FunctionDecl
+	: 'declare' MetadataAttachment* ExternLinkageopt FunctionHeader
+;
+
+# ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#functions
+
+# ref: ParseDefine
+#
+#   ::= 'define' FunctionHeader (!dbg !56)* '{' ...
+
+FunctionDef
+	: 'define' Linkageopt FunctionHeader MetadataAttachment* FunctionBody
+;
+
+# ref: ParseFunctionHeader
+#
+#   ::= OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
+#       OptionalCallingConv OptRetAttrs OptUnnamedAddr Type GlobalName
+#       '(' ArgList ')' OptFuncAttrs OptSection OptionalAlign OptGC
+#       OptionalPrefix OptionalPrologue OptPersonalityFn
+
+# TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved,
+# as FuncAttrs also contains "align".
+
+FunctionHeader
+	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+;
+
+GC
+	: 'gc' StringLit
+;
+
+Prefix
+	: 'prefix' Type Constant
+;
+
+Prologue
+	: 'prologue' Type Constant
+;
+
+Personality
+	: 'personality' Type Constant
+;
+
+# ref: ParseFunctionBody
+#
+#   ::= '{' BasicBlock+ UseListOrderDirective* '}'
+
+FunctionBody
+	: '{' BasicBlockList UseListOrders '}'
+;
+
 # ///////////////////////////////
+
+BasicBlockList
+   : placeholder1
+;
+
+UseListOrders
+   : placeholder2
+;
 
 # TODO: move Constant to where it belongs.
 
@@ -601,4 +735,161 @@ AllocSize
 #   ::= 'alignstack' '(' 4 ')'
 StackAlignment
 	: 'alignstack' '(' int_lit_tok ')' # TODO: use unsigned int lit?
+;
+
+# ref: ParseOptionalCallingConv
+#
+#   ::= empty
+#   ::= 'ccc'
+#   ::= 'fastcc'
+#   ::= 'intel_ocl_bicc'
+#   ::= 'coldcc'
+#   ::= 'x86_stdcallcc'
+#   ::= 'x86_fastcallcc'
+#   ::= 'x86_thiscallcc'
+#   ::= 'x86_vectorcallcc'
+#   ::= 'arm_apcscc'
+#   ::= 'arm_aapcscc'
+#   ::= 'arm_aapcs_vfpcc'
+#   ::= 'msp430_intrcc'
+#   ::= 'avr_intrcc'
+#   ::= 'avr_signalcc'
+#   ::= 'ptx_kernel'
+#   ::= 'ptx_device'
+#   ::= 'spir_func'
+#   ::= 'spir_kernel'
+#   ::= 'x86_64_sysvcc'
+#   ::= 'win64cc'
+#   ::= 'webkit_jscc'
+#   ::= 'anyregcc'
+#   ::= 'preserve_mostcc'
+#   ::= 'preserve_allcc'
+#   ::= 'ghccc'
+#   ::= 'swiftcc'
+#   ::= 'x86_intrcc'
+#   ::= 'hhvmcc'
+#   ::= 'hhvm_ccc'
+#   ::= 'cxx_fast_tlscc'
+#   ::= 'amdgpu_vs'
+#   ::= 'amdgpu_ls'
+#   ::= 'amdgpu_hs'
+#   ::= 'amdgpu_es'
+#   ::= 'amdgpu_gs'
+#   ::= 'amdgpu_ps'
+#   ::= 'amdgpu_cs'
+#   ::= 'amdgpu_kernel'
+#   ::= 'cc' UINT
+
+CallingConv
+	: 'amdgpu_cs'
+	| 'amdgpu_es'
+	| 'amdgpu_gs'
+	| 'amdgpu_hs'
+	| 'amdgpu_kernel'
+	| 'amdgpu_ls'
+	| 'amdgpu_ps'
+	| 'amdgpu_vs'
+	| 'anyregcc'
+	| 'arm_aapcs_vfpcc'
+	| 'arm_aapcscc'
+	| 'arm_apcscc'
+	| 'avr_intrcc'
+	| 'avr_signalcc'
+	| 'ccc'
+	| 'coldcc'
+	| 'cxx_fast_tlscc'
+	| 'fastcc'
+	| 'ghccc'
+	| 'hhvm_ccc'
+	| 'hhvmcc'
+	| 'intel_ocl_bicc'
+	| 'msp430_intrcc'
+	| 'preserve_allcc'
+	| 'preserve_mostcc'
+	| 'ptx_device'
+	| 'ptx_kernel'
+	| 'spir_func'
+	| 'spir_kernel'
+	| 'swiftcc'
+	| 'webkit_jscc'
+	| 'win64cc'
+	| 'x86_64_sysvcc'
+	| 'x86_fastcallcc'
+	| 'x86_intrcc'
+	| 'x86_regcallcc'
+	| 'x86_stdcallcc'
+	| 'x86_thiscallcc'
+	| 'x86_vectorcallcc'
+	| 'cc' int_lit_tok # TODO: use unsigned int lit?
+;
+
+# ___ [ Return Attribute ] ___________________________________________________
+
+# ref: ParseOptionalReturnAttrs
+
+ReturnAttr
+	: Alignment
+	| Dereferenceable
+	| AttrString
+	| AttrPair
+	| 'inreg'
+	| 'noalias'
+	| 'nonnull'
+	| 'signext'
+	| 'zeroext'
+;
+
+# ref: ParseArgumentList
+#
+#   ::= '(' ArgTypeListI ')'
+#  ArgTypeListI
+#   ::= empty
+#   ::= '...'
+#   ::= ArgTypeList ',' '...'
+#   ::= ArgType (',' ArgType)*
+
+Params
+	: '...'?
+	| (Param separator ',')+ (',' '...')?
+;
+
+Param
+	: Type ParamAttr* LocalIdent?
+;
+
+# ___ [ Parameter Attribute ] __________________________________________________
+
+# ref: ParseOptionalParamAttrs
+
+# ref: ParseOptionalDerefAttrBytes
+#
+#   ::= empty
+#   ::= AttrKind '(' 4 ')'
+
+ParamAttr
+	: Alignment
+	| Dereferenceable
+	| AttrString
+	| AttrPair
+	| 'byval'
+	| 'inalloca'
+	| 'inreg'
+	| 'nest'
+	| 'noalias'
+	| 'nocapture'
+	| 'nonnull'
+	| 'readnone'
+	| 'readonly'
+	| 'returned'
+	| 'signext'
+	| 'sret'
+	| 'swifterror'
+	| 'swiftself'
+	| 'writeonly'
+	| 'zeroext'
+;
+
+Dereferenceable
+	: 'dereferenceable' '(' int_lit_tok ')' # TODO: use unsigned int lit?
+	| 'dereferenceable_or_null' '(' int_lit_tok ')' # TODO: use unsigned int lit?
 ;
