@@ -54,6 +54,7 @@ metadata_id_tok : /[!]{_id}/
 
 'add' : /add/
 'addrspace' : /addrspace/
+'addrspacecast' : /addrspacecast/
 'alias' : /alias/
 'align' : /align/
 'alignstack' : /alignstack/
@@ -81,6 +82,7 @@ metadata_id_tok : /[!]{_id}/
 'available_externally' : /available_externally/
 'avr_intrcc' : /avr_intrcc/
 'avr_signalcc' : /avr_signalcc/
+'bitcast' : /bitcast/
 'blockaddress' : /blockaddress/
 'builtin' : /builtin/
 'byval' : /byval/
@@ -106,37 +108,52 @@ metadata_id_tok : /[!]{_id}/
 'double' : /double/
 'dso_local' : /dso_local/
 'dso_preemptable' : /dso_preemptable/
+'eq' : /eq/
 'exact' : /exact/
 'exactmatch' : /exactmatch/
 'extern_weak' : /extern_weak/
 'external' : /external/
 'externally_initialized' : /externally_initialized/
+'extractelement' : /extractelement/
+'extractvalue' : /extractvalue/
 'fadd' : /fadd/
 'false' : /false/
 'fastcc' : /fastcc/
+'fcmp' : /fcmp/
 'fdiv' : /fdiv/
 'float' : /float/
 'fmul' : /fmul/
 'fp128' : /fp128/
+'fpext' : /fpext/
+'fptosi' : /fptosi/
+'fptoui' : /fptoui/
+'fptrunc' : /fptrunc/
 'frem' : /frem/
 'fsub' : /fsub/
 'gc' : /gc/
+'getelementptr' : /getelementptr/
 'ghccc' : /ghccc/
 'global' : /global/
 'half' : /half/
 'hhvm_ccc' : /hhvm_ccc/
 'hhvmcc' : /hhvmcc/
 'hidden' : /hidden/
+'icmp' : /icmp/
 'ifunc' : /ifunc/
 'inaccessiblemem_or_argmemonly' : /inaccessiblemem_or_argmemonly/
 'inaccessiblememonly' : /inaccessiblememonly/
 'inalloca' : /inalloca/
+'inbounds' : /inbounds/
 'initialexec' : /initialexec/
 'inlinehint' : /inlinehint/
+'inrange' : /inrange/
 'inreg' : /inreg/
+'insertelement' : /insertelement/
+'insertvalue' : /insertvalue/
 'intel_ocl_bicc' : /intel_ocl_bicc/
 'inteldialect' : /inteldialect/
 'internal' : /internal/
+'inttoptr' : /inttoptr/
 'jumptable' : /jumptable/
 'label' : /label/
 'largest' : /largest/
@@ -152,6 +169,7 @@ metadata_id_tok : /[!]{_id}/
 'msp430_intrcc' : /msp430_intrcc/
 'mul' : /mul/
 'naked' : /naked/
+'ne' : /ne/
 'nest' : /nest/
 'noalias' : /noalias/
 'nobuiltin' : /nobuiltin/
@@ -170,10 +188,17 @@ metadata_id_tok : /[!]{_id}/
 'nsw' : /nsw/
 'null' : /null/
 'nuw' : /nuw/
+'oeq' : /oeq/
+'oge' : /oge/
+'ogt' : /ogt/
+'ole' : /ole/
+'olt' : /olt/
+'one' : /one/
 'opaque' : /opaque/
 'optnone' : /optnone/
 'optsize' : /optsize/
 'or' : /or/
+'ord' : /ord/
 'personality' : /personality/
 'ppc_fp128' : /ppc_fp128/
 'prefix' : /prefix/
@@ -182,6 +207,7 @@ metadata_id_tok : /[!]{_id}/
 'private' : /private/
 'prologue' : /prologue/
 'protected' : /protected/
+'ptrtoint' : /ptrtoint/
 'ptx_device' : /ptx_device/
 'ptx_kernel' : /ptx_kernel/
 'readnone' : /readnone/
@@ -196,9 +222,17 @@ metadata_id_tok : /[!]{_id}/
 'sanitize_thread' : /sanitize_thread/
 'sdiv' : /sdiv/
 'section' : /section/
+'select' : /select/
+'sext' : /sext/
+'sge' : /sge/
+'sgt' : /sgt/
 'shl' : /shl/
+'shufflevector' : /shufflevector/
 'sideeffect' : /sideeffect/
 'signext' : /signext/
+'sitofp' : /sitofp/
+'sle' : /sle/
+'slt' : /slt/
 'source_filename' : /source_filename/
 'speculatable' : /speculatable/
 'spir_func' : /spir_func/
@@ -215,13 +249,23 @@ metadata_id_tok : /[!]{_id}/
 'swiftself' : /swiftself/
 'target' : /target/
 'thread_local' : /thread_local/
+'to' : /to/
 'token' : /token/
 'triple' : /triple/
 'true' : /true/
+'trunc' : /trunc/
 'type' : /type/
 'udiv' : /udiv/
+'ueq' : /ueq/
+'uge' : /uge/
+'ugt' : /ugt/
+'uitofp' : /uitofp/
+'ule' : /ule/
+'ult' : /ult/
 'undef' : /undef/
+'une' : /une/
 'unnamed_addr' : /unnamed_addr/
+'uno' : /uno/
 'urem' : /urem/
 'uselistorder_bb' : /uselistorder_bb/
 'uselistorder' : /uselistorder/
@@ -245,6 +289,7 @@ metadata_id_tok : /[!]{_id}/
 'xor' : /xor/
 'zeroext' : /zeroext/
 'zeroinitializer' : /zeroinitializer/
+'zext' : /zext/
 
 # TODO: remove placeholders.
 placeholder1 : /placeholder1/
@@ -1045,32 +1090,32 @@ ConstantExpr
 	| OrExpr
 	| XorExpr
 	# Vector expressions
-	#| ExtractElementExpr
-	#| InsertElementExpr
-	#| ShuffleVectorExpr
+	| ExtractElementExpr
+	| InsertElementExpr
+	| ShuffleVectorExpr
 	# Aggregate expressions
-	#| ExtractValueExpr
-	#| InsertValueExpr
+	| ExtractValueExpr
+	| InsertValueExpr
 	# Memory expressions
-	#| GetElementPtrExpr
+	| GetElementPtrExpr
 	# Conversion expressions
-	#| TruncExpr
-	#| ZExtExpr
-	#| SExtExpr
-	#| FPTruncExpr
-	#| FPExtExpr
-	#| FPToUIExpr
-	#| FPToSIExpr
-	#| UIToFPExpr
-	#| SIToFPExpr
-	#| PtrToIntExpr
-	#| IntToPtrExpr
-	#| BitCastExpr
-	#| AddrSpaceCastExpr
+	| TruncExpr
+	| ZExtExpr
+	| SExtExpr
+	| FPTruncExpr
+	| FPExtExpr
+	| FPToUIExpr
+	| FPToSIExpr
+	| UIToFPExpr
+	| SIToFPExpr
+	| PtrToIntExpr
+	| IntToPtrExpr
+	| BitCastExpr
+	| AddrSpaceCastExpr
 	# Other expressions
-	#| ICmpExpr
-	#| FCmpExpr
-	#| SelectExpr
+	| ICmpExpr
+	| FCmpExpr
+	| SelectExpr
 ;
 
 # --- [ Binary expressions ] --------------------------------------------------
@@ -1223,6 +1268,217 @@ OrExpr
 
 XorExpr
 	: 'xor' '(' Type Constant ',' Type Constant ')'
+;
+
+# --- [ Vector expressions ] ---------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ExtractElementExpr
+	: 'extractelement' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+InsertElementExpr
+	: 'insertelement' '(' Type Constant ',' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ShuffleVectorExpr
+	: 'shufflevector' '(' Type Constant ',' Type Constant ',' Type Constant ')'
+;
+
+# --- [ Aggregate expressions ] ------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ExtractValueExpr
+	: 'extractvalue' '(' Type Constant Indices ')'
+;
+
+# ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+InsertValueExpr
+	: 'insertvalue' '(' Type Constant ',' Type Constant Indices ')'
+;
+
+# --- [ Memory expressions ] ---------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+GetElementPtrExpr
+	: 'getelementptr' InBoundsopt '(' Type ',' Type Constant (',' GEPConstIndex)* ')'
+;
+
+# ref: ParseGlobalValueVector
+#
+#   ::= empty
+#   ::= [inrange] TypeAndValue (',' [inrange] TypeAndValue)*
+
+# TODO: update name to Index?
+
+GEPConstIndex
+	: Inrangeopt Type Constant
+;
+
+Inrange
+	: 'inrange'
+;
+
+# --- [ Conversion expressions ] -----------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+TruncExpr
+	: 'trunc' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ZExtExpr
+	: 'zext' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SExtExpr
+	: 'sext' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPTruncExpr
+	: 'fptrunc' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPExtExpr
+	: 'fpext' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPToUIExpr
+	: 'fptoui' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPToSIExpr
+	: 'fptosi' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+UIToFPExpr
+	: 'uitofp' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SIToFPExpr
+	: 'sitofp' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+PtrToIntExpr
+	: 'ptrtoint' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+IntToPtrExpr
+	: 'inttoptr' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+BitCastExpr
+	: 'bitcast' '(' Type Constant 'to' Type ')'
+;
+
+# ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AddrSpaceCastExpr
+	: 'addrspacecast' '(' Type Constant 'to' Type ')'
+;
+
+# --- [ Other expressions ] ----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ICmpExpr
+	: 'icmp' IPred '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FCmpExpr
+	: 'fcmp' FPred '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SelectExpr
+	: 'select' '(' Type Constant ',' Type Constant ',' Type Constant ')'
 ;
 
 # ///////////////////////////////
@@ -1633,4 +1889,52 @@ Exact
 
 OverflowFlags
 	: ('nsw' | 'nuw')* # TODO: use ('nsw' & 'nuw')? if supported.
+;
+
+InBounds
+	: 'inbounds'
+;
+
+# ref: ParseIndexList
+#
+#    ::=  (',' uint32)+
+
+Indices
+	: (int_lit_tok separator ',')*
+;
+
+# ref: ParseCmpPredicate
+
+IPred
+	: 'eq'
+	| 'ne'
+	| 'sge'
+	| 'sgt'
+	| 'sle'
+	| 'slt'
+	| 'uge'
+	| 'ugt'
+	| 'ule'
+	| 'ult'
+;
+
+# ref: ParseCmpPredicate
+
+FPred
+	: 'false'
+	| 'oeq'
+	| 'oge'
+	| 'ogt'
+	| 'ole'
+	| 'olt'
+	| 'one'
+	| 'ord'
+	| 'true'
+	| 'ueq'
+	| 'uge'
+	| 'ugt'
+	| 'ule'
+	| 'ult'
+	| 'une'
+	| 'uno'
 ;
