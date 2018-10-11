@@ -30,6 +30,12 @@ local_ident_tok : /{_local_name}|{_local_id}/
 _local_name = /[%]{_name}/
 _local_id = /[%]{_id}/
 
+#   Label             [-a-zA-Z$._0-9]+:
+
+# TODO: add _quoted_string version of label_ident_tok
+
+label_ident_tok : /[-a-zA-Z$\._0-9]+:/
+
 attr_group_id_tok : /[#]{_id}/
 
 comdat_name_tok : /[$]{_name}/
@@ -219,30 +225,6 @@ input : Module;
 # TODO: move these to their corresponding place in ll.bnf.
 StringLit
    : string_lit_tok
-;
-
-GlobalIdent
-   : global_ident_tok
-;
-
-LocalIdent
-   : local_ident_tok
-;
-
-AttrGroupID
-   : attr_group_id_tok
-;
-
-ComdatName
-   : comdat_name_tok
-;
-
-MetadataName
-   : metadata_name_tok
-;
-
-MetadataID
-   : metadata_id_tok
 ;
 
 # === [ Module ] ===============================================================
@@ -590,6 +572,48 @@ UseListOrder
 
 UseListOrderBB
 	: 'uselistorder_bb' GlobalIdent ',' LocalIdent ',' '{' (int_lit_tok separator ',')+ '}' # TODO: use unsigned int lit?
+;
+
+# === [ Identifiers ] ==========================================================
+
+# --- [ Global Identifiers ] ---------------------------------------------------
+
+GlobalIdent
+	: global_ident_tok
+;
+
+# --- [ Local Identifiers ] ----------------------------------------------------
+
+LocalIdent
+	: local_ident_tok
+;
+
+# --- [ Label Identifiers ] ----------------------------------------------------
+
+LabelIdent
+	: label_ident_tok
+;
+
+# --- [ Attribute Group Identifiers ] ------------------------------------------
+
+AttrGroupID
+	: attr_group_id_tok
+;
+
+# --- [ Comdat Identifiers ] ---------------------------------------------------
+
+ComdatName
+	: comdat_name_tok
+;
+
+# --- [ Metadata Identifiers ] -------------------------------------------------
+
+MetadataName
+	: metadata_name_tok
+;
+
+MetadataID
+	: metadata_id_tok
 ;
 
 # ///////////////////////////////
