@@ -52,8 +52,6 @@ metadata_name_tok : /[!]{_escape_name}/
 
 metadata_id_tok : /[!]{_id}/
 
-'nuw' : /nuw/
-'nsw' : /nsw/
 'add' : /add/
 'addrspace' : /addrspace/
 'alias' : /alias/
@@ -69,6 +67,7 @@ metadata_id_tok : /[!]{_id}/
 'amdgpu_ls' : /amdgpu_ls/
 'amdgpu_ps' : /amdgpu_ps/
 'amdgpu_vs' : /amdgpu_vs/
+'and' : /and/
 'any' : /any/
 'anyregcc' : /anyregcc/
 'appending' : /appending/
@@ -76,6 +75,7 @@ metadata_id_tok : /[!]{_id}/
 'arm_aapcs_vfpcc' : /arm_aapcs_vfpcc/
 'arm_aapcscc' : /arm_aapcscc/
 'arm_apcscc' : /arm_apcscc/
+'ashr' : /ashr/
 'asm' : /asm/
 'attributes' : /attributes/
 'available_externally' : /available_externally/
@@ -145,6 +145,7 @@ metadata_id_tok : /[!]{_id}/
 'local_unnamed_addr' : /local_unnamed_addr/
 'localdynamic' : /localdynamic/
 'localexec' : /localexec/
+'lshr' : /lshr/
 'metadata' : /metadata/
 'minsize' : /minsize/
 'module' : /module/
@@ -166,10 +167,13 @@ metadata_id_tok : /[!]{_id}/
 'noredzone' : /noredzone/
 'noreturn' : /noreturn/
 'nounwind' : /nounwind/
+'nsw' : /nsw/
 'null' : /null/
+'nuw' : /nuw/
 'opaque' : /opaque/
 'optnone' : /optnone/
 'optsize' : /optsize/
+'or' : /or/
 'personality' : /personality/
 'ppc_fp128' : /ppc_fp128/
 'prefix' : /prefix/
@@ -192,6 +196,7 @@ metadata_id_tok : /[!]{_id}/
 'sanitize_thread' : /sanitize_thread/
 'sdiv' : /sdiv/
 'section' : /section/
+'shl' : /shl/
 'sideeffect' : /sideeffect/
 'signext' : /signext/
 'source_filename' : /source_filename/
@@ -237,6 +242,7 @@ metadata_id_tok : /[!]{_id}/
 'x86_stdcallcc' : /x86_stdcallcc/
 'x86_thiscallcc' : /x86_thiscallcc/
 'x86_vectorcallcc' : /x86_vectorcallcc/
+'xor' : /xor/
 'zeroext' : /zeroext/
 'zeroinitializer' : /zeroinitializer/
 
@@ -1032,12 +1038,12 @@ ConstantExpr
 	| SRemExpr
 	| FRemExpr
 	# Bitwise expressions
-	#| ShlExpr
-	#| LShrExpr
-	#| AShrExpr
-	#| AndExpr
-	#| OrExpr
-	#| XorExpr
+	| ShlExpr
+	| LShrExpr
+	| AShrExpr
+	| AndExpr
+	| OrExpr
+	| XorExpr
 	# Vector expressions
 	#| ExtractElementExpr
 	#| InsertElementExpr
@@ -1165,6 +1171,58 @@ SRemExpr
 
 FRemExpr
 	: 'frem' '(' Type Constant ',' Type Constant ')'
+;
+
+# --- [ Bitwise expressions ] --------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ShlExpr
+	: 'shl' OverflowFlags '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+LShrExpr
+	: 'lshr' Exactopt '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AShrExpr
+	: 'ashr' Exactopt '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AndExpr
+	: 'and' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+OrExpr
+	: 'or' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+XorExpr
+	: 'xor' '(' Type Constant ',' Type Constant ')'
 ;
 
 # ///////////////////////////////
