@@ -119,6 +119,7 @@ metadata_id_tok : /[!]{_id}/
 'inlinehint' : /inlinehint/
 'inreg' : /inreg/
 'intel_ocl_bicc' : /intel_ocl_bicc/
+'inteldialect' : /inteldialect/
 'internal' : /internal/
 'jumptable' : /jumptable/
 'label' : /label/
@@ -171,6 +172,7 @@ metadata_id_tok : /[!]{_id}/
 'sanitize_memory' : /sanitize_memory/
 'sanitize_thread' : /sanitize_thread/
 'section' : /section/
+'sideeffect' : /sideeffect/
 'signext' : /signext/
 'source_filename' : /source_filename/
 'speculatable' : /speculatable/
@@ -788,6 +790,42 @@ NamedType
 	: LocalIdent
 ;
 
+# === [ Values ] ===============================================================
+
+# ref: ParseValue
+
+Value
+	: Constant
+	# %42
+	# %foo
+	| LocalIdent
+	| InlineAsm
+;
+
+# --- [ Inline Assembler Expressions ] -----------------------------------------
+
+# https://llvm.org/docs/LangRef.html#inline-assembler-expressions
+
+# ref: ParseValID
+#
+#  ::= 'asm' SideEffect? AlignStack? IntelDialect? STRINGCONSTANT ','
+#             STRINGCONSTANT
+
+InlineAsm
+	: 'asm' SideEffectopt AlignStackopt IntelDialectopt StringLit ',' StringLit
+;
+
+SideEffect
+	: 'sideeffect'
+;
+
+AlignStack
+	: 'alignstack'
+;
+
+IntelDialect
+	: 'inteldialect'
+;
 
 # ///////////////////////////////
 
@@ -812,11 +850,7 @@ BasicBlockList
 # TODO: move Constant to where it belongs.
 
 Constant
-   : placeholder1
-;
-
-Value
-   : placeholder1
+   : placeholder2
 ;
 
 # === [ Metadata Nodes and Metadata Strings ] ==================================
