@@ -329,10 +329,17 @@ Immutable
 	| 'global'
 ;
 
+# NOTE: GlobalAttr should contain Alignment. However, using LALR(1) this
+# produces a reduce/reduce conflict as FuncAttr also contains Alignment.
+#
+# Since GlobalAttr is only used in GlobalDecl and GlobalDef, both of which
+# include a comma separated list of GlobalAttr and FuncAttr, we can simply
+# remove Alignment from GlobalAttr to resolve the reduce/reduce conflict.
+
 GlobalAttr
 	: Section
 	| Comdat
-	| Alignment
+	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
 	#   ::= !dbg !57
 	| MetadataAttachment
 ;
