@@ -930,14 +930,9 @@ NoneConst
 #  ::= '{' ConstVector '}'
 #  ::= '<' '{' ConstVector '}' '>' --> Packed Struct.
 
-# NOTE: To prevent reduce/reduce conflicts, the alternatives of StructConst are
-# expanded.
-
 StructConst
-	: '{' '}'
-	| '{' (Type Constant separator ',')+ '}'
-	| '<' '{' '}' '>'
-	| '<' '{' (Type Constant separator ',')+ '}' '>'
+	: '{' (Type Constant separator ',')+? '}'
+	| '<' '{' (Type Constant separator ',')+? '}' '>'
 ;
 
 # --- [ Array Constants ] ------------------------------------------------------
