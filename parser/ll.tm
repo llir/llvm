@@ -34,6 +34,7 @@ attr_group_id_tok : /[#]{_id}/
 comdat_name_tok : /[$]{_name}/
 
 'addrspace' : /addrspace/
+'alias' : /alias/
 'align' : /align/
 'alignstack' : /alignstack/
 'allocsize' : /allocsize/
@@ -61,6 +62,7 @@ comdat_name_tok : /[$]{_name}/
 'externally_initialized' : /externally_initialized/
 'global' : /global/
 'hidden' : /hidden/
+'ifunc' : /ifunc/
 'inaccessiblemem_or_argmemonly' : /inaccessiblemem_or_argmemonly/
 'inaccessiblememonly' : /inaccessiblememonly/
 'initialexec' : /initialexec/
@@ -184,7 +186,7 @@ TopLevelEntity
 	| ComdatDef
 	| GlobalDecl
 	| GlobalDef
-	#| IndirectSymbolDef
+	| IndirectSymbolDef
 	#| FunctionDecl
 	#| FunctionDef
 	#| AttrGroupDef
@@ -349,6 +351,32 @@ GlobalAttr
 	#   ::= !dbg !57
 	| MetadataAttachment
 ;
+
+# ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#aliases
+# https://llvm.org/docs/LangRef.html#ifuncs
+
+# ref: parseIndirectSymbol
+#
+#   ::= GlobalVar '=' OptionalLinkage OptionalPreemptionSpecifier
+#                     OptionalVisibility OptionalDLLStorageClass
+#                     OptionalThreadLocal OptionalUnnamedAddr
+#                     'alias|ifunc' IndirectSymbol
+#
+#  IndirectSymbol
+#   ::= TypeAndValue
+
+IndirectSymbolDef
+	: GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt IndirectSymbolKind Type ',' Type Constant
+;
+
+IndirectSymbolKind
+	: 'alias'
+	| 'ifunc'
+;
+
+# ///////////////////////////////
 
 # TODO: move Constant to where it belongs.
 
