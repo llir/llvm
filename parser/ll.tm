@@ -3,9 +3,15 @@ language llvm(go);
 lang = "llvm"
 package = "github.com/mewmew/l-tm/parser"
 
-# Lexer
+# ### [ Lexical part ] #########################################################
 
 :: lexer
+
+# TODO: fix proper definition of _local_name and _local_id.
+_local_name = /[%]foo/
+_local_id = /[%]42/
+
+local_ident_tok : /{_local_name}|{_local_id}/
 
 'asm' : /asm/
 'datalayout' : /datalayout/
@@ -13,6 +19,11 @@ package = "github.com/mewmew/l-tm/parser"
 'source_filename' : /source_filename/
 'target' : /target/
 'triple' : /triple/
+'type' : /type/
+
+# TODO: remove placeholders.
+placeholder1 : /placeholder1/
+placeholder2 : /placeholder2/
 
 '=' : /=/
 
@@ -30,9 +41,13 @@ string_lit_tok : /"[^"]"/
 
 input : Module;
 
-# TODO: figure out where to place StringLit.
+# TODO: figure out where to place these.
 StringLit
    : string_lit_tok
+;
+
+LocalIdent
+   : local_ident_tok
 ;
 
 # === [ Module ] ===============================================================
@@ -55,7 +70,7 @@ TopLevelEntity
 	: SourceFilename
 	| TargetDefinition
 	| ModuleAsm
-	#| TypeDef
+	| TypeDef
 	#| ComdatDef
 	#| GlobalDecl
 	#| GlobalDef
@@ -106,4 +121,31 @@ TargetDefinition
 
 ModuleAsm
 	: 'module' 'asm' StringLit
+;
+
+# ~~~ [ Type Defintion ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#structure-type
+
+# ref: ParseUnnamedType
+#
+#   ::= LocalVarID '=' 'type' type
+
+# ref: ParseNamedType
+#
+#   ::= LocalVar '=' 'type' type
+
+TypeDef
+	: LocalIdent '=' 'type' OpaqueType
+	| LocalIdent '=' 'type' Type
+;
+
+# TODO: fix placeholders.
+
+OpaqueType
+   : placeholder1
+;
+
+Type
+   : placeholder2
 ;
