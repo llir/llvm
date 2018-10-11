@@ -55,6 +55,7 @@ comdat_name_tok : /[$]{_name}/
 'arm_aapcscc' : /arm_aapcscc/
 'arm_apcscc' : /arm_apcscc/
 'asm' : /asm/
+'attributes' : /attributes/
 'available_externally' : /available_externally/
 'avr_intrcc' : /avr_intrcc/
 'avr_signalcc' : /avr_signalcc/
@@ -500,6 +501,18 @@ Personality
 
 FunctionBody
 	: '{' BasicBlockList UseListOrders '}'
+;
+
+# ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#attribute-groups
+
+# ref: ParseUnnamedAttrGrp
+#
+#   ::= 'attributes' AttrGrpID '=' '{' AttrValPair+ '}'
+
+AttrGroupDef
+	: 'attributes' AttrGroupID '=' '{' FuncAttr* '}'
 ;
 
 # ///////////////////////////////
