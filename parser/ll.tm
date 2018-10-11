@@ -7,15 +7,28 @@ package = "github.com/mewmew/l-tm/parser"
 
 :: lexer
 
-# TODO: fix proper definition of _local_name and _local_id.
-_local_name = /[%]foo/
-_local_id = /[%]42/
+# TODO: fix proper definition of _name and _id.
+_name = /foo/
+_id = /42/
+
+# TODO: add {_quoted_name|_name} to places where {_name} is used.
+
+_local_name = /[%]{_name}/
+_local_id = /[%]{_id}/
 
 local_ident_tok : /{_local_name}|{_local_id}/
 
+comdat_name_tok : /[$]{_name}/
+
+'any' : /any/
 'asm' : /asm/
+'comdat' : /comdat/
 'datalayout' : /datalayout/
+'exactmatch' : /exactmatch/
+'largest' : /largest/
 'module' : /module/
+'noduplicates' : /noduplicates/
+'samesize' : /samesize/
 'source_filename' : /source_filename/
 'target' : /target/
 'triple' : /triple/
@@ -41,13 +54,17 @@ string_lit_tok : /"[^"]"/
 
 input : Module;
 
-# TODO: figure out where to place these.
+# TODO: move these to their corresponding place in ll.bnf.
 StringLit
    : string_lit_tok
 ;
 
 LocalIdent
    : local_ident_tok
+;
+
+ComdatName
+   : comdat_name_tok
 ;
 
 # === [ Module ] ===============================================================
@@ -71,7 +88,7 @@ TopLevelEntity
 	| TargetDefinition
 	| ModuleAsm
 	| TypeDef
-	#| ComdatDef
+	| ComdatDef
 	#| GlobalDecl
 	#| GlobalDef
 	#| IndirectSymbolDef
@@ -148,4 +165,22 @@ OpaqueType
 
 Type
    : placeholder2
+;
+
+# ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#langref-comdats
+
+# ref: parseComdat
+
+ComdatDef
+	: ComdatName '=' 'comdat' SelectionKind
+;
+
+SelectionKind
+	: 'any'
+	| 'exactmatch'
+	| 'largest'
+	| 'noduplicates'
+	| 'samesize'
 ;
