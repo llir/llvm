@@ -183,7 +183,7 @@ TopLevelEntity
 	| TypeDef
 	| ComdatDef
 	| GlobalDecl
-	#| GlobalDef
+	| GlobalDef
 	#| IndirectSymbolDef
 	#| FunctionDecl
 	#| FunctionDef
@@ -315,6 +315,12 @@ GlobalDecl
 	: GlobalIdent '=' ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Type (',' GlobalAttr)+? (',' FuncAttr)+?
 ;
 
+# ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GlobalDef
+	: GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Type Constant (',' GlobalAttr)+? (',' FuncAttr)+?
+;
+
 ExternallyInitialized
 	: 'externally_initialized'
 ;
@@ -342,6 +348,12 @@ GlobalAttr
 	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
 	#   ::= !dbg !57
 	| MetadataAttachment
+;
+
+# TODO: move Constant to where it belongs.
+
+Constant
+   : placeholder1
 ;
 
 # === [ Metadata Nodes and Metadata Strings ] ==================================
