@@ -7,7 +7,10 @@ package = "github.com/mewmew/l-tm/parser"
 
 :: lexer
 
+'datalayout' : /datalayout/
 'source_filename' : /source_filename/
+'target' : /target/
+'triple' : /triple/
 
 '=' : /=/
 
@@ -48,7 +51,7 @@ Module
 
 TopLevelEntity
 	: SourceFilename
-	#| TargetDefinition
+	| TargetDefinition
 	#| ModuleAsm
 	#| TypeDef
 	#| ComdatDef
@@ -74,4 +77,19 @@ TopLevelEntity
 
 SourceFilename
 	: 'source_filename' '=' StringLit
+;
+
+# ~~~ [ Target Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#target-triple
+# https://llvm.org/docs/LangRef.html#data-layout
+
+# ref: ParseTargetDefinition
+#
+#   ::= 'target' 'triple' '=' STRINGCONSTANT
+#   ::= 'target' 'datalayout' '=' STRINGCONSTANT
+
+TargetDefinition
+	: 'target' 'datalayout' '=' StringLit
+	| 'target' 'triple' '=' StringLit
 ;
