@@ -52,6 +52,9 @@ metadata_name_tok : /[!]{_escape_name}/
 
 metadata_id_tok : /[!]{_id}/
 
+'nuw' : /nuw/
+'nsw' : /nsw/
+'add' : /add/
 'addrspace' : /addrspace/
 'alias' : /alias/
 'align' : /align/
@@ -103,14 +106,20 @@ metadata_id_tok : /[!]{_id}/
 'double' : /double/
 'dso_local' : /dso_local/
 'dso_preemptable' : /dso_preemptable/
+'exact' : /exact/
 'exactmatch' : /exactmatch/
 'extern_weak' : /extern_weak/
 'external' : /external/
 'externally_initialized' : /externally_initialized/
+'fadd' : /fadd/
 'false' : /false/
 'fastcc' : /fastcc/
+'fdiv' : /fdiv/
 'float' : /float/
+'fmul' : /fmul/
 'fp128' : /fp128/
+'frem' : /frem/
+'fsub' : /fsub/
 'gc' : /gc/
 'ghccc' : /ghccc/
 'global' : /global/
@@ -140,6 +149,7 @@ metadata_id_tok : /[!]{_id}/
 'minsize' : /minsize/
 'module' : /module/
 'msp430_intrcc' : /msp430_intrcc/
+'mul' : /mul/
 'naked' : /naked/
 'nest' : /nest/
 'noalias' : /noalias/
@@ -180,6 +190,7 @@ metadata_id_tok : /[!]{_id}/
 'sanitize_hwaddress' : /sanitize_hwaddress/
 'sanitize_memory' : /sanitize_memory/
 'sanitize_thread' : /sanitize_thread/
+'sdiv' : /sdiv/
 'section' : /section/
 'sideeffect' : /sideeffect/
 'signext' : /signext/
@@ -187,11 +198,13 @@ metadata_id_tok : /[!]{_id}/
 'speculatable' : /speculatable/
 'spir_func' : /spir_func/
 'spir_kernel' : /spir_kernel/
+'srem' : /srem/
 'sret' : /sret/
 'ssp' : /ssp/
 'sspreq' : /sspreq/
 'sspstrong' : /sspstrong/
 'strictfp' : /strictfp/
+'sub' : /sub/
 'swiftcc' : /swiftcc/
 'swifterror' : /swifterror/
 'swiftself' : /swiftself/
@@ -201,8 +214,10 @@ metadata_id_tok : /[!]{_id}/
 'triple' : /triple/
 'true' : /true/
 'type' : /type/
+'udiv' : /udiv/
 'undef' : /undef/
 'unnamed_addr' : /unnamed_addr/
+'urem' : /urem/
 'uselistorder_bb' : /uselistorder_bb/
 'uselistorder' : /uselistorder/
 'uwtable' : /uwtable/
@@ -782,9 +797,6 @@ ArrayType
 #     ::= '<' '{' '}' '>'
 #     ::= '<' '{' Type (',' Type)* '}' '>'
 
-# NOTE: To prevent reduce/reduce conflicts, the alternatives of StructType are
-# expanded.
-
 StructType
 	: '{' (Type separator ',')+? '}'
 	| '<' '{' (Type separator ',')+? '}' '>'
@@ -997,6 +1009,162 @@ UndefConst
 
 BlockAddressConst
 	: 'blockaddress' '(' GlobalIdent ',' LocalIdent ')'
+;
+
+# === [ Constant expressions ] =================================================
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ref: ParseValID
+
+ConstantExpr
+	# Binary expressions
+	: AddExpr
+	| FAddExpr
+	| SubExpr
+	| FSubExpr
+	| MulExpr
+	| FMulExpr
+	| UDivExpr
+	| SDivExpr
+	| FDivExpr
+	| URemExpr
+	| SRemExpr
+	| FRemExpr
+	# Bitwise expressions
+	#| ShlExpr
+	#| LShrExpr
+	#| AShrExpr
+	#| AndExpr
+	#| OrExpr
+	#| XorExpr
+	# Vector expressions
+	#| ExtractElementExpr
+	#| InsertElementExpr
+	#| ShuffleVectorExpr
+	# Aggregate expressions
+	#| ExtractValueExpr
+	#| InsertValueExpr
+	# Memory expressions
+	#| GetElementPtrExpr
+	# Conversion expressions
+	#| TruncExpr
+	#| ZExtExpr
+	#| SExtExpr
+	#| FPTruncExpr
+	#| FPExtExpr
+	#| FPToUIExpr
+	#| FPToSIExpr
+	#| UIToFPExpr
+	#| SIToFPExpr
+	#| PtrToIntExpr
+	#| IntToPtrExpr
+	#| BitCastExpr
+	#| AddrSpaceCastExpr
+	# Other expressions
+	#| ICmpExpr
+	#| FCmpExpr
+	#| SelectExpr
+;
+
+# --- [ Binary expressions ] --------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AddExpr
+	: 'add' OverflowFlags '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FAddExpr
+	: 'fadd' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SubExpr
+	: 'sub' OverflowFlags '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FSubExpr
+	: 'fsub' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+MulExpr
+	: 'mul' OverflowFlags '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FMulExpr
+	: 'fmul' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+UDivExpr
+	: 'udiv' Exactopt '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SDivExpr
+	: 'sdiv' Exactopt '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FDivExpr
+	: 'fdiv' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+URemExpr
+	: 'urem' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SRemExpr
+	: 'srem' '(' Type Constant ',' Type Constant ')'
+;
+
+# ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FRemExpr
+	: 'frem' '(' Type Constant ',' Type Constant ')'
 ;
 
 # ///////////////////////////////
@@ -1399,4 +1567,12 @@ ParamAttr
 Dereferenceable
 	: 'dereferenceable' '(' int_lit_tok ')' # TODO: use unsigned int lit?
 	| 'dereferenceable_or_null' '(' int_lit_tok ')' # TODO: use unsigned int lit?
+;
+
+Exact
+	: 'exact'
+;
+
+OverflowFlags
+	: ('nsw' | 'nuw')* # TODO: use ('nsw' & 'nuw')? if supported.
 ;
