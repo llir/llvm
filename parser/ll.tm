@@ -2921,7 +2921,7 @@ DICompileUnitField
 #  OPTIONAL(checksum, MDStringField, );
 
 DIFile
-	: '!DIFile' '(' (DIFile separator ',')* ')'
+	: '!DIFile' '(' (DIFileField separator ',')* ')'
 ;
 
 DIFileField
