@@ -2096,21 +2096,8 @@ InsertValueInst
 #   ::= 'alloca' 'inalloca'? 'swifterror'? Type (',' TypeAndValue)?
 #       (',' 'align' i32)? (',', 'addrspace(n))?
 
-# TODO: Simplify when parser generator is not limited by 1 token lookahead.
-#
-#    AllocaInst
-#       : 'alloca' OptInAlloca OptSwiftError Type OptCommaTypeValue OptCommaAlignment OptCommaAddrSpace InstructionMetadata
-#    ;
-
 AllocaInst
-	: 'alloca' InAllocaopt SwiftErroropt Type InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' Alignment InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value ',' Alignment InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' AddrSpace InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' Alignment ',' AddrSpace InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value ',' AddrSpace InstructionMetadata
-	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value ',' Alignment ',' AddrSpace InstructionMetadata
+	: 'alloca' InAllocaopt SwiftErroropt Type (',' Type Value)? (',' Alignment)? (',' AddrSpace)? InstructionMetadata
 ;
 
 InAlloca
