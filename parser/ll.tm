@@ -55,12 +55,16 @@ metadata_name_tok : /[!]{_escape_name}/
 
 metadata_id_tok : /[!]{_id}/
 
+'acq_rel' : /acq_rel/
+'acquire' : /acquire/
 'add' : /add/
 'addrspace' : /addrspace/
 'addrspacecast' : /addrspacecast/
+'afn' : /afn/
 'alias' : /alias/
 'align' : /align/
 'alignstack' : /alignstack/
+'alloca' : /alloca/
 'allocsize' : /allocsize/
 'alwaysinline' : /alwaysinline/
 'amdgpu_cs' : /amdgpu_cs/
@@ -75,28 +79,43 @@ metadata_id_tok : /[!]{_id}/
 'any' : /any/
 'anyregcc' : /anyregcc/
 'appending' : /appending/
+'arcp' : /arcp/
 'argmemonly' : /argmemonly/
 'arm_aapcs_vfpcc' : /arm_aapcs_vfpcc/
 'arm_aapcscc' : /arm_aapcscc/
 'arm_apcscc' : /arm_apcscc/
 'ashr' : /ashr/
 'asm' : /asm/
+'atomic' : /atomic/
+'atomicrmw' : /atomicrmw/
 'attributes' : /attributes/
 'available_externally' : /available_externally/
 'avr_intrcc' : /avr_intrcc/
 'avr_signalcc' : /avr_signalcc/
 'bitcast' : /bitcast/
 'blockaddress' : /blockaddress/
+'br' : /br/
 'builtin' : /builtin/
 'byval' : /byval/
 'c' : /c/
+'call' : /call/
+'caller' : /caller/
+'catch' : /catch/
+'catchpad' : /catchpad/
+'catchret' : /catchret/
+'catchswitch' : /catchswitch/
 'cc' : /cc/
 'ccc' : /ccc/
+'cleanup' : /cleanup/
+'cleanuppad' : /cleanuppad/
+'cleanupret' : /cleanupret/
+'cmpxchg' : /cmpxchg/
 'cold' : /cold/
 'coldcc' : /coldcc/
 'comdat' : /comdat/
 'common' : /common/
 'constant' : /constant/
+'contract' : /contract/
 'convergent' : /convergent/
 'cxx_fast_tlscc' : /cxx_fast_tlscc/
 'datalayout' : /datalayout/
@@ -121,9 +140,12 @@ metadata_id_tok : /[!]{_id}/
 'extractvalue' : /extractvalue/
 'fadd' : /fadd/
 'false' : /false/
+'fast' : /fast/
 'fastcc' : /fastcc/
 'fcmp' : /fcmp/
 'fdiv' : /fdiv/
+'fence' : /fence/
+'filter' : /filter/
 'float' : /float/
 'fmul' : /fmul/
 'fp128' : /fp128/
@@ -132,6 +154,7 @@ metadata_id_tok : /[!]{_id}/
 'fptoui' : /fptoui/
 'fptrunc' : /fptrunc/
 'frem' : /frem/
+'from' : /from/
 'fsub' : /fsub/
 'gc' : /gc/
 'getelementptr' : /getelementptr/
@@ -147,6 +170,7 @@ metadata_id_tok : /[!]{_id}/
 'inaccessiblememonly' : /inaccessiblememonly/
 'inalloca' : /inalloca/
 'inbounds' : /inbounds/
+'indirectbr' : /indirectbr/
 'initialexec' : /initialexec/
 'inlinehint' : /inlinehint/
 'inrange' : /inrange/
@@ -157,23 +181,33 @@ metadata_id_tok : /[!]{_id}/
 'inteldialect' : /inteldialect/
 'internal' : /internal/
 'inttoptr' : /inttoptr/
+'invoke' : /invoke/
 'jumptable' : /jumptable/
 'label' : /label/
+'landingpad' : /landingpad/
 'largest' : /largest/
 'linkonce_odr' : /linkonce_odr/
 'linkonce' : /linkonce/
+'load' : /load/
 'local_unnamed_addr' : /local_unnamed_addr/
 'localdynamic' : /localdynamic/
 'localexec' : /localexec/
 'lshr' : /lshr/
+'max' : /max/
 'metadata' : /metadata/
+'min' : /min/
 'minsize' : /minsize/
 'module' : /module/
+'monotonic' : /monotonic/
 'msp430_intrcc' : /msp430_intrcc/
 'mul' : /mul/
+'musttail' : /musttail/
 'naked' : /naked/
+'nand' : /nand/
 'ne' : /ne/
 'nest' : /nest/
+'ninf' : /ninf/
+'nnan' : /nnan/
 'noalias' : /noalias/
 'nobuiltin' : /nobuiltin/
 'nocapture' : /nocapture/
@@ -187,8 +221,10 @@ metadata_id_tok : /[!]{_id}/
 'norecurse' : /norecurse/
 'noredzone' : /noredzone/
 'noreturn' : /noreturn/
+'notail' : /notail/
 'nounwind' : /nounwind/
 'nsw' : /nsw/
+'nsz' : /nsz/
 'null' : /null/
 'nuw' : /nuw/
 'oeq' : /oeq/
@@ -203,6 +239,7 @@ metadata_id_tok : /[!]{_id}/
 'or' : /or/
 'ord' : /ord/
 'personality' : /personality/
+'phi' : /phi/
 'ppc_fp128' : /ppc_fp128/
 'prefix' : /prefix/
 'preserve_allcc' : /preserve_allcc/
@@ -215,6 +252,10 @@ metadata_id_tok : /[!]{_id}/
 'ptx_kernel' : /ptx_kernel/
 'readnone' : /readnone/
 'readonly' : /readonly/
+'reassoc' : /reassoc/
+'release' : /release/
+'resume' : /resume/
+'ret' : /ret/
 'returned' : /returned/
 'returns_twice' : /returns_twice/
 'safestack' : /safestack/
@@ -226,6 +267,7 @@ metadata_id_tok : /[!]{_id}/
 'sdiv' : /sdiv/
 'section' : /section/
 'select' : /select/
+'seq_cst' : /seq_cst/
 'sext' : /sext/
 'sge' : /sge/
 'sgt' : /sgt/
@@ -233,6 +275,7 @@ metadata_id_tok : /[!]{_id}/
 'shufflevector' : /shufflevector/
 'sideeffect' : /sideeffect/
 'signext' : /signext/
+'singlethread' : /singlethread/
 'sitofp' : /sitofp/
 'sle' : /sle/
 'slt' : /slt/
@@ -245,11 +288,15 @@ metadata_id_tok : /[!]{_id}/
 'ssp' : /ssp/
 'sspreq' : /sspreq/
 'sspstrong' : /sspstrong/
+'store' : /store/
 'strictfp' : /strictfp/
 'sub' : /sub/
 'swiftcc' : /swiftcc/
 'swifterror' : /swifterror/
 'swiftself' : /swiftself/
+'switch' : /switch/
+'syncscope' : /syncscope/
+'tail' : /tail/
 'target' : /target/
 'thread_local' : /thread_local/
 'to' : /to/
@@ -265,19 +312,27 @@ metadata_id_tok : /[!]{_id}/
 'uitofp' : /uitofp/
 'ule' : /ule/
 'ult' : /ult/
+'umax' : /umax/
+'umin' : /umin/
 'undef' : /undef/
 'une' : /une/
 'unnamed_addr' : /unnamed_addr/
 'uno' : /uno/
+'unordered' : /unordered/
+'unreachable' : /unreachable/
+'unwind' : /unwind/
 'urem' : /urem/
 'uselistorder_bb' : /uselistorder_bb/
 'uselistorder' : /uselistorder/
 'uwtable' : /uwtable/
+'va_arg' : /va_arg/
 'void' : /void/
+'volatile' : /volatile/
 'weak_odr' : /weak_odr/
 'weak' : /weak/
 'webkit_jscc' : /webkit_jscc/
 'win64cc' : /win64cc/
+'within' : /within/
 'writeonly' : /writeonly/
 'x' : /x/
 'x86_64_sysvcc' : /x86_64_sysvcc/
@@ -289,6 +344,7 @@ metadata_id_tok : /[!]{_id}/
 'x86_stdcallcc' : /x86_stdcallcc/
 'x86_thiscallcc' : /x86_thiscallcc/
 'x86_vectorcallcc' : /x86_vectorcallcc/
+'xchg' : /xchg/
 'xor' : /xor/
 'zeroext' : /zeroext/
 'zeroinitializer' : /zeroinitializer/
@@ -491,6 +547,9 @@ Immutable
 	: 'constant'
 	| 'global'
 ;
+
+# TODO: Add align back to GlobalAttr (needed as GlobalAttr is comma separated
+# and FuncAttr is not in GlobalDecl and GlobalDef).
 
 # NOTE: GlobalAttr should contain Alignment. However, using LALR(1) this
 # produces a reduce/reduce conflict as FuncAttr also contains Alignment.
@@ -1494,20 +1553,999 @@ BasicBlock
 	: LabelIdent? Instruction* Terminator
 ;
 
-# ///////////////////////////////
+# === [ Instructions ] =========================================================
+
+# https://llvm.org/docs/LangRef.html#instruction-reference
+
+# ref: ParseInstruction
 
 Instruction
-   : placeholder1
+	# Instructions not producing values.
+	: StoreInst
+	| FenceInst
+	| CmpXchgInst
+	| AtomicRMWInst
+	# Instructions producing values.
+	| LocalIdent '=' ValueInstruction
+	| ValueInstruction
 ;
 
-Terminator
-   : placeholder2
+ValueInstruction
+	# Binary instructions
+	: AddInst
+	| FAddInst
+	| SubInst
+	| FSubInst
+	| MulInst
+	| FMulInst
+	| UDivInst
+	| SDivInst
+	| FDivInst
+	| URemInst
+	| SRemInst
+	| FRemInst
+	# Bitwise instructions
+	| ShlInst
+	| LShrInst
+	| AShrInst
+	| AndInst
+	| OrInst
+	| XorInst
+	# Vector instructions
+	| ExtractElementInst
+	| InsertElementInst
+	| ShuffleVectorInst
+	# Aggregate instructions
+	| ExtractValueInst
+	| InsertValueInst
+	# Memory instructions
+	| AllocaInst
+	| LoadInst
+	| GetElementPtrInst
+	# Conversion instructions
+	| TruncInst
+	| ZExtInst
+	| SExtInst
+	| FPTruncInst
+	| FPExtInst
+	| FPToUIInst
+	| FPToSIInst
+	| UIToFPInst
+	| SIToFPInst
+	| PtrToIntInst
+	| IntToPtrInst
+	| BitCastInst
+	| AddrSpaceCastInst
+	# Other instructions
+	| ICmpInst
+	| FCmpInst
+	| PhiInst
+	| SelectInst
+	| CallInst
+	| VAArgInst
+	| LandingPadInst
+	| CatchPadInst
+	| CleanupPadInst
 ;
+
+# --- [ Binary instructions ] --------------------------------------------------
+
+# ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#add-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+AddInst
+	: 'add' OverflowFlags Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fadd-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FAddInst
+	: 'fadd' FastMathFlag* Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sub-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+SubInst
+	: 'sub' OverflowFlags Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fsub-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FSubInst
+	: 'fsub' FastMathFlag* Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#mul-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+MulInst
+	: 'mul' OverflowFlags Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fmul-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FMulInst
+	: 'fmul' FastMathFlag* Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#udiv-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+UDivInst
+	: 'udiv' Exactopt Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sdiv-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+SDivInst
+	: 'sdiv' Exactopt Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fdiv-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FDivInst
+	: 'fdiv' FastMathFlag* Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#urem-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+URemInst
+	: 'urem' Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#srem-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+SRemInst
+	: 'srem' Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#frem-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FRemInst
+	: 'frem' FastMathFlag* Type Value ',' Value MetadataAttachments
+;
+
+# --- [ Bitwise instructions ] -------------------------------------------------
+
+# ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#shl-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+ShlInst
+	: 'shl' OverflowFlags Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#lshr-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+LShrInst
+	: 'lshr' Exactopt Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ashr-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+AShrInst
+	: 'ashr' Exactopt Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#and-instruction
+
+# ref: ParseLogical
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value {
+
+AndInst
+	: 'and' Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#or-instruction
+
+# ref: ParseLogical
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value {
+
+OrInst
+	: 'or' Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#xor-instruction
+
+# ref: ParseLogical
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value {
+
+XorInst
+	: 'xor' Type Value ',' Value MetadataAttachments
+;
+
+# --- [ Vector instructions ] --------------------------------------------------
+
+# ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#extractelement-instruction
+
+# ref: ParseExtractElement
+#
+#   ::= 'extractelement' TypeAndValue ',' TypeAndValue
+
+ExtractElementInst
+	: 'extractelement' Type Value ',' Type Value MetadataAttachments
+;
+
+# ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#insertelement-instruction
+
+# ref: ParseInsertElement
+#
+#   ::= 'insertelement' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+InsertElementInst
+	: 'insertelement' Type Value ',' Type Value ',' Type Value MetadataAttachments
+;
+
+# ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#shufflevector-instruction
+
+# ref: ParseShuffleVector
+#
+#   ::= 'shufflevector' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+ShuffleVectorInst
+	: 'shufflevector' Type Value ',' Type Value ',' Type Value MetadataAttachments
+;
+
+# --- [ Aggregate instructions ] -----------------------------------------------
+
+# ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#extractvalue-instruction
+
+# ref: ParseExtractValue
+#
+#   ::= 'extractvalue' TypeAndValue (',' uint32)+
+
+ExtractValueInst
+	# TODO: use unsigned int lit?
+   : 'extractvalue' Type Value (',' int_lit_tok)+ MetadataAttachments
+;
+
+# ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#insertvalue-instruction
+
+# ref: ParseInsertValue
+#
+#   ::= 'insertvalue' TypeAndValue ',' TypeAndValue (',' uint32)+
+
+InsertValueInst
+	# TODO: use unsigned int lit?
+   : 'insertvalue' Type Value ',' Type Value (',' int_lit_tok)+ MetadataAttachments
+;
+
+# --- [ Memory instructions ] --------------------------------------------------
+
+# ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#alloca-instruction
+
+# ref: ParseAlloc
+#
+#   ::= 'alloca' 'inalloca'? 'swifterror'? Type (',' TypeAndValue)?
+#       (',' 'align' i32)? (',', 'addrspace(n))?
+
+# TODO: Simplify when parser generator is not limited by 1 token lookahead.
+#
+#    AllocaInst
+#       : 'alloca' OptInAlloca OptSwiftError Type OptCommaTypeValue OptCommaAlignment OptCommaAddrSpace MetadataAttachments
+#    ;
+
+AllocaInst
+	: 'alloca' InAllocaopt SwiftErroropt Type MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' Alignment MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value ',' Alignment MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' AddrSpace MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' Alignment ',' AddrSpace MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value ',' AddrSpace MetadataAttachments
+	| 'alloca' InAllocaopt SwiftErroropt Type ',' Type Value ',' Alignment ',' AddrSpace MetadataAttachments
+;
+
+InAlloca
+	: 'inalloca'
+;
+
+SwiftError
+	: 'swifterror'
+;
+
+# ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#load-instruction
+
+# ref: ParseLoad
+#
+#   ::= 'load' 'volatile'? TypeAndValue (',' 'align' i32)?
+#   ::= 'load' 'atomic' 'volatile'? TypeAndValue
+#       'singlethread'? AtomicOrdering (',' 'align' i32)?
+
+# TODO: Simplify when parser generator is not limited by 1 token lookahead.
+#
+#    LoadInst
+#       : 'load' OptVolatile Type ',' Type Value OptCommaAlignment MetadataAttachments
+#       | 'load' 'atomic' OptVolatile Type ',' Type Value OptSyncScope AtomicOrdering OptCommaAlignment MetadataAttachments
+#    ;
+
+LoadInst
+	# Load.
+	: 'load' Volatileopt Type ',' Type Value MetadataAttachments
+	| 'load' Volatileopt Type ',' Type Value ',' Alignment MetadataAttachments
+	# Atomic load.
+	| 'load' 'atomic' Volatileopt Type ',' Type Value SyncScopeopt AtomicOrdering MetadataAttachments
+	| 'load' 'atomic' Volatileopt Type ',' Type Value SyncScopeopt AtomicOrdering ',' Alignment MetadataAttachments
+;
+
+# ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#store-instruction
+
+# ref: ParseStore
+#
+#   ::= 'store' 'volatile'? TypeAndValue ',' TypeAndValue (',' 'align' i32)?
+#   ::= 'store' 'atomic' 'volatile'? TypeAndValue ',' TypeAndValue
+#       'singlethread'? AtomicOrdering (',' 'align' i32)?
+
+# TODO: Simplify when parser generator is not limited by 1 token lookahead.
+#
+#    StoreInst
+#       : 'store' OptVolatile Type Value ',' Type Value OptCommaAlignment MetadataAttachments
+#       | 'store' 'atomic' OptVolatile Type Value ',' Type Value OptSyncScope AtomicOrdering OptCommaAlignment MetadataAttachments
+#    ;
+
+StoreInst
+	: 'store' Volatileopt Type Value ',' Type Value MetadataAttachments
+	| 'store' Volatileopt Type Value ',' Type Value ',' Alignment MetadataAttachments
+	| 'store' 'atomic' Volatileopt Type Value ',' Type Value SyncScopeopt AtomicOrdering MetadataAttachments
+	| 'store' 'atomic' Volatileopt Type Value ',' Type Value SyncScopeopt AtomicOrdering ',' Alignment MetadataAttachments
+;
+
+# ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fence-instruction
+
+# ref: ParseFence
+#
+#   ::= 'fence' 'singlethread'? AtomicOrdering
+
+FenceInst
+	: 'fence' SyncScopeopt AtomicOrdering MetadataAttachments
+;
+
+# ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#cmpxchg-instruction
+
+# ref: ParseCmpXchg
+#
+#   ::= 'cmpxchg' 'weak'? 'volatile'? TypeAndValue ',' TypeAndValue ','
+#       TypeAndValue 'singlethread'? AtomicOrdering AtomicOrdering
+
+CmpXchgInst
+	: 'cmpxchg' Weakopt Volatileopt Type Value ',' Type Value ',' Type Value SyncScopeopt AtomicOrdering AtomicOrdering MetadataAttachments
+;
+
+Weak
+	: 'weak'
+;
+
+# ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#atomicrmw-instruction
+
+# ref: ParseAtomicRMW
+#
+#   ::= 'atomicrmw' 'volatile'? BinOp TypeAndValue ',' TypeAndValue
+#       'singlethread'? AtomicOrdering
+
+AtomicRMWInst
+	: 'atomicrmw' Volatileopt BinOp Type Value ',' Type Value SyncScopeopt AtomicOrdering MetadataAttachments
+;
+
+BinOp
+	: 'add'
+	| 'and'
+	| 'max'
+	| 'min'
+	| 'nand'
+	| 'or'
+	| 'sub'
+	| 'umax'
+	| 'umin'
+	| 'xchg'
+	| 'xor'
+;
+
+# ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#getelementptr-instruction
+
+# ref: ParseGetElementPtr
+#
+#   ::= 'getelementptr' 'inbounds'? TypeAndValue (',' TypeAndValue)*
+
+# TODO: Simplify when parser generator is not limited by 1 token lookahead.
+#
+#    GetElementPtrInst
+#       : 'getelementptr' OptInBounds Type ',' Type Value GEPIndices MetadataAttachments
+#    ;
+
+GetElementPtrInst
+	: 'getelementptr' InBoundsopt Type ',' Type Value (',' Type Value)* MetadataAttachments
+;
+
+# --- [ Conversion instructions ] ----------------------------------------------
+
+# ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#trunc-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+TruncInst
+	: 'trunc' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#zext-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+ZExtInst
+	: 'zext' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sext-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+SExtInst
+	: 'sext' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fptrunc-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPTruncInst
+	: 'fptrunc' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fpext-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPExtInst
+	: 'fpext' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fptoui-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPToUIInst
+	: 'fptoui' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fptosi-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPToSIInst
+	: 'fptosi' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#uitofp-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+UIToFPInst
+	: 'uitofp' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sitofp-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+SIToFPInst
+	: 'sitofp' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ptrtoint-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+PtrToIntInst
+	: 'ptrtoint' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#inttoptr-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+IntToPtrInst
+	: 'inttoptr' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#bitcast-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+BitCastInst
+	: 'bitcast' Type Value 'to' Type MetadataAttachments
+;
+
+# ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#addrspacecast-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+AddrSpaceCastInst
+	: 'addrspacecast' Type Value 'to' Type MetadataAttachments
+;
+
+# --- [ Other instructions ] ---------------------------------------------------
+
+# ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#icmp-instruction
+
+# ref: ParseCompare
+#
+#  ::= 'icmp' IPredicates TypeAndValue ',' Value
+
+ICmpInst
+	: 'icmp' IPred Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fcmp-instruction
+
+# ref: ParseCompare
+#
+#  ::= 'fcmp' FPredicates TypeAndValue ',' Value
+
+FCmpInst
+	: 'fcmp' FastMathFlag* FPred Type Value ',' Value MetadataAttachments
+;
+
+# ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#phi-instruction
+
+# ref: ParsePHI
+#
+#   ::= 'phi' Type '[' Value ',' Value ']' (',' '[' Value ',' Value ']')*
+
+PhiInst
+	: 'phi' Type (Inc separator ',')+ MetadataAttachments
+;
+
+Inc
+	: '[' Value ',' LocalIdent ']'
+;
+
+# ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#select-instruction
+
+# ref: ParseSelect
+#
+#   ::= 'select' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+SelectInst
+	: 'select' Type Value ',' Type Value ',' Type Value MetadataAttachments
+;
+
+# ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#call-instruction
+
+# ref: ParseCall
+#
+#   ::= 'call' OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+#   ::= 'tail' 'call' OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+#   ::= 'musttail' 'call' OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+#   ::= 'notail' 'call'  OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+
+CallInst
+	: OptTail 'call' FastMathFlag* CallingConvopt ReturnAttr* Type Value '(' Args ')' FuncAttr* OperandBundles MetadataAttachments
+;
+
+OptTail
+	: 'musttail'
+	| 'notail'
+	| 'tail'
+;
+
+# ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#va_arg-instruction
+
+# ref: ParseVA_Arg
+#
+#   ::= 'va_arg' TypeAndValue ',' Type
+
+VAArgInst
+	: 'va_arg' Type Value ',' Type MetadataAttachments
+;
+
+# ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#landingpad-instruction
+
+# ref: ParseLandingPad
+#
+#   ::= 'landingpad' Type 'personality' TypeAndValue 'cleanup'? Clause+
+#  Clause
+#   ::= 'catch' TypeAndValue
+#   ::= 'filter'
+#   ::= 'filter' TypeAndValue ( ',' TypeAndValue )*
+
+LandingPadInst
+	: 'landingpad' Type Cleanupopt Clause* MetadataAttachments
+;
+
+Cleanup
+	: 'cleanup'
+;
+
+Clause
+	: 'catch' Type Value
+	| 'filter' Type ArrayConst
+;
+
+# --- [ catchpad ] -------------------------------------------------------------
+
+# ref: ParseCatchPad
+#
+#   ::= 'catchpad' ParamList 'to' TypeAndValue 'unwind' TypeAndValue
+
+CatchPadInst
+	: 'catchpad' 'within' LocalIdent '[' (ExceptionArg separator ',')* ']' MetadataAttachments
+;
+
+# --- [ cleanuppad ] -----------------------------------------------------------
+
+# ref: ParseCleanupPad
+#
+#   ::= 'cleanuppad' within Parent ParamList
+
+CleanupPadInst
+	: 'cleanuppad' 'within' ExceptionScope '[' (ExceptionArg separator ',')* ']' MetadataAttachments
+;
+
+# === [ Terminators ] ==========================================================
+
+# https://llvm.org/docs/LangRef.html#terminator-instructions
+
+# ref: ParseInstruction
+
+Terminator
+	: RetTerm
+	| BrTerm
+	| CondBrTerm
+	| SwitchTerm
+	| IndirectBrTerm
+	| InvokeTerm
+	| ResumeTerm
+	| CatchSwitchTerm
+	| CatchRetTerm
+	| CleanupRetTerm
+	| UnreachableTerm
+;
+
+# --- [ ret ] ------------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#ret-instruction
+
+# ref: ParseRet
+#
+#   ::= 'ret' void (',' !dbg, !1)*
+#   ::= 'ret' TypeAndValue (',' !dbg, !1)*
+
+RetTerm
+	# Void return.
+	: 'ret' VoidType MetadataAttachments
+	# Value return.
+	| 'ret' ConcreteType Value MetadataAttachments
+;
+
+# --- [ br ] -------------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#br-instruction
+
+# ref: ParseBr
+#
+#   ::= 'br' TypeAndValue
+#   ::= 'br' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+# Unconditional branch.
+BrTerm
+	: 'br' LabelType LocalIdent MetadataAttachments
+;
+
+# Conditional branch.
+CondBrTerm
+	: 'br' IntType Value ',' LabelType LocalIdent ',' LabelType LocalIdent MetadataAttachments
+;
+
+# --- [ switch ] ---------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#switch-instruction
+
+# ref: ParseSwitch
+#
+#    ::= 'switch' TypeAndValue ',' TypeAndValue '[' JumpTable ']'
+#  JumpTable
+#    ::= (TypeAndValue ',' TypeAndValue)*
+
+SwitchTerm
+	: 'switch' Type Value ',' LabelType LocalIdent '[' Case* ']' MetadataAttachments
+;
+
+Case
+	: Type IntConst ',' LabelType LocalIdent
+;
+
+# --- [ indirectbr ] -----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#indirectbr-instruction
+
+# ref: ParseIndirectBr
+#
+#    ::= 'indirectbr' TypeAndValue ',' '[' LabelList ']'
+
+IndirectBrTerm
+	: 'indirectbr' Type Value ',' '[' LabelList ']' MetadataAttachments
+;
+
+LabelList
+	: Label
+	| LabelList ',' Label
+;
+
+Label
+	: LabelType LocalIdent
+;
+
+# --- [ invoke ] ---------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#invoke-instruction
+
+# ref: ParseInvoke
+#
+#   ::= 'invoke' OptionalCallingConv OptionalAttrs Type Value ParamList
+#       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
+
+InvokeTerm
+	: 'invoke' CallingConvopt ReturnAttr* Type Value '(' Args ')' FuncAttr* OperandBundles 'to' LabelType LocalIdent 'unwind' LabelType LocalIdent MetadataAttachments
+;
+
+# --- [ resume ] ---------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#resume-instruction
+
+# ref: ParseResume
+#
+#   ::= 'resume' TypeAndValue
+
+ResumeTerm
+	: 'resume' Type Value MetadataAttachments
+;
+
+# --- [ catchswitch ] ----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#catchswitch-instruction
+
+# ref: ParseCatchSwitch
+#
+#   ::= 'catchswitch' within Parent
+
+CatchSwitchTerm
+	: 'catchswitch' 'within' ExceptionScope '[' LabelList ']' 'unwind' UnwindTarget MetadataAttachments
+;
+
+# --- [ catchret ] -------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#catchret-instruction
+
+# ref: ParseCatchRet
+#
+#   ::= 'catchret' from Parent Value 'to' TypeAndValue
+
+CatchRetTerm
+	: 'catchret' 'from' Value 'to' LabelType LocalIdent MetadataAttachments
+;
+
+# --- [ cleanupret ] -----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#cleanupret-instruction
+
+# ref: ParseCleanupRet
+#
+#   ::= 'cleanupret' from Value unwind ('to' 'caller' | TypeAndValue)
+
+CleanupRetTerm
+	: 'cleanupret' 'from' Value 'unwind' UnwindTarget MetadataAttachments
+;
+
+# --- [ unreachable ] ----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#unreachable-instruction
+
+# ref: ParseInstruction
+
+UnreachableTerm
+	: 'unreachable' MetadataAttachments
+;
+
+# ___ [ Helpers ] _____________________________________________________________
+
+UnwindTarget
+	: 'to' 'caller'
+	| LabelType LocalIdent
+;
+
+# ///////////////////////////////
 
 # TODO: fix placeholders.
 
-ConstantExpr
-   : placeholder3
+Metadata
+	: placeholder3
 ;
 
 MDTuple
@@ -1954,4 +2992,109 @@ FPred
 	| 'ult'
 	| 'une'
 	| 'uno'
+;
+
+# ref: ParseInstructionMetadata
+#
+#   ::= !dbg !42 (',' !dbg !57)*
+
+MetadataAttachments
+   : (',' MetadataAttachment)+?
+;
+
+# ref: EatFastMathFlagsIfPresent
+
+FastMathFlag
+	: 'afn'
+	| 'arcp'
+	| 'contract'
+	| 'fast'
+	| 'ninf'
+	| 'nnan'
+	| 'nsz'
+	| 'reassoc'
+;
+
+Volatile
+	: 'volatile'
+;
+
+# ref: ParseScope
+#
+#   ::= syncscope("singlethread" | "<target scope>")?
+
+SyncScope
+	: 'syncscope' '(' StringLit ')'
+;
+
+# ref: ParseOrdering
+#
+#   ::= AtomicOrdering
+
+AtomicOrdering
+	: 'acq_rel'
+	| 'acquire'
+	| 'monotonic'
+	| 'release'
+	| 'seq_cst'
+	| 'unordered'
+;
+
+# ref: ParseParameterList
+#
+#    ::= '(' ')'
+#    ::= '(' Arg (',' Arg)* ')'
+#  Arg
+#    ::= Type OptionalAttributes Value OptionalAttributes
+
+Args
+	: '...'?
+	| (Arg separator ',')+ (',' '...')?
+;
+
+# ref: ParseMetadataAsValue
+#
+#  ::= metadata i32 %local
+#  ::= metadata i32 @global
+#  ::= metadata i32 7
+#  ::= metadata !0
+#  ::= metadata !{...}
+#  ::= metadata !"string"
+
+Arg
+	: ConcreteType ParamAttr* Value
+	| MetadataType Metadata
+;
+
+# ref: ParseExceptionArgs
+
+ExceptionArg
+	: ConcreteType Value
+	| MetadataType Metadata
+;
+
+# ref: ParseOptionalOperandBundles
+#
+#    ::= empty
+#    ::= '[' OperandBundle [, OperandBundle ]* ']'
+#
+#  OperandBundle
+#    ::= bundle-tag '(' ')'
+#    ::= bundle-tag '(' Type Value [, Type Value ]* ')'
+#
+#  bundle-tag ::= String Constant
+
+OperandBundles
+	: ('[' (OperandBundle separator ',')+ ']')?
+;
+
+# TODO: is Type Value comma separated in OperandBundle?
+
+OperandBundle
+	: StringLit '(' (Type Value)* ')'
+;
+
+ExceptionScope
+	: NoneConst
+	| LocalIdent
 ;
