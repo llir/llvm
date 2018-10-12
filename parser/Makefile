@@ -7,6 +7,8 @@ gen: ll.tm
 	@go fmt > /dev/null
 
 clean:
-	$(RM) -v lexer.go lexer_tables.go parser.go parser_tables.go token.go
+	$(RM) -v listener.go lexer.go lexer_tables.go parser.go parser_tables.go token.go
+	$(RM) -rf -v ast/
+	$(RM) -rf -v selector/
 
 .PHONY: all gen clean

@@ -729,20 +729,10 @@ Immutable
 	| 'global'
 ;
 
-# TODO: Add align back to GlobalAttr (needed as GlobalAttr is comma separated
-# and FuncAttr is not in GlobalDecl and GlobalDef).
-
-# NOTE: GlobalAttr should contain Alignment. However, using LALR(1) this
-# produces a reduce/reduce conflict as FuncAttr also contains Alignment.
-#
-# Since GlobalAttr is only used in GlobalDecl and GlobalDef, both of which
-# include a comma separated list of GlobalAttr and FuncAttr, we can simply
-# remove Alignment from GlobalAttr to resolve the reduce/reduce conflict.
-
 GlobalAttr
 	: Section
 	| Comdat
-	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
+	| Alignment
 	#   ::= !dbg !57
 	| MetadataAttachment
 ;
@@ -806,7 +796,7 @@ FunctionDef
 # as FuncAttrs also contains "align".
 
 FunctionHeader
-	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt (FuncAttr | Alignment)* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
 GC
@@ -842,7 +832,7 @@ FunctionBody
 #   ::= 'attributes' AttrGrpID '=' '{' AttrValPair+ '}'
 
 AttrGroupDef
-	: 'attributes' AttrGroupID '=' '{' FuncAttr* '}'
+	: 'attributes' AttrGroupID '=' '{' (FuncAttr | Alignment)* '}'
 ;
 
 # ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2483,10 +2473,10 @@ SelectInst
 #           OptionalAttrs Type Value ParameterList OptionalAttrs
 
 CallInst
-	: OptTail 'call' FastMathFlag* CallingConvopt ReturnAttr* Type Value '(' Args ')' FuncAttr* OperandBundles InstructionMetadata
+	: Tailopt 'call' FastMathFlag* CallingConvopt ReturnAttr* Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles InstructionMetadata
 ;
 
-OptTail
+Tail
 	: 'musttail'
 	| 'notail'
 	| 'tail'
@@ -2653,7 +2643,7 @@ Label
 #       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
 
 InvokeTerm
-	: 'invoke' CallingConvopt ReturnAttr* Type Value '(' Args ')' FuncAttr* OperandBundles 'to' LabelType LocalIdent 'unwind' LabelType LocalIdent InstructionMetadata
+	: 'invoke' CallingConvopt ReturnAttr* Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles 'to' LabelType LocalIdent 'unwind' LabelType LocalIdent InstructionMetadata
 ;
 
 # --- [ resume ] ---------------------------------------------------------------
@@ -3886,6 +3876,13 @@ Alignment
 #
 #   ::= <attr> | <attr> '=' <value>
 
+# NOTE: FuncAttr should contain Alignment. However, using LALR(1) this
+# produces a reduce/reduce conflict as GlobalAttr also contains Alignment.
+#
+# To handle these ambiguities, (FuncAttr | Alignment) is used in those places
+# where FuncAttr is used outside of GlobalDef and GlobalDecl (which alos has
+# GlobalAttr).
+
 FuncAttr
 	# not used in attribute groups.
 	: AttrGroupID
@@ -3893,7 +3890,7 @@ FuncAttr
 	| 'align' '=' int_lit_tok # TODO: use unsigned int lit?
 	| 'alignstack' '=' int_lit_tok # TODO: use unsigned int lit?
 	# used in functions.
-	| Alignment
+	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
 	| AllocSize
 	| StackAlignment
 	| AttrString
