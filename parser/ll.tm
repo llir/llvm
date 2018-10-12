@@ -2118,20 +2118,11 @@ SwiftError
 #   ::= 'load' 'atomic' 'volatile'? TypeAndValue
 #       'singlethread'? AtomicOrdering (',' 'align' i32)?
 
-# TODO: Simplify when parser generator is not limited by 1 token lookahead.
-#
-#    LoadInst
-#       : 'load' OptVolatile Type ',' Type Value OptCommaAlignment InstructionMetadata
-#       | 'load' 'atomic' OptVolatile Type ',' Type Value OptSyncScope AtomicOrdering OptCommaAlignment InstructionMetadata
-#    ;
-
 LoadInst
 	# Load.
-	: 'load' Volatileopt Type ',' Type Value InstructionMetadata
-	| 'load' Volatileopt Type ',' Type Value ',' Alignment InstructionMetadata
+	: 'load' Volatileopt Type ',' Type Value (',' Alignment)? InstructionMetadata
 	# Atomic load.
-	| 'load' 'atomic' Volatileopt Type ',' Type Value SyncScopeopt AtomicOrdering InstructionMetadata
-	| 'load' 'atomic' Volatileopt Type ',' Type Value SyncScopeopt AtomicOrdering ',' Alignment InstructionMetadata
+	| 'load' 'atomic' Volatileopt Type ',' Type Value SyncScopeopt AtomicOrdering (',' Alignment)? InstructionMetadata
 ;
 
 # ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
