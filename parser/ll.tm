@@ -2143,10 +2143,8 @@ LoadInst
 #    ;
 
 StoreInst
-	: 'store' Volatileopt Type Value ',' Type Value InstructionMetadata
-	| 'store' Volatileopt Type Value ',' Type Value ',' Alignment InstructionMetadata
-	| 'store' 'atomic' Volatileopt Type Value ',' Type Value SyncScopeopt AtomicOrdering InstructionMetadata
-	| 'store' 'atomic' Volatileopt Type Value ',' Type Value SyncScopeopt AtomicOrdering ',' Alignment InstructionMetadata
+	: 'store' Volatileopt Type Value ',' Type Value (',' Alignment)? InstructionMetadata
+	| 'store' 'atomic' Volatileopt Type Value ',' Type Value SyncScopeopt AtomicOrdering (',' Alignment)? InstructionMetadata
 ;
 
 # ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
