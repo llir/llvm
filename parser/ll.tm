@@ -792,8 +792,8 @@ FunctionDef
 #       '(' ArgList ')' OptFuncAttrs OptSection OptionalAlign OptGC
 #       OptionalPrefix OptionalPrologue OptPersonalityFn
 
-# TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved,
-# as FuncAttrs also contains "align".
+# TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved.
+# The shift/reduce conflict is present since FuncAttr also contains 'align'.
 
 FunctionHeader
 	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt (FuncAttr | Alignment)* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
