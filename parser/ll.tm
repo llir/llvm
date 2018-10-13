@@ -3843,7 +3843,7 @@ Alignment
 # produces a reduce/reduce conflict as GlobalAttr also contains Alignment.
 #
 # To handle these ambiguities, (FuncAttr | Alignment) is used in those places
-# where FuncAttr is used outside of GlobalDef and GlobalDecl (which alos has
+# where FuncAttr is used outside of GlobalDef and GlobalDecl (which also has
 # GlobalAttr).
 
 FuncAttr
