@@ -1564,7 +1564,7 @@ InsertValueExpr
 # ref: ParseValID
 
 GetElementPtrExpr
-	: 'getelementptr' InBoundsopt '(' Type ',' Type Constant (',' GEPConstIndex)* ')'
+	: 'getelementptr' InBoundsopt '(' Type ',' Type Constant (',' GEPIndex)* ')'
 ;
 
 # ref: ParseGlobalValueVector
@@ -1572,9 +1572,7 @@ GetElementPtrExpr
 #   ::= empty
 #   ::= [inrange] TypeAndValue (',' [inrange] TypeAndValue)*
 
-# TODO: update name to Index?
-
-GEPConstIndex
+GEPIndex
 	: Inrangeopt Type Constant
 ;
 
