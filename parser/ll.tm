@@ -2211,12 +2211,6 @@ BinOp
 #
 #   ::= 'getelementptr' 'inbounds'? TypeAndValue (',' TypeAndValue)*
 
-# TODO: Simplify when parser generator is not limited by 1 token lookahead.
-#
-#    GetElementPtrInst
-#       : 'getelementptr' OptInBounds Type ',' Type Value GEPIndices InstructionMetadata
-#    ;
-
 GetElementPtrInst
 	: 'getelementptr' InBoundsopt Type ',' Type Value (',' Type Value)* InstructionMetadata
 ;
@@ -4095,7 +4089,7 @@ Exact
 ;
 
 OverflowFlags
-	: ('nsw' | 'nuw')* # TODO: use ('nsw' & 'nuw')? if supported.
+	: ('nsw' | 'nuw')*
 ;
 
 InBounds
@@ -4240,10 +4234,8 @@ OperandBundles
 	: ('[' (OperandBundle separator ',')+ ']')?
 ;
 
-# TODO: is Type Value comma separated in OperandBundle?
-
 OperandBundle
-	: StringLit '(' (Type Value)* ')'
+	: StringLit '(' (Type Value separator ',')* ')'
 ;
 
 ExceptionScope
