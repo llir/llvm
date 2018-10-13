@@ -2584,12 +2584,7 @@ Case
 #    ::= 'indirectbr' TypeAndValue ',' '[' LabelList ']'
 
 IndirectBrTerm
-	: 'indirectbr' Type Value ',' '[' LabelList ']' InstructionMetadata
-;
-
-LabelList
-	: Label
-	| LabelList ',' Label
+	: 'indirectbr' Type Value ',' '[' (Label separator ',')+ ']' InstructionMetadata
 ;
 
 Label
@@ -2630,7 +2625,7 @@ ResumeTerm
 #   ::= 'catchswitch' within Parent
 
 CatchSwitchTerm
-	: 'catchswitch' 'within' ExceptionScope '[' LabelList ']' 'unwind' UnwindTarget InstructionMetadata
+	: 'catchswitch' 'within' ExceptionScope '[' (Label separator ',')+ ']' 'unwind' UnwindTarget InstructionMetadata
 ;
 
 # --- [ catchret ] -------------------------------------------------------------
@@ -2695,13 +2690,7 @@ MDTuple
 # ref: ParseMDField(MDFieldList &)
 
 MDFields
-	: '{' '}'
-	| '{' MDFieldList '}'
-;
-
-MDFieldList
-	: MDField
-	| MDFieldList ',' MDField
+	: '{' (MDField separator',')* '}'
 ;
 
 # ref: ParseMDField(MDField &)
@@ -3561,7 +3550,7 @@ AlignField
 ;
 
 FlagsField
-	: 'flags:' DIFlagList
+	: 'flags:' (DIFlag separator '|')+
 ;
 
 LineField
@@ -3629,11 +3618,6 @@ ChecksumKind
 #  ::= uint32
 #  ::= DIFlagVector
 #  ::= DIFlagVector '|' DIFlagFwdDecl '|' uint32 '|' DIFlagPublic
-
-DIFlagList
-	: DIFlag
-	| DIFlagList '|' DIFlag
-;
 
 DIFlag
 	: IntLit
