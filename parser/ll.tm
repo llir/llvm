@@ -883,7 +883,7 @@ Distinct
 #   ::= '{' uint32 (',' uint32)+ '}'
 
 UseListOrder
-	: 'uselistorder' Type Value ',' '{' (int_lit_tok separator ',')+ '}' # TODO: use unsigned int lit?
+	: 'uselistorder' Type Value ',' '{' (UintLit separator ',')+ '}'
 ;
 
 # ref: ParseUseListOrderBB
@@ -891,7 +891,7 @@ UseListOrder
 #   ::= 'uselistorder_bb' @foo ',' %bar ',' UseListOrderIndexes
 
 UseListOrderBB
-	: 'uselistorder_bb' GlobalIdent ',' LocalIdent ',' '{' (int_lit_tok separator ',')+ '}' # TODO: use unsigned int lit?
+	: 'uselistorder_bb' GlobalIdent ',' LocalIdent ',' '{' (UintLit separator ',')+ '}'
 ;
 
 # === [ Identifiers ] ==========================================================
@@ -1040,7 +1040,7 @@ PointerType
 #     ::= '<' APSINTVAL 'x' Types '>'
 
 VectorType
-	: '<' int_lit_tok 'x' Type '>' # TODO: unsigned int lit?
+	: '<' UintLit 'x' Type '>'
 ;
 
 # --- [ Label Types ] ----------------------------------------------------------
@@ -1068,7 +1068,7 @@ MetadataType
 #     ::= '[' APSINTVAL 'x' Types ']'
 
 ArrayType
-	: '[' int_lit_tok 'x' Type ']' # TODO: unsigned int lit?
+	: '[' UintLit 'x' Type ']'
 ;
 
 # --- [ Structure Types ] ------------------------------------------------------
@@ -1184,6 +1184,10 @@ IntConst
 ;
 
 IntLit
+	: int_lit_tok
+;
+
+UintLit
 	: int_lit_tok
 ;
 
@@ -2068,8 +2072,7 @@ ShuffleVectorInst
 #   ::= 'extractvalue' TypeAndValue (',' uint32)+
 
 ExtractValueInst
-	# TODO: use unsigned int lit?
-   : 'extractvalue' Type Value (',' int_lit_tok)+ InstructionMetadata
+   : 'extractvalue' Type Value (',' UintLit)+ InstructionMetadata
 ;
 
 # ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2081,8 +2084,7 @@ ExtractValueInst
 #   ::= 'insertvalue' TypeAndValue ',' TypeAndValue (',' uint32)+
 
 InsertValueInst
-	# TODO: use unsigned int lit?
-   : 'insertvalue' Type Value ',' Type Value (',' int_lit_tok)+ InstructionMetadata
+   : 'insertvalue' Type Value ',' Type Value (',' UintLit)+ InstructionMetadata
 ;
 
 # --- [ Memory instructions ] --------------------------------------------------
@@ -2134,13 +2136,6 @@ LoadInst
 #   ::= 'store' 'volatile'? TypeAndValue ',' TypeAndValue (',' 'align' i32)?
 #   ::= 'store' 'atomic' 'volatile'? TypeAndValue ',' TypeAndValue
 #       'singlethread'? AtomicOrdering (',' 'align' i32)?
-
-# TODO: Simplify when parser generator is not limited by 1 token lookahead.
-#
-#    StoreInst
-#       : 'store' OptVolatile Type Value ',' Type Value OptCommaAlignment InstructionMetadata
-#       | 'store' 'atomic' OptVolatile Type Value ',' Type Value OptSyncScope AtomicOrdering OptCommaAlignment InstructionMetadata
-#    ;
 
 StoreInst
 	: 'store' Volatileopt Type Value ',' Type Value (',' Alignment)? InstructionMetadata
@@ -3817,7 +3812,7 @@ UnnamedAddr
 #   := 'addrspace' '(' uint32 ')'
 
 AddrSpace
-	: 'addrspace' '(' int_lit_tok ')' # TODO: use unsigned int lit.
+	: 'addrspace' '(' UintLit ')'
 ;
 
 Section
@@ -3837,7 +3832,7 @@ Comdat
 #   ::= 'align' 4
 
 Alignment
-	: 'align' int_lit_tok # TODO: use unsigned int lit.
+	: 'align' UintLit
 ;
 
 # ___ [ Function Attribute ] ___________________________________________________
@@ -3857,8 +3852,8 @@ FuncAttr
 	# not used in attribute groups.
 	: AttrGroupID
 	# used in attribute groups.
-	| 'align' '=' int_lit_tok # TODO: use unsigned int lit?
-	| 'alignstack' '=' int_lit_tok # TODO: use unsigned int lit?
+	| 'align' '=' UintLit
+	| 'alignstack' '=' UintLit
 	# used in functions.
 	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
 	| AllocSize
@@ -3915,8 +3910,8 @@ AttrPair
 # ref: parseAllocSizeArguments
 
 AllocSize
-	: 'allocsize' '(' int_lit_tok ')' # TODO: use unsigned int lit?
-	| 'allocsize' '(' int_lit_tok ',' int_lit_tok ')' # TODO: use unsigned int lit?
+	: 'allocsize' '(' UintLit ')'
+	| 'allocsize' '(' UintLit ',' UintLit ')'
 ;
 
 # ref: ParseOptionalStackAlignment
@@ -3924,7 +3919,7 @@ AllocSize
 #   ::= empty
 #   ::= 'alignstack' '(' 4 ')'
 StackAlignment
-	: 'alignstack' '(' int_lit_tok ')' # TODO: use unsigned int lit?
+	: 'alignstack' '(' UintLit ')'
 ;
 
 # ref: ParseOptionalCallingConv
@@ -4010,7 +4005,7 @@ CallingConv
 	| 'x86_stdcallcc'
 	| 'x86_thiscallcc'
 	| 'x86_vectorcallcc'
-	| 'cc' int_lit_tok # TODO: use unsigned int lit?
+	| 'cc' UintLit
 ;
 
 # ___ [ Return Attribute ] ___________________________________________________
@@ -4080,8 +4075,8 @@ ParamAttr
 ;
 
 Dereferenceable
-	: 'dereferenceable' '(' int_lit_tok ')' # TODO: use unsigned int lit?
-	| 'dereferenceable_or_null' '(' int_lit_tok ')' # TODO: use unsigned int lit?
+	: 'dereferenceable' '(' UintLit ')'
+	| 'dereferenceable_or_null' '(' UintLit ')'
 ;
 
 Exact
@@ -4101,7 +4096,7 @@ InBounds
 #    ::=  (',' uint32)+
 
 Indices
-	: (int_lit_tok separator ',')*
+	: (UintLit separator ',')*
 ;
 
 # ref: ParseCmpPredicate
