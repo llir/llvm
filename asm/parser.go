@@ -1,18 +1,34 @@
-// Package parser implements a parser for Textmapper source files.
-package parser
+// Package asm implements a parser for LLVM IR assembly files.
+package asm
 
 import (
+	"io/ioutil"
+
 	"github.com/inspirer/textmapper/tm-go/status"
-	"github.com/inspirer/textmapper/tm-parsers/tm"
-	"github.com/inspirer/textmapper/tm-parsers/tm/ast"
+	"github.com/mewmew/l-tm/asm/ll"
+	"github.com/mewmew/l-tm/asm/ll/ast"
+	"github.com/pkg/errors"
 )
 
-func Parse(filename, content string) (*ast.File, error) {
-	var l tm.Lexer
+// ParseFile parses the given LLVM IR assembly file into an LLVM IR module.
+func ParseFile(path string) (*ast.Module, error) {
+	buf, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	content := string(buf)
+	return Parse(path, content)
+}
+
+// Parse parses the given LLVM IR assembly file into an LLVM IR module, reading
+// from content.
+func Parse(filename, content string) (*ast.Module, error) {
+	var l ll.Lexer
 	l.Init(content)
-	var p tm.Parser
+	var p ll.Parser
 	b := newBuilder(filename, content)
-	p.Init(b.addError, b.addNode)
+	//p.Init(b.addError, b.addNode)
+	p.Init(b.addNode)
 	err := p.Parse(&l)
 	if err != nil {
 		return nil, err
@@ -22,8 +38,8 @@ func Parse(filename, content string) (*ast.File, error) {
 	}
 
 	b.file.parsed = b.chunks
-	x := ast.ToTmNode(b.file.root())
-	return x.(*ast.File), nil
+	x := ast.ToLlvmNode(b.file.root())
+	return x.(*ast.Module), nil
 }
 
 type builder struct {
@@ -41,14 +57,14 @@ func newBuilder(filename, content string) *builder {
 	}
 }
 
-func (b *builder) addError(se tm.SyntaxError) bool {
+func (b *builder) addError(se ll.SyntaxError) bool {
 	r := b.file.sourceRange(se.Offset, se.Endoffset)
 	b.status.Add(r, "syntax error")
 	return true
 }
 
-func (b *builder) addNode(t tm.NodeType, offset, endoffset int) {
-	if t == tm.File {
+func (b *builder) addNode(t ll.NodeType, offset, endoffset int) {
+	if t == ll.Module {
 		offset, endoffset = 0, len(b.file.content)
 	}
 
