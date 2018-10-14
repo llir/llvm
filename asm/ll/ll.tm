@@ -667,8 +667,11 @@ ModuleAsm -> ModuleAsm
 #
 #   ::= LocalVar '=' 'type' type
 
+# TODO: Remove `Typ=` once https://github.com/inspirer/textmapper/issues/13
+# is resolved.
+
 TypeDef -> TypeDef
-	: LocalIdent '=' 'type' (OpaqueType | Type)
+	: LocalIdent '=' 'type' (OpaqueType | Typ=Type)
 ;
 
 # === [ Identifiers ] ==========================================================
@@ -780,7 +783,7 @@ VoidType -> VoidType
 #  ::= Type ArgumentList OptionalAttrs
 
 FuncType -> FuncType
-	: Type '(' Params ')'
+	: RetType=Type '(' Params ')'
 ;
 
 # --- [ Integer Types ] --------------------------------------------------------
@@ -813,7 +816,7 @@ MMXType -> MMXType
 # --- [ Pointer Types ] --------------------------------------------------------
 
 PointerType -> PointerType
-	: Type AddrSpaceopt '*'
+	: Elem=Type AddrSpaceopt '*'
 ;
 
 # --- [ Vector Types ] ---------------------------------------------------------
@@ -823,7 +826,7 @@ PointerType -> PointerType
 #     ::= '<' APSINTVAL 'x' Types '>'
 
 VectorType -> VectorType
-	: '<' UintLit 'x' Type '>'
+	: '<' UintLit 'x' Elem=Type '>'
 ;
 
 # --- [ Label Types ] ----------------------------------------------------------
@@ -851,7 +854,7 @@ MetadataType -> MetadataType
 #     ::= '[' APSINTVAL 'x' Types ']'
 
 ArrayType -> ArrayType
-	: '[' UintLit 'x' Type ']'
+	: '[' UintLit 'x' Elem=Type ']'
 ;
 
 # --- [ Structure Types ] ------------------------------------------------------
@@ -865,8 +868,8 @@ ArrayType -> ArrayType
 #     ::= '<' '{' Type (',' Type)* '}' '>'
 
 StructType -> StructType
-	: '{' (Type separator ',')+? '}'
-	| '<' '{' (Type separator ',')+? '}' '>'
+	: '{' Fields=(Type separator ',')+? '}'
+	| '<' '{' Fields=(Type separator ',')+? '}' '>'
 ;
 
 OpaqueType -> OpaqueType
