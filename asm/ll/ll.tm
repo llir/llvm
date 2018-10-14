@@ -676,6 +676,7 @@ TopLevelEntity -> TopLevelEntity
 	| ModuleAsm
 	| TypeDef
 	| ComdatDef
+	| GlobalDecl
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -763,6 +764,61 @@ SelectionKind -> SelectionKind
 	| 'largest'
 	| 'noduplicates'
 	| 'samesize'
+;
+
+# ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#global-variables
+
+# ref: ParseUnnamedGlobal
+#
+#   OptionalVisibility (ALIAS | IFUNC) ...
+#   OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
+#   OptionalDLLStorageClass
+#                                                     ...   -> global variable
+#   GlobalID '=' OptionalVisibility (ALIAS | IFUNC) ...
+#   GlobalID '=' OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
+#                OptionalDLLStorageClass
+#                                                     ...   -> global variable
+
+# ref: ParseNamedGlobal
+#
+#   GlobalVar '=' OptionalVisibility (ALIAS | IFUNC) ...
+#   GlobalVar '=' OptionalLinkage OptionalPreemptionSpecifier
+#                 OptionalVisibility OptionalDLLStorageClass
+#                                                     ...   -> global variable
+
+# ref: ParseGlobal
+#
+#   ::= GlobalVar '=' OptionalLinkage OptionalPreemptionSpecifier
+#       OptionalVisibility OptionalDLLStorageClass
+#       OptionalThreadLocal OptionalUnnamedAddr OptionalAddrSpace
+#       OptionalExternallyInitialized GlobalType Type Const OptionalAttrs
+#   ::= OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
+#       OptionalDLLStorageClass OptionalThreadLocal OptionalUnnamedAddr
+#       OptionalAddrSpace OptionalExternallyInitialized GlobalType Type
+#       Const OptionalAttrs
+
+GlobalDecl -> GlobalDecl
+	: Name=GlobalIdent '=' Linkage=ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Typ=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+;
+
+# TODO: Check if ExternallyInitialized can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
+
+ExternallyInitialized -> ExternallyInitialized
+	: 'externally_initialized'
+;
+
+# ref: ParseGlobalType
+#
+#   ::= 'constant'
+#   ::= 'global'
+
+# TODO: Check if Immutable can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
+
+Immutable -> Immutable
+	: 'constant'
+	| 'global'
 ;
 
 # === [ Types ] ================================================================
@@ -949,8 +1005,25 @@ AddrSpace -> AddrSpace
 #   ::= empty
 #   ::= 'align' 4
 
+# TODO: Rename Alignment to Align.
+
 Alignment -> Alignment
 	: 'align' N=UintLit
+;
+
+AlignPair -> AlignPair
+	: 'align' '=' N=UintLit
+;
+
+AlignStack -> AlignStack
+	: 'alignstack' '=' N=UintLit
+;
+
+# ref: parseAllocSizeArguments
+
+AllocSize -> AllocSize
+	: 'allocsize' '(' ElemSize=UintLit ')'
+	| 'allocsize' '(' ElemSize=UintLit ',' N=UintLit ')'
 ;
 
 AttrPair -> AttrPair
@@ -961,6 +1034,13 @@ AttrString -> AttrString
 	: Val=StringLit
 ;
 
+# ref: parseOptionalComdat
+
+Comdat -> Comdat
+	: 'comdat'
+	| 'comdat' '(' Name=ComdatName ')'
+;
+
 # ref: ParseOptionalDerefAttrBytes
 #
 #   ::= empty
@@ -969,6 +1049,137 @@ AttrString -> AttrString
 Dereferenceable -> Dereferenceable
 	: 'dereferenceable' '(' N=UintLit ')'
 	| 'dereferenceable_or_null' '(' N=UintLit ')'
+;
+
+# https://llvm.org/docs/LangRef.html#dll-storage-classes
+
+# ref: ParseOptionalDLLStorageClass
+#
+#   ::= empty
+#   ::= 'dllimport'
+#   ::= 'dllexport'
+
+DLLStorageClass
+	: 'dllexport'
+	| 'dllimport'
+;
+
+# ref: ParseFnAttributeValuePairs
+#
+#   ::= <attr> | <attr> '=' <value>
+
+# NOTE: FuncAttr should contain Alignment. However, using LALR(1) this
+# produces a reduce/reduce conflict as GlobalAttr also contains Alignment.
+#
+# To handle these ambiguities, (FuncAttr | Alignment) is used in those places
+# where FuncAttr is used outside of GlobalDef and GlobalDecl (which also has
+# GlobalAttr).
+
+%interface FuncAttr;
+
+FuncAttr -> FuncAttr
+	: AttrString
+	| AttrPair
+	# not used in attribute groups.
+	| AttrGroupID
+	# used in attribute groups.
+	| AlignPair
+	| AlignStack
+	# used in functions.
+	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
+	| AllocSize
+	| StackAlignment
+	| FuncAttribute
+;
+
+FuncAttribute -> FuncAttribute
+	: 'alwaysinline'
+	| 'argmemonly'
+	| 'builtin'
+	| 'cold'
+	| 'convergent'
+	| 'inaccessiblemem_or_argmemonly'
+	| 'inaccessiblememonly'
+	| 'inlinehint'
+	| 'jumptable'
+	| 'minsize'
+	| 'naked'
+	| 'nobuiltin'
+	| 'nocf_check'
+	| 'noduplicate'
+	| 'noimplicitfloat'
+	| 'noinline'
+	| 'nonlazybind'
+	| 'norecurse'
+	| 'noredzone'
+	| 'noreturn'
+	| 'nounwind'
+	| 'optforfuzzing'
+	| 'optnone'
+	| 'optsize'
+	| 'readnone'
+	| 'readonly'
+	| 'returns_twice'
+	| 'safestack'
+	| 'sanitize_address'
+	| 'sanitize_hwaddress'
+	| 'sanitize_memory'
+	| 'sanitize_thread'
+	| 'shadowcallstack'
+	| 'speculatable'
+	| 'speculative_load_hardening'
+	| 'ssp'
+	| 'sspreq'
+	| 'sspstrong'
+	| 'strictfp'
+	| 'uwtable'
+	| 'writeonly'
+;
+
+%interface GlobalAttr;
+
+GlobalAttr -> GlobalAttr
+	: Section
+	| Comdat
+	| Alignment
+	#   ::= !dbg !57
+	| MetadataAttachment
+;
+
+# https://llvm.org/docs/LangRef.html#linkage-types
+
+# ref: ParseOptionalLinkage
+#
+#   ::= empty
+#   ::= 'private'
+#   ::= 'internal'
+#   ::= 'weak'
+#   ::= 'weak_odr'
+#   ::= 'linkonce'
+#   ::= 'linkonce_odr'
+#   ::= 'available_externally'
+#   ::= 'appending'
+#   ::= 'common'
+#   ::= 'extern_weak'
+#   ::= 'external'
+
+Linkage -> Linkage
+	: 'appending'
+	| 'available_externally'
+	| 'common'
+	| 'internal'
+	| 'linkonce'
+	| 'linkonce_odr'
+	| 'private'
+	| 'weak'
+	| 'weak_odr'
+;
+
+# TODO: Merge ExternLinkage with Linkage?
+
+ExternLinkage -> ExternLinkage
+	: 'extern_weak'
+	| 'external'
 ;
 
 # ref: ParseArgumentList
@@ -1025,4 +1236,76 @@ ParamAttribute -> ParamAttribute
 	| 'swiftself'
 	| 'writeonly'
 	| 'zeroext'
+;
+
+# https://llvm.org/docs/LangRef.html#runtime-preemption-model
+
+# ref: ParseOptionalDSOLocal
+
+PreemptionSpecifier -> PreemptionSpecifier
+	: 'dso_local'
+	| 'dso_preemptable'
+;
+
+Section -> Section
+	: 'section' Name=StringLit
+;
+
+# ref: ParseOptionalStackAlignment
+#
+#   ::= empty
+#   ::= 'alignstack' '(' 4 ')'
+StackAlignment -> StackAlignment
+	: 'alignstack' '(' N=UintLit ')'
+;
+
+# ref: ParseOptionalThreadLocal
+#
+#   := empty
+#   := 'thread_local'
+#   := 'thread_local' '(' tlsmodel ')'
+
+ThreadLocal -> ThreadLocal
+	: 'thread_local'
+	| 'thread_local' '(' Model=TLSModel ')'
+;
+
+# ref: ParseTLSModel
+#
+#   := 'localdynamic'
+#   := 'initialexec'
+#   := 'localexec'
+
+TLSModel -> TLSModel
+	: 'initialexec'
+	| 'localdynamic'
+	| 'localexec'
+;
+
+# ref: ParseOptionalUnnamedAddr
+
+UnnamedAddr -> UnnamedAddr
+	: 'local_unnamed_addr'
+	| 'unnamed_addr'
+;
+
+# https://llvm.org/docs/LangRef.html#visibility-styles
+
+# ref: ParseOptionalVisibility
+#
+#   ::= empty
+#   ::= 'default'
+#   ::= 'hidden'
+#   ::= 'protected'
+
+Visibility -> Visibility
+	: 'default'
+	| 'hidden'
+	| 'protected'
+;
+
+# TODO: fix metadata.
+
+MetadataAttachment -> MetadataAttachment
+	: placeholder1
 ;
