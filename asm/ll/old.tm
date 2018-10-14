@@ -3,75 +3,11 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| FunctionDecl
-	| FunctionDef
 	| AttrGroupDef
 	| NamedMetadataDef
 	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#functions
-
-# ref: ParseDeclare
-#
-#   ::= 'declare' FunctionHeader
-
-FunctionDecl
-	: 'declare' FunctionMetadata ExternLinkageopt FunctionHeader
-;
-
-# ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#functions
-
-# ref: ParseDefine
-#
-#   ::= 'define' FunctionHeader (!dbg !56)* '{' ...
-
-FunctionDef
-	: 'define' Linkageopt FunctionHeader FunctionMetadata FunctionBody
-;
-
-# ref: ParseFunctionHeader
-#
-#   ::= OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
-#       OptionalCallingConv OptRetAttrs OptUnnamedAddr Type GlobalName
-#       '(' ArgList ')' OptAddrSpace OptFuncAttrs OptSection OptionalAlign
-#       OptGC OptionalPrefix OptionalPrologue OptPersonalityFn
-
-# TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved.
-# The shift/reduce conflict is present since FuncAttr also contains 'align'.
-
-FunctionHeader
-	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt (FuncAttr | Alignment)* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
-;
-
-GC
-	: 'gc' StringLit
-;
-
-Prefix
-	: 'prefix' Type Constant
-;
-
-Prologue
-	: 'prologue' Type Constant
-;
-
-Personality
-	: 'personality' Type Constant
-;
-
-# ref: ParseFunctionBody
-#
-#   ::= '{' BasicBlock+ UseListOrderDirective* '}'
-
-FunctionBody
-	: '{' BasicBlock+ UseListOrder* '}'
 ;
 
 # ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2771,110 +2707,6 @@ NameTableKindField
 ;
 
 # ### [ Helper productions ] ###################################################
-
-# ref: ParseOptionalCallingConv
-#
-#   ::= empty
-#   ::= 'ccc'
-#   ::= 'fastcc'
-#   ::= 'intel_ocl_bicc'
-#   ::= 'coldcc'
-#   ::= 'x86_stdcallcc'
-#   ::= 'x86_fastcallcc'
-#   ::= 'x86_thiscallcc'
-#   ::= 'x86_vectorcallcc'
-#   ::= 'arm_apcscc'
-#   ::= 'arm_aapcscc'
-#   ::= 'arm_aapcs_vfpcc'
-#   ::= 'aarch64_vector_pcs'
-#   ::= 'msp430_intrcc'
-#   ::= 'avr_intrcc'
-#   ::= 'avr_signalcc'
-#   ::= 'ptx_kernel'
-#   ::= 'ptx_device'
-#   ::= 'spir_func'
-#   ::= 'spir_kernel'
-#   ::= 'x86_64_sysvcc'
-#   ::= 'win64cc'
-#   ::= 'webkit_jscc'
-#   ::= 'anyregcc'
-#   ::= 'preserve_mostcc'
-#   ::= 'preserve_allcc'
-#   ::= 'ghccc'
-#   ::= 'swiftcc'
-#   ::= 'x86_intrcc'
-#   ::= 'hhvmcc'
-#   ::= 'hhvm_ccc'
-#   ::= 'cxx_fast_tlscc'
-#   ::= 'amdgpu_vs'
-#   ::= 'amdgpu_ls'
-#   ::= 'amdgpu_hs'
-#   ::= 'amdgpu_es'
-#   ::= 'amdgpu_gs'
-#   ::= 'amdgpu_ps'
-#   ::= 'amdgpu_cs'
-#   ::= 'amdgpu_kernel'
-#   ::= 'cc' UINT
-
-CallingConv
-	: 'aarch64_vector_pcs'
-	| 'amdgpu_cs'
-	| 'amdgpu_es'
-	| 'amdgpu_gs'
-	| 'amdgpu_hs'
-	| 'amdgpu_kernel'
-	| 'amdgpu_ls'
-	| 'amdgpu_ps'
-	| 'amdgpu_vs'
-	| 'anyregcc'
-	| 'arm_aapcs_vfpcc'
-	| 'arm_aapcscc'
-	| 'arm_apcscc'
-	| 'avr_intrcc'
-	| 'avr_signalcc'
-	| 'ccc'
-	| 'coldcc'
-	| 'cxx_fast_tlscc'
-	| 'fastcc'
-	| 'ghccc'
-	| 'hhvm_ccc'
-	| 'hhvmcc'
-	| 'intel_ocl_bicc'
-	| 'msp430_intrcc'
-	| 'preserve_allcc'
-	| 'preserve_mostcc'
-	| 'ptx_device'
-	| 'ptx_kernel'
-	| 'spir_func'
-	| 'spir_kernel'
-	| 'swiftcc'
-	| 'webkit_jscc'
-	| 'win64cc'
-	| 'x86_64_sysvcc'
-	| 'x86_fastcallcc'
-	| 'x86_intrcc'
-	| 'x86_regcallcc'
-	| 'x86_stdcallcc'
-	| 'x86_thiscallcc'
-	| 'x86_vectorcallcc'
-	| 'cc' UintLit
-;
-
-# ___ [ Return Attribute ] ___________________________________________________
-
-# ref: ParseOptionalReturnAttrs
-
-ReturnAttr
-	: Alignment
-	| Dereferenceable
-	| AttrString
-	| AttrPair
-	| 'inreg'
-	| 'noalias'
-	| 'nonnull'
-	| 'signext'
-	| 'zeroext'
-;
 
 Exact
 	: 'exact'

@@ -678,6 +678,8 @@ TopLevelEntity -> TopLevelEntity
 	| ComdatDef
 	| GlobalDef
 	| IndirectSymbolDef
+	| FuncDecl
+	| FuncDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -850,6 +852,71 @@ AliasDef -> AliasDef
 
 IFuncDef -> IFuncDef
 	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
+;
+
+# ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#functions
+
+# ref: ParseDeclare
+#
+#   ::= 'declare' FunctionHeader
+
+FuncDecl -> FuncDecl
+	: 'declare' Metadata=FuncMetadata Header=FuncHeader
+;
+
+# ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#functions
+
+# ref: ParseDefine
+#
+#   ::= 'define' FunctionHeader (!dbg !56)* '{' ...
+
+FuncDef -> FuncDef
+	: 'define' Header=FuncHeader Metadata=FuncMetadata Body=FuncBody
+;
+
+# ref: ParseFunctionHeader
+#
+#   ::= OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
+#       OptionalCallingConv OptRetAttrs OptUnnamedAddr Type GlobalName
+#       '(' ArgList ')' OptAddrSpace OptFuncAttrs OptSection OptionalAlign
+#       OptGC OptionalPrefix OptionalPrologue OptPersonalityFn
+
+# TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved.
+# The shift/reduce conflict is present since FuncAttr also contains 'align'.
+
+FuncHeader -> FuncHeader
+	: Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+;
+
+# TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
+# Both define an identifier GC, the former in listener.go and the latter in token.go.
+
+GC -> GCNode
+	: 'gc' Name=StringLit
+;
+
+Prefix -> Prefix
+	: 'prefix' Typ=Type Val=Constant
+;
+
+Prologue -> Prologue
+	: 'prologue' Typ=Type Val=Constant
+;
+
+Personality -> Personality
+	: 'personality' Typ=Type Val=Constant
+;
+
+# ref: ParseFunctionBody
+#
+#   ::= '{' BasicBlock+ UseListOrderDirective* '}'
+
+FuncBody -> FuncBody
+	: '{' Blocks=BasicBlock+ UseListOrders=UseListOrder* '}'
 ;
 
 # === [ Types ] ================================================================
@@ -1065,6 +1132,94 @@ AttrString -> AttrString
 	: Val=StringLit
 ;
 
+# ref: ParseOptionalCallingConv
+#
+#   ::= empty
+#   ::= 'ccc'
+#   ::= 'fastcc'
+#   ::= 'intel_ocl_bicc'
+#   ::= 'coldcc'
+#   ::= 'x86_stdcallcc'
+#   ::= 'x86_fastcallcc'
+#   ::= 'x86_thiscallcc'
+#   ::= 'x86_vectorcallcc'
+#   ::= 'arm_apcscc'
+#   ::= 'arm_aapcscc'
+#   ::= 'arm_aapcs_vfpcc'
+#   ::= 'aarch64_vector_pcs'
+#   ::= 'msp430_intrcc'
+#   ::= 'avr_intrcc'
+#   ::= 'avr_signalcc'
+#   ::= 'ptx_kernel'
+#   ::= 'ptx_device'
+#   ::= 'spir_func'
+#   ::= 'spir_kernel'
+#   ::= 'x86_64_sysvcc'
+#   ::= 'win64cc'
+#   ::= 'webkit_jscc'
+#   ::= 'anyregcc'
+#   ::= 'preserve_mostcc'
+#   ::= 'preserve_allcc'
+#   ::= 'ghccc'
+#   ::= 'swiftcc'
+#   ::= 'x86_intrcc'
+#   ::= 'hhvmcc'
+#   ::= 'hhvm_ccc'
+#   ::= 'cxx_fast_tlscc'
+#   ::= 'amdgpu_vs'
+#   ::= 'amdgpu_ls'
+#   ::= 'amdgpu_hs'
+#   ::= 'amdgpu_es'
+#   ::= 'amdgpu_gs'
+#   ::= 'amdgpu_ps'
+#   ::= 'amdgpu_cs'
+#   ::= 'amdgpu_kernel'
+#   ::= 'cc' UINT
+
+CallingConv -> CallingConv
+	: 'aarch64_vector_pcs'
+	| 'amdgpu_cs'
+	| 'amdgpu_es'
+	| 'amdgpu_gs'
+	| 'amdgpu_hs'
+	| 'amdgpu_kernel'
+	| 'amdgpu_ls'
+	| 'amdgpu_ps'
+	| 'amdgpu_vs'
+	| 'anyregcc'
+	| 'arm_aapcs_vfpcc'
+	| 'arm_aapcscc'
+	| 'arm_apcscc'
+	| 'avr_intrcc'
+	| 'avr_signalcc'
+	| 'ccc'
+	| 'coldcc'
+	| 'cxx_fast_tlscc'
+	| 'fastcc'
+	| 'ghccc'
+	| 'hhvm_ccc'
+	| 'hhvmcc'
+	| 'intel_ocl_bicc'
+	| 'msp430_intrcc'
+	| 'preserve_allcc'
+	| 'preserve_mostcc'
+	| 'ptx_device'
+	| 'ptx_kernel'
+	| 'spir_func'
+	| 'spir_kernel'
+	| 'swiftcc'
+	| 'webkit_jscc'
+	| 'win64cc'
+	| 'x86_64_sysvcc'
+	| 'x86_fastcallcc'
+	| 'x86_intrcc'
+	| 'x86_regcallcc'
+	| 'x86_stdcallcc'
+	| 'x86_thiscallcc'
+	| 'x86_vectorcallcc'
+	| 'cc' UintLit
+;
+
 # ref: parseOptionalComdat
 
 Comdat -> Comdat
@@ -1274,6 +1429,30 @@ PreemptionSpecifier -> PreemptionSpecifier
 	| 'dso_preemptable'
 ;
 
+# ref: ParseOptionalReturnAttrs
+
+%interface ReturnAttr;
+
+ReturnAttr -> ReturnAttr
+	# TODO: Figure out how to re-enable without getting these errors in FuncHeader:
+	#    - two unnamed fields share the same type `AttrPair`: ReturnAttr -vs- FuncAttr
+	#    - `AttrPair` occurs in both named and unnamed fields
+	#    - `ReturnAttrs` cannot be nullable, since it precedes FuncAttrs
+	#: AttrString
+	#| AttrPair
+	: Alignment
+	| Dereferenceable
+	| ReturnAttribute
+;
+
+ReturnAttribute -> ReturnAttribute
+	: 'inreg'
+	| 'noalias'
+	| 'nonnull'
+	| 'signext'
+	| 'zeroext'
+;
+
 Section -> Section
 	: 'section' Name=StringLit
 ;
@@ -1341,4 +1520,16 @@ MetadataAttachment -> MetadataAttachment
 
 Constant -> Constant
 	: placeholder2
+;
+
+UseListOrder -> UseListOrder
+	: placeholder3
+;
+
+BasicBlock -> BasicBlock
+	: placeholder2
+;
+
+FuncMetadata -> FuncMetadata
+	: placeholder1
 ;
