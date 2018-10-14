@@ -5,6 +5,7 @@ all: gen
 gen: ll.tm
 	@${TM_DIR}/tm-tool/libs/textmapper.sh $<
 	@go fmt ./... > /dev/null
+	@go install ./... > /dev/null
 
 clean:
 	$(RM) -v listener.go lexer.go lexer_tables.go parser.go parser_tables.go token.go

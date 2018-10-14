@@ -3,7 +3,6 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| ComdatDef
 	| GlobalDecl
 	| GlobalDef
 	| IndirectSymbolDef
@@ -14,24 +13,6 @@ TopLevelEntity
 	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#langref-comdats
-
-# ref: parseComdat
-
-ComdatDef
-	: ComdatName '=' 'comdat' SelectionKind
-;
-
-SelectionKind
-	: 'any'
-	| 'exactmatch'
-	| 'largest'
-	| 'noduplicates'
-	| 'samesize'
 ;
 
 # ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

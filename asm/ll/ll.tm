@@ -675,6 +675,7 @@ TopLevelEntity -> TopLevelEntity
 	| TargetDef
 	| ModuleAsm
 	| TypeDef
+	| ComdatDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -744,6 +745,24 @@ ModuleAsm -> ModuleAsm
 TypeDef -> TypeDef
 	: Alias=LocalIdent '=' 'type' Typ=OpaqueType
 	| Alias=LocalIdent '=' 'type' Typ=Type
+;
+
+# ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#langref-comdats
+
+# ref: parseComdat
+
+ComdatDef -> ComdatDef
+	: Name=ComdatName '=' 'comdat' Kind=SelectionKind
+;
+
+SelectionKind -> SelectionKind
+	: 'any'
+	| 'exactmatch'
+	| 'largest'
+	| 'noduplicates'
+	| 'samesize'
 ;
 
 # === [ Types ] ================================================================
