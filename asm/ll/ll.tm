@@ -827,7 +827,7 @@ PointerType -> PointerType
 #     ::= '<' APSINTVAL 'x' Types '>'
 
 VectorType -> VectorType
-	: '<' UintLit 'x' Elem=Type '>'
+	: '<' Len=UintLit 'x' Elem=Type '>'
 ;
 
 # --- [ Label Types ] ----------------------------------------------------------
@@ -855,7 +855,7 @@ MetadataType -> MetadataType
 #     ::= '[' APSINTVAL 'x' Types ']'
 
 ArrayType -> ArrayType
-	: '[' UintLit 'x' Elem=Type ']'
+	: '[' Len=UintLit 'x' Elem=Type ']'
 ;
 
 # --- [ Structure Types ] ------------------------------------------------------
@@ -880,7 +880,7 @@ OpaqueType -> OpaqueType
 # --- [ Named Types ] ----------------------------------------------------------
 
 NamedType -> NamedType
-	: LocalIdent
+	: Name=LocalIdent
 ;
 
 # //////////////////////////////////////////////////////////////////////////////
