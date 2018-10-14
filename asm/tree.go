@@ -1,13 +1,13 @@
-package parser
+package asm
 
 import (
 	"sort"
 	"strings"
 
 	"github.com/inspirer/textmapper/tm-go/status"
-	"github.com/inspirer/textmapper/tm-parsers/tm"
-	"github.com/inspirer/textmapper/tm-parsers/tm/ast"
-	"github.com/inspirer/textmapper/tm-parsers/tm/selector"
+	"github.com/mewmew/l-tm/asm/ll"
+	"github.com/mewmew/l-tm/asm/ll/ast"
+	"github.com/mewmew/l-tm/asm/ll/selector"
 )
 
 // file holds an AST of a single file and can covert offset ranges into status.SourceRange.
@@ -23,7 +23,7 @@ func (f *file) root() ast.Node {
 }
 
 type chunk struct {
-	t          tm.NodeType
+	t          ll.NodeType
 	offset     int
 	endoffset  int
 	next       int
@@ -71,10 +71,10 @@ type node struct {
 }
 
 // Type implements ast.Node
-func (n node) Type() tm.NodeType {
+func (n node) Type() ll.NodeType {
 	if n.file == nil {
 		// TODO: introduce InvalidType
-		return tm.SyntaxProblem
+		return ll.NodeType(0)
 	}
 	return n.file.parsed[n.index].t
 }
