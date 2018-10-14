@@ -579,7 +579,7 @@ int_type_tok : /i[0-9]+/
 
 :: parser
 
-input : Module;
+%input Module;
 
 # === [ Module ] ===============================================================
 
@@ -887,20 +887,25 @@ NamedType -> NamedType
 
 # //////////////////////////////////////////////////////////////////////////////
 
-# TODO: figure out where to place StringLit.
+# TODO: figure out where to place literals.
 
 StringLit -> StringLit
 	: string_lit_tok
 ;
 
 UintLit -> UintLit
-	: placeholder3
+	: int_lit_tok
 ;
 
 Params -> Params
 	: placeholder1
 ;
 
-AddrSpace -> AddrSpace
-	: placeholder2
+# ref: ParseOptionalAddrSpace
+#
+#   := empty
+#   := 'addrspace' '(' uint32 ')'
+
+AddrSpace
+	: 'addrspace' '(' UintLit ')'
 ;

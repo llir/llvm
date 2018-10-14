@@ -3001,15 +3001,6 @@ UnnamedAddr
 	| 'unnamed_addr'
 ;
 
-# ref: ParseOptionalAddrSpace
-#
-#   := empty
-#   := 'addrspace' '(' uint32 ')'
-
-AddrSpace
-	: 'addrspace' '(' UintLit ')'
-;
-
 Section
 	: 'section' StringLit
 ;
