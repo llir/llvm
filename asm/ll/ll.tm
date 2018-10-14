@@ -677,6 +677,7 @@ TopLevelEntity -> TopLevelEntity
 	| TypeDef
 	| ComdatDef
 	| GlobalDef
+	| IndirectSymbolDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -819,6 +820,36 @@ ExternallyInitialized -> ExternallyInitialized
 Immutable -> Immutable
 	: 'constant'
 	| 'global'
+;
+
+# ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#aliases
+# https://llvm.org/docs/LangRef.html#ifuncs
+
+# ref: parseIndirectSymbol
+#
+#   ::= GlobalVar '=' OptionalLinkage OptionalPreemptionSpecifier
+#                     OptionalVisibility OptionalDLLStorageClass
+#                     OptionalThreadLocal OptionalUnnamedAddr
+#                     'alias|ifunc' IndirectSymbol
+#
+#  IndirectSymbol
+#   ::= TypeAndValue
+
+%interface IndirectSymbolDef;
+
+IndirectSymbolDef -> IndirectSymbolDef
+	: AliasDef
+	| IFuncDef
+;
+
+AliasDef -> AliasDef
+	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
+;
+
+IFuncDef -> IFuncDef
+	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
 ;
 
 # === [ Types ] ================================================================

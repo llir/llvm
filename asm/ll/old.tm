@@ -3,7 +3,6 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| IndirectSymbolDef
 	| FunctionDecl
 	| FunctionDef
 	| AttrGroupDef
@@ -11,38 +10,6 @@ TopLevelEntity
 	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# DONE.
-
-# ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# DONE.
-
-# ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#aliases
-# https://llvm.org/docs/LangRef.html#ifuncs
-
-# ref: parseIndirectSymbol
-#
-#   ::= GlobalVar '=' OptionalLinkage OptionalPreemptionSpecifier
-#                     OptionalVisibility OptionalDLLStorageClass
-#                     OptionalThreadLocal OptionalUnnamedAddr
-#                     'alias|ifunc' IndirectSymbol
-#
-#  IndirectSymbol
-#   ::= TypeAndValue
-
-IndirectSymbolDef
-	: GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt IndirectSymbolKind Type ',' Type Constant
-;
-
-IndirectSymbolKind
-	: 'alias'
-	| 'ifunc'
 ;
 
 # ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
