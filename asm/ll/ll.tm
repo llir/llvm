@@ -584,7 +584,7 @@ input : Module;
 #   module ::= toplevelentity*
 
 Module -> Module
-	: TopLevelEntity*
+	: TopLevelEntities=TopLevelEntity*
 ;
 
 # --- [ Top-level Entities ] ---------------------------------------------------
@@ -596,6 +596,7 @@ Module -> Module
 TopLevelEntity -> TopLevelEntity
 	: SourceFilename
 	| TargetDef
+	| ModuleAsm
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -607,7 +608,7 @@ TopLevelEntity -> TopLevelEntity
 #   ::= 'source_filename' '=' STRINGCONSTANT
 
 SourceFilename -> SourceFilename
-	: 'source_filename' '=' name=StringLit
+	: 'source_filename' '=' Name=StringLit
 ;
 
 # ~~~ [ Target Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -628,11 +629,23 @@ TargetDef -> TargetDef
 ;
 
 TargetDataLayout -> TargetDataLayout
-	: 'target' 'datalayout' '=' StringLit
+	: 'target' 'datalayout' '=' DataLayout=StringLit
 ;
 
 TargetTriple -> TargetTriple
-	: 'target' 'triple' '=' StringLit
+	: 'target' 'triple' '=' TargetTriple=StringLit
+;
+
+# ~~~ [ Module-level Inline Assembly ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#module-level-inline-assembly
+
+# ref: ParseModuleAsm
+#
+#   ::= 'module' 'asm' STRINGCONSTANT
+
+ModuleAsm -> ModuleAsm
+	: 'module' 'asm' Asm=StringLit
 ;
 
 # //////////////////////////////////////////////////////////////////////////////
