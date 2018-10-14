@@ -671,7 +671,8 @@ ModuleAsm -> ModuleAsm
 # is resolved.
 
 TypeDef -> TypeDef
-	: LocalIdent '=' 'type' (OpaqueType | Typ=Type)
+	: Alias=LocalIdent '=' 'type' Typ=OpaqueType
+	| Alias=LocalIdent '=' 'type' Typ=Type
 ;
 
 # === [ Identifiers ] ==========================================================
