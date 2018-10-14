@@ -12,6 +12,12 @@ eventFields = true
 
 :: lexer
 
+# TODO: remove placeholders.
+
+placeholder1 : /placeholder1/
+placeholder2 : /placeholder2/
+placeholder3 : /placeholder3/
+
 _ascii_letter_upper = /[A-Z]/
 
 _ascii_letter_lower = /[a-z]/
@@ -597,6 +603,7 @@ TopLevelEntity -> TopLevelEntity
 	: SourceFilename
 	| TargetDef
 	| ModuleAsm
+	| TypeDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -648,10 +655,246 @@ ModuleAsm -> ModuleAsm
 	: 'module' 'asm' Asm=StringLit
 ;
 
+# ~~~ [ Type Defintion ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#structure-type
+
+# ref: ParseUnnamedType
+#
+#   ::= LocalVarID '=' 'type' type
+
+# ref: ParseNamedType
+#
+#   ::= LocalVar '=' 'type' type
+
+TypeDef -> TypeDef
+	: LocalIdent '=' 'type' (OpaqueType | Type)
+;
+
+# === [ Identifiers ] ==========================================================
+
+# --- [ Global Identifiers ] ---------------------------------------------------
+
+GlobalIdent -> GlobalIdent
+	: global_ident_tok
+;
+
+# --- [ Local Identifiers ] ----------------------------------------------------
+
+LocalIdent -> LocalIdent
+	: local_ident_tok
+;
+
+# --- [ Label Identifiers ] ----------------------------------------------------
+
+LabelIdent -> LabelIdent
+	: label_ident_tok
+;
+
+# --- [ Attribute Group Identifiers ] ------------------------------------------
+
+AttrGroupID -> AttrGroupID
+	: attr_group_id_tok
+;
+
+# --- [ Comdat Identifiers ] ---------------------------------------------------
+
+ComdatName -> ComdatName
+	: comdat_name_tok
+;
+
+# --- [ Metadata Identifiers ] -------------------------------------------------
+
+MetadataName -> MetadataName
+	: metadata_name_tok
+;
+
+MetadataID -> MetadataID
+	: metadata_id_tok
+;
+
+# === [ Types ] ================================================================
+
+# ref: ParseType
+#
+#  TYPEKEYWORD("void",      Type::getVoidTy(Context));
+#  TYPEKEYWORD("half",      Type::getHalfTy(Context));
+#  TYPEKEYWORD("float",     Type::getFloatTy(Context));
+#  TYPEKEYWORD("double",    Type::getDoubleTy(Context));
+#  TYPEKEYWORD("x86_fp80",  Type::getX86_FP80Ty(Context));
+#  TYPEKEYWORD("fp128",     Type::getFP128Ty(Context));
+#  TYPEKEYWORD("ppc_fp128", Type::getPPC_FP128Ty(Context));
+#  TYPEKEYWORD("label",     Type::getLabelTy(Context));
+#  TYPEKEYWORD("metadata",  Type::getMetadataTy(Context));
+#  TYPEKEYWORD("x86_mmx",   Type::getX86_MMXTy(Context));
+#  TYPEKEYWORD("token",     Type::getTokenTy(Context));
+
+%interface Type;
+
+Type -> Type
+	: VoidType
+	| FuncType
+	| FirstClassType
+;
+
+%interface FirstClassType;
+
+FirstClassType -> FirstClassType
+	: ConcreteType
+	| MetadataType
+;
+
+%interface ConcreteType;
+
+ConcreteType -> ConcreteType
+	: IntType
+	# Type ::= 'float' | 'void' (etc)
+	| FloatType
+	# Type ::= Type '*'
+	# Type ::= Type 'addrspace' '(' uint32 ')' '*'
+	| PointerType
+	# Type ::= '<' ... '>'
+	| VectorType
+	| LabelType
+	# Type ::= '[' ... ']'
+	| ArrayType
+	# Type ::= StructType
+	| StructType
+	# Type ::= %foo
+	# Type ::= %4
+	| NamedType
+	| MMXType
+	| TokenType
+;
+
+# --- [ Void Types ] -----------------------------------------------------------
+
+VoidType -> VoidType
+	: 'void'
+;
+
+# --- [ Function Types ] -------------------------------------------------------
+
+# ref: ParseFunctionType
+#
+#  ::= Type ArgumentList OptionalAttrs
+
+FuncType -> FuncType
+	: Type '(' Params ')'
+;
+
+# --- [ Integer Types ] --------------------------------------------------------
+
+IntType -> IntType
+	: int_type_tok
+;
+
+# --- [ Floating-point Types ] -------------------------------------------------
+
+FloatType -> FloatType
+	: FloatKind
+;
+
+FloatKind -> FloatKind
+	: 'half'
+	| 'float'
+	| 'double'
+	| 'x86_fp80'
+	| 'fp128'
+	| 'ppc_fp128'
+;
+
+# --- [ MMX Types ] ------------------------------------------------------------
+
+MMXType -> MMXType
+	: 'x86_mmx'
+;
+
+# --- [ Pointer Types ] --------------------------------------------------------
+
+PointerType -> PointerType
+	: Type AddrSpaceopt '*'
+;
+
+# --- [ Vector Types ] ---------------------------------------------------------
+
+# ref: ParseArrayVectorType
+#
+#     ::= '<' APSINTVAL 'x' Types '>'
+
+VectorType -> VectorType
+	: '<' UintLit 'x' Type '>'
+;
+
+# --- [ Label Types ] ----------------------------------------------------------
+
+LabelType -> LabelType
+	: 'label'
+;
+
+# --- [ Token Types ] ----------------------------------------------------------
+
+TokenType -> TokenType
+	: 'token'
+;
+
+# --- [ Metadata Types ] -------------------------------------------------------
+
+MetadataType -> MetadataType
+	: 'metadata'
+;
+
+# --- [ Array Types ] ----------------------------------------------------------
+
+# ref: ParseArrayVectorType
+#
+#     ::= '[' APSINTVAL 'x' Types ']'
+
+ArrayType -> ArrayType
+	: '[' UintLit 'x' Type ']'
+;
+
+# --- [ Structure Types ] ------------------------------------------------------
+
+# ref: ParseStructBody
+#
+#   StructType
+#     ::= '{' '}'
+#     ::= '{' Type (',' Type)* '}'
+#     ::= '<' '{' '}' '>'
+#     ::= '<' '{' Type (',' Type)* '}' '>'
+
+StructType -> StructType
+	: '{' (Type separator ',')+? '}'
+	| '<' '{' (Type separator ',')+? '}' '>'
+;
+
+OpaqueType -> OpaqueType
+	: 'opaque'
+;
+
+# --- [ Named Types ] ----------------------------------------------------------
+
+NamedType -> NamedType
+	: LocalIdent
+;
+
 # //////////////////////////////////////////////////////////////////////////////
 
 # TODO: figure out where to place StringLit.
 
 StringLit -> StringLit
 	: string_lit_tok
+;
+
+UintLit -> UintLit
+	: placeholder3
+;
+
+Params -> Params
+	: placeholder1
+;
+
+AddrSpace -> AddrSpace
+	: placeholder2
 ;

@@ -3,7 +3,6 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| TypeDef
 	| ComdatDef
 	| GlobalDecl
 	| GlobalDef
@@ -15,23 +14,6 @@ TopLevelEntity
 	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Type Defintion ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#structure-type
-
-# ref: ParseUnnamedType
-#
-#   ::= LocalVarID '=' 'type' type
-
-# ref: ParseNamedType
-#
-#   ::= LocalVar '=' 'type' type
-
-TypeDef
-	: LocalIdent '=' 'type' OpaqueType
-	| LocalIdent '=' 'type' Type
 ;
 
 # ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -276,205 +258,11 @@ UseListOrderBB
 
 # === [ Identifiers ] ==========================================================
 
-# --- [ Global Identifiers ] ---------------------------------------------------
-
-GlobalIdent
-	: global_ident_tok
-;
-
-# --- [ Local Identifiers ] ----------------------------------------------------
-
-LocalIdent
-	: local_ident_tok
-;
-
-# --- [ Label Identifiers ] ----------------------------------------------------
-
-LabelIdent
-	: label_ident_tok
-;
-
-# --- [ Attribute Group Identifiers ] ------------------------------------------
-
-AttrGroupID
-	: attr_group_id_tok
-;
-
-# --- [ Comdat Identifiers ] ---------------------------------------------------
-
-ComdatName
-	: comdat_name_tok
-;
-
-# --- [ Metadata Identifiers ] -------------------------------------------------
-
-MetadataName
-	: metadata_name_tok
-;
-
-MetadataID
-	: metadata_id_tok
-;
+# DONE
 
 # === [ Types ] ================================================================
 
-# ref: ParseType
-#
-#  TYPEKEYWORD("void",      Type::getVoidTy(Context));
-#  TYPEKEYWORD("half",      Type::getHalfTy(Context));
-#  TYPEKEYWORD("float",     Type::getFloatTy(Context));
-#  TYPEKEYWORD("double",    Type::getDoubleTy(Context));
-#  TYPEKEYWORD("x86_fp80",  Type::getX86_FP80Ty(Context));
-#  TYPEKEYWORD("fp128",     Type::getFP128Ty(Context));
-#  TYPEKEYWORD("ppc_fp128", Type::getPPC_FP128Ty(Context));
-#  TYPEKEYWORD("label",     Type::getLabelTy(Context));
-#  TYPEKEYWORD("metadata",  Type::getMetadataTy(Context));
-#  TYPEKEYWORD("x86_mmx",   Type::getX86_MMXTy(Context));
-#  TYPEKEYWORD("token",     Type::getTokenTy(Context));
-
-Type
-	: VoidType
-	| FuncType
-	| FirstClassType
-;
-
-FirstClassType
-	: ConcreteType
-	| MetadataType
-;
-
-ConcreteType
-	: IntType
-	# Type ::= 'float' | 'void' (etc)
-	| FloatType
-	# Type ::= Type '*'
-	# Type ::= Type 'addrspace' '(' uint32 ')' '*'
-	| PointerType
-	# Type ::= '<' ... '>'
-	| VectorType
-	| LabelType
-	# Type ::= '[' ... ']'
-	| ArrayType
-	# Type ::= StructType
-	| StructType
-	# Type ::= %foo
-	# Type ::= %4
-	| NamedType
-	| MMXType
-	| TokenType
-;
-
-# --- [ Void Types ] -----------------------------------------------------------
-
-VoidType
-	: 'void'
-;
-
-# --- [ Function Types ] -------------------------------------------------------
-
-# ref: ParseFunctionType
-#
-#  ::= Type ArgumentList OptionalAttrs
-
-FuncType
-	: Type '(' Params ')'
-;
-
-# --- [ Integer Types ] --------------------------------------------------------
-
-IntType
-	: int_type_tok
-;
-
-# --- [ Floating-point Types ] -------------------------------------------------
-
-FloatType
-	: FloatKind
-;
-
-FloatKind
-	: 'half'
-	| 'float'
-	| 'double'
-	| 'x86_fp80'
-	| 'fp128'
-	| 'ppc_fp128'
-;
-
-# --- [ MMX Types ] ------------------------------------------------------------
-
-MMXType
-	: 'x86_mmx'
-;
-
-# --- [ Pointer Types ] --------------------------------------------------------
-
-PointerType
-	: Type AddrSpaceopt '*'
-;
-
-# --- [ Vector Types ] ---------------------------------------------------------
-
-# ref: ParseArrayVectorType
-#
-#     ::= '<' APSINTVAL 'x' Types '>'
-
-VectorType
-	: '<' UintLit 'x' Type '>'
-;
-
-# --- [ Label Types ] ----------------------------------------------------------
-
-LabelType
-	: 'label'
-;
-
-# --- [ Token Types ] ----------------------------------------------------------
-
-TokenType
-	: 'token'
-;
-
-# --- [ Metadata Types ] -------------------------------------------------------
-
-MetadataType
-	: 'metadata'
-;
-
-# --- [ Array Types ] ----------------------------------------------------------
-
-# ref: ParseArrayVectorType
-#
-#     ::= '[' APSINTVAL 'x' Types ']'
-
-ArrayType
-	: '[' UintLit 'x' Type ']'
-;
-
-# --- [ Structure Types ] ------------------------------------------------------
-
-# ref: ParseStructBody
-#
-#   StructType
-#     ::= '{' '}'
-#     ::= '{' Type (',' Type)* '}'
-#     ::= '<' '{' '}' '>'
-#     ::= '<' '{' Type (',' Type)* '}' '>'
-
-StructType
-	: '{' (Type separator ',')+? '}'
-	| '<' '{' (Type separator ',')+? '}' '>'
-;
-
-OpaqueType
-	: 'opaque'
-;
-
-# --- [ Named Types ] ----------------------------------------------------------
-
-NamedType
-	: LocalIdent
-;
+# DONE
 
 # === [ Values ] ===============================================================
 
