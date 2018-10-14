@@ -1059,7 +1059,7 @@ Dereferenceable -> Dereferenceable
 #   ::= 'dllimport'
 #   ::= 'dllexport'
 
-DLLStorageClass
+DLLStorageClass -> DLLStorageClass
 	: 'dllexport'
 	| 'dllimport'
 ;
