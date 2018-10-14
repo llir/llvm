@@ -676,7 +676,7 @@ TopLevelEntity -> TopLevelEntity
 	| ModuleAsm
 	| TypeDef
 	| ComdatDef
-	| GlobalDecl
+	| GlobalDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -766,7 +766,7 @@ SelectionKind -> SelectionKind
 	| 'samesize'
 ;
 
-# ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # https://llvm.org/docs/LangRef.html#global-variables
 
@@ -799,8 +799,8 @@ SelectionKind -> SelectionKind
 #       OptionalAddrSpace OptionalExternallyInitialized GlobalType Type
 #       Const OptionalAttrs
 
-GlobalDecl -> GlobalDecl
-	: Name=GlobalIdent '=' Linkage=ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Typ=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+GlobalDef -> GlobalDef
+	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Typ=Type Init=Constantopt GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # TODO: Check if ExternallyInitialized can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
@@ -1173,12 +1173,8 @@ Linkage -> Linkage
 	| 'private'
 	| 'weak'
 	| 'weak_odr'
-;
-
-# TODO: Merge ExternLinkage with Linkage?
-
-ExternLinkage -> ExternLinkage
-	: 'extern_weak'
+	# External linkage.
+	| 'extern_weak'
 	| 'external'
 ;
 
@@ -1308,4 +1304,10 @@ Visibility -> Visibility
 
 MetadataAttachment -> MetadataAttachment
 	: placeholder1
+;
+
+# TODO: fix Constant.
+
+Constant -> Constant
+	: placeholder2
 ;

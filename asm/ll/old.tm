@@ -3,7 +3,6 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| GlobalDef
 	| IndirectSymbolDef
 	| FunctionDecl
 	| FunctionDef
@@ -20,9 +19,7 @@ TopLevelEntity
 
 # ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GlobalDef
-	: GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Type Constant (',' GlobalAttr)+? (',' FuncAttr)+?
-;
+# DONE.
 
 # ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
