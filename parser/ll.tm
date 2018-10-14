@@ -569,9 +569,7 @@ int_type_tok : /i[0-9]+/
 # ### [ Syntax part ] ##########################################################
 
 # The LLVM IR grammar has been based on the source code of the official LLVM
-# project, as of 2018-02-19 (rev db070bbdacd303ae7da129f59beaf35024d94c53).
-#
-#    * lib/AsmParser/LLParser.cpp
+# project, version 7.0
 
 :: parser
 
@@ -595,8 +593,9 @@ Module -> Module
 
 %interface TopLevelEntity;
 
-TopLevelEntity
+TopLevelEntity -> TopLevelEntity
 	: SourceFilename
+	| TargetDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -611,7 +610,34 @@ SourceFilename -> SourceFilename
 	: 'source_filename' '=' name=StringLit
 ;
 
-# TODO: figure out where to place.
+# ~~~ [ Target Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#target-triple
+# https://llvm.org/docs/LangRef.html#data-layout
+
+# ref: ParseTargetDefinition
+#
+#   ::= 'target' 'triple' '=' STRINGCONSTANT
+#   ::= 'target' 'datalayout' '=' STRINGCONSTANT
+
+%interface TargetDef;
+
+TargetDef -> TargetDef
+	: TargetDataLayout
+	| TargetTriple
+;
+
+TargetDataLayout -> TargetDataLayout
+	: 'target' 'datalayout' '=' StringLit
+;
+
+TargetTriple -> TargetTriple
+	: 'target' 'triple' '=' StringLit
+;
+
+# //////////////////////////////////////////////////////////////////////////////
+
+# TODO: figure out where to place StringLit.
 
 StringLit -> StringLit
 	: string_lit_tok

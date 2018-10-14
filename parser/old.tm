@@ -569,9 +569,7 @@ int_type_tok : /i[0-9]+/
 # ### [ Syntax part ] ##########################################################
 
 # The LLVM IR grammar has been based on the source code of the official LLVM
-# project, as of 2018-02-19 (rev db070bbdacd303ae7da129f59beaf35024d94c53).
-#
-#    * lib/AsmParser/LLParser.cpp
+# project, version 7.0
 
 :: parser
 
@@ -594,8 +592,6 @@ Module
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	: SourceFilename
-	| TargetDefinition
 	| ModuleAsm
 	| TypeDef
 	| ComdatDef
@@ -609,33 +605,6 @@ TopLevelEntity
 	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#source-filename
-
-# ref: ParseSourceFileName
-#
-#   ::= 'source_filename' '=' STRINGCONSTANT
-
-SourceFilename
-	: 'source_filename' '=' StringLit
-;
-
-# ~~~ [ Target Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#target-triple
-# https://llvm.org/docs/LangRef.html#data-layout
-
-# ref: ParseTargetDefinition
-#
-#   ::= 'target' 'triple' '=' STRINGCONSTANT
-#   ::= 'target' 'datalayout' '=' STRINGCONSTANT
-
-TargetDefinition
-	: 'target' 'datalayout' '=' StringLit
-	| 'target' 'triple' '=' StringLit
 ;
 
 # ~~~ [ Module-level Inline Assembly ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
