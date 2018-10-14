@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/mewmew/l-tm/parser"
+	"github.com/mewmew/l-tm/asm/ll"
 )
 
 func main() {
@@ -20,12 +20,12 @@ func main() {
 		}
 		source := string(buf)
 		start := time.Now()
-		lex := &parser.Lexer{}
+		lex := &ll.Lexer{}
 		lex.Init(source)
-		listener := func(t parser.NodeType, offset, endoffset int) {
+		listener := func(t ll.NodeType, offset, endoffset int) {
 			fmt.Printf("t: %v (start=%v, end=%v)\n", t, offset, endoffset)
 		}
-		p := &parser.Parser{}
+		p := &ll.Parser{}
 		p.Init(listener)
 		if err := p.Parse(lex); err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
