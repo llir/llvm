@@ -2789,30 +2789,31 @@ FunctionMetadata
 # ref: ParseSpecializedMDNode
 
 SpecializedMDNode
-	: DICompileUnit
-	| DIFile
-	| DIBasicType
-	| DISubroutineType
-	| DIDerivedType
+	: DIBasicType
+	| DICompileUnit
 	| DICompositeType
-	| DISubrange
+	| DIDerivedType
 	| DIEnumerator
-	| DITemplateTypeParameter
-	| DITemplateValueParameter
-	| DIModule # not in spec as of 2018-02-21
-	| DINamespace
+	| DIExpression
+	| DIFile
 	| DIGlobalVariable
-	| DISubprogram
+	| DIGlobalVariableExpression # not in spec as of 2018-02-21
+	| DIImportedEntity
+	| DILabel # not in spec as of 2018-10-14
 	| DILexicalBlock
 	| DILexicalBlockFile
-	| DILocation
 	| DILocalVariable
-	| DIExpression
-	| DIGlobalVariableExpression # not in spec as of 2018-02-21
-	| DIObjCProperty
-	| DIImportedEntity
+	| DILocation
 	| DIMacro
 	| DIMacroFile
+	| DIModule # not in spec as of 2018-02-21
+	| DINamespace
+	| DIObjCProperty
+	| DISubprogram
+	| DISubrange
+	| DISubroutineType
+	| DITemplateTypeParameter
+	| DITemplateValueParameter
 	| GenericDINode # not in spec as of 2018-02-21
 ;
 
