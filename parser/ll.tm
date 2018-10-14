@@ -2,6 +2,8 @@ language llvm(go);
 
 lang = "llvm"
 package = "github.com/mewmew/l-tm/parser"
+eventBased = true
+eventFields = true
 
 # TODO: check when to use Fooopt and when to use Foo? (as based on the AST
 # they produce)
