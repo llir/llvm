@@ -336,11 +336,6 @@ BoolConst
 	: BoolLit
 ;
 
-BoolLit
-	: 'true'
-	| 'false'
-;
-
 # --- [ Integer Constants ] ----------------------------------------------------
 
 # https://llvm.org/docs/LangRef.html#simple-constants
@@ -348,14 +343,6 @@ BoolLit
 # ref: ParseValID
 
 IntConst
-	: int_lit_tok
-;
-
-IntLit
-	: int_lit_tok
-;
-
-UintLit
 	: int_lit_tok
 ;
 
@@ -417,10 +404,6 @@ ArrayConst
 
 CharArrayConst
 	: 'c' StringLit
-;
-
-StringLit
-	: string_lit_tok
 ;
 
 # --- [ Vector Constants ] -----------------------------------------------------

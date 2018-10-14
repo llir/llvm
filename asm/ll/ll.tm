@@ -581,6 +581,77 @@ int_type_tok : /i[0-9]+/
 
 %input Module;
 
+# === [ Identifiers ] ==========================================================
+
+# --- [ Global Identifiers ] ---------------------------------------------------
+
+GlobalIdent -> GlobalIdent
+	: global_ident_tok
+;
+
+# --- [ Local Identifiers ] ----------------------------------------------------
+
+LocalIdent -> LocalIdent
+	: local_ident_tok
+;
+
+# --- [ Label Identifiers ] ----------------------------------------------------
+
+LabelIdent -> LabelIdent
+	: label_ident_tok
+;
+
+# --- [ Attribute Group Identifiers ] ------------------------------------------
+
+AttrGroupID -> AttrGroupID
+	: attr_group_id_tok
+;
+
+# --- [ Comdat Identifiers ] ---------------------------------------------------
+
+ComdatName -> ComdatName
+	: comdat_name_tok
+;
+
+# --- [ Metadata Identifiers ] -------------------------------------------------
+
+MetadataName -> MetadataName
+	: metadata_name_tok
+;
+
+MetadataID -> MetadataID
+	: metadata_id_tok
+;
+
+# === [ Literals ] =============================================================
+
+# --- [ Integer literals ] -----------------------------------------------------
+
+BoolLit -> BoolLit
+	: 'true'
+	| 'false'
+;
+
+IntLit -> IntLit
+	: int_lit_tok
+;
+
+UintLit -> UintLit
+	: int_lit_tok
+;
+
+# --- [ Floating-point literals ] ----------------------------------------------
+
+FloatLit -> FloatLit
+	: float_lit_tok
+;
+
+# --- [ String literals ] ------------------------------------------------------
+
+StringLit -> StringLit
+	: string_lit_tok
+;
+
 # === [ Module ] ===============================================================
 
 # https://llvm.org/docs/LangRef.html#module-structure
@@ -673,48 +744,6 @@ ModuleAsm -> ModuleAsm
 TypeDef -> TypeDef
 	: Alias=LocalIdent '=' 'type' Typ=OpaqueType
 	| Alias=LocalIdent '=' 'type' Typ=Type
-;
-
-# === [ Identifiers ] ==========================================================
-
-# --- [ Global Identifiers ] ---------------------------------------------------
-
-GlobalIdent -> GlobalIdent
-	: global_ident_tok
-;
-
-# --- [ Local Identifiers ] ----------------------------------------------------
-
-LocalIdent -> LocalIdent
-	: local_ident_tok
-;
-
-# --- [ Label Identifiers ] ----------------------------------------------------
-
-LabelIdent -> LabelIdent
-	: label_ident_tok
-;
-
-# --- [ Attribute Group Identifiers ] ------------------------------------------
-
-AttrGroupID -> AttrGroupID
-	: attr_group_id_tok
-;
-
-# --- [ Comdat Identifiers ] ---------------------------------------------------
-
-ComdatName -> ComdatName
-	: comdat_name_tok
-;
-
-# --- [ Metadata Identifiers ] -------------------------------------------------
-
-MetadataName -> MetadataName
-	: metadata_name_tok
-;
-
-MetadataID -> MetadataID
-	: metadata_id_tok
 ;
 
 # === [ Types ] ================================================================
@@ -886,16 +915,6 @@ NamedType -> NamedType
 ;
 
 # //////////////////////////////////////////////////////////////////////////////
-
-# TODO: figure out where to place literals.
-
-StringLit -> StringLit
-	: string_lit_tok
-;
-
-UintLit -> UintLit
-	: int_lit_tok
-;
 
 Params -> Params
 	: placeholder1
