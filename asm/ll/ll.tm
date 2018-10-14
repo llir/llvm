@@ -916,15 +916,94 @@ NamedType -> NamedType
 
 # //////////////////////////////////////////////////////////////////////////////
 
-Params -> Params
-	: placeholder1
-;
-
 # ref: ParseOptionalAddrSpace
 #
 #   := empty
 #   := 'addrspace' '(' uint32 ')'
 
-AddrSpace
-	: 'addrspace' '(' UintLit ')'
+AddrSpace -> AddrSpace
+	: 'addrspace' '(' N=UintLit ')'
+;
+
+# ref: ParseOptionalAlignment
+#
+#   ::= empty
+#   ::= 'align' 4
+
+Alignment -> Alignment
+	: 'align' N=UintLit
+;
+
+AttrPair -> AttrPair
+	: Key=StringLit '=' Val=StringLit
+;
+
+AttrString -> AttrString
+	: Val=StringLit
+;
+
+# ref: ParseOptionalDerefAttrBytes
+#
+#   ::= empty
+#   ::= AttrKind '(' 4 ')'
+
+Dereferenceable -> Dereferenceable
+	: 'dereferenceable' '(' N=UintLit ')'
+	| 'dereferenceable_or_null' '(' N=UintLit ')'
+;
+
+# ref: ParseArgumentList
+#
+#   ::= '(' ArgTypeListI ')'
+#  ArgTypeListI
+#   ::= empty
+#   ::= '...'
+#   ::= ArgTypeList ',' '...'
+#   ::= ArgType (',' ArgType)*
+
+# TODO: Figure out how to handle variadic. ref: https://github.com/inspirer/textmapper/issues/14
+
+Params -> Params
+	: '...'?
+	| Params=(Param separator ',')+ (',' '...')?
+;
+
+Param -> Param
+	: Typ=Type Attrs=ParamAttr* Name=LocalIdent?
+;
+
+# ref: ParseOptionalParamAttrs
+
+%interface ParamAttr;
+
+ParamAttr -> ParamAttr
+	: AttrString
+	| AttrPair
+	| Alignment
+	| Dereferenceable
+	| ParamAttribute
+;
+
+# TODO: Figure out a cleaner way of handling ParamAttribute.
+# Written this way as a workaround for `'byval' cannot be used as an interface`
+# which happens when the alternatives of ParamAttribute is inlined
+# with ParamAttr in the grammar.
+
+ParamAttribute -> ParamAttribute
+	: 'byval'
+	| 'inalloca'
+	| 'inreg'
+	| 'nest'
+	| 'noalias'
+	| 'nocapture'
+	| 'nonnull'
+	| 'readnone'
+	| 'readonly'
+	| 'returned'
+	| 'signext'
+	| 'sret'
+	| 'swifterror'
+	| 'swiftself'
+	| 'writeonly'
+	| 'zeroext'
 ;

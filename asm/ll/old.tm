@@ -2995,15 +2995,6 @@ Comdat
 	| 'comdat' '(' ComdatName ')'
 ;
 
-# ref: ParseOptionalAlignment
-#
-#   ::= empty
-#   ::= 'align' 4
-
-Alignment
-	: 'align' UintLit
-;
-
 # ___ [ Function Attribute ] ___________________________________________________
 
 # ref: ParseFnAttributeValuePairs
@@ -3070,14 +3061,6 @@ FuncAttr
 	| 'strictfp'
 	| 'uwtable'
 	| 'writeonly'
-;
-
-AttrString
-	: StringLit
-;
-
-AttrPair
-	: StringLit '=' StringLit
 ;
 
 # ref: parseAllocSizeArguments
@@ -3197,61 +3180,6 @@ ReturnAttr
 	| 'nonnull'
 	| 'signext'
 	| 'zeroext'
-;
-
-# ref: ParseArgumentList
-#
-#   ::= '(' ArgTypeListI ')'
-#  ArgTypeListI
-#   ::= empty
-#   ::= '...'
-#   ::= ArgTypeList ',' '...'
-#   ::= ArgType (',' ArgType)*
-
-Params
-	: '...'?
-	| (Param separator ',')+ (',' '...')?
-;
-
-Param
-	: Type ParamAttr* LocalIdent?
-;
-
-# ___ [ Parameter Attribute ] __________________________________________________
-
-# ref: ParseOptionalParamAttrs
-
-# ref: ParseOptionalDerefAttrBytes
-#
-#   ::= empty
-#   ::= AttrKind '(' 4 ')'
-
-ParamAttr
-	: Alignment
-	| Dereferenceable
-	| AttrString
-	| AttrPair
-	| 'byval'
-	| 'inalloca'
-	| 'inreg'
-	| 'nest'
-	| 'noalias'
-	| 'nocapture'
-	| 'nonnull'
-	| 'readnone'
-	| 'readonly'
-	| 'returned'
-	| 'signext'
-	| 'sret'
-	| 'swifterror'
-	| 'swiftself'
-	| 'writeonly'
-	| 'zeroext'
-;
-
-Dereferenceable
-	: 'dereferenceable' '(' UintLit ')'
-	| 'dereferenceable_or_null' '(' UintLit ')'
 ;
 
 Exact
