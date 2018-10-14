@@ -10,8 +10,6 @@ package = "github.com/mewmew/l-tm/parser"
 
 :: lexer
 
-# ### [ Lexical part ] #########################################################
-
 _ascii_letter_upper = /[A-Z]/
 
 _ascii_letter_lower = /[a-z]/
