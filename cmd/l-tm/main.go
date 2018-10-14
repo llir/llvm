@@ -20,11 +20,14 @@ func main() {
 		}
 		source := string(buf)
 		start := time.Now()
-		l := &parser.Lexer{}
-		l.Init(source)
+		lex := &parser.Lexer{}
+		lex.Init(source)
+		listener := func(t parser.NodeType, offset, endoffset int) {
+			fmt.Printf("t: %v (start=%v, end=%v)\n", t, offset, endoffset)
+		}
 		p := &parser.Parser{}
-		p.Init()
-		if err := p.Parse(l); err != nil {
+		p.Init(listener)
+		if err := p.Parse(lex); err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
 		fmt.Println("took:", time.Since(start))
