@@ -102,6 +102,11 @@ dwarf_macinfo_tok : /DW_MACINFO_({_ascii_letter}|{_decimal_digit}|[_])*/
 # DW_OP_foo
 dwarf_op_tok : /DW_OP_({_ascii_letter}|{_decimal_digit}|[_])*/
 
+# ref: DWKEYWORD
+
+# GNU
+NameTableKind : /(GNU)|(None)|(Default)/
+
 # === [ Integer literals ] =====================================================
 
 #   Integer           [-]?[0-9]+
@@ -152,6 +157,7 @@ int_type_tok : /i[0-9]+/
 '!DIGlobalVariable' : /!DIGlobalVariable/
 '!DIGlobalVariableExpression' : /!DIGlobalVariableExpression/
 '!DIImportedEntity' : /!DIImportedEntity/
+'!DILabel' : /!DILabel/
 '!DILexicalBlock' : /!DILexicalBlock/
 '!DILexicalBlockFile' : /!DILexicalBlockFile/
 '!DILocalVariable' : /!DILocalVariable/
@@ -167,6 +173,7 @@ int_type_tok : /i[0-9]+/
 '!DITemplateTypeParameter' : /!DITemplateTypeParameter/
 '!DITemplateValueParameter' : /!DITemplateValueParameter/
 '!GenericDINode' : /!GenericDINode/
+'aarch64_vector_pcs' : /aarch64_vector_pcs/
 'acq_rel' : /acq_rel/
 'acquire' : /acquire/
 'add' : /add/
@@ -303,7 +310,6 @@ int_type_tok : /i[0-9]+/
 'ghccc' : /ghccc/
 'global' : /global/
 'globals:' : /globals:/
-'gnuPubnames:' : /gnuPubnames:/
 'half' : /half/
 'header:' : /header:/
 'hhvm_ccc' : /hhvm_ccc/
@@ -332,6 +338,7 @@ int_type_tok : /i[0-9]+/
 'inttoptr' : /inttoptr/
 'invoke' : /invoke/
 'isDefinition:' : /isDefinition:/
+'isImplicitCode:' : /isImplicitCode:/
 'isLocal:' : /isLocal:/
 'isOptimized:' : /isOptimized:/
 'isUnsigned:' : /isUnsigned:/
@@ -364,6 +371,7 @@ int_type_tok : /i[0-9]+/
 'musttail' : /musttail/
 'naked' : /naked/
 'name:' : /name:/
+'nameTableKind:' : /nameTableKind:/
 'nand' : /nand/
 'ne' : /ne/
 'nest' : /nest/
@@ -372,6 +380,7 @@ int_type_tok : /i[0-9]+/
 'noalias' : /noalias/
 'nobuiltin' : /nobuiltin/
 'nocapture' : /nocapture/
+'nocf_check' : /nocf_check/
 'NoDebug' : /NoDebug/
 'nodes:' : /nodes:/
 'noduplicate' : /noduplicate/
@@ -399,6 +408,7 @@ int_type_tok : /i[0-9]+/
 'one' : /one/
 'opaque' : /opaque/
 'operands:' : /operands:/
+'optforfuzzing' : /optforfuzzing/
 'optnone' : /optnone/
 'optsize' : /optsize/
 'or' : /or/
@@ -422,6 +432,7 @@ int_type_tok : /i[0-9]+/
 'release' : /release/
 'resume' : /resume/
 'ret' : /ret/
+'retainedNodes:' : /retainedNodes:/
 'retainedTypes:' : /retainedTypes:/
 'returned' : /returned/
 'returns_twice' : /returns_twice/
@@ -443,6 +454,7 @@ int_type_tok : /i[0-9]+/
 'sext' : /sext/
 'sge' : /sge/
 'sgt' : /sgt/
+'shadowcallstack' : /shadowcallstack/
 'shl' : /shl/
 'shufflevector' : /shufflevector/
 'sideeffect' : /sideeffect/
@@ -453,7 +465,9 @@ int_type_tok : /i[0-9]+/
 'sle' : /sle/
 'slt' : /slt/
 'source_filename' : /source_filename/
+'source:' : /source:/
 'speculatable' : /speculatable/
+'speculative_load_hardening' : /speculative_load_hardening/
 'spir_func' : /spir_func/
 'spir_kernel' : /spir_kernel/
 'splitDebugFilename:' : /splitDebugFilename:/
@@ -510,7 +524,6 @@ int_type_tok : /i[0-9]+/
 'va_arg' : /va_arg/
 'value:' : /value:/
 'var:' : /var:/
-'variables:' : /variables:/
 'virtualIndex:' : /virtualIndex:/
 'virtuality:' : /virtuality:/
 'void' : /void/
@@ -789,14 +802,14 @@ FunctionDef
 #
 #   ::= OptionalLinkage OptionalPreemptionSpecifier OptionalVisibility
 #       OptionalCallingConv OptRetAttrs OptUnnamedAddr Type GlobalName
-#       '(' ArgList ')' OptFuncAttrs OptSection OptionalAlign OptGC
-#       OptionalPrefix OptionalPrologue OptPersonalityFn
+#       '(' ArgList ')' OptAddrSpace OptFuncAttrs OptSection OptionalAlign
+#       OptGC OptionalPrefix OptionalPrologue OptPersonalityFn
 
 # TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved.
 # The shift/reduce conflict is present since FuncAttr also contains 'align'.
 
 FunctionHeader
-	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt (FuncAttr | Alignment)* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt (FuncAttr | Alignment)* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
 GC
@@ -2436,7 +2449,7 @@ SelectInst
 #           OptionalAttrs Type Value ParameterList OptionalAttrs
 
 CallInst
-	: Tailopt 'call' FastMathFlag* CallingConvopt ReturnAttr* Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles InstructionMetadata
+	: Tailopt 'call' FastMathFlag* CallingConvopt ReturnAttr* AddrSpaceopt Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles InstructionMetadata
 ;
 
 Tail
@@ -2601,7 +2614,7 @@ Label
 #       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
 
 InvokeTerm
-	: 'invoke' CallingConvopt ReturnAttr* Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles 'to' LabelType LocalIdent 'unwind' LabelType LocalIdent InstructionMetadata
+	: 'invoke' CallingConvopt ReturnAttr* AddrSpaceopt Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles 'to' LabelType LocalIdent 'unwind' LabelType LocalIdent InstructionMetadata
 ;
 
 # --- [ resume ] ---------------------------------------------------------------
@@ -2809,9 +2822,9 @@ SpecializedMDNode
 
 # ref: ParseDICompileUnit
 #
-#   ::= !DICompileUnit(language: DW_LANG_C99, file: !0, producer: 'clang',
-#                      isOptimized: true, flags: '-O2', runtimeVersion: 1,
-#                      splitDebugFilename: 'abc.debug',
+#   ::= !DICompileUnit(language: DW_LANG_C99, file: !0, producer: "clang",
+#                      isOptimized: true, flags: "-O2", runtimeVersion: 1,
+#                      splitDebugFilename: "abc.debug",
 #                      emissionKind: FullDebug, enums: !1, retainedTypes: !2,
 #                      globals: !4, imports: !5, macros: !6, dwoId: 0x0abcd)
 #
@@ -2831,7 +2844,8 @@ SpecializedMDNode
 #  OPTIONAL(dwoId, MDUnsignedField, );
 #  OPTIONAL(splitDebugInlining, MDBoolField, = true);
 #  OPTIONAL(debugInfoForProfiling, MDBoolField, = false);
-#  OPTIONAL(gnuPubnames, MDBoolField, = false);
+#  OPTIONAL(nameTableKind, NameTableKindField, );
+
 
 DICompileUnit
 	: '!DICompileUnit' '(' (DICompileUnitField separator ',')* ')'
@@ -2854,7 +2868,7 @@ DICompileUnitField
 	| 'dwoId:' IntLit
 	| 'splitDebugInlining:' BoolLit
 	| 'debugInfoForProfiling:' BoolLit
-	| 'gnuPubnames:' BoolLit
+	| 'nameTableKind:' NameTableKindField
 ;
 
 # ~~~ [ DIFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2863,14 +2877,16 @@ DICompileUnitField
 
 # ref: ParseDIFileType
 #
-#   ::= !DIFileType(filename: 'path/to/file', directory: '/path/to/dir'
+#   ::= !DIFileType(filename: "path/to/file", directory: "/path/to/dir",
 #                   checksumkind: CSK_MD5,
-#                   checksum: '000102030405060708090a0b0c0d0e0f')
+#                   checksum: "000102030405060708090a0b0c0d0e0f",
+#                   source: "source file contents")
 #
 #  REQUIRED(filename, MDStringField, );
 #  REQUIRED(directory, MDStringField, );
 #  OPTIONAL(checksumkind, ChecksumKindField, (DIFile::CSK_MD5));
 #  OPTIONAL(checksum, MDStringField, );
+#  OPTIONAL(source, MDStringField, );
 
 DIFile
 	: '!DIFile' '(' (DIFileField separator ',')* ')'
@@ -2881,6 +2897,7 @@ DIFileField
 	| 'directory:' StringLit
 	| 'checksumkind:' ChecksumKind
 	| 'checksum:' StringLit
+	| 'source:' StringLit
 ;
 
 # ~~~ [ DIBasicType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2889,13 +2906,15 @@ DIFileField
 
 # ref: ParseDIBasicType
 #
-#   ::= !DIBasicType(tag: DW_TAG_base_type, name: 'int', size: 32, align: 32)
+#   ::= !DIBasicType(tag: DW_TAG_base_type, name: "int", size: 32, align: 32,
+#                    encoding: DW_ATE_encoding, flags: 0)
 #
 #  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_base_type));
 #  OPTIONAL(name, MDStringField, );
 #  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
 #  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
 #  OPTIONAL(encoding, DwarfAttEncodingField, );
+#  OPTIONAL(flags, DIFlagField, );
 
 DIBasicType
 	: '!DIBasicType' '(' (DIBasicTypeField separator ',')* ')'
@@ -2907,6 +2926,7 @@ DIBasicTypeField
 	| SizeField
 	| AlignField
 	| 'encoding:' DwarfAttEncoding
+	| FlagsField
 ;
 
 # ~~~ [ DISubroutineType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3159,9 +3179,10 @@ DINamespaceField
 
 # ref: ParseDIGlobalVariable
 #
-#   ::= !DIGlobalVariable(scope: !0, name: 'foo', linkageName: 'foo',
+#   ::= !DIGlobalVariable(scope: !0, name: "foo", linkageName: "foo",
 #                         file: !1, line: 7, type: !2, isLocal: false,
-#                         isDefinition: true, declaration: !3, align: 8)
+#                         isDefinition: true, templateParams: !3,
+#                         declaration: !4, align: 8)
 #
 #  REQUIRED(name, MDStringField, (AllowEmpty false));
 #  OPTIONAL(scope, MDField, );
@@ -3171,6 +3192,7 @@ DINamespaceField
 #  OPTIONAL(type, MDField, );
 #  OPTIONAL(isLocal, MDBoolField, );
 #  OPTIONAL(isDefinition, MDBoolField, (true));
+#  OPTIONAL(templateParams, MDField, );                                         \
 #  OPTIONAL(declaration, MDField, );
 #  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
 
@@ -3187,6 +3209,7 @@ DIGlobalVariableField
 	| TypeField
 	| IsLocalField
 	| IsDefinitionField
+	| TemplateParamsField
 	| DeclarationField
 	| AlignField
 ;
@@ -3197,33 +3220,33 @@ DIGlobalVariableField
 
 # ref: ParseDISubprogram
 #
-#   ::= !DISubprogram(scope: !0, name: 'foo', linkageName: '_Zfoo',
+#   ::= !DISubprogram(scope: !0, name: "foo", linkageName: "_Zfoo",
 #                     file: !1, line: 7, type: !2, isLocal: false,
 #                     isDefinition: true, scopeLine: 8, containingType: !3,
 #                     virtuality: DW_VIRTUALTIY_pure_virtual,
 #                     virtualIndex: 10, thisAdjustment: 4, flags: 11,
 #                     isOptimized: false, templateParams: !4, declaration: !5,
-#                     variables: !6, thrownTypes: !7)
+#                     retainedNodes: !6, thrownTypes: !7)
 #
-#  OPTIONAL(name, MDStringField, );
-#  OPTIONAL(scope, MDField, );
-#  OPTIONAL(linkageName, MDStringField, );
-#  OPTIONAL(file, MDField, );
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(type, MDField, );
-#  OPTIONAL(isLocal, MDBoolField, );
-#  OPTIONAL(isDefinition, MDBoolField, (true));
-#  OPTIONAL(scopeLine, LineField, );
-#  OPTIONAL(containingType, MDField, );
-#  OPTIONAL(virtuality, DwarfVirtualityField, );
-#  OPTIONAL(virtualIndex, MDUnsignedField, (0, UINT32_MAX));
-#  OPTIONAL(thisAdjustment, MDSignedField, (0, INT32_MIN, INT32_MAX));
-#  OPTIONAL(flags, DIFlagField, );
-#  OPTIONAL(isOptimized, MDBoolField, );
-#  OPTIONAL(unit, MDField, );
-#  OPTIONAL(templateParams, MDField, );
-#  OPTIONAL(declaration, MDField, );
-#  OPTIONAL(variables, MDField, );
+#  OPTIONAL(scope, MDField, );                                                  \
+#  OPTIONAL(name, MDStringField, );                                             \
+#  OPTIONAL(linkageName, MDStringField, );                                      \
+#  OPTIONAL(file, MDField, );                                                   \
+#  OPTIONAL(line, LineField, );                                                 \
+#  OPTIONAL(type, MDField, );                                                   \
+#  OPTIONAL(isLocal, MDBoolField, );                                            \
+#  OPTIONAL(isDefinition, MDBoolField, (true));                                 \
+#  OPTIONAL(scopeLine, LineField, );                                            \
+#  OPTIONAL(containingType, MDField, );                                         \
+#  OPTIONAL(virtuality, DwarfVirtualityField, );                                \
+#  OPTIONAL(virtualIndex, MDUnsignedField, (0, UINT32_MAX));                    \
+#  OPTIONAL(thisAdjustment, MDSignedField, (0, INT32_MIN, INT32_MAX));          \
+#  OPTIONAL(flags, DIFlagField, );                                              \
+#  OPTIONAL(isOptimized, MDBoolField, );                                        \
+#  OPTIONAL(unit, MDField, );                                                   \
+#  OPTIONAL(templateParams, MDField, );                                         \
+#  OPTIONAL(declaration, MDField, );                                            \
+#  OPTIONAL(retainedNodes, MDField, );                                              \
 #  OPTIONAL(thrownTypes, MDField, );
 
 DISubprogram
@@ -3231,8 +3254,8 @@ DISubprogram
 ;
 
 DISubprogramField
-	: NameField
-	| ScopeField
+	: ScopeField
+	| NameField
 	| LinkageNameField
 	| FileField
 	| LineField
@@ -3249,7 +3272,7 @@ DISubprogramField
 	| 'unit:' MDField
 	| TemplateParamsField
 	| DeclarationField
-	| 'variables:' MDField
+	| 'retainedNodes:' MDField
 	| 'thrownTypes:' MDField
 ;
 
@@ -3305,12 +3328,14 @@ DILexicalBlockFileField
 
 # ref: ParseDILocation
 #
-#   ::= !DILocation(line: 43, column: 8, scope: !5, inlinedAt: !6)
+#   ::= !DILocation(line: 43, column: 8, scope: !5, inlinedAt: !6,
+#   isImplicitCode: true)
 #
 #  OPTIONAL(line, LineField, );
 #  OPTIONAL(column, ColumnField, );
 #  REQUIRED(scope, MDField, (AllowNull false));
 #  OPTIONAL(inlinedAt, MDField, );
+#  OPTIONAL(isImplicitCode, MDBoolField, (false));
 
 DILocation
 	: '!DILocation' '(' (DILocationField separator ',')* ')'
@@ -3321,6 +3346,7 @@ DILocationField
 	| ColumnField
 	| ScopeField
 	| 'inlinedAt:' MDField
+	| 'isImplicitCode:' BoolLit
 ;
 
 # ~~~ [ DILocalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3358,6 +3384,30 @@ DILocalVariableField
 	| TypeField
 	| FlagsField
 	| AlignField
+;
+
+# ~~~ [ DILabel ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDILabel:
+#
+#   ::= !DILabel(scope: !0, name: "foo", file: !1, line: 7)
+#
+#  REQUIRED(scope, MDField, (/* AllowNull */ false));                           \
+#  REQUIRED(name, MDStringField, );                                             \
+#  REQUIRED(file, MDField, );                                                   \
+#  REQUIRED(line, LineField, );
+
+DILabel
+	: '!DILabel' '(' (DILabelField separator ',')* ')'
+;
+
+DILabelField
+	: ScopeField
+	| NameField
+	| FileField
+	| LineField
 ;
 
 # ~~~ [ DIExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3685,6 +3735,13 @@ EmissionKind
 	| 'NoDebug'
 ;
 
+# ref: bool LLParser::ParseMDField(NameTableKindField &)
+
+NameTableKindField
+	: IntLit
+	| NameTableKind
+;
+
 # ### [ Helper productions ] ###################################################
 
 # https://llvm.org/docs/LangRef.html#linkage-types
@@ -3854,6 +3911,7 @@ FuncAttr
 	| 'minsize'
 	| 'naked'
 	| 'nobuiltin'
+	| 'nocf_check'
 	| 'noduplicate'
 	| 'noimplicitfloat'
 	| 'noinline'
@@ -3862,6 +3920,7 @@ FuncAttr
 	| 'noredzone'
 	| 'noreturn'
 	| 'nounwind'
+	| 'optforfuzzing'
 	| 'optnone'
 	| 'optsize'
 	| 'readnone'
@@ -3872,7 +3931,9 @@ FuncAttr
 	| 'sanitize_hwaddress'
 	| 'sanitize_memory'
 	| 'sanitize_thread'
+	| 'shadowcallstack'
 	| 'speculatable'
+	| 'speculative_load_hardening'
 	| 'ssp'
 	| 'sspreq'
 	| 'sspstrong'
@@ -3918,6 +3979,7 @@ StackAlignment
 #   ::= 'arm_apcscc'
 #   ::= 'arm_aapcscc'
 #   ::= 'arm_aapcs_vfpcc'
+#   ::= 'aarch64_vector_pcs'
 #   ::= 'msp430_intrcc'
 #   ::= 'avr_intrcc'
 #   ::= 'avr_signalcc'
@@ -3948,7 +4010,8 @@ StackAlignment
 #   ::= 'cc' UINT
 
 CallingConv
-	: 'amdgpu_cs'
+	: 'aarch64_vector_pcs'
+	| 'amdgpu_cs'
 	| 'amdgpu_es'
 	| 'amdgpu_gs'
 	| 'amdgpu_hs'
