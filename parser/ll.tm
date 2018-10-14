@@ -585,13 +585,15 @@ input : Module;
 #
 #   module ::= toplevelentity*
 
-Module
+Module -> Module
 	: TopLevelEntity*
 ;
 
 # --- [ Top-level Entities ] ---------------------------------------------------
 
 # ref: ParseTopLevelEntities
+
+%interface TopLevelEntity;
 
 TopLevelEntity
 	: SourceFilename
@@ -605,12 +607,12 @@ TopLevelEntity
 #
 #   ::= 'source_filename' '=' STRINGCONSTANT
 
-SourceFilename
-	: 'source_filename' '=' StringLit
+SourceFilename -> SourceFilename
+	: 'source_filename' '=' name=StringLit
 ;
 
 # TODO: figure out where to place.
 
-StringLit
+StringLit -> StringLit
 	: string_lit_tok
 ;
