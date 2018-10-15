@@ -2588,6 +2588,168 @@ CleanupPadInst -> CleanupPadInst
 	: 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
 ;
 
+# === [ Terminators ] ==========================================================
+
+# https://llvm.org/docs/LangRef.html#terminator-instructions
+
+# ref: ParseInstruction
+
+%interface Terminator;
+
+Terminator -> Terminator
+	: RetTerm
+	| BrTerm
+	| CondBrTerm
+	| SwitchTerm
+	| IndirectBrTerm
+	| InvokeTerm
+	| ResumeTerm
+	| CatchSwitchTerm
+	| CatchRetTerm
+	| CleanupRetTerm
+	| UnreachableTerm
+;
+
+# --- [ ret ] ------------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#ret-instruction
+
+# ref: ParseRet
+#
+#   ::= 'ret' void (',' !dbg, !1)*
+#   ::= 'ret' TypeAndValue (',' !dbg, !1)*
+
+RetTerm -> RetTerm
+	# Void return.
+	: 'ret' XTyp=VoidType InstMetadata
+	# Value return.
+	| 'ret' XTyp=ConcreteType X=Value InstMetadata
+;
+
+# --- [ br ] -------------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#br-instruction
+
+# ref: ParseBr
+#
+#   ::= 'br' TypeAndValue
+#   ::= 'br' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+# Unconditional branch.
+BrTerm -> BrTerm
+	: 'br' Target=Label InstMetadata
+;
+
+# TODO: replace `IntType Value` with TypeValue if it does not lead to conflicts.
+
+# Conditional branch.
+CondBrTerm -> CondBrTerm
+	: 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label InstMetadata
+;
+
+# --- [ switch ] ---------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#switch-instruction
+
+# ref: ParseSwitch
+#
+#    ::= 'switch' TypeAndValue ',' TypeAndValue '[' JumpTable ']'
+#  JumpTable
+#    ::= (TypeAndValue ',' TypeAndValue)*
+
+SwitchTerm -> SwitchTerm
+	: 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' InstMetadata
+;
+
+# TODO: Replace `Type IntConst` with TypeConst if it does not lead to conflicts.
+
+Case -> Case
+	: XTyp=Type X=IntConst ',' Target=Label
+;
+
+# --- [ indirectbr ] -----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#indirectbr-instruction
+
+# ref: ParseIndirectBr
+#
+#    ::= 'indirectbr' TypeAndValue ',' '[' LabelList ']'
+
+IndirectBrTerm -> IndirectBrTerm
+	: 'indirectbr' Addr=TypeValue ',' '[' Targets=(Label separator ',')+ ']' InstMetadata
+;
+
+# --- [ invoke ] ---------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#invoke-instruction
+
+# ref: ParseInvoke
+#
+#   ::= 'invoke' OptionalCallingConv OptionalAttrs Type Value ParamList
+#       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
+
+InvokeTerm -> InvokeTerm
+	: 'invoke' CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Invokee=TypeValue '(' Args ')' FuncAttrs=FuncAttr* OperandBundles 'to' Normal=Label 'unwind' Exception=Label InstMetadata
+;
+
+# --- [ resume ] ---------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#resume-instruction
+
+# ref: ParseResume
+#
+#   ::= 'resume' TypeAndValue
+
+ResumeTerm -> ResumeTerm
+	: 'resume' X=TypeValue InstMetadata
+;
+
+# --- [ catchswitch ] ----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#catchswitch-instruction
+
+# ref: ParseCatchSwitch
+#
+#   ::= 'catchswitch' within Parent
+
+CatchSwitchTerm -> CatchSwitchTerm
+	: 'catchswitch' 'within' Scope=ExceptionScope '[' Handlers=(Label separator ',')+ ']' 'unwind' UnwindTarget InstMetadata
+;
+
+# --- [ catchret ] -------------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#catchret-instruction
+
+# ref: ParseCatchRet
+#
+#   ::= 'catchret' from Parent Value 'to' TypeAndValue
+
+CatchRetTerm -> CatchRetTerm
+	: 'catchret' 'from' From=Value 'to' To=Label InstMetadata
+;
+
+# --- [ cleanupret ] -----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#cleanupret-instruction
+
+# ref: ParseCleanupRet
+#
+#   ::= 'cleanupret' from Value unwind ('to' 'caller' | TypeAndValue)
+
+CleanupRetTerm -> CleanupRetTerm
+	: 'cleanupret' 'from' From=Value 'unwind' UnwindTarget InstMetadata
+;
+
+# --- [ unreachable ] ----------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#unreachable-instruction
+
+# ref: ParseInstruction
+
+UnreachableTerm -> UnreachableTerm
+	: 'unreachable' InstMetadata
+;
+
 # //////////////////////////////////////////////////////////////////////////////
 
 # ref: ParseOptionalAddrSpace
@@ -2944,6 +3106,10 @@ IPred -> IPred
 	| 'ult'
 ;
 
+Label -> Label
+	: Typ=LabelType Name=LocalIdent
+;
+
 # https://llvm.org/docs/LangRef.html#linkage-types
 
 # ref: ParseOptionalLinkage
@@ -3152,6 +3318,11 @@ UnnamedAddr -> UnnamedAddr
 	| 'unnamed_addr'
 ;
 
+UnwindTarget -> UnwindTarget
+	: 'to' 'caller'
+	| Label
+;
+
 # https://llvm.org/docs/LangRef.html#visibility-styles
 
 # ref: ParseOptionalVisibility
@@ -3201,10 +3372,6 @@ SpecializedMDNode -> SpecializedMDNode
 
 DIExpression -> DIExpression
 	: placeholder1
-;
-
-Terminator -> Terminator
-	: placeholder2
 ;
 
 Metadata -> Metadata
