@@ -2175,7 +2175,7 @@ InsertValueInst -> InsertValueInst
 #       (',' 'align' i32)? (',', 'addrspace(n))?
 
 AllocaInst -> AllocaInst
-	: 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Alignment)? (',' AddrSpace)? InstMetadata
+	: 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Align)? (',' AddrSpace)? InstMetadata
 ;
 
 InAlloca -> InAlloca
@@ -2198,9 +2198,9 @@ SwiftError -> SwiftError
 
 LoadInst -> LoadInst
 	# Load.
-	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)? InstMetadata
+	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Align)? InstMetadata
 	# Atomic load.
-	| 'load' 'atomic' Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+	| 'load' 'atomic' Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Align)? InstMetadata
 ;
 
 # ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2214,8 +2214,8 @@ LoadInst -> LoadInst
 #       'singlethread'? AtomicOrdering (',' 'align' i32)?
 
 StoreInst -> StoreInst
-	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)? InstMetadata
-	| 'store' 'atomic' Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Align)? InstMetadata
+	| 'store' 'atomic' Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Align)? InstMetadata
 ;
 
 # ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2767,9 +2767,7 @@ AddrSpace -> AddrSpace
 #   ::= empty
 #   ::= 'align' 4
 
-# TODO: Rename Alignment to Align.
-
-Alignment -> Alignment
+Align -> Align
 	: 'align' N=UintLit
 ;
 
@@ -3009,10 +3007,10 @@ FPred -> FPred
 #
 #   ::= <attr> | <attr> '=' <value>
 
-# NOTE: FuncAttr should contain Alignment. However, using LALR(1) this
-# produces a reduce/reduce conflict as GlobalAttr also contains Alignment.
+# NOTE: FuncAttr should contain Alig. However, using LALR(1) this
+# produces a reduce/reduce conflict as GlobalAttr also contains Align.
 #
-# To handle these ambiguities, (FuncAttr | Alignment) is used in those places
+# To handle these ambiguities, (FuncAttr | Align) is used in those places
 # where FuncAttr is used outside of GlobalDef and GlobalDecl (which also has
 # GlobalAttr).
 
@@ -3027,7 +3025,7 @@ FuncAttr -> FuncAttr
 	| AlignPair
 	| AlignStack
 	# used in functions.
-	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
+	#| Align # NOTE: removed to resolve reduce/reduce conflict, see above.
 	| AllocSize
 	| StackAlignment
 	| FuncAttribute
@@ -3082,7 +3080,7 @@ FuncAttribute -> FuncAttribute
 GlobalAttr -> GlobalAttr
 	: Section
 	| Comdat
-	| Alignment
+	| Align
 	#   ::= !dbg !57
 	| MetadataAttachment
 ;
@@ -3196,7 +3194,7 @@ Param -> Param
 ParamAttr -> ParamAttr
 	: AttrString
 	| AttrPair
-	| Alignment
+	| Align
 	| Dereferenceable
 	| ParamAttribute
 ;
@@ -3245,7 +3243,7 @@ ReturnAttr -> ReturnAttr
 	#    - `ReturnAttrs` cannot be nullable, since it precedes FuncAttrs
 	#: AttrString
 	#| AttrPair
-	: Alignment
+	: Align
 	| Dereferenceable
 	| ReturnAttribute
 ;
