@@ -652,6 +652,12 @@ StringLit -> StringLit
 	: string_lit_tok
 ;
 
+# --- [ Null literals ] --------------------------------------------------------
+
+NullLit -> NullLit
+	: 'null'
+;
+
 # === [ Module ] ===============================================================
 
 # https://llvm.org/docs/LangRef.html#module-structure
@@ -1280,7 +1286,7 @@ FloatConst -> FloatConst
 # ref: ParseValID
 
 NullConst -> NullConst
-	: 'null'
+	: NullLit
 ;
 
 # --- [ Token Constants ] ------------------------------------------------------
@@ -2751,6 +2757,102 @@ UnreachableTerm -> UnreachableTerm
 	: 'unreachable' InstMetadata
 ;
 
+# === [ Metadata Nodes and Metadata Strings ] ==================================
+
+# https://llvm.org/docs/LangRef.html#metadata-nodes-and-metadata-strings
+
+# --- [ Metadata Tuple ] -------------------------------------------------------
+
+# ref: ParseMDTuple
+
+MDTuple -> MDTuple
+	: '!' MDFields
+;
+
+# ref: ParseMDNodeVector
+#
+#   ::= { Element (',' Element)* }
+#  Element
+#   ::= 'null' | TypeAndValue
+
+# ref: ParseMDField(MDFieldList &)
+
+MDFields -> MDFields
+	: '{' MDFields=(MDField separator',')* '}'
+;
+
+# ref: ParseMDField(MDField &)
+
+%interface MDField;
+
+MDField -> MDField
+	# Null is a special case since it is typeless.
+	: NullLit
+	| Metadata
+;
+
+# --- [ Metadata ] -------------------------------------------------------------
+
+# ref: ParseMetadata
+#
+#  ::= i32 %local
+#  ::= i32 @global
+#  ::= i32 7
+#  ::= !42
+#  ::= !{...}
+#  ::= !'string'
+#  ::= !DILocation(...)
+
+%interface Metadata;
+
+Metadata -> Metadata
+	: TypeValue
+	| MDString
+	# !{ ... }
+	| MDTuple
+	# !7
+	| MetadataID
+	| SpecializedMDNode
+;
+
+# --- [ Metadata String ] ------------------------------------------------------
+
+# ref: ParseMDString
+#
+#   ::= '!' STRINGCONSTANT
+
+MDString -> MDString
+	: '!' Val=StringLit
+;
+
+# --- [ Metadata Attachment ] --------------------------------------------------
+
+# ref: ParseMetadataAttachment
+#
+#   ::= !dbg !42
+
+MetadataAttachment -> MetadataAttachment
+	: Name=MetadataName MDNode
+;
+
+# --- [ Metadata Node ] --------------------------------------------------------
+
+# ref: ParseMDNode
+#
+#  ::= !{ ... }
+#  ::= !7
+#  ::= !DILocation(...)
+
+%interface MDNode;
+
+MDNode -> MDNode
+	# !{ ... }
+	: MDTuple
+	# !42
+	| MetadataID
+	| SpecializedMDNode
+;
+
 # //////////////////////////////////////////////////////////////////////////////
 
 # ref: ParseOptionalAddrSpace
@@ -3358,30 +3460,12 @@ Volatile -> Volatile
 	: 'volatile'
 ;
 
-# TODO: fix metadata.
-
-MetadataAttachment -> MetadataAttachment
-	: placeholder1
-;
-
-# TODO: fix Constant.
-
-UseListOrder -> UseListOrder
-	: placeholder3
-;
-
-MDTuple -> MDTuple
-	: placeholder2
-;
+# TODO: fix SpecializedMDNode.
 
 SpecializedMDNode -> SpecializedMDNode
-	: placeholder3
+	: placeholder1
 ;
 
 DIExpression -> DIExpression
-	: placeholder1
-;
-
-Metadata -> Metadata
-	: placeholder1
+	: placeholder2
 ;
