@@ -1,34 +1,3 @@
-# --- [ Top-level Entities ] ---------------------------------------------------
-
-# ref: ParseTopLevelEntities
-
-TopLevelEntity
-	| UseListOrder
-	| UseListOrderBB
-;
-
-# ~~~ [ Use-list Order Directives ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#use-list-order-directives
-
-# ref: ParseUseListOrder
-#
-#   ::= 'uselistorder' Type Value ',' UseListOrderIndexes
-#  UseListOrderIndexes
-#   ::= '{' uint32 (',' uint32)+ '}'
-
-UseListOrder
-	: 'uselistorder' Type Value ',' '{' (UintLit separator ',')+ '}'
-;
-
-# ref: ParseUseListOrderBB
-#
-#   ::= 'uselistorder_bb' @foo ',' %bar ',' UseListOrderIndexes
-
-UseListOrderBB
-	: 'uselistorder_bb' GlobalIdent ',' LocalIdent ',' '{' (UintLit separator ',')+ '}'
-;
-
 # === [ Identifiers ] ==========================================================
 
 # DONE

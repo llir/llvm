@@ -683,6 +683,8 @@ TopLevelEntity -> TopLevelEntity
 	| AttrGroupDef
 	| NamedMetadataDef
 	| MetadataDef
+	| UseListOrder
+	| UseListOrderBB
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -969,9 +971,32 @@ MetadataDef -> MetadataDef
 	| Name=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
 ;
 
-Distinct
+Distinct -> Distinct
 	: 'distinct'
 ;
+
+# ~~~ [ Use-list Order Directives ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#use-list-order-directives
+
+# ref: ParseUseListOrder
+#
+#   ::= 'uselistorder' Type Value ',' UseListOrderIndexes
+#  UseListOrderIndexes
+#   ::= '{' uint32 (',' uint32)+ '}'
+
+UseListOrder -> UseListOrder
+	: 'uselistorder' Typ=Type Val=Value ',' '{' Indicies=(UintLit separator ',')+ '}'
+;
+
+# ref: ParseUseListOrderBB
+#
+#   ::= 'uselistorder_bb' @foo ',' %bar ',' UseListOrderIndexes
+
+UseListOrderBB -> UseListOrderBB
+	: 'uselistorder_bb' Func=GlobalIdent ',' Block=LocalIdent ',' '{' Indicies=(UintLit separator ',')+ '}'
+;
+
 # === [ Types ] ================================================================
 
 # ref: ParseType
@@ -1597,4 +1622,8 @@ SpecializedMDNode -> SpecializedMDNode
 
 DIExpression -> DIExpression
 	: placeholder1
+;
+
+Value -> Value
+	: placeholder3
 ;
