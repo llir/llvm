@@ -1,7 +1,9 @@
 language llvm(go);
 
 lang = "llvm"
-package = "github.com/mewmew/l-tm/parser"
+package = "github.com/mewmew/l-tm/asm/ll"
+eventBased = true
+eventFields = true
 
 # TODO: check when to use Fooopt and when to use Foo? (as based on the AST
 # they produce)
@@ -102,8 +104,11 @@ dwarf_op_tok : /DW_OP_({_ascii_letter}|{_decimal_digit}|[_])*/
 
 # ref: DWKEYWORD
 
+# FullDebug
+emission_kind_tok : /(DebugDirectivesOnly)|(FullDebug)|(LineTablesOnly)|(NoDebug)/
+
 # GNU
-NameTableKind : /(GNU)|(None)|(Default)/
+name_table_kind_tok : /(GNU)|(None)|(Default)/
 
 # === [ Integer literals ] =====================================================
 
@@ -301,7 +306,6 @@ int_type_tok : /i[0-9]+/
 'frem' : /frem/
 'from' : /from/
 'fsub' : /fsub/
-'FullDebug' : /FullDebug/
 'gc' : /gc/
 'getelementptr' : /getelementptr/
 'getter:' : /getter:/
@@ -347,7 +351,6 @@ int_type_tok : /i[0-9]+/
 'language:' : /language:/
 'largest' : /largest/
 'line:' : /line:/
-'LineTablesOnly' : /LineTablesOnly/
 'linkageName:' : /linkageName:/
 'linkonce_odr' : /linkonce_odr/
 'linkonce' : /linkonce/
@@ -379,7 +382,6 @@ int_type_tok : /i[0-9]+/
 'nobuiltin' : /nobuiltin/
 'nocapture' : /nocapture/
 'nocf_check' : /nocf_check/
-'NoDebug' : /NoDebug/
 'nodes:' : /nodes:/
 'noduplicate' : /noduplicate/
 'noduplicates' : /noduplicates/
@@ -567,13 +569,88 @@ int_type_tok : /i[0-9]+/
 # ### [ Syntax part ] ##########################################################
 
 # The LLVM IR grammar has been based on the source code of the official LLVM
-# project, as of 2018-02-19 (rev db070bbdacd303ae7da129f59beaf35024d94c53).
-#
-#    * lib/AsmParser/LLParser.cpp
+# project, version 7.0
 
 :: parser
 
-input : Module;
+%input Module;
+
+# === [ Identifiers ] ==========================================================
+
+# --- [ Global Identifiers ] ---------------------------------------------------
+
+GlobalIdent -> GlobalIdent
+	: global_ident_tok
+;
+
+# --- [ Local Identifiers ] ----------------------------------------------------
+
+LocalIdent -> LocalIdent
+	: local_ident_tok
+;
+
+# --- [ Label Identifiers ] ----------------------------------------------------
+
+LabelIdent -> LabelIdent
+	: label_ident_tok
+;
+
+# --- [ Attribute Group Identifiers ] ------------------------------------------
+
+AttrGroupID -> AttrGroupID
+	: attr_group_id_tok
+;
+
+# --- [ Comdat Identifiers ] ---------------------------------------------------
+
+ComdatName -> ComdatName
+	: comdat_name_tok
+;
+
+# --- [ Metadata Identifiers ] -------------------------------------------------
+
+MetadataName -> MetadataName
+	: metadata_name_tok
+;
+
+MetadataID -> MetadataID
+	: metadata_id_tok
+;
+
+# === [ Literals ] =============================================================
+
+# --- [ Integer literals ] -----------------------------------------------------
+
+BoolLit -> BoolLit
+	: 'true'
+	| 'false'
+;
+
+IntLit -> IntLit
+	: int_lit_tok
+;
+
+UintLit -> UintLit
+	: int_lit_tok
+;
+
+# --- [ Floating-point literals ] ----------------------------------------------
+
+FloatLit -> FloatLit
+	: float_lit_tok
+;
+
+# --- [ String literals ] ------------------------------------------------------
+
+StringLit -> StringLit
+	: string_lit_tok
+;
+
+# --- [ Null literals ] --------------------------------------------------------
+
+NullLit -> NullLit
+	: 'null'
+;
 
 # === [ Module ] ===============================================================
 
@@ -583,25 +660,27 @@ input : Module;
 #
 #   module ::= toplevelentity*
 
-Module
-	: TopLevelEntity*
+Module -> Module
+	: TopLevelEntities=TopLevelEntity*
 ;
 
 # --- [ Top-level Entities ] ---------------------------------------------------
 
 # ref: ParseTopLevelEntities
 
-TopLevelEntity
+%interface TopLevelEntity;
+
+TopLevelEntity -> TopLevelEntity
 	: SourceFilename
-	| TargetDefinition
+	| TargetDef
 	| ModuleAsm
 	| TypeDef
 	| ComdatDef
 	| GlobalDecl
 	| GlobalDef
 	| IndirectSymbolDef
-	| FunctionDecl
-	| FunctionDef
+	| FuncDecl
+	| FuncDef
 	| AttrGroupDef
 	| NamedMetadataDef
 	| MetadataDef
@@ -617,8 +696,8 @@ TopLevelEntity
 #
 #   ::= 'source_filename' '=' STRINGCONSTANT
 
-SourceFilename
-	: 'source_filename' '=' StringLit
+SourceFilename -> SourceFilename
+	: 'source_filename' '=' Name=StringLit
 ;
 
 # ~~~ [ Target Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -631,9 +710,19 @@ SourceFilename
 #   ::= 'target' 'triple' '=' STRINGCONSTANT
 #   ::= 'target' 'datalayout' '=' STRINGCONSTANT
 
-TargetDefinition
-	: 'target' 'datalayout' '=' StringLit
-	| 'target' 'triple' '=' StringLit
+%interface TargetDef;
+
+TargetDef -> TargetDef
+	: TargetDataLayout
+	| TargetTriple
+;
+
+TargetDataLayout -> TargetDataLayout
+	: 'target' 'datalayout' '=' DataLayout=StringLit
+;
+
+TargetTriple -> TargetTriple
+	: 'target' 'triple' '=' TargetTriple=StringLit
 ;
 
 # ~~~ [ Module-level Inline Assembly ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -644,8 +733,8 @@ TargetDefinition
 #
 #   ::= 'module' 'asm' STRINGCONSTANT
 
-ModuleAsm
-	: 'module' 'asm' StringLit
+ModuleAsm -> ModuleAsm
+	: 'module' 'asm' Asm=StringLit
 ;
 
 # ~~~ [ Type Defintion ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -660,9 +749,12 @@ ModuleAsm
 #
 #   ::= LocalVar '=' 'type' type
 
-TypeDef
-	: LocalIdent '=' 'type' OpaqueType
-	| LocalIdent '=' 'type' Type
+# TODO: Rename `Typ=` to `Type=` once https://github.com/inspirer/textmapper/issues/13
+# is resolved.
+
+TypeDef -> TypeDef
+	: Alias=LocalIdent '=' 'type' Typ=OpaqueType
+	| Alias=LocalIdent '=' 'type' Typ=Type
 ;
 
 # ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -671,11 +763,11 @@ TypeDef
 
 # ref: parseComdat
 
-ComdatDef
-	: ComdatName '=' 'comdat' SelectionKind
+ComdatDef -> ComdatDef
+	: Name=ComdatName '=' 'comdat' Kind=SelectionKind
 ;
 
-SelectionKind
+SelectionKind -> SelectionKind
 	: 'any'
 	| 'exactmatch'
 	| 'largest'
@@ -716,17 +808,19 @@ SelectionKind
 #       OptionalAddrSpace OptionalExternallyInitialized GlobalType Type
 #       Const OptionalAttrs
 
-GlobalDecl
-	: GlobalIdent '=' ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Type (',' GlobalAttr)+? (',' FuncAttr)+?
+GlobalDecl -> GlobalDecl
+	: Name=GlobalIdent '=' ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Typ=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GlobalDef
-	: GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Type Constant (',' GlobalAttr)+? (',' FuncAttr)+?
+GlobalDef -> GlobalDef
+	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Val=Type Init=Constant GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
-ExternallyInitialized
+# TODO: Check if ExternallyInitialized can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
+
+ExternallyInitialized -> ExternallyInitialized
 	: 'externally_initialized'
 ;
 
@@ -735,17 +829,11 @@ ExternallyInitialized
 #   ::= 'constant'
 #   ::= 'global'
 
-Immutable
+# TODO: Check if Immutable can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
+
+Immutable -> Immutable
 	: 'constant'
 	| 'global'
-;
-
-GlobalAttr
-	: Section
-	| Comdat
-	| Alignment
-	#   ::= !dbg !57
-	| MetadataAttachment
 ;
 
 # ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -763,13 +851,19 @@ GlobalAttr
 #  IndirectSymbol
 #   ::= TypeAndValue
 
-IndirectSymbolDef
-	: GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt IndirectSymbolKind Type ',' Type Constant
+%interface IndirectSymbolDef;
+
+IndirectSymbolDef -> IndirectSymbolDef
+	: AliasDef
+	| IFuncDef
 ;
 
-IndirectSymbolKind
-	: 'alias'
-	| 'ifunc'
+AliasDef -> AliasDef
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
+;
+
+IFuncDef -> IFuncDef
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
 ;
 
 # ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -780,8 +874,8 @@ IndirectSymbolKind
 #
 #   ::= 'declare' FunctionHeader
 
-FunctionDecl
-	: 'declare' FunctionMetadata ExternLinkageopt FunctionHeader
+FuncDecl -> FuncDecl
+	: 'declare' Metadata=FuncMetadata Header=FuncHeader
 ;
 
 # ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -792,8 +886,8 @@ FunctionDecl
 #
 #   ::= 'define' FunctionHeader (!dbg !56)* '{' ...
 
-FunctionDef
-	: 'define' Linkageopt FunctionHeader FunctionMetadata FunctionBody
+FuncDef -> FuncDef
+	: 'define' Header=FuncHeader Metadata=FuncMetadata Body=FuncBody
 ;
 
 # ref: ParseFunctionHeader
@@ -806,32 +900,37 @@ FunctionDef
 # TODO: Add OptAlignment before OptGC once the LR-1 conflict has been resolved.
 # The shift/reduce conflict is present since FuncAttr also contains 'align'.
 
-FunctionHeader
-	: PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* Type GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt (FuncAttr | Alignment)* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+FuncHeader -> FuncHeader
+	: (Linkage | ExternLinkage)? PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
-GC
-	: 'gc' StringLit
+# TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
+# Both define an identifier GC, the former in listener.go and the latter in token.go.
+
+# TODO: Create issue in Textmapper to track this upstream.
+
+GC -> GCNode
+	: 'gc' Name=StringLit
 ;
 
-Prefix
-	: 'prefix' Type Constant
+Prefix -> Prefix
+	: 'prefix' Typ=Type Val=Constant
 ;
 
-Prologue
-	: 'prologue' Type Constant
+Prologue -> Prologue
+	: 'prologue' Typ=Type Val=Constant
 ;
 
-Personality
-	: 'personality' Type Constant
+Personality -> Personality
+	: 'personality' Typ=Type Val=Constant
 ;
 
 # ref: ParseFunctionBody
 #
 #   ::= '{' BasicBlock+ UseListOrderDirective* '}'
 
-FunctionBody
-	: '{' BasicBlock+ UseListOrder* '}'
+FuncBody -> FuncBody
+	: '{' Blocks=BasicBlock+ UseListOrders=UseListOrder* '}'
 ;
 
 # ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -842,8 +941,8 @@ FunctionBody
 #
 #   ::= 'attributes' AttrGrpID '=' '{' AttrValPair+ '}'
 
-AttrGroupDef
-	: 'attributes' AttrGroupID '=' '{' (FuncAttr | Alignment)* '}'
+AttrGroupDef -> AttrGroupDef
+	: 'attributes' Name=AttrGroupID '=' '{' Attrs=FuncAttr* '}'
 ;
 
 # ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -854,11 +953,13 @@ AttrGroupDef
 #
 #   !foo = !{ !1, !2 }
 
-NamedMetadataDef
-	: MetadataName '=' '!' '{' (MetadataNode separator ',')* '}'
+NamedMetadataDef -> NamedMetadataDef
+	: Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 ;
 
-MetadataNode
+%interface MetadataNode;
+
+MetadataNode -> MetadataNode
 	: MetadataID
 	# Parse DIExpressions inline as a special case. They are still MDNodes, so
 	# they can still appear in named metadata. Remove this logic if they become
@@ -874,12 +975,12 @@ MetadataNode
 #
 #   !42 = !{...}
 
-MetadataDef
-	: MetadataID '=' Distinctopt MDTuple
-	| MetadataID '=' Distinctopt SpecializedMDNode
+MetadataDef -> MetadataDef
+	: Name=MetadataID '=' Distinctopt MDNode=MDTuple
+	| Name=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
 ;
 
-Distinct
+Distinct -> Distinct
 	: 'distinct'
 ;
 
@@ -893,58 +994,16 @@ Distinct
 #  UseListOrderIndexes
 #   ::= '{' uint32 (',' uint32)+ '}'
 
-UseListOrder
-	: 'uselistorder' Type Value ',' '{' (UintLit separator ',')+ '}'
+UseListOrder -> UseListOrder
+	: 'uselistorder' Typ=Type Val=Value ',' '{' Indicies=(UintLit separator ',')+ '}'
 ;
 
 # ref: ParseUseListOrderBB
 #
 #   ::= 'uselistorder_bb' @foo ',' %bar ',' UseListOrderIndexes
 
-UseListOrderBB
-	: 'uselistorder_bb' GlobalIdent ',' LocalIdent ',' '{' (UintLit separator ',')+ '}'
-;
-
-# === [ Identifiers ] ==========================================================
-
-# --- [ Global Identifiers ] ---------------------------------------------------
-
-GlobalIdent
-	: global_ident_tok
-;
-
-# --- [ Local Identifiers ] ----------------------------------------------------
-
-LocalIdent
-	: local_ident_tok
-;
-
-# --- [ Label Identifiers ] ----------------------------------------------------
-
-LabelIdent
-	: label_ident_tok
-;
-
-# --- [ Attribute Group Identifiers ] ------------------------------------------
-
-AttrGroupID
-	: attr_group_id_tok
-;
-
-# --- [ Comdat Identifiers ] ---------------------------------------------------
-
-ComdatName
-	: comdat_name_tok
-;
-
-# --- [ Metadata Identifiers ] -------------------------------------------------
-
-MetadataName
-	: metadata_name_tok
-;
-
-MetadataID
-	: metadata_id_tok
+UseListOrderBB -> UseListOrderBB
+	: 'uselistorder_bb' Func=GlobalIdent ',' Block=LocalIdent ',' '{' Indicies=(UintLit separator ',')+ '}'
 ;
 
 # === [ Types ] ================================================================
@@ -963,18 +1022,24 @@ MetadataID
 #  TYPEKEYWORD("x86_mmx",   Type::getX86_MMXTy(Context));
 #  TYPEKEYWORD("token",     Type::getTokenTy(Context));
 
-Type
+%interface Type;
+
+Type -> Type
 	: VoidType
 	| FuncType
 	| FirstClassType
 ;
 
-FirstClassType
+%interface FirstClassType;
+
+FirstClassType -> FirstClassType
 	: ConcreteType
 	| MetadataType
 ;
 
-ConcreteType
+%interface ConcreteType;
+
+ConcreteType -> ConcreteType
 	: IntType
 	# Type ::= 'float' | 'void' (etc)
 	| FloatType
@@ -997,7 +1062,7 @@ ConcreteType
 
 # --- [ Void Types ] -----------------------------------------------------------
 
-VoidType
+VoidType -> VoidType
 	: 'void'
 ;
 
@@ -1007,23 +1072,23 @@ VoidType
 #
 #  ::= Type ArgumentList OptionalAttrs
 
-FuncType
-	: Type '(' Params ')'
+FuncType -> FuncType
+	: RetType=Type '(' Params ')'
 ;
 
 # --- [ Integer Types ] --------------------------------------------------------
 
-IntType
+IntType -> IntType
 	: int_type_tok
 ;
 
 # --- [ Floating-point Types ] -------------------------------------------------
 
-FloatType
+FloatType -> FloatType
 	: FloatKind
 ;
 
-FloatKind
+FloatKind -> FloatKind
 	: 'half'
 	| 'float'
 	| 'double'
@@ -1034,14 +1099,14 @@ FloatKind
 
 # --- [ MMX Types ] ------------------------------------------------------------
 
-MMXType
+MMXType -> MMXType
 	: 'x86_mmx'
 ;
 
 # --- [ Pointer Types ] --------------------------------------------------------
 
-PointerType
-	: Type AddrSpaceopt '*'
+PointerType -> PointerType
+	: Elem=Type AddrSpaceopt '*'
 ;
 
 # --- [ Vector Types ] ---------------------------------------------------------
@@ -1050,25 +1115,25 @@ PointerType
 #
 #     ::= '<' APSINTVAL 'x' Types '>'
 
-VectorType
-	: '<' UintLit 'x' Type '>'
+VectorType -> VectorType
+	: '<' Len=UintLit 'x' Elem=Type '>'
 ;
 
 # --- [ Label Types ] ----------------------------------------------------------
 
-LabelType
+LabelType -> LabelType
 	: 'label'
 ;
 
 # --- [ Token Types ] ----------------------------------------------------------
 
-TokenType
+TokenType -> TokenType
 	: 'token'
 ;
 
 # --- [ Metadata Types ] -------------------------------------------------------
 
-MetadataType
+MetadataType -> MetadataType
 	: 'metadata'
 ;
 
@@ -1078,8 +1143,8 @@ MetadataType
 #
 #     ::= '[' APSINTVAL 'x' Types ']'
 
-ArrayType
-	: '[' UintLit 'x' Type ']'
+ArrayType -> ArrayType
+	: '[' Len=UintLit 'x' Elem=Type ']'
 ;
 
 # --- [ Structure Types ] ------------------------------------------------------
@@ -1092,30 +1157,37 @@ ArrayType
 #     ::= '<' '{' '}' '>'
 #     ::= '<' '{' Type (',' Type)* '}' '>'
 
-StructType
-	: '{' (Type separator ',')+? '}'
-	| '<' '{' (Type separator ',')+? '}' '>'
+# TODO: Figure out how to represent packed; ref: https://github.com/inspirer/textmapper/issues/14
+
+StructType -> StructType
+	: '{' Fields=(Type separator ',')+? '}'
+	| '<' '{' Fields=(Type separator ',')+? '}' '>'
 ;
 
-OpaqueType
+OpaqueType -> OpaqueType
 	: 'opaque'
 ;
 
 # --- [ Named Types ] ----------------------------------------------------------
 
-NamedType
-	: LocalIdent
+NamedType -> NamedType
+	: Name=LocalIdent
 ;
 
 # === [ Values ] ===============================================================
 
 # ref: ParseValue
 
-Value
+%interface Value;
+
+Value -> Value
 	: Constant
 	# %42
 	# %foo
 	| LocalIdent
+	# TODO: Move InlineAsm from Value to Callee and Invokee?
+	# Inline assembler expressions may only be used as the callee operand of a
+	# call or an invoke instruction.
 	| InlineAsm
 ;
 
@@ -1128,19 +1200,19 @@ Value
 #  ::= 'asm' SideEffect? AlignStack? IntelDialect? STRINGCONSTANT ','
 #             STRINGCONSTANT
 
-InlineAsm
-	: 'asm' SideEffectopt AlignStackopt IntelDialectopt StringLit ',' StringLit
+InlineAsm -> InlineAsm
+	: 'asm' SideEffectopt AlignStackopt IntelDialectopt Asm=StringLit ',' Constraints=StringLit
 ;
 
-SideEffect
+SideEffect -> SideEffect
 	: 'sideeffect'
 ;
 
-AlignStack
+AlignStack -> AlignStack
 	: 'alignstack'
 ;
 
-IntelDialect
+IntelDialect -> IntelDialect
 	: 'inteldialect'
 ;
 
@@ -1150,7 +1222,9 @@ IntelDialect
 
 # ref: ParseValID
 
-Constant
+%interface Constant;
+
+Constant -> Constant
 	: BoolConst
 	| IntConst
 	| FloatConst
@@ -1175,13 +1249,8 @@ Constant
 
 # ref: ParseValID
 
-BoolConst
+BoolConst -> BoolConst
 	: BoolLit
-;
-
-BoolLit
-	: 'true'
-	| 'false'
 ;
 
 # --- [ Integer Constants ] ----------------------------------------------------
@@ -1190,16 +1259,8 @@ BoolLit
 
 # ref: ParseValID
 
-IntConst
-	: int_lit_tok
-;
-
-IntLit
-	: int_lit_tok
-;
-
-UintLit
-	: int_lit_tok
+IntConst -> IntConst
+	: IntLit
 ;
 
 # --- [ Floating-point Constants ] ---------------------------------------------
@@ -1208,8 +1269,8 @@ UintLit
 
 # ref: ParseValID
 
-FloatConst
-	: float_lit_tok
+FloatConst -> FloatConst
+	: FloatLit
 ;
 
 # --- [ Null Pointer Constants ] -----------------------------------------------
@@ -1218,8 +1279,8 @@ FloatConst
 
 # ref: ParseValID
 
-NullConst
-	: 'null'
+NullConst -> NullConst
+	: NullLit
 ;
 
 # --- [ Token Constants ] ------------------------------------------------------
@@ -1228,7 +1289,7 @@ NullConst
 
 # ref: ParseValID
 
-NoneConst
+NoneConst -> NoneConst
 	: 'none'
 ;
 
@@ -1241,9 +1302,9 @@ NoneConst
 #  ::= '{' ConstVector '}'
 #  ::= '<' '{' ConstVector '}' '>' --> Packed Struct.
 
-StructConst
-	: '{' (Type Constant separator ',')+? '}'
-	| '<' '{' (Type Constant separator ',')+? '}' '>'
+StructConst -> StructConst
+	: '{' Fields=(TypeConst separator ',')+? '}'
+	| '<' '{' Fields=(TypeConst separator ',')+? '}' '>'
 ;
 
 # --- [ Array Constants ] ------------------------------------------------------
@@ -1254,16 +1315,12 @@ StructConst
 #
 #  c "foo"
 
-ArrayConst
-	: '[' (Type Constant separator ',')* ']'
+ArrayConst -> ArrayConst
+	: '[' Elems=(TypeConst separator ',')* ']'
 ;
 
-CharArrayConst
-	: 'c' StringLit
-;
-
-StringLit
-	: string_lit_tok
+CharArrayConst -> CharArrayConst
+	: 'c' Val=StringLit
 ;
 
 # --- [ Vector Constants ] -----------------------------------------------------
@@ -1274,8 +1331,8 @@ StringLit
 #
 #  ::= '<' ConstVector '>'         --> Vector.
 
-VectorConst
-	: '<' (Type Constant separator ',')* '>'
+VectorConst -> VectorConst
+	: '<' Elems=(TypeConst separator ',')* '>'
 ;
 
 # --- [ Zero Initialization Constants ] ----------------------------------------
@@ -1284,7 +1341,7 @@ VectorConst
 
 # ref: ParseValID
 
-ZeroInitializerConst
+ZeroInitializerConst -> ZeroInitializerConst
 	: 'zeroinitializer'
 ;
 
@@ -1294,7 +1351,7 @@ ZeroInitializerConst
 
 # ref: ParseValID
 
-UndefConst
+UndefConst -> UndefConst
 	: 'undef'
 ;
 
@@ -1306,8 +1363,8 @@ UndefConst
 #
 #  ::= 'blockaddress' '(' @foo ',' %bar ')'
 
-BlockAddressConst
-	: 'blockaddress' '(' GlobalIdent ',' LocalIdent ')'
+BlockAddressConst -> BlockAddressConst
+	: 'blockaddress' '(' Func=GlobalIdent ',' Block=LocalIdent ')'
 ;
 
 # === [ Constant expressions ] =================================================
@@ -1316,7 +1373,9 @@ BlockAddressConst
 
 # ref: ParseValID
 
-ConstantExpr
+%interface ConstantExpr;
+
+ConstantExpr -> ConstantExpr
 	# Binary expressions
 	: AddExpr
 	| FAddExpr
@@ -1374,96 +1433,96 @@ ConstantExpr
 
 # ref: ParseValID
 
-AddExpr
-	: 'add' OverflowFlags '(' Type Constant ',' Type Constant ')'
+AddExpr -> AddExpr
+	: 'add' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FAddExpr
-	: 'fadd' '(' Type Constant ',' Type Constant ')'
+FAddExpr -> FAddExpr
+	: 'fadd' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-SubExpr
-	: 'sub' OverflowFlags '(' Type Constant ',' Type Constant ')'
+SubExpr -> SubExpr
+	: 'sub' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FSubExpr
-	: 'fsub' '(' Type Constant ',' Type Constant ')'
+FSubExpr -> FSubExpr
+	: 'fsub' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-MulExpr
-	: 'mul' OverflowFlags '(' Type Constant ',' Type Constant ')'
+MulExpr -> MulExpr
+	: 'mul' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FMulExpr
-	: 'fmul' '(' Type Constant ',' Type Constant ')'
+FMulExpr -> FMulExpr
+	: 'fmul' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-UDivExpr
-	: 'udiv' Exactopt '(' Type Constant ',' Type Constant ')'
+UDivExpr -> UDivExpr
+	: 'udiv' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-SDivExpr
-	: 'sdiv' Exactopt '(' Type Constant ',' Type Constant ')'
+SDivExpr -> SDivExpr
+	: 'sdiv' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FDivExpr
-	: 'fdiv' '(' Type Constant ',' Type Constant ')'
+FDivExpr -> FDivExpr
+	: 'fdiv' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-URemExpr
-	: 'urem' '(' Type Constant ',' Type Constant ')'
+URemExpr -> URemExpr
+	: 'urem' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-SRemExpr
-	: 'srem' '(' Type Constant ',' Type Constant ')'
+SRemExpr -> SRemExpr
+	: 'srem' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FRemExpr
-	: 'frem' '(' Type Constant ',' Type Constant ')'
+FRemExpr -> FRemExpr
+	: 'frem' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # --- [ Bitwise expressions ] --------------------------------------------------
@@ -1474,48 +1533,48 @@ FRemExpr
 
 # ref: ParseValID
 
-ShlExpr
-	: 'shl' OverflowFlags '(' Type Constant ',' Type Constant ')'
+ShlExpr -> ShlExpr
+	: 'shl' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-LShrExpr
-	: 'lshr' Exactopt '(' Type Constant ',' Type Constant ')'
+LShrExpr -> LShrExpr
+	: 'lshr' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-AShrExpr
-	: 'ashr' Exactopt '(' Type Constant ',' Type Constant ')'
+AShrExpr -> AShrExpr
+	: 'ashr' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-AndExpr
-	: 'and' '(' Type Constant ',' Type Constant ')'
+AndExpr -> AndExpr
+	: 'and' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-OrExpr
-	: 'or' '(' Type Constant ',' Type Constant ')'
+OrExpr -> OrExpr
+	: 'or' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-XorExpr
-	: 'xor' '(' Type Constant ',' Type Constant ')'
+XorExpr -> XorExpr
+	: 'xor' '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # --- [ Vector expressions ] ---------------------------------------------------
@@ -1526,24 +1585,24 @@ XorExpr
 
 # ref: ParseValID
 
-ExtractElementExpr
-	: 'extractelement' '(' Type Constant ',' Type Constant ')'
+ExtractElementExpr -> ExtractElementExpr
+	: 'extractelement' '(' X=TypeConst ',' Index=TypeConst ')'
 ;
 
 # ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-InsertElementExpr
-	: 'insertelement' '(' Type Constant ',' Type Constant ',' Type Constant ')'
+InsertElementExpr -> InsertElementExpr
+	: 'insertelement' '(' X=TypeConst ',' Elem=TypeConst ',' Index=TypeConst ')'
 ;
 
 # ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-ShuffleVectorExpr
-	: 'shufflevector' '(' Type Constant ',' Type Constant ',' Type Constant ')'
+ShuffleVectorExpr -> ShuffleVectorExpr
+	: 'shufflevector' '(' X=TypeConst ',' Y=TypeConst ',' Mask=TypeConst ')'
 ;
 
 # --- [ Aggregate expressions ] ------------------------------------------------
@@ -1554,16 +1613,16 @@ ShuffleVectorExpr
 
 # ref: ParseValID
 
-ExtractValueExpr
-	: 'extractvalue' '(' Type Constant Indices ')'
+ExtractValueExpr -> ExtractValueExpr
+	: 'extractvalue' '(' X=TypeConst Indices=(',' UintLit)* ')'
 ;
 
 # ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-InsertValueExpr
-	: 'insertvalue' '(' Type Constant ',' Type Constant Indices ')'
+InsertValueExpr -> InsertValueExpr
+	: 'insertvalue' '(' X=TypeConst ',' Elem=TypeConst Indices=(',' UintLit)* ')'
 ;
 
 # --- [ Memory expressions ] ---------------------------------------------------
@@ -1574,8 +1633,8 @@ InsertValueExpr
 
 # ref: ParseValID
 
-GetElementPtrExpr
-	: 'getelementptr' InBoundsopt '(' Type ',' Type Constant (',' GEPIndex)* ')'
+GetElementPtrExpr -> GetElementPtrExpr
+	: 'getelementptr' InBoundsopt '(' ElemType=Type ',' Src=TypeConst Indices=(',' GEPIndex)* ')'
 ;
 
 # ref: ParseGlobalValueVector
@@ -1583,11 +1642,11 @@ GetElementPtrExpr
 #   ::= empty
 #   ::= [inrange] TypeAndValue (',' [inrange] TypeAndValue)*
 
-GEPIndex
-	: Inrangeopt Type Constant
+GEPIndex -> GEPIndex
+	: Inrangeopt Index=TypeConst
 ;
 
-Inrange
+Inrange -> Inrange
 	: 'inrange'
 ;
 
@@ -1599,104 +1658,104 @@ Inrange
 
 # ref: ParseValID
 
-TruncExpr
-	: 'trunc' '(' Type Constant 'to' Type ')'
+TruncExpr -> TruncExpr
+	: 'trunc' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-ZExtExpr
-	: 'zext' '(' Type Constant 'to' Type ')'
+ZExtExpr -> ZExtExpr
+	: 'zext' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-SExtExpr
-	: 'sext' '(' Type Constant 'to' Type ')'
+SExtExpr -> SExtExpr
+	: 'sext' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FPTruncExpr
-	: 'fptrunc' '(' Type Constant 'to' Type ')'
+FPTruncExpr -> FPTruncExpr
+	: 'fptrunc' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FPExtExpr
-	: 'fpext' '(' Type Constant 'to' Type ')'
+FPExtExpr -> FPExtExpr
+	: 'fpext' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FPToUIExpr
-	: 'fptoui' '(' Type Constant 'to' Type ')'
+FPToUIExpr -> FPToUIExpr
+	: 'fptoui' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FPToSIExpr
-	: 'fptosi' '(' Type Constant 'to' Type ')'
+FPToSIExpr -> FPToSIExpr
+	: 'fptosi' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-UIToFPExpr
-	: 'uitofp' '(' Type Constant 'to' Type ')'
+UIToFPExpr -> UIToFPExpr
+	: 'uitofp' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-SIToFPExpr
-	: 'sitofp' '(' Type Constant 'to' Type ')'
+SIToFPExpr -> SIToFPExpr
+	: 'sitofp' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-PtrToIntExpr
-	: 'ptrtoint' '(' Type Constant 'to' Type ')'
+PtrToIntExpr -> PtrToIntExpr
+	: 'ptrtoint' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-IntToPtrExpr
-	: 'inttoptr' '(' Type Constant 'to' Type ')'
+IntToPtrExpr -> IntToPtrExpr
+	: 'inttoptr' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-BitCastExpr
-	: 'bitcast' '(' Type Constant 'to' Type ')'
+BitCastExpr -> BitCastExpr
+	: 'bitcast' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-AddrSpaceCastExpr
-	: 'addrspacecast' '(' Type Constant 'to' Type ')'
+AddrSpaceCastExpr -> AddrSpaceCastExpr
+	: 'addrspacecast' '(' From=TypeConst 'to' To=Type ')'
 ;
 
 # --- [ Other expressions ] ----------------------------------------------------
@@ -1707,24 +1766,24 @@ AddrSpaceCastExpr
 
 # ref: ParseValID
 
-ICmpExpr
-	: 'icmp' IPred '(' Type Constant ',' Type Constant ')'
+ICmpExpr -> ICmpExpr
+	: 'icmp' Pred=IPred '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-FCmpExpr
-	: 'fcmp' FPred '(' Type Constant ',' Type Constant ')'
+FCmpExpr -> FCmpExpr
+	: 'fcmp' Pred=FPred '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseValID
 
-SelectExpr
-	: 'select' '(' Type Constant ',' Type Constant ',' Type Constant ')'
+SelectExpr -> SelectExpr
+	: 'select' '(' Cond=TypeConst ',' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # === [ Basic Blocks ] =========================================================
@@ -1733,8 +1792,8 @@ SelectExpr
 #
 #   ::= LabelStr? Instruction*
 
-BasicBlock
-	: LabelIdent? Instruction* Terminator
+BasicBlock -> BasicBlock
+	: Name=LabelIdent? Insts=Instruction* Term=Terminator
 ;
 
 # === [ Instructions ] =========================================================
@@ -1743,18 +1802,26 @@ BasicBlock
 
 # ref: ParseInstruction
 
-Instruction
+%interface Instruction;
+
+Instruction -> Instruction
 	# Instructions not producing values.
 	: StoreInst
 	| FenceInst
 	| CmpXchgInst
 	| AtomicRMWInst
 	# Instructions producing values.
-	| LocalIdent '=' ValueInstruction
+	| LocalDef
 	| ValueInstruction
 ;
 
-ValueInstruction
+LocalDef -> LocalDef
+	: Name=LocalIdent '=' Inst=ValueInstruction
+;
+
+%interface ValueInstruction;
+
+ValueInstruction -> ValueInstruction
 	# Binary instructions
 	: AddInst
 	| FAddInst
@@ -1822,8 +1889,8 @@ ValueInstruction
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-AddInst
-	: 'add' OverflowFlags Type Value ',' Value InstructionMetadata
+AddInst -> AddInst
+	: 'add' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1834,8 +1901,8 @@ AddInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-FAddInst
-	: 'fadd' FastMathFlag* Type Value ',' Value InstructionMetadata
+FAddInst -> FAddInst
+	: 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1846,8 +1913,8 @@ FAddInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-SubInst
-	: 'sub' OverflowFlags Type Value ',' Value InstructionMetadata
+SubInst -> SubInst
+	: 'sub' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1858,8 +1925,8 @@ SubInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-FSubInst
-	: 'fsub' FastMathFlag* Type Value ',' Value InstructionMetadata
+FSubInst -> FSubInst
+	: 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1870,8 +1937,8 @@ FSubInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-MulInst
-	: 'mul' OverflowFlags Type Value ',' Value InstructionMetadata
+MulInst -> MulInst
+	: 'mul' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1882,8 +1949,8 @@ MulInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-FMulInst
-	: 'fmul' FastMathFlag* Type Value ',' Value InstructionMetadata
+FMulInst -> FMulInst
+	: 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1894,8 +1961,8 @@ FMulInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-UDivInst
-	: 'udiv' Exactopt Type Value ',' Value InstructionMetadata
+UDivInst -> UDivInst
+	: 'udiv' Exactopt X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1906,8 +1973,8 @@ UDivInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-SDivInst
-	: 'sdiv' Exactopt Type Value ',' Value InstructionMetadata
+SDivInst -> SDivInst
+	: 'sdiv' Exactopt X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1918,8 +1985,8 @@ SDivInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-FDivInst
-	: 'fdiv' FastMathFlag* Type Value ',' Value InstructionMetadata
+FDivInst -> FDivInst
+	: 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1930,8 +1997,8 @@ FDivInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-URemInst
-	: 'urem' Type Value ',' Value InstructionMetadata
+URemInst -> URemInst
+	: 'urem' X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1942,8 +2009,8 @@ URemInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-SRemInst
-	: 'srem' Type Value ',' Value InstructionMetadata
+SRemInst -> SRemInst
+	: 'srem' X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1954,8 +2021,8 @@ SRemInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-FRemInst
-	: 'frem' FastMathFlag* Type Value ',' Value InstructionMetadata
+FRemInst -> FRemInst
+	: 'frem' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # --- [ Bitwise instructions ] -------------------------------------------------
@@ -1968,8 +2035,8 @@ FRemInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-ShlInst
-	: 'shl' OverflowFlags Type Value ',' Value InstructionMetadata
+ShlInst -> ShlInst
+	: 'shl' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1980,8 +2047,8 @@ ShlInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-LShrInst
-	: 'lshr' Exactopt Type Value ',' Value InstructionMetadata
+LShrInst -> LShrInst
+	: 'lshr' Exactopt X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1992,8 +2059,8 @@ LShrInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
-AShrInst
-	: 'ashr' Exactopt Type Value ',' Value InstructionMetadata
+AShrInst -> AShrInst
+	: 'ashr' Exactopt X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2004,8 +2071,8 @@ AShrInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value {
 
-AndInst
-	: 'and' Type Value ',' Value InstructionMetadata
+AndInst -> AndInst
+	: 'and' X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2016,8 +2083,8 @@ AndInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value {
 
-OrInst
-	: 'or' Type Value ',' Value InstructionMetadata
+OrInst -> OrInst
+	: 'or' X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2028,8 +2095,8 @@ OrInst
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value {
 
-XorInst
-	: 'xor' Type Value ',' Value InstructionMetadata
+XorInst -> XorInst
+	: 'xor' X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # --- [ Vector instructions ] --------------------------------------------------
@@ -2042,8 +2109,8 @@ XorInst
 #
 #   ::= 'extractelement' TypeAndValue ',' TypeAndValue
 
-ExtractElementInst
-	: 'extractelement' Type Value ',' Type Value InstructionMetadata
+ExtractElementInst -> ExtractElementInst
+	: 'extractelement' X=TypeValue ',' Index=TypeValue InstMetadata
 ;
 
 # ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2054,8 +2121,8 @@ ExtractElementInst
 #
 #   ::= 'insertelement' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
-InsertElementInst
-	: 'insertelement' Type Value ',' Type Value ',' Type Value InstructionMetadata
+InsertElementInst -> InsertElementInst
+	: 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue InstMetadata
 ;
 
 # ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2066,8 +2133,8 @@ InsertElementInst
 #
 #   ::= 'shufflevector' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
-ShuffleVectorInst
-	: 'shufflevector' Type Value ',' Type Value ',' Type Value InstructionMetadata
+ShuffleVectorInst -> ShuffleVectorInst
+	: 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue InstMetadata
 ;
 
 # --- [ Aggregate instructions ] -----------------------------------------------
@@ -2080,8 +2147,8 @@ ShuffleVectorInst
 #
 #   ::= 'extractvalue' TypeAndValue (',' uint32)+
 
-ExtractValueInst
-   : 'extractvalue' Type Value (',' UintLit)+ InstructionMetadata
+ExtractValueInst -> ExtractValueInst
+   : 'extractvalue' X=TypeValue Indices=(',' UintLit)+ InstMetadata
 ;
 
 # ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2092,8 +2159,8 @@ ExtractValueInst
 #
 #   ::= 'insertvalue' TypeAndValue ',' TypeAndValue (',' uint32)+
 
-InsertValueInst
-   : 'insertvalue' Type Value ',' Type Value (',' UintLit)+ InstructionMetadata
+InsertValueInst -> InsertValueInst
+   : 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+ InstMetadata
 ;
 
 # --- [ Memory instructions ] --------------------------------------------------
@@ -2107,15 +2174,15 @@ InsertValueInst
 #   ::= 'alloca' 'inalloca'? 'swifterror'? Type (',' TypeAndValue)?
 #       (',' 'align' i32)? (',', 'addrspace(n))?
 
-AllocaInst
-	: 'alloca' InAllocaopt SwiftErroropt Type (',' Type Value)? (',' Alignment)? (',' AddrSpace)? InstructionMetadata
+AllocaInst -> AllocaInst
+	: 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Alignment)? (',' AddrSpace)? InstMetadata
 ;
 
-InAlloca
+InAlloca -> InAlloca
 	: 'inalloca'
 ;
 
-SwiftError
+SwiftError -> SwiftError
 	: 'swifterror'
 ;
 
@@ -2129,11 +2196,11 @@ SwiftError
 #   ::= 'load' 'atomic' 'volatile'? TypeAndValue
 #       'singlethread'? AtomicOrdering (',' 'align' i32)?
 
-LoadInst
+LoadInst -> LoadInst
 	# Load.
-	: 'load' Volatileopt Type ',' Type Value (',' Alignment)? InstructionMetadata
+	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)? InstMetadata
 	# Atomic load.
-	| 'load' 'atomic' Volatileopt Type ',' Type Value SyncScopeopt AtomicOrdering (',' Alignment)? InstructionMetadata
+	| 'load' 'atomic' Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
 ;
 
 # ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2146,9 +2213,9 @@ LoadInst
 #   ::= 'store' 'atomic' 'volatile'? TypeAndValue ',' TypeAndValue
 #       'singlethread'? AtomicOrdering (',' 'align' i32)?
 
-StoreInst
-	: 'store' Volatileopt Type Value ',' Type Value (',' Alignment)? InstructionMetadata
-	| 'store' 'atomic' Volatileopt Type Value ',' Type Value SyncScopeopt AtomicOrdering (',' Alignment)? InstructionMetadata
+StoreInst -> StoreInst
+	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)? InstMetadata
+	| 'store' 'atomic' Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
 ;
 
 # ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2159,8 +2226,8 @@ StoreInst
 #
 #   ::= 'fence' 'singlethread'? AtomicOrdering
 
-FenceInst
-	: 'fence' SyncScopeopt AtomicOrdering InstructionMetadata
+FenceInst -> FenceInst
+	: 'fence' SyncScopeopt AtomicOrdering InstMetadata
 ;
 
 # ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2172,11 +2239,11 @@ FenceInst
 #   ::= 'cmpxchg' 'weak'? 'volatile'? TypeAndValue ',' TypeAndValue ','
 #       TypeAndValue 'singlethread'? AtomicOrdering AtomicOrdering
 
-CmpXchgInst
-	: 'cmpxchg' Weakopt Volatileopt Type Value ',' Type Value ',' Type Value SyncScopeopt AtomicOrdering AtomicOrdering InstructionMetadata
+CmpXchgInst -> CmpXchgInst
+	: 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ',' New=TypeValue SyncScopeopt Success=AtomicOrdering Failure=AtomicOrdering InstMetadata
 ;
 
-Weak
+Weak -> Weak
 	: 'weak'
 ;
 
@@ -2189,11 +2256,11 @@ Weak
 #   ::= 'atomicrmw' 'volatile'? BinOp TypeAndValue ',' TypeAndValue
 #       'singlethread'? AtomicOrdering
 
-AtomicRMWInst
-	: 'atomicrmw' Volatileopt BinOp Type Value ',' Type Value SyncScopeopt AtomicOrdering InstructionMetadata
+AtomicRMWInst -> AtomicRMWInst
+	: 'atomicrmw' Volatileopt Op=BinOp Ptr=TypeValue ',' X=TypeValue SyncScopeopt AtomicOrdering InstMetadata
 ;
 
-BinOp
+BinOp -> BinOp
 	: 'add'
 	| 'and'
 	| 'max'
@@ -2215,8 +2282,8 @@ BinOp
 #
 #   ::= 'getelementptr' 'inbounds'? TypeAndValue (',' TypeAndValue)*
 
-GetElementPtrInst
-	: 'getelementptr' InBoundsopt Type ',' Type Value (',' Type Value)* InstructionMetadata
+GetElementPtrInst -> GetElementPtrInst
+	: 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(',' TypeValue)* InstMetadata
 ;
 
 # --- [ Conversion instructions ] ----------------------------------------------
@@ -2229,8 +2296,8 @@ GetElementPtrInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-TruncInst
-	: 'trunc' Type Value 'to' Type InstructionMetadata
+TruncInst -> TruncInst
+	: 'trunc' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2241,8 +2308,8 @@ TruncInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-ZExtInst
-	: 'zext' Type Value 'to' Type InstructionMetadata
+ZExtInst -> ZExtInst
+	: 'zext' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2253,8 +2320,8 @@ ZExtInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-SExtInst
-	: 'sext' Type Value 'to' Type InstructionMetadata
+SExtInst -> SExtInst
+	: 'sext' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2265,8 +2332,8 @@ SExtInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-FPTruncInst
-	: 'fptrunc' Type Value 'to' Type InstructionMetadata
+FPTruncInst -> FPTruncInst
+	: 'fptrunc' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2277,8 +2344,8 @@ FPTruncInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-FPExtInst
-	: 'fpext' Type Value 'to' Type InstructionMetadata
+FPExtInst -> FPExtInst
+	: 'fpext' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2289,8 +2356,8 @@ FPExtInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-FPToUIInst
-	: 'fptoui' Type Value 'to' Type InstructionMetadata
+FPToUIInst -> FPToUIInst
+	: 'fptoui' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2301,8 +2368,8 @@ FPToUIInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-FPToSIInst
-	: 'fptosi' Type Value 'to' Type InstructionMetadata
+FPToSIInst -> FPToSIInst
+	: 'fptosi' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2313,8 +2380,8 @@ FPToSIInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-UIToFPInst
-	: 'uitofp' Type Value 'to' Type InstructionMetadata
+UIToFPInst -> UIToFPInst
+	: 'uitofp' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2325,8 +2392,8 @@ UIToFPInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-SIToFPInst
-	: 'sitofp' Type Value 'to' Type InstructionMetadata
+SIToFPInst -> SIToFPInst
+	: 'sitofp' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2337,8 +2404,8 @@ SIToFPInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-PtrToIntInst
-	: 'ptrtoint' Type Value 'to' Type InstructionMetadata
+PtrToIntInst -> PtrToIntInst
+	: 'ptrtoint' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2349,8 +2416,8 @@ PtrToIntInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-IntToPtrInst
-	: 'inttoptr' Type Value 'to' Type InstructionMetadata
+IntToPtrInst -> IntToPtrInst
+	: 'inttoptr' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2361,8 +2428,8 @@ IntToPtrInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-BitCastInst
-	: 'bitcast' Type Value 'to' Type InstructionMetadata
+BitCastInst -> BitCastInst
+	: 'bitcast' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2373,8 +2440,8 @@ BitCastInst
 #
 #   ::= CastOpc TypeAndValue 'to' Type
 
-AddrSpaceCastInst
-	: 'addrspacecast' Type Value 'to' Type InstructionMetadata
+AddrSpaceCastInst -> AddrSpaceCastInst
+	: 'addrspacecast' From=TypeValue 'to' To=Type InstMetadata
 ;
 
 # --- [ Other instructions ] ---------------------------------------------------
@@ -2387,8 +2454,8 @@ AddrSpaceCastInst
 #
 #  ::= 'icmp' IPredicates TypeAndValue ',' Value
 
-ICmpInst
-	: 'icmp' IPred Type Value ',' Value InstructionMetadata
+ICmpInst -> ICmpInst
+	: 'icmp' Pred=IPred X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2399,8 +2466,8 @@ ICmpInst
 #
 #  ::= 'fcmp' FPredicates TypeAndValue ',' Value
 
-FCmpInst
-	: 'fcmp' FastMathFlag* FPred Type Value ',' Value InstructionMetadata
+FCmpInst -> FCmpInst
+	: 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2411,12 +2478,12 @@ FCmpInst
 #
 #   ::= 'phi' Type '[' Value ',' Value ']' (',' '[' Value ',' Value ']')*
 
-PhiInst
-	: 'phi' Type (Inc separator ',')+ InstructionMetadata
+PhiInst -> PhiInst
+	: 'phi' Typ=Type Incs=(Inc separator ',')+ InstMetadata
 ;
 
-Inc
-	: '[' Value ',' LocalIdent ']'
+Inc -> Inc
+	: '[' X=Value ',' Pred=LocalIdent ']'
 ;
 
 # ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2427,8 +2494,8 @@ Inc
 #
 #   ::= 'select' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
-SelectInst
-	: 'select' Type Value ',' Type Value ',' Type Value InstructionMetadata
+SelectInst -> SelectInst
+	: 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue InstMetadata
 ;
 
 # ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2446,11 +2513,11 @@ SelectInst
 #   ::= 'notail' 'call'  OptionalFastMathFlags OptionalCallingConv
 #           OptionalAttrs Type Value ParameterList OptionalAttrs
 
-CallInst
-	: Tailopt 'call' FastMathFlag* CallingConvopt ReturnAttr* AddrSpaceopt Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles InstructionMetadata
+CallInst -> CallInst
+	: Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt RetType=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles InstMetadata
 ;
 
-Tail
+Tail -> Tail
 	: 'musttail'
 	| 'notail'
 	| 'tail'
@@ -2464,8 +2531,8 @@ Tail
 #
 #   ::= 'va_arg' TypeAndValue ',' Type
 
-VAArgInst
-	: 'va_arg' Type Value ',' Type InstructionMetadata
+VAArgInst -> VAArgInst
+	: 'va_arg' ArgList=TypeValue ',' ArgType=Type InstMetadata
 ;
 
 # ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2480,17 +2547,27 @@ VAArgInst
 #   ::= 'filter'
 #   ::= 'filter' TypeAndValue ( ',' TypeAndValue )*
 
-LandingPadInst
-	: 'landingpad' Type Cleanupopt Clause* InstructionMetadata
+LandingPadInst -> LandingPadInst
+	: 'landingpad' Typ=Type Cleanupopt Clauses=Clause* InstMetadata
 ;
 
-Cleanup
+Cleanup -> Cleanup
 	: 'cleanup'
 ;
 
-Clause
-	: 'catch' Type Value
-	| 'filter' Type ArrayConst
+%interface Clause;
+
+Clause -> Clause
+	: CatchClause
+	| FilterClause
+;
+
+CatchClause -> CatchClause
+	: 'catch' X=TypeValue
+;
+
+FilterClause -> FilterClause
+	: 'filter' Typ=Type Val=ArrayConst
 ;
 
 # --- [ catchpad ] -------------------------------------------------------------
@@ -2499,8 +2576,8 @@ Clause
 #
 #   ::= 'catchpad' ParamList 'to' TypeAndValue 'unwind' TypeAndValue
 
-CatchPadInst
-	: 'catchpad' 'within' LocalIdent '[' (ExceptionArg separator ',')* ']' InstructionMetadata
+CatchPadInst -> CatchPadInst
+	: 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
 ;
 
 # --- [ cleanuppad ] -----------------------------------------------------------
@@ -2509,8 +2586,8 @@ CatchPadInst
 #
 #   ::= 'cleanuppad' within Parent ParamList
 
-CleanupPadInst
-	: 'cleanuppad' 'within' ExceptionScope '[' (ExceptionArg separator ',')* ']' InstructionMetadata
+CleanupPadInst -> CleanupPadInst
+	: 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
 ;
 
 # === [ Terminators ] ==========================================================
@@ -2519,7 +2596,9 @@ CleanupPadInst
 
 # ref: ParseInstruction
 
-Terminator
+%interface Terminator;
+
+Terminator -> Terminator
 	: RetTerm
 	| BrTerm
 	| CondBrTerm
@@ -2542,11 +2621,11 @@ Terminator
 #   ::= 'ret' void (',' !dbg, !1)*
 #   ::= 'ret' TypeAndValue (',' !dbg, !1)*
 
-RetTerm
+RetTerm -> RetTerm
 	# Void return.
-	: 'ret' VoidType InstructionMetadata
+	: 'ret' XTyp=VoidType InstMetadata
 	# Value return.
-	| 'ret' ConcreteType Value InstructionMetadata
+	| 'ret' XTyp=ConcreteType X=Value InstMetadata
 ;
 
 # --- [ br ] -------------------------------------------------------------------
@@ -2559,13 +2638,16 @@ RetTerm
 #   ::= 'br' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
 # Unconditional branch.
-BrTerm
-	: 'br' LabelType LocalIdent InstructionMetadata
+BrTerm -> BrTerm
+	: 'br' Target=Label InstMetadata
 ;
 
+# TODO: replace `IntType Value` with TypeValue when the parser generator
+# is capable of handling the shift/reduce conflict.
+
 # Conditional branch.
-CondBrTerm
-	: 'br' IntType Value ',' LabelType LocalIdent ',' LabelType LocalIdent InstructionMetadata
+CondBrTerm -> CondBrTerm
+	: 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label InstMetadata
 ;
 
 # --- [ switch ] ---------------------------------------------------------------
@@ -2578,12 +2660,12 @@ CondBrTerm
 #  JumpTable
 #    ::= (TypeAndValue ',' TypeAndValue)*
 
-SwitchTerm
-	: 'switch' Type Value ',' LabelType LocalIdent '[' Case* ']' InstructionMetadata
+SwitchTerm -> SwitchTerm
+	: 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' InstMetadata
 ;
 
-Case
-	: Type IntConst ',' LabelType LocalIdent
+Case -> Case
+	: X=TypeConst ',' Target=Label
 ;
 
 # --- [ indirectbr ] -----------------------------------------------------------
@@ -2594,12 +2676,8 @@ Case
 #
 #    ::= 'indirectbr' TypeAndValue ',' '[' LabelList ']'
 
-IndirectBrTerm
-	: 'indirectbr' Type Value ',' '[' (Label separator ',')+ ']' InstructionMetadata
-;
-
-Label
-	: LabelType LocalIdent
+IndirectBrTerm -> IndirectBrTerm
+	: 'indirectbr' Addr=TypeValue ',' '[' Targets=(Label separator ',')+ ']' InstMetadata
 ;
 
 # --- [ invoke ] ---------------------------------------------------------------
@@ -2611,8 +2689,8 @@ Label
 #   ::= 'invoke' OptionalCallingConv OptionalAttrs Type Value ParamList
 #       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
 
-InvokeTerm
-	: 'invoke' CallingConvopt ReturnAttr* AddrSpaceopt Type Value '(' Args ')' (FuncAttr | Alignment)* OperandBundles 'to' LabelType LocalIdent 'unwind' LabelType LocalIdent InstructionMetadata
+InvokeTerm -> InvokeTerm
+	: 'invoke' CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Invokee=TypeValue '(' Args ')' FuncAttrs=FuncAttr* OperandBundles 'to' Normal=Label 'unwind' Exception=Label InstMetadata
 ;
 
 # --- [ resume ] ---------------------------------------------------------------
@@ -2623,8 +2701,8 @@ InvokeTerm
 #
 #   ::= 'resume' TypeAndValue
 
-ResumeTerm
-	: 'resume' Type Value InstructionMetadata
+ResumeTerm -> ResumeTerm
+	: 'resume' X=TypeValue InstMetadata
 ;
 
 # --- [ catchswitch ] ----------------------------------------------------------
@@ -2635,8 +2713,8 @@ ResumeTerm
 #
 #   ::= 'catchswitch' within Parent
 
-CatchSwitchTerm
-	: 'catchswitch' 'within' ExceptionScope '[' (Label separator ',')+ ']' 'unwind' UnwindTarget InstructionMetadata
+CatchSwitchTerm -> CatchSwitchTerm
+	: 'catchswitch' 'within' Scope=ExceptionScope '[' Handlers=(Label separator ',')+ ']' 'unwind' UnwindTarget InstMetadata
 ;
 
 # --- [ catchret ] -------------------------------------------------------------
@@ -2647,8 +2725,8 @@ CatchSwitchTerm
 #
 #   ::= 'catchret' from Parent Value 'to' TypeAndValue
 
-CatchRetTerm
-	: 'catchret' 'from' Value 'to' LabelType LocalIdent InstructionMetadata
+CatchRetTerm -> CatchRetTerm
+	: 'catchret' 'from' From=Value 'to' To=Label InstMetadata
 ;
 
 # --- [ cleanupret ] -----------------------------------------------------------
@@ -2659,8 +2737,8 @@ CatchRetTerm
 #
 #   ::= 'cleanupret' from Value unwind ('to' 'caller' | TypeAndValue)
 
-CleanupRetTerm
-	: 'cleanupret' 'from' Value 'unwind' UnwindTarget InstructionMetadata
+CleanupRetTerm -> CleanupRetTerm
+	: 'cleanupret' 'from' From=Value 'unwind' UnwindTarget InstMetadata
 ;
 
 # --- [ unreachable ] ----------------------------------------------------------
@@ -2669,15 +2747,8 @@ CleanupRetTerm
 
 # ref: ParseInstruction
 
-UnreachableTerm
-	: 'unreachable' InstructionMetadata
-;
-
-# ___ [ Helpers ] _____________________________________________________________
-
-UnwindTarget
-	: 'to' 'caller'
-	| LabelType LocalIdent
+UnreachableTerm -> UnreachableTerm
+	: 'unreachable' InstMetadata
 ;
 
 # === [ Metadata Nodes and Metadata Strings ] ==================================
@@ -2688,7 +2759,7 @@ UnwindTarget
 
 # ref: ParseMDTuple
 
-MDTuple
+MDTuple -> MDTuple
 	: '!' MDFields
 ;
 
@@ -2700,15 +2771,17 @@ MDTuple
 
 # ref: ParseMDField(MDFieldList &)
 
-MDFields
-	: '{' (MDField separator',')* '}'
+MDFields -> MDFields
+	: '{' MDFields=(MDField separator',')* '}'
 ;
 
 # ref: ParseMDField(MDField &)
 
-MDField
+%interface MDField;
+
+MDField -> MDField
 	# Null is a special case since it is typeless.
-	: 'null'
+	: NullLit
 	| Metadata
 ;
 
@@ -2724,8 +2797,10 @@ MDField
 #  ::= !'string'
 #  ::= !DILocation(...)
 
-Metadata
-	: Type Value
+%interface Metadata;
+
+Metadata -> Metadata
+	: TypeValue
 	| MDString
 	# !{ ... }
 	| MDTuple
@@ -2740,8 +2815,8 @@ Metadata
 #
 #   ::= '!' STRINGCONSTANT
 
-MDString
-	: '!' StringLit
+MDString -> MDString
+	: '!' Val=StringLit
 ;
 
 # --- [ Metadata Attachment ] --------------------------------------------------
@@ -2750,8 +2825,8 @@ MDString
 #
 #   ::= !dbg !42
 
-MetadataAttachment
-	: MetadataName MDNode
+MetadataAttachment -> MetadataAttachment
+	: Name=MetadataName MDNode
 ;
 
 # --- [ Metadata Node ] --------------------------------------------------------
@@ -2762,22 +2837,14 @@ MetadataAttachment
 #  ::= !7
 #  ::= !DILocation(...)
 
-MDNode
+%interface MDNode;
+
+MDNode -> MDNode
 	# !{ ... }
 	: MDTuple
 	# !42
 	| MetadataID
 	| SpecializedMDNode
-;
-
-# ### [ Helper productions ] ##################################################
-
-# ref: ParseOptionalFunctionMetadata
-#
-#   ::= (!dbg !57)*
-
-FunctionMetadata
-	: MetadataAttachment*
 ;
 
 # --- [ Specialized Metadata Nodes ] -------------------------------------------
@@ -2786,7 +2853,9 @@ FunctionMetadata
 
 # ref: ParseSpecializedMDNode
 
-SpecializedMDNode
+%interface SpecializedMDNode;
+
+SpecializedMDNode -> SpecializedMDNode
 	: DIBasicType
 	| DICompileUnit
 	| DICompositeType
@@ -2813,6 +2882,37 @@ SpecializedMDNode
 	| DITemplateTypeParameter
 	| DITemplateValueParameter
 	| GenericDINode # not in spec as of 2018-02-21
+;
+
+# ~~~ [ DIBasicType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dibasictype
+
+# ref: ParseDIBasicType
+#
+#   ::= !DIBasicType(tag: DW_TAG_base_type, name: "int", size: 32, align: 32,
+#                    encoding: DW_ATE_encoding, flags: 0)
+#
+#  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_base_type));
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(encoding, DwarfAttEncodingField, );
+#  OPTIONAL(flags, DIFlagField, );
+
+DIBasicType -> DIBasicType
+	: '!DIBasicType' '(' Fields=(DIBasicTypeField separator ',')* ')'
+;
+
+%interface DIBasicTypeField;
+
+DIBasicTypeField -> DIBasicTypeField
+	: TagField
+	| NameField
+	| SizeField
+	| AlignField
+	| EncodingField
+	| FlagsField
 ;
 
 # ~~~ [ DICompileUnit ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2846,106 +2946,78 @@ SpecializedMDNode
 #  OPTIONAL(nameTableKind, NameTableKindField, );
 
 
-DICompileUnit
-	: '!DICompileUnit' '(' (DICompileUnitField separator ',')* ')'
+DICompileUnit -> DICompileUnit
+	: '!DICompileUnit' '(' Fields=(DICompileUnitField separator ',')* ')'
 ;
 
-DICompileUnitField
-	: 'language:' DwarfLang
+%interface DICompileUnitField;
+
+DICompileUnitField -> DICompileUnitField
+	: LanguageField
 	| FileField
-	| 'producer:' StringLit
+	| ProducerField
 	| IsOptimizedField
-	| 'flags:' StringLit
-	| 'runtimeVersion:' IntLit
-	| 'splitDebugFilename:' StringLit
-	| 'emissionKind:' EmissionKind
-	| 'enums:' MDField
-	| 'retainedTypes:' MDField
-	| 'globals:' MDField
-	| 'imports:' MDField
-	| 'macros:' MDField
-	| 'dwoId:' IntLit
-	| 'splitDebugInlining:' BoolLit
-	| 'debugInfoForProfiling:' BoolLit
-	| 'nameTableKind:' NameTableKindField
+	| FlagsStringField
+	| RuntimeVersionField
+	| SplitDebugFilenameField
+	| EmissionKindField
+	| EnumsField
+	| RetainedTypesField
+	| GlobalsField
+	| ImportsField
+	| MacrosField
+	| DwoIdField
+	| SplitDebugInliningField
+	| DebugInfoForProfilingField
+	| NameTableKindField
 ;
 
-# ~~~ [ DIFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ DICompositeType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# https://llvm.org/docs/LangRef.html#difile
+# https://llvm.org/docs/LangRef.html#dicompositetype
 
-# ref: ParseDIFileType
+# ref: ParseDICompositeType
 #
-#   ::= !DIFileType(filename: "path/to/file", directory: "/path/to/dir",
-#                   checksumkind: CSK_MD5,
-#                   checksum: "000102030405060708090a0b0c0d0e0f",
-#                   source: "source file contents")
-#
-#  REQUIRED(filename, MDStringField, );
-#  REQUIRED(directory, MDStringField, );
-#  OPTIONAL(checksumkind, ChecksumKindField, (DIFile::CSK_MD5));
-#  OPTIONAL(checksum, MDStringField, );
-#  OPTIONAL(source, MDStringField, );
-
-DIFile
-	: '!DIFile' '(' (DIFileField separator ',')* ')'
-;
-
-DIFileField
-	: 'filename:' StringLit
-	| 'directory:' StringLit
-	| 'checksumkind:' ChecksumKind
-	| 'checksum:' StringLit
-	| 'source:' StringLit
-;
-
-# ~~~ [ DIBasicType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dibasictype
-
-# ref: ParseDIBasicType
-#
-#   ::= !DIBasicType(tag: DW_TAG_base_type, name: "int", size: 32, align: 32,
-#                    encoding: DW_ATE_encoding, flags: 0)
-#
-#  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_base_type));
+#  REQUIRED(tag, DwarfTagField, );
 #  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(scope, MDField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(baseType, MDField, );
 #  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
 #  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
-#  OPTIONAL(encoding, DwarfAttEncodingField, );
+#  OPTIONAL(offset, MDUnsignedField, (0, UINT64_MAX));
 #  OPTIONAL(flags, DIFlagField, );
+#  OPTIONAL(elements, MDField, );
+#  OPTIONAL(runtimeLang, DwarfLangField, );
+#  OPTIONAL(vtableHolder, MDField, );
+#  OPTIONAL(templateParams, MDField, );
+#  OPTIONAL(identifier, MDStringField, );
+#  OPTIONAL(discriminator, MDField, );
 
-DIBasicType
-	: '!DIBasicType' '(' (DIBasicTypeField separator ',')* ')'
+DICompositeType -> DICompositeType
+	: '!DICompositeType' '(' Fields=(DICompositeTypeField separator ',')* ')'
 ;
 
-DIBasicTypeField
+%interface DICompositeTypeField;
+
+DICompositeTypeField -> DICompositeTypeField
 	: TagField
 	| NameField
+	| ScopeField
+	| FileField
+	| LineField
+	| BaseTypeField
 	| SizeField
 	| AlignField
-	| 'encoding:' DwarfAttEncoding
+	| OffsetField
 	| FlagsField
-;
-
-# ~~~ [ DISubroutineType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#disubroutinetype
-
-# ref: ParseDISubroutineType
-#
-#  OPTIONAL(flags, DIFlagField, );
-#  OPTIONAL(cc, DwarfCCField, );
-#  REQUIRED(types, MDField, );
-
-DISubroutineType
-	: '!DISubroutineType' '(' (DISubroutineTypeField separator ',')* ')'
-;
-
-DISubroutineTypeField
-	: FlagsField
-	| 'cc:' DwarfCC
-	| 'types:' MDField
+	| ElementsField
+	| RuntimeLangField
+	| VtableHolderField
+	| TemplateParamsField
+	| IdentifierField
+	| DiscriminatorField
 ;
 
 # ~~~ [ DIDerivedType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2972,11 +3044,13 @@ DISubroutineTypeField
 #  OPTIONAL(extraData, MDField, );
 #  OPTIONAL(dwarfAddressSpace, MDUnsignedField, (UINT32_MAX, UINT32_MAX));
 
-DIDerivedType
-	: '!DIDerivedType' '(' (DIDerivedTypeField separator ',')* ')'
+DIDerivedType -> DIDerivedType
+	: '!DIDerivedType' '(' Fields=(DIDerivedTypeField separator ',')* ')'
 ;
 
-DIDerivedTypeField
+%interface DIDerivedTypeField;
+
+DIDerivedTypeField -> DIDerivedTypeField
 	: TagField
 	| NameField
 	| ScopeField
@@ -2987,75 +3061,8 @@ DIDerivedTypeField
 	| AlignField
 	| OffsetField
 	| FlagsField
-	| 'extraData:' MDField
-	| 'dwarfAddressSpace:' IntLit
-;
-
-# ~~~ [ DICompositeType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dicompositetype
-
-# ref: ParseDICompositeType
-#
-#  REQUIRED(tag, DwarfTagField, );
-#  OPTIONAL(name, MDStringField, );
-#  OPTIONAL(scope, MDField, );
-#  OPTIONAL(file, MDField, );
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(baseType, MDField, );
-#  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
-#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
-#  OPTIONAL(offset, MDUnsignedField, (0, UINT64_MAX));
-#  OPTIONAL(flags, DIFlagField, );
-#  OPTIONAL(elements, MDField, );
-#  OPTIONAL(runtimeLang, DwarfLangField, );
-#  OPTIONAL(vtableHolder, MDField, );
-#  OPTIONAL(templateParams, MDField, );
-#  OPTIONAL(identifier, MDStringField, );
-#  OPTIONAL(discriminator, MDField, );
-
-DICompositeType
-	: '!DICompositeType' '(' (DICompositeTypeField separator ',')* ')'
-;
-
-DICompositeTypeField
-	: TagField
-	| NameField
-	| ScopeField
-	| FileField
-	| LineField
-	| BaseTypeField
-	| SizeField
-	| AlignField
-	| OffsetField
-	| FlagsField
-	| 'elements:' MDField
-	| 'runtimeLang:' DwarfLang
-	| 'vtableHolder:' MDField
-	| TemplateParamsField
-	| 'identifier:' StringLit
-	| 'discriminator:' MDField
-;
-
-# ~~~ [ DISubrange ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#disubrange
-
-# ref: ParseDISubrange
-#
-#   ::= !DISubrange(count: 30, lowerBound: 2)
-#   ::= !DISubrange(count: !node, lowerBound: 2)
-#
-#  REQUIRED(count, MDSignedOrMDField, (-1, -1, INT64_MAX, false));
-#  OPTIONAL(lowerBound, MDSignedField, );
-
-DISubrange
-	: '!DISubrange' '(' (DISubrangeField separator ',')* ')'
-;
-
-DISubrangeField
-	: 'count:' IntOrMDField
-	| 'lowerBound:' IntLit
+	| ExtraDataField
+	| DwarfAddressSpaceField
 ;
 
 # ~~~ [ DIEnumerator ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3070,106 +3077,66 @@ DISubrangeField
 #  REQUIRED(value, MDSignedOrUnsignedField, );
 #  OPTIONAL(isUnsigned, MDBoolField, (false));
 
-DIEnumerator
-	: '!DIEnumerator' '(' (DIEnumeratorField separator ',')* ')'
+DIEnumerator -> DIEnumerator
+	: '!DIEnumerator' '(' Fields=(DIEnumeratorField separator ',')* ')'
 ;
 
-DIEnumeratorField
+%interface DIEnumeratorField;
+
+DIEnumeratorField -> DIEnumeratorField
 	: NameField
-	| 'value:' IntLit
-	| 'isUnsigned:' BoolLit
+	| ValueIntField
+	| IsUnsignedField
 ;
 
-# ~~~ [ DITemplateTypeParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ DIExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# https://llvm.org/docs/LangRef.html#ditemplatetypeparameter
+# https://llvm.org/docs/LangRef.html#diexpression
 
-# ref: ParseDITemplateTypeParameter
+# ref: ParseDIExpression
 #
-#   ::= !DITemplateTypeParameter(name: 'Ty', type: !1)
-#
-#  OPTIONAL(name, MDStringField, );
-#  REQUIRED(type, MDField, );
+#   ::= !DIExpression(0, 7, -1)
 
-DITemplateTypeParameter
-	: '!DITemplateTypeParameter' '(' (DITemplateTypeParameterField separator ',')* ')'
+DIExpression -> DIExpression
+	: '!DIExpression' '(' Fields=(DIExpressionField separator ',')* ')'
 ;
 
-DITemplateTypeParameterField
-	: NameField
-	| TypeField
+%interface DIExpressionField;
+
+DIExpressionField -> DIExpressionField
+	: IntLit
+	| DwarfOp
 ;
 
-# ~~~ [ DITemplateValueParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ DIFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# https://llvm.org/docs/LangRef.html#ditemplatevalueparameter
+# https://llvm.org/docs/LangRef.html#difile
 
-# ref: ParseDITemplateValueParameter
+# ref: ParseDIFileType
 #
-#   ::= !DITemplateValueParameter(tag: DW_TAG_template_value_parameter,
-#                                 name: 'V', type: !1, value: i32 7)
+#   ::= !DIFileType(filename: "path/to/file", directory: "/path/to/dir",
+#                   checksumkind: CSK_MD5,
+#                   checksum: "000102030405060708090a0b0c0d0e0f",
+#                   source: "source file contents")
 #
-#  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_template_value_parameter));
-#  OPTIONAL(name, MDStringField, );
-#  OPTIONAL(type, MDField, );
-#  REQUIRED(value, MDField, );
+#  REQUIRED(filename, MDStringField, );
+#  REQUIRED(directory, MDStringField, );
+#  OPTIONAL(checksumkind, ChecksumKindField, (DIFile::CSK_MD5));
+#  OPTIONAL(checksum, MDStringField, );
+#  OPTIONAL(source, MDStringField, );
 
-DITemplateValueParameter
-	: '!DITemplateValueParameter' '(' (DITemplateValueParameterField separator ',')* ')'
+DIFile -> DIFile
+	: '!DIFile' '(' Fields=(DIFileField separator ',')* ')'
 ;
 
-DITemplateValueParameterField
-	: TagField
-	| NameField
-	| TypeField
-	| 'value:' MDField
-;
+%interface DIFileField;
 
-# ~~~ [ DIModule ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# ref: ParseDIModule
-#
-#   ::= !DIModule(scope: !0, name: 'SomeModule', configMacros: '-DNDEBUG',
-#                 includePath: '/usr/include', isysroot: '/')
-#
-#  REQUIRED(scope, MDField, );
-#  REQUIRED(name, MDStringField, );
-#  OPTIONAL(configMacros, MDStringField, );
-#  OPTIONAL(includePath, MDStringField, );
-#  OPTIONAL(isysroot, MDStringField, );
-
-DIModule
-	: '!DIModule' '(' (DIModuleField separator ',')* ')'
-;
-
-DIModuleField
-	: ScopeField
-	| NameField
-	| 'configMacros:' StringLit
-	| 'includePath:' StringLit
-	| 'isysroot:' StringLit
-;
-
-# ~~~ [ DINamespace ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dinamespace
-
-# ref: ParseDINamespace
-#
-#   ::= !DINamespace(scope: !0, file: !2, name: 'SomeNamespace', line: 9)
-#
-#  REQUIRED(scope, MDField, );
-#  OPTIONAL(name, MDStringField, );
-#  OPTIONAL(exportSymbols, MDBoolField, );
-
-DINamespace
-	: '!DINamespace' '(' (DINamespaceField separator ',')* ')'
-;
-
-DINamespaceField
-	: ScopeField
-	| NameField
-	| 'exportSymbols:' BoolLit
+DIFileField -> DIFileField
+	: FilenameField
+	| DirectoryField
+	| ChecksumkindField
+	| ChecksumField
+	| SourceField
 ;
 
 # ~~~ [ DIGlobalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3195,11 +3162,13 @@ DINamespaceField
 #  OPTIONAL(declaration, MDField, );
 #  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
 
-DIGlobalVariable
-	: '!DIGlobalVariable' '(' (DIGlobalVariableField separator ',')* ')'
+DIGlobalVariable -> DIGlobalVariable
+	: '!DIGlobalVariable' '(' Fields=(DIGlobalVariableField separator ',')* ')'
 ;
 
-DIGlobalVariableField
+%interface DIGlobalVariableField;
+
+DIGlobalVariableField -> DIGlobalVariableField
 	: NameField
 	| ScopeField
 	| LinkageNameField
@@ -3211,6 +3180,341 @@ DIGlobalVariableField
 	| TemplateParamsField
 	| DeclarationField
 	| AlignField
+;
+
+# ~~~ [ DIGlobalVariableExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDIGlobalVariableExpression
+#
+#   ::= !DIGlobalVariableExpression(var: !0, expr: !1)
+#
+#  REQUIRED(var, MDField, );
+#  REQUIRED(expr, MDField, );
+
+DIGlobalVariableExpression -> DIGlobalVariableExpression
+	: '!DIGlobalVariableExpression' '(' Fields=(DIGlobalVariableExpressionField separator ',')* ')'
+;
+
+%interface DIGlobalVariableExpressionField;
+
+DIGlobalVariableExpressionField -> DIGlobalVariableExpressionField
+	: VarField
+	| ExprField
+;
+
+# ~~~ [ DIImportedEntity ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diimportedentity
+
+# ref: ParseDIImportedEntity
+#
+#   ::= !DIImportedEntity(tag: DW_TAG_imported_module, scope: !0, entity: !1,
+#                         line: 7, name: 'foo')
+#
+#  REQUIRED(tag, DwarfTagField, );
+#  REQUIRED(scope, MDField, );
+#  OPTIONAL(entity, MDField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(name, MDStringField, );
+
+DIImportedEntity -> DIImportedEntity
+	: '!DIImportedEntity' '(' Fields=(DIImportedEntityField separator ',')* ')'
+;
+
+%interface DIImportedEntityField;
+
+DIImportedEntityField -> DIImportedEntityField
+	: TagField
+	| ScopeField
+	| EntityField
+	| FileField
+	| LineField
+	| NameField
+;
+
+# ~~~ [ DILabel ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDILabel:
+#
+#   ::= !DILabel(scope: !0, name: "foo", file: !1, line: 7)
+#
+#  REQUIRED(scope, MDField, (/* AllowNull */ false));                           \
+#  REQUIRED(name, MDStringField, );                                             \
+#  REQUIRED(file, MDField, );                                                   \
+#  REQUIRED(line, LineField, );
+
+DILabel -> DILabel
+	: '!DILabel' '(' Fields=(DILabelField separator ',')* ')'
+;
+
+%interface DILabelField;
+
+DILabelField -> DILabelField
+	: ScopeField
+	| NameField
+	| FileField
+	| LineField
+;
+
+# ~~~ [ DILexicalBlock ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilexicalblock
+
+# ref: ParseDILexicalBlock
+#
+#   ::= !DILexicalBlock(scope: !0, file: !2, line: 7, column: 9)
+#
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(column, ColumnField, );
+
+DILexicalBlock -> DILexicalBlock
+	: '!DILexicalBlock' '(' Fields=(DILexicalBlockField separator ',')* ')'
+;
+
+%interface DILexicalBlockField;
+
+DILexicalBlockField -> DILexicalBlockField
+	: ScopeField
+	| FileField
+	| LineField
+	| ColumnField
+;
+
+# ~~~ [ DILexicalBlockFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilexicalblockfile
+
+# ref: ParseDILexicalBlockFile
+#
+#   ::= !DILexicalBlockFile(scope: !0, file: !2, discriminator: 9)
+#
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(file, MDField, );
+#  REQUIRED(discriminator, MDUnsignedField, (0, UINT32_MAX));
+
+DILexicalBlockFile -> DILexicalBlockFile
+	: '!DILexicalBlockFile' '(' Fields=(DILexicalBlockFileField separator ',')* ')'
+;
+
+%interface DILexicalBlockFileField;
+
+DILexicalBlockFileField -> DILexicalBlockFileField
+	: ScopeField
+	| FileField
+	| DiscriminatorIntField
+;
+
+# ~~~ [ DILocalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilocalvariable
+
+# ref: ParseDILocalVariable
+#
+#   ::= !DILocalVariable(arg: 7, scope: !0, name: 'foo',
+#                        file: !1, line: 7, type: !2, arg: 2, flags: 7,
+#                        align: 8)
+#   ::= !DILocalVariable(scope: !0, name: 'foo',
+#                        file: !1, line: 7, type: !2, arg: 2, flags: 7,
+#                        align: 8)
+#
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(arg, MDUnsignedField, (0, UINT16_MAX));
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(type, MDField, );
+#  OPTIONAL(flags, DIFlagField, );
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+
+DILocalVariable -> DILocalVariable
+	: '!DILocalVariable' '(' Fields=(DILocalVariableField separator ',')* ')'
+;
+
+%interface DILocalVariableField;
+
+DILocalVariableField -> DILocalVariableField
+	: NameField
+	| ArgField
+	| ScopeField
+	| FileField
+	| LineField
+	| TypeField
+	| FlagsField
+	| AlignField
+;
+
+# ~~~ [ DILocation ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilocation
+
+# ref: ParseDILocation
+#
+#   ::= !DILocation(line: 43, column: 8, scope: !5, inlinedAt: !6,
+#   isImplicitCode: true)
+#
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(column, ColumnField, );
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(inlinedAt, MDField, );
+#  OPTIONAL(isImplicitCode, MDBoolField, (false));
+
+DILocation -> DILocation
+	: '!DILocation' '(' Fields=(DILocationField separator ',')* ')'
+;
+
+%interface DILocationField;
+
+DILocationField -> DILocationField
+	: LineField
+	| ColumnField
+	| ScopeField
+	| InlinedAtField
+	| IsImplicitCodeField
+;
+
+# ~~~ [ DIMacro ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dimacro
+
+# ref: ParseDIMacro
+#
+#   ::= !DIMacro(macinfo: type, line: 9, name: 'SomeMacro', value: 'SomeValue')
+#
+#  REQUIRED(type, DwarfMacinfoTypeField, );
+#  OPTIONAL(line, LineField, );
+#  REQUIRED(name, MDStringField, );
+#  OPTIONAL(value, MDStringField, );
+
+DIMacro -> DIMacro
+	: '!DIMacro' '(' Fields=(DIMacroField separator ',')* ')'
+;
+
+%interface DIMacroField;
+
+DIMacroField -> DIMacroField
+	: TypeMacinfoField
+	| LineField
+	| NameField
+	| ValueStringField
+;
+
+# ~~~ [ DIMacroFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dimacrofile
+
+# ref: ParseDIMacroFile
+#
+#   ::= !DIMacroFile(line: 9, file: !2, nodes: !3)
+#
+#  OPTIONAL(type, DwarfMacinfoTypeField, (dwarf::DW_MACINFO_start_file));
+#  OPTIONAL(line, LineField, );
+#  REQUIRED(file, MDField, );
+#  OPTIONAL(nodes, MDField, );
+
+DIMacroFile -> DIMacroFile
+	: '!DIMacroFile' '(' Fields=(DIMacroFileField separator ',')* ')'
+;
+
+%interface DIMacroFileField;
+
+DIMacroFileField -> DIMacroFileField
+	: TypeMacinfoField
+	| LineField
+	| FileField
+	| NodesField
+;
+
+# ~~~ [ DIModule ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDIModule
+#
+#   ::= !DIModule(scope: !0, name: 'SomeModule', configMacros: '-DNDEBUG',
+#                 includePath: '/usr/include', isysroot: '/')
+#
+#  REQUIRED(scope, MDField, );
+#  REQUIRED(name, MDStringField, );
+#  OPTIONAL(configMacros, MDStringField, );
+#  OPTIONAL(includePath, MDStringField, );
+#  OPTIONAL(isysroot, MDStringField, );
+
+DIModule -> DIModule
+	: '!DIModule' '(' Fields=(DIModuleField separator ',')* ')'
+;
+
+%interface DIModuleField;
+
+DIModuleField -> DIModuleField
+	: ScopeField
+	| NameField
+	| ConfigMacrosField
+	| IncludePathField
+	| IsysrootField
+;
+
+# ~~~ [ DINamespace ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dinamespace
+
+# ref: ParseDINamespace
+#
+#   ::= !DINamespace(scope: !0, file: !2, name: 'SomeNamespace', line: 9)
+#
+#  REQUIRED(scope, MDField, );
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(exportSymbols, MDBoolField, );
+
+DINamespace -> DINamespace
+	: '!DINamespace' '(' Fields=(DINamespaceField separator ',')* ')'
+;
+
+%interface DINamespaceField;
+
+DINamespaceField -> DINamespaceField
+	: ScopeField
+	| NameField
+	| ExportSymbolsField
+;
+
+# ~~~ [ DIObjCProperty ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diobjcproperty
+
+# ref: ParseDIObjCProperty
+#
+#   ::= !DIObjCProperty(name: 'foo', file: !1, line: 7, setter: 'setFoo',
+#                       getter: 'getFoo', attributes: 7, type: !2)
+#
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(setter, MDStringField, );
+#  OPTIONAL(getter, MDStringField, );
+#  OPTIONAL(attributes, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(type, MDField, );
+
+DIObjCProperty -> DIObjCProperty
+	: '!DIObjCProperty' '(' Fields=(DIObjCPropertyField separator ',')* ')'
+;
+
+%interface DIObjCPropertyField;
+
+DIObjCPropertyField -> DIObjCPropertyField
+	: NameField
+	| FileField
+	| LineField
+	| SetterField
+	| GetterField
+	| AttributesField
+	| TypeField
 ;
 
 # ~~~ [ DISubprogram ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3248,11 +3552,13 @@ DIGlobalVariableField
 #  OPTIONAL(retainedNodes, MDField, );                                              \
 #  OPTIONAL(thrownTypes, MDField, );
 
-DISubprogram
-	: '!DISubprogram' '(' (DISubprogramField separator ',')* ')'
+DISubprogram -> DISubprogram
+	: '!DISubprogram' '(' Fields=(DISubprogramField separator ',')* ')'
 ;
 
-DISubprogramField
+%interface DISubprogramField;
+
+DISubprogramField -> DISubprogramField
 	: ScopeField
 	| NameField
 	| LinkageNameField
@@ -3261,298 +3567,117 @@ DISubprogramField
 	| TypeField
 	| IsLocalField
 	| IsDefinitionField
-	| 'scopeLine:' IntLit
-	| 'containingType:' MDField
-	| 'virtuality:' DwarfVirtuality
-	| 'virtualIndex:' IntLit
-	| 'thisAdjustment:' IntLit
+	| ScopeLineField
+	| ContainingTypeField
+	| VirtualityField
+	| VirtualIndexField
+	| ThisAdjustmentField
 	| FlagsField
 	| IsOptimizedField
-	| 'unit:' MDField
+	| UnitField
 	| TemplateParamsField
 	| DeclarationField
-	| 'retainedNodes:' MDField
-	| 'thrownTypes:' MDField
+	| RetainedNodesField
+	| ThrownTypesField
 ;
 
-# ~~~ [ DILexicalBlock ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ DISubrange ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# https://llvm.org/docs/LangRef.html#dilexicalblock
+# https://llvm.org/docs/LangRef.html#disubrange
 
-# ref: ParseDILexicalBlock
+# ref: ParseDISubrange
 #
-#   ::= !DILexicalBlock(scope: !0, file: !2, line: 7, column: 9)
+#   ::= !DISubrange(count: 30, lowerBound: 2)
+#   ::= !DISubrange(count: !node, lowerBound: 2)
 #
-#  REQUIRED(scope, MDField, (AllowNull false));
-#  OPTIONAL(file, MDField, );
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(column, ColumnField, );
+#  REQUIRED(count, MDSignedOrMDField, (-1, -1, INT64_MAX, false));
+#  OPTIONAL(lowerBound, MDSignedField, );
 
-DILexicalBlock
-	: '!DILexicalBlock' '(' (DILexicalBlockField separator ',')* ')'
+DISubrange -> DISubrange
+	: '!DISubrange' '(' Fields=(DISubrangeField separator ',')* ')'
 ;
 
-DILexicalBlockField
-	: ScopeField
-	| FileField
-	| LineField
-	| ColumnField
+%interface DISubrangeField;
+
+DISubrangeField -> DISubrangeField
+	: CountField
+	| LowerBoundField
 ;
 
-# ~~~ [ DILexicalBlockFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ DISubroutineType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# https://llvm.org/docs/LangRef.html#dilexicalblockfile
+# https://llvm.org/docs/LangRef.html#disubroutinetype
 
-# ref: ParseDILexicalBlockFile
+# ref: ParseDISubroutineType
 #
-#   ::= !DILexicalBlockFile(scope: !0, file: !2, discriminator: 9)
-#
-#  REQUIRED(scope, MDField, (AllowNull false));
-#  OPTIONAL(file, MDField, );
-#  REQUIRED(discriminator, MDUnsignedField, (0, UINT32_MAX));
-
-DILexicalBlockFile
-	: '!DILexicalBlockFile' '(' (DILexicalBlockFileField separator ',')* ')'
-;
-
-DILexicalBlockFileField
-	: ScopeField
-	| FileField
-	| 'discriminator:' IntLit
-;
-
-# ~~~ [ DILocation ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dilocation
-
-# ref: ParseDILocation
-#
-#   ::= !DILocation(line: 43, column: 8, scope: !5, inlinedAt: !6,
-#   isImplicitCode: true)
-#
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(column, ColumnField, );
-#  REQUIRED(scope, MDField, (AllowNull false));
-#  OPTIONAL(inlinedAt, MDField, );
-#  OPTIONAL(isImplicitCode, MDBoolField, (false));
-
-DILocation
-	: '!DILocation' '(' (DILocationField separator ',')* ')'
-;
-
-DILocationField
-	: LineField
-	| ColumnField
-	| ScopeField
-	| 'inlinedAt:' MDField
-	| 'isImplicitCode:' BoolLit
-;
-
-# ~~~ [ DILocalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dilocalvariable
-
-# ref: ParseDILocalVariable
-#
-#   ::= !DILocalVariable(arg: 7, scope: !0, name: 'foo',
-#                        file: !1, line: 7, type: !2, arg: 2, flags: 7,
-#                        align: 8)
-#   ::= !DILocalVariable(scope: !0, name: 'foo',
-#                        file: !1, line: 7, type: !2, arg: 2, flags: 7,
-#                        align: 8)
-#
-#  OPTIONAL(name, MDStringField, );
-#  OPTIONAL(arg, MDUnsignedField, (0, UINT16_MAX));
-#  REQUIRED(scope, MDField, (AllowNull false));
-#  OPTIONAL(file, MDField, );
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(type, MDField, );
 #  OPTIONAL(flags, DIFlagField, );
-#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(cc, DwarfCCField, );
+#  REQUIRED(types, MDField, );
 
-DILocalVariable
-	: '!DILocalVariable' '(' (DILocalVariableField separator ',')* ')'
+DISubroutineType -> DISubroutineType
+	: '!DISubroutineType' '(' Fields=(DISubroutineTypeField separator ',')* ')'
 ;
 
-DILocalVariableField
-	: NameField
-	| 'arg:' IntLit
-	| ScopeField
-	| FileField
-	| LineField
-	| TypeField
-	| FlagsField
-	| AlignField
+%interface DISubroutineTypeField;
+
+DISubroutineTypeField -> DISubroutineTypeField
+	: FlagsField
+	| CCField
+	| TypesField
 ;
 
-# ~~~ [ DILabel ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ DITemplateTypeParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# TODO: add link to LangRef.html.
+# https://llvm.org/docs/LangRef.html#ditemplatetypeparameter
 
-# ref: ParseDILabel:
+# ref: ParseDITemplateTypeParameter
 #
-#   ::= !DILabel(scope: !0, name: "foo", file: !1, line: 7)
-#
-#  REQUIRED(scope, MDField, (/* AllowNull */ false));                           \
-#  REQUIRED(name, MDStringField, );                                             \
-#  REQUIRED(file, MDField, );                                                   \
-#  REQUIRED(line, LineField, );
-
-DILabel
-	: '!DILabel' '(' (DILabelField separator ',')* ')'
-;
-
-DILabelField
-	: ScopeField
-	| NameField
-	| FileField
-	| LineField
-;
-
-# ~~~ [ DIExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#diexpression
-
-# ref: ParseDIExpression
-#
-#   ::= !DIExpression(0, 7, -1)
-
-DIExpression
-	: '!DIExpression' '(' (DIExpressionField separator ',')* ')'
-;
-
-DIExpressionField
-	: int_lit_tok
-	| DwarfOp
-;
-
-# ~~~ [ DIGlobalVariableExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# ref: ParseDIGlobalVariableExpression
-#
-#   ::= !DIGlobalVariableExpression(var: !0, expr: !1)
-#
-#  REQUIRED(var, MDField, );
-#  REQUIRED(expr, MDField, );
-
-DIGlobalVariableExpression
-	: '!DIGlobalVariableExpression' '(' (DIGlobalVariableExpressionField separator ',')* ')'
-;
-
-DIGlobalVariableExpressionField
-	: 'var:' MDField
-	| 'expr:' MDField
-;
-
-# ~~~ [ DIObjCProperty ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#diobjcproperty
-
-# ref: ParseDIObjCProperty
-#
-#   ::= !DIObjCProperty(name: 'foo', file: !1, line: 7, setter: 'setFoo',
-#                       getter: 'getFoo', attributes: 7, type: !2)
+#   ::= !DITemplateTypeParameter(name: 'Ty', type: !1)
 #
 #  OPTIONAL(name, MDStringField, );
-#  OPTIONAL(file, MDField, );
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(setter, MDStringField, );
-#  OPTIONAL(getter, MDStringField, );
-#  OPTIONAL(attributes, MDUnsignedField, (0, UINT32_MAX));
+#  REQUIRED(type, MDField, );
+
+DITemplateTypeParameter -> DITemplateTypeParameter
+	: '!DITemplateTypeParameter' '(' Fields=(DITemplateTypeParameterField separator ',')* ')'
+;
+
+%interface DITemplateTypeParameterField;
+
+DITemplateTypeParameterField -> DITemplateTypeParameterField
+	: NameField
+	| TypeField
+;
+
+# ~~~ [ DITemplateValueParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ditemplatevalueparameter
+
+# ref: ParseDITemplateValueParameter
+#
+#   ::= !DITemplateValueParameter(tag: DW_TAG_template_value_parameter,
+#                                 name: 'V', type: !1, value: i32 7)
+#
+#  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_template_value_parameter));
+#  OPTIONAL(name, MDStringField, );
 #  OPTIONAL(type, MDField, );
+#  REQUIRED(value, MDField, );
 
-DIObjCProperty
-	: '!DIObjCProperty' '(' (DIObjCPropertyField separator ',')* ')'
+DITemplateValueParameter -> DITemplateValueParameter
+	: '!DITemplateValueParameter' '(' Fields=(DITemplateValueParameterField separator ',')* ')'
 ;
 
-DIObjCPropertyField
-	: NameField
-	| FileField
-	| LineField
-	| 'setter:' StringLit
-	| 'getter:' StringLit
-	| 'attributes:' IntLit
-	| TypeField
-;
+%interface DITemplateValueParameterField;
 
-# ~~~ [ DIImportedEntity ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#diimportedentity
-
-# ref: ParseDIImportedEntity
-#
-#   ::= !DIImportedEntity(tag: DW_TAG_imported_module, scope: !0, entity: !1,
-#                         line: 7, name: 'foo')
-#
-#  REQUIRED(tag, DwarfTagField, );
-#  REQUIRED(scope, MDField, );
-#  OPTIONAL(entity, MDField, );
-#  OPTIONAL(file, MDField, );
-#  OPTIONAL(line, LineField, );
-#  OPTIONAL(name, MDStringField, );
-
-DIImportedEntity
-	: '!DIImportedEntity' '(' (DIImportedEntityField separator ',')* ')'
-;
-
-DIImportedEntityField
+DITemplateValueParameterField -> DITemplateValueParameterField
 	: TagField
-	| ScopeField
-	| 'entity:' MDField
-	| FileField
-	| LineField
 	| NameField
-;
-
-# ~~~ [ DIMacro ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dimacro
-
-# ref: ParseDIMacro
-#
-#   ::= !DIMacro(macinfo: type, line: 9, name: 'SomeMacro', value: 'SomeValue')
-#
-#  REQUIRED(type, DwarfMacinfoTypeField, );
-#  OPTIONAL(line, LineField, );
-#  REQUIRED(name, MDStringField, );
-#  OPTIONAL(value, MDStringField, );
-
-DIMacro
-	: '!DIMacro' '(' (DIMacroField separator ',')* ')'
-;
-
-DIMacroField
-	: TypeMacinfoField
-	| LineField
-	| NameField
-	| 'value:' StringLit
-;
-
-# ~~~ [ DIMacroFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#dimacrofile
-
-# ref: ParseDIMacroFile
-#
-#   ::= !DIMacroFile(line: 9, file: !2, nodes: !3)
-#
-#  OPTIONAL(type, DwarfMacinfoTypeField, (dwarf::DW_MACINFO_start_file));
-#  OPTIONAL(line, LineField, );
-#  REQUIRED(file, MDField, );
-#  OPTIONAL(nodes, MDField, );
-
-DIMacroFile
-	: '!DIMacroFile' '(' (DIMacroFileField separator ',')* ')'
-;
-
-DIMacroFileField
-	: TypeMacinfoField
-	| LineField
-	| FileField
-	| 'nodes:' MDField
+	| TypeField
+	| ValueField
 ;
 
 # ~~~ [ GenericDINode ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
 
 # ref: ParseGenericDINode
 #
@@ -3562,102 +3687,354 @@ DIMacroFileField
 #  OPTIONAL(header, MDStringField, );
 #  OPTIONAL(operands, MDFieldList, );
 
-GenericDINode
-	: '!GenericDINode' '(' (GenericDINodeField separator ',')* ')'
+GenericDINode -> GenericDINode
+	: '!GenericDINode' '(' Fields=(GenericDINodeField separator ',')* ')'
 ;
 
-GenericDINodeField
+%interface GenericDINodeField;
+
+GenericDINodeField -> GenericDINodeField
 	: TagField
-	| 'header:' StringLit
-	| 'operands:' MDFields
+	| HeaderField
+	| OperandsField
 ;
 
-# ### [ Helper productions ] ###################################################
+# ___ [ Specialized metadata fields ] __________________________________________
 
-FileField
-	: 'file:' MDField
-;
-
-IsOptimizedField
-	: 'isOptimized:' BoolLit
-;
-
-TagField
-	: 'tag:' DwarfTag
-;
-
-NameField
-	: 'name:' StringLit
-;
-
-SizeField
-	: 'size:' IntLit
-;
-
-AlignField
+AlignField -> AlignField
 	: 'align:' IntLit
 ;
 
-FlagsField
-	: 'flags:' (DIFlag separator '|')+
+ArgField -> ArgField
+	: 'arg:' IntLit
 ;
 
-LineField
-	: 'line:' IntLit
+AttributesField -> AttributesField
+	: 'attributes:' IntLit
 ;
 
-ScopeField
-	: 'scope:' MDField
-;
-
-BaseTypeField
+BaseTypeField -> BaseTypeField
 	: 'baseType:' MDField
 ;
 
-OffsetField
-	: 'offset:' IntLit
+CCField -> CCField
+	: 'cc:' DwarfCC
 ;
 
-TemplateParamsField
-	: 'templateParams:' MDField
+ChecksumField -> ChecksumField
+	: 'checksum:' StringLit
 ;
 
-# ref: ParseMDField(MDSignedOrMDField &)
-
-IntOrMDField
-	: int_lit_tok
-	| MDField
+ChecksumkindField -> ChecksumkindField
+	: 'checksumkind:' ChecksumKind
 ;
 
-TypeField
-	: 'type:' MDField
-;
-
-LinkageNameField
-	: 'linkageName:' StringLit
-;
-
-IsLocalField
-	: 'isLocal:' BoolLit
-;
-
-IsDefinitionField
-	: 'isDefinition:' BoolLit
-;
-
-DeclarationField
-	: 'declaration:' MDField
-;
-
-ColumnField
+ColumnField -> ColumnField
 	: 'column:' IntLit
 ;
 
-TypeMacinfoField
+ConfigMacrosField -> ConfigMacrosField
+	: 'configMacros:' StringLit
+;
+
+ContainingTypeField -> ContainingTypeField
+	: 'containingType:' MDField
+;
+
+CountField -> CountField
+	: 'count:' MDFieldOrInt
+;
+
+DebugInfoForProfilingField -> DebugInfoForProfilingField
+	: 'debugInfoForProfiling:' BoolLit
+;
+
+DeclarationField -> DeclarationField
+	: 'declaration:' MDField
+;
+
+DirectoryField -> DirectoryField
+	: 'directory:' StringLit
+;
+
+DiscriminatorField -> DiscriminatorField
+	: 'discriminator:' MDField
+;
+
+DiscriminatorIntField -> DiscriminatorIntField
+	: 'discriminator:' IntLit
+;
+
+DwarfAddressSpaceField -> DwarfAddressSpaceField
+	: 'dwarfAddressSpace:' IntLit
+;
+
+DwoIdField -> DwoIdField
+	: 'dwoId:' IntLit
+;
+
+ElementsField -> ElementsField
+	: 'elements:' MDField
+;
+
+EmissionKindField -> EmissionKindField
+	: 'emissionKind:' EmissionKind
+;
+
+EncodingField -> EncodingField
+	: 'encoding:' DwarfAttEncoding
+;
+
+EntityField -> EntityField
+	: 'entity:' MDField
+;
+
+EnumsField -> EnumsField
+	: 'enums:' MDField
+;
+
+ExportSymbolsField -> ExportSymbolsField
+	: 'exportSymbols:' BoolLit
+;
+
+ExprField -> ExprField
+	: 'expr:' MDField
+;
+
+ExtraDataField -> ExtraDataField
+	: 'extraData:' MDField
+;
+
+FileField -> FileField
+	: 'file:' MDField
+;
+
+FilenameField -> FilenameField
+	: 'filename:' StringLit
+;
+
+FlagsField -> FlagsField
+	: 'flags:' DIFlags
+;
+
+FlagsStringField -> FlagsStringField
+	: 'flags:' StringLit
+;
+
+GetterField -> GetterField
+	: 'getter:' StringLit
+;
+
+GlobalsField -> GlobalsField
+	: 'globals:' MDField
+;
+
+HeaderField -> HeaderField
+	: 'header:' StringLit
+;
+
+IdentifierField -> IdentifierField
+	: 'identifier:' StringLit
+;
+
+ImportsField -> ImportsField
+	: 'imports:' MDField
+;
+
+IncludePathField -> IncludePathField
+	: 'includePath:' StringLit
+;
+
+InlinedAtField -> InlinedAtField
+	: 'inlinedAt:' MDField
+;
+
+IsDefinitionField -> IsDefinitionField
+	: 'isDefinition:' BoolLit
+;
+
+IsImplicitCodeField -> IsImplicitCodeField
+	: 'isImplicitCode:' BoolLit
+;
+
+IsLocalField -> IsLocalField
+	: 'isLocal:' BoolLit
+;
+
+IsOptimizedField -> IsOptimizedField
+	: 'isOptimized:' BoolLit
+;
+
+IsUnsignedField -> IsUnsignedField
+	: 'isUnsigned:' BoolLit
+;
+
+IsysrootField -> IsysrootField
+	: 'isysroot:' StringLit
+;
+
+LanguageField -> LanguageField
+	: 'language:' DwarfLang
+;
+
+LineField -> LineField
+	: 'line:' IntLit
+;
+
+LinkageNameField -> LinkageNameField
+	: 'linkageName:' StringLit
+;
+
+LowerBoundField -> LowerBoundField
+	: 'lowerBound:' IntLit
+;
+
+MacrosField -> MacrosField
+	: 'macros:' MDField
+;
+
+NameField -> NameField
+	: 'name:' StringLit
+;
+
+NameTableKindField -> NameTableKindField
+	: 'nameTableKind:' NameTableKind
+;
+
+NodesField -> NodesField
+	: 'nodes:' MDField
+;
+
+OffsetField -> OffsetField
+	: 'offset:' IntLit
+;
+
+OperandsField -> OperandsField
+	: 'operands:' MDFields
+;
+
+ProducerField -> ProducerField
+	: 'producer:' StringLit
+;
+
+RetainedNodesField -> RetainedNodesField
+	: 'retainedNodes:' MDField
+;
+
+RetainedTypesField -> RetainedTypesField
+	: 'retainedTypes:' MDField
+;
+
+RuntimeLangField -> RuntimeLangField
+	: 'runtimeLang:' DwarfLang
+;
+
+RuntimeVersionField -> RuntimeVersionField
+	: 'runtimeVersion:' IntLit
+;
+
+ScopeField -> ScopeField
+	: 'scope:' MDField
+;
+
+ScopeLineField -> ScopeLineField
+	: 'scopeLine:' IntLit
+;
+
+SetterField -> SetterField
+	: 'setter:' StringLit
+;
+
+SizeField -> SizeField
+	: 'size:' IntLit
+;
+
+SourceField -> SourceField
+	: 'source:' StringLit
+;
+
+SplitDebugFilenameField -> SplitDebugFilenameField
+	: 'splitDebugFilename:' StringLit
+;
+
+SplitDebugInliningField -> SplitDebugInliningField
+	: 'splitDebugInlining:' BoolLit
+;
+
+TagField -> TagField
+	: 'tag:' DwarfTag
+;
+
+TemplateParamsField -> TemplateParamsField
+	: 'templateParams:' MDField
+;
+
+ThisAdjustmentField -> ThisAdjustmentField
+	: 'thisAdjustment:' IntLit
+;
+
+ThrownTypesField -> ThrownTypesField
+	: 'thrownTypes:' MDField
+;
+
+TypeField -> TypeField
+	: 'type:' MDField
+;
+
+TypeMacinfoField -> TypeMacinfoField
 	: 'type:' DwarfMacinfo
 ;
 
-ChecksumKind
+TypesField -> TypesField
+	: 'types:' MDField
+;
+
+UnitField -> UnitField
+	: 'unit:' MDField
+;
+
+ValueField -> ValueField
+	: 'value:' MDField
+;
+
+ValueIntField -> ValueIntField
+	: 'value:' IntLit
+;
+
+ValueStringField -> ValueStringField
+	: 'value:' StringLit
+;
+
+VarField -> VarField
+	: 'var:' MDField
+;
+
+VirtualIndexField -> VirtualIndexField
+	: 'virtualIndex:' IntLit
+;
+
+VirtualityField -> VirtualityField
+	: 'virtuality:' DwarfVirtuality
+;
+
+VtableHolderField -> VtableHolderField
+	: 'vtableHolder:' MDField
+;
+
+# ___ [ Specialized metadata values ] __________________________________________
+
+# ref: ParseMDField(MDSignedOrMDField &)
+
+%interface MDFieldOrInt;
+
+MDFieldOrInt -> MDFieldOrInt
+	: MDField
+	| IntLit
+;
+
+# ___ [ Specialized metadata enums ] ___________________________________________
+
+ChecksumKind -> ChecksumKind
 	# CSK_foo
 	: checksum_kind_tok
 ;
@@ -3668,200 +4045,94 @@ ChecksumKind
 #  ::= DIFlagVector
 #  ::= DIFlagVector '|' DIFlagFwdDecl '|' uint32 '|' DIFlagPublic
 
-DIFlag
-	: IntLit
+DIFlags -> DIFlags
+	: Flags=(DIFlag separator '|')+
+;
+
+DIFlag -> DIFlag
+	: UintLit
 	# DIFlagFoo
 	| di_flag_tok
 ;
 
 # ref: ParseMDField(DwarfAttEncodingField &)
 
-DwarfAttEncoding
-	: IntLit
+DwarfAttEncoding -> DwarfAttEncoding
+	: UintLit
 	# DW_ATE_foo
 	| dwarf_att_encoding_tok
 ;
 
 # ref: ParseMDField(DwarfCCField &Result)
 
-DwarfCC
-	: IntLit
+DwarfCC -> DwarfCC
+	: UintLit
 	# DW_CC_foo
 	| dwarf_cc_tok
 ;
 
 # ref: ParseMDField(DwarfLangField &)
 
-DwarfLang
-	: IntLit
+DwarfLang -> DwarfLang
+	: UintLit
 	# DW_LANG_foo
 	| dwarf_lang_tok
 ;
 
 # ref: ParseMDField(DwarfMacinfoTypeField &)
 
-DwarfMacinfo
-	: IntLit
+DwarfMacinfo -> DwarfMacinfo
+	: UintLit
 	# DW_MACINFO_foo
 	| dwarf_macinfo_tok
 ;
 
-DwarfOp
+DwarfOp -> DwarfOp
 	# DW_OP_foo
 	: dwarf_op_tok
 ;
 
 # ref: ParseMDField(DwarfTagField &)
 
-DwarfTag
-	: IntLit
+DwarfTag -> DwarfTag
+	: UintLit
 	# DW_TAG_foo
 	| dwarf_tag_tok
 ;
 
 # ref: ParseMDField(DwarfVirtualityField &)
 
-DwarfVirtuality
-	: IntLit
+DwarfVirtuality -> DwarfVirtuality
+	: UintLit
 	# DW_VIRTUALITY_foo
 	| dwarf_virtuality_tok
 ;
 
-EmissionKind
-	: IntLit
-	| 'FullDebug'
-	| 'LineTablesOnly'
-	| 'NoDebug'
+# ref bool LLParser::ParseMDField(EmissionKindField &)
+
+EmissionKind -> EmissionKind
+	: UintLit
+	# FullDebug
+	| emission_kind_tok
 ;
 
 # ref: bool LLParser::ParseMDField(NameTableKindField &)
 
-NameTableKindField
-	: IntLit
-	| NameTableKind
+NameTableKind -> NameTableKind
+	: UintLit
+	# GNU
+	| name_table_kind_tok
 ;
 
-# ### [ Helper productions ] ###################################################
-
-# https://llvm.org/docs/LangRef.html#linkage-types
-
-# ref: ParseOptionalLinkage
-#
-#   ::= empty
-#   ::= 'private'
-#   ::= 'internal'
-#   ::= 'weak'
-#   ::= 'weak_odr'
-#   ::= 'linkonce'
-#   ::= 'linkonce_odr'
-#   ::= 'available_externally'
-#   ::= 'appending'
-#   ::= 'common'
-#   ::= 'extern_weak'
-#   ::= 'external'
-
-Linkage
-	: 'appending'
-	| 'available_externally'
-	| 'common'
-	| 'internal'
-	| 'linkonce'
-	| 'linkonce_odr'
-	| 'private'
-	| 'weak'
-	| 'weak_odr'
-;
-
-ExternLinkage
-	: 'extern_weak'
-	| 'external'
-;
-
-# https://llvm.org/docs/LangRef.html#runtime-preemption-model
-
-# ref: ParseOptionalDSOLocal
-
-PreemptionSpecifier
-	: 'dso_local'
-	| 'dso_preemptable'
-;
-
-# https://llvm.org/docs/LangRef.html#visibility-styles
-
-# ref: ParseOptionalVisibility
-#
-#   ::= empty
-#   ::= 'default'
-#   ::= 'hidden'
-#   ::= 'protected'
-
-Visibility
-	: 'default'
-	| 'hidden'
-	| 'protected'
-;
-
-# https://llvm.org/docs/LangRef.html#dll-storage-classes
-
-# ref: ParseOptionalDLLStorageClass
-#
-#   ::= empty
-#   ::= 'dllimport'
-#   ::= 'dllexport'
-
-DLLStorageClass
-	: 'dllexport'
-	| 'dllimport'
-;
-
-# ref: ParseOptionalThreadLocal
-#
-#   := empty
-#   := 'thread_local'
-#   := 'thread_local' '(' tlsmodel ')'
-
-ThreadLocal
-	: 'thread_local'
-	| 'thread_local' '(' TLSModel ')'
-;
-
-# ref: ParseTLSModel
-#
-#   := 'localdynamic'
-#   := 'initialexec'
-#   := 'localexec'
-
-TLSModel
-	: 'initialexec'
-	| 'localdynamic'
-	| 'localexec'
-;
-
-# ref: ParseOptionalUnnamedAddr
-
-UnnamedAddr
-	: 'local_unnamed_addr'
-	| 'unnamed_addr'
-;
+# ___ [ Helpers ] ______________________________________________________________
 
 # ref: ParseOptionalAddrSpace
 #
 #   := empty
 #   := 'addrspace' '(' uint32 ')'
 
-AddrSpace
-	: 'addrspace' '(' UintLit ')'
-;
-
-Section
-	: 'section' StringLit
-;
-
-# ref: parseOptionalComdat
-
-Comdat
-	: 'comdat'
-	| 'comdat' '(' ComdatName ')'
+AddrSpace -> AddrSpace
+	: 'addrspace' '(' N=UintLit ')'
 ;
 
 # ref: ParseOptionalAlignment
@@ -3869,99 +4140,74 @@ Comdat
 #   ::= empty
 #   ::= 'align' 4
 
-Alignment
-	: 'align' UintLit
+# TODO: Rename Alignment to Align.
+
+Alignment -> Alignment
+	: 'align' N=UintLit
 ;
 
-# ___ [ Function Attribute ] ___________________________________________________
-
-# ref: ParseFnAttributeValuePairs
-#
-#   ::= <attr> | <attr> '=' <value>
-
-# NOTE: FuncAttr should contain Alignment. However, using LALR(1) this
-# produces a reduce/reduce conflict as GlobalAttr also contains Alignment.
-#
-# To handle these ambiguities, (FuncAttr | Alignment) is used in those places
-# where FuncAttr is used outside of GlobalDef and GlobalDecl (which also has
-# GlobalAttr).
-
-FuncAttr
-	# not used in attribute groups.
-	: AttrGroupID
-	# used in attribute groups.
-	| 'align' '=' UintLit
-	| 'alignstack' '=' UintLit
-	# used in functions.
-	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
-	| AllocSize
-	| StackAlignment
-	| AttrString
-	| AttrPair
-	| 'alwaysinline'
-	| 'argmemonly'
-	| 'builtin'
-	| 'cold'
-	| 'convergent'
-	| 'inaccessiblemem_or_argmemonly'
-	| 'inaccessiblememonly'
-	| 'inlinehint'
-	| 'jumptable'
-	| 'minsize'
-	| 'naked'
-	| 'nobuiltin'
-	| 'nocf_check'
-	| 'noduplicate'
-	| 'noimplicitfloat'
-	| 'noinline'
-	| 'nonlazybind'
-	| 'norecurse'
-	| 'noredzone'
-	| 'noreturn'
-	| 'nounwind'
-	| 'optforfuzzing'
-	| 'optnone'
-	| 'optsize'
-	| 'readnone'
-	| 'readonly'
-	| 'returns_twice'
-	| 'safestack'
-	| 'sanitize_address'
-	| 'sanitize_hwaddress'
-	| 'sanitize_memory'
-	| 'sanitize_thread'
-	| 'shadowcallstack'
-	| 'speculatable'
-	| 'speculative_load_hardening'
-	| 'ssp'
-	| 'sspreq'
-	| 'sspstrong'
-	| 'strictfp'
-	| 'uwtable'
-	| 'writeonly'
+AlignPair -> AlignPair
+	: 'align' '=' N=UintLit
 ;
 
-AttrString
-	: StringLit
-;
-
-AttrPair
-	: StringLit '=' StringLit
+AlignStackPair -> AlignStackPair
+	: 'alignstack' '=' N=UintLit
 ;
 
 # ref: parseAllocSizeArguments
 
-AllocSize
-	: 'allocsize' '(' UintLit ')'
-	| 'allocsize' '(' UintLit ',' UintLit ')'
+AllocSize -> AllocSize
+	: 'allocsize' '(' ElemSize=UintLit ')'
+	| 'allocsize' '(' ElemSize=UintLit ',' N=UintLit ')'
 ;
 
-# ref: ParseOptionalStackAlignment
+# ref: ParseParameterList
 #
-#   ::= empty
-#   ::= 'alignstack' '(' 4 ')'
-StackAlignment
-	: 'alignstack' '(' UintLit ')'
+#    ::= '(' ')'
+#    ::= '(' Arg (',' Arg)* ')'
+#  Arg
+#    ::= Type OptionalAttributes Value OptionalAttributes
+
+# NOTE: Args may contain '...'. The ellipsis is purely for readability.
+
+Args -> Args
+	: '...'?
+	| Args=(Arg separator ',')+ (',' '...')?
+;
+
+# ref: ParseMetadataAsValue
+#
+#  ::= metadata i32 %local
+#  ::= metadata i32 @global
+#  ::= metadata i32 7
+#  ::= metadata !0
+#  ::= metadata !{...}
+#  ::= metadata !"string"
+
+Arg -> Arg
+	: Typ=ConcreteType Attrs=ParamAttr* Val=Value
+	| Typ=MetadataType Val=Metadata
+;
+
+# ref: ParseOrdering
+#
+#   ::= AtomicOrdering
+
+AtomicOrdering -> AtomicOrdering
+	: 'acq_rel'
+	| 'acquire'
+	| 'monotonic'
+	| 'release'
+	| 'seq_cst'
+	| 'unordered'
+;
+
+AttrPair -> AttrPair
+	: Key=StringLit '=' Val=StringLit
+;
+
+AttrString -> AttrString
+	: Val=StringLit
 ;
 
 # ref: ParseOptionalCallingConv
@@ -4008,7 +4254,7 @@ StackAlignment
 #   ::= 'amdgpu_kernel'
 #   ::= 'cc' UINT
 
-CallingConv
+CallingConv -> CallingConv
 	: 'aarch64_vector_pcs'
 	| 'amdgpu_cs'
 	| 'amdgpu_es'
@@ -4049,118 +4295,71 @@ CallingConv
 	| 'x86_stdcallcc'
 	| 'x86_thiscallcc'
 	| 'x86_vectorcallcc'
-	| 'cc' UintLit
+	| 'cc' UintLit # TODO: Check how the AST looks like for this case.
 ;
 
-# ___ [ Return Attribute ] ___________________________________________________
+# ref: parseOptionalComdat
 
-# ref: ParseOptionalReturnAttrs
-
-ReturnAttr
-	: Alignment
-	| Dereferenceable
-	| AttrString
-	| AttrPair
-	| 'inreg'
-	| 'noalias'
-	| 'nonnull'
-	| 'signext'
-	| 'zeroext'
+Comdat -> Comdat
+	: 'comdat'
+	| 'comdat' '(' Name=ComdatName ')'
 ;
-
-# ref: ParseArgumentList
-#
-#   ::= '(' ArgTypeListI ')'
-#  ArgTypeListI
-#   ::= empty
-#   ::= '...'
-#   ::= ArgTypeList ',' '...'
-#   ::= ArgType (',' ArgType)*
-
-Params
-	: '...'?
-	| (Param separator ',')+ (',' '...')?
-;
-
-Param
-	: Type ParamAttr* LocalIdent?
-;
-
-# ___ [ Parameter Attribute ] __________________________________________________
-
-# ref: ParseOptionalParamAttrs
 
 # ref: ParseOptionalDerefAttrBytes
 #
 #   ::= empty
 #   ::= AttrKind '(' 4 ')'
 
-ParamAttr
-	: Alignment
-	| Dereferenceable
-	| AttrString
-	| AttrPair
-	| 'byval'
-	| 'inalloca'
-	| 'inreg'
-	| 'nest'
-	| 'noalias'
-	| 'nocapture'
-	| 'nonnull'
-	| 'readnone'
-	| 'readonly'
-	| 'returned'
-	| 'signext'
-	| 'sret'
-	| 'swifterror'
-	| 'swiftself'
-	| 'writeonly'
-	| 'zeroext'
+Dereferenceable -> Dereferenceable
+	: 'dereferenceable' '(' N=UintLit ')'
+	| 'dereferenceable_or_null' '(' N=UintLit ')'
 ;
 
-Dereferenceable
-	: 'dereferenceable' '(' UintLit ')'
-	| 'dereferenceable_or_null' '(' UintLit ')'
+# https://llvm.org/docs/LangRef.html#dll-storage-classes
+
+# ref: ParseOptionalDLLStorageClass
+#
+#   ::= empty
+#   ::= 'dllimport'
+#   ::= 'dllexport'
+
+DLLStorageClass -> DLLStorageClass
+	: 'dllexport'
+	| 'dllimport'
 ;
 
-Exact
+Exact -> Exact
 	: 'exact'
 ;
 
-OverflowFlags
-	: ('nsw' | 'nuw')*
+# ref: ParseExceptionArgs
+
+ExceptionArg -> ExceptionArg
+	: Typ=ConcreteType Val=Value
+	| Typ=MetadataType Val=Metadata
 ;
 
-InBounds
-	: 'inbounds'
+ExceptionScope -> ExceptionScope
+	: NoneConst
+	| LocalIdent
 ;
 
-# ref: ParseIndexList
-#
-#    ::=  (',' uint32)+
+# ref: EatFastMathFlagsIfPresent
 
-Indices
-	: (UintLit separator ',')*
-;
-
-# ref: ParseCmpPredicate
-
-IPred
-	: 'eq'
-	| 'ne'
-	| 'sge'
-	| 'sgt'
-	| 'sle'
-	| 'slt'
-	| 'uge'
-	| 'ugt'
-	| 'ule'
-	| 'ult'
+FastMathFlag -> FastMathFlag
+	: 'afn'
+	| 'arcp'
+	| 'contract'
+	| 'fast'
+	| 'ninf'
+	| 'nnan'
+	| 'nsz'
+	| 'reassoc'
 ;
 
 # ref: ParseCmpPredicate
 
-FPred
+FPred -> FPred
 	: 'false'
 	| 'oeq'
 	| 'oge'
@@ -4179,83 +4378,159 @@ FPred
 	| 'uno'
 ;
 
+# ref: ParseFnAttributeValuePairs
+#
+#   ::= <attr> | <attr> '=' <value>
+
+# NOTE: FuncAttr should contain Alignment. However, using LALR(1) this
+# produces a reduce/reduce conflict as GlobalAttr also contains Alignment.
+#
+# To handle these ambiguities, (FuncAttr | Alignment) is used in those places
+# where FuncAttr is used outside of GlobalDef and GlobalDecl (which also has
+# GlobalAttr).
+
+%interface FuncAttr;
+
+FuncAttr -> FuncAttr
+	: AttrString
+	| AttrPair
+	# not used in attribute groups.
+	| AttrGroupID
+	# used in attribute groups.
+	| AlignPair
+	| AlignStackPair
+	# used in functions.
+	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
+	| AllocSize
+	| StackAlignment
+	| FuncAttribute
+;
+
+FuncAttribute -> FuncAttribute
+	: 'alwaysinline'
+	| 'argmemonly'
+	| 'builtin'
+	| 'cold'
+	| 'convergent'
+	| 'inaccessiblemem_or_argmemonly'
+	| 'inaccessiblememonly'
+	| 'inlinehint'
+	| 'jumptable'
+	| 'minsize'
+	| 'naked'
+	| 'nobuiltin'
+	| 'nocf_check'
+	| 'noduplicate'
+	| 'noimplicitfloat'
+	| 'noinline'
+	| 'nonlazybind'
+	| 'norecurse'
+	| 'noredzone'
+	| 'noreturn'
+	| 'nounwind'
+	| 'optforfuzzing'
+	| 'optnone'
+	| 'optsize'
+	| 'readnone'
+	| 'readonly'
+	| 'returns_twice'
+	| 'safestack'
+	| 'sanitize_address'
+	| 'sanitize_hwaddress'
+	| 'sanitize_memory'
+	| 'sanitize_thread'
+	| 'shadowcallstack'
+	| 'speculatable'
+	| 'speculative_load_hardening'
+	| 'ssp'
+	| 'sspreq'
+	| 'sspstrong'
+	| 'strictfp'
+	| 'uwtable'
+	| 'writeonly'
+;
+
+# ref: ParseOptionalFunctionMetadata
+#
+#   ::= (!dbg !57)*
+
+FuncMetadata -> FuncMetadata
+	: MetadataAttachments=MetadataAttachment*
+;
+
+%interface GlobalAttr;
+
+GlobalAttr -> GlobalAttr
+	: Section
+	| Comdat
+	| Alignment
+	#   ::= !dbg !57
+	| MetadataAttachment
+;
+
+InBounds -> InBounds
+	: 'inbounds'
+;
+
 # ref: ParseInstructionMetadata
 #
 #   ::= !dbg !42 (',' !dbg !57)*
 
-InstructionMetadata
-   : (',' MetadataAttachment)+?
+InstMetadata -> InstMetadata
+   : MetadataAttachments=(',' MetadataAttachment)+?
 ;
 
-# ref: EatFastMathFlagsIfPresent
+# ref: ParseCmpPredicate
 
-FastMathFlag
-	: 'afn'
-	| 'arcp'
-	| 'contract'
-	| 'fast'
-	| 'ninf'
-	| 'nnan'
-	| 'nsz'
-	| 'reassoc'
+IPred -> IPred
+	: 'eq'
+	| 'ne'
+	| 'sge'
+	| 'sgt'
+	| 'sle'
+	| 'slt'
+	| 'uge'
+	| 'ugt'
+	| 'ule'
+	| 'ult'
 ;
 
-Volatile
-	: 'volatile'
+Label -> Label
+	: Typ=LabelType Name=LocalIdent
 ;
 
-# ref: ParseScope
+# https://llvm.org/docs/LangRef.html#linkage-types
+
+# ref: ParseOptionalLinkage
 #
-#   ::= syncscope("singlethread" | "<target scope>")?
+#   ::= empty
+#   ::= 'private'
+#   ::= 'internal'
+#   ::= 'weak'
+#   ::= 'weak_odr'
+#   ::= 'linkonce'
+#   ::= 'linkonce_odr'
+#   ::= 'available_externally'
+#   ::= 'appending'
+#   ::= 'common'
+#   ::= 'extern_weak'
+#   ::= 'external'
 
-SyncScope
-	: 'syncscope' '(' StringLit ')'
+Linkage -> Linkage
+	: 'appending'
+	| 'available_externally'
+	| 'common'
+	| 'internal'
+	| 'linkonce'
+	| 'linkonce_odr'
+	| 'private'
+	| 'weak'
+	| 'weak_odr'
 ;
 
-# ref: ParseOrdering
-#
-#   ::= AtomicOrdering
-
-AtomicOrdering
-	: 'acq_rel'
-	| 'acquire'
-	| 'monotonic'
-	| 'release'
-	| 'seq_cst'
-	| 'unordered'
-;
-
-# ref: ParseParameterList
-#
-#    ::= '(' ')'
-#    ::= '(' Arg (',' Arg)* ')'
-#  Arg
-#    ::= Type OptionalAttributes Value OptionalAttributes
-
-Args
-	: '...'?
-	| (Arg separator ',')+ (',' '...')?
-;
-
-# ref: ParseMetadataAsValue
-#
-#  ::= metadata i32 %local
-#  ::= metadata i32 @global
-#  ::= metadata i32 7
-#  ::= metadata !0
-#  ::= metadata !{...}
-#  ::= metadata !"string"
-
-Arg
-	: ConcreteType ParamAttr* Value
-	| MetadataType Metadata
-;
-
-# ref: ParseExceptionArgs
-
-ExceptionArg
-	: ConcreteType Value
-	| MetadataType Metadata
+ExternLinkage -> ExternLinkage
+	: 'extern_weak'
+	| 'external'
 ;
 
 # ref: ParseOptionalOperandBundles
@@ -4269,15 +4544,189 @@ ExceptionArg
 #
 #  bundle-tag ::= String Constant
 
-OperandBundles
-	: ('[' (OperandBundle separator ',')+ ']')?
+# TODO: inline OperandBundles to avoid OperandBundles as a node in the AST?
+
+OperandBundles -> OperandBundles
+	: ('[' OperandBundles=(OperandBundle separator ',')+ ']')?
 ;
 
-OperandBundle
-	: StringLit '(' (Type Value separator ',')* ')'
+OperandBundle -> OperandBundle
+	: Tag=StringLit '(' Inputs=(TypeValue separator ',')* ')'
 ;
 
-ExceptionScope
-	: NoneConst
-	| LocalIdent
+OverflowFlags -> OverflowFlags
+	: ('nsw' | 'nuw')*
+;
+
+# ref: ParseArgumentList
+#
+#   ::= '(' ArgTypeListI ')'
+#  ArgTypeListI
+#   ::= empty
+#   ::= '...'
+#   ::= ArgTypeList ',' '...'
+#   ::= ArgType (',' ArgType)*
+
+# TODO: Figure out how to handle variadic. ref: https://github.com/inspirer/textmapper/issues/14
+
+Params -> Params
+	: '...'?
+	| Params=(Param separator ',')+ (',' '...')?
+;
+
+Param -> Param
+	: Typ=Type Attrs=ParamAttr* Name=LocalIdent?
+;
+
+# ref: ParseOptionalParamAttrs
+
+%interface ParamAttr;
+
+ParamAttr -> ParamAttr
+	: AttrString
+	| AttrPair
+	| Alignment
+	| Dereferenceable
+	| ParamAttribute
+;
+
+# TODO: Figure out a cleaner way of handling ParamAttribute.
+# Written this way as a workaround for `'byval' cannot be used as an interface`
+# which happens when the alternatives of ParamAttribute is inlined
+# with ParamAttr in the grammar.
+
+ParamAttribute -> ParamAttribute
+	: 'byval'
+	| 'inalloca'
+	| 'inreg'
+	| 'nest'
+	| 'noalias'
+	| 'nocapture'
+	| 'nonnull'
+	| 'readnone'
+	| 'readonly'
+	| 'returned'
+	| 'signext'
+	| 'sret'
+	| 'swifterror'
+	| 'swiftself'
+	| 'writeonly'
+	| 'zeroext'
+;
+
+# https://llvm.org/docs/LangRef.html#runtime-preemption-model
+
+# ref: ParseOptionalDSOLocal
+
+PreemptionSpecifier -> PreemptionSpecifier
+	: 'dso_local'
+	| 'dso_preemptable'
+;
+
+# ref: ParseOptionalReturnAttrs
+
+%interface ReturnAttr;
+
+ReturnAttr -> ReturnAttr
+	# TODO: Figure out how to re-enable without getting these errors in FuncHeader:
+	#    - two unnamed fields share the same type `AttrPair`: ReturnAttr -vs- FuncAttr
+	#    - `AttrPair` occurs in both named and unnamed fields
+	#    - `ReturnAttrs` cannot be nullable, since it precedes FuncAttrs
+	#: AttrString
+	#| AttrPair
+	: Alignment
+	| Dereferenceable
+	| ReturnAttribute
+;
+
+ReturnAttribute -> ReturnAttribute
+	: 'inreg'
+	| 'noalias'
+	| 'nonnull'
+	| 'signext'
+	| 'zeroext'
+;
+
+Section -> Section
+	: 'section' Name=StringLit
+;
+
+# TODO: StackAlignment rename to AlignStack?
+
+# ref: ParseOptionalStackAlignment
+#
+#   ::= empty
+#   ::= 'alignstack' '(' 4 ')'
+StackAlignment -> StackAlignment
+	: 'alignstack' '(' N=UintLit ')'
+;
+
+# ref: ParseScope
+#
+#   ::= syncscope("singlethread" | "<target scope>")?
+
+SyncScope -> SyncScope
+	: 'syncscope' '(' Scope=StringLit ')'
+;
+
+# ref: ParseOptionalThreadLocal
+#
+#   := empty
+#   := 'thread_local'
+#   := 'thread_local' '(' tlsmodel ')'
+
+ThreadLocal -> ThreadLocal
+	: 'thread_local'
+	| 'thread_local' '(' Model=TLSModel ')'
+;
+
+# ref: ParseTLSModel
+#
+#   := 'localdynamic'
+#   := 'initialexec'
+#   := 'localexec'
+
+TLSModel -> TLSModel
+	: 'initialexec'
+	| 'localdynamic'
+	| 'localexec'
+;
+
+TypeConst -> TypeConst
+	: Typ=Type Val=Constant
+;
+
+TypeValue -> TypeValue
+	: Typ=Type Val=Value
+;
+
+# ref: ParseOptionalUnnamedAddr
+
+UnnamedAddr -> UnnamedAddr
+	: 'local_unnamed_addr'
+	| 'unnamed_addr'
+;
+
+UnwindTarget -> UnwindTarget
+	: 'to' 'caller'
+	| Label
+;
+
+# https://llvm.org/docs/LangRef.html#visibility-styles
+
+# ref: ParseOptionalVisibility
+#
+#   ::= empty
+#   ::= 'default'
+#   ::= 'hidden'
+#   ::= 'protected'
+
+Visibility -> Visibility
+	: 'default'
+	| 'hidden'
+	| 'protected'
+;
+
+Volatile -> Volatile
+	: 'volatile'
 ;
