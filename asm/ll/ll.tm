@@ -12,12 +12,6 @@ eventFields = true
 
 :: lexer
 
-# TODO: remove placeholders.
-
-placeholder1 : /placeholder1/
-placeholder2 : /placeholder2/
-placeholder3 : /placeholder3/
-
 _ascii_letter_upper = /[A-Z]/
 
 _ascii_letter_lower = /[a-z]/
