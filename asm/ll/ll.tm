@@ -1165,6 +1165,47 @@ NamedType -> NamedType
 	: Name=LocalIdent
 ;
 
+# === [ Values ] ===============================================================
+
+# ref: ParseValue
+
+%interface Value;
+
+Value -> Value
+	: Constant
+	# %42
+	# %foo
+	| LocalIdent
+	# Inline assembler expressions may only be used as the callee operand of a
+	# call or an invoke instruction.
+	| InlineAsm
+;
+
+# --- [ Inline Assembler Expressions ] -----------------------------------------
+
+# https://llvm.org/docs/LangRef.html#inline-assembler-expressions
+
+# ref: ParseValID
+#
+#  ::= 'asm' SideEffect? AlignStack? IntelDialect? STRINGCONSTANT ','
+#             STRINGCONSTANT
+
+InlineAsm -> InlineAsm
+	: 'asm' SideEffectopt AlignStackopt IntelDialectopt Asm=StringLit ',' Constraints=StringLit
+;
+
+SideEffect -> SideEffect
+	: 'sideeffect'
+;
+
+AlignStack -> AlignStack
+	: 'alignstack'
+;
+
+IntelDialect -> IntelDialect
+	: 'inteldialect'
+;
+
 # //////////////////////////////////////////////////////////////////////////////
 
 # ref: ParseOptionalAddrSpace
@@ -1622,8 +1663,4 @@ SpecializedMDNode -> SpecializedMDNode
 
 DIExpression -> DIExpression
 	: placeholder1
-;
-
-Value -> Value
-	: placeholder3
 ;
