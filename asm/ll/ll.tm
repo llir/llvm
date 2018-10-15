@@ -110,8 +110,11 @@ dwarf_op_tok : /DW_OP_({_ascii_letter}|{_decimal_digit}|[_])*/
 
 # ref: DWKEYWORD
 
+# FullDebug
+emission_kind_tok : /(DebugDirectivesOnly)|(FullDebug)|(LineTablesOnly)|(NoDebug)/
+
 # GNU
-NameTableKind : /(GNU)|(None)|(Default)/
+name_table_kind_tok : /(GNU)|(None)|(Default)/
 
 # === [ Integer literals ] =====================================================
 
@@ -309,7 +312,6 @@ int_type_tok : /i[0-9]+/
 'frem' : /frem/
 'from' : /from/
 'fsub' : /fsub/
-'FullDebug' : /FullDebug/
 'gc' : /gc/
 'getelementptr' : /getelementptr/
 'getter:' : /getter:/
@@ -355,7 +357,6 @@ int_type_tok : /i[0-9]+/
 'language:' : /language:/
 'largest' : /largest/
 'line:' : /line:/
-'LineTablesOnly' : /LineTablesOnly/
 'linkageName:' : /linkageName:/
 'linkonce_odr' : /linkonce_odr/
 'linkonce' : /linkonce/
@@ -387,7 +388,6 @@ int_type_tok : /i[0-9]+/
 'nobuiltin' : /nobuiltin/
 'nocapture' : /nocapture/
 'nocf_check' : /nocf_check/
-'NoDebug' : /NoDebug/
 'nodes:' : /nodes:/
 'noduplicate' : /noduplicate/
 'noduplicates' : /noduplicates/
@@ -2853,7 +2853,1284 @@ MDNode -> MDNode
 	| SpecializedMDNode
 ;
 
-# //////////////////////////////////////////////////////////////////////////////
+# --- [ Specialized Metadata Nodes ] -------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#specialized-metadata-nodes
+
+# ref: ParseSpecializedMDNode
+
+%interface SpecializedMDNode;
+
+SpecializedMDNode -> SpecializedMDNode
+	: DIBasicType
+	| DICompileUnit
+	| DICompositeType
+	| DIDerivedType
+	| DIEnumerator
+	| DIExpression
+	| DIFile
+	| DIGlobalVariable
+	| DIGlobalVariableExpression # not in spec as of 2018-02-21
+	| DIImportedEntity
+	| DILabel # not in spec as of 2018-10-14
+	| DILexicalBlock
+	| DILexicalBlockFile
+	| DILocalVariable
+	| DILocation
+	| DIMacro
+	| DIMacroFile
+	| DIModule # not in spec as of 2018-02-21
+	| DINamespace
+	| DIObjCProperty
+	| DISubprogram
+	| DISubrange
+	| DISubroutineType
+	| DITemplateTypeParameter
+	| DITemplateValueParameter
+	| GenericDINode # not in spec as of 2018-02-21
+;
+
+# ~~~ [ DIBasicType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dibasictype
+
+# ref: ParseDIBasicType
+#
+#   ::= !DIBasicType(tag: DW_TAG_base_type, name: "int", size: 32, align: 32,
+#                    encoding: DW_ATE_encoding, flags: 0)
+#
+#  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_base_type));
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(encoding, DwarfAttEncodingField, );
+#  OPTIONAL(flags, DIFlagField, );
+
+DIBasicType -> DIBasicType
+	: '!DIBasicType' '(' Fields=(DIBasicTypeField separator ',')* ')'
+;
+
+%interface DIBasicTypeField;
+
+DIBasicTypeField -> DIBasicTypeField
+	: TagField
+	| NameField
+	| SizeField
+	| AlignField
+	| EncodingField
+	| FlagsField
+;
+
+# ~~~ [ DICompileUnit ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dicompileunit
+
+# ref: ParseDICompileUnit
+#
+#   ::= !DICompileUnit(language: DW_LANG_C99, file: !0, producer: "clang",
+#                      isOptimized: true, flags: "-O2", runtimeVersion: 1,
+#                      splitDebugFilename: "abc.debug",
+#                      emissionKind: FullDebug, enums: !1, retainedTypes: !2,
+#                      globals: !4, imports: !5, macros: !6, dwoId: 0x0abcd)
+#
+#  REQUIRED(language, DwarfLangField, );
+#  REQUIRED(file, MDField, (AllowNull false));
+#  OPTIONAL(producer, MDStringField, );
+#  OPTIONAL(isOptimized, MDBoolField, );
+#  OPTIONAL(flags, MDStringField, );
+#  OPTIONAL(runtimeVersion, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(splitDebugFilename, MDStringField, );
+#  OPTIONAL(emissionKind, EmissionKindField, );
+#  OPTIONAL(enums, MDField, );
+#  OPTIONAL(retainedTypes, MDField, );
+#  OPTIONAL(globals, MDField, );
+#  OPTIONAL(imports, MDField, );
+#  OPTIONAL(macros, MDField, );
+#  OPTIONAL(dwoId, MDUnsignedField, );
+#  OPTIONAL(splitDebugInlining, MDBoolField, = true);
+#  OPTIONAL(debugInfoForProfiling, MDBoolField, = false);
+#  OPTIONAL(nameTableKind, NameTableKindField, );
+
+
+DICompileUnit -> DICompileUnit
+	: '!DICompileUnit' '(' Fields=(DICompileUnitField separator ',')* ')'
+;
+
+%interface DICompileUnitField;
+
+DICompileUnitField -> DICompileUnitField
+	: LanguageField
+	| FileField
+	| ProducerField
+	| IsOptimizedField
+	| FlagsStringField
+	| RuntimeVersionField
+	| SplitDebugFilenameField
+	| EmissionKindField
+	| EnumsField
+	| RetainedTypesField
+	| GlobalsField
+	| ImportsField
+	| MacrosField
+	| DwoIdField
+	| SplitDebugInliningField
+	| DebugInfoForProfilingField
+	| NameTableKindField
+;
+
+# ~~~ [ DICompositeType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dicompositetype
+
+# ref: ParseDICompositeType
+#
+#  REQUIRED(tag, DwarfTagField, );
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(scope, MDField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(baseType, MDField, );
+#  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(offset, MDUnsignedField, (0, UINT64_MAX));
+#  OPTIONAL(flags, DIFlagField, );
+#  OPTIONAL(elements, MDField, );
+#  OPTIONAL(runtimeLang, DwarfLangField, );
+#  OPTIONAL(vtableHolder, MDField, );
+#  OPTIONAL(templateParams, MDField, );
+#  OPTIONAL(identifier, MDStringField, );
+#  OPTIONAL(discriminator, MDField, );
+
+DICompositeType -> DICompositeType
+	: '!DICompositeType' '(' Fields=(DICompositeTypeField separator ',')* ')'
+;
+
+%interface DICompositeTypeField;
+
+DICompositeTypeField -> DICompositeTypeField
+	: TagField
+	| NameField
+	| ScopeField
+	| FileField
+	| LineField
+	| BaseTypeField
+	| SizeField
+	| AlignField
+	| OffsetField
+	| FlagsField
+	| ElementsField
+	| RuntimeLangField
+	| VtableHolderField
+	| TemplateParamsField
+	| IdentifierField
+	| DiscriminatorField
+;
+
+# ~~~ [ DIDerivedType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diderivedtype
+
+# ref: ParseDIDerivedType
+#
+#   ::= !DIDerivedType(tag: DW_TAG_pointer_type, name: 'int', file: !0,
+#                      line: 7, scope: !1, baseType: !2, size: 32,
+#                      align: 32, offset: 0, flags: 0, extraData: !3,
+#                      dwarfAddressSpace: 3)
+#
+#  REQUIRED(tag, DwarfTagField, );
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(scope, MDField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  REQUIRED(baseType, MDField, );
+#  OPTIONAL(size, MDUnsignedField, (0, UINT64_MAX));
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(offset, MDUnsignedField, (0, UINT64_MAX));
+#  OPTIONAL(flags, DIFlagField, );
+#  OPTIONAL(extraData, MDField, );
+#  OPTIONAL(dwarfAddressSpace, MDUnsignedField, (UINT32_MAX, UINT32_MAX));
+
+DIDerivedType -> DIDerivedType
+	: '!DIDerivedType' '(' Fields=(DIDerivedTypeField separator ',')* ')'
+;
+
+%interface DIDerivedTypeField;
+
+DIDerivedTypeField -> DIDerivedTypeField
+	: TagField
+	| NameField
+	| ScopeField
+	| FileField
+	| LineField
+	| BaseTypeField
+	| SizeField
+	| AlignField
+	| OffsetField
+	| FlagsField
+	| ExtraDataField
+	| DwarfAddressSpaceField
+;
+
+# ~~~ [ DIEnumerator ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dienumerator
+
+# ref: ParseDIEnumerator
+#
+#   ::= !DIEnumerator(value: 30, isUnsigned: true, name: 'SomeKind')
+#
+#  REQUIRED(name, MDStringField, );
+#  REQUIRED(value, MDSignedOrUnsignedField, );
+#  OPTIONAL(isUnsigned, MDBoolField, (false));
+
+DIEnumerator -> DIEnumerator
+	: '!DIEnumerator' '(' Fields=(DIEnumeratorField separator ',')* ')'
+;
+
+%interface DIEnumeratorField;
+
+DIEnumeratorField -> DIEnumeratorField
+	: NameField
+	| ValueIntField
+	| IsUnsignedField
+;
+
+# ~~~ [ DIExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diexpression
+
+# ref: ParseDIExpression
+#
+#   ::= !DIExpression(0, 7, -1)
+
+DIExpression -> DIExpression
+	: '!DIExpression' '(' Fields=(DIExpressionField separator ',')* ')'
+;
+
+%interface DIExpressionField;
+
+DIExpressionField -> DIExpressionField
+	: IntLit
+	| DwarfOp
+;
+
+# ~~~ [ DIFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#difile
+
+# ref: ParseDIFileType
+#
+#   ::= !DIFileType(filename: "path/to/file", directory: "/path/to/dir",
+#                   checksumkind: CSK_MD5,
+#                   checksum: "000102030405060708090a0b0c0d0e0f",
+#                   source: "source file contents")
+#
+#  REQUIRED(filename, MDStringField, );
+#  REQUIRED(directory, MDStringField, );
+#  OPTIONAL(checksumkind, ChecksumKindField, (DIFile::CSK_MD5));
+#  OPTIONAL(checksum, MDStringField, );
+#  OPTIONAL(source, MDStringField, );
+
+DIFile -> DIFile
+	: '!DIFile' '(' Fields=(DIFileField separator ',')* ')'
+;
+
+%interface DIFileField;
+
+DIFileField -> DIFileField
+	: FilenameField
+	| DirectoryField
+	| ChecksumkindField
+	| ChecksumField
+	| SourceField
+;
+
+# ~~~ [ DIGlobalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diglobalvariable
+
+# ref: ParseDIGlobalVariable
+#
+#   ::= !DIGlobalVariable(scope: !0, name: "foo", linkageName: "foo",
+#                         file: !1, line: 7, type: !2, isLocal: false,
+#                         isDefinition: true, templateParams: !3,
+#                         declaration: !4, align: 8)
+#
+#  REQUIRED(name, MDStringField, (AllowEmpty false));
+#  OPTIONAL(scope, MDField, );
+#  OPTIONAL(linkageName, MDStringField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(type, MDField, );
+#  OPTIONAL(isLocal, MDBoolField, );
+#  OPTIONAL(isDefinition, MDBoolField, (true));
+#  OPTIONAL(templateParams, MDField, );                                         \
+#  OPTIONAL(declaration, MDField, );
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+
+DIGlobalVariable -> DIGlobalVariable
+	: '!DIGlobalVariable' '(' Fields=(DIGlobalVariableField separator ',')* ')'
+;
+
+%interface DIGlobalVariableField;
+
+DIGlobalVariableField -> DIGlobalVariableField
+	: NameField
+	| ScopeField
+	| LinkageNameField
+	| FileField
+	| LineField
+	| TypeField
+	| IsLocalField
+	| IsDefinitionField
+	| TemplateParamsField
+	| DeclarationField
+	| AlignField
+;
+
+# ~~~ [ DIGlobalVariableExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDIGlobalVariableExpression
+#
+#   ::= !DIGlobalVariableExpression(var: !0, expr: !1)
+#
+#  REQUIRED(var, MDField, );
+#  REQUIRED(expr, MDField, );
+
+DIGlobalVariableExpression -> DIGlobalVariableExpression
+	: '!DIGlobalVariableExpression' '(' Fields=(DIGlobalVariableExpressionField separator ',')* ')'
+;
+
+%interface DIGlobalVariableExpressionField;
+
+DIGlobalVariableExpressionField -> DIGlobalVariableExpressionField
+	: VarField
+	| ExprField
+;
+
+# ~~~ [ DIImportedEntity ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diimportedentity
+
+# ref: ParseDIImportedEntity
+#
+#   ::= !DIImportedEntity(tag: DW_TAG_imported_module, scope: !0, entity: !1,
+#                         line: 7, name: 'foo')
+#
+#  REQUIRED(tag, DwarfTagField, );
+#  REQUIRED(scope, MDField, );
+#  OPTIONAL(entity, MDField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(name, MDStringField, );
+
+DIImportedEntity -> DIImportedEntity
+	: '!DIImportedEntity' '(' Fields=(DIImportedEntityField separator ',')* ')'
+;
+
+%interface DIImportedEntityField;
+
+DIImportedEntityField -> DIImportedEntityField
+	: TagField
+	| ScopeField
+	| EntityField
+	| FileField
+	| LineField
+	| NameField
+;
+
+# ~~~ [ DILabel ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDILabel:
+#
+#   ::= !DILabel(scope: !0, name: "foo", file: !1, line: 7)
+#
+#  REQUIRED(scope, MDField, (/* AllowNull */ false));                           \
+#  REQUIRED(name, MDStringField, );                                             \
+#  REQUIRED(file, MDField, );                                                   \
+#  REQUIRED(line, LineField, );
+
+DILabel -> DILabel
+	: '!DILabel' '(' Fields=(DILabelField separator ',')* ')'
+;
+
+%interface DILabelField;
+
+DILabelField -> DILabelField
+	: ScopeField
+	| NameField
+	| FileField
+	| LineField
+;
+
+# ~~~ [ DILexicalBlock ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilexicalblock
+
+# ref: ParseDILexicalBlock
+#
+#   ::= !DILexicalBlock(scope: !0, file: !2, line: 7, column: 9)
+#
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(column, ColumnField, );
+
+DILexicalBlock -> DILexicalBlock
+	: '!DILexicalBlock' '(' Fields=(DILexicalBlockField separator ',')* ')'
+;
+
+%interface DILexicalBlockField;
+
+DILexicalBlockField -> DILexicalBlockField
+	: ScopeField
+	| FileField
+	| LineField
+	| ColumnField
+;
+
+# ~~~ [ DILexicalBlockFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilexicalblockfile
+
+# ref: ParseDILexicalBlockFile
+#
+#   ::= !DILexicalBlockFile(scope: !0, file: !2, discriminator: 9)
+#
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(file, MDField, );
+#  REQUIRED(discriminator, MDUnsignedField, (0, UINT32_MAX));
+
+DILexicalBlockFile -> DILexicalBlockFile
+	: '!DILexicalBlockFile' '(' Fields=(DILexicalBlockFileField separator ',')* ')'
+;
+
+%interface DILexicalBlockFileField;
+
+DILexicalBlockFileField -> DILexicalBlockFileField
+	: ScopeField
+	| FileField
+	| DiscriminatorIntField
+;
+
+# ~~~ [ DILocalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilocalvariable
+
+# ref: ParseDILocalVariable
+#
+#   ::= !DILocalVariable(arg: 7, scope: !0, name: 'foo',
+#                        file: !1, line: 7, type: !2, arg: 2, flags: 7,
+#                        align: 8)
+#   ::= !DILocalVariable(scope: !0, name: 'foo',
+#                        file: !1, line: 7, type: !2, arg: 2, flags: 7,
+#                        align: 8)
+#
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(arg, MDUnsignedField, (0, UINT16_MAX));
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(type, MDField, );
+#  OPTIONAL(flags, DIFlagField, );
+#  OPTIONAL(align, MDUnsignedField, (0, UINT32_MAX));
+
+DILocalVariable -> DILocalVariable
+	: '!DILocalVariable' '(' Fields=(DILocalVariableField separator ',')* ')'
+;
+
+%interface DILocalVariableField;
+
+DILocalVariableField -> DILocalVariableField
+	: NameField
+	| ArgField
+	| ScopeField
+	| FileField
+	| LineField
+	| TypeField
+	| FlagsField
+	| AlignField
+;
+
+# ~~~ [ DILocation ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dilocation
+
+# ref: ParseDILocation
+#
+#   ::= !DILocation(line: 43, column: 8, scope: !5, inlinedAt: !6,
+#   isImplicitCode: true)
+#
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(column, ColumnField, );
+#  REQUIRED(scope, MDField, (AllowNull false));
+#  OPTIONAL(inlinedAt, MDField, );
+#  OPTIONAL(isImplicitCode, MDBoolField, (false));
+
+DILocation -> DILocation
+	: '!DILocation' '(' Fields=(DILocationField separator ',')* ')'
+;
+
+%interface DILocationField;
+
+DILocationField -> DILocationField
+	: LineField
+	| ColumnField
+	| ScopeField
+	| InlinedAtField
+	| IsImplicitCodeField
+;
+
+# ~~~ [ DIMacro ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dimacro
+
+# ref: ParseDIMacro
+#
+#   ::= !DIMacro(macinfo: type, line: 9, name: 'SomeMacro', value: 'SomeValue')
+#
+#  REQUIRED(type, DwarfMacinfoTypeField, );
+#  OPTIONAL(line, LineField, );
+#  REQUIRED(name, MDStringField, );
+#  OPTIONAL(value, MDStringField, );
+
+DIMacro -> DIMacro
+	: '!DIMacro' '(' Fields=(DIMacroField separator ',')* ')'
+;
+
+%interface DIMacroField;
+
+DIMacroField -> DIMacroField
+	: TypeMacinfoField
+	| LineField
+	| NameField
+	| ValueStringField
+;
+
+# ~~~ [ DIMacroFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dimacrofile
+
+# ref: ParseDIMacroFile
+#
+#   ::= !DIMacroFile(line: 9, file: !2, nodes: !3)
+#
+#  OPTIONAL(type, DwarfMacinfoTypeField, (dwarf::DW_MACINFO_start_file));
+#  OPTIONAL(line, LineField, );
+#  REQUIRED(file, MDField, );
+#  OPTIONAL(nodes, MDField, );
+
+DIMacroFile -> DIMacroFile
+	: '!DIMacroFile' '(' Fields=(DIMacroFileField separator ',')* ')'
+;
+
+%interface DIMacroFileField;
+
+DIMacroFileField -> DIMacroFileField
+	: TypeMacinfoField
+	| LineField
+	| FileField
+	| NodesField
+;
+
+# ~~~ [ DIModule ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseDIModule
+#
+#   ::= !DIModule(scope: !0, name: 'SomeModule', configMacros: '-DNDEBUG',
+#                 includePath: '/usr/include', isysroot: '/')
+#
+#  REQUIRED(scope, MDField, );
+#  REQUIRED(name, MDStringField, );
+#  OPTIONAL(configMacros, MDStringField, );
+#  OPTIONAL(includePath, MDStringField, );
+#  OPTIONAL(isysroot, MDStringField, );
+
+DIModule -> DIModule
+	: '!DIModule' '(' Fields=(DIModuleField separator ',')* ')'
+;
+
+%interface DIModuleField;
+
+DIModuleField -> DIModuleField
+	: ScopeField
+	| NameField
+	| ConfigMacrosField
+	| IncludePathField
+	| IsysrootField
+;
+
+# ~~~ [ DINamespace ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#dinamespace
+
+# ref: ParseDINamespace
+#
+#   ::= !DINamespace(scope: !0, file: !2, name: 'SomeNamespace', line: 9)
+#
+#  REQUIRED(scope, MDField, );
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(exportSymbols, MDBoolField, );
+
+DINamespace -> DINamespace
+	: '!DINamespace' '(' Fields=(DINamespaceField separator ',')* ')'
+;
+
+%interface DINamespaceField;
+
+DINamespaceField -> DINamespaceField
+	: ScopeField
+	| NameField
+	| ExportSymbolsField
+;
+
+# ~~~ [ DIObjCProperty ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#diobjcproperty
+
+# ref: ParseDIObjCProperty
+#
+#   ::= !DIObjCProperty(name: 'foo', file: !1, line: 7, setter: 'setFoo',
+#                       getter: 'getFoo', attributes: 7, type: !2)
+#
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(file, MDField, );
+#  OPTIONAL(line, LineField, );
+#  OPTIONAL(setter, MDStringField, );
+#  OPTIONAL(getter, MDStringField, );
+#  OPTIONAL(attributes, MDUnsignedField, (0, UINT32_MAX));
+#  OPTIONAL(type, MDField, );
+
+DIObjCProperty -> DIObjCProperty
+	: '!DIObjCProperty' '(' Fields=(DIObjCPropertyField separator ',')* ')'
+;
+
+%interface DIObjCPropertyField;
+
+DIObjCPropertyField -> DIObjCPropertyField
+	: NameField
+	| FileField
+	| LineField
+	| SetterField
+	| GetterField
+	| AttributesField
+	| TypeField
+;
+
+# ~~~ [ DISubprogram ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#disubprogram
+
+# ref: ParseDISubprogram
+#
+#   ::= !DISubprogram(scope: !0, name: "foo", linkageName: "_Zfoo",
+#                     file: !1, line: 7, type: !2, isLocal: false,
+#                     isDefinition: true, scopeLine: 8, containingType: !3,
+#                     virtuality: DW_VIRTUALTIY_pure_virtual,
+#                     virtualIndex: 10, thisAdjustment: 4, flags: 11,
+#                     isOptimized: false, templateParams: !4, declaration: !5,
+#                     retainedNodes: !6, thrownTypes: !7)
+#
+#  OPTIONAL(scope, MDField, );                                                  \
+#  OPTIONAL(name, MDStringField, );                                             \
+#  OPTIONAL(linkageName, MDStringField, );                                      \
+#  OPTIONAL(file, MDField, );                                                   \
+#  OPTIONAL(line, LineField, );                                                 \
+#  OPTIONAL(type, MDField, );                                                   \
+#  OPTIONAL(isLocal, MDBoolField, );                                            \
+#  OPTIONAL(isDefinition, MDBoolField, (true));                                 \
+#  OPTIONAL(scopeLine, LineField, );                                            \
+#  OPTIONAL(containingType, MDField, );                                         \
+#  OPTIONAL(virtuality, DwarfVirtualityField, );                                \
+#  OPTIONAL(virtualIndex, MDUnsignedField, (0, UINT32_MAX));                    \
+#  OPTIONAL(thisAdjustment, MDSignedField, (0, INT32_MIN, INT32_MAX));          \
+#  OPTIONAL(flags, DIFlagField, );                                              \
+#  OPTIONAL(isOptimized, MDBoolField, );                                        \
+#  OPTIONAL(unit, MDField, );                                                   \
+#  OPTIONAL(templateParams, MDField, );                                         \
+#  OPTIONAL(declaration, MDField, );                                            \
+#  OPTIONAL(retainedNodes, MDField, );                                              \
+#  OPTIONAL(thrownTypes, MDField, );
+
+DISubprogram -> DISubprogram
+	: '!DISubprogram' '(' Fields=(DISubprogramField separator ',')* ')'
+;
+
+%interface DISubprogramField;
+
+DISubprogramField -> DISubprogramField
+	: ScopeField
+	| NameField
+	| LinkageNameField
+	| FileField
+	| LineField
+	| TypeField
+	| IsLocalField
+	| IsDefinitionField
+	| ScopeLineField
+	| ContainingTypeField
+	| VirtualityField
+	| VirtualIndexField
+	| ThisAdjustmentField
+	| FlagsField
+	| IsOptimizedField
+	| UnitField
+	| TemplateParamsField
+	| DeclarationField
+	| RetainedNodesField
+	| ThrownTypesField
+;
+
+# ~~~ [ DISubrange ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#disubrange
+
+# ref: ParseDISubrange
+#
+#   ::= !DISubrange(count: 30, lowerBound: 2)
+#   ::= !DISubrange(count: !node, lowerBound: 2)
+#
+#  REQUIRED(count, MDSignedOrMDField, (-1, -1, INT64_MAX, false));
+#  OPTIONAL(lowerBound, MDSignedField, );
+
+DISubrange -> DISubrange
+	: '!DISubrange' '(' Fields=(DISubrangeField separator ',')* ')'
+;
+
+%interface DISubrangeField;
+
+DISubrangeField -> DISubrangeField
+	: CountField
+	| LowerBoundField
+;
+
+# ~~~ [ DISubroutineType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#disubroutinetype
+
+# ref: ParseDISubroutineType
+#
+#  OPTIONAL(flags, DIFlagField, );
+#  OPTIONAL(cc, DwarfCCField, );
+#  REQUIRED(types, MDField, );
+
+DISubroutineType -> DISubroutineType
+	: '!DISubroutineType' '(' Fields=(DISubroutineTypeField separator ',')* ')'
+;
+
+%interface DISubroutineTypeField;
+
+DISubroutineTypeField -> DISubroutineTypeField
+	: FlagsField
+	| CCField
+	| TypesField
+;
+
+# ~~~ [ DITemplateTypeParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ditemplatetypeparameter
+
+# ref: ParseDITemplateTypeParameter
+#
+#   ::= !DITemplateTypeParameter(name: 'Ty', type: !1)
+#
+#  OPTIONAL(name, MDStringField, );
+#  REQUIRED(type, MDField, );
+
+DITemplateTypeParameter -> DITemplateTypeParameter
+	: '!DITemplateTypeParameter' '(' Fields=(DITemplateTypeParameterField separator ',')* ')'
+;
+
+%interface DITemplateTypeParameterField;
+
+DITemplateTypeParameterField -> DITemplateTypeParameterField
+	: NameField
+	| TypeField
+;
+
+# ~~~ [ DITemplateValueParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ditemplatevalueparameter
+
+# ref: ParseDITemplateValueParameter
+#
+#   ::= !DITemplateValueParameter(tag: DW_TAG_template_value_parameter,
+#                                 name: 'V', type: !1, value: i32 7)
+#
+#  OPTIONAL(tag, DwarfTagField, (dwarf::DW_TAG_template_value_parameter));
+#  OPTIONAL(name, MDStringField, );
+#  OPTIONAL(type, MDField, );
+#  REQUIRED(value, MDField, );
+
+DITemplateValueParameter -> DITemplateValueParameter
+	: '!DITemplateValueParameter' '(' Fields=(DITemplateValueParameterField separator ',')* ')'
+;
+
+%interface DITemplateValueParameterField;
+
+DITemplateValueParameterField -> DITemplateValueParameterField
+	: TagField
+	| NameField
+	| TypeField
+	| ValueField
+;
+
+# ~~~ [ GenericDINode ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TODO: add link to LangRef.html.
+
+# ref: ParseGenericDINode
+#
+#   ::= !GenericDINode(tag: 15, header: '...', operands: {...})
+#
+#  REQUIRED(tag, DwarfTagField, );
+#  OPTIONAL(header, MDStringField, );
+#  OPTIONAL(operands, MDFieldList, );
+
+GenericDINode -> GenericDINode
+	: '!GenericDINode' '(' Fields=(GenericDINodeField separator ',')* ')'
+;
+
+%interface GenericDINodeField;
+
+GenericDINodeField -> GenericDINodeField
+	: TagField
+	| HeaderField
+	| OperandsField
+;
+
+# ___ [ Specialized metadata fields ] __________________________________________
+
+AlignField -> AlignField
+	: 'align:' IntLit
+;
+
+ArgField -> ArgField
+	: 'arg:' IntLit
+;
+
+AttributesField -> AttributesField
+	: 'attributes:' IntLit
+;
+
+BaseTypeField -> BaseTypeField
+	: 'baseType:' MDField
+;
+
+CCField -> CCField
+	: 'cc:' DwarfCC
+;
+
+ChecksumField -> ChecksumField
+	: 'checksum:' StringLit
+;
+
+ChecksumkindField -> ChecksumkindField
+	: 'checksumkind:' ChecksumKind
+;
+
+ColumnField -> ColumnField
+	: 'column:' IntLit
+;
+
+ConfigMacrosField -> ConfigMacrosField
+	: 'configMacros:' StringLit
+;
+
+ContainingTypeField -> ContainingTypeField
+	: 'containingType:' MDField
+;
+
+CountField -> CountField
+	: 'count:' MDFieldOrInt
+;
+
+DebugInfoForProfilingField -> DebugInfoForProfilingField
+	: 'debugInfoForProfiling:' BoolLit
+;
+
+DeclarationField -> DeclarationField
+	: 'declaration:' MDField
+;
+
+DirectoryField -> DirectoryField
+	: 'directory:' StringLit
+;
+
+DiscriminatorField -> DiscriminatorField
+	: 'discriminator:' MDField
+;
+
+DiscriminatorIntField -> DiscriminatorIntField
+	: 'discriminator:' IntLit
+;
+
+DwarfAddressSpaceField -> DwarfAddressSpaceField
+	: 'dwarfAddressSpace:' IntLit
+;
+
+DwoIdField -> DwoIdField
+	: 'dwoId:' IntLit
+;
+
+ElementsField -> ElementsField
+	: 'elements:' MDField
+;
+
+EmissionKindField -> EmissionKindField
+	: 'emissionKind:' EmissionKind
+;
+
+EncodingField -> EncodingField
+	: 'encoding:' DwarfAttEncoding
+;
+
+EntityField -> EntityField
+	: 'entity:' MDField
+;
+
+EnumsField -> EnumsField
+	: 'enums:' MDField
+;
+
+ExportSymbolsField -> ExportSymbolsField
+	: 'exportSymbols:' BoolLit
+;
+
+ExprField -> ExprField
+	: 'expr:' MDField
+;
+
+ExtraDataField -> ExtraDataField
+	: 'extraData:' MDField
+;
+
+FileField -> FileField
+	: 'file:' MDField
+;
+
+FilenameField -> FilenameField
+	: 'filename:' StringLit
+;
+
+FlagsField -> FlagsField
+	: 'flags:' DIFlags
+;
+
+FlagsStringField -> FlagsStringField
+	: 'flags:' StringLit
+;
+
+GetterField -> GetterField
+	: 'getter:' StringLit
+;
+
+GlobalsField -> GlobalsField
+	: 'globals:' MDField
+;
+
+HeaderField -> HeaderField
+	: 'header:' StringLit
+;
+
+IdentifierField -> IdentifierField
+	: 'identifier:' StringLit
+;
+
+ImportsField -> ImportsField
+	: 'imports:' MDField
+;
+
+IncludePathField -> IncludePathField
+	: 'includePath:' StringLit
+;
+
+InlinedAtField -> InlinedAtField
+	: 'inlinedAt:' MDField
+;
+
+IsDefinitionField -> IsDefinitionField
+	: 'isDefinition:' BoolLit
+;
+
+IsImplicitCodeField -> IsImplicitCodeField
+	: 'isImplicitCode:' BoolLit
+;
+
+IsLocalField -> IsLocalField
+	: 'isLocal:' BoolLit
+;
+
+IsOptimizedField -> IsOptimizedField
+	: 'isOptimized:' BoolLit
+;
+
+IsUnsignedField -> IsUnsignedField
+	: 'isUnsigned:' BoolLit
+;
+
+IsysrootField -> IsysrootField
+	: 'isysroot:' StringLit
+;
+
+LanguageField -> LanguageField
+	: 'language:' DwarfLang
+;
+
+LineField -> LineField
+	: 'line:' IntLit
+;
+
+LinkageNameField -> LinkageNameField
+	: 'linkageName:' StringLit
+;
+
+LowerBoundField -> LowerBoundField
+	: 'lowerBound:' IntLit
+;
+
+MacrosField -> MacrosField
+	: 'macros:' MDField
+;
+
+NameField -> NameField
+	: 'name:' StringLit
+;
+
+NameTableKindField -> NameTableKindField
+	: 'nameTableKind:' NameTableKind
+;
+
+NodesField -> NodesField
+	: 'nodes:' MDField
+;
+
+OffsetField -> OffsetField
+	: 'offset:' IntLit
+;
+
+OperandsField -> OperandsField
+	: 'operands:' MDFields
+;
+
+ProducerField -> ProducerField
+	: 'producer:' StringLit
+;
+
+RetainedNodesField -> RetainedNodesField
+	: 'retainedNodes:' MDField
+;
+
+RetainedTypesField -> RetainedTypesField
+	: 'retainedTypes:' MDField
+;
+
+RuntimeLangField -> RuntimeLangField
+	: 'runtimeLang:' DwarfLang
+;
+
+RuntimeVersionField -> RuntimeVersionField
+	: 'runtimeVersion:' IntLit
+;
+
+ScopeField -> ScopeField
+	: 'scope:' MDField
+;
+
+ScopeLineField -> ScopeLineField
+	: 'scopeLine:' IntLit
+;
+
+SetterField -> SetterField
+	: 'setter:' StringLit
+;
+
+SizeField -> SizeField
+	: 'size:' IntLit
+;
+
+SourceField -> SourceField
+	: 'source:' StringLit
+;
+
+SplitDebugFilenameField -> SplitDebugFilenameField
+	: 'splitDebugFilename:' StringLit
+;
+
+SplitDebugInliningField -> SplitDebugInliningField
+	: 'splitDebugInlining:' BoolLit
+;
+
+TagField -> TagField
+	: 'tag:' DwarfTag
+;
+
+TemplateParamsField -> TemplateParamsField
+	: 'templateParams:' MDField
+;
+
+ThisAdjustmentField -> ThisAdjustmentField
+	: 'thisAdjustment:' IntLit
+;
+
+ThrownTypesField -> ThrownTypesField
+	: 'thrownTypes:' MDField
+;
+
+TypeField -> TypeField
+	: 'type:' MDField
+;
+
+TypeMacinfoField -> TypeMacinfoField
+	: 'type:' DwarfMacinfo
+;
+
+TypesField -> TypesField
+	: 'types:' MDField
+;
+
+UnitField -> UnitField
+	: 'unit:' MDField
+;
+
+ValueField -> ValueField
+	: 'value:' MDField
+;
+
+ValueIntField -> ValueIntField
+	: 'value:' IntLit
+;
+
+ValueStringField -> ValueStringField
+	: 'value:' StringLit
+;
+
+VarField -> VarField
+	: 'var:' MDField
+;
+
+VirtualIndexField -> VirtualIndexField
+	: 'virtualIndex:' IntLit
+;
+
+VirtualityField -> VirtualityField
+	: 'virtuality:' DwarfVirtuality
+;
+
+VtableHolderField -> VtableHolderField
+	: 'vtableHolder:' MDField
+;
+
+# ___ [ Specialized metadata values ] __________________________________________
+
+# ref: ParseMDField(MDSignedOrMDField &)
+
+%interface MDFieldOrInt;
+
+MDFieldOrInt -> MDFieldOrInt
+	: MDField
+	| IntLit
+;
+
+# ___ [ Specialized metadata enums ] ___________________________________________
+
+ChecksumKind -> ChecksumKind
+	# CSK_foo
+	: checksum_kind_tok
+;
+
+# ref: ParseMDField(DIFlagField &)
+#
+#  ::= uint32
+#  ::= DIFlagVector
+#  ::= DIFlagVector '|' DIFlagFwdDecl '|' uint32 '|' DIFlagPublic
+
+DIFlags -> DIFlags
+	: Flags=(DIFlag separator '|')+
+;
+
+DIFlag -> DIFlag
+	: UintLit
+	# DIFlagFoo
+	| di_flag_tok
+;
+
+# ref: ParseMDField(DwarfAttEncodingField &)
+
+DwarfAttEncoding -> DwarfAttEncoding
+	: UintLit
+	# DW_ATE_foo
+	| dwarf_att_encoding_tok
+;
+
+# ref: ParseMDField(DwarfCCField &Result)
+
+DwarfCC -> DwarfCC
+	: UintLit
+	# DW_CC_foo
+	| dwarf_cc_tok
+;
+
+# ref: ParseMDField(DwarfLangField &)
+
+DwarfLang -> DwarfLang
+	: UintLit
+	# DW_LANG_foo
+	| dwarf_lang_tok
+;
+
+# ref: ParseMDField(DwarfMacinfoTypeField &)
+
+DwarfMacinfo -> DwarfMacinfo
+	: UintLit
+	# DW_MACINFO_foo
+	| dwarf_macinfo_tok
+;
+
+DwarfOp -> DwarfOp
+	# DW_OP_foo
+	: dwarf_op_tok
+;
+
+# ref: ParseMDField(DwarfTagField &)
+
+DwarfTag -> DwarfTag
+	: UintLit
+	# DW_TAG_foo
+	| dwarf_tag_tok
+;
+
+# ref: ParseMDField(DwarfVirtualityField &)
+
+DwarfVirtuality -> DwarfVirtuality
+	: UintLit
+	# DW_VIRTUALITY_foo
+	| dwarf_virtuality_tok
+;
+
+# ref bool LLParser::ParseMDField(EmissionKindField &)
+
+EmissionKind -> EmissionKind
+	: UintLit
+	# FullDebug
+	| emission_kind_tok
+;
+
+# ref: bool LLParser::ParseMDField(NameTableKindField &)
+
+NameTableKind -> NameTableKind
+	: UintLit
+	# GNU
+	| name_table_kind_tok
+;
+
+# ___ [ Helpers ] ______________________________________________________________
 
 # ref: ParseOptionalAddrSpace
 #
@@ -3458,14 +4735,4 @@ Visibility -> Visibility
 
 Volatile -> Volatile
 	: 'volatile'
-;
-
-# TODO: fix SpecializedMDNode.
-
-SpecializedMDNode -> SpecializedMDNode
-	: placeholder1
-;
-
-DIExpression -> DIExpression
-	: placeholder2
 ;
