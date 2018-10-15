@@ -22,32 +22,47 @@ var DoTypeResolution = true
 // Translate translates the AST of the given module to an equivalent LLVM IR
 // module.
 func Translate(module *ast.Module) (*ir.Module, error) {
-	m := &ir.Module{}
+	gen := newGenerator()
 	if DoTypeResolution {
 		typeResolutionStart := time.Now()
-		ts, err := resolveTypeDefs(module)
+		_, err := gen.resolveTypeDefs(module)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		fmt.Println("type resolution of type definitions took:", time.Since(typeResolutionStart))
 		fmt.Println()
-		_ = ts
-		//pretty.Println(ts)
 	}
-	return m, nil
+	return gen.m, nil
+}
+
+// generator keeps track of global and local identifiers when translating values
+// and types from AST to IR representation.
+type generator struct {
+	// LLVM IR module being generated.
+	m *ir.Module
+}
+
+// newGenerator returns a new generator for translating an LLVM IR module from
+// AST to IR representation.
+func newGenerator() *generator {
+	return &generator{
+		m: &ir.Module{},
+	}
 }
 
 // resolveTypeDefs resolves the type definitions of the given module. The
 // returned value maps from type name (without '%' prefix) to the underlying
 // type.
-func resolveTypeDefs(module *ast.Module) (map[string]types.Type, error) {
+func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type, error) {
 	// index maps from type name to underlying AST type.
 	index := make(map[string]ast.LlvmNode)
 	// Index named AST types.
+	var order []string
 	for _, entity := range module.TopLevelEntities() {
 		switch entity := entity.(type) {
 		case *ast.TypeDef:
 			alias := local(entity.Alias())
+			order = append(order, alias)
 			typ := entity.Typ()
 			switch typ.(type) {
 			case *ast.OpaqueType:
@@ -86,6 +101,22 @@ func resolveTypeDefs(module *ast.Module) (map[string]types.Type, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
+	}
+
+	// Add type definitions to the IR module, in the same order of occurrance as
+	// the input.
+	added := make(map[string]bool)
+	for _, key := range order {
+		if added[key] {
+			// Add only the first type definition of each type name.
+			//
+			// Type definitions of opaque types may contain several type
+			// definitions with the same type name.
+			continue
+		}
+		added[key] = true
+		t := ts[key]
+		gen.m.TypeDefs = append(gen.m.TypeDefs, t)
 	}
 
 	return ts, nil
