@@ -2795,8 +2795,7 @@ AllocSize -> AllocSize
 #  Arg
 #    ::= Type OptionalAttributes Value OptionalAttributes
 
-# TODO: Check if args can contain '...', otherwise, inline using
-# (Arg separator ',') to avoid Args as a separate AST node.
+# NOTE: Args may contain '...'. The ellipsis is purely for readability.
 
 Args -> Args
 	: '...'?
