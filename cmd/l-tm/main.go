@@ -22,7 +22,10 @@ func main() {
 		}
 		fmt.Println("took:", time.Since(start))
 		fmt.Println()
-		m := asm.Translate(module)
+		m, err := asm.Translate(module)
+		if err != nil {
+			log.Fatalf("%q: %+v", llPath, err)
+		}
 		pretty.Println(m)
 	}
 }
