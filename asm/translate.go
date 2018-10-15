@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kr/pretty"
 	"github.com/llir/l/ir"
@@ -18,10 +19,13 @@ import (
 // module.
 func Translate(module *ast.Module) (*ir.Module, error) {
 	m := &ir.Module{}
+	start := time.Now()
 	ts, err := resolveTypeDefs(module)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	fmt.Println("type resolution of type definitions took:", time.Since(start))
+	fmt.Println()
 	pretty.Println(ts)
 	return m, nil
 }
@@ -36,9 +40,7 @@ func resolveTypeDefs(module *ast.Module) (map[string]types.Type, error) {
 	for _, entity := range module.TopLevelEntities() {
 		switch entity := entity.(type) {
 		case *ast.TypeDef:
-			fmt.Printf("entity: %T\n", entity)
 			alias := local(entity.Alias())
-			fmt.Println("   alias:", alias)
 			typ := entity.Typ()
 			switch typ.(type) {
 			case *ast.OpaqueType:
@@ -46,7 +48,6 @@ func resolveTypeDefs(module *ast.Module) (map[string]types.Type, error) {
 			default:
 				panic(fmt.Errorf("support for type %T not yet implemented", typ))
 			}
-			fmt.Println("   typ:", typ.Text())
 			if prev, ok := index[alias]; ok {
 				if _, ok := prev.(*ast.OpaqueType); !ok {
 					return nil, errors.Errorf("AST type definition with alias %q already present; prev `%s`, new `%s`", enc.Local(alias), prev.Text(), typ.Text())
