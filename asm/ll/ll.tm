@@ -681,6 +681,8 @@ TopLevelEntity -> TopLevelEntity
 	| FuncDecl
 	| FuncDef
 	| AttrGroupDef
+	| NamedMetadataDef
+	| MetadataDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -932,6 +934,44 @@ AttrGroupDef -> AttrGroupDef
 	: 'attributes' Name=AttrGroupID '=' '{' Attrs=FuncAttr* '}'
 ;
 
+# ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#named-metadata
+
+# ref: ParseNamedMetadata
+#
+#   !foo = !{ !1, !2 }
+
+NamedMetadataDef -> NamedMetadataDef
+	: Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
+;
+
+%interface MetadataNode;
+
+MetadataNode -> MetadataNode
+	: MetadataID
+	# Parse DIExpressions inline as a special case. They are still MDNodes, so
+	# they can still appear in named metadata. Remove this logic if they become
+	# plain Metadata.
+	| DIExpression
+;
+
+# ~~~ [ Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#metadata-nodes-and-metadata-strings
+
+# ref: ParseStandaloneMetadata
+#
+#   !42 = !{...}
+
+MetadataDef -> MetadataDef
+	: Name=MetadataID '=' Distinctopt MDNode=MDTuple
+	| Name=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
+;
+
+Distinct
+	: 'distinct'
+;
 # === [ Types ] ================================================================
 
 # ref: ParseType
@@ -1544,5 +1584,17 @@ BasicBlock -> BasicBlock
 ;
 
 FuncMetadata -> FuncMetadata
+	: placeholder1
+;
+
+MDTuple -> MDTuple
+	: placeholder2
+;
+
+SpecializedMDNode -> SpecializedMDNode
+	: placeholder3
+;
+
+DIExpression -> DIExpression
 	: placeholder1
 ;

@@ -3,47 +3,8 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| NamedMetadataDef
-	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#named-metadata
-
-# ref: ParseNamedMetadata
-#
-#   !foo = !{ !1, !2 }
-
-NamedMetadataDef
-	: MetadataName '=' '!' '{' (MetadataNode separator ',')* '}'
-;
-
-MetadataNode
-	: MetadataID
-	# Parse DIExpressions inline as a special case. They are still MDNodes, so
-	# they can still appear in named metadata. Remove this logic if they become
-	# plain Metadata.
-	| DIExpression
-;
-
-# ~~~ [ Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#metadata-nodes-and-metadata-strings
-
-# ref: ParseStandaloneMetadata
-#
-#   !42 = !{...}
-
-MetadataDef
-	: MetadataID '=' Distinctopt MDTuple
-	| MetadataID '=' Distinctopt SpecializedMDNode
-;
-
-Distinct
-	: 'distinct'
 ;
 
 # ~~~ [ Use-list Order Directives ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
