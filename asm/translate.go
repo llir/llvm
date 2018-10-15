@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kr/pretty"
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
@@ -15,18 +14,26 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: remove flag after we reach our performance goals.
+
+// DoTypeResolution enables type resolution of type defintions.
+var DoTypeResolution = true
+
 // Translate translates the AST of the given module to an equivalent LLVM IR
 // module.
 func Translate(module *ast.Module) (*ir.Module, error) {
 	m := &ir.Module{}
-	start := time.Now()
-	ts, err := resolveTypeDefs(module)
-	if err != nil {
-		return nil, errors.WithStack(err)
+	if DoTypeResolution {
+		typeResolutionStart := time.Now()
+		ts, err := resolveTypeDefs(module)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		fmt.Println("type resolution of type definitions took:", time.Since(typeResolutionStart))
+		fmt.Println()
+		_ = ts
+		//pretty.Println(ts)
 	}
-	fmt.Println("type resolution of type definitions took:", time.Since(start))
-	fmt.Println()
-	pretty.Println(ts)
 	return m, nil
 }
 
