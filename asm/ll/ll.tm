@@ -1238,7 +1238,7 @@ Constant -> Constant
 	| GlobalIdent
 	| UndefConst
 	| BlockAddressConst
-	#| ConstantExpr # TODO: uncomment
+	| ConstantExpr
 ;
 
 # --- [ Boolean Constants ] ----------------------------------------------------
@@ -1363,6 +1363,425 @@ UndefConst -> UndefConst
 
 BlockAddressConst -> BlockAddressConst
 	: 'blockaddress' '(' Func=GlobalIdent ',' Block=LocalIdent ')'
+;
+
+# === [ Constant expressions ] =================================================
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ref: ParseValID
+
+%interface ConstantExpr;
+
+ConstantExpr -> ConstantExpr
+	# Binary expressions
+	: AddExpr
+	| FAddExpr
+	| SubExpr
+	| FSubExpr
+	| MulExpr
+	| FMulExpr
+	| UDivExpr
+	| SDivExpr
+	| FDivExpr
+	| URemExpr
+	| SRemExpr
+	| FRemExpr
+	# Bitwise expressions
+	| ShlExpr
+	| LShrExpr
+	| AShrExpr
+	| AndExpr
+	| OrExpr
+	| XorExpr
+	# Vector expressions
+	| ExtractElementExpr
+	| InsertElementExpr
+	| ShuffleVectorExpr
+	# Aggregate expressions
+	| ExtractValueExpr
+	| InsertValueExpr
+	# Memory expressions
+	| GetElementPtrExpr
+	# Conversion expressions
+	| TruncExpr
+	| ZExtExpr
+	| SExtExpr
+	| FPTruncExpr
+	| FPExtExpr
+	| FPToUIExpr
+	| FPToSIExpr
+	| UIToFPExpr
+	| SIToFPExpr
+	| PtrToIntExpr
+	| IntToPtrExpr
+	| BitCastExpr
+	| AddrSpaceCastExpr
+	# Other expressions
+	| ICmpExpr
+	| FCmpExpr
+	| SelectExpr
+;
+
+# --- [ Binary expressions ] --------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AddExpr -> AddExpr
+	: 'add' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FAddExpr -> FAddExpr
+	: 'fadd' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SubExpr -> SubExpr
+	: 'sub' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FSubExpr -> FSubExpr
+	: 'fsub' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+MulExpr -> MulExpr
+	: 'mul' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FMulExpr -> FMulExpr
+	: 'fmul' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+UDivExpr -> UDivExpr
+	: 'udiv' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SDivExpr -> SDivExpr
+	: 'sdiv' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FDivExpr -> FDivExpr
+	: 'fdiv' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+URemExpr -> URemExpr
+	: 'urem' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SRemExpr -> SRemExpr
+	: 'srem' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FRemExpr -> FRemExpr
+	: 'frem' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# --- [ Bitwise expressions ] --------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ShlExpr -> ShlExpr
+	: 'shl' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+LShrExpr -> LShrExpr
+	: 'lshr' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AShrExpr -> AShrExpr
+	: 'ashr' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AndExpr -> AndExpr
+	: 'and' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+OrExpr -> OrExpr
+	: 'or' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+XorExpr -> XorExpr
+	: 'xor' '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# --- [ Vector expressions ] ---------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ExtractElementExpr -> ExtractElementExpr
+	: 'extractelement' '(' X=TypeConst ',' Index=TypeConst ')'
+;
+
+# ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+InsertElementExpr -> InsertElementExpr
+	: 'insertelement' '(' X=TypeConst ',' Elem=TypeConst ',' Index=TypeConst ')'
+;
+
+# ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ShuffleVectorExpr -> ShuffleVectorExpr
+	: 'shufflevector' '(' X=TypeConst ',' Y=TypeConst ',' Mask=TypeConst ')'
+;
+
+# --- [ Aggregate expressions ] ------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ExtractValueExpr -> ExtractValueExpr
+	: 'extractvalue' '(' X=TypeConst Indices=(',' UintLit)* ')'
+;
+
+# ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+InsertValueExpr -> InsertValueExpr
+	: 'insertvalue' '(' X=TypeConst ',' Elem=TypeConst Indices=(',' UintLit)* ')'
+;
+
+# --- [ Memory expressions ] ---------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+GetElementPtrExpr -> GetElementPtrExpr
+	: 'getelementptr' InBoundsopt '(' ElemType=Type ',' Src=TypeConst Indices=(',' GEPIndex)* ')'
+;
+
+# ref: ParseGlobalValueVector
+#
+#   ::= empty
+#   ::= [inrange] TypeAndValue (',' [inrange] TypeAndValue)*
+
+GEPIndex -> GEPIndex
+	: Inrangeopt Index=TypeConst
+;
+
+Inrange -> Inrange
+	: 'inrange'
+;
+
+# --- [ Conversion expressions ] -----------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+TruncExpr -> TruncExpr
+	: 'trunc' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ZExtExpr -> ZExtExpr
+	: 'zext' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SExtExpr -> SExtExpr
+	: 'sext' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPTruncExpr -> FPTruncExpr
+	: 'fptrunc' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPExtExpr -> FPExtExpr
+	: 'fpext' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPToUIExpr -> FPToUIExpr
+	: 'fptoui' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FPToSIExpr -> FPToSIExpr
+	: 'fptosi' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+UIToFPExpr -> UIToFPExpr
+	: 'uitofp' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SIToFPExpr -> SIToFPExpr
+	: 'sitofp' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+PtrToIntExpr -> PtrToIntExpr
+	: 'ptrtoint' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+IntToPtrExpr -> IntToPtrExpr
+	: 'inttoptr' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+BitCastExpr -> BitCastExpr
+	: 'bitcast' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+AddrSpaceCastExpr -> AddrSpaceCastExpr
+	: 'addrspacecast' '(' From=TypeConst 'to' To=Type ')'
+;
+
+# --- [ Other expressions ] ----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#constant-expressions
+
+# ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+ICmpExpr -> ICmpExpr
+	: 'icmp' Cond=IPred '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+FCmpExpr -> FCmpExpr
+	: 'fcmp' Cond=FPred '(' X=TypeConst ',' Y=TypeConst ')'
+;
+
+# ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ref: ParseValID
+
+SelectExpr -> SelectExpr
+	: 'select' '(' Cond=TypeConst ',' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # //////////////////////////////////////////////////////////////////////////////
@@ -1495,7 +1914,7 @@ CallingConv -> CallingConv
 	| 'x86_stdcallcc'
 	| 'x86_thiscallcc'
 	| 'x86_vectorcallcc'
-	| 'cc' UintLit
+	| 'cc' UintLit # TODO: Check how the AST looks like for this case.
 ;
 
 # ref: parseOptionalComdat
@@ -1526,6 +1945,31 @@ Dereferenceable -> Dereferenceable
 DLLStorageClass -> DLLStorageClass
 	: 'dllexport'
 	| 'dllimport'
+;
+
+Exact -> Exact
+	: 'exact'
+;
+
+# ref: ParseCmpPredicate
+
+FPred -> FPred
+	: 'false'
+	| 'oeq'
+	| 'oge'
+	| 'ogt'
+	| 'ole'
+	| 'olt'
+	| 'one'
+	| 'ord'
+	| 'true'
+	| 'ueq'
+	| 'uge'
+	| 'ugt'
+	| 'ule'
+	| 'ult'
+	| 'une'
+	| 'uno'
 ;
 
 # ref: ParseFnAttributeValuePairs
@@ -1610,6 +2054,25 @@ GlobalAttr -> GlobalAttr
 	| MetadataAttachment
 ;
 
+InBounds -> InBounds
+	: 'inbounds'
+;
+
+# ref: ParseCmpPredicate
+
+IPred -> IPred
+	: 'eq'
+	| 'ne'
+	| 'sge'
+	| 'sgt'
+	| 'sle'
+	| 'slt'
+	| 'uge'
+	| 'ugt'
+	| 'ule'
+	| 'ult'
+;
+
 # https://llvm.org/docs/LangRef.html#linkage-types
 
 # ref: ParseOptionalLinkage
@@ -1642,6 +2105,10 @@ Linkage -> Linkage
 ExternLinkage -> ExternLinkage
 	: 'extern_weak'
 	| 'external'
+;
+
+OverflowFlags -> OverflowFlags
+	: ('nsw' | 'nuw')*
 ;
 
 # ref: ParseArgumentList
@@ -1736,6 +2203,8 @@ ReturnAttribute -> ReturnAttribute
 Section -> Section
 	: 'section' Name=StringLit
 ;
+
+# TODO: StackAlignment rename to AlignStack?
 
 # ref: ParseOptionalStackAlignment
 #
