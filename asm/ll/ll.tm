@@ -749,7 +749,7 @@ ModuleAsm -> ModuleAsm
 #
 #   ::= LocalVar '=' 'type' type
 
-# TODO: Remove `Typ=` once https://github.com/inspirer/textmapper/issues/13
+# TODO: Rename `Typ=` to `Type=` once https://github.com/inspirer/textmapper/issues/13
 # is resolved.
 
 TypeDef -> TypeDef
@@ -906,6 +906,8 @@ FuncHeader -> FuncHeader
 
 # TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
 # Both define an identifier GC, the former in listener.go and the latter in token.go.
+
+# TODO: Create issue in Textmapper to track this upstream.
 
 GC -> GCNode
 	: 'gc' Name=StringLit
@@ -2640,7 +2642,8 @@ BrTerm -> BrTerm
 	: 'br' Target=Label InstMetadata
 ;
 
-# TODO: replace `IntType Value` with TypeValue if it does not lead to conflicts.
+# TODO: replace `IntType Value` with TypeValue when the parser generator
+# is capable of handling the shift/reduce conflict.
 
 # Conditional branch.
 CondBrTerm -> CondBrTerm
@@ -2661,10 +2664,8 @@ SwitchTerm -> SwitchTerm
 	: 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' InstMetadata
 ;
 
-# TODO: Replace `Type IntConst` with TypeConst if it does not lead to conflicts.
-
 Case -> Case
-	: XTyp=Type X=IntConst ',' Target=Label
+	: X=TypeConst ',' Target=Label
 ;
 
 # --- [ indirectbr ] -----------------------------------------------------------
