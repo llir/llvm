@@ -20,7 +20,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
-		fmt.Println("took:", time.Since(start))
+		fmt.Println("parsing into AST took:", time.Since(start))
 		fmt.Println()
 		m, err := asm.Translate(module)
 		if err != nil {
