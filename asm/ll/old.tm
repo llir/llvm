@@ -88,16 +88,6 @@ MDNode
 	| SpecializedMDNode
 ;
 
-# ### [ Helper productions ] ##################################################
-
-# ref: ParseOptionalFunctionMetadata
-#
-#   ::= (!dbg !57)*
-
-FunctionMetadata
-	: MetadataAttachment*
-;
-
 # --- [ Specialized Metadata Nodes ] -------------------------------------------
 
 # https://llvm.org/docs/LangRef.html#specialized-metadata-nodes
@@ -1057,14 +1047,4 @@ EmissionKind
 NameTableKindField
 	: IntLit
 	| NameTableKind
-;
-
-# ### [ Helper productions ] ###################################################
-
-# ref: ParseInstructionMetadata
-#
-#   ::= !dbg !42 (',' !dbg !57)*
-
-InstructionMetadata
-   : (',' MetadataAttachment)+?
 ;

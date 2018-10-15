@@ -3077,6 +3077,14 @@ FuncAttribute -> FuncAttribute
 	| 'writeonly'
 ;
 
+# ref: ParseOptionalFunctionMetadata
+#
+#   ::= (!dbg !57)*
+
+FuncMetadata -> FuncMetadata
+	: MetadataAttachments=MetadataAttachment*
+;
+
 %interface GlobalAttr;
 
 GlobalAttr -> GlobalAttr
@@ -3089,6 +3097,14 @@ GlobalAttr -> GlobalAttr
 
 InBounds -> InBounds
 	: 'inbounds'
+;
+
+# ref: ParseInstructionMetadata
+#
+#   ::= !dbg !42 (',' !dbg !57)*
+
+InstMetadata -> InstMetadata
+   : MetadataAttachments=(',' MetadataAttachment)+?
 ;
 
 # ref: ParseCmpPredicate
@@ -3352,14 +3368,6 @@ MetadataAttachment -> MetadataAttachment
 
 UseListOrder -> UseListOrder
 	: placeholder3
-;
-
-FuncMetadata -> FuncMetadata
-	: placeholder1
-;
-
-InstMetadata -> InstMetadata
-	: placeholder2
 ;
 
 MDTuple -> MDTuple
