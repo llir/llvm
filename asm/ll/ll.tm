@@ -1765,7 +1765,7 @@ AddrSpaceCastExpr -> AddrSpaceCastExpr
 # ref: ParseValID
 
 ICmpExpr -> ICmpExpr
-	: 'icmp' Cond=IPred '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'icmp' Pred=IPred '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1773,7 +1773,7 @@ ICmpExpr -> ICmpExpr
 # ref: ParseValID
 
 FCmpExpr -> FCmpExpr
-	: 'fcmp' Cond=FPred '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'fcmp' Pred=FPred '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1792,6 +1792,800 @@ SelectExpr -> SelectExpr
 
 BasicBlock -> BasicBlock
 	: Name=LabelIdent? Insts=Instruction* Term=Terminator
+;
+
+# === [ Instructions ] =========================================================
+
+# https://llvm.org/docs/LangRef.html#instruction-reference
+
+# ref: ParseInstruction
+
+%interface Instruction;
+
+Instruction -> Instruction
+	# Instructions not producing values.
+	: StoreInst
+	| FenceInst
+	| CmpXchgInst
+	| AtomicRMWInst
+	# Instructions producing values.
+	| LocalDef
+	| ValueInstruction
+;
+
+LocalDef -> LocalDef
+	: Name=LocalIdent '=' Inst=ValueInstruction
+;
+
+%interface ValueInstruction;
+
+ValueInstruction -> ValueInstruction
+	# Binary instructions
+	: AddInst
+	| FAddInst
+	| SubInst
+	| FSubInst
+	| MulInst
+	| FMulInst
+	| UDivInst
+	| SDivInst
+	| FDivInst
+	| URemInst
+	| SRemInst
+	| FRemInst
+	# Bitwise instructions
+	| ShlInst
+	| LShrInst
+	| AShrInst
+	| AndInst
+	| OrInst
+	| XorInst
+	# Vector instructions
+	| ExtractElementInst
+	| InsertElementInst
+	| ShuffleVectorInst
+	# Aggregate instructions
+	| ExtractValueInst
+	| InsertValueInst
+	# Memory instructions
+	| AllocaInst
+	| LoadInst
+	| GetElementPtrInst
+	# Conversion instructions
+	| TruncInst
+	| ZExtInst
+	| SExtInst
+	| FPTruncInst
+	| FPExtInst
+	| FPToUIInst
+	| FPToSIInst
+	| UIToFPInst
+	| SIToFPInst
+	| PtrToIntInst
+	| IntToPtrInst
+	| BitCastInst
+	| AddrSpaceCastInst
+	# Other instructions
+	| ICmpInst
+	| FCmpInst
+	| PhiInst
+	| SelectInst
+	| CallInst
+	| VAArgInst
+	| LandingPadInst
+	| CatchPadInst
+	| CleanupPadInst
+;
+
+# --- [ Binary instructions ] --------------------------------------------------
+
+# ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#add-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+AddInst -> AddInst
+	: 'add' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fadd-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FAddInst -> FAddInst
+	: 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sub-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+SubInst -> SubInst
+	: 'sub' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fsub-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FSubInst -> FSubInst
+	: 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#mul-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+MulInst -> MulInst
+	: 'mul' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fmul-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FMulInst -> FMulInst
+	: 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#udiv-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+UDivInst -> UDivInst
+	: 'udiv' Exactopt X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sdiv-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+SDivInst -> SDivInst
+	: 'sdiv' Exactopt X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fdiv-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FDivInst -> FDivInst
+	: 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#urem-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+URemInst -> URemInst
+	: 'urem' X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#srem-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+SRemInst -> SRemInst
+	: 'srem' X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#frem-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+FRemInst -> FRemInst
+	: 'frem' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+;
+
+# --- [ Bitwise instructions ] -------------------------------------------------
+
+# ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#shl-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+ShlInst -> ShlInst
+	: 'shl' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#lshr-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+LShrInst -> LShrInst
+	: 'lshr' Exactopt X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ashr-instruction
+
+# ref: ParseArithmetic
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value
+
+AShrInst -> AShrInst
+	: 'ashr' Exactopt X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#and-instruction
+
+# ref: ParseLogical
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value {
+
+AndInst -> AndInst
+	: 'and' X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#or-instruction
+
+# ref: ParseLogical
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value {
+
+OrInst -> OrInst
+	: 'or' X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#xor-instruction
+
+# ref: ParseLogical
+#
+#  ::= ArithmeticOps TypeAndValue ',' Value {
+
+XorInst -> XorInst
+	: 'xor' X=TypeValue ',' Y=Value InstMetadata
+;
+
+# --- [ Vector instructions ] --------------------------------------------------
+
+# ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#extractelement-instruction
+
+# ref: ParseExtractElement
+#
+#   ::= 'extractelement' TypeAndValue ',' TypeAndValue
+
+ExtractElementInst -> ExtractElementInst
+	: 'extractelement' X=TypeValue ',' Index=TypeValue InstMetadata
+;
+
+# ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#insertelement-instruction
+
+# ref: ParseInsertElement
+#
+#   ::= 'insertelement' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+InsertElementInst -> InsertElementInst
+	: 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue InstMetadata
+;
+
+# ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#shufflevector-instruction
+
+# ref: ParseShuffleVector
+#
+#   ::= 'shufflevector' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+ShuffleVectorInst -> ShuffleVectorInst
+	: 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue InstMetadata
+;
+
+# --- [ Aggregate instructions ] -----------------------------------------------
+
+# ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#extractvalue-instruction
+
+# ref: ParseExtractValue
+#
+#   ::= 'extractvalue' TypeAndValue (',' uint32)+
+
+ExtractValueInst -> ExtractValueInst
+   : 'extractvalue' X=TypeValue Indices=(',' UintLit)+ InstMetadata
+;
+
+# ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#insertvalue-instruction
+
+# ref: ParseInsertValue
+#
+#   ::= 'insertvalue' TypeAndValue ',' TypeAndValue (',' uint32)+
+
+InsertValueInst -> InsertValueInst
+   : 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+ InstMetadata
+;
+
+# --- [ Memory instructions ] --------------------------------------------------
+
+# ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#alloca-instruction
+
+# ref: ParseAlloc
+#
+#   ::= 'alloca' 'inalloca'? 'swifterror'? Type (',' TypeAndValue)?
+#       (',' 'align' i32)? (',', 'addrspace(n))?
+
+AllocaInst -> AllocaInst
+	: 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Alignment)? (',' AddrSpace)? InstMetadata
+;
+
+InAlloca -> InAlloca
+	: 'inalloca'
+;
+
+SwiftError -> SwiftError
+	: 'swifterror'
+;
+
+# ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#load-instruction
+
+# ref: ParseLoad
+#
+#   ::= 'load' 'volatile'? TypeAndValue (',' 'align' i32)?
+#   ::= 'load' 'atomic' 'volatile'? TypeAndValue
+#       'singlethread'? AtomicOrdering (',' 'align' i32)?
+
+LoadInst -> LoadInst
+	# Load.
+	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)? InstMetadata
+	# Atomic load.
+	| 'load' 'atomic' Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+;
+
+# ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#store-instruction
+
+# ref: ParseStore
+#
+#   ::= 'store' 'volatile'? TypeAndValue ',' TypeAndValue (',' 'align' i32)?
+#   ::= 'store' 'atomic' 'volatile'? TypeAndValue ',' TypeAndValue
+#       'singlethread'? AtomicOrdering (',' 'align' i32)?
+
+StoreInst -> StoreInst
+	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)? InstMetadata
+	| 'store' 'atomic' Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+;
+
+# ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fence-instruction
+
+# ref: ParseFence
+#
+#   ::= 'fence' 'singlethread'? AtomicOrdering
+
+FenceInst -> FenceInst
+	: 'fence' SyncScopeopt AtomicOrdering InstMetadata
+;
+
+# ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#cmpxchg-instruction
+
+# ref: ParseCmpXchg
+#
+#   ::= 'cmpxchg' 'weak'? 'volatile'? TypeAndValue ',' TypeAndValue ','
+#       TypeAndValue 'singlethread'? AtomicOrdering AtomicOrdering
+
+CmpXchgInst -> CmpXchgInst
+	: 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ',' New=TypeValue SyncScopeopt Success=AtomicOrdering Failure=AtomicOrdering InstMetadata
+;
+
+Weak -> Weak
+	: 'weak'
+;
+
+# ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#atomicrmw-instruction
+
+# ref: ParseAtomicRMW
+#
+#   ::= 'atomicrmw' 'volatile'? BinOp TypeAndValue ',' TypeAndValue
+#       'singlethread'? AtomicOrdering
+
+AtomicRMWInst -> AtomicRMWInst
+	: 'atomicrmw' Volatileopt Op=BinOp Ptr=TypeValue ',' X=TypeValue SyncScopeopt AtomicOrdering InstMetadata
+;
+
+BinOp -> BinOp
+	: 'add'
+	| 'and'
+	| 'max'
+	| 'min'
+	| 'nand'
+	| 'or'
+	| 'sub'
+	| 'umax'
+	| 'umin'
+	| 'xchg'
+	| 'xor'
+;
+
+# ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#getelementptr-instruction
+
+# ref: ParseGetElementPtr
+#
+#   ::= 'getelementptr' 'inbounds'? TypeAndValue (',' TypeAndValue)*
+
+GetElementPtrInst -> GetElementPtrInst
+	: 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(',' TypeValue)* InstMetadata
+;
+
+# --- [ Conversion instructions ] ----------------------------------------------
+
+# ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#trunc-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+TruncInst -> TruncInst
+	: 'trunc' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#zext-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+ZExtInst -> ZExtInst
+	: 'zext' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sext-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+SExtInst -> SExtInst
+	: 'sext' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fptrunc-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPTruncInst -> FPTruncInst
+	: 'fptrunc' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fpext-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPExtInst -> FPExtInst
+	: 'fpext' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fptoui-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPToUIInst -> FPToUIInst
+	: 'fptoui' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fptosi-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+FPToSIInst -> FPToSIInst
+	: 'fptosi' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#uitofp-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+UIToFPInst -> UIToFPInst
+	: 'uitofp' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#sitofp-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+SIToFPInst -> SIToFPInst
+	: 'sitofp' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#ptrtoint-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+PtrToIntInst -> PtrToIntInst
+	: 'ptrtoint' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#inttoptr-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+IntToPtrInst -> IntToPtrInst
+	: 'inttoptr' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#bitcast-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+BitCastInst -> BitCastInst
+	: 'bitcast' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#addrspacecast-instruction
+
+# ref: ParseCast
+#
+#   ::= CastOpc TypeAndValue 'to' Type
+
+AddrSpaceCastInst -> AddrSpaceCastInst
+	: 'addrspacecast' From=TypeValue 'to' To=Type InstMetadata
+;
+
+# --- [ Other instructions ] ---------------------------------------------------
+
+# ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#icmp-instruction
+
+# ref: ParseCompare
+#
+#  ::= 'icmp' IPredicates TypeAndValue ',' Value
+
+ICmpInst -> ICmpInst
+	: 'icmp' Pred=IPred X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#fcmp-instruction
+
+# ref: ParseCompare
+#
+#  ::= 'fcmp' FPredicates TypeAndValue ',' Value
+
+FCmpInst -> FCmpInst
+	: 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value InstMetadata
+;
+
+# ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#phi-instruction
+
+# ref: ParsePHI
+#
+#   ::= 'phi' Type '[' Value ',' Value ']' (',' '[' Value ',' Value ']')*
+
+PhiInst -> PhiInst
+	: 'phi' Typ=Type Incs=(Inc separator ',')+ InstMetadata
+;
+
+Inc -> Inc
+	: '[' X=Value ',' Pred=LocalIdent ']'
+;
+
+# ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#select-instruction
+
+# ref: ParseSelect
+#
+#   ::= 'select' TypeAndValue ',' TypeAndValue ',' TypeAndValue
+
+SelectInst -> SelectInst
+	: 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue InstMetadata
+;
+
+# ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#call-instruction
+
+# ref: ParseCall
+#
+#   ::= 'call' OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+#   ::= 'tail' 'call' OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+#   ::= 'musttail' 'call' OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+#   ::= 'notail' 'call'  OptionalFastMathFlags OptionalCallingConv
+#           OptionalAttrs Type Value ParameterList OptionalAttrs
+
+CallInst -> CallInst
+	: Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt RetType=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles InstMetadata
+;
+
+Tail -> Tail
+	: 'musttail'
+	| 'notail'
+	| 'tail'
+;
+
+# ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#va_arg-instruction
+
+# ref: ParseVA_Arg
+#
+#   ::= 'va_arg' TypeAndValue ',' Type
+
+VAArgInst -> VAArgInst
+	: 'va_arg' ArgList=TypeValue ',' ArgType=Type InstMetadata
+;
+
+# ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#landingpad-instruction
+
+# ref: ParseLandingPad
+#
+#   ::= 'landingpad' Type 'personality' TypeAndValue 'cleanup'? Clause+
+#  Clause
+#   ::= 'catch' TypeAndValue
+#   ::= 'filter'
+#   ::= 'filter' TypeAndValue ( ',' TypeAndValue )*
+
+LandingPadInst -> LandingPadInst
+	: 'landingpad' Typ=Type Cleanupopt Clauses=Clause* InstMetadata
+;
+
+Cleanup -> Cleanup
+	: 'cleanup'
+;
+
+%interface Clause;
+
+Clause -> Clause
+	: CatchClause
+	| FilterClause
+;
+
+CatchClause -> CatchClause
+	: 'catch' X=TypeValue
+;
+
+FilterClause -> FilterClause
+	: 'filter' Typ=Type Val=ArrayConst
+;
+
+# --- [ catchpad ] -------------------------------------------------------------
+
+# ref: ParseCatchPad
+#
+#   ::= 'catchpad' ParamList 'to' TypeAndValue 'unwind' TypeAndValue
+
+CatchPadInst -> CatchPadInst
+	: 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
+;
+
+# --- [ cleanuppad ] -----------------------------------------------------------
+
+# ref: ParseCleanupPad
+#
+#   ::= 'cleanuppad' within Parent ParamList
+
+CleanupPadInst -> CleanupPadInst
+	: 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
 ;
 
 # //////////////////////////////////////////////////////////////////////////////
@@ -1829,6 +2623,48 @@ AlignStack -> AlignStack
 AllocSize -> AllocSize
 	: 'allocsize' '(' ElemSize=UintLit ')'
 	| 'allocsize' '(' ElemSize=UintLit ',' N=UintLit ')'
+;
+
+# ref: ParseParameterList
+#
+#    ::= '(' ')'
+#    ::= '(' Arg (',' Arg)* ')'
+#  Arg
+#    ::= Type OptionalAttributes Value OptionalAttributes
+
+# TODO: Check if args can contain '...', otherwise, inline using
+# (Arg separator ',') to avoid Args as a separate AST node.
+
+Args -> Args
+	: '...'?
+	| Args=(Arg separator ',')+ (',' '...')?
+;
+
+# ref: ParseMetadataAsValue
+#
+#  ::= metadata i32 %local
+#  ::= metadata i32 @global
+#  ::= metadata i32 7
+#  ::= metadata !0
+#  ::= metadata !{...}
+#  ::= metadata !"string"
+
+Arg -> Arg
+	: Typ=ConcreteType Attrs=ParamAttr* Val=Value
+	| Typ=MetadataType Val=Metadata
+;
+
+# ref: ParseOrdering
+#
+#   ::= AtomicOrdering
+
+AtomicOrdering -> AtomicOrdering
+	: 'acq_rel'
+	| 'acquire'
+	| 'monotonic'
+	| 'release'
+	| 'seq_cst'
+	| 'unordered'
 ;
 
 AttrPair -> AttrPair
@@ -1959,6 +2795,31 @@ DLLStorageClass -> DLLStorageClass
 
 Exact -> Exact
 	: 'exact'
+;
+
+# ref: ParseExceptionArgs
+
+ExceptionArg -> ExceptionArg
+	: Typ=ConcreteType Val=Value
+	| Typ=MetadataType Val=Metadata
+;
+
+ExceptionScope -> ExceptionScope
+	: NoneConst
+	| LocalIdent
+;
+
+# ref: EatFastMathFlagsIfPresent
+
+FastMathFlag -> FastMathFlag
+	: 'afn'
+	| 'arcp'
+	| 'contract'
+	| 'fast'
+	| 'ninf'
+	| 'nnan'
+	| 'nsz'
+	| 'reassoc'
 ;
 
 # ref: ParseCmpPredicate
@@ -2117,6 +2978,27 @@ ExternLinkage -> ExternLinkage
 	| 'external'
 ;
 
+# ref: ParseOptionalOperandBundles
+#
+#    ::= empty
+#    ::= '[' OperandBundle [, OperandBundle ]* ']'
+#
+#  OperandBundle
+#    ::= bundle-tag '(' ')'
+#    ::= bundle-tag '(' Type Value [, Type Value ]* ')'
+#
+#  bundle-tag ::= String Constant
+
+# TODO: inline OperandBundles to avoid OperandBundles as a node in the AST?
+
+OperandBundles -> OperandBundles
+	: ('[' OperandBundles=(OperandBundle separator ',')+ ']')?
+;
+
+OperandBundle -> OperandBundle
+	: Tag=StringLit '(' Inputs=(TypeValue separator ',')* ')'
+;
+
 OverflowFlags -> OverflowFlags
 	: ('nsw' | 'nuw')*
 ;
@@ -2224,6 +3106,14 @@ StackAlignment -> StackAlignment
 	: 'alignstack' '(' N=UintLit ')'
 ;
 
+# ref: ParseScope
+#
+#   ::= syncscope("singlethread" | "<target scope>")?
+
+SyncScope -> SyncScope
+	: 'syncscope' '(' Scope=StringLit ')'
+;
+
 # ref: ParseOptionalThreadLocal
 #
 #   := empty
@@ -2251,6 +3141,10 @@ TypeConst -> TypeConst
 	: Typ=Type Val=Constant
 ;
 
+TypeValue -> TypeValue
+	: Typ=Type Val=Value
+;
+
 # ref: ParseOptionalUnnamedAddr
 
 UnnamedAddr -> UnnamedAddr
@@ -2273,6 +3167,10 @@ Visibility -> Visibility
 	| 'protected'
 ;
 
+Volatile -> Volatile
+	: 'volatile'
+;
+
 # TODO: fix metadata.
 
 MetadataAttachment -> MetadataAttachment
@@ -2289,6 +3187,10 @@ FuncMetadata -> FuncMetadata
 	: placeholder1
 ;
 
+InstMetadata -> InstMetadata
+	: placeholder2
+;
+
 MDTuple -> MDTuple
 	: placeholder2
 ;
@@ -2301,10 +3203,10 @@ DIExpression -> DIExpression
 	: placeholder1
 ;
 
-Instruction -> Instruction
-	: placeholder1
-;
-
 Terminator -> Terminator
 	: placeholder2
+;
+
+Metadata -> Metadata
+	: placeholder1
 ;
