@@ -2777,7 +2777,7 @@ AlignPair -> AlignPair
 	: 'align' '=' N=UintLit
 ;
 
-AlignStack -> AlignStack
+AlignStackPair -> AlignStackPair
 	: 'alignstack' '=' N=UintLit
 ;
 
@@ -3025,7 +3025,7 @@ FuncAttr -> FuncAttr
 	| AttrGroupID
 	# used in attribute groups.
 	| AlignPair
-	| AlignStack
+	| AlignStackPair
 	# used in functions.
 	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
 	| AllocSize
