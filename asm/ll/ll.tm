@@ -676,6 +676,7 @@ TopLevelEntity -> TopLevelEntity
 	| ModuleAsm
 	| TypeDef
 	| ComdatDef
+	| GlobalDecl
 	| GlobalDef
 	| IndirectSymbolDef
 	| FuncDecl
@@ -774,7 +775,7 @@ SelectionKind -> SelectionKind
 	| 'samesize'
 ;
 
-# ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # https://llvm.org/docs/LangRef.html#global-variables
 
@@ -807,8 +808,14 @@ SelectionKind -> SelectionKind
 #       OptionalAddrSpace OptionalExternallyInitialized GlobalType Type
 #       Const OptionalAttrs
 
+GlobalDecl -> GlobalDecl
+	: Name=GlobalIdent '=' ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Typ=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+;
+
+# ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 GlobalDef -> GlobalDef
-	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Typ=Type Init=Constantopt GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable Val=Type Init=Constant GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # TODO: Check if ExternallyInitialized can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
@@ -852,11 +859,11 @@ IndirectSymbolDef -> IndirectSymbolDef
 ;
 
 AliasDef -> AliasDef
-	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
 ;
 
 IFuncDef -> IFuncDef
-	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
 ;
 
 # ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -894,7 +901,7 @@ FuncDef -> FuncDef
 # The shift/reduce conflict is present since FuncAttr also contains 'align'.
 
 FuncHeader -> FuncHeader
-	: Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+	: (Linkage | ExternLinkage)? PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
 # TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
@@ -1176,6 +1183,7 @@ Value -> Value
 	# %42
 	# %foo
 	| LocalIdent
+	# TODO: Move InlineAsm from Value to Callee and Invokee?
 	# Inline assembler expressions may only be used as the callee operand of a
 	# call or an invoke instruction.
 	| InlineAsm
@@ -1204,6 +1212,157 @@ AlignStack -> AlignStack
 
 IntelDialect -> IntelDialect
 	: 'inteldialect'
+;
+
+# === [ Constants ] ============================================================
+
+# https://llvm.org/docs/LangRef.html#constants
+
+# ref: ParseValID
+
+%interface Constant;
+
+Constant -> Constant
+	: BoolConst
+	| IntConst
+	| FloatConst
+	| NullConst
+	| NoneConst
+	| StructConst
+	| ArrayConst
+	| CharArrayConst
+	| VectorConst
+	| ZeroInitializerConst
+	# @42
+	# @foo
+	| GlobalIdent
+	| UndefConst
+	| BlockAddressConst
+	#| ConstantExpr # TODO: uncomment
+;
+
+# --- [ Boolean Constants ] ----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+BoolConst -> BoolConst
+	: BoolLit
+;
+
+# --- [ Integer Constants ] ----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+IntConst -> IntConst
+	: IntLit
+;
+
+# --- [ Floating-point Constants ] ---------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+FloatConst -> FloatConst
+	: FloatLit
+;
+
+# --- [ Null Pointer Constants ] -----------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+NullConst -> NullConst
+	: 'null'
+;
+
+# --- [ Token Constants ] ------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#simple-constants
+
+# ref: ParseValID
+
+NoneConst -> NoneConst
+	: 'none'
+;
+
+# --- [ Structure Constants ] --------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+#
+#  ::= '{' ConstVector '}'
+#  ::= '<' '{' ConstVector '}' '>' --> Packed Struct.
+
+StructConst -> StructConst
+	: '{' Fields=(TypeConst separator ',')+? '}'
+	| '<' '{' Fields=(TypeConst separator ',')+? '}' '>'
+;
+
+# --- [ Array Constants ] ------------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+#
+#  c "foo"
+
+ArrayConst -> ArrayConst
+	: '[' Elems=(TypeConst separator ',')* ']'
+;
+
+CharArrayConst -> CharArrayConst
+	: 'c' Val=StringLit
+;
+
+# --- [ Vector Constants ] -----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+#
+#  ::= '<' ConstVector '>'         --> Vector.
+
+VectorConst -> VectorConst
+	: '<' Elems=(TypeConst separator ',')* '>'
+;
+
+# --- [ Zero Initialization Constants ] ----------------------------------------
+
+# https://llvm.org/docs/LangRef.html#complex-constants
+
+# ref: ParseValID
+
+ZeroInitializerConst -> ZeroInitializerConst
+	: 'zeroinitializer'
+;
+
+# --- [ Undefined Values ] -----------------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#undefined-values
+
+# ref: ParseValID
+
+UndefConst -> UndefConst
+	: 'undef'
+;
+
+# --- [ Addresses of Basic Blocks ] --------------------------------------------
+
+# https://llvm.org/docs/LangRef.html#addresses-of-basic-blocks
+
+# ref: ParseValID
+#
+#  ::= 'blockaddress' '(' @foo ',' %bar ')'
+
+BlockAddressConst -> BlockAddressConst
+	: 'blockaddress' '(' Func=GlobalIdent ',' Block=LocalIdent ')'
 ;
 
 # //////////////////////////////////////////////////////////////////////////////
@@ -1478,8 +1637,10 @@ Linkage -> Linkage
 	| 'private'
 	| 'weak'
 	| 'weak_odr'
-	# External linkage.
-	| 'extern_weak'
+;
+
+ExternLinkage -> ExternLinkage
+	: 'extern_weak'
 	| 'external'
 ;
 
@@ -1607,6 +1768,10 @@ TLSModel -> TLSModel
 	| 'localexec'
 ;
 
+TypeConst -> TypeConst
+	: Typ=Type Val=Constant
+;
+
 # ref: ParseOptionalUnnamedAddr
 
 UnnamedAddr -> UnnamedAddr
@@ -1636,10 +1801,6 @@ MetadataAttachment -> MetadataAttachment
 ;
 
 # TODO: fix Constant.
-
-Constant -> Constant
-	: placeholder2
-;
 
 UseListOrder -> UseListOrder
 	: placeholder3
