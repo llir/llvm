@@ -3,23 +3,10 @@
 # ref: ParseTopLevelEntities
 
 TopLevelEntity
-	| AttrGroupDef
 	| NamedMetadataDef
 	| MetadataDef
 	| UseListOrder
 	| UseListOrderBB
-;
-
-# ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# https://llvm.org/docs/LangRef.html#attribute-groups
-
-# ref: ParseUnnamedAttrGrp
-#
-#   ::= 'attributes' AttrGrpID '=' '{' AttrValPair+ '}'
-
-AttrGroupDef
-	: 'attributes' AttrGroupID '=' '{' (FuncAttr | Alignment)* '}'
 ;
 
 # ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

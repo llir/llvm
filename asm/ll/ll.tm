@@ -680,6 +680,7 @@ TopLevelEntity -> TopLevelEntity
 	| IndirectSymbolDef
 	| FuncDecl
 	| FuncDef
+	| AttrGroupDef
 ;
 
 # ~~~ [ Source Filename ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -917,6 +918,18 @@ Personality -> Personality
 
 FuncBody -> FuncBody
 	: '{' Blocks=BasicBlock+ UseListOrders=UseListOrder* '}'
+;
+
+# ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://llvm.org/docs/LangRef.html#attribute-groups
+
+# ref: ParseUnnamedAttrGrp
+#
+#   ::= 'attributes' AttrGrpID '=' '{' AttrValPair+ '}'
+
+AttrGroupDef -> AttrGroupDef
+	: 'attributes' Name=AttrGroupID '=' '{' Attrs=FuncAttr* '}'
 ;
 
 # === [ Types ] ================================================================
