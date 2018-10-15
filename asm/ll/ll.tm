@@ -1784,6 +1784,16 @@ SelectExpr -> SelectExpr
 	: 'select' '(' Cond=TypeConst ',' X=TypeConst ',' Y=TypeConst ')'
 ;
 
+# === [ Basic Blocks ] =========================================================
+
+# ref: ParseBasicBlock
+#
+#   ::= LabelStr? Instruction*
+
+BasicBlock -> BasicBlock
+	: Name=LabelIdent? Insts=Instruction* Term=Terminator
+;
+
 # //////////////////////////////////////////////////////////////////////////////
 
 # ref: ParseOptionalAddrSpace
@@ -2275,10 +2285,6 @@ UseListOrder -> UseListOrder
 	: placeholder3
 ;
 
-BasicBlock -> BasicBlock
-	: placeholder2
-;
-
 FuncMetadata -> FuncMetadata
 	: placeholder1
 ;
@@ -2293,4 +2299,12 @@ SpecializedMDNode -> SpecializedMDNode
 
 DIExpression -> DIExpression
 	: placeholder1
+;
+
+Instruction -> Instruction
+	: placeholder1
+;
+
+Terminator -> Terminator
+	: placeholder2
 ;

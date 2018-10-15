@@ -1,13 +1,3 @@
-# === [ Basic Blocks ] =========================================================
-
-# ref: ParseBasicBlock
-#
-#   ::= LabelStr? Instruction*
-
-BasicBlock
-	: LabelIdent? Instruction* Terminator
-;
-
 # === [ Instructions ] =========================================================
 
 # https://llvm.org/docs/LangRef.html#instruction-reference
