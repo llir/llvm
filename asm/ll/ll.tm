@@ -4328,6 +4328,10 @@ DLLStorageClass -> DLLStorageClass
 	| 'dllimport'
 ;
 
+Ellipsis -> Ellipsis
+	: '...'
+;
+
 Exact -> Exact
 	: 'exact'
 ;
@@ -4567,11 +4571,12 @@ OverflowFlags -> OverflowFlags
 #   ::= ArgTypeList ',' '...'
 #   ::= ArgType (',' ArgType)*
 
-# TODO: Figure out how to handle variadic. ref: https://github.com/inspirer/textmapper/issues/14
+# NOTE: The grammar for Params of FuncType contains Attrs and Name. However, the
+# semantic check will report an error if any of those are present in the input.
 
 Params -> Params
-	: '...'?
-	| Params=(Param separator ',')+ (',' '...')?
+	: Variadic=Ellipsisopt
+	| Params=(Param separator ',')+ Variadic=(',' Ellipsis)?
 ;
 
 Param -> Param
