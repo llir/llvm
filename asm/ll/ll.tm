@@ -809,13 +809,13 @@ SelectionKind -> SelectionKind
 #       Const OptionalAttrs
 
 GlobalDecl -> GlobalDecl
-	: Name=GlobalIdent '=' ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+	: Name=GlobalIdent '=' ExternLinkage Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GlobalDef -> GlobalDef
-	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+	: Name=GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # TODO: Check if ExternallyInitialized can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
@@ -859,11 +859,11 @@ IndirectSymbolDef -> IndirectSymbolDef
 ;
 
 AliasDef -> AliasDef
-	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
 ;
 
 IFuncDef -> IFuncDef
-	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
 ;
 
 # ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -901,7 +901,7 @@ FuncDef -> FuncDef
 # The shift/reduce conflict is present since FuncAttr also contains 'align'.
 
 FuncHeader -> FuncHeader
-	: (Linkage | ExternLinkage)? PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+	: (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
 # TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
@@ -4462,6 +4462,11 @@ FuncMetadata -> FuncMetadata
 	: MetadataAttachments=MetadataAttachment*
 ;
 
+# TODO: consider removing remove GlobalAttr in favour of using (',' Section)?
+# (',' Comdat)? (',' Alignment)? (',' MetadataAttachment)* as was used in the
+# LangRef spec of LLVM IR. Note that the LLVM C++ parser is implemented using
+# GlobalAttr, and does not follow the LangRef spec.
+
 %interface GlobalAttr;
 
 GlobalAttr -> GlobalAttr
@@ -4623,7 +4628,7 @@ ParamAttribute -> ParamAttribute
 
 # ref: ParseOptionalDSOLocal
 
-PreemptionSpecifier -> PreemptionSpecifier
+Preemption -> Preemption
 	: 'dso_local'
 	| 'dso_preemptable'
 ;

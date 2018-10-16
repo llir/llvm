@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
@@ -87,6 +88,75 @@ func irAddrSpace(n *ast.AddrSpace) types.AddrSpace {
 	}
 	x := uintLit(n.N())
 	return types.AddrSpace(x)
+}
+
+// irDLLStorageClass returns the IR DLL storage class corresponding to the given
+// optional AST DLL storage class.
+func irDLLStorageClass(n *ast.DLLStorageClass) ll.DLLStorageClass {
+	text := n.Text()
+	switch text {
+	case "":
+		// \empty is used when DLL storage class not present.
+		return ll.DLLStorageClassNone
+	case "dllexport":
+		return ll.DLLStorageClassDLLExport
+	case "dllimport":
+		return ll.DLLStorageClassDLLImport
+	default:
+		panic(fmt.Errorf("support for DLL storage class %q not yet implemented", text))
+	}
+}
+
+// irLinkage returns the IR linkage corresponding to the given optional AST
+// linkage.
+func irLinkage(n *ast.Linkage) ll.Linkage {
+	text := n.Text()
+	switch text {
+	case "":
+		// \empty is used when linkage not present.
+		return ll.LinkageNone
+	case "appending":
+		return ll.LinkageAppending
+	case "available_externally":
+		return ll.LinkageAvailableExternally
+	case "common":
+		return ll.LinkageCommon
+	case "internal":
+		return ll.LinkageInternal
+	case "linkonce":
+		return ll.LinkageLinkOnce
+	case "linkonce_odr":
+		return ll.LinkageLinkOnceODR
+	case "private":
+		return ll.LinkagePrivate
+	case "weak":
+		return ll.LinkageWeak
+	case "weak_odr":
+		return ll.LinkageWeakODR
+	case "external":
+		return ll.LinkageExternal
+	case "extern_weak":
+		return ll.LinkageExternWeak
+	default:
+		panic(fmt.Errorf("support for linkage %q not yet implemented", text))
+	}
+}
+
+// irPreemption returns the IR preemption corresponding to the given optional
+// AST preemption.
+func irPreemption(n *ast.Preemption) ll.Preemption {
+	text := n.Text()
+	switch text {
+	case "":
+		// \empty is used when preemption not present.
+		return ll.PreemptionNone
+	case "dso_local":
+		return ll.PreemptionDSOLocal
+	case "dso_preemptable":
+		return ll.PreemptionDSOPreemptable
+	default:
+		panic(fmt.Errorf("support for preemption %q not yet implemented", text))
+	}
 }
 
 // irVariadic returns the variadic boolean corresponding to the given optional
