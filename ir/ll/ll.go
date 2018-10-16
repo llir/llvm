@@ -44,3 +44,14 @@ const (
 type UnwindTarget interface {
 	IsUnwindTarget()
 }
+
+// TODO: add proper implementations.
+type Linkage uint
+type Preemption uint
+type Visibility uint
+type DLLStorageClass uint
+type TLSModel uint
+type UnnamedAddr uint
+type FuncAttribute interface {
+	isFuncAttribute()
+}
