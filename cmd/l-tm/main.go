@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/kr/pretty"
 	"github.com/mewmew/l-tm/asm"
 )
 
@@ -28,7 +29,7 @@ func main() {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
 		_ = m
-		//pretty.Println(m)
+		pretty.Println(m)
 		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
 	}
 }
