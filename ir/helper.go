@@ -62,3 +62,14 @@ func isLocalID(name string) bool {
 	}
 	return len(name) > 0
 }
+
+// quote returns s as a double-quoted string literal.
+func quote(s string) string {
+	return enc.Quote([]byte(s))
+}
+
+// unquote interprets s as a double-quoted string literal, returning the string
+// value that s quotes.
+func unquote(s string) string {
+	return string(enc.Unquote(s))
+}

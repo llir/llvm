@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/llir/l/internal/enc"
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 )
 
@@ -57,8 +59,29 @@ func (m *Module) Def() string {
 	for _, t := range m.TypeDefs {
 		// LocalIdent "=" "type" OpaqueType
 		// LocalIdent "=" "type" Type
-		fmt.Fprintf(buf, "%v = type %v\n", t, t.Def())
+		fmt.Fprintf(buf, "%s = type %s\n", t, t.Def())
 	}
 	// TODO: implement Module.Def.
 	return buf.String()
+}
+
+// ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ComdatDef is a comdat definition top-level entity.
+type ComdatDef struct {
+	// Comdat name (without '$' prefix).
+	Name string
+	// Comdat kind.
+	Kind ll.SelectionKind
+}
+
+// String returns the string representation of the Comdat definition.
+func (c *ComdatDef) String() string {
+	return c.Name
+}
+
+// Def returns the LLVM syntax representation of the Comdat definition.
+func (c *ComdatDef) Def() string {
+	// ComdatName "=" "comdat" SelectionKind
+	return fmt.Sprintf("%s = comdat %s", enc.Comdat(c.Name), c.Kind)
 }

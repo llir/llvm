@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/ll"
@@ -23,9 +24,11 @@ type Global struct {
 
 	// extra.
 
-	// Pointer type to global variable, including optional address space.
+	// Pointer type to global variable, including an optional address space. If
+	// Typ is nil, the first invocation of Type stores a pointer type with
+	// ContentType as element.
 	Typ *types.PointerType
-	// (optional) Linkage.
+	// (optional) Linkage; zero value if not present.
 	Linkage ll.Linkage
 	// (optional) Preemption; zero value if not present.
 	Preemption ll.Preemption
@@ -35,17 +38,16 @@ type Global struct {
 	DLLStorageClass ll.DLLStorageClass
 	// (optional) Thread local storage model; zero value if not present.
 	TLSModel ll.TLSModel
-	// (optional) Unnamed address.
+	// (optional) Unnamed address; zero value if not present.
 	UnnamedAddr ll.UnnamedAddr
-	// (optional) Externally initialized.
+	// (optional) Externally initialized; false if not present.
 	ExternallyInitialized bool
 	// (optional) Section name; empty if not present.
 	Section string
 	// (optional) Comdat definition; nil if not present.
-	// TODO: define ComdatDef.
-	//Comdat *ComdatDef
+	Comdat *ComdatDef
 	// (optional) Alignment; zero if not present.
-	Alignment int
+	Align int64
 	// (optional) Function attributes.
 	FuncAttrs []ll.FuncAttribute
 	// (optional) Metadata attachments.
@@ -68,7 +70,7 @@ func NewGlobalDef(name string, init Constant) *Global {
 // String returns the LLVM syntax representation of the global variable as a
 // type-value pair.
 func (g *Global) String() string {
-	return fmt.Sprintf("%v %v", g.Type(), g.Ident())
+	return fmt.Sprintf("%s %s", g.Type(), g.Ident())
 }
 
 // Type returns the type of the global variable.
@@ -98,5 +100,60 @@ func (g *Global) SetName(name string) {
 // Def returns the LLVM syntax representation of the global variable definition
 // or declaration.
 func (g *Global) Def() string {
-	panic("not yet implemented")
+	// GlobalIdent "=" OptLinkage OptPreemptionSpecifier OptVisibility
+	// OptDLLStorageClass OptThreadLocal OptUnnamedAddr OptAddrSpace
+	// OptExternallyInitialized Immutable Type Constant GlobalAttrs FuncAttrs
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%s =", g.Ident())
+	if g.Linkage != ll.LinkageNone {
+		fmt.Fprintf(buf, " %s", g.Linkage)
+	}
+	if g.Preemption != ll.PreemptionNone {
+		fmt.Fprintf(buf, " %s", g.Preemption)
+	}
+	if g.Visibility != ll.VisibilityNone {
+		fmt.Fprintf(buf, " %s", g.Visibility)
+	}
+	if g.DLLStorageClass != ll.DLLStorageClassNone {
+		fmt.Fprintf(buf, " %s", g.DLLStorageClass)
+	}
+	if g.TLSModel != ll.TLSModelNone {
+		fmt.Fprintf(buf, " %s", g.TLSModel)
+	}
+	if g.UnnamedAddr != ll.UnnamedAddrNone {
+		fmt.Fprintf(buf, " %s", g.UnnamedAddr)
+	}
+	if g.Typ.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", g.Typ.AddrSpace)
+	}
+	if g.ExternallyInitialized {
+		buf.WriteString(" externallyinitialized")
+	}
+	if g.Immutable {
+		buf.WriteString(" constant")
+	} else {
+		buf.WriteString(" global")
+	}
+	fmt.Fprintf(buf, " %s", g.ContentType)
+	if g.Init != nil {
+		fmt.Fprintf(buf, " %s", g.Init.Ident())
+	}
+	if g.Section != "" {
+		fmt.Fprintf(buf, ", section %s", quote(g.Section))
+	}
+	if g.Comdat != nil {
+		fmt.Fprintf(buf, ", %s", g.Comdat)
+	}
+	if g.Align != 0 {
+		fmt.Fprintf(buf, ", align %d", g.Align)
+	}
+	// TODO: add metadata.
+	//for _, md := range g.Metadata {
+	//	fmt.Fprintf(buf, ", %s", md)
+	//}
+	// TODO: add function attributes.
+	//for _, attr := range g.FuncAttrs {
+	//	fmt.Fprintf(buf, " %s", attr)
+	//}
+	return buf.String()
 }
