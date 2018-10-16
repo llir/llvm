@@ -46,6 +46,20 @@ const (
 	PreemptionDSOPreemptable                   // dso_preemptable
 )
 
+//go:generate stringer -linecomment -type SelectionKind
+
+// SelectionKind is a Comdat selection kind.
+type SelectionKind uint8
+
+// Comdat selection kinds.
+const (
+	SelectionKindAny          SelectionKind = iota // any
+	SelectionKindExactMatch                        // exactmatch
+	SelectionKindLargest                           // largest
+	SelectionKindNoDuplicates                      // noduplicates
+	SelectionKindSameSize                          // samesize
+)
+
 //go:generate stringer -linecomment -type TLSModel
 
 // TLSModel is a thread local storage model.
