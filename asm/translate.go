@@ -6,6 +6,7 @@ import (
 
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
+	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/pkg/errors"
 )
@@ -14,6 +15,9 @@ import (
 var (
 	// DoTypeResolution enables type resolution of type defintions.
 	DoTypeResolution = true
+	// DoGlobalResolution enables global resolution of global variable and
+	// function delcarations and defintions.
+	DoGlobalResolution = true
 )
 
 // Translate translates the AST of the given module to an equivalent LLVM IR
@@ -29,6 +33,15 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		fmt.Println("type resolution of type definitions took:", time.Since(typeResolutionStart))
 		fmt.Println()
 	}
+	if DoGlobalResolution {
+		globalResolutionStart := time.Now()
+		_, err := gen.resolveGlobals(module)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		fmt.Println("global resolution of global variable and function declarations and definitions took:", time.Since(globalResolutionStart))
+		fmt.Println()
+	}
 	return gen.m, nil
 }
 
@@ -38,8 +51,12 @@ type generator struct {
 	// LLVM IR module being generated.
 	m *ir.Module
 
-	// ts maps from type name to underlying IR type.
+	// ts maps from type name (without '%' prefix) to underlying IR type.
 	ts map[string]types.Type
+
+	// gs maps from global identifier (without '@' prefix) to corresponding
+	// IR value.
+	gs map[string]value.Value
 }
 
 // newGenerator returns a new generator for translating an LLVM IR module from

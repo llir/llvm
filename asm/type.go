@@ -52,23 +52,20 @@ func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type
 
 	// Create corresponding named IR types (without bodies).
 	gen.ts = make(map[string]types.Type)
-	for alias, typ := range index {
+	for alias, old := range index {
 		// track is used to identify self-referential named types.
 		track := make(map[string]bool)
-		t, err := newIRType(alias, typ, index, track)
+		t, err := newIRType(alias, old, index, track)
 		if err != nil {
 			return nil, errors.WithStack(err)
-		}
-		if prev, ok := gen.ts[alias]; ok {
-			return nil, errors.Errorf("IR type definition with alias %q already present; prev `%s`, new `%s`", enc.Local(alias), prev.Def(), t.Def())
 		}
 		gen.ts[alias] = t
 	}
 
 	// Translate type defintions (including bodies).
-	for alias, typ := range index {
+	for alias, old := range index {
 		t := gen.ts[alias]
-		_, err := gen.translateType(t, typ)
+		_, err := gen.translateType(t, old)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -99,8 +96,8 @@ func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type
 //
 //    ; struct type containing pointer to itself.
 //    %d = type { %d* }
-func newIRType(alias string, typ ast.LlvmNode, index map[string]ast.LlvmNode, track map[string]bool) (types.Type, error) {
-	switch typ := typ.(type) {
+func newIRType(alias string, old ast.LlvmNode, index map[string]ast.LlvmNode, track map[string]bool) (types.Type, error) {
+	switch old := old.(type) {
 	case *ast.OpaqueType:
 		return &types.StructType{Alias: alias, Opaque: true}, nil
 	case *ast.ArrayType:
@@ -127,7 +124,7 @@ func newIRType(alias string, typ ast.LlvmNode, index map[string]ast.LlvmNode, tr
 			return nil, errors.Errorf("invalid named type; self-referential with type name(s) %s", strings.Join(names, ", "))
 		}
 		track[alias] = true
-		newAlias := local(typ.Name())
+		newAlias := local(old.Name())
 		newTyp := index[newAlias]
 		return newIRType(newAlias, newTyp, index, track)
 	case *ast.PointerType:
@@ -141,7 +138,7 @@ func newIRType(alias string, typ ast.LlvmNode, index map[string]ast.LlvmNode, tr
 	case *ast.VoidType:
 		return &types.VoidType{Alias: alias}, nil
 	default:
-		panic(fmt.Errorf("support for type %T not yet implemented", typ))
+		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
 }
 
@@ -192,6 +189,8 @@ func (gen *generator) translateVoidType(t types.Type, old *ast.VoidType) (types.
 	if t == nil {
 		typ = &types.VoidType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST void type; expected *types.VoidType, got %T", t))
 	}
 	// nothing to do.
@@ -205,6 +204,8 @@ func (gen *generator) translateFuncType(t types.Type, old *ast.FuncType) (types.
 	if t == nil {
 		typ = &types.FuncType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST function type; expected *types.FuncType, got %T", t))
 	}
 	// Return type.
@@ -234,6 +235,8 @@ func (gen *generator) translateIntType(t types.Type, old *ast.IntType) (types.Ty
 	if t == nil {
 		typ = &types.IntType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST integer type; expected *types.IntType, got %T", t))
 	}
 	// Bit size.
@@ -304,6 +307,8 @@ func (gen *generator) translateMMXType(t types.Type, old *ast.MMXType) (types.Ty
 	if t == nil {
 		typ = &types.MMXType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST MMX type; expected *types.MMXType, got %T", t))
 	}
 	// nothing to do.
@@ -317,6 +322,8 @@ func (gen *generator) translatePointerType(t types.Type, old *ast.PointerType) (
 	if t == nil {
 		typ = &types.PointerType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST pointer type; expected *types.PointerType, got %T", t))
 	}
 	// Element type.
@@ -337,6 +344,8 @@ func (gen *generator) translateVectorType(t types.Type, old *ast.VectorType) (ty
 	if t == nil {
 		typ = &types.VectorType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST vector type; expected *types.VectorType, got %T", t))
 	}
 	// Vector length.
@@ -358,6 +367,8 @@ func (gen *generator) translateLabelType(t types.Type, old *ast.LabelType) (type
 	if t == nil {
 		typ = &types.LabelType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST label type; expected *types.LabelType, got %T", t))
 	}
 	// nothing to do.
@@ -371,6 +382,8 @@ func (gen *generator) translateTokenType(t types.Type, old *ast.TokenType) (type
 	if t == nil {
 		typ = &types.TokenType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST token type; expected *types.TokenType, got %T", t))
 	}
 	// nothing to do.
@@ -384,6 +397,8 @@ func (gen *generator) translateMetadataType(t types.Type, old *ast.MetadataType)
 	if t == nil {
 		typ = &types.MetadataType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST metadata type; expected *types.MetadataType, got %T", t))
 	}
 	// nothing to do.
@@ -397,6 +412,8 @@ func (gen *generator) translateArrayType(t types.Type, old *ast.ArrayType) (type
 	if t == nil {
 		typ = &types.ArrayType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST array type; expected *types.ArrayType, got %T", t))
 	}
 	// Array length.
@@ -420,6 +437,8 @@ func (gen *generator) translateOpaqueType(t types.Type, old *ast.OpaqueType) (ty
 		// possible given the grammar.
 		panic("invalid use of opaque type; only allowed in type definitions")
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST opaque type; expected *types.StructType, got %T", t))
 	}
 	// nothing to do.
@@ -431,6 +450,8 @@ func (gen *generator) translateStructType(t types.Type, old *ast.StructType) (ty
 	if t == nil {
 		typ = &types.StructType{}
 	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST struct type; expected *types.StructType, got %T", t))
 	}
 	// Packed.
