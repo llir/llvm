@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/l/ir"
+	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
@@ -110,17 +111,69 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]value.Value
 func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
-		// TODO: Add type.
-		return &ir.Global{GlobalName: name}, nil
+		g := &ir.Global{GlobalName: name}
+		// Content type.
+		typ, err := gen.irType(old.ContentType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		g.ContentType = typ
+		return g, nil
 	case *ast.GlobalDef:
-		// TODO: Add type.
-		return &ir.Global{GlobalName: name}, nil
+		g := &ir.Global{GlobalName: name}
+		// Content type.
+		typ, err := gen.irType(old.ContentType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		g.ContentType = typ
+		return g, nil
 	case *ast.FuncDecl:
-		// TODO: Add type.
-		return &ir.Function{FuncName: name}, nil
+		f := &ir.Function{FuncName: name}
+		hdr := old.Header()
+		sig := &types.FuncType{}
+		// Return type.
+		retType, err := gen.irType(hdr.RetType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		sig.RetType = retType
+		// Function parameters.
+		ps := hdr.Params()
+		for _, p := range ps.Params() {
+			param, err := gen.irType(p.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			sig.Params = append(sig.Params, param)
+		}
+		// Variadic.
+		sig.Variadic = irVariadic(ps.Variadic())
+		f.Sig = sig
+		return f, nil
 	case *ast.FuncDef:
-		// TODO: Add type.
-		return &ir.Function{FuncName: name}, nil
+		f := &ir.Function{FuncName: name}
+		sig := &types.FuncType{}
+		hdr := old.Header()
+		// Return type.
+		retType, err := gen.irType(hdr.RetType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		sig.RetType = retType
+		// Function parameters.
+		ps := hdr.Params()
+		for _, p := range ps.Params() {
+			param, err := gen.irType(p.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			sig.Params = append(sig.Params, param)
+		}
+		// Variadic.
+		sig.Variadic = irVariadic(ps.Variadic())
+		f.Sig = sig
+		return f, nil
 	default:
 		panic(fmt.Errorf("support for global variable or function %T not yet implemented", old))
 	}
