@@ -209,7 +209,7 @@ func (gen *generator) translateFuncType(t types.Type, old *ast.FuncType) (types.
 		panic(fmt.Errorf("invalid IR type for AST function type; expected *types.FuncType, got %T", t))
 	}
 	// Return type.
-	retType, err := gen.translateType(nil, old.RetType())
+	retType, err := gen.irType(old.RetType())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -217,7 +217,7 @@ func (gen *generator) translateFuncType(t types.Type, old *ast.FuncType) (types.
 	// Function parameters.
 	ps := old.Params()
 	for _, p := range ps.Params() {
-		param, err := gen.translateType(nil, p.Typ())
+		param, err := gen.irType(p.Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -327,7 +327,7 @@ func (gen *generator) translatePointerType(t types.Type, old *ast.PointerType) (
 		panic(fmt.Errorf("invalid IR type for AST pointer type; expected *types.PointerType, got %T", t))
 	}
 	// Element type.
-	elemType, err := gen.translateType(nil, old.Elem())
+	elemType, err := gen.irType(old.Elem())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -352,7 +352,7 @@ func (gen *generator) translateVectorType(t types.Type, old *ast.VectorType) (ty
 	len := uintLit(old.Len())
 	typ.Len = int64(len)
 	// Element type.
-	elem, err := gen.translateType(nil, old.Elem())
+	elem, err := gen.irType(old.Elem())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -420,7 +420,7 @@ func (gen *generator) translateArrayType(t types.Type, old *ast.ArrayType) (type
 	len := uintLit(old.Len())
 	typ.Len = int64(len)
 	// Element type.
-	elem, err := gen.translateType(nil, old.Elem())
+	elem, err := gen.irType(old.Elem())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -458,7 +458,7 @@ func (gen *generator) translateStructType(t types.Type, old *ast.StructType) (ty
 	// TODO: Figure out how to represent packed in grammar.
 	// Fields.
 	for _, f := range old.Fields() {
-		field, err := gen.translateType(nil, f)
+		field, err := gen.irType(f)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -479,4 +479,11 @@ func (gen *generator) translateNamedType(t types.Type, old *ast.NamedType) (type
 		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.Local(alias))
 	}
 	return typ, nil
+}
+
+// ### [ Helpers ] #############################################################
+
+// irType returns the IR type corresponding to the given AST type.
+func (gen *generator) irType(old ast.LlvmNode) (types.Type, error) {
+	return gen.translateType(nil, old)
 }
