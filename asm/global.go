@@ -118,6 +118,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, err
 			return nil, errors.WithStack(err)
 		}
 		g.ContentType = typ
+		g.Typ = types.NewPointer(g.ContentType)
 		return g, nil
 	case *ast.GlobalDef:
 		g := &ir.Global{GlobalName: name}
@@ -127,6 +128,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, err
 			return nil, errors.WithStack(err)
 		}
 		g.ContentType = typ
+		g.Typ = types.NewPointer(g.ContentType)
 		return g, nil
 	case *ast.FuncDecl:
 		f := &ir.Function{FuncName: name}
@@ -150,6 +152,8 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, err
 		// Variadic.
 		sig.Variadic = irVariadic(ps.Variadic())
 		f.Sig = sig
+		// TODO: add Typ?
+		//f.Typ = types.NewPointer(f.Sig)
 		return f, nil
 	case *ast.FuncDef:
 		f := &ir.Function{FuncName: name}
@@ -173,6 +177,8 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, err
 		// Variadic.
 		sig.Variadic = irVariadic(ps.Variadic())
 		f.Sig = sig
+		// TODO: add Typ?
+		//f.Typ = types.NewPointer(f.Sig)
 		return f, nil
 	default:
 		panic(fmt.Errorf("support for global variable or function %T not yet implemented", old))
@@ -203,7 +209,27 @@ func (gen *generator) translateGlobalDecl(g value.Value, old *ast.GlobalDecl) (v
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", g))
 	}
-	// TODO: implement
+	// Linkage.
+	global.Linkage = irLinkage(old.ExternLinkage().Text())
+	// Preemption.
+	global.Preemption = irPreemption(old.Preemption())
+	// Visibility.
+	global.Visibility = irVisibility(old.Visibility())
+	// DLL storage class.
+	global.DLLStorageClass = irDLLStorageClass(old.DLLStorageClass())
+	// Thread local storage model.
+	global.TLSModel = irTLSModelFromThreadLocal(old.ThreadLocal())
+	// Unnamed address.
+	global.UnnamedAddr = irUnnamedAddr(old.UnnamedAddr())
+	// Address space.
+	global.Typ.AddrSpace = irAddrSpace(old.AddrSpace())
+	// Externally initialized.
+	global.ExternallyInitialized = irExternallyInitialized(old.ExternallyInitialized())
+	// Immutable (constant or global).
+	global.Immutable = irImmutable(old.Immutable())
+	// Content type already stored during index.
+	// TODO: handle GlobalAttrs.
+	// TODO: handle FuncAttrs.
 	return global, nil
 }
 
@@ -214,7 +240,28 @@ func (gen *generator) translateGlobalDef(g value.Value, old *ast.GlobalDef) (val
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", g))
 	}
-	// TODO: implement
+	// Linkage.
+	global.Linkage = irLinkage(old.Linkage().Text())
+	// Preemption.
+	global.Preemption = irPreemption(old.Preemption())
+	// Visibility.
+	global.Visibility = irVisibility(old.Visibility())
+	// DLL storage class.
+	global.DLLStorageClass = irDLLStorageClass(old.DLLStorageClass())
+	// Thread local storage model.
+	global.TLSModel = irTLSModelFromThreadLocal(old.ThreadLocal())
+	// Unnamed address.
+	global.UnnamedAddr = irUnnamedAddr(old.UnnamedAddr())
+	// Address space.
+	global.Typ.AddrSpace = irAddrSpace(old.AddrSpace())
+	// Externally initialized.
+	global.ExternallyInitialized = irExternallyInitialized(old.ExternallyInitialized())
+	// Immutable (constant or global).
+	global.Immutable = irImmutable(old.Immutable())
+	// Content type already stored during index.
+	// TODO: handle Init.
+	// TODO: handle GlobalAttrs.
+	// TODO: handle FuncAttrs.
 	return global, nil
 }
 

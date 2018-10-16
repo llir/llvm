@@ -107,10 +107,35 @@ func irDLLStorageClass(n *ast.DLLStorageClass) ll.DLLStorageClass {
 	}
 }
 
+// irExternallyInitialized returns the externally initialized boolean
+// corresponding to the given optional AST externally initialized.
+func irExternallyInitialized(n *ast.ExternallyInitialized) bool {
+	// TODO: check why ExternallyInitialized is non-nil, when reduced as \empty.
+	return n.Text() == "externally_initialized"
+}
+
+// irImmutable returns the immutable (constant or global) boolean corresponding
+// to the given optional AST immutable.
+func irImmutable(n ast.Immutable) bool {
+	// TODO: check why Immutable is non-nil, when reduced as \empty.
+	text := n.Text()
+	switch text {
+	case "constant":
+		return true
+	case "global":
+		return false
+	default:
+		panic(fmt.Errorf("support for immutable %q not yet implemented", text))
+	}
+}
+
 // irLinkage returns the IR linkage corresponding to the given optional AST
 // linkage.
-func irLinkage(n *ast.Linkage) ll.Linkage {
-	text := n.Text()
+func irLinkage(text string) ll.Linkage {
+	// TODO: when ExternLinkage and Linkage are merged in grammar, update
+	// irLinkage to take `n *ast.Linkage` instead of `text string`.
+
+	//text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when linkage not present.
@@ -159,6 +184,78 @@ func irPreemption(n *ast.Preemption) ll.Preemption {
 	}
 }
 
+// irSelectionKind returns the IR Comdat selection kind corresponding to the
+// given optional AST Comdat selection kind.
+func irSelectionKind(n *ast.SelectionKind) ll.SelectionKind {
+	text := n.Text()
+	switch text {
+	case "any":
+		return ll.SelectionKindAny
+	case "exactmatch":
+		return ll.SelectionKindExactMatch
+	case "largest":
+		return ll.SelectionKindLargest
+	case "noduplicates":
+		return ll.SelectionKindNoDuplicates
+	case "samesize":
+		return ll.SelectionKindSameSize
+	default:
+		panic(fmt.Errorf("support for Comdat selection kind %q not yet implemented", text))
+	}
+}
+
+// irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given
+// optional AST thread local storage.
+func irTLSModelFromThreadLocal(n *ast.ThreadLocal) ll.TLSModel {
+	if n.Text() != "" {
+		model := irTLSModel(n.Model())
+		if model == ll.TLSModelNone {
+			// If no explicit model is given, the "general dynamic" model is used.
+			//    thread_local
+			return ll.TLSModelGeneric
+		}
+		// e.g. thread_local(initialexec)
+		return model
+	}
+	return ll.TLSModelNone
+}
+
+// irTLSModel returns the IR TLS model corresponding to the given optional AST
+// TLS model.
+func irTLSModel(n *ast.TLSModel) ll.TLSModel {
+	text := n.Text()
+	switch text {
+	case "":
+		// \empty is used when TLS model not present.
+		return ll.TLSModelNone
+	case "initialexec":
+		return ll.TLSModelInitialExec
+	case "localdynamic":
+		return ll.TLSModelLocalDynamic
+	case "localexec":
+		return ll.TLSModelLocalExec
+	default:
+		panic(fmt.Errorf("support for TLS model %q not yet implemented", text))
+	}
+}
+
+// irUnnamedAddr returns the IR unnamed address corresponding to the given
+// optional AST unnamed address.
+func irUnnamedAddr(n *ast.UnnamedAddr) ll.UnnamedAddr {
+	text := n.Text()
+	switch text {
+	case "":
+		// \empty is used when unnamed address not present.
+		return ll.UnnamedAddrNone
+	case "local_unnamed_addr":
+		return ll.UnnamedAddrLocalUnnamedAddr
+	case "unnamed_addr":
+		return ll.UnnamedAddrUnnamedAddr
+	default:
+		panic(fmt.Errorf("support for unnamed address %q not yet implemented", text))
+	}
+}
+
 // irVariadic returns the variadic boolean corresponding to the given optional
 // AST ellipsis.
 func irVariadic(n *ast.Ellipsis) bool {
@@ -170,6 +267,25 @@ func irVariadic(n *ast.Ellipsis) bool {
 	//
 	// Using `n.Text() == "..."` for now, would like to use `n != nil`.
 	return n.Text() == "..."
+}
+
+// irVisibility returns the IR visibility kind corresponding to the given
+// optional AST visibility kind.
+func irVisibility(n *ast.Visibility) ll.Visibility {
+	text := n.Text()
+	switch text {
+	case "":
+		// \empty is used when visibility kind not present.
+		return ll.VisibilityNone
+	case "default":
+		return ll.VisibilityDefault
+	case "hidden":
+		return ll.VisibilityHidden
+	case "protected":
+		return ll.VisibilityProtected
+	default:
+		panic(fmt.Errorf("support for visibility kind %q not yet implemented", text))
+	}
 }
 
 // ### [ Helpers ] #############################################################
