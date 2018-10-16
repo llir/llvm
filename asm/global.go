@@ -16,7 +16,7 @@ import (
 // identifier (without '@' prefix) to the corresponding IR value.
 func (gen *generator) resolveGlobals(module *ast.Module) (map[string]value.Value, error) {
 	// index maps from global identifier to underlying AST value.
-	index := make(map[string]ast.LlvmNode) // TODO: see if we can make the type stronger. ast.Value, ast.Constant?
+	index := make(map[string]ast.LlvmNode)
 	// Record order of global variable and function declarations and definitions.
 	var globalOrder, funcOrder []string
 	// Index global variable and function declarations and definitions.
