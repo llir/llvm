@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"math/big"
 
@@ -46,7 +47,9 @@ func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 //         0xM[0-9A-Fa-f]{32} // HexPPC128
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
 func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
-	panic("not yet implemented")
+	log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
+	// TODO: implement NewFloatFromString. return 0 for now.
+	return NewFloat(typ, 0), nil
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
