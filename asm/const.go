@@ -6,7 +6,6 @@ import (
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
-	"github.com/mewmew/l-tm/internal/enc"
 	"github.com/pkg/errors"
 )
 
@@ -40,11 +39,11 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (ir.Constant, e
 		return gen.irBlockAddressConst(t, old)
 	case *ast.GlobalIdent:
 		name := global(*old)
-		g, ok := gen.gs[name]
+		v, ok := gen.gs[name]
 		if !ok {
-			return nil, errors.Errorf("unable to locate global identifier %q", enc.Global(name))
+			return nil, errors.Errorf("unable to locate global identifier %q", name)
 		}
-		return g, nil
+		return v, nil
 	case ast.ConstantExpr:
 		return gen.irConstantExpr(t, old)
 	default:
@@ -53,10 +52,12 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (ir.Constant, e
 }
 
 func (gen *generator) irTypeConst(old ast.TypeConst) (ir.Constant, error) {
+	// Type.
 	typ, err := gen.irType(old.Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	// Constant.
 	return gen.irConstant(typ, old.Val())
 }
 
@@ -112,7 +113,8 @@ func (gen *generator) irNullConst(t types.Type, old *ast.NullConst) (*ir.ConstNu
 // --- [ Token Constants ] -----------------------------------------------------
 
 func (gen *generator) irNoneConst(t types.Type, old *ast.NoneConst) (*ir.ConstNone, error) {
-	panic("not yet implemented")
+	// TODO: validate type t.
+	return ir.None, nil
 }
 
 // --- [ Structure Constants ] -------------------------------------------------
@@ -153,18 +155,29 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*ir.Const
 
 func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*ir.ConstCharArray, error) {
 	data := stringLitBytes(old.Val())
-	// TODO: validate that t and type of newly created character array constant
-	// match.
-
-	// TODO: also decide whether to update ir.NewCharArray to include a type as
-	// its first parameter, thus making it consistent with ir.NewArray.
-	return ir.NewCharArray(data), nil
+	// TODO: decide whether to update ir.NewCharArray to include a type as its
+	// first parameter, thus making it consistent with ir.NewArray.
+	expr := ir.NewCharArray(data)
+	// TODO: validate t against expr.Typ.
+	return expr, nil
 }
 
 // --- [ Vector Constants ] ----------------------------------------------------
 
 func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*ir.ConstVector, error) {
-	panic("not yet implemented")
+	typ, ok := t.(*types.VectorType)
+	if !ok {
+		return nil, errors.Errorf("invalid type of vector constant; expected *types.VectorType, got %T", t)
+	}
+	var elems []ir.Constant
+	for _, e := range old.Elems() {
+		elem, err := gen.irTypeConst(e)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		elems = append(elems, elem)
+	}
+	return ir.NewVector(typ, elems...), nil
 }
 
 // --- [ Zero Initialization Constants ] ---------------------------------------
@@ -176,11 +189,29 @@ func (gen *generator) irZeroInitializerConst(t types.Type, old *ast.ZeroInitiali
 // --- [ Undefined Values ] ----------------------------------------------------
 
 func (gen *generator) irUndefConst(t types.Type, old *ast.UndefConst) (*ir.ConstUndef, error) {
-	panic("not yet implemented")
+	return ir.NewUndef(t), nil
 }
 
 // --- [ Addresses of Basic Blocks ] -------------------------------------------
 
 func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressConst) (*ir.ConstBlockAddress, error) {
-	panic("not yet implemented")
+	panic("not yet implemented. ensure that irBlockAddressConst is invoked only after function bodies have been populated, and local identifiers have been assigned names. In this sense, irBlockAddressConst is different from all other constants.")
+	// Function.
+	funcName := global(old.Func())
+	f, err := gen.function(funcName)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Basic block.
+	blockName := local(old.Block())
+	// TODO: assign block IDs; or rather, place call to irBlockAddressConst after
+	// the IDs have been assigned already.
+	for _, block := range f.Blocks {
+		if block.LocalName == blockName {
+			expr := ir.NewBlockAddress(f, block)
+			// TODO: validate type t against expr.Typ.
+			return expr, nil
+		}
+	}
+	return nil, errors.Errorf("unable to locate basic block %q in function %q", blockName, funcName)
 }

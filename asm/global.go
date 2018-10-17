@@ -81,11 +81,10 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 	// Add global variable declarations and definitions to IR module in order of
 	// occurrence in input.
 	for _, key := range globalOrder {
-		g, ok := gen.gs[key].(*ir.Global)
-		if !ok {
-			// NOTE: Panic instead of returning error as this case should not be
-			// possible, and would indicate a bug in the implementation.
-			panic(fmt.Errorf("invalid IR type for AST global variable declaration or definition; expected *ir.Global, got %T", g))
+		g, err := gen.global(key)
+		if err != nil {
+			// NOTE: panic since this would indicate a bug in the implementation.
+			panic(err)
 		}
 		gen.m.Globals = append(gen.m.Globals, g)
 	}
@@ -93,11 +92,10 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 	// Add function declarations and definitions to IR module in order of
 	// occurrence in input.
 	for _, key := range funcOrder {
-		f, ok := gen.gs[key].(*ir.Function)
-		if !ok {
-			// NOTE: Panic instead of returning error as this case should not be
-			// possible, and would indicate a bug in the implementation.
-			panic(fmt.Errorf("invalid IR type for AST function declaration or definition; expected *ir.Function, got %T", f))
+		f, err := gen.function(key)
+		if err != nil {
+			// NOTE: panic since this would indicate a bug in the implementation.
+			panic(err)
 		}
 		gen.m.Funcs = append(gen.m.Funcs, f)
 	}
