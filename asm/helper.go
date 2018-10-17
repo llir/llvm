@@ -147,7 +147,6 @@ func irExternallyInitialized(n *ast.ExternallyInitialized) bool {
 // irImmutable returns the immutable (constant or global) boolean corresponding
 // to the given optional AST immutable.
 func irImmutable(n ast.Immutable) bool {
-	// TODO: check why Immutable is non-nil, when reduced as \empty.
 	text := n.Text()
 	switch text {
 	case "constant":
@@ -157,6 +156,13 @@ func irImmutable(n ast.Immutable) bool {
 	default:
 		panic(fmt.Errorf("support for immutable %q not yet implemented", text))
 	}
+}
+
+// irInBounds returns the in-bounds boolean corresponding to the given optional
+// AST in-bounds.
+func irInBounds(n *ast.InBounds) bool {
+	// TODO: check why InBounds is non-nil, when reduced as \empty.
+	return n.Text() == "inbounds"
 }
 
 // irLinkage returns the IR linkage corresponding to the given optional AST
@@ -212,6 +218,13 @@ func irPreemption(n *ast.Preemption) ll.Preemption {
 	default:
 		panic(fmt.Errorf("support for preemption %q not yet implemented", text))
 	}
+}
+
+// irInRange returns the in-range boolean corresponding to the given optional
+// AST in-range.
+func irInRange(n *ast.InRange) bool {
+	// TODO: check why InRange is non-nil, when reduced as \empty.
+	return n.Text() == "inrange"
 }
 
 // irSelectionKind returns the IR Comdat selection kind corresponding to the
