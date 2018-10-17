@@ -65,3 +65,29 @@ func newGenerator() *generator {
 		m: &ir.Module{},
 	}
 }
+
+// global returns the IR global variable of the given name.
+func (gen *generator) global(name string) (*ir.Global, error) {
+	v, ok := gen.gs[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate global variable %q", name)
+	}
+	g, ok := v.(*ir.Global)
+	if !ok {
+		return nil, errors.Errorf("invalid global variable type of %q; expected *ir.Global, got %T", name, v)
+	}
+	return g, nil
+}
+
+// function returns the IR function of the given name.
+func (gen *generator) function(name string) (*ir.Function, error) {
+	v, ok := gen.gs[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate function %q", name)
+	}
+	f, ok := v.(*ir.Function)
+	if !ok {
+		return nil, errors.Errorf("invalid function type of %q; expected *ir.Function, got %T", name, v)
+	}
+	return f, nil
+}
