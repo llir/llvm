@@ -5,6 +5,7 @@ import (
 	"math/big"
 
 	"github.com/llir/l/ir/types"
+	"github.com/pkg/errors"
 )
 
 // --- [ Integer constants ] ---------------------------------------------------
@@ -20,7 +21,7 @@ type ConstInt struct {
 // NewInt returns a new integer constant based on the given integer type and
 // 64-bit interger value.
 func NewInt(typ *types.IntType, x int64) *ConstInt {
-	return &ConstInt{Typ: types.I1, X: big.NewInt(x)}
+	return &ConstInt{Typ: typ, X: big.NewInt(x)}
 }
 
 // NewIntFromString returns a new integer constant based on the given integer
@@ -34,8 +35,13 @@ func NewInt(typ *types.IntType, x int64) *ConstInt {
 //         [-]? [0-9]+
 //    * hexadecimal integer literal
 //         TODO: add support for hexadecimal integer literal notation.
-func NewIntFromString(typ *types.IntType, s string) *ConstInt {
-	panic("not yet implemented")
+func NewIntFromString(typ *types.IntType, s string) (*ConstInt, error) {
+	// TODO: handle boolean literals and hexadecimal integer literals.
+	x, _ := (&big.Int{}).SetString(s, 10)
+	if x == nil {
+		return nil, errors.Errorf("unable to parse integer constant %q", s)
+	}
+	return &ConstInt{Typ: typ, X: x}, nil
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
