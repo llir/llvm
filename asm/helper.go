@@ -55,6 +55,21 @@ func local(n ast.LocalIdent) string {
 
 // --- [ Integer literals ] ----------------------------------------------------
 
+// boolLit returns the boolean value corresponding to the given boolean literal.
+func boolLit(n ast.BoolLit) bool {
+	text := n.Text()
+	switch text {
+	case "true":
+		return true
+	case "false":
+		return false
+	default:
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible given the grammar.
+		panic(fmt.Errorf("invalid boolean literal; expected `true` or `false`, got `%v`", text))
+	}
+}
+
 // uintLit returns the unsigned integer value corresponding to the given
 // unsigned integer literal.
 func uintLit(n ast.UintLit) uint64 {
@@ -74,6 +89,21 @@ func uintLit(n ast.UintLit) uint64 {
 // --- [ Floating-point literals ] ---------------------------------------------
 
 // --- [ String literals ] -----------------------------------------------------
+
+// stringLit returns the string corresponding to the given string literal.
+func stringLit(n ast.StringLit) string {
+	text := n.Text()
+	s := enc.Unquote(text)
+	return string(s)
+}
+
+// TODO: remove stringLitBytes if not used.
+
+// stringLitBytes returns the byte slice corresponding to the given string literal.
+func stringLitBytes(n ast.StringLit) []byte {
+	text := n.Text()
+	return enc.Unquote(text)
+}
 
 // --- [ Null literals ] -------------------------------------------------------
 
