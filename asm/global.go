@@ -5,7 +5,6 @@ import (
 
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
-	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
 	"github.com/pkg/errors"
@@ -14,7 +13,7 @@ import (
 // resolveGlobals resolves the global variable and function declarations and
 // defintions of the given module. The returned value maps from global
 // identifier (without '@' prefix) to the corresponding IR value.
-func (gen *generator) resolveGlobals(module *ast.Module) (map[string]value.Value, error) {
+func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant, error) {
 	// index maps from global identifier to underlying AST value.
 	index := make(map[string]ast.LlvmNode)
 	// Record order of global variable and function declarations and definitions.
@@ -61,7 +60,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]value.Value
 	}
 
 	// Create corresponding IR global variables and functions (without bodies).
-	gen.gs = make(map[string]value.Value)
+	gen.gs = make(map[string]ir.Constant)
 	for name, old := range index {
 		g, err := gen.newGlobal(name, old)
 		if err != nil {
@@ -108,7 +107,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]value.Value
 
 // newGlobal returns a new IR value (without body but with a type) based on the
 // given AST global variable or function.
-func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, error) {
+func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
 		g := &ir.Global{GlobalName: name}
@@ -187,7 +186,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (value.Value, err
 
 // translateGlobal translates the AST global variable or function into an
 // equivalent IR value.
-func (gen *generator) translateGlobal(g value.Value, old ast.LlvmNode) (value.Value, error) {
+func (gen *generator) translateGlobal(g ir.Constant, old ast.LlvmNode) (ir.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
 		return gen.translateGlobalDecl(g, old)
@@ -204,7 +203,7 @@ func (gen *generator) translateGlobal(g value.Value, old ast.LlvmNode) (value.Va
 
 // ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateGlobalDecl(g value.Value, old *ast.GlobalDecl) (value.Value, error) {
+func (gen *generator) translateGlobalDecl(g ir.Constant, old *ast.GlobalDecl) (ir.Constant, error) {
 	global, ok := g.(*ir.Global)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", g))
@@ -235,7 +234,7 @@ func (gen *generator) translateGlobalDecl(g value.Value, old *ast.GlobalDecl) (v
 
 // ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateGlobalDef(g value.Value, old *ast.GlobalDef) (value.Value, error) {
+func (gen *generator) translateGlobalDef(g ir.Constant, old *ast.GlobalDef) (ir.Constant, error) {
 	global, ok := g.(*ir.Global)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", g))
@@ -259,7 +258,11 @@ func (gen *generator) translateGlobalDef(g value.Value, old *ast.GlobalDef) (val
 	// Immutable (constant or global).
 	global.Immutable = irImmutable(old.Immutable())
 	// Content type already stored during index.
-	// TODO: handle Init.
+	init, err := gen.irConstant(global.ContentType, old.Init())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	global.Init = init
 	// TODO: handle GlobalAttrs.
 	// TODO: handle FuncAttrs.
 	return global, nil
@@ -271,7 +274,7 @@ func (gen *generator) translateGlobalDef(g value.Value, old *ast.GlobalDef) (val
 
 // ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateFuncDecl(g value.Value, old *ast.FuncDecl) (value.Value, error) {
+func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Constant, error) {
 	f, ok := g.(*ir.Function)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", g))
@@ -282,7 +285,7 @@ func (gen *generator) translateFuncDecl(g value.Value, old *ast.FuncDecl) (value
 
 // ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateFuncDef(g value.Value, old *ast.FuncDef) (value.Value, error) {
+func (gen *generator) translateFuncDef(g ir.Constant, old *ast.FuncDef) (ir.Constant, error) {
 	f, ok := g.(*ir.Function)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function definition; expected *ir.Function, got %T", g))

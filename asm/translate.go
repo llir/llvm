@@ -6,7 +6,6 @@ import (
 
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
-	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/pkg/errors"
 )
@@ -56,7 +55,7 @@ type generator struct {
 
 	// gs maps from global identifier (without '@' prefix) to corresponding
 	// IR value.
-	gs map[string]value.Value
+	gs map[string]ir.Constant
 }
 
 // newGenerator returns a new generator for translating an LLVM IR module from
