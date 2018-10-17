@@ -45,7 +45,7 @@ func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 //         0xL[0-9A-Fa-f]{32} // HexFP128
 //         0xM[0-9A-Fa-f]{32} // HexPPC128
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
-func NewFloatFromString(typ *types.FloatType, s string) *ConstFloat {
+func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
 	panic("not yet implemented")
 }
 
