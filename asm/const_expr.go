@@ -298,79 +298,235 @@ func (gen *generator) irGEPIndex(old ast.GEPIndex) (*ir.Index, error) {
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irTruncExpr(t types.Type, old *ast.TruncExpr) (*ir.ExprTrunc, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewTruncExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irZExtExpr(t types.Type, old *ast.ZExtExpr) (*ir.ExprZExt, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewZExtExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irSExtExpr(t types.Type, old *ast.SExtExpr) (*ir.ExprSExt, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewSExtExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irFPTruncExpr(t types.Type, old *ast.FPTruncExpr) (*ir.ExprFPTrunc, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewFPTruncExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irFPExtExpr(t types.Type, old *ast.FPExtExpr) (*ir.ExprFPExt, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewFPExtExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irFPToUIExpr(t types.Type, old *ast.FPToUIExpr) (*ir.ExprFPToUI, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewFPToUIExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irFPToSIExpr(t types.Type, old *ast.FPToSIExpr) (*ir.ExprFPToSI, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewFPToSIExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irUIToFPExpr(t types.Type, old *ast.UIToFPExpr) (*ir.ExprUIToFP, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewUIToFPExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irSIToFPExpr(t types.Type, old *ast.SIToFPExpr) (*ir.ExprSIToFP, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewSIToFPExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irPtrToIntExpr(t types.Type, old *ast.PtrToIntExpr) (*ir.ExprPtrToInt, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewPtrToIntExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irIntToPtrExpr(t types.Type, old *ast.IntToPtrExpr) (*ir.ExprIntToPtr, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewIntToPtrExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irBitCastExpr(t types.Type, old *ast.BitCastExpr) (*ir.ExprBitCast, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewBitCastExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (gen *generator) irAddrSpaceCastExpr(t types.Type, old *ast.AddrSpaceCastExpr) (*ir.ExprAddrSpaceCast, error) {
-	panic("not yet implemented")
+	// From.
+	from, err := gen.irTypeConst(old.From())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// To.
+	to, err := gen.irType(old.To())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := ir.NewAddrSpaceCastExpr(from, to)
+	// TODO: validate type t against expr.Typ.
+	return expr, nil
 }
 
 // --- [ Other expressions ] ---------------------------------------------------
