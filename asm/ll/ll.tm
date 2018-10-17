@@ -1643,10 +1643,10 @@ GetElementPtrExpr -> GetElementPtrExpr
 #   ::= [inrange] TypeAndValue (',' [inrange] TypeAndValue)*
 
 GEPIndex -> GEPIndex
-	: Inrangeopt Index=TypeConst
+	: InRangeopt Index=TypeConst
 ;
 
-Inrange -> Inrange
+InRange -> InRange
 	: 'inrange'
 ;
 
