@@ -6,6 +6,7 @@ import (
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
+	"github.com/pkg/errors"
 )
 
 // === [ Constant expressions ] ================================================
@@ -13,91 +14,91 @@ import (
 func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (ir.Expression, error) {
 	switch old := old.(type) {
 	// Binary expressions
-	case ast.AddExpr:
+	case *ast.AddExpr:
 		return gen.irAddExpr(t, old)
-	case ast.FAddExpr:
+	case *ast.FAddExpr:
 		return gen.irFAddExpr(t, old)
-	case ast.SubExpr:
+	case *ast.SubExpr:
 		return gen.irSubExpr(t, old)
-	case ast.FSubExpr:
+	case *ast.FSubExpr:
 		return gen.irFSubExpr(t, old)
-	case ast.MulExpr:
+	case *ast.MulExpr:
 		return gen.irMulExpr(t, old)
-	case ast.FMulExpr:
+	case *ast.FMulExpr:
 		return gen.irFMulExpr(t, old)
-	case ast.UDivExpr:
+	case *ast.UDivExpr:
 		return gen.irUDivExpr(t, old)
-	case ast.SDivExpr:
+	case *ast.SDivExpr:
 		return gen.irSDivExpr(t, old)
-	case ast.FDivExpr:
+	case *ast.FDivExpr:
 		return gen.irFDivExpr(t, old)
-	case ast.URemExpr:
+	case *ast.URemExpr:
 		return gen.irURemExpr(t, old)
-	case ast.SRemExpr:
+	case *ast.SRemExpr:
 		return gen.irSRemExpr(t, old)
-	case ast.FRemExpr:
+	case *ast.FRemExpr:
 		return gen.irFRemExpr(t, old)
 	// Bitwise expressions
-	case ast.ShlExpr:
+	case *ast.ShlExpr:
 		return gen.irShlExpr(t, old)
-	case ast.LShrExpr:
+	case *ast.LShrExpr:
 		return gen.irLShrExpr(t, old)
-	case ast.AShrExpr:
+	case *ast.AShrExpr:
 		return gen.irAShrExpr(t, old)
-	case ast.AndExpr:
+	case *ast.AndExpr:
 		return gen.irAndExpr(t, old)
-	case ast.OrExpr:
+	case *ast.OrExpr:
 		return gen.irOrExpr(t, old)
-	case ast.XorExpr:
+	case *ast.XorExpr:
 		return gen.irXorExpr(t, old)
 	// Vector expressions
-	case ast.ExtractElementExpr:
+	case *ast.ExtractElementExpr:
 		return gen.irExtractElementExpr(t, old)
-	case ast.InsertElementExpr:
+	case *ast.InsertElementExpr:
 		return gen.irInsertElementExpr(t, old)
-	case ast.ShuffleVectorExpr:
+	case *ast.ShuffleVectorExpr:
 		return gen.irShuffleVectorExpr(t, old)
 	// Aggregate expressions
-	case ast.ExtractValueExpr:
+	case *ast.ExtractValueExpr:
 		return gen.irExtractValueExpr(t, old)
-	case ast.InsertValueExpr:
+	case *ast.InsertValueExpr:
 		return gen.irInsertValueExpr(t, old)
 	// Memory expressions
-	case ast.GetElementPtrExpr:
+	case *ast.GetElementPtrExpr:
 		return gen.irGetElementPtrExpr(t, old)
 	// Conversion expressions
-	case ast.TruncExpr:
+	case *ast.TruncExpr:
 		return gen.irTruncExpr(t, old)
-	case ast.ZExtExpr:
+	case *ast.ZExtExpr:
 		return gen.irZExtExpr(t, old)
-	case ast.SExtExpr:
+	case *ast.SExtExpr:
 		return gen.irSExtExpr(t, old)
-	case ast.FPTruncExpr:
+	case *ast.FPTruncExpr:
 		return gen.irFPTruncExpr(t, old)
-	case ast.FPExtExpr:
+	case *ast.FPExtExpr:
 		return gen.irFPExtExpr(t, old)
-	case ast.FPToUIExpr:
+	case *ast.FPToUIExpr:
 		return gen.irFPToUIExpr(t, old)
-	case ast.FPToSIExpr:
+	case *ast.FPToSIExpr:
 		return gen.irFPToSIExpr(t, old)
-	case ast.UIToFPExpr:
+	case *ast.UIToFPExpr:
 		return gen.irUIToFPExpr(t, old)
-	case ast.SIToFPExpr:
+	case *ast.SIToFPExpr:
 		return gen.irSIToFPExpr(t, old)
-	case ast.PtrToIntExpr:
+	case *ast.PtrToIntExpr:
 		return gen.irPtrToIntExpr(t, old)
-	case ast.IntToPtrExpr:
+	case *ast.IntToPtrExpr:
 		return gen.irIntToPtrExpr(t, old)
-	case ast.BitCastExpr:
+	case *ast.BitCastExpr:
 		return gen.irBitCastExpr(t, old)
-	case ast.AddrSpaceCastExpr:
+	case *ast.AddrSpaceCastExpr:
 		return gen.irAddrSpaceCastExpr(t, old)
 	// Other expressions
-	case ast.ICmpExpr:
+	case *ast.ICmpExpr:
 		return gen.irICmpExpr(t, old)
-	case ast.FCmpExpr:
+	case *ast.FCmpExpr:
 		return gen.irFCmpExpr(t, old)
-	case ast.SelectExpr:
+	case *ast.SelectExpr:
 		return gen.irSelectExpr(t, old)
 	default:
 		panic(fmt.Errorf("support for AST constant expression %T not yet implemented", old))
@@ -108,73 +109,73 @@ func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (ir.Exp
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irAddExpr(t types.Type, old ast.AddExpr) (*ir.ExprAdd, error) {
+func (gen *generator) irAddExpr(t types.Type, old *ast.AddExpr) (*ir.ExprAdd, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFAddExpr(t types.Type, old ast.FAddExpr) (*ir.ExprFAdd, error) {
+func (gen *generator) irFAddExpr(t types.Type, old *ast.FAddExpr) (*ir.ExprFAdd, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irSubExpr(t types.Type, old ast.SubExpr) (*ir.ExprSub, error) {
+func (gen *generator) irSubExpr(t types.Type, old *ast.SubExpr) (*ir.ExprSub, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFSubExpr(t types.Type, old ast.FSubExpr) (*ir.ExprFSub, error) {
+func (gen *generator) irFSubExpr(t types.Type, old *ast.FSubExpr) (*ir.ExprFSub, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irMulExpr(t types.Type, old ast.MulExpr) (*ir.ExprMul, error) {
+func (gen *generator) irMulExpr(t types.Type, old *ast.MulExpr) (*ir.ExprMul, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFMulExpr(t types.Type, old ast.FMulExpr) (*ir.ExprFMul, error) {
+func (gen *generator) irFMulExpr(t types.Type, old *ast.FMulExpr) (*ir.ExprFMul, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irUDivExpr(t types.Type, old ast.UDivExpr) (*ir.ExprUDiv, error) {
+func (gen *generator) irUDivExpr(t types.Type, old *ast.UDivExpr) (*ir.ExprUDiv, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irSDivExpr(t types.Type, old ast.SDivExpr) (*ir.ExprSDiv, error) {
+func (gen *generator) irSDivExpr(t types.Type, old *ast.SDivExpr) (*ir.ExprSDiv, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFDivExpr(t types.Type, old ast.FDivExpr) (*ir.ExprFDiv, error) {
+func (gen *generator) irFDivExpr(t types.Type, old *ast.FDivExpr) (*ir.ExprFDiv, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irURemExpr(t types.Type, old ast.URemExpr) (*ir.ExprURem, error) {
+func (gen *generator) irURemExpr(t types.Type, old *ast.URemExpr) (*ir.ExprURem, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irSRemExpr(t types.Type, old ast.SRemExpr) (*ir.ExprSRem, error) {
+func (gen *generator) irSRemExpr(t types.Type, old *ast.SRemExpr) (*ir.ExprSRem, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFRemExpr(t types.Type, old ast.FRemExpr) (*ir.ExprFRem, error) {
+func (gen *generator) irFRemExpr(t types.Type, old *ast.FRemExpr) (*ir.ExprFRem, error) {
 	panic("not yet implemented")
 }
 
@@ -182,37 +183,37 @@ func (gen *generator) irFRemExpr(t types.Type, old ast.FRemExpr) (*ir.ExprFRem, 
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irShlExpr(t types.Type, old ast.ShlExpr) (*ir.ExprShl, error) {
+func (gen *generator) irShlExpr(t types.Type, old *ast.ShlExpr) (*ir.ExprShl, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irLShrExpr(t types.Type, old ast.LShrExpr) (*ir.ExprLShr, error) {
+func (gen *generator) irLShrExpr(t types.Type, old *ast.LShrExpr) (*ir.ExprLShr, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irAShrExpr(t types.Type, old ast.AShrExpr) (*ir.ExprAShr, error) {
+func (gen *generator) irAShrExpr(t types.Type, old *ast.AShrExpr) (*ir.ExprAShr, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irAndExpr(t types.Type, old ast.AndExpr) (*ir.ExprAnd, error) {
+func (gen *generator) irAndExpr(t types.Type, old *ast.AndExpr) (*ir.ExprAnd, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irOrExpr(t types.Type, old ast.OrExpr) (*ir.ExprOr, error) {
+func (gen *generator) irOrExpr(t types.Type, old *ast.OrExpr) (*ir.ExprOr, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irXorExpr(t types.Type, old ast.XorExpr) (*ir.ExprXor, error) {
+func (gen *generator) irXorExpr(t types.Type, old *ast.XorExpr) (*ir.ExprXor, error) {
 	panic("not yet implemented")
 }
 
@@ -220,19 +221,19 @@ func (gen *generator) irXorExpr(t types.Type, old ast.XorExpr) (*ir.ExprXor, err
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irExtractElementExpr(t types.Type, old ast.ExtractElementExpr) (*ir.ExprExtractElement, error) {
+func (gen *generator) irExtractElementExpr(t types.Type, old *ast.ExtractElementExpr) (*ir.ExprExtractElement, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irInsertElementExpr(t types.Type, old ast.InsertElementExpr) (*ir.ExprInsertElement, error) {
+func (gen *generator) irInsertElementExpr(t types.Type, old *ast.InsertElementExpr) (*ir.ExprInsertElement, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irShuffleVectorExpr(t types.Type, old ast.ShuffleVectorExpr) (*ir.ExprShuffleVector, error) {
+func (gen *generator) irShuffleVectorExpr(t types.Type, old *ast.ShuffleVectorExpr) (*ir.ExprShuffleVector, error) {
 	panic("not yet implemented")
 }
 
@@ -240,13 +241,13 @@ func (gen *generator) irShuffleVectorExpr(t types.Type, old ast.ShuffleVectorExp
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irExtractValueExpr(t types.Type, old ast.ExtractValueExpr) (*ir.ExprExtractValue, error) {
+func (gen *generator) irExtractValueExpr(t types.Type, old *ast.ExtractValueExpr) (*ir.ExprExtractValue, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irInsertValueExpr(t types.Type, old ast.InsertValueExpr) (*ir.ExprInsertValue, error) {
+func (gen *generator) irInsertValueExpr(t types.Type, old *ast.InsertValueExpr) (*ir.ExprInsertValue, error) {
 	panic("not yet implemented")
 }
 
@@ -254,87 +255,121 @@ func (gen *generator) irInsertValueExpr(t types.Type, old ast.InsertValueExpr) (
 
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irGetElementPtrExpr(t types.Type, old ast.GetElementPtrExpr) (*ir.ExprGetElementPtr, error) {
-	panic("not yet implemented")
+func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrExpr) (*ir.ExprGetElementPtr, error) {
+	// Element type.
+	elemType, err := gen.irType(old.ElemType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Source.
+	src, err := gen.irTypeConst(old.Src())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Indices.
+	var indices []*ir.Index
+	for _, idx := range old.Indices() {
+		index, err := gen.irGEPIndex(idx)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		indices = append(indices, index)
+	}
+	expr := ir.NewGetElementPtrExpr(elemType, src, indices...)
+	// TODO: validate type t against expr.Typ.
+	// In-bounds.
+	expr.InBounds = irInBounds(old.InBounds())
+	return expr, nil
+}
+
+func (gen *generator) irGEPIndex(old ast.GEPIndex) (*ir.Index, error) {
+	// Index.
+	idx, err := gen.irTypeConst(old.Index())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	index := ir.NewIndex(idx)
+	index.InRange = irInRange(old.InRange())
+	return index, nil
 }
 
 // --- [ Conversion expressions ] ----------------------------------------------
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irTruncExpr(t types.Type, old ast.TruncExpr) (*ir.ExprTrunc, error) {
+func (gen *generator) irTruncExpr(t types.Type, old *ast.TruncExpr) (*ir.ExprTrunc, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irZExtExpr(t types.Type, old ast.ZExtExpr) (*ir.ExprZExt, error) {
+func (gen *generator) irZExtExpr(t types.Type, old *ast.ZExtExpr) (*ir.ExprZExt, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irSExtExpr(t types.Type, old ast.SExtExpr) (*ir.ExprSExt, error) {
+func (gen *generator) irSExtExpr(t types.Type, old *ast.SExtExpr) (*ir.ExprSExt, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFPTruncExpr(t types.Type, old ast.FPTruncExpr) (*ir.ExprFPTrunc, error) {
+func (gen *generator) irFPTruncExpr(t types.Type, old *ast.FPTruncExpr) (*ir.ExprFPTrunc, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFPExtExpr(t types.Type, old ast.FPExtExpr) (*ir.ExprFPExt, error) {
+func (gen *generator) irFPExtExpr(t types.Type, old *ast.FPExtExpr) (*ir.ExprFPExt, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFPToUIExpr(t types.Type, old ast.FPToUIExpr) (*ir.ExprFPToUI, error) {
+func (gen *generator) irFPToUIExpr(t types.Type, old *ast.FPToUIExpr) (*ir.ExprFPToUI, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFPToSIExpr(t types.Type, old ast.FPToSIExpr) (*ir.ExprFPToSI, error) {
+func (gen *generator) irFPToSIExpr(t types.Type, old *ast.FPToSIExpr) (*ir.ExprFPToSI, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irUIToFPExpr(t types.Type, old ast.UIToFPExpr) (*ir.ExprUIToFP, error) {
+func (gen *generator) irUIToFPExpr(t types.Type, old *ast.UIToFPExpr) (*ir.ExprUIToFP, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irSIToFPExpr(t types.Type, old ast.SIToFPExpr) (*ir.ExprSIToFP, error) {
+func (gen *generator) irSIToFPExpr(t types.Type, old *ast.SIToFPExpr) (*ir.ExprSIToFP, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irPtrToIntExpr(t types.Type, old ast.PtrToIntExpr) (*ir.ExprPtrToInt, error) {
+func (gen *generator) irPtrToIntExpr(t types.Type, old *ast.PtrToIntExpr) (*ir.ExprPtrToInt, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irIntToPtrExpr(t types.Type, old ast.IntToPtrExpr) (*ir.ExprIntToPtr, error) {
+func (gen *generator) irIntToPtrExpr(t types.Type, old *ast.IntToPtrExpr) (*ir.ExprIntToPtr, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irBitCastExpr(t types.Type, old ast.BitCastExpr) (*ir.ExprBitCast, error) {
+func (gen *generator) irBitCastExpr(t types.Type, old *ast.BitCastExpr) (*ir.ExprBitCast, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irAddrSpaceCastExpr(t types.Type, old ast.AddrSpaceCastExpr) (*ir.ExprAddrSpaceCast, error) {
+func (gen *generator) irAddrSpaceCastExpr(t types.Type, old *ast.AddrSpaceCastExpr) (*ir.ExprAddrSpaceCast, error) {
 	panic("not yet implemented")
 }
 
@@ -342,18 +377,18 @@ func (gen *generator) irAddrSpaceCastExpr(t types.Type, old ast.AddrSpaceCastExp
 
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irICmpExpr(t types.Type, old ast.ICmpExpr) (*ir.ExprICmp, error) {
+func (gen *generator) irICmpExpr(t types.Type, old *ast.ICmpExpr) (*ir.ExprICmp, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irFCmpExpr(t types.Type, old ast.FCmpExpr) (*ir.ExprFCmp, error) {
+func (gen *generator) irFCmpExpr(t types.Type, old *ast.FCmpExpr) (*ir.ExprFCmp, error) {
 	panic("not yet implemented")
 }
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) irSelectExpr(t types.Type, old ast.SelectExpr) (*ir.ExprSelect, error) {
+func (gen *generator) irSelectExpr(t types.Type, old *ast.SelectExpr) (*ir.ExprSelect, error) {
 	panic("not yet implemented")
 }
