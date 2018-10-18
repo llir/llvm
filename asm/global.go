@@ -276,7 +276,15 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", g))
 	}
-	hdr := old.Header()
+	if err := gen.translateFuncHeader(f, old.Header()); err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Metadata.
+	// TODO: translate function metadata.
+	return f, nil
+}
+
+func (gen *generator) translateFuncHeader(f *ir.Function, hdr ast.FuncHeader) error {
 	// Linkage.
 	f.Linkage = irLinkage(hdr.ExternLinkage().Text())
 	// Preemption.
@@ -298,7 +306,7 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 		// Type.
 		typ, err := gen.irType(p.Typ())
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return errors.WithStack(err)
 		}
 		// Parameter attributes.
 		// TODO: handle Attrs.
@@ -326,7 +334,7 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 	// Personality.
 	// TODO: handle Personality.
 	// TODO: assign local IDs.
-	return f, nil
+	return nil
 }
 
 // ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -336,6 +344,11 @@ func (gen *generator) translateFuncDef(g ir.Constant, old *ast.FuncDef) (ir.Cons
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function definition; expected *ir.Function, got %T", g))
 	}
+	if err := gen.translateFuncHeader(f, old.Header()); err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Metadata.
+	// TODO: translate function metadata.
 	// TODO: implement
 	return f, nil
 }
