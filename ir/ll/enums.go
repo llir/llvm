@@ -1,5 +1,66 @@
 package ll
 
+//go:generate stringer -linecomment -type CallingConv
+
+// CallingConv is a calling convention.
+type CallingConv uint8
+
+// Calling conventions.
+const (
+	CallingConvNone          CallingConv = iota // none
+	CallingConvAmdGPUCS                         // amdgpu_cs
+	CallingConvAmdGPUES                         // amdgpu_es
+	CallingConvAmdGPUGS                         // amdgpu_gs
+	CallingConvAmdGPUHS                         // amdgpu_hs
+	CallingConvAmdGPUKernel                     // amdgpu_kernel
+	CallingConvAmdGPULS                         // amdgpu_ls
+	CallingConvAmdGPUPS                         // amdgpu_ps
+	CallingConvAmdGPUVS                         // amdgpu_vs
+	CallingConvAnyReg                           // anyregcc
+	CallingConvARMAAPCSVFP                      // arm_aapcs_vfpcc
+	CallingConvARMAAPCS                         // arm_aapcscc
+	CallingConvARMAPCS                          // arm_apcscc
+	CallingConvAVRIntr                          // avr_intrcc
+	CallingConvAVRSignal                        // avr_signalcc
+	CallingConvC                                // ccc
+	CallingConvCold                             // coldcc
+	CallingConvCXXFastTLS                       // cxx_fast_tlscc
+	CallingConvFast                             // fastcc
+	CallingConvGHC                              // ghccc
+	CallingConvHHVMC                            // hhvm_ccc
+	CallingConvHHVM                             // hhvmcc
+	CallingConvIntelOCLBI                       // intel_ocl_bicc
+	CallingConvMSP430Intr                       // msp430_intrcc
+	CallingConvPreserveAll                      // preserve_allcc
+	CallingConvPreserveMost                     // preserve_mostcc
+	CallingConvPTXDevice                        // ptx_device
+	CallingConvPTXKernel                        // ptx_kernel
+	CallingConvSPIRFunc                         // spir_func
+	CallingConvSPIRKernel                       // spir_kernel
+	CallingConvSwift                            // swiftcc
+	CallingConvWebKitJS                         // webkit_jscc
+	CallingConvWin64                            // win64cc
+	CallingConvX86_64SysV                       // x86_64_sysvcc
+	CallingConvX86FastCall                      // x86_fastcallcc
+	CallingConvX86Intr                          // x86_intrcc
+	CallingConvX86RegCall                       // x86_regcallcc
+	CallingConvX86StdCall                       // x86_stdcallcc
+	CallingConvX86ThisCall                      // x86_thiscallcc
+	CallingConvX86VectorCall                    // x86_vectorcallcc
+	// Calling conventions defined through cc NNN.
+	CallingConvHiPE          // cc 11
+	CallingConvAVRBuiltin    // cc 86
+	CallingConvAMDGPUVS      // cc 87
+	CallingConvAMDGPUGS      // cc 88
+	CallingConvAMDGPUPS      // cc 89
+	CallingConvAMDGPUCS      // cc 90
+	CallingConvAMDGPUKernel  // cc 91
+	CallingConvAMDGPUHS      // cc 93
+	CallingConvMSP430Builtin // cc 94
+	CallingConvAMDGPULS      // cc 95
+	CallingConvAMDGPUES      // cc 96
+)
+
 //go:generate stringer -linecomment -type DLLStorageClass
 
 // DLLStorageClass specifies the DLL storage class of a global identifier.
