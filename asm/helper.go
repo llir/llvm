@@ -18,6 +18,10 @@ import (
 // global returns the name (without '@' prefix) of the given global identifier.
 func global(n ast.GlobalIdent) string {
 	text := n.Text()
+	if text == "" {
+		// \empty is used when global identifier not present.
+		return ""
+	}
 	const prefix = "@"
 	if !strings.HasPrefix(text, prefix) {
 		// NOTE: Panic instead of returning error as this case should not be
@@ -33,6 +37,10 @@ func global(n ast.GlobalIdent) string {
 // local returns the name (without '%' prefix) of the given local identifier.
 func local(n ast.LocalIdent) string {
 	text := n.Text()
+	if text == "" {
+		// \empty is used when local identifier not present.
+		return ""
+	}
 	const prefix = "%"
 	if !strings.HasPrefix(text, prefix) {
 		// NOTE: Panic instead of returning error as this case should not be
