@@ -2514,7 +2514,7 @@ SelectInst -> SelectInst
 #           OptionalAttrs Type Value ParameterList OptionalAttrs
 
 CallInst -> CallInst
-	: Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt RetType=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles InstMetadata
+	: Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Typ=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles InstMetadata
 ;
 
 Tail -> Tail
