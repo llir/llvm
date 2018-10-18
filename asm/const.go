@@ -195,7 +195,6 @@ func (gen *generator) irUndefConst(t types.Type, old *ast.UndefConst) (*ir.Const
 // --- [ Addresses of Basic Blocks ] -------------------------------------------
 
 func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressConst) (*ir.ConstBlockAddress, error) {
-	panic("not yet implemented. ensure that irBlockAddressConst is invoked only after function bodies have been populated, and local identifiers have been assigned names. In this sense, irBlockAddressConst is different from all other constants.")
 	// Function.
 	funcName := global(old.Func())
 	f, err := gen.function(funcName)
