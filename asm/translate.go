@@ -23,6 +23,7 @@ var (
 // module.
 func Translate(module *ast.Module) (*ir.Module, error) {
 	gen := newGenerator()
+	// Resolve types.
 	if DoTypeResolution {
 		typeResolutionStart := time.Now()
 		_, err := gen.resolveTypeDefs(module)
@@ -32,6 +33,7 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		fmt.Println("type resolution of type definitions took:", time.Since(typeResolutionStart))
 		fmt.Println()
 	}
+	// Resolve globals.
 	if DoGlobalResolution {
 		globalResolutionStart := time.Now()
 		_, err := gen.resolveGlobals(module)
@@ -40,6 +42,14 @@ func Translate(module *ast.Module) (*ir.Module, error) {
 		}
 		fmt.Println("global resolution of global variable and function declarations and definitions took:", time.Since(globalResolutionStart))
 		fmt.Println()
+	}
+	// Resolve functions.
+	// TODO: implement.
+	// Fix dummy values.
+	for _, c := range gen.todo {
+		if err := fixBlockAddressConst(c); err != nil {
+			return nil, errors.WithStack(err)
+		}
 	}
 	return gen.m, nil
 }
@@ -56,6 +66,10 @@ type generator struct {
 	// gs maps from global identifier (without '@' prefix) to corresponding
 	// IR value.
 	gs map[string]ir.Constant
+
+	// Fix dummy basic blocks after translation of function bodies and assignment
+	// of local IDs.
+	todo []*ir.ConstBlockAddress
 }
 
 // newGenerator returns a new generator for translating an LLVM IR module from

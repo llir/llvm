@@ -204,14 +204,27 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 	}
 	// Basic block.
 	blockName := local(old.Block())
-	// TODO: assign block IDs; or rather, place call to irBlockAddressConst after
-	// the IDs have been assigned already.
+	// Add dummy basic block to track the name recorded by the AST. Resolve the
+	// proper basic block after translation of function bodies and assignment of
+	// local IDs.
+	block := &ir.BasicBlock{
+		LocalName: blockName,
+	}
+	expr := ir.NewBlockAddress(f, block)
+	gen.todo = append(gen.todo, expr)
+	// TODO: validate type t against expr.Typ. Store t in todo?
+	return expr, nil
+}
+
+// Pre-condition: translate function body and assign local IDs of c.Func.
+func fixBlockAddressConst(c *ir.ConstBlockAddress) error {
+	f := c.Func
+	blockName := c.Block.LocalName
 	for _, block := range f.Blocks {
 		if block.LocalName == blockName {
-			expr := ir.NewBlockAddress(f, block)
-			// TODO: validate type t against expr.Typ.
-			return expr, nil
+			c.Block = block
+			return nil
 		}
 	}
-	return nil, errors.Errorf("unable to locate basic block %q in function %q", blockName, funcName)
+	return errors.Errorf("unable to locate basic block %q in function %q", blockName, f.FuncName)
 }
