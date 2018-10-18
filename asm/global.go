@@ -59,7 +59,8 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 		}
 	}
 
-	// Create corresponding IR global variables and functions (without bodies).
+	// Create corresponding IR global variables and functions (without bodies but
+	// with a type).
 	gen.gs = make(map[string]ir.Constant)
 	for name, old := range index {
 		g, err := gen.newGlobal(name, old)
@@ -110,21 +111,21 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 	case *ast.GlobalDecl:
 		g := &ir.Global{GlobalName: name}
 		// Content type.
-		typ, err := gen.irType(old.ContentType())
+		contentType, err := gen.irType(old.ContentType())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		g.ContentType = typ
+		g.ContentType = contentType
 		g.Typ = types.NewPointer(g.ContentType)
 		return g, nil
 	case *ast.GlobalDef:
 		g := &ir.Global{GlobalName: name}
 		// Content type.
-		typ, err := gen.irType(old.ContentType())
+		contentType, err := gen.irType(old.ContentType())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		g.ContentType = typ
+		g.ContentType = contentType
 		g.Typ = types.NewPointer(g.ContentType)
 		return g, nil
 	case *ast.FuncDecl:
@@ -149,8 +150,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 		// Variadic.
 		sig.Variadic = irVariadic(ps.Variadic())
 		f.Sig = sig
-		// TODO: add Typ?
-		//f.Typ = types.NewPointer(f.Sig)
+		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
 	case *ast.FuncDef:
 		f := &ir.Function{FuncName: name}
@@ -174,8 +174,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 		// Variadic.
 		sig.Variadic = irVariadic(ps.Variadic())
 		f.Sig = sig
-		// TODO: add Typ?
-		//f.Typ = types.NewPointer(f.Sig)
+		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
 	default:
 		panic(fmt.Errorf("support for global variable or function %T not yet implemented", old))
@@ -277,7 +276,43 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", g))
 	}
-	// TODO: implement
+	hdr := old.Header()
+	// Linkage.
+	// TODO: Handle ExternLinkage.
+	f.Linkage = irLinkage(hdr.Linkage().Text())
+	// Preemption.
+	f.Preemption = irPreemption(hdr.Preemption())
+	// Visibility.
+	f.Visibility = irVisibility(hdr.Visibility())
+	// DLL storage class.
+	f.DLLStorageClass = irDLLStorageClass(hdr.DLLStorageClass())
+	// Calling convention.
+	// TODO: translate CallingConv.
+	// Return attributes.
+	// TODO: handle ReturnAttrs.
+	// Return type; already handled.
+	// Function name; already handled.
+	// Function parameters.
+	// TODO: handle Params.
+	// Unnamed address.
+	f.UnnamedAddr = irUnnamedAddr(hdr.UnnamedAddr())
+	// Address space.
+	f.Typ.AddrSpace = irAddrSpace(hdr.AddrSpace())
+	// Function attributes.
+	// TODO: handle FuncAttrs.
+	// Section.
+	// TODO: handle Section.
+	// Comdat.
+	// TODO: handle Comdat.
+	// GC.
+	// TODO: handle GC.
+	// Prefix.
+	// TODO: handle Prefix.
+	// Prologue.
+	// TODO: handle Prologue.
+	// Personality.
+	// TODO: handle Personality.
+	// TODO: assign local IDs.
 	return f, nil
 }
 
