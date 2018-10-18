@@ -53,3 +53,7 @@ type FuncAttribute interface {
 type ReturnAttribute interface {
 	isReturnAttribute()
 }
+
+type ParamAttribute interface {
+	isParamAttribute()
+}

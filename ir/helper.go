@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/l/internal/enc"
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 )
 
@@ -16,8 +17,18 @@ func (*BasicBlock) IsUnwindTarget() {}
 type Param struct {
 	// Parameter type.
 	Typ types.Type
-	// Parameter name.
+	// (optional) Parameter name.
 	ParamName string
+
+	// extra.
+
+	// (optional) Parameter attributes.
+	Attrs []ll.ParamAttribute
+}
+
+// NewParam returns a new function parameter based on the given type and name.
+func NewParam(typ types.Type, name string) *Param {
+	return &Param{Typ: typ, ParamName: name}
 }
 
 // String returns the LLVM syntax representation of the function parameter as a
