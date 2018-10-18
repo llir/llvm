@@ -276,11 +276,11 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", g))
 	}
+	// Metadata.
+	// TODO: translate function metadata.
 	if err := gen.translateFuncHeader(f, old.Header()); err != nil {
 		return nil, errors.WithStack(err)
 	}
-	// Metadata.
-	// TODO: translate function metadata.
 	return f, nil
 }
 
@@ -300,7 +300,6 @@ func (gen *generator) translateFuncHeader(f *ir.Function, hdr ast.FuncHeader) er
 	// Return type; already handled.
 	// Function name; already handled.
 	// Function parameters.
-	var params []*ir.Param
 	ps := hdr.Params()
 	for _, p := range ps.Params() {
 		// Type.
@@ -312,7 +311,7 @@ func (gen *generator) translateFuncHeader(f *ir.Function, hdr ast.FuncHeader) er
 		// TODO: handle Attrs.
 		name := local(*p.Name())
 		param := ir.NewParam(typ, name)
-		params = append(params, param)
+		f.Params = append(f.Params, param)
 	}
 
 	// Unnamed address.
@@ -333,7 +332,6 @@ func (gen *generator) translateFuncHeader(f *ir.Function, hdr ast.FuncHeader) er
 	// TODO: handle Prologue.
 	// Personality.
 	// TODO: handle Personality.
-	// TODO: assign local IDs.
 	return nil
 }
 
@@ -349,6 +347,13 @@ func (gen *generator) translateFuncDef(g ir.Constant, old *ast.FuncDef) (ir.Cons
 	}
 	// Metadata.
 	// TODO: translate function metadata.
-	// TODO: implement
+	// Basic blocks.
+	fgen := newFuncGen(gen, f)
+	_, err := fgen.resolveLocals(old.Body())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Use list orders.
+	// TODO: translate use list orders.
 	return f, nil
 }
