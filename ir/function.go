@@ -55,7 +55,7 @@ type Function struct {
 	Prologue Constant
 	// (optional) Personality; nil if not present.
 	Personality Constant
-	// (optional) Use list order.
+	// (optional) Use list orders.
 	// TODO: add support for UseListOrder.
 	//UseListOrders []*UseListOrder
 	// (optional) Metadata attachments.
