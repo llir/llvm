@@ -278,8 +278,7 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 	}
 	hdr := old.Header()
 	// Linkage.
-	// TODO: Handle ExternLinkage.
-	f.Linkage = irLinkage(hdr.Linkage().Text())
+	f.Linkage = irLinkage(hdr.ExternLinkage().Text())
 	// Preemption.
 	f.Preemption = irPreemption(hdr.Preemption())
 	// Visibility.
@@ -293,7 +292,21 @@ func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Co
 	// Return type; already handled.
 	// Function name; already handled.
 	// Function parameters.
-	// TODO: handle Params.
+	var params []*ir.Param
+	ps := hdr.Params()
+	for _, p := range ps.Params() {
+		// Type.
+		typ, err := gen.irType(p.Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		// Parameter attributes.
+		// TODO: handle Attrs.
+		name := local(*p.Name())
+		param := ir.NewParam(typ, name)
+		params = append(params, param)
+	}
+
 	// Unnamed address.
 	f.UnnamedAddr = irUnnamedAddr(hdr.UnnamedAddr())
 	// Address space.
