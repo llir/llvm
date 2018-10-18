@@ -53,6 +53,23 @@ func local(n ast.LocalIdent) string {
 
 // --- [ Label Identifiers ] ---------------------------------------------------
 
+// label returns the name (without ':' suffix) of the given label identifier.
+func label(n ast.LabelIdent) string {
+	text := n.Text()
+	if text == "" {
+		// \empty is used when label identifier not present.
+		return ""
+	}
+	const suffix = ":"
+	if !strings.HasSuffix(text, suffix) {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible given the grammar.
+		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", text, suffix))
+	}
+	text = text[:len(text)-len(suffix)]
+	return unquote(text)
+}
+
 // --- [ Attribute Group Identifiers ] -----------------------------------------
 
 // --- [ Comdat Identifiers ] --------------------------------------------------
