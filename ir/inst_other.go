@@ -210,6 +210,11 @@ type InstCall struct {
 	Callee value.Value
 	// Function arguments.
 	Args []ll.Arg
+
+	// extra.
+
+	// Either the return type or the function signature of the callee.
+	Typ types.Type
 }
 
 // NewCall returns a new call instruction based on the given callee and function
@@ -228,7 +233,11 @@ func (inst *InstCall) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstCall) Type() types.Type {
-	panic("not yet implemented")
+	// TODO: cache Typ from Callee if nil?
+	if t, ok := inst.Typ.(*types.FuncType); ok {
+		return t.RetType
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.

@@ -2,10 +2,13 @@ package ir
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
+	"github.com/llir/l/ir/value"
+	"github.com/pkg/errors"
 )
 
 // === [ Functions ] ===========================================================
@@ -115,4 +118,66 @@ func (f *Function) SetName(name string) {
 // declaration.
 func (f *Function) Def() string {
 	panic("not yet implemented")
+}
+
+// AssignIDs assigns IDs to unnamed local variables.
+func (f *Function) AssignIDs() error {
+	if len(f.Blocks) == 0 {
+		return nil
+	}
+	id := 0
+	names := make(map[string]value.Value)
+	setName := func(n value.Named) error {
+		got := n.Name()
+		fmt.Printf("got %T: %v\n", n, got)
+		if isUnnamed(got) {
+			name := strconv.Itoa(id)
+			fmt.Println("   unnamed:", name)
+			n.SetName(name)
+			names[name] = n
+			id++
+		} else if isLocalID(got) {
+			want := strconv.Itoa(id)
+			if want != got {
+				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", enc.Global(f.FuncName), enc.Local(want), enc.Local(got))
+			}
+			id++
+		} else {
+			// already named; nothing to do.
+		}
+		return nil
+	}
+	fmt.Println("f:", f.FuncName)
+	fmt.Println("params:", f.Params)
+	for _, param := range f.Params {
+		// Assign local IDs to unnamed parameters of function definitions.
+		if err := setName(param); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	for _, block := range f.Blocks {
+		// Assign local IDs to unnamed basic blocks.
+		if err := setName(block); err != nil {
+			return errors.WithStack(err)
+		}
+		for _, inst := range block.Insts {
+			n, ok := inst.(value.Named)
+			if !ok {
+				continue
+			}
+			// Skip void instructions.
+			// TODO: Check if any other value instructions than call may have void
+			// type.
+			if n, ok := n.(*InstCall); ok {
+				if n.Type().Equal(types.Void) {
+					continue
+				}
+			}
+			// Assign local IDs to unnamed local variables.
+			if err := setName(n); err != nil {
+				return errors.WithStack(err)
+			}
+		}
+	}
+	return nil
 }

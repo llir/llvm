@@ -67,7 +67,7 @@ func isUnnamed(name string) bool {
 // isLocalID reports whether the given identifier is a local ID (e.g. "%42").
 func isLocalID(name string) bool {
 	for _, r := range name {
-		if strings.IndexRune("0123456789", r) == -1 {
+		if !strings.ContainsRune("0123456789", r) {
 			return false
 		}
 	}
