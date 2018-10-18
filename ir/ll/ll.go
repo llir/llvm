@@ -49,3 +49,7 @@ type UnwindTarget interface {
 type FuncAttribute interface {
 	isFuncAttribute()
 }
+
+type ReturnAttribute interface {
+	isReturnAttribute()
+}
