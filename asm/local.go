@@ -1,3 +1,20 @@
+// Problems to solve.
+//
+// phi instructions can reference local variables defined in basic blocks not
+// yet visited when translating basic blocks in linear order.
+//
+// Terminator instructions can reference basic blocks not yet visited when
+// translating basic blocks in linear order.
+//
+// The function parameters, basic blocks and local variables (produced by the
+// result of instructions) of a function may be unnamed. They are assigned the
+// first unused local ID (e.g. %42) when traversing the body of the function in
+// linear order; where function parameters are assigned first, then for each
+// basic block, assign an ID to the basic block and then to the result of its
+// instructions. Note, instructions that produce void results are ignored.
+// Non-value instructions (e.g. store) are always ignored. Notably, the call
+// instruction may be ignored if the callee has a void return.
+
 // TODO: make concurrent :)
 
 package asm
