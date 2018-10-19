@@ -24,13 +24,14 @@ import (
 
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/value"
+	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/pkg/errors"
 )
 
 type funcGen struct {
 	// Module generator.
-	*generator
+	gen *generator
 
 	// LLVM IR function being generated.
 	f *ir.Function
@@ -42,9 +43,9 @@ type funcGen struct {
 
 func newFuncGen(gen *generator, f *ir.Function) *funcGen {
 	return &funcGen{
-		generator: gen,
-		f:         f,
-		ls:        make(map[string]value.Value),
+		gen: gen,
+		f:   f,
+		ls:  make(map[string]value.Value),
 	}
 }
 
@@ -72,8 +73,24 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 		return nil, errors.WithStack(err)
 	}
 	// Index local identifiers.
-	// TODO: index local identifiers.
-
+	for _, param := range f.Params {
+		fgen.ls[param.ParamName] = param
+	}
+	for _, block := range f.Blocks {
+		// TODO: Rename block.LocalName to block.BlockName?
+		fgen.ls[block.LocalName] = block
+		for _, inst := range block.Insts {
+			if n, ok := inst.(value.Named); ok {
+				// Skip call instruction if callee has void return type.
+				if n, ok := n.(*ir.InstCall); ok {
+					if n.Type().Equal(types.Void) {
+						continue
+					}
+				}
+				fgen.ls[n.Name()] = n
+			}
+		}
+	}
 	// Translate instructions.
 	for i, block := range f.Blocks {
 		insts := bbs[i].Insts()
@@ -215,7 +232,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		// NOTE: We need to store the type of call instructions before invoking
 		// f.AssignIDs, since call instructions may be value instructions or
 		// non-value instructions based on return type.
-		typ, err := fgen.irType(old.Typ())
+		typ, err := fgen.gen.irType(old.Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -249,6 +266,9 @@ func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir
 // --- [ Binary instructions ] -------------------------------------------------
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO: implement astToIRValue(old ast.Value) value.Value
+//func (fgen *funcGen) astToIRValue(old ast.Node) value.Value
 
 func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*ir.InstAdd, error) {
 	i, ok := inst.(*ir.InstAdd)
