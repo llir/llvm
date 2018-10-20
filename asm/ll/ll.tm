@@ -1157,11 +1157,9 @@ ArrayType -> ArrayType
 #     ::= '<' '{' '}' '>'
 #     ::= '<' '{' Type (',' Type)* '}' '>'
 
-# TODO: Figure out how to represent packed; ref: https://github.com/inspirer/textmapper/issues/14
-
 StructType -> StructType
 	: '{' Fields=(Type separator ',')+? '}'
-	| '<' '{' Fields=(Type separator ',')+? '}' '>'
+	| '<' '{' Fields=(Type separator ',')+? '}' '>'   -> PackedStructType
 ;
 
 OpaqueType -> OpaqueType

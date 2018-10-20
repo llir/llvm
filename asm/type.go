@@ -99,7 +99,7 @@ func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type
 func newIRType(alias string, old ast.LlvmNode, index map[string]ast.LlvmNode, track map[string]bool) (types.Type, error) {
 	switch old := old.(type) {
 	case *ast.OpaqueType:
-		return &types.StructType{Alias: alias, Opaque: true}, nil
+		return &types.StructType{Alias: alias}, nil
 	case *ast.ArrayType:
 		return &types.ArrayType{Alias: alias}, nil
 	case *ast.FloatType:
@@ -130,6 +130,8 @@ func newIRType(alias string, old ast.LlvmNode, index map[string]ast.LlvmNode, tr
 	case *ast.PointerType:
 		return &types.PointerType{Alias: alias}, nil
 	case *ast.StructType:
+		return &types.StructType{Alias: alias}, nil
+	case *ast.PackedStructType:
 		return &types.StructType{Alias: alias}, nil
 	case *ast.TokenType:
 		return &types.TokenType{Alias: alias}, nil
@@ -171,6 +173,8 @@ func (gen *generator) translateType(t types.Type, old ast.LlvmNode) (types.Type,
 		return gen.translatePointerType(t, old)
 	case *ast.StructType:
 		return gen.translateStructType(t, old)
+	case *ast.PackedStructType:
+		return gen.translatePackedStructType(t, old)
 	case *ast.TokenType:
 		return gen.translateTokenType(t, old)
 	case *ast.VectorType:
@@ -441,7 +445,8 @@ func (gen *generator) translateOpaqueType(t types.Type, old *ast.OpaqueType) (ty
 		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST opaque type; expected *types.StructType, got %T", t))
 	}
-	// nothing to do.
+	// Opaque.
+	typ.Opaque = true
 	return typ, nil
 }
 
@@ -455,7 +460,30 @@ func (gen *generator) translateStructType(t types.Type, old *ast.StructType) (ty
 		panic(fmt.Errorf("invalid IR type for AST struct type; expected *types.StructType, got %T", t))
 	}
 	// Packed.
-	// TODO: Figure out how to represent packed in grammar.
+	// Fields.
+	for _, f := range old.Fields() {
+		field, err := gen.irType(f)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		typ.Fields = append(typ.Fields, field)
+	}
+	// struct body now present.
+	typ.Opaque = false
+	return typ, nil
+}
+
+func (gen *generator) translatePackedStructType(t types.Type, old *ast.PackedStructType) (types.Type, error) {
+	typ, ok := t.(*types.StructType)
+	if t == nil {
+		typ = &types.StructType{}
+	} else if !ok {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible, and would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR type for AST struct type; expected *types.StructType, got %T", t))
+	}
+	// Packed.
+	typ.Packed = true
 	// Fields.
 	for _, f := range old.Fields() {
 		field, err := gen.irType(f)
