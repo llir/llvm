@@ -1230,7 +1230,6 @@ Constant -> Constant
 	| NoneConst
 	| StructConst
 	| ArrayConst
-	| CharArrayConst
 	| VectorConst
 	| ZeroInitializerConst
 	# @42
@@ -1315,11 +1314,9 @@ StructConst -> StructConst
 
 ArrayConst -> ArrayConst
 	: '[' Elems=(TypeConst separator ',')* ']'
+	| 'c' Val=StringLit                          -> CharArrayConst
 ;
 
-CharArrayConst -> CharArrayConst
-	: 'c' Val=StringLit
-;
 
 # --- [ Vector Constants ] -----------------------------------------------------
 
