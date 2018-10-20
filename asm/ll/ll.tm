@@ -2570,7 +2570,7 @@ FilterClause -> FilterClause
 	: 'filter' Typ=Type Val=ArrayConst
 ;
 
-# --- [ catchpad ] -------------------------------------------------------------
+# ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseCatchPad
 #
@@ -2580,7 +2580,7 @@ CatchPadInst -> CatchPadInst
 	: 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
 ;
 
-# --- [ cleanuppad ] -----------------------------------------------------------
+# ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseCleanupPad
 #
