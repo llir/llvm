@@ -1,3 +1,5 @@
+// TODO: rename from translateFoo to astToIRFoo.
+
 // Problems to solve.
 //
 // phi instructions can reference local variables defined in basic blocks not
