@@ -26,6 +26,7 @@ import (
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
+	"github.com/mewmew/l-tm/internal/enc"
 	"github.com/pkg/errors"
 )
 
@@ -74,9 +75,15 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 	}
 	// Index local identifiers.
 	for _, param := range f.Params {
+		if prev, ok := fgen.ls[param.ParamName]; ok {
+			return nil, errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(param.ParamName), prev, param)
+		}
 		fgen.ls[param.ParamName] = param
 	}
 	for _, block := range f.Blocks {
+		if prev, ok := fgen.ls[block.LocalName]; ok {
+			return nil, errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(block.LocalName), prev, block)
+		}
 		// TODO: Rename block.LocalName to block.BlockName?
 		fgen.ls[block.LocalName] = block
 		for _, inst := range block.Insts {
@@ -86,6 +93,9 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 					if n.Type().Equal(types.Void) {
 						continue
 					}
+				}
+				if prev, ok := fgen.ls[n.Name()]; ok {
+					return nil, errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(n.Name()), prev, n)
 				}
 				fgen.ls[n.Name()] = n
 			}
@@ -256,6 +266,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 // instruction.
 func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir.Instruction, error) {
 	switch old := old.(type) {
+	// Value instruction.
 	case *ast.LocalDef:
 		name := local(old.Name())
 		v, ok := fgen.ls[name]
@@ -266,11 +277,132 @@ func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir
 		if !ok {
 			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", name, v)
 		}
-		return fgen.translateInst(i, old.Inst().(ast.Instruction))
-	case *ast.AddInst:
-		return fgen.translateAddInst(inst, old)
+		return fgen.translateValueInst(i, old.Inst())
+	case ast.ValueInstruction:
+		return fgen.translateValueInst(inst, old)
+	// Non-value instructions.
+	case *ast.StoreInst:
+		return fgen.translateStoreInst(inst, old)
+	case *ast.FenceInst:
+		return fgen.translateFenceInst(inst, old)
+	case *ast.CmpXchgInst:
+		return fgen.translateCmpXchgInst(inst, old)
+	case *ast.AtomicRMWInst:
+		return fgen.translateAtomicRMWInst(inst, old)
 	default:
 		panic(fmt.Errorf("support for instruction type %T not yet implemented", old))
+	}
+}
+
+// translateValueInst translates the AST value instruction into an equivalent IR
+// value instruction.
+func (fgen *funcGen) translateValueInst(inst ir.Instruction, old ast.ValueInstruction) (ir.Instruction, error) {
+	switch old := old.(type) {
+	// Binary instructions
+	case *ast.AddInst:
+		return fgen.translateAddInst(inst, old)
+	case *ast.FAddInst:
+		return fgen.translateFAddInst(inst, old)
+	case *ast.SubInst:
+		return fgen.translateSubInst(inst, old)
+	case *ast.FSubInst:
+		return fgen.translateFSubInst(inst, old)
+	case *ast.MulInst:
+		return fgen.translateMulInst(inst, old)
+	case *ast.FMulInst:
+		return fgen.translateFMulInst(inst, old)
+	case *ast.UDivInst:
+		return fgen.translateUDivInst(inst, old)
+	case *ast.SDivInst:
+		return fgen.translateSDivInst(inst, old)
+	case *ast.FDivInst:
+		return fgen.translateFDivInst(inst, old)
+	case *ast.URemInst:
+		return fgen.translateURemInst(inst, old)
+	case *ast.SRemInst:
+		return fgen.translateSRemInst(inst, old)
+	case *ast.FRemInst:
+		return fgen.translateFRemInst(inst, old)
+	// Bitwise instructions
+	case *ast.ShlInst:
+		return fgen.translateShlInst(inst, old)
+	case *ast.LShrInst:
+		return fgen.translateLShrInst(inst, old)
+	case *ast.AShrInst:
+		return fgen.translateAShrInst(inst, old)
+	case *ast.AndInst:
+		return fgen.translateAndInst(inst, old)
+	case *ast.OrInst:
+		return fgen.translateOrInst(inst, old)
+	case *ast.XorInst:
+		return fgen.translateXorInst(inst, old)
+	// Vector instructions
+	case *ast.ExtractElementInst:
+		return fgen.translateExtractElementInst(inst, old)
+	case *ast.InsertElementInst:
+		return fgen.translateInsertElementInst(inst, old)
+	case *ast.ShuffleVectorInst:
+		return fgen.translateShuffleVectorInst(inst, old)
+	// Aggregate instructions
+	case *ast.ExtractValueInst:
+		return fgen.translateExtractValueInst(inst, old)
+	case *ast.InsertValueInst:
+		return fgen.translateInsertValueInst(inst, old)
+	// Memory instructions
+	case *ast.AllocaInst:
+		return fgen.translateAllocaInst(inst, old)
+	case *ast.LoadInst:
+		return fgen.translateLoadInst(inst, old)
+	case *ast.GetElementPtrInst:
+		return fgen.translateGetElementPtrInst(inst, old)
+	// Conversion instructions
+	case *ast.TruncInst:
+		return fgen.translateTruncInst(inst, old)
+	case *ast.ZExtInst:
+		return fgen.translateZExtInst(inst, old)
+	case *ast.SExtInst:
+		return fgen.translateSExtInst(inst, old)
+	case *ast.FPTruncInst:
+		return fgen.translateFPTruncInst(inst, old)
+	case *ast.FPExtInst:
+		return fgen.translateFPExtInst(inst, old)
+	case *ast.FPToUIInst:
+		return fgen.translateFPToUIInst(inst, old)
+	case *ast.FPToSIInst:
+		return fgen.translateFPToSIInst(inst, old)
+	case *ast.UIToFPInst:
+		return fgen.translateUIToFPInst(inst, old)
+	case *ast.SIToFPInst:
+		return fgen.translateSIToFPInst(inst, old)
+	case *ast.PtrToIntInst:
+		return fgen.translatePtrToIntInst(inst, old)
+	case *ast.IntToPtrInst:
+		return fgen.translateIntToPtrInst(inst, old)
+	case *ast.BitCastInst:
+		return fgen.translateBitCastInst(inst, old)
+	case *ast.AddrSpaceCastInst:
+		return fgen.translateAddrSpaceCastInst(inst, old)
+	// Other instructions
+	case *ast.ICmpInst:
+		return fgen.translateICmpInst(inst, old)
+	case *ast.FCmpInst:
+		return fgen.translateFCmpInst(inst, old)
+	case *ast.PhiInst:
+		return fgen.translatePhiInst(inst, old)
+	case *ast.SelectInst:
+		return fgen.translateSelectInst(inst, old)
+	case *ast.CallInst:
+		return fgen.translateCallInst(inst, old)
+	case *ast.VAArgInst:
+		return fgen.translateVAArgInst(inst, old)
+	case *ast.LandingPadInst:
+		return fgen.translateLandingPadInst(inst, old)
+	case *ast.CatchPadInst:
+		return fgen.translateCatchPadInst(inst, old)
+	case *ast.CleanupPadInst:
+		return fgen.translateCleanupPadInst(inst, old)
+	default:
+		panic(fmt.Errorf("support for value instruction type %T not yet implemented", old))
 	}
 }
 
@@ -299,114 +431,624 @@ func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*i
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateFAddInst(inst ir.Instruction, old *ast.FAddInst) (*ir.InstFAdd, error) {
+	i, ok := inst.(*ir.InstFAdd)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFAdd, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateSubInst(inst ir.Instruction, old *ast.SubInst) (*ir.InstSub, error) {
+	i, ok := inst.(*ir.InstSub)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSub, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateFSubInst(inst ir.Instruction, old *ast.FSubInst) (*ir.InstFSub, error) {
+	i, ok := inst.(*ir.InstFSub)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFSub, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateMulInst(inst ir.Instruction, old *ast.MulInst) (*ir.InstMul, error) {
+	i, ok := inst.(*ir.InstMul)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstMul, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateFMulInst(inst ir.Instruction, old *ast.FMulInst) (*ir.InstFMul, error) {
+	i, ok := inst.(*ir.InstFMul)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFMul, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateUDivInst(inst ir.Instruction, old *ast.UDivInst) (*ir.InstUDiv, error) {
+	i, ok := inst.(*ir.InstUDiv)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstUDiv, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateSDivInst(inst ir.Instruction, old *ast.SDivInst) (*ir.InstSDiv, error) {
+	i, ok := inst.(*ir.InstSDiv)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSDiv, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateFDivInst(inst ir.Instruction, old *ast.FDivInst) (*ir.InstFDiv, error) {
+	i, ok := inst.(*ir.InstFDiv)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFDiv, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateURemInst(inst ir.Instruction, old *ast.URemInst) (*ir.InstURem, error) {
+	i, ok := inst.(*ir.InstURem)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstURem, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateSRemInst(inst ir.Instruction, old *ast.SRemInst) (*ir.InstSRem, error) {
+	i, ok := inst.(*ir.InstSRem)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSRem, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateFRemInst(inst ir.Instruction, old *ast.FRemInst) (*ir.InstFRem, error) {
+	i, ok := inst.(*ir.InstFRem)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFRem, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // --- [ Bitwise instructions ] ------------------------------------------------
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateShlInst(inst ir.Instruction, old *ast.ShlInst) (*ir.InstShl, error) {
+	i, ok := inst.(*ir.InstShl)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstShl, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateLShrInst(inst ir.Instruction, old *ast.LShrInst) (*ir.InstLShr, error) {
+	i, ok := inst.(*ir.InstLShr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLShr, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateAShrInst(inst ir.Instruction, old *ast.AShrInst) (*ir.InstAShr, error) {
+	i, ok := inst.(*ir.InstAShr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAShr, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateAndInst(inst ir.Instruction, old *ast.AndInst) (*ir.InstAnd, error) {
+	i, ok := inst.(*ir.InstAnd)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAnd, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateOrInst(inst ir.Instruction, old *ast.OrInst) (*ir.InstOr, error) {
+	i, ok := inst.(*ir.InstOr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstOr, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateXorInst(inst ir.Instruction, old *ast.XorInst) (*ir.InstXor, error) {
+	i, ok := inst.(*ir.InstXor)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstXor, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // --- [ Vector instructions ] -------------------------------------------------
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateExtractElementInst(inst ir.Instruction, old *ast.ExtractElementInst) (*ir.InstExtractElement, error) {
+	i, ok := inst.(*ir.InstExtractElement)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstExtractElement, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateInsertElementInst(inst ir.Instruction, old *ast.InsertElementInst) (*ir.InstInsertElement, error) {
+	i, ok := inst.(*ir.InstInsertElement)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstInsertElement, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateShuffleVectorInst(inst ir.Instruction, old *ast.ShuffleVectorInst) (*ir.InstShuffleVector, error) {
+	i, ok := inst.(*ir.InstShuffleVector)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstShuffleVector, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // --- [ Aggregate instructions ] ----------------------------------------------
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateExtractValueInst(inst ir.Instruction, old *ast.ExtractValueInst) (*ir.InstExtractValue, error) {
+	i, ok := inst.(*ir.InstExtractValue)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstExtractValue, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateInsertValueInst(inst ir.Instruction, old *ast.InsertValueInst) (*ir.InstInsertValue, error) {
+	i, ok := inst.(*ir.InstInsertValue)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstInsertValue, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // --- [ Memory instructions ] -------------------------------------------------
 
 // ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateAllocaInst(inst ir.Instruction, old *ast.AllocaInst) (*ir.InstAlloca, error) {
+	i, ok := inst.(*ir.InstAlloca)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAlloca, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateLoadInst(inst ir.Instruction, old *ast.LoadInst) (*ir.InstLoad, error) {
+	i, ok := inst.(*ir.InstLoad)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLoad, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateStoreInst(inst ir.Instruction, old *ast.StoreInst) (*ir.InstStore, error) {
+	i, ok := inst.(*ir.InstStore)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstStore, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateFenceInst(inst ir.Instruction, old *ast.FenceInst) (*ir.InstFence, error) {
+	i, ok := inst.(*ir.InstFence)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFence, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateCmpXchgInst(inst ir.Instruction, old *ast.CmpXchgInst) (*ir.InstCmpXchg, error) {
+	i, ok := inst.(*ir.InstCmpXchg)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCmpXchg, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateAtomicRMWInst(inst ir.Instruction, old *ast.AtomicRMWInst) (*ir.InstAtomicRMW, error) {
+	i, ok := inst.(*ir.InstAtomicRMW)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAtomicRMW, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateGetElementPtrInst(inst ir.Instruction, old *ast.GetElementPtrInst) (*ir.InstGetElementPtr, error) {
+	i, ok := inst.(*ir.InstGetElementPtr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstGetElementPtr, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // --- [ Conversion instructions ] ---------------------------------------------
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateTruncInst(inst ir.Instruction, old *ast.TruncInst) (*ir.InstTrunc, error) {
+	i, ok := inst.(*ir.InstTrunc)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstTrunc, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateZExtInst(inst ir.Instruction, old *ast.ZExtInst) (*ir.InstZExt, error) {
+	i, ok := inst.(*ir.InstZExt)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstZExt, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateSExtInst(inst ir.Instruction, old *ast.SExtInst) (*ir.InstSExt, error) {
+	i, ok := inst.(*ir.InstSExt)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSExt, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateFPTruncInst(inst ir.Instruction, old *ast.FPTruncInst) (*ir.InstFPTrunc, error) {
+	i, ok := inst.(*ir.InstFPTrunc)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFPTrunc, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateFPExtInst(inst ir.Instruction, old *ast.FPExtInst) (*ir.InstFPExt, error) {
+	i, ok := inst.(*ir.InstFPExt)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFPExt, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateFPToUIInst(inst ir.Instruction, old *ast.FPToUIInst) (*ir.InstFPToUI, error) {
+	i, ok := inst.(*ir.InstFPToUI)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFPToUI, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateFPToSIInst(inst ir.Instruction, old *ast.FPToSIInst) (*ir.InstFPToSI, error) {
+	i, ok := inst.(*ir.InstFPToSI)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFPToSI, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateUIToFPInst(inst ir.Instruction, old *ast.UIToFPInst) (*ir.InstUIToFP, error) {
+	i, ok := inst.(*ir.InstUIToFP)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstUIToFP, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateSIToFPInst(inst ir.Instruction, old *ast.SIToFPInst) (*ir.InstSIToFP, error) {
+	i, ok := inst.(*ir.InstSIToFP)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSIToFP, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translatePtrToIntInst(inst ir.Instruction, old *ast.PtrToIntInst) (*ir.InstPtrToInt, error) {
+	i, ok := inst.(*ir.InstPtrToInt)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstPtrToInt, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateIntToPtrInst(inst ir.Instruction, old *ast.IntToPtrInst) (*ir.InstIntToPtr, error) {
+	i, ok := inst.(*ir.InstIntToPtr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstIntToPtr, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateBitCastInst(inst ir.Instruction, old *ast.BitCastInst) (*ir.InstBitCast, error) {
+	i, ok := inst.(*ir.InstBitCast)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstBitCast, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateAddrSpaceCastInst(inst ir.Instruction, old *ast.AddrSpaceCastInst) (*ir.InstAddrSpaceCast, error) {
+	i, ok := inst.(*ir.InstAddrSpaceCast)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAddrSpaceCast, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // --- [ Other instructions ] --------------------------------------------------
 
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateICmpInst(inst ir.Instruction, old *ast.ICmpInst) (*ir.InstICmp, error) {
+	i, ok := inst.(*ir.InstICmp)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstICmp, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateFCmpInst(inst ir.Instruction, old *ast.FCmpInst) (*ir.InstFCmp, error) {
+	i, ok := inst.(*ir.InstFCmp)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFCmp, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translatePhiInst(inst ir.Instruction, old *ast.PhiInst) (*ir.InstPhi, error) {
+	i, ok := inst.(*ir.InstPhi)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstPhi, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateSelectInst(inst ir.Instruction, old *ast.SelectInst) (*ir.InstSelect, error) {
+	i, ok := inst.(*ir.InstSelect)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSelect, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateCallInst(inst ir.Instruction, old *ast.CallInst) (*ir.InstCall, error) {
+	i, ok := inst.(*ir.InstCall)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCall, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateVAArgInst(inst ir.Instruction, old *ast.VAArgInst) (*ir.InstVAArg, error) {
+	i, ok := inst.(*ir.InstVAArg)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstVAArg, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateLandingPadInst(inst ir.Instruction, old *ast.LandingPadInst) (*ir.InstLandingPad, error) {
+	i, ok := inst.(*ir.InstLandingPad)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLandingPad, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+func (fgen *funcGen) translateCatchPadInst(inst ir.Instruction, old *ast.CatchPadInst) (*ir.InstCatchPad, error) {
+	i, ok := inst.(*ir.InstCatchPad)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCatchPad, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
+
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+func (fgen *funcGen) translateCleanupPadInst(inst ir.Instruction, old *ast.CleanupPadInst) (*ir.InstCleanupPad, error) {
+	i, ok := inst.(*ir.InstCleanupPad)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCleanupPad, got %T", inst))
+	}
+	// TODO: implement
+	return i, nil
+}
