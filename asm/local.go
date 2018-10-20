@@ -428,15 +428,21 @@ func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAdd, got %T", inst))
 	}
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	y, err := fgen.astToIRValue(x.Type(), old.Y())
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	i.X = x
 	i.Y = y
 	return i, nil
 }
@@ -449,7 +455,22 @@ func (fgen *funcGen) translateFAddInst(inst ir.Instruction, old *ast.FAddInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFAdd, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -461,7 +482,22 @@ func (fgen *funcGen) translateSubInst(inst ir.Instruction, old *ast.SubInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSub, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -473,7 +509,22 @@ func (fgen *funcGen) translateFSubInst(inst ir.Instruction, old *ast.FSubInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFSub, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -485,7 +536,22 @@ func (fgen *funcGen) translateMulInst(inst ir.Instruction, old *ast.MulInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstMul, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -497,7 +563,22 @@ func (fgen *funcGen) translateFMulInst(inst ir.Instruction, old *ast.FMulInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFMul, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -509,7 +590,22 @@ func (fgen *funcGen) translateUDivInst(inst ir.Instruction, old *ast.UDivInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstUDiv, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -521,7 +617,22 @@ func (fgen *funcGen) translateSDivInst(inst ir.Instruction, old *ast.SDivInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSDiv, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -533,7 +644,22 @@ func (fgen *funcGen) translateFDivInst(inst ir.Instruction, old *ast.FDivInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFDiv, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -545,7 +671,22 @@ func (fgen *funcGen) translateURemInst(inst ir.Instruction, old *ast.URemInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstURem, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -557,7 +698,22 @@ func (fgen *funcGen) translateSRemInst(inst ir.Instruction, old *ast.SRemInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSRem, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -569,7 +725,22 @@ func (fgen *funcGen) translateFRemInst(inst ir.Instruction, old *ast.FRemInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFRem, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -583,7 +754,22 @@ func (fgen *funcGen) translateShlInst(inst ir.Instruction, old *ast.ShlInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstShl, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -595,7 +781,22 @@ func (fgen *funcGen) translateLShrInst(inst ir.Instruction, old *ast.LShrInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLShr, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -607,7 +808,22 @@ func (fgen *funcGen) translateAShrInst(inst ir.Instruction, old *ast.AShrInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAShr, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -619,7 +835,22 @@ func (fgen *funcGen) translateAndInst(inst ir.Instruction, old *ast.AndInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAnd, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -631,7 +862,22 @@ func (fgen *funcGen) translateOrInst(inst ir.Instruction, old *ast.OrInst) (*ir.
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstOr, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
@@ -643,7 +889,22 @@ func (fgen *funcGen) translateXorInst(inst ir.Instruction, old *ast.XorInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstXor, got %T", inst))
 	}
-	// TODO: implement
+	// X operand.
+	xType, err := fgen.gen.irType(old.X().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(xType, old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	return i, nil
 }
 
