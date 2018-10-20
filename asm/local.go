@@ -23,8 +23,8 @@ import (
 	"fmt"
 
 	"github.com/llir/l/ir"
-	"github.com/llir/l/ir/value"
 	"github.com/llir/l/ir/types"
+	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/pkg/errors"
 )
@@ -256,6 +256,17 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 // instruction.
 func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir.Instruction, error) {
 	switch old := old.(type) {
+	case *ast.LocalDef:
+		name := local(old.Name())
+		v, ok := fgen.ls[name]
+		if !ok {
+			return nil, errors.Errorf("unable to locate local variable %q", name)
+		}
+		i, ok := v.(ir.Instruction)
+		if !ok {
+			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", name, v)
+		}
+		return fgen.translateInst(i, old.Inst().(ast.Instruction))
 	case *ast.AddInst:
 		return fgen.translateAddInst(inst, old)
 	default:
@@ -267,16 +278,22 @@ func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// TODO: implement astToIRValue(old ast.Value) value.Value
-//func (fgen *funcGen) astToIRValue(old ast.Node) value.Value
-
 func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*ir.InstAdd, error) {
 	i, ok := inst.(*ir.InstAdd)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAdd, got %T", inst))
 	}
-	// TODO: implement
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	y, err := fgen.astToIRValue(x.Type(), old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	i.Y = y
 	return i, nil
 }
 
@@ -390,6 +407,6 @@ func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*i
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// --- [ catchpad ] ------------------------------------------------------------
+// ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// --- [ cleanuppad ] ----------------------------------------------------------
+// ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
