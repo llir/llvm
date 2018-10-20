@@ -113,10 +113,16 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 			}
 		}
 	}
-	// TODO: implement.
-	panic("not yet implemented")
 	// Translate terminators.
-	// TODO: implement.
+	for i, block := range f.Blocks {
+		old := bbs[i].Term()
+		term, err := fgen.translateTerm(old)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		block.Term = term
+	}
+	return fgen.ls, nil
 }
 
 // newIRInst returns a new IR instruction (without body) based on the given AST
@@ -237,7 +243,11 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 	case *ast.FCmpInst:
 		return &ir.InstFCmp{LocalName: name}, nil
 	case *ast.PhiInst:
-		return &ir.InstPhi{LocalName: name}, nil
+		typ, err := fgen.gen.irType(old.Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstPhi{LocalName: name, Typ: typ}, nil
 	case *ast.SelectInst:
 		return &ir.InstSelect{LocalName: name}, nil
 	case *ast.CallInst:
@@ -1053,4 +1063,122 @@ func (fgen *funcGen) translateCleanupPadInst(inst ir.Instruction, old *ast.Clean
 	}
 	// TODO: implement
 	return i, nil
+}
+
+// === [ Terminators ] =========================================================
+
+// translateTerm translates the AST terminator into an equivalent IR terminator.
+func (fgen *funcGen) translateTerm(old ast.Terminator) (ir.Terminator, error) {
+	switch old := old.(type) {
+	case *ast.RetTerm:
+		return fgen.translateRetTerm(old)
+	case *ast.BrTerm:
+		return fgen.translateBrTerm(old)
+	case *ast.CondBrTerm:
+		return fgen.translateCondBrTerm(old)
+	case *ast.SwitchTerm:
+		return fgen.translateSwitchTerm(old)
+	case *ast.IndirectBrTerm:
+		return fgen.translateIndirectBrTerm(old)
+	case *ast.InvokeTerm:
+		return fgen.translateInvokeTerm(old)
+	case *ast.ResumeTerm:
+		return fgen.translateResumeTerm(old)
+	case *ast.CatchSwitchTerm:
+		return fgen.translateCatchSwitchTerm(old)
+	case *ast.CatchRetTerm:
+		return fgen.translateCatchRetTerm(old)
+	case *ast.CleanupRetTerm:
+		return fgen.translateCleanupRetTerm(old)
+	case *ast.UnreachableTerm:
+		return fgen.translateUnreachableTerm(old)
+	default:
+		panic(fmt.Errorf("support for AST terminator type %T not yet implemented", old))
+	}
+}
+
+// --- [ ret ] -----------------------------------------------------------------
+
+func (fgen *funcGen) translateRetTerm(old *ast.RetTerm) (*ir.TermRet, error) {
+	term := &ir.TermRet{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ br ] ------------------------------------------------------------------
+
+func (fgen *funcGen) translateBrTerm(old *ast.BrTerm) (*ir.TermBr, error) {
+	term := &ir.TermBr{}
+	// TODO: implement
+	return term, nil
+}
+
+func (fgen *funcGen) translateCondBrTerm(old *ast.CondBrTerm) (*ir.TermCondBr, error) {
+	term := &ir.TermCondBr{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ switch ] --------------------------------------------------------------
+
+func (fgen *funcGen) translateSwitchTerm(old *ast.SwitchTerm) (*ir.TermSwitch, error) {
+	term := &ir.TermSwitch{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ indirectbr ] ----------------------------------------------------------
+
+func (fgen *funcGen) translateIndirectBrTerm(old *ast.IndirectBrTerm) (*ir.TermIndirectBr, error) {
+	term := &ir.TermIndirectBr{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ invoke ] --------------------------------------------------------------
+
+func (fgen *funcGen) translateInvokeTerm(old *ast.InvokeTerm) (*ir.TermInvoke, error) {
+	term := &ir.TermInvoke{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ resume ] --------------------------------------------------------------
+
+func (fgen *funcGen) translateResumeTerm(old *ast.ResumeTerm) (*ir.TermResume, error) {
+	term := &ir.TermResume{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ catchswitch ] ---------------------------------------------------------
+
+func (fgen *funcGen) translateCatchSwitchTerm(old *ast.CatchSwitchTerm) (*ir.TermCatchSwitch, error) {
+	term := &ir.TermCatchSwitch{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ catchret ] ------------------------------------------------------------
+
+func (fgen *funcGen) translateCatchRetTerm(old *ast.CatchRetTerm) (*ir.TermCatchRet, error) {
+	term := &ir.TermCatchRet{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ cleanupret ] ----------------------------------------------------------
+
+func (fgen *funcGen) translateCleanupRetTerm(old *ast.CleanupRetTerm) (*ir.TermCleanupRet, error) {
+	term := &ir.TermCleanupRet{}
+	// TODO: implement
+	return term, nil
+}
+
+// --- [ unreachable ] ---------------------------------------------------------
+
+func (fgen *funcGen) translateUnreachableTerm(old *ast.UnreachableTerm) (*ir.TermUnreachable, error) {
+	term := &ir.TermUnreachable{}
+	// TODO: implement
+	return term, nil
 }
