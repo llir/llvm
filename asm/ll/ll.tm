@@ -1429,7 +1429,7 @@ ConstantExpr -> ConstantExpr
 # ref: ParseValID
 
 AddExpr -> AddExpr
-	: 'add' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'add' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1445,7 +1445,7 @@ FAddExpr -> FAddExpr
 # ref: ParseValID
 
 SubExpr -> SubExpr
-	: 'sub' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'sub' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1461,7 +1461,7 @@ FSubExpr -> FSubExpr
 # ref: ParseValID
 
 MulExpr -> MulExpr
-	: 'mul' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'mul' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1529,7 +1529,7 @@ FRemExpr -> FRemExpr
 # ref: ParseValID
 
 ShlExpr -> ShlExpr
-	: 'shl' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'shl' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1885,7 +1885,7 @@ ValueInstruction -> ValueInstruction
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 AddInst -> AddInst
-	: 'add' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'add' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1909,7 +1909,7 @@ FAddInst -> FAddInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 SubInst -> SubInst
-	: 'sub' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'sub' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1933,7 +1933,7 @@ FSubInst -> FSubInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 MulInst -> MulInst
-	: 'mul' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'mul' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2031,7 +2031,7 @@ FRemInst -> FRemInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 ShlInst -> ShlInst
-	: 'shl' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4558,8 +4558,9 @@ OperandBundle -> OperandBundle
 	: Tag=StringLit '(' Inputs=(TypeValue separator ',')* ')'
 ;
 
-OverflowFlags -> OverflowFlags
-	: ('nsw' | 'nuw')*
+OverflowFlag -> OverflowFlag
+	: 'nsw'
+	| 'nuw'
 ;
 
 # ref: ParseArgumentList
