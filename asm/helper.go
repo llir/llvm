@@ -169,6 +169,43 @@ func irExternallyInitialized(n *ast.ExternallyInitialized) bool {
 	return n.Text() == "externally_initialized"
 }
 
+// irFastMathFlags returns the IR fast math flags corresponding to the given
+// optional AST fast math flags.
+func irFastMathFlags(ns []ast.FastMathFlag) []ll.FastMathFlag {
+	var flags []ll.FastMathFlag
+	for _, n := range ns {
+		flag := irFastMathFlag(n)
+		flags = append(flags, flag)
+	}
+	return flags
+}
+
+// irFastMathFlag returns the IR fast math flag corresponding to the given
+// optional AST fast math flag.
+func irFastMathFlag(n ast.FastMathFlag) ll.FastMathFlag {
+	text := n.Text()
+	switch text {
+	case "afn":
+		return ll.FastMathFlagAFn
+	case "arcp":
+		return ll.FastMathFlagARcp
+	case "contract":
+		return ll.FastMathFlagContract
+	case "fast":
+		return ll.FastMathFlagFast
+	case "ninf":
+		return ll.FastMathFlagNInf
+	case "nnan":
+		return ll.FastMathFlagNNaN
+	case "nsz":
+		return ll.FastMathFlagNSZ
+	case "reassoc":
+		return ll.FastMathFlagReassoc
+	default:
+		panic(fmt.Errorf("support for fast math flag %q not yet implemented", text))
+	}
+}
+
 // irImmutable returns the immutable (constant or global) boolean corresponding
 // to the given optional AST immutable.
 func irImmutable(n ast.Immutable) bool {
@@ -190,12 +227,18 @@ func irInBounds(n *ast.InBounds) bool {
 	return n.Text() == "inbounds"
 }
 
+// irInRange returns the in-range boolean corresponding to the given optional
+// AST in-range.
+func irInRange(n *ast.InRange) bool {
+	// TODO: check why InRange is non-nil, when reduced as \empty.
+	return n.Text() == "inrange"
+}
+
 // irLinkage returns the IR linkage corresponding to the given optional AST
 // linkage.
 func irLinkage(text string) ll.Linkage {
 	// TODO: when ExternLinkage and Linkage are merged in grammar, update
 	// irLinkage to take `n *ast.Linkage` instead of `text string`.
-
 	//text := n.Text()
 	switch text {
 	case "":
@@ -228,6 +271,31 @@ func irLinkage(text string) ll.Linkage {
 	}
 }
 
+// irOverflowFlags returns the IR overflow flags corresponding to the given
+// optional AST overflow flags.
+func irOverflowFlags(ns []ast.OverflowFlag) []ll.OverflowFlag {
+	var flags []ll.OverflowFlag
+	for _, n := range ns {
+		flag := irOverflowFlag(n)
+		flags = append(flags, flag)
+	}
+	return flags
+}
+
+// irOverflowFlag returns the IR overflow flag corresponding to the given
+// optional AST overflow flag.
+func irOverflowFlag(n ast.OverflowFlag) ll.OverflowFlag {
+	text := n.Text()
+	switch text {
+	case "nsw":
+		return ll.OverflowFlagNSW
+	case "nuw":
+		return ll.OverflowFlagNUW
+	default:
+		panic(fmt.Errorf("support for overflow flag %q not yet implemented", text))
+	}
+}
+
 // irPreemption returns the IR preemption corresponding to the given optional
 // AST preemption.
 func irPreemption(n *ast.Preemption) ll.Preemption {
@@ -243,13 +311,6 @@ func irPreemption(n *ast.Preemption) ll.Preemption {
 	default:
 		panic(fmt.Errorf("support for preemption %q not yet implemented", text))
 	}
-}
-
-// irInRange returns the in-range boolean corresponding to the given optional
-// AST in-range.
-func irInRange(n *ast.InRange) bool {
-	// TODO: check why InRange is non-nil, when reduced as \empty.
-	return n.Text() == "inrange"
 }
 
 // irSelectionKind returns the IR Comdat selection kind corresponding to the
