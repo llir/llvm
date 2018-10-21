@@ -20,6 +20,11 @@ type InstAlloca struct {
 	ElemType types.Type
 	// (optional) Number of elements; nil if not present.
 	NElems value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ *types.PointerType
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -61,6 +66,11 @@ type InstLoad struct {
 	LocalName string
 	// Source address.
 	Src value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -110,22 +120,6 @@ func NewStore(src, dst value.Value) *InstStore {
 	return &InstStore{Src: src, Dst: dst}
 }
 
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstStore) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstStore) Type() types.Type {
-	panic("not yet implemented")
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstStore) Ident() string {
-	panic("not yet implemented")
-}
-
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFence is an LLVM IR fence instruction.
@@ -137,22 +131,6 @@ type InstFence struct {
 // NewFence returns a new fence instruction based on the given atomic ordering.
 func NewFence(ordering ll.AtomicOrdering) *InstFence {
 	return &InstFence{Ordering: ordering}
-}
-
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstFence) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstFence) Type() types.Type {
-	panic("not yet implemented")
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFence) Ident() string {
-	panic("not yet implemented")
 }
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

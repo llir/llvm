@@ -22,6 +22,8 @@ type InstAdd struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Overflow flags.
 	OverflowFlags []ll.OverflowFlag
 	// Metadata.
@@ -70,6 +72,8 @@ type InstFAdd struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Fast math flags.
 	FastMathFlags []ll.FastMathFlag
 	// Metadata.
@@ -118,6 +122,8 @@ type InstSub struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Overflow flags.
 	OverflowFlags []ll.OverflowFlag
 	// Metadata.
@@ -166,6 +172,8 @@ type InstFSub struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Fast math flags.
 	FastMathFlags []ll.FastMathFlag
 	// Metadata.
@@ -214,6 +222,8 @@ type InstMul struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Overflow flags.
 	OverflowFlags []ll.OverflowFlag
 	// Metadata.
@@ -262,6 +272,8 @@ type InstFMul struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Fast math flags.
 	FastMathFlags []ll.FastMathFlag
 	// Metadata.
@@ -307,6 +319,11 @@ type InstUDiv struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
@@ -348,6 +365,11 @@ type InstSDiv struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
@@ -392,6 +414,8 @@ type InstFDiv struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Fast math flags.
 	FastMathFlags []ll.FastMathFlag
 	// Metadata.
@@ -437,6 +461,11 @@ type InstURem struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewURem returns a new urem instruction based on the given operands.
@@ -478,6 +507,11 @@ type InstSRem struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
@@ -522,6 +556,8 @@ type InstFRem struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Fast math flags.
 	FastMathFlags []ll.FastMathFlag
 	// Metadata.

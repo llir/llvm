@@ -21,6 +21,8 @@ type InstShl struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Overflow flags.
 	OverflowFlags []ll.OverflowFlag
 	// Metadata.
@@ -66,6 +68,11 @@ type InstLShr struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
@@ -107,6 +114,11 @@ type InstAShr struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
@@ -148,6 +160,11 @@ type InstAnd struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewAnd returns a new and instruction based on the given operands.
@@ -189,6 +206,11 @@ type InstOr struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewOr returns a new or instruction based on the given operands.
@@ -230,6 +252,11 @@ type InstXor struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewXor returns a new xor instruction based on the given operands.
