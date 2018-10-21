@@ -428,7 +428,10 @@ func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAdd, got %T", inst))
 	}
+	// Overflow flags.
+	i.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	// X operand.
+	// TODO: remove xType if types are added during indexing; then use x.Type() instead.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -455,6 +458,8 @@ func (fgen *funcGen) translateFAddInst(inst ir.Instruction, old *ast.FAddInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFAdd, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -482,6 +487,8 @@ func (fgen *funcGen) translateSubInst(inst ir.Instruction, old *ast.SubInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSub, got %T", inst))
 	}
+	// Overflow flags.
+	i.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -509,6 +516,8 @@ func (fgen *funcGen) translateFSubInst(inst ir.Instruction, old *ast.FSubInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFSub, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -536,6 +545,8 @@ func (fgen *funcGen) translateMulInst(inst ir.Instruction, old *ast.MulInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstMul, got %T", inst))
 	}
+	// Overflow flags.
+	i.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -563,6 +574,8 @@ func (fgen *funcGen) translateFMulInst(inst ir.Instruction, old *ast.FMulInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFMul, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -644,6 +657,8 @@ func (fgen *funcGen) translateFDivInst(inst ir.Instruction, old *ast.FDivInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFDiv, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -725,6 +740,8 @@ func (fgen *funcGen) translateFRemInst(inst ir.Instruction, old *ast.FRemInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFRem, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -754,6 +771,8 @@ func (fgen *funcGen) translateShlInst(inst ir.Instruction, old *ast.ShlInst) (*i
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstShl, got %T", inst))
 	}
+	// Overflow flags.
+	i.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	// X operand.
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
@@ -1238,6 +1257,8 @@ func (fgen *funcGen) translateFCmpInst(inst ir.Instruction, old *ast.FCmpInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFCmp, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// TODO: implement
 	return i, nil
 }
@@ -1274,6 +1295,8 @@ func (fgen *funcGen) translateCallInst(inst ir.Instruction, old *ast.CallInst) (
 		// NOTE: panic since this would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCall, got %T", inst))
 	}
+	// Fast math flags.
+	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// TODO: implement
 	return i, nil
 }
