@@ -1803,8 +1803,6 @@ Instruction -> Instruction
 	# Instructions not producing values.
 	: StoreInst
 	| FenceInst
-	| CmpXchgInst
-	| AtomicRMWInst
 	# Instructions producing values.
 	| LocalDef
 	| ValueInstruction
@@ -1847,6 +1845,8 @@ ValueInstruction -> ValueInstruction
 	# Memory instructions
 	| AllocaInst
 	| LoadInst
+	| CmpXchgInst
+	| AtomicRMWInst
 	| GetElementPtrInst
 	# Conversion instructions
 	| TruncInst
