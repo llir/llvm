@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -17,6 +18,13 @@ type InstShl struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Overflow flags.
+	OverflowFlags []ll.OverflowFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewShl returns a new shl instruction based on the given operands.

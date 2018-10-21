@@ -73,6 +73,23 @@ const (
 	DLLStorageClassDLLImport                        // dllimport
 )
 
+//go:generate stringer -linecomment -type FastMathFlag
+
+// FastMathFlag is a fast-math flag.
+type FastMathFlag uint8
+
+// Fast-math flags.
+const (
+	FastMathFlagAFn      FastMathFlag = iota // afn
+	FastMathFlagARcp                         // arcp
+	FastMathFlagContract                     // contract
+	FastMathFlagFast                         // fast
+	FastMathFlagNInf                         // ninf
+	FastMathFlagNNaN                         // nnan
+	FastMathFlagNSZ                          // nsz
+	FastMathFlagReassoc                      // reassoc
+)
+
 //go:generate stringer -linecomment -type Linkage
 
 // Linkage specifies the linkage of a global identifier.
@@ -93,6 +110,17 @@ const (
 	// External linkage.
 	LinkageExternal   // external
 	LinkageExternWeak // extern_weak
+)
+
+//go:generate stringer -linecomment -type OverflowFlag
+
+// OverflowFlag is an integer overflow flag.
+type OverflowFlag uint8
+
+// Overflow flags.
+const (
+	OverflowFlagNSW OverflowFlag = iota // nsw
+	OverflowFlagNUW                     // nuw
 )
 
 //go:generate stringer -linecomment -type Preemption
