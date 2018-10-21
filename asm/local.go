@@ -140,10 +140,6 @@ func (fgen *funcGen) newIRInst(old ast.Instruction) (ir.Instruction, error) {
 		return &ir.InstStore{}, nil
 	case *ast.FenceInst:
 		return &ir.InstFence{}, nil
-	case *ast.CmpXchgInst:
-		return &ir.InstCmpXchg{}, nil
-	case *ast.AtomicRMWInst:
-		return &ir.InstAtomicRMW{}, nil
 	default:
 		panic(fmt.Errorf("support for AST instruction type %T not yet implemented", old))
 	}
@@ -208,6 +204,10 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		return &ir.InstAlloca{LocalName: name}, nil
 	case *ast.LoadInst:
 		return &ir.InstLoad{LocalName: name}, nil
+	case *ast.CmpXchgInst:
+		return &ir.InstCmpXchg{LocalName: name}, nil
+	case *ast.AtomicRMWInst:
+		return &ir.InstAtomicRMW{LocalName: name}, nil
 	case *ast.GetElementPtrInst:
 		return &ir.InstGetElementPtr{LocalName: name}, nil
 	// Conversion instructions
@@ -297,10 +297,6 @@ func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir
 		return fgen.translateStoreInst(inst, old)
 	case *ast.FenceInst:
 		return fgen.translateFenceInst(inst, old)
-	case *ast.CmpXchgInst:
-		return fgen.translateCmpXchgInst(inst, old)
-	case *ast.AtomicRMWInst:
-		return fgen.translateAtomicRMWInst(inst, old)
 	default:
 		panic(fmt.Errorf("support for instruction type %T not yet implemented", old))
 	}
@@ -365,6 +361,10 @@ func (fgen *funcGen) translateValueInst(inst ir.Instruction, old ast.ValueInstru
 		return fgen.translateAllocaInst(inst, old)
 	case *ast.LoadInst:
 		return fgen.translateLoadInst(inst, old)
+	case *ast.CmpXchgInst:
+		return fgen.translateCmpXchgInst(inst, old)
+	case *ast.AtomicRMWInst:
+		return fgen.translateAtomicRMWInst(inst, old)
 	case *ast.GetElementPtrInst:
 		return fgen.translateGetElementPtrInst(inst, old)
 	// Conversion instructions
