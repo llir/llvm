@@ -64,6 +64,13 @@ type InstFCmp struct {
 	Cond ll.FCond
 	// Floating-point scalar or vector operands.
 	X, Y value.Value
+
+	// extra.
+
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -106,6 +113,11 @@ type InstPhi struct {
 	LocalName string
 	// Incoming values.
 	Incs []*Incoming
+
+	// extra.
+
+	// Type of incoming value.
+	Typ types.Type
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -121,7 +133,11 @@ func (inst *InstPhi) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstPhi) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.Incs[0].X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -215,6 +231,12 @@ type InstCall struct {
 
 	// Either the return type or the function signature of the callee.
 	Typ types.Type
+	// Tail.
+	// TODO: add tail.
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewCall returns a new call instruction based on the given callee and function

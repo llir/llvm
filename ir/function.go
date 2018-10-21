@@ -129,10 +129,8 @@ func (f *Function) AssignIDs() error {
 	names := make(map[string]value.Value)
 	setName := func(n value.Named) error {
 		got := n.Name()
-		fmt.Printf("got %T: %v\n", n, got)
 		if isUnnamed(got) {
 			name := strconv.Itoa(id)
-			fmt.Println("   unnamed:", name)
 			n.SetName(name)
 			names[name] = n
 			id++
@@ -147,8 +145,6 @@ func (f *Function) AssignIDs() error {
 		}
 		return nil
 	}
-	fmt.Println("f:", f.FuncName)
-	fmt.Println("params:", f.Params)
 	for _, param := range f.Params {
 		// Assign local IDs to unnamed parameters of function definitions.
 		if err := setName(param); err != nil {

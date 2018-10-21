@@ -23,19 +23,6 @@ type FCond uint
 
 type ICond uint
 
-// --- [ Overflow flags ] ------------------------------------------------------
-
-//go:generate stringer -linecomment -type OverflowFlag
-
-// OverflowFlag is an integer overflow flag.
-type OverflowFlag uint8
-
-// Overflow flags.
-const (
-	OverflowFlagNSW OverflowFlag = iota // nsw
-	OverflowFlagNUW                     // nuw
-)
-
 // --- [ Unwind targets ] ------------------------------------------------------
 
 // TODO: consider getting rid of UnwindTarget, and let unwind targets be of type

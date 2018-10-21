@@ -3,6 +3,8 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
+	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -17,6 +19,13 @@ type InstAdd struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Overflow flags.
+	OverflowFlags []ll.OverflowFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewAdd returns a new add instruction based on the given operands.
@@ -37,7 +46,7 @@ func (inst *InstAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAdd) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -58,6 +67,13 @@ type InstFAdd struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // floating-point scalars or vectors
+
+	// extra.
+
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
@@ -73,12 +89,12 @@ func (inst *InstFAdd) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFAdd) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFAdd) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -99,6 +115,13 @@ type InstSub struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Overflow flags.
+	OverflowFlags []ll.OverflowFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewSub returns a new sub instruction based on the given operands.
@@ -114,12 +137,12 @@ func (inst *InstSub) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSub) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSub) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -140,6 +163,13 @@ type InstFSub struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // floating-point scalars or vectors
+
+	// extra.
+
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
@@ -155,12 +185,12 @@ func (inst *InstFSub) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFSub) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFSub) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -181,6 +211,13 @@ type InstMul struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
+
+	// extra.
+
+	// Overflow flags.
+	OverflowFlags []ll.OverflowFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewMul returns a new mul instruction based on the given operands.
@@ -196,12 +233,12 @@ func (inst *InstMul) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstMul) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstMul) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -222,6 +259,13 @@ type InstFMul struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // floating-point scalars or vectors
+
+	// extra.
+
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
@@ -237,12 +281,12 @@ func (inst *InstFMul) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFMul) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFMul) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -278,12 +322,12 @@ func (inst *InstUDiv) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstUDiv) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstUDiv) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -319,12 +363,12 @@ func (inst *InstSDiv) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSDiv) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSDiv) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -345,6 +389,13 @@ type InstFDiv struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // floating-point scalars or vectors
+
+	// extra.
+
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
@@ -360,12 +411,12 @@ func (inst *InstFDiv) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFDiv) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFDiv) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -401,12 +452,12 @@ func (inst *InstURem) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstURem) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstURem) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -442,12 +493,12 @@ func (inst *InstSRem) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSRem) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSRem) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -468,6 +519,13 @@ type InstFRem struct {
 	LocalName string
 	// Operands.
 	X, Y value.Value // floating-point scalars or vectors
+
+	// extra.
+
+	// Fast math flags.
+	FastMathFlags []ll.FastMathFlag
+	// Metadata.
+	// TODO: add metadata.
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
@@ -483,12 +541,12 @@ func (inst *InstFRem) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFRem) Type() types.Type {
-	panic("not yet implemented")
+	return inst.X.Type()
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFRem) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
