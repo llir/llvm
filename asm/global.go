@@ -60,7 +60,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 	}
 
 	// Create corresponding IR global variables and functions (without bodies but
-	// with a type).
+	// with type).
 	gen.gs = make(map[string]ir.Constant)
 	for name, old := range index {
 		g, err := gen.newGlobal(name, old)
@@ -104,7 +104,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 	return gen.gs, nil
 }
 
-// newGlobal returns a new IR value (without body but with a type) based on the
+// newGlobal returns a new IR value (without body but with type) based on the
 // given AST global variable or function.
 func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, error) {
 	switch old := old.(type) {
