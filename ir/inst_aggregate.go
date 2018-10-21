@@ -19,6 +19,11 @@ type InstExtractValue struct {
 	X value.Value
 	// Element indices.
 	Indices []int64
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewExtractValue returns a new extractvalue instruction based on the given
@@ -65,6 +70,11 @@ type InstInsertValue struct {
 	Elem value.Value
 	// Element indices.
 	Indices []int64
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewInsertValue returns a new insertvalue instruction based on the given

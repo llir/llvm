@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -20,6 +21,11 @@ type InstICmp struct {
 	Cond ll.ICond
 	// Integer scalar or vector operands.
 	X, Y value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewICmp returns a new icmp instruction based on the given integer comparison
@@ -41,7 +47,7 @@ func (inst *InstICmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstICmp) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -67,6 +73,8 @@ type InstFCmp struct {
 
 	// extra.
 
+	// Type of result produced by the instruction.
+	Typ types.Type
 	// Fast math flags.
 	FastMathFlags []ll.FastMathFlag
 	// Metadata.
@@ -92,7 +100,7 @@ func (inst *InstFCmp) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFCmp) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -116,7 +124,7 @@ type InstPhi struct {
 
 	// extra.
 
-	// Type of incoming value.
+	// Type of result produced by the instruction; i.e. type of incoming value.
 	Typ types.Type
 }
 
@@ -142,7 +150,7 @@ func (inst *InstPhi) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstPhi) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -181,6 +189,11 @@ type InstSelect struct {
 	Cond value.Value
 	// Operands.
 	X, Y value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewSelect returns a new select instruction based on the given selection
@@ -202,7 +215,7 @@ func (inst *InstSelect) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSelect) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -264,7 +277,7 @@ func (inst *InstCall) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstCall) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -303,12 +316,12 @@ func (inst *InstVAArg) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstVAArg) Type() types.Type {
-	panic("not yet implemented")
+	return inst.ArgType
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstVAArg) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -350,12 +363,12 @@ func (inst *InstLandingPad) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstLandingPad) Type() types.Type {
-	panic("not yet implemented")
+	return inst.ResultType
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstLandingPad) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -394,12 +407,12 @@ func (inst *InstCatchPad) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstCatchPad) Type() types.Type {
-	panic("not yet implemented")
+	return types.Token
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstCatchPad) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -438,12 +451,12 @@ func (inst *InstCleanupPad) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstCleanupPad) Type() types.Type {
-	panic("not yet implemented")
+	return types.Token
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstCleanupPad) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.

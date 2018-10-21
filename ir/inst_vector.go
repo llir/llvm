@@ -19,6 +19,11 @@ type InstExtractElement struct {
 	X value.Value
 	// Element index.
 	Index value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewExtractElement returns a new extractelement instruction based on the given
@@ -65,6 +70,11 @@ type InstInsertElement struct {
 	Elem value.Value
 	// Element index.
 	Index value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewInsertElement returns a new insertelement instruction based on the given
@@ -109,6 +119,11 @@ type InstShuffleVector struct {
 	X, Y value.Value
 	// Shuffle mask.
 	Mask value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given
