@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 )
 
@@ -14,14 +14,14 @@ import (
 // ExprICmp is an LLVM IR icmp expression.
 type ExprICmp struct {
 	// Integer comparison condition.
-	Cond ll.ICond
+	Cond enum.ICond
 	// Integer scalar or vector operands.
 	X, Y Constant
 }
 
 // NewICmpExpr returns a new icmp expression based on the given integer
 // comparison condition and integer scalar or vector operands.
-func NewICmpExpr(cond ll.ICond, x, y Constant) *ExprICmp {
+func NewICmpExpr(cond enum.ICond, x, y Constant) *ExprICmp {
 	return &ExprICmp{Cond: cond, X: x, Y: y}
 }
 
@@ -53,14 +53,14 @@ func (e *ExprICmp) Simplify() Constant {
 // ExprFCmp is an LLVM IR fcmp expression.
 type ExprFCmp struct {
 	// Floating-point comparison condition.
-	Cond ll.FCond
+	Cond enum.FCond
 	// Floating-point scalar or vector operands.
 	X, Y Constant
 }
 
 // NewFCmpExpr returns a new fcmp expression based on the given floating-point
 // comparison condition and floating-point scalar or vector operands.
-func NewFCmpExpr(cond ll.FCond, x, y Constant) *ExprFCmp {
+func NewFCmpExpr(cond enum.FCond, x, y Constant) *ExprFCmp {
 	return &ExprFCmp{Cond: cond, X: x, Y: y}
 }
 

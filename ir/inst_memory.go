@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -138,11 +138,11 @@ func NewStore(src, dst value.Value) *InstStore {
 // InstFence is an LLVM IR fence instruction.
 type InstFence struct {
 	// Atomic memory ordering constraints.
-	Ordering ll.AtomicOrdering
+	Ordering enum.AtomicOrdering
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
-func NewFence(ordering ll.AtomicOrdering) *InstFence {
+func NewFence(ordering enum.AtomicOrdering) *InstFence {
 	return &InstFence{Ordering: ordering}
 }
 
@@ -159,9 +159,9 @@ type InstCmpXchg struct {
 	// New value to store.
 	New value.Value
 	// Atomic memory ordering constraints on success.
-	Success ll.AtomicOrdering
+	Success enum.AtomicOrdering
 	// Atomic memory ordering constraints on failure.
-	Failure ll.AtomicOrdering
+	Failure enum.AtomicOrdering
 
 	// extra.
 
@@ -173,7 +173,7 @@ type InstCmpXchg struct {
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
 // value to compare against, new value to store, and atomic orderings for
 // success and failure.
-func NewCmpXchg(ptr, cmp, new value.Value, success, failure ll.AtomicOrdering) *InstCmpXchg {
+func NewCmpXchg(ptr, cmp, new value.Value, success, failure enum.AtomicOrdering) *InstCmpXchg {
 	return &InstCmpXchg{Ptr: ptr, Cmp: cmp, New: new, Success: success, Failure: failure}
 }
 
@@ -215,18 +215,18 @@ type InstAtomicRMW struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Atomic operation.
-	Op ll.AtomicOp
+	Op enum.AtomicOp
 	// Destination address.
 	Dst value.Value
 	// Operand.
 	X value.Value
 	// Atomic memory ordering constraints.
-	Ordering ll.AtomicOrdering
+	Ordering enum.AtomicOrdering
 }
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
 // operation, destination address, operand and atomic ordering.
-func NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, ordering ll.AtomicOrdering) *InstAtomicRMW {
+func NewAtomicRMW(op enum.AtomicOp, dst, x value.Value, ordering enum.AtomicOrdering) *InstAtomicRMW {
 	return &InstAtomicRMW{Op: op, Dst: dst, X: x, Ordering: ordering}
 }
 

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 )
 
@@ -33,12 +33,12 @@ type Module struct {
 		// (optional) Module-level inline assembly.
 		ModuleAsms []string
 		// (optional) Comdat definitions.
-		ComdatDefs []*ll.ComdatDef
+		ComdatDefs []*enum.ComdatDef
 		// (optional) Indirect symbol definitions (aliases and IFuncs).
 		// TODO: figure out how to represent aliases and IFuncs.
 		//IndirectSymbols []*IndirectSymbol
 		// (optional) Attribute group definitions.
-		AttrGroupDefs []*ll.AttrGroupDef
+		AttrGroupDefs []*enum.AttrGroupDef
 		// (optional) Named metadata definitions.
 		// TODO: figure out how to represent metadata.
 		//NamedMetadataDefs []*metadata.NamedMetadataDef
@@ -46,7 +46,7 @@ type Module struct {
 		// TODO: figure out how to represent metadata.
 		//MetadataDefs []*metadata.MetadataDef
 		// (optional) Use-list order directives.
-		UseListOrders []*ll.UseListOrder
+		UseListOrders []*enum.UseListOrder
 		// (optional) Basic block specific use-list order directives.
 		UseListOrderBBs []*UseListOrderBB
 	*/
@@ -72,7 +72,7 @@ type ComdatDef struct {
 	// Comdat name (without '$' prefix).
 	Name string
 	// Comdat kind.
-	Kind ll.SelectionKind
+	Kind enum.SelectionKind
 }
 
 // String returns the string representation of the Comdat definition.

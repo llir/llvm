@@ -1,7 +1,7 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -12,7 +12,7 @@ import (
 
 // NewICmp appends a new icmp instruction to the basic block based on the given
 // integer comparison condition and integer scalar or vector operands.
-func (block *BasicBlock) NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
+func (block *BasicBlock) NewICmp(cond enum.ICond, x, y value.Value) *InstICmp {
 	inst := NewICmp(cond, x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -23,7 +23,7 @@ func (block *BasicBlock) NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
 // NewFCmp appends a new fcmp instruction to the basic block based on the given
 // floating-point comparison condition and floating-point scalar or vector
 // operands.
-func (block *BasicBlock) NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
+func (block *BasicBlock) NewFCmp(cond enum.FCond, x, y value.Value) *InstFCmp {
 	inst := NewFCmp(cond, x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -55,7 +55,7 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 // callee and function arguments.
 //
 // TODO: specify the set of underlying types of callee.
-func (block *BasicBlock) NewCall(callee value.Value, args ...ll.Arg) *InstCall {
+func (block *BasicBlock) NewCall(callee value.Value, args ...enum.Arg) *InstCall {
 	inst := NewCall(callee, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -75,7 +75,7 @@ func (block *BasicBlock) NewVAArg(vaList value.Value, argType types.Type) *InstV
 
 // NewLandingPad appends a new landingpad instruction to the basic block based
 // on the given result type and filter/catch clauses.
-func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*ll.Clause) *InstLandingPad {
+func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*enum.Clause) *InstLandingPad {
 	inst := NewLandingPad(resultType, clauses...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -85,7 +85,7 @@ func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*ll.Cla
 
 // NewCatchPad appends a new catchpad instruction to the basic block based on
 // the given exception scope and exception arguments.
-func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *InstCatchPad {
+func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...enum.Arg) *InstCatchPad {
 	inst := NewCatchPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -95,7 +95,7 @@ func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *In
 
 // NewCleanupPad appends a new cleanuppad instruction to the basic block based
 // on the given exception scope and exception arguments.
-func (block *BasicBlock) NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *InstCleanupPad {
+func (block *BasicBlock) NewCleanupPad(scope enum.ExceptionScope, args ...enum.Arg) *InstCleanupPad {
 	inst := NewCleanupPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst

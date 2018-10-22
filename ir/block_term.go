@@ -1,7 +1,7 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/value"
 )
 
@@ -67,7 +67,7 @@ func (block *BasicBlock) NewIndirectBr(addr *ConstBlockAddress, validTargets ...
 // for normal and exceptional execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func (block *BasicBlock) NewInvoke(invokee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
+func (block *BasicBlock) NewInvoke(invokee value.Value, args []enum.Arg, normal, exception *BasicBlock) *TermInvoke {
 	term := NewInvoke(invokee, args, normal, exception)
 	block.Term = term
 	return term
@@ -88,7 +88,7 @@ func (block *BasicBlock) NewResume(x value.Value) *TermResume {
 // NewCatchSwitch sets the terminator of the basic block to a new catchswitch
 // terminator based on the given exception scope, exception handlers and unwind
 // target.
-func (block *BasicBlock) NewCatchSwitch(scope ll.ExceptionScope, handlers []*BasicBlock, unwindTarget ll.UnwindTarget) *TermCatchSwitch {
+func (block *BasicBlock) NewCatchSwitch(scope enum.ExceptionScope, handlers []*BasicBlock, unwindTarget enum.UnwindTarget) *TermCatchSwitch {
 	term := NewCatchSwitch(scope, handlers, unwindTarget)
 	block.Term = term
 	return term
@@ -108,7 +108,7 @@ func (block *BasicBlock) NewCatchRet(from *InstCatchPad, to *BasicBlock) *TermCa
 
 // NewCleanupRet sets the terminator of the basic block to a new cleanupret
 // terminator based on the given exit cleanuppad and unwind target.
-func (block *BasicBlock) NewCleanupRet(from *InstCleanupPad, to ll.UnwindTarget) *TermCleanupRet {
+func (block *BasicBlock) NewCleanupRet(from *InstCleanupPad, to enum.UnwindTarget) *TermCleanupRet {
 	term := NewCleanupRet(from, to)
 	block.Term = term
 	return term
