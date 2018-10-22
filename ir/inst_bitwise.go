@@ -24,9 +24,9 @@ type InstShl struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Overflow flags.
+	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -78,6 +78,10 @@ type InstLShr struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Exact.
+	Exact bool
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
@@ -128,6 +132,10 @@ type InstAShr struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Exact.
+	Exact bool
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
@@ -178,6 +186,8 @@ type InstAnd struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewAnd returns a new and instruction based on the given operands.
@@ -228,6 +238,8 @@ type InstOr struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewOr returns a new or instruction based on the given operands.
@@ -278,6 +290,8 @@ type InstXor struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewXor returns a new xor instruction based on the given operands.

@@ -24,9 +24,9 @@ type InstAdd struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Overflow flags.
+	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -78,9 +78,9 @@ type InstFAdd struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Fast math flags.
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -132,9 +132,9 @@ type InstSub struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Overflow flags.
+	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -186,9 +186,9 @@ type InstFSub struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Fast math flags.
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -240,9 +240,9 @@ type InstMul struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Overflow flags.
+	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -294,9 +294,9 @@ type InstFMul struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Fast math flags.
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -348,6 +348,10 @@ type InstUDiv struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Exact.
+	Exact bool
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
@@ -398,6 +402,10 @@ type InstSDiv struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Exact.
+	Exact bool
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
@@ -448,9 +456,9 @@ type InstFDiv struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Fast math flags.
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 
@@ -502,6 +510,8 @@ type InstURem struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewURem returns a new urem instruction based on the given operands.
@@ -552,6 +562,8 @@ type InstSRem struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
@@ -602,9 +614,9 @@ type InstFRem struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
-	// Fast math flags.
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
-	// Metadata.
+	// (optional) Metadata.
 	// TODO: add metadata.
 }
 

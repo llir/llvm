@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -24,6 +25,8 @@ type InstExtractElement struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewExtractElement returns a new extractelement instruction based on the given
@@ -40,12 +43,20 @@ func (inst *InstExtractElement) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstExtractElement) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		t, ok := inst.X.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", inst.X.Type()))
+		}
+		inst.Typ = t.ElemType
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstExtractElement) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -74,7 +85,9 @@ type InstInsertElement struct {
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ types.Type
+	Typ *types.VectorType
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewInsertElement returns a new insertelement instruction based on the given
@@ -91,12 +104,20 @@ func (inst *InstInsertElement) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstInsertElement) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		t, ok := inst.X.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", inst.X.Type()))
+		}
+		inst.Typ = types.NewVector(t.Len+1, t.ElemType)
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstInsertElement) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -123,7 +144,9 @@ type InstShuffleVector struct {
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ types.Type
+	Typ *types.VectorType
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given
@@ -140,12 +163,24 @@ func (inst *InstShuffleVector) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstShuffleVector) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		xType, ok := inst.X.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", inst.X.Type()))
+		}
+		maskType, ok := inst.Mask.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", inst.Mask.Type()))
+		}
+		inst.Typ = types.NewVector(maskType.Len, xType.ElemType)
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstShuffleVector) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
