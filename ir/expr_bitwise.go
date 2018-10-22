@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 )
 
@@ -20,7 +20,7 @@ type ExprShl struct {
 	// extra.
 
 	// (optional) Integer overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 }
 
 // NewShlExpr returns a new shl expression based on the given operands.

@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -172,7 +172,7 @@ type TermInvoke struct {
 	// TODO: specify the set of underlying types of Invokee.
 	Invokee value.Value
 	// Function arguments.
-	Args []ll.Arg
+	Args []enum.Arg
 	// Normal control flow return point.
 	Normal *BasicBlock
 	// Exception control flow return point.
@@ -184,7 +184,7 @@ type TermInvoke struct {
 // execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func NewInvoke(invokee value.Value, args []ll.Arg, normal, exception *BasicBlock) *TermInvoke {
+func NewInvoke(invokee value.Value, args []enum.Arg, normal, exception *BasicBlock) *TermInvoke {
 	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
 }
 
@@ -246,16 +246,16 @@ type TermCatchSwitch struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope ll.ExceptionScope // TODO: rename to Parent? rename to From?
+	Scope enum.ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception handlers.
 	Handlers []*BasicBlock
 	// Unwind target; basic block or caller function.
-	UnwindTarget ll.UnwindTarget // TODO: rename to To? rename to DefaultTarget?
+	UnwindTarget enum.UnwindTarget // TODO: rename to To? rename to DefaultTarget?
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
 // exception scope, exception handlers and unwind target.
-func NewCatchSwitch(scope ll.ExceptionScope, handlers []*BasicBlock, unwindTarget ll.UnwindTarget) *TermCatchSwitch {
+func NewCatchSwitch(scope enum.ExceptionScope, handlers []*BasicBlock, unwindTarget enum.UnwindTarget) *TermCatchSwitch {
 	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
 }
 
@@ -321,12 +321,12 @@ type TermCleanupRet struct {
 	// Exit cleanuppad.
 	From *InstCleanupPad
 	// Unwind target; basic block or caller function.
-	To ll.UnwindTarget
+	To enum.UnwindTarget
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
 // cleanuppad and unwind target.
-func NewCleanupRet(from *InstCleanupPad, to ll.UnwindTarget) *TermCleanupRet {
+func NewCleanupRet(from *InstCleanupPad, to enum.UnwindTarget) *TermCleanupRet {
 	return &TermCleanupRet{From: from, To: to}
 }
 

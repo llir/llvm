@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -25,7 +25,7 @@ type InstShl struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 	// Metadata.
 	// TODO: add metadata.
 }

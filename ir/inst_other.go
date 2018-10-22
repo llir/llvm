@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -18,7 +18,7 @@ type InstICmp struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Integer comparison condition.
-	Cond ll.ICond
+	Cond enum.ICond
 	// Integer scalar or vector operands.
 	X, Y value.Value
 
@@ -30,7 +30,7 @@ type InstICmp struct {
 
 // NewICmp returns a new icmp instruction based on the given integer comparison
 // condition and integer scalar or vector operands.
-func NewICmp(cond ll.ICond, x, y value.Value) *InstICmp {
+func NewICmp(cond enum.ICond, x, y value.Value) *InstICmp {
 	return &InstICmp{Cond: cond, X: x, Y: y}
 }
 
@@ -67,7 +67,7 @@ type InstFCmp struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Floating-point comparison condition.
-	Cond ll.FCond
+	Cond enum.FCond
 	// Floating-point scalar or vector operands.
 	X, Y value.Value
 
@@ -76,14 +76,14 @@ type InstFCmp struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
 // comparison condition and floating-point scalar or vector operands.
-func NewFCmp(cond ll.FCond, x, y value.Value) *InstFCmp {
+func NewFCmp(cond enum.FCond, x, y value.Value) *InstFCmp {
 	return &InstFCmp{Cond: cond, X: x, Y: y}
 }
 
@@ -238,7 +238,7 @@ type InstCall struct {
 	// TODO: specify the set of underlying types of Callee.
 	Callee value.Value
 	// Function arguments.
-	Args []ll.Arg
+	Args []enum.Arg
 
 	// extra.
 
@@ -247,7 +247,7 @@ type InstCall struct {
 	// Tail.
 	// TODO: add tail.
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -256,7 +256,7 @@ type InstCall struct {
 // arguments.
 //
 // TODO: specify the set of underlying types of callee.
-func NewCall(callee value.Value, args ...ll.Arg) *InstCall {
+func NewCall(callee value.Value, args ...enum.Arg) *InstCall {
 	return &InstCall{Callee: callee, Args: args}
 }
 
@@ -346,12 +346,12 @@ type InstLandingPad struct {
 	Cleanup bool
 	// Filter and catch clauses; zero or more if Cleanup is true, otherwise one
 	// or more.
-	Clauses []*ll.Clause
+	Clauses []*enum.Clause
 }
 
 // NewLandingPad returns a new landingpad instruction based on the given result
 // type and filter/catch clauses.
-func NewLandingPad(resultType types.Type, clauses ...*ll.Clause) *InstLandingPad {
+func NewLandingPad(resultType types.Type, clauses ...*enum.Clause) *InstLandingPad {
 	return &InstLandingPad{ResultType: resultType, Clauses: clauses}
 }
 
@@ -390,12 +390,12 @@ type InstCatchPad struct {
 	// Exception scope.
 	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
 	// Exception arguments.
-	Args []ll.Arg
+	Args []enum.Arg
 }
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
 // scope and exception arguments.
-func NewCatchPad(scope *TermCatchSwitch, args ...ll.Arg) *InstCatchPad {
+func NewCatchPad(scope *TermCatchSwitch, args ...enum.Arg) *InstCatchPad {
 	return &InstCatchPad{Scope: scope, Args: args}
 }
 
@@ -432,14 +432,14 @@ type InstCleanupPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope ll.ExceptionScope // TODO: rename to Parent? rename to From?
+	Scope enum.ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
-	Args []ll.Arg
+	Args []enum.Arg
 }
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
 // exception scope and exception arguments.
-func NewCleanupPad(scope ll.ExceptionScope, args ...ll.Arg) *InstCleanupPad {
+func NewCleanupPad(scope enum.ExceptionScope, args ...enum.Arg) *InstCleanupPad {
 	return &InstCleanupPad{Scope: scope, Args: args}
 }
 

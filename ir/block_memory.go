@@ -1,7 +1,7 @@
 package ir
 
 import (
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -42,7 +42,7 @@ func (block *BasicBlock) NewStore(src, dst value.Value) *InstStore {
 
 // NewFence appends a new fence instruction to the basic block based on the
 // given atomic ordering.
-func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *InstFence {
+func (block *BasicBlock) NewFence(ordering enum.AtomicOrdering) *InstFence {
 	inst := NewFence(ordering)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -53,7 +53,7 @@ func (block *BasicBlock) NewFence(ordering ll.AtomicOrdering) *InstFence {
 // NewCmpXchg appends a new cmpxchg instruction to the basic block based on the
 // given address, value to compare against, new value to store, and atomic
 // orderings for success and failure.
-func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure ll.AtomicOrdering) *InstCmpXchg {
+func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure enum.AtomicOrdering) *InstCmpXchg {
 	inst := NewCmpXchg(ptr, cmp, new, success, failure)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -63,7 +63,7 @@ func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure 
 
 // NewAtomicRMW appends a new atomicrmw instruction to the basic block based on
 // the given atomic operation, destination address, operand and atomic ordering.
-func (block *BasicBlock) NewAtomicRMW(op ll.AtomicOp, dst, x value.Value, ordering ll.AtomicOrdering) *InstAtomicRMW {
+func (block *BasicBlock) NewAtomicRMW(op enum.AtomicOp, dst, x value.Value, ordering enum.AtomicOrdering) *InstAtomicRMW {
 	inst := NewAtomicRMW(op, dst, x, ordering)
 	block.Insts = append(block.Insts, inst)
 	return inst

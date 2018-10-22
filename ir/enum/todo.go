@@ -2,7 +2,7 @@
 
 // TODO: decide where to merge ir/ll with ir.
 
-package ll
+package enum
 
 type Arg interface {
 	isArg()

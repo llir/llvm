@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 )
 
@@ -29,17 +29,17 @@ type Global struct {
 	// ContentType as element.
 	Typ *types.PointerType
 	// (optional) Linkage; zero value if not present.
-	Linkage ll.Linkage
+	Linkage enum.Linkage
 	// (optional) Preemption; zero value if not present.
-	Preemption ll.Preemption
+	Preemption enum.Preemption
 	// (optional) Visibility; zero value if not present.
-	Visibility ll.Visibility
+	Visibility enum.Visibility
 	// (optional) DLL storage class; zero value if not present.
-	DLLStorageClass ll.DLLStorageClass
+	DLLStorageClass enum.DLLStorageClass
 	// (optional) Thread local storage model; zero value if not present.
-	TLSModel ll.TLSModel
+	TLSModel enum.TLSModel
 	// (optional) Unnamed address; zero value if not present.
-	UnnamedAddr ll.UnnamedAddr
+	UnnamedAddr enum.UnnamedAddr
 	// (optional) Externally initialized; false if not present.
 	ExternallyInitialized bool
 	// (optional) Section name; empty if not present.
@@ -49,7 +49,7 @@ type Global struct {
 	// (optional) Alignment; zero if not present.
 	Align int64
 	// (optional) Function attributes.
-	FuncAttrs []ll.FuncAttribute
+	FuncAttrs []enum.FuncAttribute
 	// (optional) Metadata attachments.
 	// TODO: add support for metadata.
 	//Metadata []*metadata.MetadataAttachment
@@ -105,22 +105,22 @@ func (g *Global) Def() string {
 	// OptExternallyInitialized Immutable Type Constant GlobalAttrs FuncAttrs
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", g.Ident())
-	if g.Linkage != ll.LinkageNone {
+	if g.Linkage != enum.LinkageNone {
 		fmt.Fprintf(buf, " %s", g.Linkage)
 	}
-	if g.Preemption != ll.PreemptionNone {
+	if g.Preemption != enum.PreemptionNone {
 		fmt.Fprintf(buf, " %s", g.Preemption)
 	}
-	if g.Visibility != ll.VisibilityNone {
+	if g.Visibility != enum.VisibilityNone {
 		fmt.Fprintf(buf, " %s", g.Visibility)
 	}
-	if g.DLLStorageClass != ll.DLLStorageClassNone {
+	if g.DLLStorageClass != enum.DLLStorageClassNone {
 		fmt.Fprintf(buf, " %s", g.DLLStorageClass)
 	}
-	if g.TLSModel != ll.TLSModelNone {
+	if g.TLSModel != enum.TLSModelNone {
 		fmt.Fprintf(buf, " %s", g.TLSModel)
 	}
-	if g.UnnamedAddr != ll.UnnamedAddrNone {
+	if g.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", g.UnnamedAddr)
 	}
 	if g.Typ.AddrSpace != 0 {

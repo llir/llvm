@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 )
 
@@ -20,7 +20,7 @@ type ExprAdd struct {
 	// extra.
 
 	// (optional) Integer overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 }
 
 // NewAddExpr returns a new add expression based on the given operands.
@@ -103,7 +103,7 @@ type ExprSub struct {
 	// extra.
 
 	// (optional) Integer overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 }
 
 // NewSubExpr returns a new sub expression based on the given operands.
@@ -186,7 +186,7 @@ type ExprMul struct {
 	// extra.
 
 	// (optional) Integer overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 }
 
 // NewMulExpr returns a new mul expression based on the given operands.

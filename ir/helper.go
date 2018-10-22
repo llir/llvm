@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 )
 
@@ -23,7 +23,7 @@ type Param struct {
 	// extra.
 
 	// (optional) Parameter attributes.
-	Attrs []ll.ParamAttribute
+	Attrs []enum.ParamAttribute
 }
 
 // NewParam returns a new function parameter based on the given type and name.

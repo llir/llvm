@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -25,7 +25,7 @@ type InstAdd struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -79,7 +79,7 @@ type InstFAdd struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -133,7 +133,7 @@ type InstSub struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -187,7 +187,7 @@ type InstFSub struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -241,7 +241,7 @@ type InstMul struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Overflow flags.
-	OverflowFlags []ll.OverflowFlag
+	OverflowFlags []enum.OverflowFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -295,7 +295,7 @@ type InstFMul struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -449,7 +449,7 @@ type InstFDiv struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -603,7 +603,7 @@ type InstFRem struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// Fast math flags.
-	FastMathFlags []ll.FastMathFlag
+	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }

@@ -1,4 +1,5 @@
-package ll
+// Package enum defines enumerate types of LLVM IR.
+package enum
 
 //go:generate stringer -linecomment -type CallingConv
 

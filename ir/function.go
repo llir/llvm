@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/llir/l/internal/enc"
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 	"github.com/pkg/errors"
@@ -31,21 +31,21 @@ type Function struct {
 	// element.
 	Typ *types.PointerType
 	// (optional) Linkage.
-	Linkage ll.Linkage
+	Linkage enum.Linkage
 	// (optional) Preemption; zero value if not present.
-	Preemption ll.Preemption
+	Preemption enum.Preemption
 	// (optional) Visibility; zero value if not present.
-	Visibility ll.Visibility
+	Visibility enum.Visibility
 	// (optional) DLL storage class; zero value if not present.
-	DLLStorageClass ll.DLLStorageClass
+	DLLStorageClass enum.DLLStorageClass
 	// (optional) Calling convention; zero value if not present.
-	CallingConv ll.CallingConv
+	CallingConv enum.CallingConv
 	// (optional) Return attributes.
-	ReturnAttrs []ll.ReturnAttribute
+	ReturnAttrs []enum.ReturnAttribute
 	// (optional) Unnamed address.
-	UnnamedAddr ll.UnnamedAddr
+	UnnamedAddr enum.UnnamedAddr
 	// (optional) Function attributes.
-	FuncAttrs []ll.FuncAttribute
+	FuncAttrs []enum.FuncAttribute
 	// (optional) Section; nil if not present.
 	Section string
 	// (optional) Comdat; nil if not present.
