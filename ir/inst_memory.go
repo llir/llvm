@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -40,12 +41,16 @@ func (inst *InstAlloca) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstAlloca) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = types.NewPointer(inst.ElemType)
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAlloca) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -86,12 +91,20 @@ func (inst *InstLoad) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstLoad) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		t, ok := inst.Src.Type().(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid source type; expected *types.PointerType, got %T", inst.Src.Type()))
+		}
+		inst.Typ = t.ElemType
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstLoad) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -149,6 +162,12 @@ type InstCmpXchg struct {
 	Success ll.AtomicOrdering
 	// Atomic memory ordering constraints on failure.
 	Failure ll.AtomicOrdering
+
+	// extra.
+
+	// Type of result produced by the instruction; the first field of the struct
+	// holds the old value, and the second field indicates success.
+	Typ *types.StructType
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -166,12 +185,17 @@ func (inst *InstCmpXchg) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstCmpXchg) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		oldType := inst.New.Type()
+		inst.Typ = types.NewStruct(oldType, types.I8)
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstCmpXchg) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -219,7 +243,7 @@ func (inst *InstAtomicRMW) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAtomicRMW) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -266,7 +290,7 @@ func (inst *InstGetElementPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstGetElementPtr) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
