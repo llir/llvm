@@ -310,7 +310,22 @@ func (inst *InstCall) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstCall) Type() types.Type {
-	// TODO: cache Typ from Callee if nil?
+	// Cache type if not present.
+	if inst.Typ == nil {
+		t, ok := inst.Callee.Type().(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid callee type; expected *types.PointerType, got %T", inst.Callee.Type()))
+		}
+		sig, ok := t.ElemType.(*types.FuncType)
+		if !ok {
+			panic(fmt.Errorf("invalid callee type; expected *types.FuncType, got %T", t.ElemType))
+		}
+		if sig.Variadic {
+			inst.Typ = sig
+		} else {
+			inst.Typ = sig.RetType
+		}
+	}
 	if t, ok := inst.Typ.(*types.FuncType); ok {
 		return t.RetType
 	}
@@ -339,7 +354,7 @@ type InstVAArg struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Variable argument list.
-	VAList value.Value
+	ArgList value.Value
 	// Argument type.
 	ArgType types.Type
 
@@ -351,8 +366,8 @@ type InstVAArg struct {
 
 // NewVAArg returns a new va_arg instruction based on the given variable
 // argument list and argument type.
-func NewVAArg(vaList value.Value, argType types.Type) *InstVAArg {
-	return &InstVAArg{VAList: vaList, ArgType: argType}
+func NewVAArg(argList value.Value, argType types.Type) *InstVAArg {
+	return &InstVAArg{ArgList: argList, ArgType: argType}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
