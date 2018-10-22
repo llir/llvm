@@ -1762,7 +1762,7 @@ AddrSpaceCastExpr -> AddrSpaceCastExpr
 # ref: ParseValID
 
 ICmpExpr -> ICmpExpr
-	: 'icmp' Cond=ICond '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'icmp' Pred=IPred '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1770,7 +1770,7 @@ ICmpExpr -> ICmpExpr
 # ref: ParseValID
 
 FCmpExpr -> FCmpExpr
-	: 'fcmp' Cond=FCond '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'fcmp' Pred=FPred '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2450,7 +2450,7 @@ AddrSpaceCastInst -> AddrSpaceCastInst
 #  ::= 'icmp' IPredicates TypeAndValue ',' Value
 
 ICmpInst -> ICmpInst
-	: 'icmp' Cond=ICond X=TypeValue ',' Y=Value InstMetadata
+	: 'icmp' Pred=IPred X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2462,7 +2462,7 @@ ICmpInst -> ICmpInst
 #  ::= 'fcmp' FPredicates TypeAndValue ',' Value
 
 FCmpInst -> FCmpInst
-	: 'fcmp' FastMathFlags=FastMathFlag* Cond=FCond X=TypeValue ',' Y=Value InstMetadata
+	: 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value InstMetadata
 ;
 
 # ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -4362,7 +4362,7 @@ FastMathFlag -> FastMathFlag
 
 # ref: ParseCmpPredicate
 
-FCond -> FCond
+FPred -> FPred
 	: 'false'
 	| 'oeq'
 	| 'oge'
@@ -4490,7 +4490,7 @@ InstMetadata -> InstMetadata
 
 # ref: ParseCmpPredicate
 
-ICond -> ICond
+IPred -> IPred
 	: 'eq'
 	| 'ne'
 	| 'sge'
