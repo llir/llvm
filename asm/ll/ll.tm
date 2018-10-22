@@ -2195,7 +2195,7 @@ LoadInst -> LoadInst
 	# Load.
 	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)? InstMetadata
 	# Atomic load.
-	| 'load' 'atomic' Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+	| 'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
 ;
 
 # ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2210,7 +2210,7 @@ LoadInst -> LoadInst
 
 StoreInst -> StoreInst
 	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)? InstMetadata
-	| 'store' 'atomic' Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+	| 'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
 ;
 
 # ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2252,10 +2252,10 @@ Weak -> Weak
 #       'singlethread'? AtomicOrdering
 
 AtomicRMWInst -> AtomicRMWInst
-	: 'atomicrmw' Volatileopt Op=BinOp Ptr=TypeValue ',' X=TypeValue SyncScopeopt AtomicOrdering InstMetadata
+	: 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue SyncScopeopt AtomicOrdering InstMetadata
 ;
 
-BinOp -> BinOp
+AtomicOp -> AtomicOp
 	: 'add'
 	| 'and'
 	| 'max'
@@ -4182,6 +4182,10 @@ Args -> Args
 Arg -> Arg
 	: Typ=ConcreteType Attrs=ParamAttr* Val=Value
 	| Typ=MetadataType Val=Metadata
+;
+
+Atomic -> Atomic
+	: 'atomic'
 ;
 
 # ref: ParseOrdering
