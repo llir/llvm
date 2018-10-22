@@ -24,8 +24,17 @@ type InstAlloca struct {
 
 	// extra.
 
-	// Type of result produced by the instruction.
+	// Type of result produced by the instruction, including an optional address
+	// space.
 	Typ *types.PointerType
+	// (optional) In-alloca.
+	InAlloca bool
+	// (optional) Swift error.
+	SwiftError bool
+	// (optional) Alignment; zero if not present.
+	Alignment int
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -76,6 +85,18 @@ type InstLoad struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Atomic.
+	Atomic bool
+	// (optional) Volatile.
+	Volatile bool
+	// (optional) Sync scope; empty if not present.
+	SyncScope string
+	// (optional) Atomic memory ordering constraints; zero if not present.
+	Ordering enum.AtomicOrdering
+	// (optional) Alignment; zero if not present.
+	Alignment int
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -125,6 +146,21 @@ type InstStore struct {
 	Src value.Value
 	// Destination address.
 	Dst value.Value
+
+	// extra.
+
+	// (optional) Atomic.
+	Atomic bool
+	// (optional) Volatile.
+	Volatile bool
+	// (optional) Sync scope; empty if not present.
+	SyncScope string
+	// (optional) Atomic memory ordering constraints; zero if not present.
+	Ordering enum.AtomicOrdering
+	// (optional) Alignment; zero if not present.
+	Alignment int
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewStore returns a new store instruction based on the given source value and
@@ -139,6 +175,13 @@ func NewStore(src, dst value.Value) *InstStore {
 type InstFence struct {
 	// Atomic memory ordering constraints.
 	Ordering enum.AtomicOrdering
+
+	// extra.
+
+	// (optional) Sync scope; empty if not present.
+	SyncScope string
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
@@ -168,6 +211,14 @@ type InstCmpXchg struct {
 	// Type of result produced by the instruction; the first field of the struct
 	// holds the old value, and the second field indicates success.
 	Typ *types.StructType
+	// (optional) Weak.
+	Weak bool
+	// (optional) Volatile.
+	Volatile bool
+	// (optional) Sync scope; empty if not present.
+	SyncScope string
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -188,7 +239,7 @@ func (inst *InstCmpXchg) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		oldType := inst.New.Type()
-		inst.Typ = types.NewStruct(oldType, types.I8)
+		inst.Typ = types.NewStruct(oldType, types.I1)
 	}
 	return inst.Typ
 }
@@ -222,6 +273,17 @@ type InstAtomicRMW struct {
 	X value.Value
 	// Atomic memory ordering constraints.
 	Ordering enum.AtomicOrdering
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
+	// (optional) Volatile.
+	Volatile bool
+	// (optional) Sync scope; empty if not present.
+	SyncScope string
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
@@ -238,7 +300,15 @@ func (inst *InstAtomicRMW) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstAtomicRMW) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		t, ok := inst.Dst.Type().(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid destination type; expected *types.PointerType, got %T", inst.Dst.Type()))
+		}
+		inst.Typ = t.ElemType
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -268,6 +338,15 @@ type InstGetElementPtr struct {
 	Src value.Value
 	// Element indicies.
 	Indices []value.Value
+
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
+	// (optional) In-bounds.
+	InBounds bool
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
@@ -284,8 +363,11 @@ func (inst *InstGetElementPtr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstGetElementPtr) Type() types.Type {
-	// TODO: cache type?
-	return types.NewPointer(inst.ElemType)
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = types.NewPointer(inst.ElemType)
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
