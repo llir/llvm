@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 )
@@ -19,6 +20,11 @@ type InstTrunc struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and
@@ -40,7 +46,7 @@ func (inst *InstTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstTrunc) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -63,6 +69,11 @@ type InstZExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewZExt returns a new zext instruction based on the given source value and
@@ -84,7 +95,7 @@ func (inst *InstZExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstZExt) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -107,6 +118,11 @@ type InstSExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewSExt returns a new sext instruction based on the given source value and
@@ -128,7 +144,7 @@ func (inst *InstSExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSExt) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -151,6 +167,11 @@ type InstFPTrunc struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value
@@ -172,7 +193,7 @@ func (inst *InstFPTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPTrunc) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -195,6 +216,11 @@ type InstFPExt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and
@@ -216,7 +242,7 @@ func (inst *InstFPExt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPExt) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -239,6 +265,11 @@ type InstFPToUI struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value
@@ -260,7 +291,7 @@ func (inst *InstFPToUI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPToUI) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -283,6 +314,11 @@ type InstFPToSI struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value
@@ -304,7 +340,7 @@ func (inst *InstFPToSI) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstFPToSI) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -327,6 +363,11 @@ type InstUIToFP struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value
@@ -348,7 +389,7 @@ func (inst *InstUIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstUIToFP) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -371,6 +412,11 @@ type InstSIToFP struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value
@@ -392,7 +438,7 @@ func (inst *InstSIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstSIToFP) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -415,6 +461,11 @@ type InstPtrToInt struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
@@ -436,7 +487,7 @@ func (inst *InstPtrToInt) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstPtrToInt) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -459,6 +510,11 @@ type InstIntToPtr struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source
@@ -480,7 +536,7 @@ func (inst *InstIntToPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstIntToPtr) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -503,6 +559,11 @@ type InstBitCast struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value
@@ -524,7 +585,7 @@ func (inst *InstBitCast) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstBitCast) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -547,6 +608,11 @@ type InstAddrSpaceCast struct {
 	From value.Value
 	// Type after conversion.
 	To types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given
@@ -568,7 +634,7 @@ func (inst *InstAddrSpaceCast) Type() types.Type {
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAddrSpaceCast) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
