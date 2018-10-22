@@ -18,7 +18,7 @@ type InstShl struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 

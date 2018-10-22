@@ -11,9 +11,9 @@ import (
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewICmp appends a new icmp instruction to the basic block based on the given
-// integer comparison condition and integer scalar or vector operands.
-func (block *BasicBlock) NewICmp(cond enum.ICond, x, y value.Value) *InstICmp {
-	inst := NewICmp(cond, x, y)
+// integer comparison predicate and integer scalar or vector operands.
+func (block *BasicBlock) NewICmp(pred enum.IPred, x, y value.Value) *InstICmp {
+	inst := NewICmp(pred, x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -21,10 +21,10 @@ func (block *BasicBlock) NewICmp(cond enum.ICond, x, y value.Value) *InstICmp {
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewFCmp appends a new fcmp instruction to the basic block based on the given
-// floating-point comparison condition and floating-point scalar or vector
+// floating-point comparison predicate and floating-point scalar or vector
 // operands.
-func (block *BasicBlock) NewFCmp(cond enum.FCond, x, y value.Value) *InstFCmp {
-	inst := NewFCmp(cond, x, y)
+func (block *BasicBlock) NewFCmp(pred enum.FPred, x, y value.Value) *InstFCmp {
+	inst := NewFCmp(pred, x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

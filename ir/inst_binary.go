@@ -18,7 +18,7 @@ type InstAdd struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -72,7 +72,7 @@ type InstFAdd struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // floating-point scalars or vectors
+	X, Y value.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
@@ -126,7 +126,7 @@ type InstSub struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -180,7 +180,7 @@ type InstFSub struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // floating-point scalars or vectors
+	X, Y value.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
@@ -234,7 +234,7 @@ type InstMul struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -288,7 +288,7 @@ type InstFMul struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // floating-point scalars or vectors
+	X, Y value.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
@@ -342,7 +342,7 @@ type InstUDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -396,7 +396,7 @@ type InstSDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -450,7 +450,7 @@ type InstFDiv struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // floating-point scalars or vectors
+	X, Y value.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
@@ -504,7 +504,7 @@ type InstURem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -556,7 +556,7 @@ type InstSRem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // integer scalars or vectors
+	X, Y value.Value // integer scalar or integer vector
 
 	// extra.
 
@@ -608,7 +608,7 @@ type InstFRem struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Operands.
-	X, Y value.Value // floating-point scalars or vectors
+	X, Y value.Value // floating-point scalar or floating-point vector
 
 	// extra.
 

@@ -17,21 +17,23 @@ import (
 type InstICmp struct {
 	// Name of local variable associated with the result.
 	LocalName string
-	// Integer comparison condition.
-	Cond enum.ICond
+	// Integer comparison predicate.
+	Pred enum.IPred
 	// Integer scalar or vector operands.
-	X, Y value.Value
+	X, Y value.Value // integer scalar, pointer, integer vector or pointer vector.
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ types.Type
+	Typ types.Type // boolean or boolean vector
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewICmp returns a new icmp instruction based on the given integer comparison
-// condition and integer scalar or vector operands.
-func NewICmp(cond enum.ICond, x, y value.Value) *InstICmp {
-	return &InstICmp{Cond: cond, X: x, Y: y}
+// predicate and integer scalar or vector operands.
+func NewICmp(pred enum.IPred, x, y value.Value) *InstICmp {
+	return &InstICmp{Pred: pred, X: x, Y: y}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -42,7 +44,18 @@ func (inst *InstICmp) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstICmp) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		switch xType := inst.X.Type().(type) {
+		case *types.IntType, *types.PointerType:
+			inst.Typ = types.I1
+		case *types.VectorType:
+			inst.Typ = types.NewVector(xType.Len, types.I1)
+		default:
+			panic(fmt.Errorf("invalid icmp operand type; expected *types.IntType, *types.PointerType or *types.VectorType, got %T", xType))
+		}
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -66,25 +79,25 @@ func (inst *InstICmp) SetName(name string) {
 type InstFCmp struct {
 	// Name of local variable associated with the result.
 	LocalName string
-	// Floating-point comparison condition.
-	Cond enum.FCond
+	// Floating-point comparison predicate.
+	Pred enum.FPred
 	// Floating-point scalar or vector operands.
-	X, Y value.Value
+	X, Y value.Value // floating-point scalar or floating-point vector
 
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ types.Type
-	// Fast math flags.
+	Typ types.Type // boolean or boolean vector
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// Metadata.
 	// TODO: add metadata.
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
-// comparison condition and floating-point scalar or vector operands.
-func NewFCmp(cond enum.FCond, x, y value.Value) *InstFCmp {
-	return &InstFCmp{Cond: cond, X: x, Y: y}
+// comparison predicate and floating-point scalar or vector operands.
+func NewFCmp(pred enum.FPred, x, y value.Value) *InstFCmp {
+	return &InstFCmp{Pred: pred, X: x, Y: y}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -95,7 +108,18 @@ func (inst *InstFCmp) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFCmp) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		switch xType := inst.X.Type().(type) {
+		case *types.FloatType:
+			inst.Typ = types.I1
+		case *types.VectorType:
+			inst.Typ = types.NewVector(xType.Len, types.I1)
+		default:
+			panic(fmt.Errorf("invalid fcmp operand type; expected *types.FloatType or *types.VectorType, got %T", xType))
+		}
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -124,8 +148,10 @@ type InstPhi struct {
 
 	// extra.
 
-	// Type of result produced by the instruction; i.e. type of incoming value.
-	Typ types.Type
+	// Type of result produced by the instruction.
+	Typ types.Type // type of incoming value
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -186,7 +212,7 @@ type InstSelect struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Selection condition.
-	Cond value.Value
+	Cond value.Value // boolean or boolean vector
 	// Operands.
 	X, Y value.Value
 
@@ -194,6 +220,8 @@ type InstSelect struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewSelect returns a new select instruction based on the given selection
@@ -210,7 +238,10 @@ func (inst *InstSelect) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSelect) Type() types.Type {
-	panic("not yet implemented")
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -238,16 +269,27 @@ type InstCall struct {
 	// TODO: specify the set of underlying types of Callee.
 	Callee value.Value
 	// Function arguments.
-	Args []enum.Arg
+	Args []enum.Arg // TODO: move enum.Arg to ir.Arg.
 
 	// extra.
 
-	// Either the return type or the function signature of the callee.
+	// Type of result produced by the instruction, or function signature of the
+	// callee (as used when callee is variadic).
 	Typ types.Type
-	// Tail.
-	// TODO: add tail.
-	// Fast math flags.
+	// (optional) Tail; zero if not present.
+	Tail enum.Tail
+	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
+	// (optional) Calling convention; zero if not present.
+	CallingConv enum.CallingConv
+	// (optional) Return attributes.
+	ReturnAttrs []enum.ReturnAttribute
+	// (optional) Address space; zero if not present.
+	AddrSpace types.AddrSpace
+	// (optional) Function attributes.
+	FuncAttrs []enum.FuncAttribute
+	// (optional) Operand bundles.
+	OperandBundles []enum.OperandBundle
 	// Metadata.
 	// TODO: add metadata.
 }
@@ -300,6 +342,11 @@ type InstVAArg struct {
 	VAList value.Value
 	// Argument type.
 	ArgType types.Type
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewVAArg returns a new va_arg instruction based on the given variable
@@ -347,6 +394,11 @@ type InstLandingPad struct {
 	// Filter and catch clauses; zero or more if Cleanup is true, otherwise one
 	// or more.
 	Clauses []*enum.Clause
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewLandingPad returns a new landingpad instruction based on the given result
@@ -391,6 +443,11 @@ type InstCatchPad struct {
 	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
 	// Exception arguments.
 	Args []enum.Arg
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
@@ -435,6 +492,11 @@ type InstCleanupPad struct {
 	Scope enum.ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
 	Args []enum.Arg
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
