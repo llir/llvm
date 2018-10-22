@@ -13,16 +13,16 @@ import (
 
 // ExprICmp is an LLVM IR icmp expression.
 type ExprICmp struct {
-	// Integer comparison condition.
-	Cond enum.ICond
+	// Integer comparison predicate.
+	Pred enum.IPred
 	// Integer scalar or vector operands.
 	X, Y Constant
 }
 
 // NewICmpExpr returns a new icmp expression based on the given integer
-// comparison condition and integer scalar or vector operands.
-func NewICmpExpr(cond enum.ICond, x, y Constant) *ExprICmp {
-	return &ExprICmp{Cond: cond, X: x, Y: y}
+// comparison predicate and integer scalar or vector operands.
+func NewICmpExpr(pred enum.IPred, x, y Constant) *ExprICmp {
+	return &ExprICmp{Pred: pred, X: x, Y: y}
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
@@ -39,7 +39,7 @@ func (e *ExprICmp) Type() types.Type {
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprICmp) Ident() string {
 	// "icmp" IPred "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("icmp %v (%v, %v)", e.Cond, e.X, e.Y)
+	return fmt.Sprintf("icmp %v (%v, %v)", e.Pred, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -52,16 +52,16 @@ func (e *ExprICmp) Simplify() Constant {
 
 // ExprFCmp is an LLVM IR fcmp expression.
 type ExprFCmp struct {
-	// Floating-point comparison condition.
-	Cond enum.FCond
+	// Floating-point comparison predicate.
+	Pred enum.FPred
 	// Floating-point scalar or vector operands.
 	X, Y Constant
 }
 
 // NewFCmpExpr returns a new fcmp expression based on the given floating-point
-// comparison condition and floating-point scalar or vector operands.
-func NewFCmpExpr(cond enum.FCond, x, y Constant) *ExprFCmp {
-	return &ExprFCmp{Cond: cond, X: x, Y: y}
+// comparison predicate and floating-point scalar or vector operands.
+func NewFCmpExpr(pred enum.FPred, x, y Constant) *ExprFCmp {
+	return &ExprFCmp{Pred: pred, X: x, Y: y}
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
@@ -78,7 +78,7 @@ func (e *ExprFCmp) Type() types.Type {
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFCmp) Ident() string {
 	// "fcmp" FPred "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("fcmp %v (%v, %v)", e.Cond, e.X, e.Y)
+	return fmt.Sprintf("fcmp %v (%v, %v)", e.Pred, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

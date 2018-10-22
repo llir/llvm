@@ -19,11 +19,9 @@ type ExceptionScope interface {
 	isExceptionScope()
 }
 
-type FCond uint
-
-type ICond uint
-
-// --- [ Unwind targets ] ------------------------------------------------------
+type OperandBundle struct {
+	// TODO: implement body.
+}
 
 // TODO: consider getting rid of UnwindTarget, and let unwind targets be of type
 // *ir.BasicBlock, where a nil value indicates the caller, and a non-nil value
@@ -37,10 +35,10 @@ type FuncAttribute interface {
 	isFuncAttribute()
 }
 
-type ReturnAttribute interface {
-	isReturnAttribute()
-}
-
 type ParamAttribute interface {
 	isParamAttribute()
+}
+
+type ReturnAttribute interface {
+	isReturnAttribute()
 }

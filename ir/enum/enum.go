@@ -91,6 +91,50 @@ const (
 	FastMathFlagReassoc                      // reassoc
 )
 
+//go:generate stringer -linecomment -type FPred
+
+// FPred is a floating-point comparison predicate.
+type FPred uint8
+
+// Floating-point predicates.
+const (
+	FPredFalse FPred = iota // false
+	FPredOEQ                // oeq
+	FPredOGE                // oge
+	FPredOGT                // ogt
+	FPredOLE                // ole
+	FPredOLT                // olt
+	FPredONE                // one
+	FPredORD                // ord
+	FPredTrue               // true
+	FPredUEQ                // ueq
+	FPredUGE                // uge
+	FPredUGT                // ugt
+	FPredULE                // ule
+	FPredULT                // ult
+	FPredUNE                // une
+	FPredUNO                // uno
+)
+
+//go:generate stringer -linecomment -type IPred
+
+// IPred is an integer comparison predicate.
+type IPred uint8
+
+// Integer predicates.
+const (
+	IPredEQ  IPred = iota // eq
+	IPredNE               // ne
+	IPredSGE              // sge
+	IPredSGT              // sgt
+	IPredSLE              // sle
+	IPredSLT              // slt
+	IPredUGE              // uge
+	IPredUGT              // ugt
+	IPredULE              // ule
+	IPredULT              // ult
+)
+
 //go:generate stringer -linecomment -type Linkage
 
 // Linkage specifies the linkage of a global identifier.
@@ -148,6 +192,19 @@ const (
 	SelectionKindLargest                           // largest
 	SelectionKindNoDuplicates                      // noduplicates
 	SelectionKindSameSize                          // samesize
+)
+
+//go:generate stringer -linecomment -type Tail
+
+// Tail is a tail call attribute.
+type Tail uint8
+
+// Tail call attributes.
+const (
+	TailNone     Tail = iota // none
+	TailMustTail             // musttail
+	TailNoTail               // notail
+	TailTail                 // tail
 )
 
 //go:generate stringer -linecomment -type TLSModel
