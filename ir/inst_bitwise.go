@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/ll"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -42,12 +43,16 @@ func (inst *InstShl) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstShl) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstShl) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -88,12 +93,16 @@ func (inst *InstLShr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstLShr) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstLShr) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -134,12 +143,16 @@ func (inst *InstAShr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstAShr) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAShr) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -180,12 +193,16 @@ func (inst *InstAnd) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstAnd) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstAnd) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -226,12 +243,16 @@ func (inst *InstOr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstOr) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstOr) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.
@@ -272,12 +293,16 @@ func (inst *InstXor) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstXor) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
 func (inst *InstXor) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(inst.LocalName)
 }
 
 // Name returns the name of the instruction.

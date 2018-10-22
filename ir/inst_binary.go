@@ -43,7 +43,11 @@ func (inst *InstAdd) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstAdd) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -93,7 +97,11 @@ func (inst *InstFAdd) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFAdd) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -143,7 +151,11 @@ func (inst *InstSub) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSub) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -193,7 +205,11 @@ func (inst *InstFSub) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFSub) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -243,7 +259,11 @@ func (inst *InstMul) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstMul) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -293,7 +313,11 @@ func (inst *InstFMul) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFMul) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -339,7 +363,11 @@ func (inst *InstUDiv) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstUDiv) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -385,7 +413,11 @@ func (inst *InstSDiv) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSDiv) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -435,7 +467,11 @@ func (inst *InstFDiv) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFDiv) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -481,7 +517,11 @@ func (inst *InstURem) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstURem) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -527,7 +567,11 @@ func (inst *InstSRem) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSRem) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
@@ -577,7 +621,11 @@ func (inst *InstFRem) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFRem) Type() types.Type {
-	return inst.X.Type()
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // Ident returns the identifier associated with the instruction.
