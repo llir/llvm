@@ -110,7 +110,7 @@ func (inst *InstInsertElement) Type() types.Type {
 		if !ok {
 			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", inst.X.Type()))
 		}
-		inst.Typ = types.NewVector(t.Len+1, t.ElemType)
+		inst.Typ = t
 	}
 	return inst.Typ
 }

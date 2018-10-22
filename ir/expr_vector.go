@@ -76,8 +76,7 @@ func (e *ExprInsertElement) String() string {
 // Type returns the type of the constant expression.
 func (e *ExprInsertElement) Type() types.Type {
 	// TODO: cache type?
-	typ := e.X.Type().(*types.VectorType)
-	return types.NewVector(typ.Len+1, typ.ElemType)
+	return e.X.Type()
 }
 
 // Ident returns the identifier associated with the constant expression.
