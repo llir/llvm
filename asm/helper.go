@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llir/l/ir/ll"
+	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
@@ -147,16 +147,16 @@ func irAddrSpace(n *ast.AddrSpace) types.AddrSpace {
 
 // irDLLStorageClass returns the IR DLL storage class corresponding to the given
 // optional AST DLL storage class.
-func irDLLStorageClass(n *ast.DLLStorageClass) ll.DLLStorageClass {
+func irDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {
 	text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when DLL storage class not present.
-		return ll.DLLStorageClassNone
+		return enum.DLLStorageClassNone
 	case "dllexport":
-		return ll.DLLStorageClassDLLExport
+		return enum.DLLStorageClassDLLExport
 	case "dllimport":
-		return ll.DLLStorageClassDLLImport
+		return enum.DLLStorageClassDLLImport
 	default:
 		panic(fmt.Errorf("support for DLL storage class %q not yet implemented", text))
 	}
@@ -171,8 +171,8 @@ func irExternallyInitialized(n *ast.ExternallyInitialized) bool {
 
 // irFastMathFlags returns the IR fast math flags corresponding to the given
 // optional AST fast math flags.
-func irFastMathFlags(ns []ast.FastMathFlag) []ll.FastMathFlag {
-	var flags []ll.FastMathFlag
+func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
+	var flags []enum.FastMathFlag
 	for _, n := range ns {
 		flag := irFastMathFlag(n)
 		flags = append(flags, flag)
@@ -182,25 +182,25 @@ func irFastMathFlags(ns []ast.FastMathFlag) []ll.FastMathFlag {
 
 // irFastMathFlag returns the IR fast math flag corresponding to the given
 // optional AST fast math flag.
-func irFastMathFlag(n ast.FastMathFlag) ll.FastMathFlag {
+func irFastMathFlag(n ast.FastMathFlag) enum.FastMathFlag {
 	text := n.Text()
 	switch text {
 	case "afn":
-		return ll.FastMathFlagAFn
+		return enum.FastMathFlagAFn
 	case "arcp":
-		return ll.FastMathFlagARcp
+		return enum.FastMathFlagARcp
 	case "contract":
-		return ll.FastMathFlagContract
+		return enum.FastMathFlagContract
 	case "fast":
-		return ll.FastMathFlagFast
+		return enum.FastMathFlagFast
 	case "ninf":
-		return ll.FastMathFlagNInf
+		return enum.FastMathFlagNInf
 	case "nnan":
-		return ll.FastMathFlagNNaN
+		return enum.FastMathFlagNNaN
 	case "nsz":
-		return ll.FastMathFlagNSZ
+		return enum.FastMathFlagNSZ
 	case "reassoc":
-		return ll.FastMathFlagReassoc
+		return enum.FastMathFlagReassoc
 	default:
 		panic(fmt.Errorf("support for fast math flag %q not yet implemented", text))
 	}
@@ -236,36 +236,36 @@ func irInRange(n *ast.InRange) bool {
 
 // irLinkage returns the IR linkage corresponding to the given optional AST
 // linkage.
-func irLinkage(text string) ll.Linkage {
+func irLinkage(text string) enum.Linkage {
 	// TODO: when ExternLinkage and Linkage are merged in grammar, update
 	// irLinkage to take `n *ast.Linkage` instead of `text string`.
 	//text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when linkage not present.
-		return ll.LinkageNone
+		return enum.LinkageNone
 	case "appending":
-		return ll.LinkageAppending
+		return enum.LinkageAppending
 	case "available_externally":
-		return ll.LinkageAvailableExternally
+		return enum.LinkageAvailableExternally
 	case "common":
-		return ll.LinkageCommon
+		return enum.LinkageCommon
 	case "internal":
-		return ll.LinkageInternal
+		return enum.LinkageInternal
 	case "linkonce":
-		return ll.LinkageLinkOnce
+		return enum.LinkageLinkOnce
 	case "linkonce_odr":
-		return ll.LinkageLinkOnceODR
+		return enum.LinkageLinkOnceODR
 	case "private":
-		return ll.LinkagePrivate
+		return enum.LinkagePrivate
 	case "weak":
-		return ll.LinkageWeak
+		return enum.LinkageWeak
 	case "weak_odr":
-		return ll.LinkageWeakODR
+		return enum.LinkageWeakODR
 	case "external":
-		return ll.LinkageExternal
+		return enum.LinkageExternal
 	case "extern_weak":
-		return ll.LinkageExternWeak
+		return enum.LinkageExternWeak
 	default:
 		panic(fmt.Errorf("support for linkage %q not yet implemented", text))
 	}
@@ -273,8 +273,8 @@ func irLinkage(text string) ll.Linkage {
 
 // irOverflowFlags returns the IR overflow flags corresponding to the given
 // optional AST overflow flags.
-func irOverflowFlags(ns []ast.OverflowFlag) []ll.OverflowFlag {
-	var flags []ll.OverflowFlag
+func irOverflowFlags(ns []ast.OverflowFlag) []enum.OverflowFlag {
+	var flags []enum.OverflowFlag
 	for _, n := range ns {
 		flag := irOverflowFlag(n)
 		flags = append(flags, flag)
@@ -284,13 +284,13 @@ func irOverflowFlags(ns []ast.OverflowFlag) []ll.OverflowFlag {
 
 // irOverflowFlag returns the IR overflow flag corresponding to the given
 // optional AST overflow flag.
-func irOverflowFlag(n ast.OverflowFlag) ll.OverflowFlag {
+func irOverflowFlag(n ast.OverflowFlag) enum.OverflowFlag {
 	text := n.Text()
 	switch text {
 	case "nsw":
-		return ll.OverflowFlagNSW
+		return enum.OverflowFlagNSW
 	case "nuw":
-		return ll.OverflowFlagNUW
+		return enum.OverflowFlagNUW
 	default:
 		panic(fmt.Errorf("support for overflow flag %q not yet implemented", text))
 	}
@@ -298,16 +298,16 @@ func irOverflowFlag(n ast.OverflowFlag) ll.OverflowFlag {
 
 // irPreemption returns the IR preemption corresponding to the given optional
 // AST preemption.
-func irPreemption(n *ast.Preemption) ll.Preemption {
+func irPreemption(n *ast.Preemption) enum.Preemption {
 	text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when preemption not present.
-		return ll.PreemptionNone
+		return enum.PreemptionNone
 	case "dso_local":
-		return ll.PreemptionDSOLocal
+		return enum.PreemptionDSOLocal
 	case "dso_preemptable":
-		return ll.PreemptionDSOPreemptable
+		return enum.PreemptionDSOPreemptable
 	default:
 		panic(fmt.Errorf("support for preemption %q not yet implemented", text))
 	}
@@ -315,19 +315,19 @@ func irPreemption(n *ast.Preemption) ll.Preemption {
 
 // irSelectionKind returns the IR Comdat selection kind corresponding to the
 // given optional AST Comdat selection kind.
-func irSelectionKind(n *ast.SelectionKind) ll.SelectionKind {
+func irSelectionKind(n *ast.SelectionKind) enum.SelectionKind {
 	text := n.Text()
 	switch text {
 	case "any":
-		return ll.SelectionKindAny
+		return enum.SelectionKindAny
 	case "exactmatch":
-		return ll.SelectionKindExactMatch
+		return enum.SelectionKindExactMatch
 	case "largest":
-		return ll.SelectionKindLargest
+		return enum.SelectionKindLargest
 	case "noduplicates":
-		return ll.SelectionKindNoDuplicates
+		return enum.SelectionKindNoDuplicates
 	case "samesize":
-		return ll.SelectionKindSameSize
+		return enum.SelectionKindSameSize
 	default:
 		panic(fmt.Errorf("support for Comdat selection kind %q not yet implemented", text))
 	}
@@ -335,34 +335,34 @@ func irSelectionKind(n *ast.SelectionKind) ll.SelectionKind {
 
 // irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given
 // optional AST thread local storage.
-func irTLSModelFromThreadLocal(n *ast.ThreadLocal) ll.TLSModel {
+func irTLSModelFromThreadLocal(n *ast.ThreadLocal) enum.TLSModel {
 	if n.Text() != "" {
 		model := irTLSModel(n.Model())
-		if model == ll.TLSModelNone {
+		if model == enum.TLSModelNone {
 			// If no explicit model is given, the "general dynamic" model is used.
 			//    thread_local
-			return ll.TLSModelGeneric
+			return enum.TLSModelGeneric
 		}
 		// e.g. thread_local(initialexec)
 		return model
 	}
-	return ll.TLSModelNone
+	return enum.TLSModelNone
 }
 
 // irTLSModel returns the IR TLS model corresponding to the given optional AST
 // TLS model.
-func irTLSModel(n *ast.TLSModel) ll.TLSModel {
+func irTLSModel(n *ast.TLSModel) enum.TLSModel {
 	text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when TLS model not present.
-		return ll.TLSModelNone
+		return enum.TLSModelNone
 	case "initialexec":
-		return ll.TLSModelInitialExec
+		return enum.TLSModelInitialExec
 	case "localdynamic":
-		return ll.TLSModelLocalDynamic
+		return enum.TLSModelLocalDynamic
 	case "localexec":
-		return ll.TLSModelLocalExec
+		return enum.TLSModelLocalExec
 	default:
 		panic(fmt.Errorf("support for TLS model %q not yet implemented", text))
 	}
@@ -370,16 +370,16 @@ func irTLSModel(n *ast.TLSModel) ll.TLSModel {
 
 // irUnnamedAddr returns the IR unnamed address corresponding to the given
 // optional AST unnamed address.
-func irUnnamedAddr(n *ast.UnnamedAddr) ll.UnnamedAddr {
+func irUnnamedAddr(n *ast.UnnamedAddr) enum.UnnamedAddr {
 	text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when unnamed address not present.
-		return ll.UnnamedAddrNone
+		return enum.UnnamedAddrNone
 	case "local_unnamed_addr":
-		return ll.UnnamedAddrLocalUnnamedAddr
+		return enum.UnnamedAddrLocalUnnamedAddr
 	case "unnamed_addr":
-		return ll.UnnamedAddrUnnamedAddr
+		return enum.UnnamedAddrUnnamedAddr
 	default:
 		panic(fmt.Errorf("support for unnamed address %q not yet implemented", text))
 	}
@@ -400,18 +400,18 @@ func irVariadic(n *ast.Ellipsis) bool {
 
 // irVisibility returns the IR visibility kind corresponding to the given
 // optional AST visibility kind.
-func irVisibility(n *ast.Visibility) ll.Visibility {
+func irVisibility(n *ast.Visibility) enum.Visibility {
 	text := n.Text()
 	switch text {
 	case "":
 		// \empty is used when visibility kind not present.
-		return ll.VisibilityNone
+		return enum.VisibilityNone
 	case "default":
-		return ll.VisibilityDefault
+		return enum.VisibilityDefault
 	case "hidden":
-		return ll.VisibilityHidden
+		return enum.VisibilityHidden
 	case "protected":
-		return ll.VisibilityProtected
+		return enum.VisibilityProtected
 	default:
 		panic(fmt.Errorf("support for visibility kind %q not yet implemented", text))
 	}
