@@ -273,11 +273,24 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		return &ir.InstInsertValue{LocalName: name}, nil
 	// Memory instructions
 	case *ast.AllocaInst:
-		return &ir.InstAlloca{LocalName: name}, nil
+		elemType, err := fgen.gen.irType(old.ElemType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstAlloca{LocalName: name, ElemType: elemType}, nil
 	case *ast.LoadInst:
-		return &ir.InstLoad{LocalName: name}, nil
+		elemType, err := fgen.gen.irType(old.ElemType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstLoad{LocalName: name, Typ: elemType}, nil
 	case *ast.CmpXchgInst:
-		return &ir.InstCmpXchg{LocalName: name}, nil
+		oldType, err := fgen.gen.irType(old.New().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		typ := types.NewStruct(oldType, types.I8)
+		return &ir.InstCmpXchg{LocalName: name, Typ: typ}, nil
 	case *ast.AtomicRMWInst:
 		return &ir.InstAtomicRMW{LocalName: name}, nil
 	case *ast.GetElementPtrInst:
@@ -503,18 +516,13 @@ func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*i
 	// Overflow flags.
 	i.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	// X operand.
-	// TODO: remove xType if types are added during indexing; then use x.Type() instead.
-	xType, err := fgen.gen.irType(old.X().Typ())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	i.X = x
 	// Y operand.
-	y, err := fgen.astToIRValue(xType, old.Y())
+	y, err := fgen.astToIRValue(x.Type(), old.Y())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -533,6 +541,7 @@ func (fgen *funcGen) translateFAddInst(inst ir.Instruction, old *ast.FAddInst) (
 	// Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// X operand.
+	// TODO: remove xType in favour of x.Type().
 	xType, err := fgen.gen.irType(old.X().Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)
