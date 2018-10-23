@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 
+	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
@@ -223,8 +224,21 @@ type TermInvoke struct {
 
 	// extra.
 
+	// Type of result produced by the terminator, or function signature of the
+	// invokee (as used when invokee is variadic).
+	Typ types.Type
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
+	// (optional) Calling convention; zero if not present.
+	CallingConv enum.CallingConv
+	// (optional) Return attributes.
+	ReturnAttrs []enum.ReturnAttribute
+	// (optional) Address space; zero if not present.
+	AddrSpace types.AddrSpace
+	// (optional) Function attributes.
+	FuncAttrs []enum.FuncAttribute
+	// (optional) Operand bundles.
+	OperandBundles []enum.OperandBundle
 	// (optional) Metadata.
 	// TODO: add metadata.
 }
@@ -246,12 +260,31 @@ func (term *TermInvoke) String() string {
 
 // Type returns the type of the terminator.
 func (term *TermInvoke) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if term.Typ == nil {
+		t, ok := term.Invokee.Type().(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid invokee type; expected *types.PointerType, got %T", term.Invokee.Type()))
+		}
+		sig, ok := t.ElemType.(*types.FuncType)
+		if !ok {
+			panic(fmt.Errorf("invalid invokee type; expected *types.FuncType, got %T", t.ElemType))
+		}
+		if sig.Variadic {
+			term.Typ = sig
+		} else {
+			term.Typ = sig.RetType
+		}
+	}
+	if t, ok := term.Typ.(*types.FuncType); ok {
+		return t.RetType
+	}
+	return term.Typ
 }
 
 // Ident returns the identifier associated with the terminator.
 func (term *TermInvoke) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(term.LocalName)
 }
 
 // Name returns the name of the terminator.
@@ -338,7 +371,7 @@ func (term *TermCatchSwitch) Type() types.Type {
 
 // Ident returns the identifier associated with the terminator.
 func (term *TermCatchSwitch) Ident() string {
-	panic("not yet implemented")
+	return enc.Local(term.LocalName)
 }
 
 // Name returns the name of the terminator.
