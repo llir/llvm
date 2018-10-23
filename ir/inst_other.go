@@ -404,7 +404,7 @@ type InstLandingPad struct {
 	LocalName string
 	// Result type.
 	ResultType types.Type
-	// Cleanup landing pad.
+	// (optional) Cleanup landing pad.
 	Cleanup bool
 	// Filter and catch clauses; zero or more if Cleanup is true, otherwise one
 	// or more.
