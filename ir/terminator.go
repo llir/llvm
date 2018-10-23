@@ -40,6 +40,11 @@ type Terminator interface {
 type TermRet struct {
 	// Return value; or nil if void return.
 	X value.Value
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
@@ -60,6 +65,13 @@ func (*TermRet) Succs() []*BasicBlock {
 type TermBr struct {
 	// Target basic block.
 	Target *BasicBlock
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
@@ -70,7 +82,11 @@ func NewBr(target *BasicBlock) *TermBr {
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermBr) Succs() []*BasicBlock {
-	return []*BasicBlock{term.Target}
+	// Cache successors if not present.
+	if term.Successors == nil {
+		term.Successors = []*BasicBlock{term.Target}
+	}
+	return term.Successors
 }
 
 // --- [ conditional br ] ------------------------------------------------------
@@ -83,6 +99,13 @@ type TermCondBr struct {
 	TargetTrue *BasicBlock
 	// False condition target basic block.
 	TargetFalse *BasicBlock
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
@@ -93,7 +116,11 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondB
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermCondBr) Succs() []*BasicBlock {
-	return []*BasicBlock{term.TargetTrue, term.TargetFalse}
+	// Cache successors if not present.
+	if term.Successors == nil {
+		term.Successors = []*BasicBlock{term.TargetTrue, term.TargetFalse}
+	}
+	return term.Successors
 }
 
 // --- [ switch ] --------------------------------------------------------------
@@ -106,6 +133,13 @@ type TermSwitch struct {
 	TargetDefault *BasicBlock
 	// TermSwitch cases.
 	Cases []*Case
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewSwitch returns a new switch terminator based on the given control
@@ -116,12 +150,16 @@ func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSw
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermSwitch) Succs() []*BasicBlock {
-	succs := make([]*BasicBlock, 0, 1+len(term.Cases))
-	succs = append(succs, term.TargetDefault)
-	for _, c := range term.Cases {
-		succs = append(succs, c.Target)
+	// Cache successors if not present.
+	if term.Successors == nil {
+		succs := make([]*BasicBlock, 0, 1+len(term.Cases))
+		succs = append(succs, term.TargetDefault)
+		for _, c := range term.Cases {
+			succs = append(succs, c.Target)
+		}
+		term.Successors = succs
 	}
-	return succs
+	return term.Successors
 }
 
 // ~~~ [ Switch case ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,6 +186,11 @@ type TermIndirectBr struct {
 	Addr *ConstBlockAddress
 	// Set of valid target basic blocks.
 	ValidTargets []*BasicBlock
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewIndirectBr returns a new indirectbr terminator based on the given target
@@ -177,6 +220,13 @@ type TermInvoke struct {
 	Normal *BasicBlock
 	// Exception control flow return point.
 	Exception *BasicBlock
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewInvoke returns a new invoke terminator based on the given invokee, function
@@ -216,7 +266,11 @@ func (term *TermInvoke) SetName(name string) {
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermInvoke) Succs() []*BasicBlock {
-	return []*BasicBlock{term.Normal, term.Exception}
+	// Cache successors if not present.
+	if term.Successors == nil {
+		term.Successors = []*BasicBlock{term.Normal, term.Exception}
+	}
+	return term.Successors
 }
 
 // --- [ resume ] --------------------------------------------------------------
@@ -225,6 +279,11 @@ func (term *TermInvoke) Succs() []*BasicBlock {
 type TermResume struct {
 	// Exception argument to propagate.
 	X value.Value
+
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewResume returns a new resume terminator based on the given exception
@@ -251,6 +310,13 @@ type TermCatchSwitch struct {
 	Handlers []*BasicBlock
 	// Unwind target; basic block or caller function.
 	UnwindTarget enum.UnwindTarget // TODO: rename to To? rename to DefaultTarget?
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
@@ -287,10 +353,15 @@ func (term *TermCatchSwitch) SetName(name string) {
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermCatchSwitch) Succs() []*BasicBlock {
-	if unwindTarget, ok := term.UnwindTarget.(*BasicBlock); ok {
-		return append(term.Handlers, unwindTarget)
+	// Cache successors if not present.
+	if term.Successors == nil {
+		if unwindTarget, ok := term.UnwindTarget.(*BasicBlock); ok {
+			term.Successors = append(term.Handlers, unwindTarget)
+		} else {
+			term.Successors = term.Handlers
+		}
 	}
-	return term.Handlers
+	return term.Successors
 }
 
 // --- [ catchret ] ------------------------------------------------------------
@@ -301,6 +372,13 @@ type TermCatchRet struct {
 	From *InstCatchPad
 	// Target basic block to transfer control flow to.
 	To *BasicBlock
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCatchRet returns a new catchret terminator based on the given exit
@@ -311,7 +389,11 @@ func NewCatchRet(from *InstCatchPad, to *BasicBlock) *TermCatchRet {
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermCatchRet) Succs() []*BasicBlock {
-	return []*BasicBlock{term.To}
+	// Cache successors if not present.
+	if term.Successors == nil {
+		term.Successors = []*BasicBlock{term.To}
+	}
+	return term.Successors
 }
 
 // --- [ cleanupret ] ----------------------------------------------------------
@@ -322,6 +404,13 @@ type TermCleanupRet struct {
 	From *InstCleanupPad
 	// Unwind target; basic block or caller function.
 	To enum.UnwindTarget
+
+	// extra.
+
+	// Successor basic blocks of the terminator.
+	Successors []*BasicBlock
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
@@ -332,16 +421,25 @@ func NewCleanupRet(from *InstCleanupPad, to enum.UnwindTarget) *TermCleanupRet {
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermCleanupRet) Succs() []*BasicBlock {
-	if unwindTarget, ok := term.To.(*BasicBlock); ok {
-		return []*BasicBlock{unwindTarget}
+	// Cache successors if not present.
+	if term.Successors == nil {
+		if unwindTarget, ok := term.To.(*BasicBlock); ok {
+			term.Successors = []*BasicBlock{unwindTarget}
+		} else {
+			term.Successors = []*BasicBlock{}
+		}
 	}
-	return nil
+	return term.Successors
 }
 
 // --- [ unreachable ] ---------------------------------------------------------
 
 // TermUnreachable is an LLVM IR unreachable terminator.
 type TermUnreachable struct {
+	// extra.
+
+	// (optional) Metadata.
+	// TODO: add metadata.
 }
 
 // NewUnreachable returns a new unreachable terminator.
