@@ -174,6 +174,7 @@ func (f *Function) AssignIDs() error {
 				return errors.WithStack(err)
 			}
 		}
+		// TODO: handle terminator of basic block? e.g. invoke, ...
 	}
 	return nil
 }
