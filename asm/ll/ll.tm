@@ -4703,11 +4703,11 @@ TLSModel -> TLSModel
 ;
 
 TypeConst -> TypeConst
-	: Typ=Type Val=Constant
+	: Typ=FirstClassType Val=Constant
 ;
 
 TypeValue -> TypeValue
-	: Typ=Type Val=Value
+	: Typ=FirstClassType Val=Value
 ;
 
 # ref: ParseOptionalUnnamedAddr
