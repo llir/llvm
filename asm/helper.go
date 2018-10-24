@@ -111,6 +111,17 @@ func uintLit(n ast.UintLit) uint64 {
 	return x
 }
 
+// uintSlice returns the slice of unsigned integer value corresponding to the given
+// unsigned integer slice.
+func uintSlice(ns []ast.UintLit) []uint64 {
+	var xs []uint64
+	for _, n := range ns {
+		x := uintLit(n)
+		xs = append(xs, x)
+	}
+	return xs
+}
+
 // --- [ Floating-point literals ] ---------------------------------------------
 
 // --- [ String literals ] -----------------------------------------------------
