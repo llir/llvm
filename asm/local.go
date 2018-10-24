@@ -261,16 +261,59 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		return &ir.InstXor{LocalName: name, Typ: typ}, nil
 	// Vector instructions
 	case *ast.ExtractElementInst:
-		return &ir.InstExtractElement{LocalName: name}, nil
+		xType, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		t, ok := xType.(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", xType))
+		}
+		return &ir.InstExtractElement{LocalName: name, Typ: t.ElemType}, nil
 	case *ast.InsertElementInst:
-		return &ir.InstInsertElement{LocalName: name}, nil
+		xType, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		t, ok := xType.(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", xType))
+		}
+		return &ir.InstInsertElement{LocalName: name, Typ: t}, nil
 	case *ast.ShuffleVectorInst:
-		return &ir.InstShuffleVector{LocalName: name}, nil
+		xType, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		xt, ok := xType.(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", xType))
+		}
+		maskType, err := fgen.gen.irType(old.Mask().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		mt, ok := maskType.(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", maskType))
+		}
+		typ := types.NewVector(mt.Len, xt.ElemType)
+		return &ir.InstShuffleVector{LocalName: name, Typ: typ}, nil
 	// Aggregate instructions
 	case *ast.ExtractValueInst:
-		return &ir.InstExtractValue{LocalName: name}, nil
+		xType, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		indices := uintSlice(old.Indices())
+		typ := aggregateElemType(xType, indices)
+		return &ir.InstExtractValue{LocalName: name, Typ: typ}, nil
 	case *ast.InsertValueInst:
-		return &ir.InstInsertValue{LocalName: name}, nil
+		typ, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstInsertValue{LocalName: name, Typ: typ}, nil
 	// Memory instructions
 	case *ast.AllocaInst:
 		elemType, err := fgen.gen.irType(old.ElemType())
@@ -386,7 +429,11 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		}
 		return &ir.InstPhi{LocalName: name, Typ: typ}, nil
 	case *ast.SelectInst:
-		return &ir.InstSelect{LocalName: name}, nil
+		typ, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstSelect{LocalName: name, Typ: typ}, nil
 	case *ast.CallInst:
 		// NOTE: We need to store the type of call instructions before invoking
 		// f.AssignIDs, since call instructions may be value instructions or
@@ -1598,4 +1645,26 @@ func (fgen *funcGen) translateUnreachableTerm(old *ast.UnreachableTerm) (*ir.Ter
 	term := &ir.TermUnreachable{}
 	// TODO: implement
 	return term, nil
+}
+
+// ### [ Helper functions ] ####################################################
+
+// NOTE: aggregateElemType is copied from llir/l/ir/inst_aggregate.go and the
+// type of indicies is updated from []int64 to []uint64
+
+// aggregateElemType returns the element type at the position in the aggregate
+// type specified by the given indices.
+func aggregateElemType(t types.Type, indices []uint64) types.Type {
+	// Base case.
+	if len(indices) == 0 {
+		return t
+	}
+	switch t := t.(type) {
+	case *types.ArrayType:
+		return aggregateElemType(t.ElemType, indices[1:])
+	case *types.StructType:
+		return aggregateElemType(t.Fields[indices[0]], indices[1:])
+	default:
+		panic(fmt.Errorf("support for aggregate type %T not yet implemented", t))
+	}
 }
