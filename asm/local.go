@@ -297,31 +297,83 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		return &ir.InstGetElementPtr{LocalName: name}, nil
 	// Conversion instructions
 	case *ast.TruncInst:
-		return &ir.InstTrunc{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstTrunc{LocalName: name, To: to}, nil
 	case *ast.ZExtInst:
-		return &ir.InstZExt{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstZExt{LocalName: name, To: to}, nil
 	case *ast.SExtInst:
-		return &ir.InstSExt{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstSExt{LocalName: name, To: to}, nil
 	case *ast.FPTruncInst:
-		return &ir.InstFPTrunc{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstFPTrunc{LocalName: name, To: to}, nil
 	case *ast.FPExtInst:
-		return &ir.InstFPExt{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstFPExt{LocalName: name, To: to}, nil
 	case *ast.FPToUIInst:
-		return &ir.InstFPToUI{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstFPToUI{LocalName: name, To: to}, nil
 	case *ast.FPToSIInst:
-		return &ir.InstFPToSI{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstFPToSI{LocalName: name, To: to}, nil
 	case *ast.UIToFPInst:
-		return &ir.InstUIToFP{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstUIToFP{LocalName: name, To: to}, nil
 	case *ast.SIToFPInst:
-		return &ir.InstSIToFP{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstSIToFP{LocalName: name, To: to}, nil
 	case *ast.PtrToIntInst:
-		return &ir.InstPtrToInt{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstPtrToInt{LocalName: name, To: to}, nil
 	case *ast.IntToPtrInst:
-		return &ir.InstIntToPtr{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstIntToPtr{LocalName: name, To: to}, nil
 	case *ast.BitCastInst:
-		return &ir.InstBitCast{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstBitCast{LocalName: name, To: to}, nil
 	case *ast.AddrSpaceCastInst:
-		return &ir.InstAddrSpaceCast{LocalName: name}, nil
+		to, err := fgen.gen.irType(old.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstAddrSpaceCast{LocalName: name, To: to}, nil
 	// Other instructions
 	case *ast.ICmpInst:
 		return &ir.InstICmp{LocalName: name}, nil
