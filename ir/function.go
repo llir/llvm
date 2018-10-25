@@ -164,17 +164,36 @@ func (f *Function) AssignIDs() error {
 			// Skip void instructions.
 			// TODO: Check if any other value instructions than call may have void
 			// type.
-			if n, ok := n.(*InstCall); ok {
-				if n.Type().Equal(types.Void) {
-					continue
-				}
+			if isVoidValue(n) {
+				continue
 			}
 			// Assign local IDs to unnamed local variables.
 			if err := setName(n); err != nil {
 				return errors.WithStack(err)
 			}
 		}
-		// TODO: handle terminator of basic block? e.g. invoke, ...
+		n, ok := block.Term.(value.Named)
+		if !ok {
+			continue
+		}
+		if isVoidValue(n) {
+			continue
+		}
+		if err := setName(n); err != nil {
+			return errors.WithStack(err)
+		}
 	}
 	return nil
+}
+
+// ### [ Helper functions ] ####################################################
+
+// isVoidValue reports whether the given named value is a non-value (i.e. a call
+// instruction or invoke terminator with void-return type).
+func isVoidValue(n value.Named) bool {
+	switch n.(type) {
+	case *InstCall, *TermInvoke:
+		return n.Type().Equal(types.Void)
+	}
+	return false
 }
