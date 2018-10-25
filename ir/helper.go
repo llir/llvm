@@ -17,8 +17,8 @@ func (*BasicBlock) IsUnwindTarget() {}
 type Param struct {
 	// Parameter type.
 	Typ types.Type
-	// (optional) Parameter name.
-	ParamName string
+	// (optional) Parameter name (without '%' prefix).
+	LocalName string
 
 	// extra.
 
@@ -28,7 +28,7 @@ type Param struct {
 
 // NewParam returns a new function parameter based on the given type and name.
 func NewParam(typ types.Type, name string) *Param {
-	return &Param{Typ: typ, ParamName: name}
+	return &Param{Typ: typ, LocalName: name}
 }
 
 // String returns the LLVM syntax representation of the function parameter as a
@@ -44,17 +44,17 @@ func (p *Param) Type() types.Type {
 
 // Ident returns the identifier associated with the function parameter.
 func (p *Param) Ident() string {
-	return enc.Local(p.ParamName)
+	return enc.Local(p.LocalName)
 }
 
 // Name returns the name of the function parameter.
 func (p *Param) Name() string {
-	return p.ParamName
+	return p.LocalName
 }
 
 // SetName sets the name of the function parameter.
 func (p *Param) SetName(name string) {
-	p.ParamName = name
+	p.LocalName = name
 }
 
 // ### [ Helper functions ] ####################################################

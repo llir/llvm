@@ -17,8 +17,8 @@ import (
 type Function struct {
 	// Function signature.
 	Sig *types.FuncType
-	// Function name.
-	FuncName string
+	// Function name (without '@' prefix).
+	GlobalName string
 	// Function parameters.
 	Params []*Param
 	// Basic blocks.
@@ -80,7 +80,7 @@ func NewFunction(name string, retType types.Type, params ...*Param) *Function {
 			paramType[i] = param.Type()
 		}
 		sig := types.NewFunc(f.RetType, paramTypes...)
-		return &Function{Sig: sig, FuncName: name, Params: params}
+		return &Function{Sig: sig, GlobalName: name, Params: params}
 	*/
 }
 
@@ -101,17 +101,17 @@ func (f *Function) Type() types.Type {
 
 // Ident returns the identifier associated with the function.
 func (f *Function) Ident() string {
-	return enc.Global(f.FuncName)
+	return enc.Global(f.GlobalName)
 }
 
 // Name returns the name of the function.
 func (f *Function) Name() string {
-	return f.FuncName
+	return f.GlobalName
 }
 
 // SetName sets the name of the function.
 func (f *Function) SetName(name string) {
-	f.FuncName = name
+	f.GlobalName = name
 }
 
 // Def returns the LLVM syntax representation of the function definition or
@@ -137,7 +137,7 @@ func (f *Function) AssignIDs() error {
 		} else if isLocalID(got) {
 			want := strconv.Itoa(id)
 			if want != got {
-				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", enc.Global(f.FuncName), enc.Local(want), enc.Local(got))
+				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", enc.Global(f.GlobalName), enc.Local(want), enc.Local(got))
 			}
 			id++
 		} else {
