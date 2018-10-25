@@ -1805,11 +1805,11 @@ Instruction -> Instruction
 	: StoreInst
 	| FenceInst
 	# Instructions producing values.
-	| LocalDef
+	| LocalDefInst
 	| ValueInstruction
 ;
 
-LocalDef -> LocalDef
+LocalDefInst -> LocalDefInst
 	: Name=LocalIdent '=' Inst=ValueInstruction
 ;
 
@@ -2595,17 +2595,30 @@ CleanupPadInst -> CleanupPadInst
 %interface Terminator;
 
 Terminator -> Terminator
+	# Terminators not producing values.
 	: RetTerm
 	| BrTerm
 	| CondBrTerm
 	| SwitchTerm
 	| IndirectBrTerm
-	| InvokeTerm
 	| ResumeTerm
-	| CatchSwitchTerm
 	| CatchRetTerm
 	| CleanupRetTerm
 	| UnreachableTerm
+	# Terminators producing values.
+	| LocalDefTerm
+	| ValueTerminator
+;
+
+LocalDefTerm -> LocalDefTerm
+	: Name=LocalIdent '=' Term=ValueTerminator
+;
+
+%interface ValueTerminator;
+
+ValueTerminator -> ValueTerminator
+	: InvokeTerm
+	| CatchSwitchTerm
 ;
 
 # --- [ ret ] ------------------------------------------------------------------
