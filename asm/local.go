@@ -30,18 +30,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+// funcGen is a generator for a given IR function.
 type funcGen struct {
 	// Module generator.
 	gen *generator
-
 	// LLVM IR function being generated.
 	f *ir.Function
-
 	// ls maps from local identifier (without '%' prefix) to corresponding IR
 	// value.
 	ls map[string]value.Value
 }
 
+// newFuncGen returns a new generator for the given IR function.
 func newFuncGen(gen *generator, f *ir.Function) *funcGen {
 	return &funcGen{
 		gen: gen,
@@ -50,61 +50,29 @@ func newFuncGen(gen *generator, f *ir.Function) *funcGen {
 	}
 }
 
+// addLocal adds the local variable with the given name to the map of local
+// variables of the function.
+func (fgen *funcGen) addLocal(name string, v value.Value) error {
+	if prev, ok := fgen.ls[name]; ok {
+		return errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(name), prev, v)
+	}
+	fgen.ls[name] = v
+	return nil
+}
+
 // resolveLocals resolves the local variables, basic blocks and function
 // parameters of the given function body. The returned value maps from local
 // identifier (without '%' prefix) to the corresponding IR value.
 func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, error) {
 	// Create instructions (without bodies), in preparation for index.
-	f := fgen.f
-	bbs := body.Blocks()
-	for _, b := range bbs {
-		blockName := label(*b.Name())
-		block := ir.NewBlock(blockName)
-		for _, i := range b.Insts() {
-			inst, err := fgen.newIRInst(i)
-			if err != nil {
-				return nil, errors.WithStack(err)
-			}
-			block.Insts = append(block.Insts, inst)
-		}
-		f.Blocks = append(f.Blocks, block)
-	}
-	// Assign local IDs.
-	if err := f.AssignIDs(); err != nil {
+	oldBlocks := body.Blocks()
+	if err := fgen.indexLocals(oldBlocks); err != nil {
 		return nil, errors.WithStack(err)
 	}
-	// Index local identifiers.
-	for _, param := range f.Params {
-		if prev, ok := fgen.ls[param.ParamName]; ok {
-			return nil, errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(param.ParamName), prev, param)
-		}
-		fgen.ls[param.ParamName] = param
-	}
-	for _, block := range f.Blocks {
-		if prev, ok := fgen.ls[block.LocalName]; ok {
-			return nil, errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(block.LocalName), prev, block)
-		}
-		// TODO: Rename block.LocalName to block.BlockName?
-		fgen.ls[block.LocalName] = block
-		for _, inst := range block.Insts {
-			if n, ok := inst.(value.Named); ok {
-				// Skip call instruction if callee has void return type.
-				if n, ok := n.(*ir.InstCall); ok {
-					if n.Type().Equal(types.Void) {
-						continue
-					}
-				}
-				if prev, ok := fgen.ls[n.Name()]; ok {
-					return nil, errors.Errorf("IR local identifier %q already present; prev `%s`, new `%s`", enc.Local(n.Name()), prev, n)
-				}
-				fgen.ls[n.Name()] = n
-			}
-		}
-		// TODO: Index terminators.
-	}
 	// Translate instructions.
+	f := fgen.f
 	for i, block := range f.Blocks {
-		insts := bbs[i].Insts()
+		insts := oldBlocks[i].Insts()
 		for j, inst := range block.Insts {
 			old := insts[j]
 			if _, err := fgen.astToIRInst(inst, old); err != nil {
@@ -114,12 +82,10 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 	}
 	// Translate terminators.
 	for i, block := range f.Blocks {
-		old := bbs[i].Term()
-		term, err := fgen.astToIRTerm(old)
-		if err != nil {
+		old := oldBlocks[i].Term()
+		if _, err := fgen.astToIRTerm(block.Term, old); err != nil {
 			return nil, errors.WithStack(err)
 		}
-		block.Term = term
 	}
 	return fgen.ls, nil
 }
@@ -128,8 +94,8 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 // the given AST instruction.
 func (fgen *funcGen) newIRInst(old ast.Instruction) (ir.Instruction, error) {
 	switch old := old.(type) {
-	// Value instruction.
-	case *ast.LocalDef:
+	// Value instructions.
+	case *ast.LocalDefInst:
 		name := local(old.Name())
 		return fgen.newIRValueInst(name, old.Inst())
 	case ast.ValueInstruction:
@@ -461,7 +427,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.Instruction, error) {
 	switch old := old.(type) {
 	// Value instruction.
-	case *ast.LocalDef:
+	case *ast.LocalDefInst:
 		name := local(old.Name())
 		v, ok := fgen.ls[name]
 		if !ok {
@@ -471,9 +437,9 @@ func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.I
 		if !ok {
 			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", name, v)
 		}
-		return fgen.astToIRInstValue(i, old.Inst())
+		return fgen.astToIRValueInst(i, old.Inst())
 	case ast.ValueInstruction:
-		return fgen.astToIRInstValue(inst, old)
+		return fgen.astToIRValueInst(inst, old)
 	// Non-value instructions.
 	case *ast.StoreInst:
 		return fgen.astToIRInstStore(inst, old)
@@ -486,7 +452,7 @@ func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.I
 
 // astToIRValueInst translates the AST value instruction into an equivalent IR
 // value instruction.
-func (fgen *funcGen) astToIRInstValue(inst ir.Instruction, old ast.ValueInstruction) (ir.Instruction, error) {
+func (fgen *funcGen) astToIRValueInst(inst ir.Instruction, old ast.ValueInstruction) (ir.Instruction, error) {
 	switch old := old.(type) {
 	// Binary instructions
 	case *ast.AddInst:
@@ -1530,119 +1496,187 @@ func (fgen *funcGen) astToIRInstCleanupPad(inst ir.Instruction, old *ast.Cleanup
 // === [ Terminators ] =========================================================
 
 // astToIRTerm translates the AST terminator into an equivalent IR terminator.
-func (fgen *funcGen) astToIRTerm(old ast.Terminator) (ir.Terminator, error) {
+func (fgen *funcGen) astToIRTerm(term ir.Terminator, old ast.Terminator) (ir.Terminator, error) {
 	switch old := old.(type) {
+	// Value terminator.
+	case *ast.LocalDefTerm:
+		name := local(old.Name())
+		v, ok := fgen.ls[name]
+		if !ok {
+			return nil, errors.Errorf("unable to locate local variable %q", name)
+		}
+		t, ok := v.(ir.Terminator)
+		if !ok {
+			return nil, errors.Errorf("invalid terminator type of %q; expected ir.Terminator, got %T", name, v)
+		}
+		return fgen.astToIRValueTerm(t, old.Term())
+	case ast.ValueTerminator:
+		return fgen.astToIRValueTerm(term, old)
+	// Non-value terminators.
 	case *ast.RetTerm:
-		return fgen.astToIRTermRet(old)
+		return fgen.astToIRTermRet(term, old)
 	case *ast.BrTerm:
-		return fgen.astToIRTermBr(old)
+		return fgen.astToIRTermBr(term, old)
 	case *ast.CondBrTerm:
-		return fgen.astToIRTermCondBr(old)
+		return fgen.astToIRTermCondBr(term, old)
 	case *ast.SwitchTerm:
-		return fgen.astToIRTermSwitch(old)
+		return fgen.astToIRTermSwitch(term, old)
 	case *ast.IndirectBrTerm:
-		return fgen.astToIRTermIndirectBr(old)
-	case *ast.InvokeTerm:
-		return fgen.astToIRTermInvoke(old)
+		return fgen.astToIRTermIndirectBr(term, old)
 	case *ast.ResumeTerm:
-		return fgen.astToIRTermResume(old)
-	case *ast.CatchSwitchTerm:
-		return fgen.astToIRTermCatchSwitch(old)
+		return fgen.astToIRTermResume(term, old)
 	case *ast.CatchRetTerm:
-		return fgen.astToIRTermCatchRet(old)
+		return fgen.astToIRTermCatchRet(term, old)
 	case *ast.CleanupRetTerm:
-		return fgen.astToIRTermCleanupRet(old)
+		return fgen.astToIRTermCleanupRet(term, old)
 	case *ast.UnreachableTerm:
-		return fgen.astToIRTermUnreachable(old)
+		return fgen.astToIRTermUnreachable(term, old)
 	default:
 		panic(fmt.Errorf("support for AST terminator type %T not yet implemented", old))
 	}
 }
 
+// astToIRValueTerm translates the AST value terminator into an equivalent IR
+// terminator.
+func (fgen *funcGen) astToIRValueTerm(term ir.Terminator, old ast.ValueTerminator) (ir.Terminator, error) {
+	switch old := old.(type) {
+	case *ast.InvokeTerm:
+		return fgen.astToIRTermInvoke(term, old)
+	case *ast.CatchSwitchTerm:
+		return fgen.astToIRTermCatchSwitch(term, old)
+	default:
+		panic(fmt.Errorf("support for value terminator %T not yet implemented", old))
+	}
+}
+
 // --- [ ret ] -----------------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermRet(old *ast.RetTerm) (*ir.TermRet, error) {
-	term := &ir.TermRet{}
+func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) (*ir.TermRet, error) {
+	t, ok := term.(*ir.TermRet)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermRet), got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ br ] ------------------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermBr(old *ast.BrTerm) (*ir.TermBr, error) {
-	term := &ir.TermBr{}
+func (fgen *funcGen) astToIRTermBr(term ir.Terminator, old *ast.BrTerm) (*ir.TermBr, error) {
+	t, ok := term.(*ir.TermBr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermBr, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
-func (fgen *funcGen) astToIRTermCondBr(old *ast.CondBrTerm) (*ir.TermCondBr, error) {
-	term := &ir.TermCondBr{}
+func (fgen *funcGen) astToIRTermCondBr(term ir.Terminator, old *ast.CondBrTerm) (*ir.TermCondBr, error) {
+	t, ok := term.(*ir.TermCondBr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCondBr, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ switch ] --------------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermSwitch(old *ast.SwitchTerm) (*ir.TermSwitch, error) {
-	term := &ir.TermSwitch{}
+func (fgen *funcGen) astToIRTermSwitch(term ir.Terminator, old *ast.SwitchTerm) (*ir.TermSwitch, error) {
+	t, ok := term.(*ir.TermSwitch)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermSwitch, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ indirectbr ] ----------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermIndirectBr(old *ast.IndirectBrTerm) (*ir.TermIndirectBr, error) {
-	term := &ir.TermIndirectBr{}
+func (fgen *funcGen) astToIRTermIndirectBr(term ir.Terminator, old *ast.IndirectBrTerm) (*ir.TermIndirectBr, error) {
+	t, ok := term.(*ir.TermIndirectBr)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermIndirectBr, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ invoke ] --------------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermInvoke(old *ast.InvokeTerm) (*ir.TermInvoke, error) {
-	term := &ir.TermInvoke{}
+func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) (*ir.TermInvoke, error) {
+	t, ok := term.(*ir.TermInvoke)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermInvoke, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ resume ] --------------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermResume(old *ast.ResumeTerm) (*ir.TermResume, error) {
-	term := &ir.TermResume{}
+func (fgen *funcGen) astToIRTermResume(term ir.Terminator, old *ast.ResumeTerm) (*ir.TermResume, error) {
+	t, ok := term.(*ir.TermResume)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermResume, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ catchswitch ] ---------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermCatchSwitch(old *ast.CatchSwitchTerm) (*ir.TermCatchSwitch, error) {
-	term := &ir.TermCatchSwitch{}
+func (fgen *funcGen) astToIRTermCatchSwitch(term ir.Terminator, old *ast.CatchSwitchTerm) (*ir.TermCatchSwitch, error) {
+	t, ok := term.(*ir.TermCatchSwitch)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchSwitch, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ catchret ] ------------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermCatchRet(old *ast.CatchRetTerm) (*ir.TermCatchRet, error) {
-	term := &ir.TermCatchRet{}
+func (fgen *funcGen) astToIRTermCatchRet(term ir.Terminator, old *ast.CatchRetTerm) (*ir.TermCatchRet, error) {
+	t, ok := term.(*ir.TermCatchRet)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchRet, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ cleanupret ] ----------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermCleanupRet(old *ast.CleanupRetTerm) (*ir.TermCleanupRet, error) {
-	term := &ir.TermCleanupRet{}
+func (fgen *funcGen) astToIRTermCleanupRet(term ir.Terminator, old *ast.CleanupRetTerm) (*ir.TermCleanupRet, error) {
+	t, ok := term.(*ir.TermCleanupRet)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCleanupRet, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // --- [ unreachable ] ---------------------------------------------------------
 
-func (fgen *funcGen) astToIRTermUnreachable(old *ast.UnreachableTerm) (*ir.TermUnreachable, error) {
-	term := &ir.TermUnreachable{}
+func (fgen *funcGen) astToIRTermUnreachable(term ir.Terminator, old *ast.UnreachableTerm) (*ir.TermUnreachable, error) {
+	t, ok := term.(*ir.TermUnreachable)
+	if !ok {
+		// NOTE: panic since this would indicate a bug in the implementation.
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermUnreachable, got %T", term))
+	}
 	// TODO: implement
-	return term, nil
+	return t, nil
 }
 
 // ### [ Helper functions ] ####################################################
