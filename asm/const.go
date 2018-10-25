@@ -225,5 +225,5 @@ func fixBlockAddressConst(c *ir.ConstBlockAddress) error {
 			return nil
 		}
 	}
-	return errors.Errorf("unable to locate basic block %q in function %q", blockName, f.FuncName)
+	return errors.Errorf("unable to locate basic block %q in function %q", blockName, f.GlobalName)
 }

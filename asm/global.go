@@ -129,7 +129,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 		g.Typ = types.NewPointer(g.ContentType)
 		return g, nil
 	case *ast.FuncDecl:
-		f := &ir.Function{FuncName: name}
+		f := &ir.Function{GlobalName: name}
 		hdr := old.Header()
 		sig := &types.FuncType{}
 		// Return type.
@@ -153,7 +153,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
 	case *ast.FuncDef:
-		f := &ir.Function{FuncName: name}
+		f := &ir.Function{GlobalName: name}
 		sig := &types.FuncType{}
 		hdr := old.Header()
 		// Return type.
