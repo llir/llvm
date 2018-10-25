@@ -2686,7 +2686,7 @@ IndirectBrTerm -> IndirectBrTerm
 #       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
 
 InvokeTerm -> InvokeTerm
-	: 'invoke' CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Invokee=TypeValue '(' Args ')' FuncAttrs=FuncAttr* OperandBundles 'to' Normal=Label 'unwind' Exception=Label InstMetadata
+	: 'invoke' CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Typ=Type Invokee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles 'to' Normal=Label 'unwind' Exception=Label InstMetadata
 ;
 
 # --- [ resume ] ---------------------------------------------------------------
