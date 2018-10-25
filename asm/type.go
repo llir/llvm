@@ -511,6 +511,8 @@ func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.
 
 // ### [ Helpers ] #############################################################
 
+// TODO: rename irType to astToIRType?
+
 // irType returns the IR type corresponding to the given AST type.
 func (gen *generator) irType(old ast.LlvmNode) (types.Type, error) {
 	return gen.astToIRTypeDef(nil, old)
