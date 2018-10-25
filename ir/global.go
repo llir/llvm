@@ -13,7 +13,7 @@ import (
 
 // Global is a global variable declaration or definition.
 type Global struct {
-	// Global variable name.
+	// Global variable name (without '@' prefix).
 	GlobalName string
 	// Immutability of global variable (constant or global).
 	Immutable bool
