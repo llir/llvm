@@ -904,10 +904,11 @@ FuncHeader -> FuncHeader
 	: (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
-# TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
-# Both define an identifier GC, the former in listener.go and the latter in token.go.
-
-# TODO: Create issue in Textmapper to track this upstream.
+# NODE: Named GCNode instead of GC to avoid collisions with 'gc' token. Both
+# define an identifier GC, the former in listener.go and the latter in
+# token.go.
+#
+# Upstream issue https://github.com/inspirer/textmapper/issues/18
 
 GC -> GCNode
 	: 'gc' Name=StringLit
