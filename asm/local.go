@@ -1,5 +1,3 @@
-// TODO: rename from translateFoo to astToIRFoo.
-
 // Problems to solve.
 //
 // phi instructions can reference local variables defined in basic blocks not
@@ -102,13 +100,14 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 				fgen.ls[n.Name()] = n
 			}
 		}
+		// TODO: Index terminators.
 	}
 	// Translate instructions.
 	for i, block := range f.Blocks {
 		insts := bbs[i].Insts()
 		for j, inst := range block.Insts {
 			old := insts[j]
-			if _, err := fgen.translateInst(inst, old); err != nil {
+			if _, err := fgen.astToIRInst(inst, old); err != nil {
 				return nil, errors.WithStack(err)
 			}
 		}
@@ -116,7 +115,7 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 	// Translate terminators.
 	for i, block := range f.Blocks {
 		old := bbs[i].Term()
-		term, err := fgen.translateTerm(old)
+		term, err := fgen.astToIRTerm(old)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -458,9 +457,8 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 
 // === [ Instructions ] ========================================================
 
-// translateInst translates the AST instruction into an equivalent IR
-// instruction.
-func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir.Instruction, error) {
+// astToIRInst translates the AST instruction into an equivalent IR instruction.
+func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.Instruction, error) {
 	switch old := old.(type) {
 	// Value instruction.
 	case *ast.LocalDef:
@@ -473,130 +471,130 @@ func (fgen *funcGen) translateInst(inst ir.Instruction, old ast.Instruction) (ir
 		if !ok {
 			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", name, v)
 		}
-		return fgen.translateValueInst(i, old.Inst())
+		return fgen.astToIRInstValue(i, old.Inst())
 	case ast.ValueInstruction:
-		return fgen.translateValueInst(inst, old)
+		return fgen.astToIRInstValue(inst, old)
 	// Non-value instructions.
 	case *ast.StoreInst:
-		return fgen.translateStoreInst(inst, old)
+		return fgen.astToIRInstStore(inst, old)
 	case *ast.FenceInst:
-		return fgen.translateFenceInst(inst, old)
+		return fgen.astToIRInstFence(inst, old)
 	default:
 		panic(fmt.Errorf("support for instruction type %T not yet implemented", old))
 	}
 }
 
-// translateValueInst translates the AST value instruction into an equivalent IR
+// astToIRValueInst translates the AST value instruction into an equivalent IR
 // value instruction.
-func (fgen *funcGen) translateValueInst(inst ir.Instruction, old ast.ValueInstruction) (ir.Instruction, error) {
+func (fgen *funcGen) astToIRInstValue(inst ir.Instruction, old ast.ValueInstruction) (ir.Instruction, error) {
 	switch old := old.(type) {
 	// Binary instructions
 	case *ast.AddInst:
-		return fgen.translateAddInst(inst, old)
+		return fgen.astToIRInstAdd(inst, old)
 	case *ast.FAddInst:
-		return fgen.translateFAddInst(inst, old)
+		return fgen.astToIRInstFAdd(inst, old)
 	case *ast.SubInst:
-		return fgen.translateSubInst(inst, old)
+		return fgen.astToIRInstSub(inst, old)
 	case *ast.FSubInst:
-		return fgen.translateFSubInst(inst, old)
+		return fgen.astToIRInstFSub(inst, old)
 	case *ast.MulInst:
-		return fgen.translateMulInst(inst, old)
+		return fgen.astToIRInstMul(inst, old)
 	case *ast.FMulInst:
-		return fgen.translateFMulInst(inst, old)
+		return fgen.astToIRInstFMul(inst, old)
 	case *ast.UDivInst:
-		return fgen.translateUDivInst(inst, old)
+		return fgen.astToIRInstUDiv(inst, old)
 	case *ast.SDivInst:
-		return fgen.translateSDivInst(inst, old)
+		return fgen.astToIRInstSDiv(inst, old)
 	case *ast.FDivInst:
-		return fgen.translateFDivInst(inst, old)
+		return fgen.astToIRInstFDiv(inst, old)
 	case *ast.URemInst:
-		return fgen.translateURemInst(inst, old)
+		return fgen.astToIRInstURem(inst, old)
 	case *ast.SRemInst:
-		return fgen.translateSRemInst(inst, old)
+		return fgen.astToIRInstSRem(inst, old)
 	case *ast.FRemInst:
-		return fgen.translateFRemInst(inst, old)
+		return fgen.astToIRInstFRem(inst, old)
 	// Bitwise instructions
 	case *ast.ShlInst:
-		return fgen.translateShlInst(inst, old)
+		return fgen.astToIRInstShl(inst, old)
 	case *ast.LShrInst:
-		return fgen.translateLShrInst(inst, old)
+		return fgen.astToIRInstLShr(inst, old)
 	case *ast.AShrInst:
-		return fgen.translateAShrInst(inst, old)
+		return fgen.astToIRInstAShr(inst, old)
 	case *ast.AndInst:
-		return fgen.translateAndInst(inst, old)
+		return fgen.astToIRInstAnd(inst, old)
 	case *ast.OrInst:
-		return fgen.translateOrInst(inst, old)
+		return fgen.astToIRInstOr(inst, old)
 	case *ast.XorInst:
-		return fgen.translateXorInst(inst, old)
+		return fgen.astToIRInstXor(inst, old)
 	// Vector instructions
 	case *ast.ExtractElementInst:
-		return fgen.translateExtractElementInst(inst, old)
+		return fgen.astToIRInstExtractElement(inst, old)
 	case *ast.InsertElementInst:
-		return fgen.translateInsertElementInst(inst, old)
+		return fgen.astToIRInstInsertElement(inst, old)
 	case *ast.ShuffleVectorInst:
-		return fgen.translateShuffleVectorInst(inst, old)
+		return fgen.astToIRInstShuffleVector(inst, old)
 	// Aggregate instructions
 	case *ast.ExtractValueInst:
-		return fgen.translateExtractValueInst(inst, old)
+		return fgen.astToIRInstExtractValue(inst, old)
 	case *ast.InsertValueInst:
-		return fgen.translateInsertValueInst(inst, old)
+		return fgen.astToIRInstInsertValue(inst, old)
 	// Memory instructions
 	case *ast.AllocaInst:
-		return fgen.translateAllocaInst(inst, old)
+		return fgen.astToIRInstAlloca(inst, old)
 	case *ast.LoadInst:
-		return fgen.translateLoadInst(inst, old)
+		return fgen.astToIRInstLoad(inst, old)
 	case *ast.CmpXchgInst:
-		return fgen.translateCmpXchgInst(inst, old)
+		return fgen.astToIRInstCmpXchg(inst, old)
 	case *ast.AtomicRMWInst:
-		return fgen.translateAtomicRMWInst(inst, old)
+		return fgen.astToIRInstAtomicRMW(inst, old)
 	case *ast.GetElementPtrInst:
-		return fgen.translateGetElementPtrInst(inst, old)
+		return fgen.astToIRInstGetElementPtr(inst, old)
 	// Conversion instructions
 	case *ast.TruncInst:
-		return fgen.translateTruncInst(inst, old)
+		return fgen.astToIRInstTrunc(inst, old)
 	case *ast.ZExtInst:
-		return fgen.translateZExtInst(inst, old)
+		return fgen.astToIRInstZExt(inst, old)
 	case *ast.SExtInst:
-		return fgen.translateSExtInst(inst, old)
+		return fgen.astToIRInstSExt(inst, old)
 	case *ast.FPTruncInst:
-		return fgen.translateFPTruncInst(inst, old)
+		return fgen.astToIRInstFPTrunc(inst, old)
 	case *ast.FPExtInst:
-		return fgen.translateFPExtInst(inst, old)
+		return fgen.astToIRInstFPExt(inst, old)
 	case *ast.FPToUIInst:
-		return fgen.translateFPToUIInst(inst, old)
+		return fgen.astToIRInstFPToUI(inst, old)
 	case *ast.FPToSIInst:
-		return fgen.translateFPToSIInst(inst, old)
+		return fgen.astToIRInstFPToSI(inst, old)
 	case *ast.UIToFPInst:
-		return fgen.translateUIToFPInst(inst, old)
+		return fgen.astToIRInstUIToFP(inst, old)
 	case *ast.SIToFPInst:
-		return fgen.translateSIToFPInst(inst, old)
+		return fgen.astToIRInstSIToFP(inst, old)
 	case *ast.PtrToIntInst:
-		return fgen.translatePtrToIntInst(inst, old)
+		return fgen.astToIRInstPtrToInt(inst, old)
 	case *ast.IntToPtrInst:
-		return fgen.translateIntToPtrInst(inst, old)
+		return fgen.astToIRInstIntToPtr(inst, old)
 	case *ast.BitCastInst:
-		return fgen.translateBitCastInst(inst, old)
+		return fgen.astToIRInstBitCast(inst, old)
 	case *ast.AddrSpaceCastInst:
-		return fgen.translateAddrSpaceCastInst(inst, old)
+		return fgen.astToIRInstAddrSpaceCast(inst, old)
 	// Other instructions
 	case *ast.ICmpInst:
-		return fgen.translateICmpInst(inst, old)
+		return fgen.astToIRInstICmp(inst, old)
 	case *ast.FCmpInst:
-		return fgen.translateFCmpInst(inst, old)
+		return fgen.astToIRInstFCmp(inst, old)
 	case *ast.PhiInst:
-		return fgen.translatePhiInst(inst, old)
+		return fgen.astToIRInstPhi(inst, old)
 	case *ast.SelectInst:
-		return fgen.translateSelectInst(inst, old)
+		return fgen.astToIRInstSelect(inst, old)
 	case *ast.CallInst:
-		return fgen.translateCallInst(inst, old)
+		return fgen.astToIRInstCall(inst, old)
 	case *ast.VAArgInst:
-		return fgen.translateVAArgInst(inst, old)
+		return fgen.astToIRInstVAArg(inst, old)
 	case *ast.LandingPadInst:
-		return fgen.translateLandingPadInst(inst, old)
+		return fgen.astToIRInstLandingPad(inst, old)
 	case *ast.CatchPadInst:
-		return fgen.translateCatchPadInst(inst, old)
+		return fgen.astToIRInstCatchPad(inst, old)
 	case *ast.CleanupPadInst:
-		return fgen.translateCleanupPadInst(inst, old)
+		return fgen.astToIRInstCleanupPad(inst, old)
 	default:
 		panic(fmt.Errorf("support for value instruction type %T not yet implemented", old))
 	}
@@ -606,7 +604,7 @@ func (fgen *funcGen) translateValueInst(inst ir.Instruction, old ast.ValueInstru
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*ir.InstAdd, error) {
+func (fgen *funcGen) astToIRInstAdd(inst ir.Instruction, old *ast.AddInst) (*ir.InstAdd, error) {
 	i, ok := inst.(*ir.InstAdd)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -631,7 +629,7 @@ func (fgen *funcGen) translateAddInst(inst ir.Instruction, old *ast.AddInst) (*i
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFAddInst(inst ir.Instruction, old *ast.FAddInst) (*ir.InstFAdd, error) {
+func (fgen *funcGen) astToIRInstFAdd(inst ir.Instruction, old *ast.FAddInst) (*ir.InstFAdd, error) {
 	i, ok := inst.(*ir.InstFAdd)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -661,7 +659,7 @@ func (fgen *funcGen) translateFAddInst(inst ir.Instruction, old *ast.FAddInst) (
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateSubInst(inst ir.Instruction, old *ast.SubInst) (*ir.InstSub, error) {
+func (fgen *funcGen) astToIRInstSub(inst ir.Instruction, old *ast.SubInst) (*ir.InstSub, error) {
 	i, ok := inst.(*ir.InstSub)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -690,7 +688,7 @@ func (fgen *funcGen) translateSubInst(inst ir.Instruction, old *ast.SubInst) (*i
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFSubInst(inst ir.Instruction, old *ast.FSubInst) (*ir.InstFSub, error) {
+func (fgen *funcGen) astToIRInstFSub(inst ir.Instruction, old *ast.FSubInst) (*ir.InstFSub, error) {
 	i, ok := inst.(*ir.InstFSub)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -719,7 +717,7 @@ func (fgen *funcGen) translateFSubInst(inst ir.Instruction, old *ast.FSubInst) (
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateMulInst(inst ir.Instruction, old *ast.MulInst) (*ir.InstMul, error) {
+func (fgen *funcGen) astToIRInstMul(inst ir.Instruction, old *ast.MulInst) (*ir.InstMul, error) {
 	i, ok := inst.(*ir.InstMul)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -748,7 +746,7 @@ func (fgen *funcGen) translateMulInst(inst ir.Instruction, old *ast.MulInst) (*i
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFMulInst(inst ir.Instruction, old *ast.FMulInst) (*ir.InstFMul, error) {
+func (fgen *funcGen) astToIRInstFMul(inst ir.Instruction, old *ast.FMulInst) (*ir.InstFMul, error) {
 	i, ok := inst.(*ir.InstFMul)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -777,7 +775,7 @@ func (fgen *funcGen) translateFMulInst(inst ir.Instruction, old *ast.FMulInst) (
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateUDivInst(inst ir.Instruction, old *ast.UDivInst) (*ir.InstUDiv, error) {
+func (fgen *funcGen) astToIRInstUDiv(inst ir.Instruction, old *ast.UDivInst) (*ir.InstUDiv, error) {
 	i, ok := inst.(*ir.InstUDiv)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -804,7 +802,7 @@ func (fgen *funcGen) translateUDivInst(inst ir.Instruction, old *ast.UDivInst) (
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateSDivInst(inst ir.Instruction, old *ast.SDivInst) (*ir.InstSDiv, error) {
+func (fgen *funcGen) astToIRInstSDiv(inst ir.Instruction, old *ast.SDivInst) (*ir.InstSDiv, error) {
 	i, ok := inst.(*ir.InstSDiv)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -831,7 +829,7 @@ func (fgen *funcGen) translateSDivInst(inst ir.Instruction, old *ast.SDivInst) (
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFDivInst(inst ir.Instruction, old *ast.FDivInst) (*ir.InstFDiv, error) {
+func (fgen *funcGen) astToIRInstFDiv(inst ir.Instruction, old *ast.FDivInst) (*ir.InstFDiv, error) {
 	i, ok := inst.(*ir.InstFDiv)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -860,7 +858,7 @@ func (fgen *funcGen) translateFDivInst(inst ir.Instruction, old *ast.FDivInst) (
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateURemInst(inst ir.Instruction, old *ast.URemInst) (*ir.InstURem, error) {
+func (fgen *funcGen) astToIRInstURem(inst ir.Instruction, old *ast.URemInst) (*ir.InstURem, error) {
 	i, ok := inst.(*ir.InstURem)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -887,7 +885,7 @@ func (fgen *funcGen) translateURemInst(inst ir.Instruction, old *ast.URemInst) (
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateSRemInst(inst ir.Instruction, old *ast.SRemInst) (*ir.InstSRem, error) {
+func (fgen *funcGen) astToIRInstSRem(inst ir.Instruction, old *ast.SRemInst) (*ir.InstSRem, error) {
 	i, ok := inst.(*ir.InstSRem)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -914,7 +912,7 @@ func (fgen *funcGen) translateSRemInst(inst ir.Instruction, old *ast.SRemInst) (
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFRemInst(inst ir.Instruction, old *ast.FRemInst) (*ir.InstFRem, error) {
+func (fgen *funcGen) astToIRInstFRem(inst ir.Instruction, old *ast.FRemInst) (*ir.InstFRem, error) {
 	i, ok := inst.(*ir.InstFRem)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -945,7 +943,7 @@ func (fgen *funcGen) translateFRemInst(inst ir.Instruction, old *ast.FRemInst) (
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateShlInst(inst ir.Instruction, old *ast.ShlInst) (*ir.InstShl, error) {
+func (fgen *funcGen) astToIRInstShl(inst ir.Instruction, old *ast.ShlInst) (*ir.InstShl, error) {
 	i, ok := inst.(*ir.InstShl)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -974,7 +972,7 @@ func (fgen *funcGen) translateShlInst(inst ir.Instruction, old *ast.ShlInst) (*i
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateLShrInst(inst ir.Instruction, old *ast.LShrInst) (*ir.InstLShr, error) {
+func (fgen *funcGen) astToIRInstLShr(inst ir.Instruction, old *ast.LShrInst) (*ir.InstLShr, error) {
 	i, ok := inst.(*ir.InstLShr)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1001,7 +999,7 @@ func (fgen *funcGen) translateLShrInst(inst ir.Instruction, old *ast.LShrInst) (
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateAShrInst(inst ir.Instruction, old *ast.AShrInst) (*ir.InstAShr, error) {
+func (fgen *funcGen) astToIRInstAShr(inst ir.Instruction, old *ast.AShrInst) (*ir.InstAShr, error) {
 	i, ok := inst.(*ir.InstAShr)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1028,7 +1026,7 @@ func (fgen *funcGen) translateAShrInst(inst ir.Instruction, old *ast.AShrInst) (
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateAndInst(inst ir.Instruction, old *ast.AndInst) (*ir.InstAnd, error) {
+func (fgen *funcGen) astToIRInstAnd(inst ir.Instruction, old *ast.AndInst) (*ir.InstAnd, error) {
 	i, ok := inst.(*ir.InstAnd)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1055,7 +1053,7 @@ func (fgen *funcGen) translateAndInst(inst ir.Instruction, old *ast.AndInst) (*i
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateOrInst(inst ir.Instruction, old *ast.OrInst) (*ir.InstOr, error) {
+func (fgen *funcGen) astToIRInstOr(inst ir.Instruction, old *ast.OrInst) (*ir.InstOr, error) {
 	i, ok := inst.(*ir.InstOr)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1082,7 +1080,7 @@ func (fgen *funcGen) translateOrInst(inst ir.Instruction, old *ast.OrInst) (*ir.
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateXorInst(inst ir.Instruction, old *ast.XorInst) (*ir.InstXor, error) {
+func (fgen *funcGen) astToIRInstXor(inst ir.Instruction, old *ast.XorInst) (*ir.InstXor, error) {
 	i, ok := inst.(*ir.InstXor)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1111,7 +1109,7 @@ func (fgen *funcGen) translateXorInst(inst ir.Instruction, old *ast.XorInst) (*i
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateExtractElementInst(inst ir.Instruction, old *ast.ExtractElementInst) (*ir.InstExtractElement, error) {
+func (fgen *funcGen) astToIRInstExtractElement(inst ir.Instruction, old *ast.ExtractElementInst) (*ir.InstExtractElement, error) {
 	i, ok := inst.(*ir.InstExtractElement)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1123,7 +1121,7 @@ func (fgen *funcGen) translateExtractElementInst(inst ir.Instruction, old *ast.E
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateInsertElementInst(inst ir.Instruction, old *ast.InsertElementInst) (*ir.InstInsertElement, error) {
+func (fgen *funcGen) astToIRInstInsertElement(inst ir.Instruction, old *ast.InsertElementInst) (*ir.InstInsertElement, error) {
 	i, ok := inst.(*ir.InstInsertElement)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1135,7 +1133,7 @@ func (fgen *funcGen) translateInsertElementInst(inst ir.Instruction, old *ast.In
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateShuffleVectorInst(inst ir.Instruction, old *ast.ShuffleVectorInst) (*ir.InstShuffleVector, error) {
+func (fgen *funcGen) astToIRInstShuffleVector(inst ir.Instruction, old *ast.ShuffleVectorInst) (*ir.InstShuffleVector, error) {
 	i, ok := inst.(*ir.InstShuffleVector)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1149,7 +1147,7 @@ func (fgen *funcGen) translateShuffleVectorInst(inst ir.Instruction, old *ast.Sh
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateExtractValueInst(inst ir.Instruction, old *ast.ExtractValueInst) (*ir.InstExtractValue, error) {
+func (fgen *funcGen) astToIRInstExtractValue(inst ir.Instruction, old *ast.ExtractValueInst) (*ir.InstExtractValue, error) {
 	i, ok := inst.(*ir.InstExtractValue)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1161,7 +1159,7 @@ func (fgen *funcGen) translateExtractValueInst(inst ir.Instruction, old *ast.Ext
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateInsertValueInst(inst ir.Instruction, old *ast.InsertValueInst) (*ir.InstInsertValue, error) {
+func (fgen *funcGen) astToIRInstInsertValue(inst ir.Instruction, old *ast.InsertValueInst) (*ir.InstInsertValue, error) {
 	i, ok := inst.(*ir.InstInsertValue)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1175,7 +1173,7 @@ func (fgen *funcGen) translateInsertValueInst(inst ir.Instruction, old *ast.Inse
 
 // ~~~ [ alloca ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateAllocaInst(inst ir.Instruction, old *ast.AllocaInst) (*ir.InstAlloca, error) {
+func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst) (*ir.InstAlloca, error) {
 	i, ok := inst.(*ir.InstAlloca)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1187,7 +1185,7 @@ func (fgen *funcGen) translateAllocaInst(inst ir.Instruction, old *ast.AllocaIns
 
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateLoadInst(inst ir.Instruction, old *ast.LoadInst) (*ir.InstLoad, error) {
+func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*ir.InstLoad, error) {
 	i, ok := inst.(*ir.InstLoad)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1199,7 +1197,7 @@ func (fgen *funcGen) translateLoadInst(inst ir.Instruction, old *ast.LoadInst) (
 
 // ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateStoreInst(inst ir.Instruction, old *ast.StoreInst) (*ir.InstStore, error) {
+func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (*ir.InstStore, error) {
 	i, ok := inst.(*ir.InstStore)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1211,7 +1209,7 @@ func (fgen *funcGen) translateStoreInst(inst ir.Instruction, old *ast.StoreInst)
 
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFenceInst(inst ir.Instruction, old *ast.FenceInst) (*ir.InstFence, error) {
+func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (*ir.InstFence, error) {
 	i, ok := inst.(*ir.InstFence)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1223,7 +1221,7 @@ func (fgen *funcGen) translateFenceInst(inst ir.Instruction, old *ast.FenceInst)
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateCmpXchgInst(inst ir.Instruction, old *ast.CmpXchgInst) (*ir.InstCmpXchg, error) {
+func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgInst) (*ir.InstCmpXchg, error) {
 	i, ok := inst.(*ir.InstCmpXchg)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1235,7 +1233,7 @@ func (fgen *funcGen) translateCmpXchgInst(inst ir.Instruction, old *ast.CmpXchgI
 
 // ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateAtomicRMWInst(inst ir.Instruction, old *ast.AtomicRMWInst) (*ir.InstAtomicRMW, error) {
+func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRMWInst) (*ir.InstAtomicRMW, error) {
 	i, ok := inst.(*ir.InstAtomicRMW)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1247,7 +1245,7 @@ func (fgen *funcGen) translateAtomicRMWInst(inst ir.Instruction, old *ast.Atomic
 
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateGetElementPtrInst(inst ir.Instruction, old *ast.GetElementPtrInst) (*ir.InstGetElementPtr, error) {
+func (fgen *funcGen) astToIRInstGetElementPtr(inst ir.Instruction, old *ast.GetElementPtrInst) (*ir.InstGetElementPtr, error) {
 	i, ok := inst.(*ir.InstGetElementPtr)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1261,7 +1259,7 @@ func (fgen *funcGen) translateGetElementPtrInst(inst ir.Instruction, old *ast.Ge
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateTruncInst(inst ir.Instruction, old *ast.TruncInst) (*ir.InstTrunc, error) {
+func (fgen *funcGen) astToIRInstTrunc(inst ir.Instruction, old *ast.TruncInst) (*ir.InstTrunc, error) {
 	i, ok := inst.(*ir.InstTrunc)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1273,7 +1271,7 @@ func (fgen *funcGen) translateTruncInst(inst ir.Instruction, old *ast.TruncInst)
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateZExtInst(inst ir.Instruction, old *ast.ZExtInst) (*ir.InstZExt, error) {
+func (fgen *funcGen) astToIRInstZExt(inst ir.Instruction, old *ast.ZExtInst) (*ir.InstZExt, error) {
 	i, ok := inst.(*ir.InstZExt)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1285,7 +1283,7 @@ func (fgen *funcGen) translateZExtInst(inst ir.Instruction, old *ast.ZExtInst) (
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateSExtInst(inst ir.Instruction, old *ast.SExtInst) (*ir.InstSExt, error) {
+func (fgen *funcGen) astToIRInstSExt(inst ir.Instruction, old *ast.SExtInst) (*ir.InstSExt, error) {
 	i, ok := inst.(*ir.InstSExt)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1297,7 +1295,7 @@ func (fgen *funcGen) translateSExtInst(inst ir.Instruction, old *ast.SExtInst) (
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFPTruncInst(inst ir.Instruction, old *ast.FPTruncInst) (*ir.InstFPTrunc, error) {
+func (fgen *funcGen) astToIRInstFPTrunc(inst ir.Instruction, old *ast.FPTruncInst) (*ir.InstFPTrunc, error) {
 	i, ok := inst.(*ir.InstFPTrunc)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1309,7 +1307,7 @@ func (fgen *funcGen) translateFPTruncInst(inst ir.Instruction, old *ast.FPTruncI
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFPExtInst(inst ir.Instruction, old *ast.FPExtInst) (*ir.InstFPExt, error) {
+func (fgen *funcGen) astToIRInstFPExt(inst ir.Instruction, old *ast.FPExtInst) (*ir.InstFPExt, error) {
 	i, ok := inst.(*ir.InstFPExt)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1321,7 +1319,7 @@ func (fgen *funcGen) translateFPExtInst(inst ir.Instruction, old *ast.FPExtInst)
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFPToUIInst(inst ir.Instruction, old *ast.FPToUIInst) (*ir.InstFPToUI, error) {
+func (fgen *funcGen) astToIRInstFPToUI(inst ir.Instruction, old *ast.FPToUIInst) (*ir.InstFPToUI, error) {
 	i, ok := inst.(*ir.InstFPToUI)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1333,7 +1331,7 @@ func (fgen *funcGen) translateFPToUIInst(inst ir.Instruction, old *ast.FPToUIIns
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFPToSIInst(inst ir.Instruction, old *ast.FPToSIInst) (*ir.InstFPToSI, error) {
+func (fgen *funcGen) astToIRInstFPToSI(inst ir.Instruction, old *ast.FPToSIInst) (*ir.InstFPToSI, error) {
 	i, ok := inst.(*ir.InstFPToSI)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1345,7 +1343,7 @@ func (fgen *funcGen) translateFPToSIInst(inst ir.Instruction, old *ast.FPToSIIns
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateUIToFPInst(inst ir.Instruction, old *ast.UIToFPInst) (*ir.InstUIToFP, error) {
+func (fgen *funcGen) astToIRInstUIToFP(inst ir.Instruction, old *ast.UIToFPInst) (*ir.InstUIToFP, error) {
 	i, ok := inst.(*ir.InstUIToFP)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1357,7 +1355,7 @@ func (fgen *funcGen) translateUIToFPInst(inst ir.Instruction, old *ast.UIToFPIns
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateSIToFPInst(inst ir.Instruction, old *ast.SIToFPInst) (*ir.InstSIToFP, error) {
+func (fgen *funcGen) astToIRInstSIToFP(inst ir.Instruction, old *ast.SIToFPInst) (*ir.InstSIToFP, error) {
 	i, ok := inst.(*ir.InstSIToFP)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1369,7 +1367,7 @@ func (fgen *funcGen) translateSIToFPInst(inst ir.Instruction, old *ast.SIToFPIns
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translatePtrToIntInst(inst ir.Instruction, old *ast.PtrToIntInst) (*ir.InstPtrToInt, error) {
+func (fgen *funcGen) astToIRInstPtrToInt(inst ir.Instruction, old *ast.PtrToIntInst) (*ir.InstPtrToInt, error) {
 	i, ok := inst.(*ir.InstPtrToInt)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1381,7 +1379,7 @@ func (fgen *funcGen) translatePtrToIntInst(inst ir.Instruction, old *ast.PtrToIn
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateIntToPtrInst(inst ir.Instruction, old *ast.IntToPtrInst) (*ir.InstIntToPtr, error) {
+func (fgen *funcGen) astToIRInstIntToPtr(inst ir.Instruction, old *ast.IntToPtrInst) (*ir.InstIntToPtr, error) {
 	i, ok := inst.(*ir.InstIntToPtr)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1393,7 +1391,7 @@ func (fgen *funcGen) translateIntToPtrInst(inst ir.Instruction, old *ast.IntToPt
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateBitCastInst(inst ir.Instruction, old *ast.BitCastInst) (*ir.InstBitCast, error) {
+func (fgen *funcGen) astToIRInstBitCast(inst ir.Instruction, old *ast.BitCastInst) (*ir.InstBitCast, error) {
 	i, ok := inst.(*ir.InstBitCast)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1405,7 +1403,7 @@ func (fgen *funcGen) translateBitCastInst(inst ir.Instruction, old *ast.BitCastI
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateAddrSpaceCastInst(inst ir.Instruction, old *ast.AddrSpaceCastInst) (*ir.InstAddrSpaceCast, error) {
+func (fgen *funcGen) astToIRInstAddrSpaceCast(inst ir.Instruction, old *ast.AddrSpaceCastInst) (*ir.InstAddrSpaceCast, error) {
 	i, ok := inst.(*ir.InstAddrSpaceCast)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1419,7 +1417,7 @@ func (fgen *funcGen) translateAddrSpaceCastInst(inst ir.Instruction, old *ast.Ad
 
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateICmpInst(inst ir.Instruction, old *ast.ICmpInst) (*ir.InstICmp, error) {
+func (fgen *funcGen) astToIRInstICmp(inst ir.Instruction, old *ast.ICmpInst) (*ir.InstICmp, error) {
 	i, ok := inst.(*ir.InstICmp)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1431,7 +1429,7 @@ func (fgen *funcGen) translateICmpInst(inst ir.Instruction, old *ast.ICmpInst) (
 
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateFCmpInst(inst ir.Instruction, old *ast.FCmpInst) (*ir.InstFCmp, error) {
+func (fgen *funcGen) astToIRInstFCmp(inst ir.Instruction, old *ast.FCmpInst) (*ir.InstFCmp, error) {
 	i, ok := inst.(*ir.InstFCmp)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1445,7 +1443,7 @@ func (fgen *funcGen) translateFCmpInst(inst ir.Instruction, old *ast.FCmpInst) (
 
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translatePhiInst(inst ir.Instruction, old *ast.PhiInst) (*ir.InstPhi, error) {
+func (fgen *funcGen) astToIRInstPhi(inst ir.Instruction, old *ast.PhiInst) (*ir.InstPhi, error) {
 	i, ok := inst.(*ir.InstPhi)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1457,7 +1455,7 @@ func (fgen *funcGen) translatePhiInst(inst ir.Instruction, old *ast.PhiInst) (*i
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateSelectInst(inst ir.Instruction, old *ast.SelectInst) (*ir.InstSelect, error) {
+func (fgen *funcGen) astToIRInstSelect(inst ir.Instruction, old *ast.SelectInst) (*ir.InstSelect, error) {
 	i, ok := inst.(*ir.InstSelect)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1469,7 +1467,7 @@ func (fgen *funcGen) translateSelectInst(inst ir.Instruction, old *ast.SelectIns
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateCallInst(inst ir.Instruction, old *ast.CallInst) (*ir.InstCall, error) {
+func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*ir.InstCall, error) {
 	i, ok := inst.(*ir.InstCall)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1483,7 +1481,7 @@ func (fgen *funcGen) translateCallInst(inst ir.Instruction, old *ast.CallInst) (
 
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateVAArgInst(inst ir.Instruction, old *ast.VAArgInst) (*ir.InstVAArg, error) {
+func (fgen *funcGen) astToIRInstVAArg(inst ir.Instruction, old *ast.VAArgInst) (*ir.InstVAArg, error) {
 	i, ok := inst.(*ir.InstVAArg)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1495,7 +1493,7 @@ func (fgen *funcGen) translateVAArgInst(inst ir.Instruction, old *ast.VAArgInst)
 
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateLandingPadInst(inst ir.Instruction, old *ast.LandingPadInst) (*ir.InstLandingPad, error) {
+func (fgen *funcGen) astToIRInstLandingPad(inst ir.Instruction, old *ast.LandingPadInst) (*ir.InstLandingPad, error) {
 	i, ok := inst.(*ir.InstLandingPad)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1507,7 +1505,7 @@ func (fgen *funcGen) translateLandingPadInst(inst ir.Instruction, old *ast.Landi
 
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateCatchPadInst(inst ir.Instruction, old *ast.CatchPadInst) (*ir.InstCatchPad, error) {
+func (fgen *funcGen) astToIRInstCatchPad(inst ir.Instruction, old *ast.CatchPadInst) (*ir.InstCatchPad, error) {
 	i, ok := inst.(*ir.InstCatchPad)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1519,7 +1517,7 @@ func (fgen *funcGen) translateCatchPadInst(inst ir.Instruction, old *ast.CatchPa
 
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (fgen *funcGen) translateCleanupPadInst(inst ir.Instruction, old *ast.CleanupPadInst) (*ir.InstCleanupPad, error) {
+func (fgen *funcGen) astToIRInstCleanupPad(inst ir.Instruction, old *ast.CleanupPadInst) (*ir.InstCleanupPad, error) {
 	i, ok := inst.(*ir.InstCleanupPad)
 	if !ok {
 		// NOTE: panic since this would indicate a bug in the implementation.
@@ -1531,31 +1529,31 @@ func (fgen *funcGen) translateCleanupPadInst(inst ir.Instruction, old *ast.Clean
 
 // === [ Terminators ] =========================================================
 
-// translateTerm translates the AST terminator into an equivalent IR terminator.
-func (fgen *funcGen) translateTerm(old ast.Terminator) (ir.Terminator, error) {
+// astToIRTerm translates the AST terminator into an equivalent IR terminator.
+func (fgen *funcGen) astToIRTerm(old ast.Terminator) (ir.Terminator, error) {
 	switch old := old.(type) {
 	case *ast.RetTerm:
-		return fgen.translateRetTerm(old)
+		return fgen.astToIRTermRet(old)
 	case *ast.BrTerm:
-		return fgen.translateBrTerm(old)
+		return fgen.astToIRTermBr(old)
 	case *ast.CondBrTerm:
-		return fgen.translateCondBrTerm(old)
+		return fgen.astToIRTermCondBr(old)
 	case *ast.SwitchTerm:
-		return fgen.translateSwitchTerm(old)
+		return fgen.astToIRTermSwitch(old)
 	case *ast.IndirectBrTerm:
-		return fgen.translateIndirectBrTerm(old)
+		return fgen.astToIRTermIndirectBr(old)
 	case *ast.InvokeTerm:
-		return fgen.translateInvokeTerm(old)
+		return fgen.astToIRTermInvoke(old)
 	case *ast.ResumeTerm:
-		return fgen.translateResumeTerm(old)
+		return fgen.astToIRTermResume(old)
 	case *ast.CatchSwitchTerm:
-		return fgen.translateCatchSwitchTerm(old)
+		return fgen.astToIRTermCatchSwitch(old)
 	case *ast.CatchRetTerm:
-		return fgen.translateCatchRetTerm(old)
+		return fgen.astToIRTermCatchRet(old)
 	case *ast.CleanupRetTerm:
-		return fgen.translateCleanupRetTerm(old)
+		return fgen.astToIRTermCleanupRet(old)
 	case *ast.UnreachableTerm:
-		return fgen.translateUnreachableTerm(old)
+		return fgen.astToIRTermUnreachable(old)
 	default:
 		panic(fmt.Errorf("support for AST terminator type %T not yet implemented", old))
 	}
@@ -1563,7 +1561,7 @@ func (fgen *funcGen) translateTerm(old ast.Terminator) (ir.Terminator, error) {
 
 // --- [ ret ] -----------------------------------------------------------------
 
-func (fgen *funcGen) translateRetTerm(old *ast.RetTerm) (*ir.TermRet, error) {
+func (fgen *funcGen) astToIRTermRet(old *ast.RetTerm) (*ir.TermRet, error) {
 	term := &ir.TermRet{}
 	// TODO: implement
 	return term, nil
@@ -1571,13 +1569,13 @@ func (fgen *funcGen) translateRetTerm(old *ast.RetTerm) (*ir.TermRet, error) {
 
 // --- [ br ] ------------------------------------------------------------------
 
-func (fgen *funcGen) translateBrTerm(old *ast.BrTerm) (*ir.TermBr, error) {
+func (fgen *funcGen) astToIRTermBr(old *ast.BrTerm) (*ir.TermBr, error) {
 	term := &ir.TermBr{}
 	// TODO: implement
 	return term, nil
 }
 
-func (fgen *funcGen) translateCondBrTerm(old *ast.CondBrTerm) (*ir.TermCondBr, error) {
+func (fgen *funcGen) astToIRTermCondBr(old *ast.CondBrTerm) (*ir.TermCondBr, error) {
 	term := &ir.TermCondBr{}
 	// TODO: implement
 	return term, nil
@@ -1585,7 +1583,7 @@ func (fgen *funcGen) translateCondBrTerm(old *ast.CondBrTerm) (*ir.TermCondBr, e
 
 // --- [ switch ] --------------------------------------------------------------
 
-func (fgen *funcGen) translateSwitchTerm(old *ast.SwitchTerm) (*ir.TermSwitch, error) {
+func (fgen *funcGen) astToIRTermSwitch(old *ast.SwitchTerm) (*ir.TermSwitch, error) {
 	term := &ir.TermSwitch{}
 	// TODO: implement
 	return term, nil
@@ -1593,7 +1591,7 @@ func (fgen *funcGen) translateSwitchTerm(old *ast.SwitchTerm) (*ir.TermSwitch, e
 
 // --- [ indirectbr ] ----------------------------------------------------------
 
-func (fgen *funcGen) translateIndirectBrTerm(old *ast.IndirectBrTerm) (*ir.TermIndirectBr, error) {
+func (fgen *funcGen) astToIRTermIndirectBr(old *ast.IndirectBrTerm) (*ir.TermIndirectBr, error) {
 	term := &ir.TermIndirectBr{}
 	// TODO: implement
 	return term, nil
@@ -1601,7 +1599,7 @@ func (fgen *funcGen) translateIndirectBrTerm(old *ast.IndirectBrTerm) (*ir.TermI
 
 // --- [ invoke ] --------------------------------------------------------------
 
-func (fgen *funcGen) translateInvokeTerm(old *ast.InvokeTerm) (*ir.TermInvoke, error) {
+func (fgen *funcGen) astToIRTermInvoke(old *ast.InvokeTerm) (*ir.TermInvoke, error) {
 	term := &ir.TermInvoke{}
 	// TODO: implement
 	return term, nil
@@ -1609,7 +1607,7 @@ func (fgen *funcGen) translateInvokeTerm(old *ast.InvokeTerm) (*ir.TermInvoke, e
 
 // --- [ resume ] --------------------------------------------------------------
 
-func (fgen *funcGen) translateResumeTerm(old *ast.ResumeTerm) (*ir.TermResume, error) {
+func (fgen *funcGen) astToIRTermResume(old *ast.ResumeTerm) (*ir.TermResume, error) {
 	term := &ir.TermResume{}
 	// TODO: implement
 	return term, nil
@@ -1617,7 +1615,7 @@ func (fgen *funcGen) translateResumeTerm(old *ast.ResumeTerm) (*ir.TermResume, e
 
 // --- [ catchswitch ] ---------------------------------------------------------
 
-func (fgen *funcGen) translateCatchSwitchTerm(old *ast.CatchSwitchTerm) (*ir.TermCatchSwitch, error) {
+func (fgen *funcGen) astToIRTermCatchSwitch(old *ast.CatchSwitchTerm) (*ir.TermCatchSwitch, error) {
 	term := &ir.TermCatchSwitch{}
 	// TODO: implement
 	return term, nil
@@ -1625,7 +1623,7 @@ func (fgen *funcGen) translateCatchSwitchTerm(old *ast.CatchSwitchTerm) (*ir.Ter
 
 // --- [ catchret ] ------------------------------------------------------------
 
-func (fgen *funcGen) translateCatchRetTerm(old *ast.CatchRetTerm) (*ir.TermCatchRet, error) {
+func (fgen *funcGen) astToIRTermCatchRet(old *ast.CatchRetTerm) (*ir.TermCatchRet, error) {
 	term := &ir.TermCatchRet{}
 	// TODO: implement
 	return term, nil
@@ -1633,7 +1631,7 @@ func (fgen *funcGen) translateCatchRetTerm(old *ast.CatchRetTerm) (*ir.TermCatch
 
 // --- [ cleanupret ] ----------------------------------------------------------
 
-func (fgen *funcGen) translateCleanupRetTerm(old *ast.CleanupRetTerm) (*ir.TermCleanupRet, error) {
+func (fgen *funcGen) astToIRTermCleanupRet(old *ast.CleanupRetTerm) (*ir.TermCleanupRet, error) {
 	term := &ir.TermCleanupRet{}
 	// TODO: implement
 	return term, nil
@@ -1641,7 +1639,7 @@ func (fgen *funcGen) translateCleanupRetTerm(old *ast.CleanupRetTerm) (*ir.TermC
 
 // --- [ unreachable ] ---------------------------------------------------------
 
-func (fgen *funcGen) translateUnreachableTerm(old *ast.UnreachableTerm) (*ir.TermUnreachable, error) {
+func (fgen *funcGen) astToIRTermUnreachable(old *ast.UnreachableTerm) (*ir.TermUnreachable, error) {
 	term := &ir.TermUnreachable{}
 	// TODO: implement
 	return term, nil
