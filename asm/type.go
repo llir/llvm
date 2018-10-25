@@ -65,7 +65,7 @@ func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type
 	// Translate type defintions (including bodies).
 	for alias, old := range index {
 		t := gen.ts[alias]
-		_, err := gen.translateType(t, old)
+		_, err := gen.astToIRTypeDef(t, old)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -146,41 +146,41 @@ func newIRType(alias string, old ast.LlvmNode, index map[string]ast.LlvmNode, tr
 
 // === [ Types ] ===============================================================
 
-// translateType translates the AST type into an equivalent IR type. A new IR
+// astToIRTypeDef translates the AST type into an equivalent IR type. A new IR
 // type correspoding to the AST type is created if t is nil, otherwise the body
 // of t is populated. Named types are resolved through ts.
-func (gen *generator) translateType(t types.Type, old ast.LlvmNode) (types.Type, error) {
+func (gen *generator) astToIRTypeDef(t types.Type, old ast.LlvmNode) (types.Type, error) {
 	switch old := old.(type) {
 	case *ast.OpaqueType:
-		return gen.translateOpaqueType(t, old)
+		return gen.astToIROpaqueType(t, old)
 	case *ast.ArrayType:
-		return gen.translateArrayType(t, old)
+		return gen.astToIRArrayType(t, old)
 	case *ast.FloatType:
-		return gen.translateFloatType(t, old)
+		return gen.astToIRFloatType(t, old)
 	case *ast.FuncType:
-		return gen.translateFuncType(t, old)
+		return gen.astToIRFuncType(t, old)
 	case *ast.IntType:
-		return gen.translateIntType(t, old)
+		return gen.astToIRIntType(t, old)
 	case *ast.LabelType:
-		return gen.translateLabelType(t, old)
+		return gen.astToIRLabelType(t, old)
 	case *ast.MMXType:
-		return gen.translateMMXType(t, old)
+		return gen.astToIRMMXType(t, old)
 	case *ast.MetadataType:
-		return gen.translateMetadataType(t, old)
+		return gen.astToIRMetadataType(t, old)
 	case *ast.NamedType:
-		return gen.translateNamedType(t, old)
+		return gen.astToIRNamedType(t, old)
 	case *ast.PointerType:
-		return gen.translatePointerType(t, old)
+		return gen.astToIRPointerType(t, old)
 	case *ast.StructType:
-		return gen.translateStructType(t, old)
+		return gen.astToIRStructType(t, old)
 	case *ast.PackedStructType:
-		return gen.translatePackedStructType(t, old)
+		return gen.astToIRPackedStructType(t, old)
 	case *ast.TokenType:
-		return gen.translateTokenType(t, old)
+		return gen.astToIRTokenType(t, old)
 	case *ast.VectorType:
-		return gen.translateVectorType(t, old)
+		return gen.astToIRVectorType(t, old)
 	case *ast.VoidType:
-		return gen.translateVoidType(t, old)
+		return gen.astToIRVoidType(t, old)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
@@ -188,7 +188,7 @@ func (gen *generator) translateType(t types.Type, old ast.LlvmNode) (types.Type,
 
 // --- [ Void Types ] ----------------------------------------------------------
 
-func (gen *generator) translateVoidType(t types.Type, old *ast.VoidType) (types.Type, error) {
+func (gen *generator) astToIRVoidType(t types.Type, old *ast.VoidType) (types.Type, error) {
 	typ, ok := t.(*types.VoidType)
 	if t == nil {
 		typ = &types.VoidType{}
@@ -203,7 +203,7 @@ func (gen *generator) translateVoidType(t types.Type, old *ast.VoidType) (types.
 
 // --- [ Function Types ] ------------------------------------------------------
 
-func (gen *generator) translateFuncType(t types.Type, old *ast.FuncType) (types.Type, error) {
+func (gen *generator) astToIRFuncType(t types.Type, old *ast.FuncType) (types.Type, error) {
 	typ, ok := t.(*types.FuncType)
 	if t == nil {
 		typ = &types.FuncType{}
@@ -234,7 +234,7 @@ func (gen *generator) translateFuncType(t types.Type, old *ast.FuncType) (types.
 
 // --- [ Integer Types ] -------------------------------------------------------
 
-func (gen *generator) translateIntType(t types.Type, old *ast.IntType) (types.Type, error) {
+func (gen *generator) astToIRIntType(t types.Type, old *ast.IntType) (types.Type, error) {
 	typ, ok := t.(*types.IntType)
 	if t == nil {
 		typ = &types.IntType{}
@@ -270,7 +270,7 @@ func irIntTypeBitSize(n *ast.IntType) int64 {
 
 // --- [ Floating-point Types ] ------------------------------------------------
 
-func (gen *generator) translateFloatType(t types.Type, old *ast.FloatType) (types.Type, error) {
+func (gen *generator) astToIRFloatType(t types.Type, old *ast.FloatType) (types.Type, error) {
 	typ, ok := t.(*types.FloatType)
 	if t == nil {
 		typ = &types.FloatType{}
@@ -306,7 +306,7 @@ func irFloatKind(kind ast.FloatKind) types.FloatKind {
 
 // --- [ MMX Types ] -----------------------------------------------------------
 
-func (gen *generator) translateMMXType(t types.Type, old *ast.MMXType) (types.Type, error) {
+func (gen *generator) astToIRMMXType(t types.Type, old *ast.MMXType) (types.Type, error) {
 	typ, ok := t.(*types.MMXType)
 	if t == nil {
 		typ = &types.MMXType{}
@@ -321,7 +321,7 @@ func (gen *generator) translateMMXType(t types.Type, old *ast.MMXType) (types.Ty
 
 // --- [ Pointer Types ] -------------------------------------------------------
 
-func (gen *generator) translatePointerType(t types.Type, old *ast.PointerType) (types.Type, error) {
+func (gen *generator) astToIRPointerType(t types.Type, old *ast.PointerType) (types.Type, error) {
 	typ, ok := t.(*types.PointerType)
 	if t == nil {
 		typ = &types.PointerType{}
@@ -343,7 +343,7 @@ func (gen *generator) translatePointerType(t types.Type, old *ast.PointerType) (
 
 // --- [ Vector Types ] --------------------------------------------------------
 
-func (gen *generator) translateVectorType(t types.Type, old *ast.VectorType) (types.Type, error) {
+func (gen *generator) astToIRVectorType(t types.Type, old *ast.VectorType) (types.Type, error) {
 	typ, ok := t.(*types.VectorType)
 	if t == nil {
 		typ = &types.VectorType{}
@@ -366,7 +366,7 @@ func (gen *generator) translateVectorType(t types.Type, old *ast.VectorType) (ty
 
 // --- [ Label Types ] ---------------------------------------------------------
 
-func (gen *generator) translateLabelType(t types.Type, old *ast.LabelType) (types.Type, error) {
+func (gen *generator) astToIRLabelType(t types.Type, old *ast.LabelType) (types.Type, error) {
 	typ, ok := t.(*types.LabelType)
 	if t == nil {
 		typ = &types.LabelType{}
@@ -381,7 +381,7 @@ func (gen *generator) translateLabelType(t types.Type, old *ast.LabelType) (type
 
 // --- [ Token Types ] ---------------------------------------------------------
 
-func (gen *generator) translateTokenType(t types.Type, old *ast.TokenType) (types.Type, error) {
+func (gen *generator) astToIRTokenType(t types.Type, old *ast.TokenType) (types.Type, error) {
 	typ, ok := t.(*types.TokenType)
 	if t == nil {
 		typ = &types.TokenType{}
@@ -396,7 +396,7 @@ func (gen *generator) translateTokenType(t types.Type, old *ast.TokenType) (type
 
 // --- [ Metadata Types ] ------------------------------------------------------
 
-func (gen *generator) translateMetadataType(t types.Type, old *ast.MetadataType) (types.Type, error) {
+func (gen *generator) astToIRMetadataType(t types.Type, old *ast.MetadataType) (types.Type, error) {
 	typ, ok := t.(*types.MetadataType)
 	if t == nil {
 		typ = &types.MetadataType{}
@@ -411,7 +411,7 @@ func (gen *generator) translateMetadataType(t types.Type, old *ast.MetadataType)
 
 // --- [ Array Types ] ---------------------------------------------------------
 
-func (gen *generator) translateArrayType(t types.Type, old *ast.ArrayType) (types.Type, error) {
+func (gen *generator) astToIRArrayType(t types.Type, old *ast.ArrayType) (types.Type, error) {
 	typ, ok := t.(*types.ArrayType)
 	if t == nil {
 		typ = &types.ArrayType{}
@@ -434,7 +434,7 @@ func (gen *generator) translateArrayType(t types.Type, old *ast.ArrayType) (type
 
 // --- [ Structure Types ] -----------------------------------------------------
 
-func (gen *generator) translateOpaqueType(t types.Type, old *ast.OpaqueType) (types.Type, error) {
+func (gen *generator) astToIROpaqueType(t types.Type, old *ast.OpaqueType) (types.Type, error) {
 	typ, ok := t.(*types.StructType)
 	if t == nil {
 		// NOTE: Panic instead of returning error as this case should not be
@@ -450,7 +450,7 @@ func (gen *generator) translateOpaqueType(t types.Type, old *ast.OpaqueType) (ty
 	return typ, nil
 }
 
-func (gen *generator) translateStructType(t types.Type, old *ast.StructType) (types.Type, error) {
+func (gen *generator) astToIRStructType(t types.Type, old *ast.StructType) (types.Type, error) {
 	typ, ok := t.(*types.StructType)
 	if t == nil {
 		typ = &types.StructType{}
@@ -473,7 +473,7 @@ func (gen *generator) translateStructType(t types.Type, old *ast.StructType) (ty
 	return typ, nil
 }
 
-func (gen *generator) translatePackedStructType(t types.Type, old *ast.PackedStructType) (types.Type, error) {
+func (gen *generator) astToIRPackedStructType(t types.Type, old *ast.PackedStructType) (types.Type, error) {
 	typ, ok := t.(*types.StructType)
 	if t == nil {
 		typ = &types.StructType{}
@@ -499,7 +499,7 @@ func (gen *generator) translatePackedStructType(t types.Type, old *ast.PackedStr
 
 // --- [ Named Types ] ---------------------------------------------------------
 
-func (gen *generator) translateNamedType(t types.Type, old *ast.NamedType) (types.Type, error) {
+func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.Type, error) {
 	// Resolve named type.
 	alias := local(old.Name())
 	typ, ok := gen.ts[alias]
@@ -513,5 +513,5 @@ func (gen *generator) translateNamedType(t types.Type, old *ast.NamedType) (type
 
 // irType returns the IR type corresponding to the given AST type.
 func (gen *generator) irType(old ast.LlvmNode) (types.Type, error) {
-	return gen.translateType(nil, old)
+	return gen.astToIRTypeDef(nil, old)
 }

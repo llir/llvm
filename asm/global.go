@@ -73,7 +73,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 	// Translate global variables and functions (including bodies).
 	for name, old := range index {
 		g := gen.gs[name]
-		_, err := gen.translateGlobal(g, old)
+		_, err := gen.astToIRGlobal(g, old)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -181,18 +181,18 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 	}
 }
 
-// translateGlobal translates the AST global variable or function into an
+// astToIRGlobal translates the AST global variable or function into an
 // equivalent IR value.
-func (gen *generator) translateGlobal(g ir.Constant, old ast.LlvmNode) (ir.Constant, error) {
+func (gen *generator) astToIRGlobal(g ir.Constant, old ast.LlvmNode) (ir.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
-		return gen.translateGlobalDecl(g, old)
+		return gen.astToIRGlobalDecl(g, old)
 	case *ast.GlobalDef:
-		return gen.translateGlobalDef(g, old)
+		return gen.astToIRGlobalDef(g, old)
 	case *ast.FuncDecl:
-		return gen.translateFuncDecl(g, old)
+		return gen.astToIRFuncDecl(g, old)
 	case *ast.FuncDef:
-		return gen.translateFuncDef(g, old)
+		return gen.astToIRFuncDef(g, old)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
@@ -200,7 +200,7 @@ func (gen *generator) translateGlobal(g ir.Constant, old ast.LlvmNode) (ir.Const
 
 // ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateGlobalDecl(g ir.Constant, old *ast.GlobalDecl) (ir.Constant, error) {
+func (gen *generator) astToIRGlobalDecl(g ir.Constant, old *ast.GlobalDecl) (*ir.Global, error) {
 	global, ok := g.(*ir.Global)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", g))
@@ -231,7 +231,7 @@ func (gen *generator) translateGlobalDecl(g ir.Constant, old *ast.GlobalDecl) (i
 
 // ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateGlobalDef(g ir.Constant, old *ast.GlobalDef) (ir.Constant, error) {
+func (gen *generator) astToIRGlobalDef(g ir.Constant, old *ast.GlobalDef) (*ir.Global, error) {
 	global, ok := g.(*ir.Global)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", g))
@@ -271,20 +271,20 @@ func (gen *generator) translateGlobalDef(g ir.Constant, old *ast.GlobalDef) (ir.
 
 // ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateFuncDecl(g ir.Constant, old *ast.FuncDecl) (ir.Constant, error) {
+func (gen *generator) astToIRFuncDecl(g ir.Constant, old *ast.FuncDecl) (*ir.Function, error) {
 	f, ok := g.(*ir.Function)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", g))
 	}
 	// Metadata.
 	// TODO: translate function metadata.
-	if err := gen.translateFuncHeader(f, old.Header()); err != nil {
+	if err := gen.astToIRFuncHeader(f, old.Header()); err != nil {
 		return nil, errors.WithStack(err)
 	}
 	return f, nil
 }
 
-func (gen *generator) translateFuncHeader(f *ir.Function, hdr ast.FuncHeader) error {
+func (gen *generator) astToIRFuncHeader(f *ir.Function, hdr ast.FuncHeader) error {
 	// Linkage.
 	f.Linkage = irLinkage(hdr.ExternLinkage().Text())
 	// Preemption.
@@ -337,12 +337,12 @@ func (gen *generator) translateFuncHeader(f *ir.Function, hdr ast.FuncHeader) er
 
 // ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) translateFuncDef(g ir.Constant, old *ast.FuncDef) (ir.Constant, error) {
+func (gen *generator) astToIRFuncDef(g ir.Constant, old *ast.FuncDef) (*ir.Function, error) {
 	f, ok := g.(*ir.Function)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function definition; expected *ir.Function, got %T", g))
 	}
-	if err := gen.translateFuncHeader(f, old.Header()); err != nil {
+	if err := gen.astToIRFuncHeader(f, old.Header()); err != nil {
 		return nil, errors.WithStack(err)
 	}
 	// Metadata.
