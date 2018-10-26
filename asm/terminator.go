@@ -179,7 +179,7 @@ func (fgen *funcGen) astToIRTermCondBr(term ir.Terminator, old *ast.CondBrTerm) 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCondBr, got %T", term))
 	}
-	// Condition.
+	// Branching condition.
 	ct := old.CondTyp()
 	condType, err := fgen.gen.irType(&ct)
 	if err != nil {
@@ -215,8 +215,26 @@ func (fgen *funcGen) astToIRTermSwitch(term ir.Terminator, old *ast.SwitchTerm) 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermSwitch, got %T", term))
 	}
-	// TODO: implement.
-	_ = t
+	// Control variable.
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.X = x
+	// Default target.
+	targetDefault, err := fgen.irBasicBlock(old.Default())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.TargetDefault = targetDefault
+	// Switch cases.
+	for _, oldCase := range old.Cases() {
+		c, err := fgen.irCase(oldCase)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		t.Cases = append(t.Cases, c)
+	}
 	// TODO: handle metadata.
 	return nil
 }

@@ -5,10 +5,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
+	"github.com/pkg/errors"
 )
 
 // === [ Identifiers ] =========================================================
@@ -154,6 +156,19 @@ func irAddrSpace(n *ast.AddrSpace) types.AddrSpace {
 	}
 	x := uintLit(n.N())
 	return types.AddrSpace(x)
+}
+
+// irCase returns the IR switch case corresponding to the given AST switch case.
+func (fgen *funcGen) irCase(old ast.Case) (*ir.Case, error) {
+	x, err := fgen.gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	target, err := fgen.irBasicBlock(old.Target())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewCase(x, target), nil
 }
 
 // irDLLStorageClass returns the IR DLL storage class corresponding to the given
