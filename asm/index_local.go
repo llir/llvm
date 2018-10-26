@@ -5,6 +5,7 @@ import (
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
 	"github.com/mewmew/l-tm/asm/ll/ast"
+	"github.com/mewmew/l-tm/internal/enc"
 	"github.com/pkg/errors"
 )
 
@@ -87,6 +88,16 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 }
 
 // ### [ Helper functions ] ####################################################
+
+// addLocal adds the local variable with the given name to the map of local
+// variables of the function.
+func (fgen *funcGen) addLocal(name string, v value.Value) error {
+	if prev, ok := fgen.ls[name]; ok {
+		return errors.Errorf("local identifier %q already present; prev `%s`, new `%s`", enc.Local(name), prev, v)
+	}
+	fgen.ls[name] = v
+	return nil
+}
 
 // isVoidValue reports whether the given named value is a non-value (i.e. a call
 // instruction or invoke terminator with void-return type).
