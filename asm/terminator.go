@@ -147,6 +147,7 @@ func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) error 
 		return errors.WithStack(err)
 	}
 	t.X = x
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -159,8 +160,13 @@ func (fgen *funcGen) astToIRTermBr(term ir.Terminator, old *ast.BrTerm) error {
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermBr, got %T", term))
 	}
-	// TODO: implement.
-	_ = t
+	// Target.
+	target, err := fgen.irBasicBlock(old.Target())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Target = target
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -175,6 +181,7 @@ func (fgen *funcGen) astToIRTermCondBr(term ir.Terminator, old *ast.CondBrTerm) 
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -189,6 +196,7 @@ func (fgen *funcGen) astToIRTermSwitch(term ir.Terminator, old *ast.SwitchTerm) 
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -203,6 +211,7 @@ func (fgen *funcGen) astToIRTermIndirectBr(term ir.Terminator, old *ast.Indirect
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -217,6 +226,7 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -231,6 +241,7 @@ func (fgen *funcGen) astToIRTermResume(term ir.Terminator, old *ast.ResumeTerm) 
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -245,6 +256,7 @@ func (fgen *funcGen) astToIRTermCatchSwitch(term ir.Terminator, old *ast.CatchSw
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -259,6 +271,7 @@ func (fgen *funcGen) astToIRTermCatchRet(term ir.Terminator, old *ast.CatchRetTe
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -273,6 +286,7 @@ func (fgen *funcGen) astToIRTermCleanupRet(term ir.Terminator, old *ast.CleanupR
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
 
@@ -287,5 +301,6 @@ func (fgen *funcGen) astToIRTermUnreachable(term ir.Terminator, old *ast.Unreach
 	}
 	// TODO: implement.
 	_ = t
+	// TODO: handle metadata.
 	return nil
 }
