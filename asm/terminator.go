@@ -179,8 +179,29 @@ func (fgen *funcGen) astToIRTermCondBr(term ir.Terminator, old *ast.CondBrTerm) 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCondBr, got %T", term))
 	}
-	// TODO: implement.
-	_ = t
+	// Condition.
+	ct := old.CondTyp()
+	condType, err := fgen.gen.irType(&ct)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	cond, err := fgen.astToIRValue(condType, old.Cond())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Cond = cond
+	// Target true.
+	targetTrue, err := fgen.irBasicBlock(old.TargetTrue())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.TargetTrue = targetTrue
+	// Target false.
+	targetFalse, err := fgen.irBasicBlock(old.TargetFalse())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.TargetFalse = targetFalse
 	// TODO: handle metadata.
 	return nil
 }
