@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/l/ir"
+	"github.com/llir/l/ir/types"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
 	"github.com/pkg/errors"
@@ -131,8 +132,21 @@ func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) error 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermRet, got %T", term))
 	}
-	// TODO: implement.
-	_ = t
+	// Return type.
+	typ, err := fgen.gen.irType(old.XTyp())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	if typ.Equal(types.Void) {
+		// void return.
+		return nil
+	}
+	// Return value.
+	x, err := fgen.astToIRValue(typ, old.X())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.X = x
 	return nil
 }
 
