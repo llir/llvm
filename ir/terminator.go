@@ -132,7 +132,7 @@ type TermSwitch struct {
 	X value.Value
 	// Default target basic block.
 	TargetDefault *BasicBlock
-	// TermSwitch cases.
+	// Switch cases.
 	Cases []*Case
 
 	// extra.
@@ -184,7 +184,7 @@ func NewCase(x Constant, target *BasicBlock) *Case {
 // TermIndirectBr is an LLVM IR indirectbr terminator.
 type TermIndirectBr struct {
 	// Target address.
-	Addr *ConstBlockAddress
+	Addr value.Value // blockaddress
 	// Set of valid target basic blocks.
 	ValidTargets []*BasicBlock
 
