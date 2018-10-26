@@ -248,8 +248,20 @@ func (fgen *funcGen) astToIRTermIndirectBr(term ir.Terminator, old *ast.Indirect
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermIndirectBr, got %T", term))
 	}
-	// TODO: implement.
-	_ = t
+	// Target address.
+	addr, err := fgen.astToIRTypeValue(old.Addr())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Addr = addr
+	// Valid targets.
+	for _, oldValidTarget := range old.ValidTargets() {
+		validTarget, err := fgen.irBasicBlock(oldValidTarget)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		t.ValidTargets = append(t.ValidTargets, validTarget)
+	}
 	// TODO: handle metadata.
 	return nil
 }
