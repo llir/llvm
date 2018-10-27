@@ -4267,7 +4267,14 @@ AttrString -> AttrString
 #   ::= 'amdgpu_kernel'
 #   ::= 'cc' UINT
 
+%interface CallingConv;
+
 CallingConv -> CallingConv
+	: CallingConvEnum
+	| CallingConvInt
+;
+
+CallingConvEnum -> CallingConvEnum
 	: 'aarch64_vector_pcs'
 	| 'amdgpu_cs'
 	| 'amdgpu_es'
@@ -4308,7 +4315,10 @@ CallingConv -> CallingConv
 	| 'x86_stdcallcc'
 	| 'x86_thiscallcc'
 	| 'x86_vectorcallcc'
-	| 'cc' UintLit # TODO: Check how the AST looks like for this case.
+;
+
+CallingConvInt -> CallingConvInt
+	: 'cc' UintLit
 ;
 
 # ref: parseOptionalComdat
