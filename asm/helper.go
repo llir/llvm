@@ -171,6 +171,130 @@ func (fgen *funcGen) irCase(old ast.Case) (*ir.Case, error) {
 	return ir.NewCase(x, target), nil
 }
 
+// irCallingConv returns the IR calling convention corresponding to the given
+// optional AST calling convention.
+func irCallingConv(old ast.CallingConv) enum.CallingConv {
+	switch old := old.(type) {
+	case *ast.CallingConvEnum:
+		text := old.Text()
+		switch text {
+		case "":
+			// \empty is used when calling convention not present.
+			return enum.CallingConvNone
+		case "amdgpu_cs":
+			return enum.CallingConvAmdGPUCS
+		case "amdgpu_es":
+			return enum.CallingConvAmdGPUES
+		case "amdgpu_gs":
+			return enum.CallingConvAmdGPUGS
+		case "amdgpu_hs":
+			return enum.CallingConvAmdGPUHS
+		case "amdgpu_kernel":
+			return enum.CallingConvAmdGPUKernel
+		case "amdgpu_ls":
+			return enum.CallingConvAmdGPULS
+		case "amdgpu_ps":
+			return enum.CallingConvAmdGPUPS
+		case "amdgpu_vs":
+			return enum.CallingConvAmdGPUVS
+		case "anyregcc":
+			return enum.CallingConvAnyReg
+		case "arm_aapcs_vfpcc":
+			return enum.CallingConvARMAAPCSVFP
+		case "arm_aapcscc":
+			return enum.CallingConvARMAAPCS
+		case "arm_apcscc":
+			return enum.CallingConvARMAPCS
+		case "avr_intrcc":
+			return enum.CallingConvAVRIntr
+		case "avr_signalcc":
+			return enum.CallingConvAVRSignal
+		case "ccc":
+			return enum.CallingConvC
+		case "coldcc":
+			return enum.CallingConvCold
+		case "cxx_fast_tlscc":
+			return enum.CallingConvCXXFastTLS
+		case "fastcc":
+			return enum.CallingConvFast
+		case "ghccc":
+			return enum.CallingConvGHC
+		case "hhvm_ccc":
+			return enum.CallingConvHHVMC
+		case "hhvmcc":
+			return enum.CallingConvHHVM
+		case "intel_ocl_bicc":
+			return enum.CallingConvIntelOCLBI
+		case "msp430_intrcc":
+			return enum.CallingConvMSP430Intr
+		case "preserve_allcc":
+			return enum.CallingConvPreserveAll
+		case "preserve_mostcc":
+			return enum.CallingConvPreserveMost
+		case "ptx_device":
+			return enum.CallingConvPTXDevice
+		case "ptx_kernel":
+			return enum.CallingConvPTXKernel
+		case "spir_func":
+			return enum.CallingConvSPIRFunc
+		case "spir_kernel":
+			return enum.CallingConvSPIRKernel
+		case "swiftcc":
+			return enum.CallingConvSwift
+		case "webkit_jscc":
+			return enum.CallingConvWebKitJS
+		case "win64cc":
+			return enum.CallingConvWin64
+		case "x86_64_sysvcc":
+			return enum.CallingConvX86_64SysV
+		case "x86_fastcallcc":
+			return enum.CallingConvX86FastCall
+		case "x86_intrcc":
+			return enum.CallingConvX86Intr
+		case "x86_regcallcc":
+			return enum.CallingConvX86RegCall
+		case "x86_stdcallcc":
+			return enum.CallingConvX86StdCall
+		case "x86_thiscallcc":
+			return enum.CallingConvX86ThisCall
+		case "x86_vectorcallcc":
+			return enum.CallingConvX86VectorCall
+		default:
+			panic(fmt.Errorf("support for calling convention %q not yet implemented", text))
+		}
+	case *ast.CallingConvInt:
+		n := uintLit(old.UintLit())
+		switch n {
+		case 11:
+			return enum.CallingConvHiPE
+		case 86:
+			return enum.CallingConvAVRBuiltin
+		case 87:
+			return enum.CallingConvAMDGPUVS
+		case 88:
+			return enum.CallingConvAMDGPUGS
+		case 89:
+			return enum.CallingConvAMDGPUPS
+		case 90:
+			return enum.CallingConvAMDGPUCS
+		case 91:
+			return enum.CallingConvAMDGPUKernel
+		case 93:
+			return enum.CallingConvAMDGPUHS
+		case 94:
+			return enum.CallingConvMSP430Builtin
+		case 95:
+			return enum.CallingConvAMDGPULS
+		case 96:
+			return enum.CallingConvAMDGPUES
+		default:
+			panic(fmt.Errorf("support for calling convention %d not yet implemented", n))
+		}
+	default:
+		panic(fmt.Errorf("support for calling convention type %T not yet implemented", old))
+	}
+}
+
 // irDLLStorageClass returns the IR DLL storage class corresponding to the given
 // optional AST DLL storage class.
 func irDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {

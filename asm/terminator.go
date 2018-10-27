@@ -275,7 +275,8 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermInvoke, got %T", term))
 	}
-	// TODO: implement.
+	// Calling convention.
+	//t.CallingConv = irCallingConv(old.CallingConv())
 	_ = t
 	// TODO: handle metadata.
 	return nil
