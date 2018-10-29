@@ -274,10 +274,18 @@ func irOptInRange(n *ast.InRange) bool {
 // irOptLinkage returns the IR linkage corresponding to the given optional AST
 // linkage.
 func irOptLinkage(n ast.LlvmNode) enum.Linkage {
-	// TODO: fix implementation of optlinkage.
-	return enum.LinkageNone
 	if n == nil {
 		return enum.LinkageNone
+	}
+	switch n := n.(type) {
+	case *ast.ExternLinkage:
+		if n == nil {
+			return enum.LinkageNone
+		}
+	case *ast.Linkage:
+		if n == nil {
+			return enum.LinkageNone
+		}
 	}
 	return asmenum.LinkageFromString(n.LlvmNode().Text())
 }
