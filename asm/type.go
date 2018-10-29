@@ -43,7 +43,7 @@ func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type
 			}
 			if prev, ok := index[alias]; ok {
 				if _, ok := prev.(*ast.OpaqueType); !ok {
-					return nil, errors.Errorf("AST type definition with alias %q already present; prev `%s`, new `%s`", enc.Local(alias), prev.Text(), typ.Text())
+					return nil, errors.Errorf("AST type definition with alias %q already present; prev `%s`, new `%s`", enc.Local(alias), text(prev), text(typ))
 				}
 			}
 			index[alias] = typ
@@ -228,7 +228,7 @@ func (gen *generator) astToIRFuncType(t types.Type, old *ast.FuncType) (types.Ty
 		typ.Params = append(typ.Params, param)
 	}
 	// Variadic.
-	typ.Variadic = irVariadic(ps.Variadic())
+	typ.Variadic = irOptVariadic(ps.Variadic())
 	return typ, nil
 }
 
@@ -337,7 +337,7 @@ func (gen *generator) astToIRPointerType(t types.Type, old *ast.PointerType) (ty
 	}
 	typ.ElemType = elemType
 	// Address space.
-	typ.AddrSpace = irAddrSpace(old.AddrSpace())
+	typ.AddrSpace = irOptAddrSpace(old.AddrSpace())
 	return typ, nil
 }
 

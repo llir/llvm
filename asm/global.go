@@ -26,7 +26,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 			globalOrder = append(globalOrder, name)
 			if prev, ok := index[name]; ok {
 				// TODO: don't report error if prev is a declaration (of same type)?
-				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), prev.Text(), entity.Text())
+				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
 			}
 			index[name] = entity
 		case *ast.GlobalDef:
@@ -34,7 +34,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 			globalOrder = append(globalOrder, name)
 			if prev, ok := index[name]; ok {
 				// TODO: don't report error if prev is a declaration (of same type)?
-				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), prev.Text(), entity.Text())
+				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
 			}
 			index[name] = entity
 		case *ast.FuncDecl:
@@ -42,7 +42,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 			funcOrder = append(funcOrder, name)
 			if prev, ok := index[name]; ok {
 				// TODO: don't report error if prev is a declaration (of same type)?
-				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), prev.Text(), entity.Text())
+				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
 			}
 			index[name] = entity
 		case *ast.FuncDef:
@@ -50,7 +50,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 			funcOrder = append(funcOrder, name)
 			if prev, ok := index[name]; ok {
 				// TODO: don't report error if prev is a declaration (of same type)?
-				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), prev.Text(), entity.Text())
+				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
 			}
 			index[name] = entity
 			// TODO: handle alias definitions and IFuncs.
@@ -148,7 +148,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 			sig.Params = append(sig.Params, param)
 		}
 		// Variadic.
-		sig.Variadic = irVariadic(ps.Variadic())
+		sig.Variadic = irOptVariadic(ps.Variadic())
 		f.Sig = sig
 		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
@@ -172,7 +172,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 			sig.Params = append(sig.Params, param)
 		}
 		// Variadic.
-		sig.Variadic = irVariadic(ps.Variadic())
+		sig.Variadic = irOptVariadic(ps.Variadic())
 		f.Sig = sig
 		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
@@ -206,21 +206,21 @@ func (gen *generator) astToIRGlobalDecl(g ir.Constant, old *ast.GlobalDecl) (*ir
 		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", g))
 	}
 	// Linkage.
-	global.Linkage = irLinkage(old.ExternLinkage().Text())
+	global.Linkage = irOptLinkage(old.ExternLinkage())
 	// Preemption.
-	global.Preemption = irPreemption(old.Preemption())
+	global.Preemption = irOptPreemption(old.Preemption())
 	// Visibility.
-	global.Visibility = irVisibility(old.Visibility())
+	global.Visibility = irOptVisibility(old.Visibility())
 	// DLL storage class.
-	global.DLLStorageClass = irDLLStorageClass(old.DLLStorageClass())
+	global.DLLStorageClass = irOptDLLStorageClass(old.DLLStorageClass())
 	// Thread local storage model.
-	global.TLSModel = irTLSModelFromThreadLocal(old.ThreadLocal())
+	global.TLSModel = irOptTLSModelFromThreadLocal(old.ThreadLocal())
 	// Unnamed address.
-	global.UnnamedAddr = irUnnamedAddr(old.UnnamedAddr())
+	global.UnnamedAddr = irOptUnnamedAddr(old.UnnamedAddr())
 	// Address space.
-	global.Typ.AddrSpace = irAddrSpace(old.AddrSpace())
+	global.Typ.AddrSpace = irOptAddrSpace(old.AddrSpace())
 	// Externally initialized.
-	global.ExternallyInitialized = irExternallyInitialized(old.ExternallyInitialized())
+	global.ExternallyInitialized = irOptExternallyInitialized(old.ExternallyInitialized())
 	// Immutable (constant or global).
 	global.Immutable = irImmutable(old.Immutable())
 	// Content type already stored during index.
@@ -237,21 +237,21 @@ func (gen *generator) astToIRGlobalDef(g ir.Constant, old *ast.GlobalDef) (*ir.G
 		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", g))
 	}
 	// Linkage.
-	global.Linkage = irLinkage(old.Linkage().Text())
+	global.Linkage = irOptLinkage(old.Linkage())
 	// Preemption.
-	global.Preemption = irPreemption(old.Preemption())
+	global.Preemption = irOptPreemption(old.Preemption())
 	// Visibility.
-	global.Visibility = irVisibility(old.Visibility())
+	global.Visibility = irOptVisibility(old.Visibility())
 	// DLL storage class.
-	global.DLLStorageClass = irDLLStorageClass(old.DLLStorageClass())
+	global.DLLStorageClass = irOptDLLStorageClass(old.DLLStorageClass())
 	// Thread local storage model.
-	global.TLSModel = irTLSModelFromThreadLocal(old.ThreadLocal())
+	global.TLSModel = irOptTLSModelFromThreadLocal(old.ThreadLocal())
 	// Unnamed address.
-	global.UnnamedAddr = irUnnamedAddr(old.UnnamedAddr())
+	global.UnnamedAddr = irOptUnnamedAddr(old.UnnamedAddr())
 	// Address space.
-	global.Typ.AddrSpace = irAddrSpace(old.AddrSpace())
+	global.Typ.AddrSpace = irOptAddrSpace(old.AddrSpace())
 	// Externally initialized.
-	global.ExternallyInitialized = irExternallyInitialized(old.ExternallyInitialized())
+	global.ExternallyInitialized = irOptExternallyInitialized(old.ExternallyInitialized())
 	// Immutable (constant or global).
 	global.Immutable = irImmutable(old.Immutable())
 	// Content type already stored during index.
@@ -286,13 +286,13 @@ func (gen *generator) astToIRFuncDecl(g ir.Constant, old *ast.FuncDecl) (*ir.Fun
 
 func (gen *generator) astToIRFuncHeader(f *ir.Function, hdr ast.FuncHeader) error {
 	// Linkage.
-	f.Linkage = irLinkage(hdr.ExternLinkage().Text())
+	f.Linkage = irOptLinkage(hdr.ExternLinkage())
 	// Preemption.
-	f.Preemption = irPreemption(hdr.Preemption())
+	f.Preemption = irOptPreemption(hdr.Preemption())
 	// Visibility.
-	f.Visibility = irVisibility(hdr.Visibility())
+	f.Visibility = irOptVisibility(hdr.Visibility())
 	// DLL storage class.
-	f.DLLStorageClass = irDLLStorageClass(hdr.DLLStorageClass())
+	f.DLLStorageClass = irOptDLLStorageClass(hdr.DLLStorageClass())
 	// Calling convention.
 	// TODO: translate CallingConv.
 	// Return attributes.
@@ -309,15 +309,15 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, hdr ast.FuncHeader) erro
 		}
 		// Parameter attributes.
 		// TODO: handle Attrs.
-		name := local(*p.Name())
+		name := optLocal(p.Name())
 		param := ir.NewParam(typ, name)
 		f.Params = append(f.Params, param)
 	}
 
 	// Unnamed address.
-	f.UnnamedAddr = irUnnamedAddr(hdr.UnnamedAddr())
+	f.UnnamedAddr = irOptUnnamedAddr(hdr.UnnamedAddr())
 	// Address space.
-	f.Typ.AddrSpace = irAddrSpace(hdr.AddrSpace())
+	f.Typ.AddrSpace = irOptAddrSpace(hdr.AddrSpace())
 	// Function attributes.
 	// TODO: handle FuncAttrs.
 	// Section.
@@ -356,4 +356,14 @@ func (gen *generator) astToIRFuncDef(g ir.Constant, old *ast.FuncDef) (*ir.Funct
 	// Use list orders.
 	// TODO: translate use list orders.
 	return f, nil
+}
+
+// ### [ Helper functions ] ####################################################
+
+// text returns the text of the given node.
+func text(n ast.LlvmNode) string {
+	if n := n.LlvmNode(); n != nil {
+		return n.Text()
+	}
+	return ""
 }
