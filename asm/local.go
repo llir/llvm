@@ -25,9 +25,7 @@ import (
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/types"
 	"github.com/llir/l/ir/value"
-	"github.com/mewmew/l-tm/asm/ll"
 	"github.com/mewmew/l-tm/asm/ll/ast"
-	"github.com/mewmew/l-tm/asm/ll/selector"
 	"github.com/pkg/errors"
 )
 
@@ -1433,18 +1431,7 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	// Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// Calling convention.
-	// TODO: update when https://github.com/inspirer/textmapper/issues/19 is resolved.
-	//
-	// Note, I would like to write:
-	//    i.CallingConv = irCallingConv(old.CallingConv())
-	//
-	// Or, perhaps:
-	//    if oldcc := old.CallingConv(); oldcc.IsValid() {
-	//       i.CallingConv = irCallingConv(oldcc)
-	//    }
-	if n := old.Child(selector.CallingConv); n.Type() != ll.NoType {
-		i.CallingConv = irCallingConv(ast.ToLlvmNode(n).(ast.CallingConv))
-	}
+	i.CallingConv = irOptCallingConv(old.CallingConv())
 	return i, nil
 }
 

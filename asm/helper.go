@@ -8,6 +8,7 @@ import (
 	"github.com/llir/l/ir"
 	"github.com/llir/l/ir/enum"
 	"github.com/llir/l/ir/types"
+	asmenum "github.com/mewmew/l-tm/asm/enum"
 	"github.com/mewmew/l-tm/asm/ll/ast"
 	"github.com/mewmew/l-tm/internal/enc"
 	"github.com/pkg/errors"
@@ -20,10 +21,6 @@ import (
 // global returns the name (without '@' prefix) of the given global identifier.
 func global(n ast.GlobalIdent) string {
 	text := n.Text()
-	if text == "" {
-		// \empty is used when global identifier not present.
-		return ""
-	}
 	const prefix = "@"
 	if !strings.HasPrefix(text, prefix) {
 		// NOTE: Panic instead of returning error as this case should not be
@@ -39,10 +36,6 @@ func global(n ast.GlobalIdent) string {
 // local returns the name (without '%' prefix) of the given local identifier.
 func local(n ast.LocalIdent) string {
 	text := n.Text()
-	if text == "" {
-		// \empty is used when local identifier not present.
-		return ""
-	}
 	const prefix = "%"
 	if !strings.HasPrefix(text, prefix) {
 		// NOTE: Panic instead of returning error as this case should not be
@@ -53,15 +46,20 @@ func local(n ast.LocalIdent) string {
 	return unquote(text)
 }
 
+// optLocal returns the name (without '%' prefix) of the given optional local
+// identifier.
+func optLocal(n *ast.LocalIdent) string {
+	if n == nil {
+		return ""
+	}
+	return local(*n)
+}
+
 // --- [ Label Identifiers ] ---------------------------------------------------
 
 // label returns the name (without ':' suffix) of the given label identifier.
 func label(n ast.LabelIdent) string {
 	text := n.Text()
-	if text == "" {
-		// \empty is used when label identifier not present.
-		return ""
-	}
 	const suffix = ":"
 	if !strings.HasSuffix(text, suffix) {
 		// NOTE: Panic instead of returning error as this case should not be
@@ -70,6 +68,15 @@ func label(n ast.LabelIdent) string {
 	}
 	text = text[:len(text)-len(suffix)]
 	return unquote(text)
+}
+
+// optLabel returns the name (without ':' suffix) of the given optional label
+// identifier.
+func optLabel(n *ast.LabelIdent) string {
+	if n == nil {
+		return ""
+	}
+	return label(*n)
 }
 
 // --- [ Attribute Group Identifiers ] -----------------------------------------
@@ -147,11 +154,10 @@ func stringLitBytes(n ast.StringLit) []byte {
 
 // ___ [ Helpers ] _____________________________________________________________
 
-// irAddrSpace returns the IR address space corresponding to the given optional
-// AST address space.
-func irAddrSpace(n *ast.AddrSpace) types.AddrSpace {
-	// \empty is used when address space not present.
-	if n.Text() == "" {
+// irOptAddrSpace returns the IR address space corresponding to the given
+// optional AST address space.
+func irOptAddrSpace(n *ast.AddrSpace) types.AddrSpace {
+	if n == nil {
 		return 0
 	}
 	x := uintLit(n.N())
@@ -159,112 +165,30 @@ func irAddrSpace(n *ast.AddrSpace) types.AddrSpace {
 }
 
 // irCase returns the IR switch case corresponding to the given AST switch case.
-func (fgen *funcGen) irCase(old ast.Case) (*ir.Case, error) {
-	x, err := fgen.gen.irTypeConst(old.X())
+func (fgen *funcGen) irCase(n ast.Case) (*ir.Case, error) {
+	x, err := fgen.gen.irTypeConst(n.X())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	target, err := fgen.irBasicBlock(old.Target())
+	target, err := fgen.irBasicBlock(n.Target())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	return ir.NewCase(x, target), nil
 }
 
-// irCallingConv returns the IR calling convention corresponding to the given
+// irOptCallingConv returns the IR calling convention corresponding to the given
 // optional AST calling convention.
-func irCallingConv(old ast.CallingConv) enum.CallingConv {
-	switch old := old.(type) {
+func irOptCallingConv(n ast.CallingConv) enum.CallingConv {
+	if n == nil {
+		return enum.CallingConvNone
+	}
+	switch n := n.(type) {
 	case *ast.CallingConvEnum:
-		text := old.Text()
-		switch text {
-		case "":
-			// \empty is used when calling convention not present.
-			return enum.CallingConvNone
-		case "amdgpu_cs":
-			return enum.CallingConvAmdGPUCS
-		case "amdgpu_es":
-			return enum.CallingConvAmdGPUES
-		case "amdgpu_gs":
-			return enum.CallingConvAmdGPUGS
-		case "amdgpu_hs":
-			return enum.CallingConvAmdGPUHS
-		case "amdgpu_kernel":
-			return enum.CallingConvAmdGPUKernel
-		case "amdgpu_ls":
-			return enum.CallingConvAmdGPULS
-		case "amdgpu_ps":
-			return enum.CallingConvAmdGPUPS
-		case "amdgpu_vs":
-			return enum.CallingConvAmdGPUVS
-		case "anyregcc":
-			return enum.CallingConvAnyReg
-		case "arm_aapcs_vfpcc":
-			return enum.CallingConvARMAAPCSVFP
-		case "arm_aapcscc":
-			return enum.CallingConvARMAAPCS
-		case "arm_apcscc":
-			return enum.CallingConvARMAPCS
-		case "avr_intrcc":
-			return enum.CallingConvAVRIntr
-		case "avr_signalcc":
-			return enum.CallingConvAVRSignal
-		case "ccc":
-			return enum.CallingConvC
-		case "coldcc":
-			return enum.CallingConvCold
-		case "cxx_fast_tlscc":
-			return enum.CallingConvCXXFastTLS
-		case "fastcc":
-			return enum.CallingConvFast
-		case "ghccc":
-			return enum.CallingConvGHC
-		case "hhvm_ccc":
-			return enum.CallingConvHHVMC
-		case "hhvmcc":
-			return enum.CallingConvHHVM
-		case "intel_ocl_bicc":
-			return enum.CallingConvIntelOCLBI
-		case "msp430_intrcc":
-			return enum.CallingConvMSP430Intr
-		case "preserve_allcc":
-			return enum.CallingConvPreserveAll
-		case "preserve_mostcc":
-			return enum.CallingConvPreserveMost
-		case "ptx_device":
-			return enum.CallingConvPTXDevice
-		case "ptx_kernel":
-			return enum.CallingConvPTXKernel
-		case "spir_func":
-			return enum.CallingConvSPIRFunc
-		case "spir_kernel":
-			return enum.CallingConvSPIRKernel
-		case "swiftcc":
-			return enum.CallingConvSwift
-		case "webkit_jscc":
-			return enum.CallingConvWebKitJS
-		case "win64cc":
-			return enum.CallingConvWin64
-		case "x86_64_sysvcc":
-			return enum.CallingConvX86_64SysV
-		case "x86_fastcallcc":
-			return enum.CallingConvX86FastCall
-		case "x86_intrcc":
-			return enum.CallingConvX86Intr
-		case "x86_regcallcc":
-			return enum.CallingConvX86RegCall
-		case "x86_stdcallcc":
-			return enum.CallingConvX86StdCall
-		case "x86_thiscallcc":
-			return enum.CallingConvX86ThisCall
-		case "x86_vectorcallcc":
-			return enum.CallingConvX86VectorCall
-		default:
-			panic(fmt.Errorf("support for calling convention %q not yet implemented", text))
-		}
+		return asmenum.CallingConvFromString(n.Text())
 	case *ast.CallingConvInt:
-		n := uintLit(old.UintLit())
-		switch n {
+		x := uintLit(n.UintLit())
+		switch x {
 		case 11:
 			return enum.CallingConvHiPE
 		case 86:
@@ -288,72 +212,37 @@ func irCallingConv(old ast.CallingConv) enum.CallingConv {
 		case 96:
 			return enum.CallingConvAMDGPUES
 		default:
-			panic(fmt.Errorf("support for calling convention %d not yet implemented", n))
+			panic(fmt.Errorf("support for calling convention %d not yet implemented", x))
 		}
 	default:
-		panic(fmt.Errorf("support for calling convention type %T not yet implemented", old))
+		panic(fmt.Errorf("support for calling convention type %T not yet implemented", n))
 	}
 }
 
-// irDLLStorageClass returns the IR DLL storage class corresponding to the given
-// optional AST DLL storage class.
-func irDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {
-	text := n.Text()
-	switch text {
-	case "":
-		// \empty is used when DLL storage class not present.
+// irOptDLLStorageClass returns the IR DLL storage class corresponding to the
+// given optional AST DLL storage class.
+func irOptDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {
+	if n == nil {
 		return enum.DLLStorageClassNone
-	case "dllexport":
-		return enum.DLLStorageClassDLLExport
-	case "dllimport":
-		return enum.DLLStorageClassDLLImport
-	default:
-		panic(fmt.Errorf("support for DLL storage class %q not yet implemented", text))
 	}
+	return asmenum.DLLStorageClassFromString(n.Text())
 }
 
-// irExternallyInitialized returns the externally initialized boolean
+// irOptExternallyInitialized returns the externally initialized boolean
 // corresponding to the given optional AST externally initialized.
-func irExternallyInitialized(n *ast.ExternallyInitialized) bool {
-	// TODO: check why ExternallyInitialized is non-nil, when reduced as \empty.
-	return n.Text() == "externally_initialized"
+func irOptExternallyInitialized(n *ast.ExternallyInitialized) bool {
+	return n != nil
 }
 
-// irFastMathFlags returns the IR fast math flags corresponding to the given
-// optional AST fast math flags.
+// irFastMathFlags returns the IR fast math flags corresponding to the given AST
+// fast math flags.
 func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
 	var flags []enum.FastMathFlag
 	for _, n := range ns {
-		flag := irFastMathFlag(n)
+		flag := asmenum.FastMathFlagFromString(n.Text())
 		flags = append(flags, flag)
 	}
 	return flags
-}
-
-// irFastMathFlag returns the IR fast math flag corresponding to the given
-// optional AST fast math flag.
-func irFastMathFlag(n ast.FastMathFlag) enum.FastMathFlag {
-	text := n.Text()
-	switch text {
-	case "afn":
-		return enum.FastMathFlagAFn
-	case "arcp":
-		return enum.FastMathFlagARcp
-	case "contract":
-		return enum.FastMathFlagContract
-	case "fast":
-		return enum.FastMathFlagFast
-	case "ninf":
-		return enum.FastMathFlagNInf
-	case "nnan":
-		return enum.FastMathFlagNNaN
-	case "nsz":
-		return enum.FastMathFlagNSZ
-	case "reassoc":
-		return enum.FastMathFlagReassoc
-	default:
-		panic(fmt.Errorf("support for fast math flag %q not yet implemented", text))
-	}
 }
 
 // irImmutable returns the immutable (constant or global) boolean corresponding
@@ -370,201 +259,105 @@ func irImmutable(n ast.Immutable) bool {
 	}
 }
 
-// irInBounds returns the in-bounds boolean corresponding to the given optional
-// AST in-bounds.
-func irInBounds(n *ast.InBounds) bool {
-	// TODO: check why InBounds is non-nil, when reduced as \empty.
-	return n.Text() == "inbounds"
+// irOptInBounds returns the in-bounds boolean corresponding to the given
+// optional AST in-bounds.
+func irOptInBounds(n *ast.InBounds) bool {
+	return n != nil
 }
 
-// irInRange returns the in-range boolean corresponding to the given optional
+// irOptInRange returns the in-range boolean corresponding to the given optional
 // AST in-range.
-func irInRange(n *ast.InRange) bool {
-	// TODO: check why InRange is non-nil, when reduced as \empty.
-	return n.Text() == "inrange"
+func irOptInRange(n *ast.InRange) bool {
+	return n != nil
 }
 
-// irLinkage returns the IR linkage corresponding to the given optional AST
+// irOptLinkage returns the IR linkage corresponding to the given optional AST
 // linkage.
-func irLinkage(text string) enum.Linkage {
-	// TODO: when ExternLinkage and Linkage are merged in grammar, update
-	// irLinkage to take `n *ast.Linkage` instead of `text string`.
-	//text := n.Text()
-	switch text {
-	case "":
-		// \empty is used when linkage not present.
+func irOptLinkage(n ast.LlvmNode) enum.Linkage {
+	// TODO: fix implementation of optlinkage.
+	return enum.LinkageNone
+	if n == nil {
 		return enum.LinkageNone
-	case "appending":
-		return enum.LinkageAppending
-	case "available_externally":
-		return enum.LinkageAvailableExternally
-	case "common":
-		return enum.LinkageCommon
-	case "internal":
-		return enum.LinkageInternal
-	case "linkonce":
-		return enum.LinkageLinkOnce
-	case "linkonce_odr":
-		return enum.LinkageLinkOnceODR
-	case "private":
-		return enum.LinkagePrivate
-	case "weak":
-		return enum.LinkageWeak
-	case "weak_odr":
-		return enum.LinkageWeakODR
-	case "external":
-		return enum.LinkageExternal
-	case "extern_weak":
-		return enum.LinkageExternWeak
-	default:
-		panic(fmt.Errorf("support for linkage %q not yet implemented", text))
 	}
+	return asmenum.LinkageFromString(n.LlvmNode().Text())
 }
 
-// irOverflowFlags returns the IR overflow flags corresponding to the given
-// optional AST overflow flags.
+// irOverflowFlags returns the IR overflow flags corresponding to the given AST
+// overflow flags.
 func irOverflowFlags(ns []ast.OverflowFlag) []enum.OverflowFlag {
 	var flags []enum.OverflowFlag
 	for _, n := range ns {
-		flag := irOverflowFlag(n)
+		flag := asmenum.OverflowFlagFromString(n.Text())
 		flags = append(flags, flag)
 	}
 	return flags
 }
 
-// irOverflowFlag returns the IR overflow flag corresponding to the given
-// optional AST overflow flag.
-func irOverflowFlag(n ast.OverflowFlag) enum.OverflowFlag {
-	text := n.Text()
-	switch text {
-	case "nsw":
-		return enum.OverflowFlagNSW
-	case "nuw":
-		return enum.OverflowFlagNUW
-	default:
-		panic(fmt.Errorf("support for overflow flag %q not yet implemented", text))
-	}
-}
-
-// irPreemption returns the IR preemption corresponding to the given optional
+// irOptPreemption returns the IR preemption corresponding to the given optional
 // AST preemption.
-func irPreemption(n *ast.Preemption) enum.Preemption {
-	text := n.Text()
-	switch text {
-	case "":
-		// \empty is used when preemption not present.
+func irOptPreemption(n *ast.Preemption) enum.Preemption {
+	if n == nil {
 		return enum.PreemptionNone
-	case "dso_local":
-		return enum.PreemptionDSOLocal
-	case "dso_preemptable":
-		return enum.PreemptionDSOPreemptable
-	default:
-		panic(fmt.Errorf("support for preemption %q not yet implemented", text))
 	}
+	return asmenum.PreemptionFromString(n.Text())
 }
 
-// irSelectionKind returns the IR Comdat selection kind corresponding to the
+// irOptSelectionKind returns the IR Comdat selection kind corresponding to the
 // given optional AST Comdat selection kind.
-func irSelectionKind(n *ast.SelectionKind) enum.SelectionKind {
-	text := n.Text()
-	switch text {
-	case "any":
+func irOptSelectionKind(n *ast.SelectionKind) enum.SelectionKind {
+	if n == nil {
 		return enum.SelectionKindAny
-	case "exactmatch":
-		return enum.SelectionKindExactMatch
-	case "largest":
-		return enum.SelectionKindLargest
-	case "noduplicates":
-		return enum.SelectionKindNoDuplicates
-	case "samesize":
-		return enum.SelectionKindSameSize
-	default:
-		panic(fmt.Errorf("support for Comdat selection kind %q not yet implemented", text))
 	}
+	return asmenum.SelectionKindFromString(n.Text())
 }
 
-// irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given
-// optional AST thread local storage.
-func irTLSModelFromThreadLocal(n *ast.ThreadLocal) enum.TLSModel {
-	if n.Text() != "" {
-		model := irTLSModel(n.Model())
-		if model == enum.TLSModelNone {
-			// If no explicit model is given, the "general dynamic" model is used.
-			//    thread_local
-			return enum.TLSModelGeneric
-		}
-		// e.g. thread_local(initialexec)
-		return model
-	}
-	return enum.TLSModelNone
-}
-
-// irTLSModel returns the IR TLS model corresponding to the given optional AST
-// TLS model.
-func irTLSModel(n *ast.TLSModel) enum.TLSModel {
-	text := n.Text()
-	switch text {
-	case "":
-		// \empty is used when TLS model not present.
+// irOptTLSModelFromThreadLocal returns the IR TLS model corresponding to the
+// given optional AST thread local storage.
+func irOptTLSModelFromThreadLocal(n *ast.ThreadLocal) enum.TLSModel {
+	if n == nil {
 		return enum.TLSModelNone
-	case "initialexec":
-		return enum.TLSModelInitialExec
-	case "localdynamic":
-		return enum.TLSModelLocalDynamic
-	case "localexec":
-		return enum.TLSModelLocalExec
-	default:
-		panic(fmt.Errorf("support for TLS model %q not yet implemented", text))
 	}
+	model := irOptTLSModel(n.Model())
+	if model == enum.TLSModelNone {
+		// If no explicit model is given, the "general dynamic" model is used.
+		//    thread_local
+		return enum.TLSModelGeneric
+	}
+	// e.g. thread_local(initialexec)
+	return model
 }
 
-// irUnnamedAddr returns the IR unnamed address corresponding to the given
+// irOptTLSModel returns the IR TLS model corresponding to the given optional
+// AST TLS model.
+func irOptTLSModel(n *ast.TLSModel) enum.TLSModel {
+	if n == nil {
+		return enum.TLSModelNone
+	}
+	return asmenum.TLSModelFromString(n.Text())
+}
+
+// irOptUnnamedAddr returns the IR unnamed address corresponding to the given
 // optional AST unnamed address.
-func irUnnamedAddr(n *ast.UnnamedAddr) enum.UnnamedAddr {
-	text := n.Text()
-	switch text {
-	case "":
-		// \empty is used when unnamed address not present.
+func irOptUnnamedAddr(n *ast.UnnamedAddr) enum.UnnamedAddr {
+	if n == nil {
 		return enum.UnnamedAddrNone
-	case "local_unnamed_addr":
-		return enum.UnnamedAddrLocalUnnamedAddr
-	case "unnamed_addr":
-		return enum.UnnamedAddrUnnamedAddr
-	default:
-		panic(fmt.Errorf("support for unnamed address %q not yet implemented", text))
 	}
+	return asmenum.UnnamedAddrFromString(n.Text())
 }
 
-// irVariadic returns the variadic boolean corresponding to the given optional
-// AST ellipsis.
-func irVariadic(n *ast.Ellipsis) bool {
-	// TODO: check why Variadic is non-nil for `Variadic=Ellipsisopt`, regardless
-	// of whether the input is (...) or ().
-	//
-	// It seems that the Variadic.Text simply returns empty string when
-	// Ellipsisopt reduces to \empty.
-	//
-	// Using `n.Text() == "..."` for now, would like to use `n != nil`.
-	return n.Text() == "..."
+// irOptVariadic returns the variadic boolean corresponding to the given
+// optional AST ellipsis.
+func irOptVariadic(n *ast.Ellipsis) bool {
+	return n != nil
 }
 
-// irVisibility returns the IR visibility kind corresponding to the given
+// irOptVisibility returns the IR visibility kind corresponding to the given
 // optional AST visibility kind.
-func irVisibility(n *ast.Visibility) enum.Visibility {
-	text := n.Text()
-	switch text {
-	case "":
-		// \empty is used when visibility kind not present.
+func irOptVisibility(n *ast.Visibility) enum.Visibility {
+	if n == nil {
 		return enum.VisibilityNone
-	case "default":
-		return enum.VisibilityDefault
-	case "hidden":
-		return enum.VisibilityHidden
-	case "protected":
-		return enum.VisibilityProtected
-	default:
-		panic(fmt.Errorf("support for visibility kind %q not yet implemented", text))
 	}
+	return asmenum.VisibilityFromString(n.Text())
 }
 
 // ### [ Helpers ] #############################################################

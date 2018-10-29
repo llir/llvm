@@ -4,6 +4,7 @@ lang = "llvm"
 package = "github.com/mewmew/l-tm/asm/ll"
 eventBased = true
 eventFields = true
+eventAST = true
 
 # TODO: check when to use Fooopt and when to use Foo? (as based on the AST
 # they produce)
