@@ -62,6 +62,11 @@ func (m *Module) Def() string {
 		fmt.Fprintf(buf, "%s = type %s\n", t, t.Def())
 	}
 	// TODO: implement Module.Def.
+	// Function declarations and definitions.
+	for _, f := range m.Funcs {
+		fmt.Fprintln(buf, f.Def())
+	}
+	// TODO: implement Module.Def.
 	return buf.String()
 }
 

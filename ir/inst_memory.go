@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
@@ -34,7 +35,7 @@ type InstAlloca struct {
 	// (optional) Alignment; zero if not present.
 	Alignment int
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -72,6 +73,33 @@ func (inst *InstAlloca) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstAlloca) Def() string {
+	// "alloca" OptInAlloca OptSwiftError Type OptCommaTypeValue OptCommaAlignment OptCommaAddrSpace OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("alloca")
+	if inst.InAlloca {
+		buf.WriteString(" inalloca")
+	}
+	if inst.SwiftError {
+		buf.WriteString(" swifterror")
+	}
+	fmt.Fprintf(buf, " %v", inst.ElemType)
+	if inst.NElems != nil {
+		fmt.Fprintf(buf, ", %v", inst.NElems)
+	}
+	if inst.Alignment != 0 {
+		fmt.Fprintf(buf, ", align %v", inst.Alignment)
+	}
+	if inst.Typ.AddrSpace != 0 {
+		fmt.Fprintf(buf, ", %v", inst.Typ.AddrSpace)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLoad is an LLVM IR load instruction.
@@ -96,7 +124,7 @@ type InstLoad struct {
 	// (optional) Alignment; zero if not present.
 	Alignment int
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -138,6 +166,34 @@ func (inst *InstLoad) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstLoad) Def() string {
+	// "load" "atomic" OptVolatile Type "," Type Value OptSyncScope AtomicOrdering OptCommaAlignment OptCommaSepMetadataAttachmentList
+	// "load" OptVolatile Type "," Type Value OptCommaAlignment OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("load")
+	if inst.Atomic {
+		buf.WriteString(" atomic")
+	}
+	if inst.Volatile {
+		buf.WriteString(" volatile")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.Typ, inst.Src)
+	if len(inst.SyncScope) > 0 {
+		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+	}
+	if inst.Ordering != enum.AtomicOrderingNone {
+		fmt.Fprintf(buf, " %v", inst.Ordering)
+	}
+	if inst.Alignment != 0 {
+		fmt.Fprintf(buf, ", align %v", inst.Alignment)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstStore is an LLVM IR store instruction.
@@ -160,13 +216,41 @@ type InstStore struct {
 	// (optional) Alignment; zero if not present.
 	Alignment int
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
 func NewStore(src, dst value.Value) *InstStore {
 	return &InstStore{Src: src, Dst: dst}
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstStore) Def() string {
+	// "store" "atomic" OptVolatile Type Value "," Type Value OptSyncScope AtomicOrdering OptCommaAlignment OptCommaSepMetadataAttachmentList
+	// "store" OptVolatile Type Value "," Type Value OptCommaAlignment OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("store")
+	if inst.Atomic {
+		buf.WriteString(" atomic")
+	}
+	if inst.Volatile {
+		buf.WriteString(" volatile")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.Src, inst.Dst)
+	if len(inst.SyncScope) > 0 {
+		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+	}
+	if inst.Ordering != enum.AtomicOrderingNone {
+		fmt.Fprintf(buf, " %v", inst.Ordering)
+	}
+	if inst.Alignment != 0 {
+		fmt.Fprintf(buf, ", align %v", inst.Alignment)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,12 +265,27 @@ type InstFence struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
 func NewFence(ordering enum.AtomicOrdering) *InstFence {
 	return &InstFence{Ordering: ordering}
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFence) Def() string {
+	// "fence" OptSyncScope AtomicOrdering OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("fence")
+	if len(inst.SyncScope) > 0 {
+		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+	}
+	fmt.Fprintf(buf, " %v", inst.Ordering)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,7 +317,7 @@ type InstCmpXchg struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -259,6 +358,29 @@ func (inst *InstCmpXchg) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstCmpXchg) Def() string {
+	// "cmpxchg" OptWeak OptVolatile Type Value "," Type Value "," Type Value OptSyncScope AtomicOrdering AtomicOrdering OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("cmpxchg")
+	if inst.Weak {
+		buf.WriteString(" weak")
+	}
+	if inst.Volatile {
+		buf.WriteString(" volatile")
+	}
+	fmt.Fprintf(buf, " %v, %v, %v", inst.Ptr, inst.Cmp, inst.New)
+	if len(inst.SyncScope) > 0 {
+		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+	}
+	fmt.Fprintf(buf, " %v", inst.Success)
+	fmt.Fprintf(buf, " %v", inst.Failure)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAtomicRMW is an LLVM IR atomicrmw instruction.
@@ -283,7 +405,7 @@ type InstAtomicRMW struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
@@ -326,6 +448,25 @@ func (inst *InstAtomicRMW) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstAtomicRMW) Def() string {
+	// "atomicrmw" OptVolatile BinOp Type Value "," Type Value OptSyncScope AtomicOrdering OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("atomicrmw")
+	if inst.Volatile {
+		buf.WriteString(" volatile")
+	}
+	fmt.Fprintf(buf, " %v %v, %v", inst.Op, inst.Dst, inst.X)
+	if len(inst.SyncScope) > 0 {
+		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+	}
+	fmt.Fprintf(buf, " %v", inst.Ordering)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstGetElementPtr is an LLVM IR getelementptr instruction.
@@ -346,7 +487,7 @@ type InstGetElementPtr struct {
 	// (optional) In-bounds.
 	InBounds bool
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
@@ -383,4 +524,22 @@ func (inst *InstGetElementPtr) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstGetElementPtr) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstGetElementPtr) Def() string {
+	// "getelementptr" OptInBounds Type "," Type Value GEPIndices OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("getelementptr")
+	if inst.InBounds {
+		buf.WriteString(" inbounds")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.ElemType, inst.Src)
+	for _, index := range inst.Indices {
+		fmt.Fprintf(buf, ", %v", index)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

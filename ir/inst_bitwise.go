@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
@@ -27,7 +28,7 @@ type InstShl struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewShl returns a new shl instruction based on the given operands.
@@ -65,6 +66,21 @@ func (inst *InstShl) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstShl) Def() string {
+	// "shl" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("shl")
+	for _, flag := range inst.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLShr is an LLVM IR lshr instruction.
@@ -81,7 +97,7 @@ type InstLShr struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
@@ -119,6 +135,21 @@ func (inst *InstLShr) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstLShr) Def() string {
+	// "lshr" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("lshr")
+	if inst.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAShr is an LLVM IR ashr instruction.
@@ -135,7 +166,7 @@ type InstAShr struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
@@ -173,6 +204,21 @@ func (inst *InstAShr) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstAShr) Def() string {
+	// "ashr" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("ashr")
+	if inst.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAnd is an LLVM IR and instruction.
@@ -187,7 +233,7 @@ type InstAnd struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewAnd returns a new and instruction based on the given operands.
@@ -225,6 +271,17 @@ func (inst *InstAnd) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstAnd) Def() string {
+	// "and" Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "and %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstOr is an LLVM IR or instruction.
@@ -239,7 +296,7 @@ type InstOr struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewOr returns a new or instruction based on the given operands.
@@ -277,6 +334,17 @@ func (inst *InstOr) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstOr) Def() string {
+	// "or" Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "or %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstXor is an LLVM IR xor instruction.
@@ -291,7 +359,7 @@ type InstXor struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewXor returns a new xor instruction based on the given operands.
@@ -327,4 +395,15 @@ func (inst *InstXor) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstXor) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstXor) Def() string {
+	// "xor" Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "xor %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

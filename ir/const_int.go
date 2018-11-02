@@ -58,7 +58,17 @@ func (c *ConstInt) Type() types.Type {
 // Ident returns the identifier associated with the constant.
 func (c *ConstInt) Ident() string {
 	// int_lit
-	// "true"
-	// "false"
-	panic("not yet implemented")
+	if c.Typ.BitSize == 1 {
+		// "true"
+		// "false"
+		switch x := c.X.Int64(); x {
+		case 0:
+			return "false"
+		case 1:
+			return "true"
+		default:
+			panic(fmt.Errorf("invalid integer value of boolean type; expected 0 or 1, got %d", x))
+		}
+	}
+	return c.X.String()
 }

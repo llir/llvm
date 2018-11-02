@@ -3,6 +3,7 @@ package ir
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
@@ -117,7 +118,38 @@ func (f *Function) SetName(name string) {
 // Def returns the LLVM syntax representation of the function definition or
 // declaration.
 func (f *Function) Def() string {
-	panic("not yet implemented")
+	// "declare" MetadataAttachments OptExternLinkage FunctionHeader
+	// "define" OptLinkage FunctionHeader MetadataAttachments FunctionBody
+	buf := &strings.Builder{}
+	if len(f.Blocks) == 0 {
+		// Function declaration.
+		//
+		//    "declare" MetadataAttachments OptExternLinkage FunctionHeader
+		buf.WriteString("declare")
+		// TODO: add metadata support.
+		//for _, md := range f.Metadata {
+		//	fmt.Fprintf(buf, " %v", md)
+		//}
+		if f.Linkage != enum.LinkageNone {
+			fmt.Fprintf(buf, " %v", f.Linkage)
+		}
+		buf.WriteString(headerString(f))
+		return buf.String()
+	}
+	// Function definition.
+	//
+	//    "define" OptLinkage FunctionHeader MetadataAttachments FunctionBody
+	buf.WriteString("define")
+	if f.Linkage != enum.LinkageNone {
+		fmt.Fprintf(buf, " %v", f.Linkage)
+	}
+	buf.WriteString(headerString(f))
+	// TODO: add metadata support.
+	//for _, md := range f.Metadata {
+	//	fmt.Fprintf(buf, " %v", md)
+	//}
+	fmt.Fprintf(buf, " %v", bodyString(f))
+	return buf.String()
 }
 
 // AssignIDs assigns IDs to unnamed local variables.
@@ -187,6 +219,85 @@ func (f *Function) AssignIDs() error {
 }
 
 // ### [ Helper functions ] ####################################################
+
+// headerString returns the string representation of the function header.
+func headerString(hdr *Function) string {
+	// OptPreemptionSpecifier OptVisibility OptDLLStorageClass OptCallingConv
+	// ReturnAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs
+	// OptSection OptComdat OptGC OptPrefix OptPrologue OptPersonality
+	buf := &strings.Builder{}
+	if hdr.Preemption != enum.PreemptionNone {
+		fmt.Fprintf(buf, " %v", hdr.Preemption)
+	}
+	if hdr.Visibility != enum.VisibilityNone {
+		fmt.Fprintf(buf, " %v", hdr.Visibility)
+	}
+	if hdr.DLLStorageClass != enum.DLLStorageClassNone {
+		fmt.Fprintf(buf, " %v", hdr.DLLStorageClass)
+	}
+	if hdr.CallingConv != enum.CallingConvNone {
+		fmt.Fprintf(buf, " %v", hdr.CallingConv)
+	}
+	for _, attr := range hdr.ReturnAttrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	fmt.Fprintf(buf, " %v", hdr.Sig.RetType)
+	fmt.Fprintf(buf, " %v(", enc.Global(hdr.GlobalName))
+	for i, param := range hdr.Params {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(param.Def())
+	}
+	if hdr.Sig.Variadic {
+		if len(hdr.Params) > 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString("...")
+	}
+	buf.WriteString(")")
+	if hdr.UnnamedAddr != enum.UnnamedAddrNone {
+		fmt.Fprintf(buf, " %v", hdr.UnnamedAddr)
+	}
+	for _, attr := range hdr.FuncAttrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	if len(hdr.Section) > 0 {
+		fmt.Fprintf(buf, " section %v", enc.Quote([]byte(hdr.Section)))
+	}
+	if hdr.Comdat != nil {
+		fmt.Fprintf(buf, " %v", hdr.Comdat)
+	}
+	if len(hdr.GC) > 0 {
+		fmt.Fprintf(buf, " gc %v", enc.Quote([]byte(hdr.GC)))
+	}
+	if hdr.Prefix != nil {
+		fmt.Fprintf(buf, " prefix %v", hdr.Prefix)
+	}
+	if hdr.Prologue != nil {
+		fmt.Fprintf(buf, " prologue %v", hdr.Prologue)
+	}
+	if hdr.Personality != nil {
+		fmt.Fprintf(buf, " personality %v", hdr.Personality)
+	}
+	return buf.String()
+}
+
+// bodyString returns the string representation of the function body.
+func bodyString(body *Function) string {
+	// "{" BasicBlockList UseListOrders "}"
+	buf := &strings.Builder{}
+	buf.WriteString("{\n")
+	for _, block := range body.Blocks {
+		fmt.Fprintf(buf, "%v\n", block.Def())
+	}
+	// TODO: add support for use list orders.
+	//for _, useList := range body.UseListOrders {
+	//	fmt.Fprintf(buf, "%v\n", useList)
+	//}
+	buf.WriteString("}")
+	return buf.String()
+}
 
 // isVoidValue reports whether the given named value is a non-value (i.e. a call
 // instruction or invoke terminator with void-return type).

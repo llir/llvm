@@ -9,6 +9,15 @@ import (
 	"github.com/llir/l/ir/types"
 )
 
+// TODO: move to the right place.
+
+// TODO: figure out definition of arg.
+type Arg interface {
+	String() string
+	isArg()
+}
+
+// TODO: remove IsUnwindTarget? or unexport.
 func (*BasicBlock) IsUnwindTarget() {}
 
 // --- [ Function parameters ] -------------------------------------------------
@@ -55,6 +64,20 @@ func (p *Param) Name() string {
 // SetName sets the name of the function parameter.
 func (p *Param) SetName(name string) {
 	p.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the function parameter.
+func (p *Param) Def() string {
+	// Type ParamAttrs OptLocalIdent
+	buf := &strings.Builder{}
+	buf.WriteString(p.Typ.String())
+	for _, attr := range p.Attrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	if !isUnnamed(p.LocalName) && !isLocalID(p.LocalName) {
+		fmt.Fprintf(buf, " %v", enc.Local(p.LocalName))
+	}
+	return buf.String()
 }
 
 // ### [ Helper functions ] ####################################################

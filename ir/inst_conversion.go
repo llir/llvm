@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
@@ -24,7 +25,7 @@ type InstTrunc struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and
@@ -59,6 +60,17 @@ func (inst *InstTrunc) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstTrunc) Def() string {
+	// "trunc" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "trunc %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstZExt is an LLVM IR zext instruction.
@@ -73,7 +85,7 @@ type InstZExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewZExt returns a new zext instruction based on the given source value and
@@ -108,6 +120,17 @@ func (inst *InstZExt) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstZExt) Def() string {
+	// "zext" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "zext %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSExt is an LLVM IR sext instruction.
@@ -122,7 +145,7 @@ type InstSExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSExt returns a new sext instruction based on the given source value and
@@ -157,6 +180,17 @@ func (inst *InstSExt) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstSExt) Def() string {
+	// "sext" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "sext %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPTrunc is an LLVM IR fptrunc instruction.
@@ -171,7 +205,7 @@ type InstFPTrunc struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value
@@ -206,6 +240,17 @@ func (inst *InstFPTrunc) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFPTrunc) Def() string {
+	// "fptrunc" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "fptrunc %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPExt is an LLVM IR fpext instruction.
@@ -220,7 +265,7 @@ type InstFPExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and
@@ -255,6 +300,17 @@ func (inst *InstFPExt) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFPExt) Def() string {
+	// "fpext" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "fpext %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPToUI is an LLVM IR fptoui instruction.
@@ -269,7 +325,7 @@ type InstFPToUI struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value
@@ -304,6 +360,17 @@ func (inst *InstFPToUI) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFPToUI) Def() string {
+	// "fptoui" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "fptoui %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPToSI is an LLVM IR fptosi instruction.
@@ -318,7 +385,7 @@ type InstFPToSI struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value
@@ -353,6 +420,17 @@ func (inst *InstFPToSI) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFPToSI) Def() string {
+	// "fptosi" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "fptosi %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstUIToFP is an LLVM IR uitofp instruction.
@@ -367,7 +445,7 @@ type InstUIToFP struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value
@@ -402,6 +480,17 @@ func (inst *InstUIToFP) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstUIToFP) Def() string {
+	// "uitofp" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "uitofp %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSIToFP is an LLVM IR sitofp instruction.
@@ -416,7 +505,7 @@ type InstSIToFP struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value
@@ -451,6 +540,17 @@ func (inst *InstSIToFP) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstSIToFP) Def() string {
+	// "sitofp" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "sitofp %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstPtrToInt is an LLVM IR ptrtoint instruction.
@@ -465,7 +565,7 @@ type InstPtrToInt struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
@@ -500,6 +600,17 @@ func (inst *InstPtrToInt) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstPtrToInt) Def() string {
+	// "ptrtoint" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "ptrtoint %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstIntToPtr is an LLVM IR inttoptr instruction.
@@ -514,7 +625,7 @@ type InstIntToPtr struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source
@@ -549,6 +660,17 @@ func (inst *InstIntToPtr) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstIntToPtr) Def() string {
+	// "inttoptr" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "inttoptr %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstBitCast is an LLVM IR bitcast instruction.
@@ -563,7 +685,7 @@ type InstBitCast struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value
@@ -598,6 +720,17 @@ func (inst *InstBitCast) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstBitCast) Def() string {
+	// "bitcast" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "bitcast %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAddrSpaceCast is an LLVM IR addrspacecast instruction.
@@ -612,7 +745,7 @@ type InstAddrSpaceCast struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given
@@ -645,4 +778,15 @@ func (inst *InstAddrSpaceCast) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstAddrSpaceCast) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstAddrSpaceCast) Def() string {
+	// "addrspacecast" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "addrspacecast %v to %v", inst.From, inst.To)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

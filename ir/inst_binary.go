@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
@@ -27,7 +28,7 @@ type InstAdd struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewAdd returns a new add instruction based on the given operands.
@@ -65,6 +66,21 @@ func (inst *InstAdd) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstAdd) Def() string {
+	// "add" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("add")
+	for _, flag := range inst.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFAdd is an LLVM IR fadd instruction.
@@ -81,7 +97,7 @@ type InstFAdd struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
@@ -119,6 +135,21 @@ func (inst *InstFAdd) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFAdd) Def() string {
+	// "fadd" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("fadd")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSub is an LLVM IR sub instruction.
@@ -135,7 +166,7 @@ type InstSub struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSub returns a new sub instruction based on the given operands.
@@ -173,6 +204,21 @@ func (inst *InstSub) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstSub) Def() string {
+	// "sub" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("sub")
+	for _, flag := range inst.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFSub is an LLVM IR fsub instruction.
@@ -189,7 +235,7 @@ type InstFSub struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
@@ -227,6 +273,21 @@ func (inst *InstFSub) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFSub) Def() string {
+	// "fsub" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("fsub")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstMul is an LLVM IR mul instruction.
@@ -243,7 +304,7 @@ type InstMul struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewMul returns a new mul instruction based on the given operands.
@@ -281,6 +342,21 @@ func (inst *InstMul) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstMul) Def() string {
+	// "mul" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("mul")
+	for _, flag := range inst.OverflowFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFMul is an LLVM IR fmul instruction.
@@ -297,7 +373,7 @@ type InstFMul struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
@@ -335,6 +411,21 @@ func (inst *InstFMul) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFMul) Def() string {
+	// "fmul" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("fmul")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstUDiv is an LLVM IR udiv instruction.
@@ -351,7 +442,7 @@ type InstUDiv struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
@@ -389,6 +480,21 @@ func (inst *InstUDiv) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstUDiv) Def() string {
+	// "udiv" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("udiv")
+	if inst.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSDiv is an LLVM IR sdiv instruction.
@@ -405,7 +511,7 @@ type InstSDiv struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
@@ -443,6 +549,21 @@ func (inst *InstSDiv) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstSDiv) Def() string {
+	// "sdiv" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("sdiv")
+	if inst.Exact {
+		buf.WriteString(" exact")
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFDiv is an LLVM IR fdiv instruction.
@@ -459,7 +580,7 @@ type InstFDiv struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
@@ -497,6 +618,21 @@ func (inst *InstFDiv) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFDiv) Def() string {
+	// "fdiv" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("fdiv")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstURem is an LLVM IR urem instruction.
@@ -511,7 +647,7 @@ type InstURem struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewURem returns a new urem instruction based on the given operands.
@@ -549,6 +685,17 @@ func (inst *InstURem) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstURem) Def() string {
+	// "urem" Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "urem %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSRem is an LLVM IR srem instruction.
@@ -563,7 +710,7 @@ type InstSRem struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
@@ -601,6 +748,17 @@ func (inst *InstSRem) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstSRem) Def() string {
+	// "srem" Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "srem %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFRem is an LLVM IR frem instruction.
@@ -617,7 +775,7 @@ type InstFRem struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFRem returns a new frem instruction based on the given operands.
@@ -653,4 +811,19 @@ func (inst *InstFRem) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstFRem) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFRem) Def() string {
+	// "frem" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("frem")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

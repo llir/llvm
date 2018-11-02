@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
@@ -26,7 +27,7 @@ type InstExtractValue struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewExtractValue returns a new extractvalue instruction based on the given
@@ -65,6 +66,20 @@ func (inst *InstExtractValue) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstExtractValue) Def() string {
+	// "extractvalue" Type Value "," IndexList OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "extractvalue %v", inst.X)
+	for _, index := range inst.Indices {
+		fmt.Fprintf(buf, ", %v", index)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstInsertValue is an LLVM IR insertvalue instruction.
@@ -83,7 +98,7 @@ type InstInsertValue struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewInsertValue returns a new insertvalue instruction based on the given
@@ -120,6 +135,20 @@ func (inst *InstInsertValue) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstInsertValue) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstInsertValue) Def() string {
+	// "insertvalue" Type Value "," Type Value "," IndexList OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "insertvalue %v, %v", inst.X, inst.Elem)
+	for _, index := range inst.Indices {
+		fmt.Fprintf(buf, ", %v", index)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // ### [ Helper functions ] ####################################################

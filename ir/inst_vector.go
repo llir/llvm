@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
@@ -26,7 +27,7 @@ type InstExtractElement struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewExtractElement returns a new extractelement instruction based on the given
@@ -69,6 +70,17 @@ func (inst *InstExtractElement) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstExtractElement) Def() string {
+	// "extractelement" Type Value "," Type Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "extractelement %v, %v", inst.X, inst.Index)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstInsertElement is an LLVM IR insertelement instruction.
@@ -87,7 +99,7 @@ type InstInsertElement struct {
 	// Type of result produced by the instruction.
 	Typ *types.VectorType
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewInsertElement returns a new insertelement instruction based on the given
@@ -130,6 +142,17 @@ func (inst *InstInsertElement) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstInsertElement) Def() string {
+	// "insertelement" Type Value "," Type Value "," Type Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "insertelement %v, %v, %v", inst.X, inst.Elem, inst.Index)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstShuffleVector is an LLVM IR shufflevector instruction.
@@ -146,7 +169,7 @@ type InstShuffleVector struct {
 	// Type of result produced by the instruction.
 	Typ *types.VectorType
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given
@@ -191,4 +214,15 @@ func (inst *InstShuffleVector) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstShuffleVector) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstShuffleVector) Def() string {
+	// "shufflevector" Type Value "," Type Value "," Type Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "shufflevector %v, %v, %v", inst.X, inst.Y, inst.Mask)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

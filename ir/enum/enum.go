@@ -1,10 +1,29 @@
 // Package enum defines enumerate types of LLVM IR.
 package enum
 
+//go:generate stringer -linecomment -type AtomicOrdering
+
+// AtomicOrdering is an atomic ordering attribute.
+type AtomicOrdering uint8
+
+// Atomic ordering attributes.
+const (
+	AtomicOrderingNone      AtomicOrdering = iota // none
+	AtomicOrderingAcqRel                          // acq_rel
+	AtomicOrderingAcquire                         // acquire
+	AtomicOrderingMonotonic                       // monotonic
+	AtomicOrderingRelease                         // release
+	AtomicOrderingSeqCst                          // seq_cst
+	AtomicOrderingUnordered                       // unordered
+)
+
 //go:generate stringer -linecomment -type CallingConv
 
 // CallingConv is a calling convention.
 type CallingConv uint8
+
+// TODO: Check if there are any calling conventions defined in LLVM 7.0 that are
+// missing from this list.
 
 // Calling conventions.
 const (

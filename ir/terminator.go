@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
@@ -31,6 +32,8 @@ import (
 //    *ir.TermCleanupRet    // https://godoc.org/github.com/llir/l/ir#TermCleanupRet
 //    *ir.TermUnreachable   // https://godoc.org/github.com/llir/l/ir#TermUnreachable
 type Terminator interface {
+	// Def returns the LLVM syntax representation of the terminator.
+	Def() string
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*BasicBlock
 }
@@ -45,7 +48,7 @@ type TermRet struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
@@ -60,6 +63,22 @@ func (*TermRet) Succs() []*BasicBlock {
 	return nil
 }
 
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermRet) Def() string {
+	// "ret" VoidType OptCommaSepMetadataAttachmentList
+	// "ret" ConcreteType Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	if term.X == nil {
+		buf.WriteString("ret void")
+	} else {
+		fmt.Fprintf(buf, "ret %v", term.X)
+	}
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // --- [ br ] ------------------------------------------------------------------
 
 // TermBr is an unconditional LLVM IR br terminator.
@@ -72,7 +91,7 @@ type TermBr struct {
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
@@ -88,6 +107,17 @@ func (term *TermBr) Succs() []*BasicBlock {
 		term.Successors = []*BasicBlock{term.Target}
 	}
 	return term.Successors
+}
+
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermBr) Def() string {
+	// "br" LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "br %v", term.Target)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // --- [ conditional br ] ------------------------------------------------------
@@ -106,7 +136,7 @@ type TermCondBr struct {
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
@@ -122,6 +152,17 @@ func (term *TermCondBr) Succs() []*BasicBlock {
 		term.Successors = []*BasicBlock{term.TargetTrue, term.TargetFalse}
 	}
 	return term.Successors
+}
+
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermCondBr) Def() string {
+	// "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "br %v, %v, %v", term.Cond, term.TargetTrue, term.TargetFalse)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // --- [ switch ] --------------------------------------------------------------
@@ -140,7 +181,7 @@ type TermSwitch struct {
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSwitch returns a new switch terminator based on the given control
@@ -161,6 +202,21 @@ func (term *TermSwitch) Succs() []*BasicBlock {
 		term.Successors = succs
 	}
 	return term.Successors
+}
+
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermSwitch) Def() string {
+	// "switch" Type Value "," LabelType LocalIdent "[" Cases "]" OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "switch %v, %v [\n", term.X, term.TargetDefault)
+	for _, c := range term.Cases {
+		fmt.Fprintf(buf, "\t\t%v\n", c)
+	}
+	buf.WriteString("\t]")
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // ~~~ [ Switch case ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -191,7 +247,7 @@ type TermIndirectBr struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewIndirectBr returns a new indirectbr terminator based on the given target
@@ -206,6 +262,24 @@ func (term *TermIndirectBr) Succs() []*BasicBlock {
 	return term.ValidTargets
 }
 
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermIndirectBr) Def() string {
+	// "indirectbr" Type Value "," "[" LabelList "]" OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "indirectbr %v, [", term.Addr)
+	for i, target := range term.ValidTargets {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(target.String())
+	}
+	buf.WriteString("]")
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // --- [ invoke ] --------------------------------------------------------------
 
 // TermInvoke is an LLVM IR invoke terminator.
@@ -216,7 +290,7 @@ type TermInvoke struct {
 	// TODO: specify the set of underlying types of Invokee.
 	Invokee value.Value
 	// Function arguments.
-	Args []enum.Arg
+	Args []Arg
 	// Normal control flow return point.
 	Normal *BasicBlock
 	// Exception control flow return point.
@@ -240,7 +314,7 @@ type TermInvoke struct {
 	// (optional) Operand bundles.
 	OperandBundles []enum.OperandBundle
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewInvoke returns a new invoke terminator based on the given invokee, function
@@ -248,7 +322,7 @@ type TermInvoke struct {
 // execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func NewInvoke(invokee value.Value, args []enum.Arg, normal, exception *BasicBlock) *TermInvoke {
+func NewInvoke(invokee value.Value, args []Arg, normal, exception *BasicBlock) *TermInvoke {
 	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
 }
 
@@ -306,6 +380,42 @@ func (term *TermInvoke) Succs() []*BasicBlock {
 	return term.Successors
 }
 
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermInvoke) Def() string {
+	// "invoke" OptCallingConv ReturnAttrs Type Value "(" Args ")" FuncAttrs OperandBundles "to" LabelType LocalIdent "unwind" LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("invoke")
+	if term.CallingConv != enum.CallingConvNone {
+		fmt.Fprintf(buf, " %v", term.CallingConv)
+	}
+	for _, attr := range term.ReturnAttrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	fmt.Fprintf(buf, "%v %v(", term.Type(), term.Invokee.Ident())
+	for i, arg := range term.Args {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(arg.String())
+	}
+	buf.WriteString(")")
+	for _, attr := range term.FuncAttrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	if len(term.OperandBundles) > 0 {
+		buf.WriteString("[")
+		for _, operandBundle := range term.OperandBundles {
+			fmt.Fprintf(buf, " %v", operandBundle)
+		}
+		buf.WriteString("]")
+	}
+	fmt.Fprintf(buf, " to %v unwind %v", term.Normal, term.Exception)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // --- [ resume ] --------------------------------------------------------------
 
 // TermResume is an LLVM IR resume terminator.
@@ -316,7 +426,7 @@ type TermResume struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewResume returns a new resume terminator based on the given exception
@@ -329,6 +439,17 @@ func NewResume(x value.Value) *TermResume {
 func (term *TermResume) Succs() []*BasicBlock {
 	// no successors.
 	return nil
+}
+
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermResume) Def() string {
+	// "resume" Type Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "resume %v", term.X)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // --- [ catchswitch ] ---------------------------------------------------------
@@ -349,7 +470,7 @@ type TermCatchSwitch struct {
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
@@ -397,6 +518,24 @@ func (term *TermCatchSwitch) Succs() []*BasicBlock {
 	return term.Successors
 }
 
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermCatchSwitch) Def() string {
+	// "catchswitch" "within" ExceptionScope "[" LabelList "]" "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "catchswitch within %v [", term.Scope)
+	for i, handler := range term.Handlers {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(handler.String())
+	}
+	fmt.Fprintf(buf, "] unwind %v", term.UnwindTarget)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // --- [ catchret ] ------------------------------------------------------------
 
 // TermCatchRet is an LLVM IR catchret terminator.
@@ -411,7 +550,7 @@ type TermCatchRet struct {
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCatchRet returns a new catchret terminator based on the given exit
@@ -429,6 +568,17 @@ func (term *TermCatchRet) Succs() []*BasicBlock {
 	return term.Successors
 }
 
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermCatchRet) Def() string {
+	// "catchret" "from" Value "to" LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "catchret from %v to %v", term.From, term.To)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // --- [ cleanupret ] ----------------------------------------------------------
 
 // TermCleanupRet is an LLVM IR cleanupret terminator.
@@ -436,33 +586,44 @@ type TermCleanupRet struct {
 	// Exit cleanuppad.
 	From *InstCleanupPad
 	// Unwind target; basic block or caller function.
-	To enum.UnwindTarget
+	UnwindTarget enum.UnwindTarget
 
 	// extra.
 
 	// Successor basic blocks of the terminator.
 	Successors []*BasicBlock
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
 // cleanuppad and unwind target.
-func NewCleanupRet(from *InstCleanupPad, to enum.UnwindTarget) *TermCleanupRet {
-	return &TermCleanupRet{From: from, To: to}
+func NewCleanupRet(from *InstCleanupPad, unwindTarget enum.UnwindTarget) *TermCleanupRet {
+	return &TermCleanupRet{From: from, UnwindTarget: unwindTarget}
 }
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermCleanupRet) Succs() []*BasicBlock {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		if unwindTarget, ok := term.To.(*BasicBlock); ok {
+		if unwindTarget, ok := term.UnwindTarget.(*BasicBlock); ok {
 			term.Successors = []*BasicBlock{unwindTarget}
 		} else {
 			term.Successors = []*BasicBlock{}
 		}
 	}
 	return term.Successors
+}
+
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermCleanupRet) Def() string {
+	// "cleanupret" "from" Value "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "cleanupret from %v unwind %v", term.From, term.UnwindTarget)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }
 
 // --- [ unreachable ] ---------------------------------------------------------
@@ -472,7 +633,7 @@ type TermUnreachable struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewUnreachable returns a new unreachable terminator.
@@ -484,4 +645,15 @@ func NewUnreachable() *TermUnreachable {
 func (term *TermUnreachable) Succs() []*BasicBlock {
 	// no successors.
 	return nil
+}
+
+// Def returns the LLVM syntax representation of the terminator.
+func (term *TermUnreachable) Def() string {
+	// "unreachable" OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("unreachable")
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

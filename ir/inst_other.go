@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/enum"
@@ -27,7 +28,7 @@ type InstICmp struct {
 	// Type of result produced by the instruction.
 	Typ types.Type // boolean or boolean vector
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewICmp returns a new icmp instruction based on the given integer comparison
@@ -73,6 +74,17 @@ func (inst *InstICmp) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstICmp) Def() string {
+	// "icmp" IPred Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "icmp %v %v, %v", inst.Pred, inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFCmp is an LLVM IR fcmp instruction.
@@ -90,8 +102,8 @@ type InstFCmp struct {
 	Typ types.Type // boolean or boolean vector
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
-	// Metadata.
-	// TODO: add metadata.
+	// (optional) Metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -137,6 +149,21 @@ func (inst *InstFCmp) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstFCmp) Def() string {
+	// "fcmp" FastMathFlags FPred Type Value "," Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	buf.WriteString("fcmp")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	fmt.Fprintf(buf, " %v %v, %v", inst.Pred, inst.X, inst.Y.Ident())
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstPhi is an LLVM IR phi instruction.
@@ -151,7 +178,7 @@ type InstPhi struct {
 	// Type of result produced by the instruction.
 	Typ types.Type // type of incoming value
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -189,6 +216,23 @@ func (inst *InstPhi) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstPhi) Def() string {
+	// "phi" Type IncList OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "phi %v ", inst.Typ)
+	for i, inc := range inst.Incs {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(inc.String())
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ___ [ Incoming value ] ______________________________________________________
 
 // Incoming is an incoming value of a phi instruction.
@@ -203,6 +247,12 @@ type Incoming struct {
 // predecessor basic block.
 func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
 	return &Incoming{X: x, Pred: pred}
+}
+
+// String returns the string representation of the incoming value.
+func (inc *Incoming) String() string {
+	// "[" Value "," LocalIdent "]"
+	return fmt.Sprintf("[ %v, %v ]", inc.X.Ident(), inc.Pred.Ident())
 }
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -221,7 +271,7 @@ type InstSelect struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewSelect returns a new select instruction based on the given selection
@@ -259,6 +309,17 @@ func (inst *InstSelect) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstSelect) Def() string {
+	// "select" Type Value "," Type Value "," Type Value OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "select %v, %v, %v", inst.Cond, inst.X, inst.Y)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCall is an LLVM IR call instruction.
@@ -269,7 +330,7 @@ type InstCall struct {
 	// TODO: specify the set of underlying types of Callee.
 	Callee value.Value
 	// Function arguments.
-	Args []enum.Arg // TODO: move enum.Arg to ir.Arg.
+	Args []Arg
 
 	// extra.
 
@@ -290,15 +351,15 @@ type InstCall struct {
 	FuncAttrs []enum.FuncAttribute
 	// (optional) Operand bundles.
 	OperandBundles []enum.OperandBundle
-	// Metadata.
-	// TODO: add metadata.
+	// (optional) Metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
 //
 // TODO: specify the set of underlying types of callee.
-func NewCall(callee value.Value, args ...enum.Arg) *InstCall {
+func NewCall(callee value.Value, args ...Arg) *InstCall {
 	return &InstCall{Callee: callee, Args: args}
 }
 
@@ -347,6 +408,47 @@ func (inst *InstCall) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstCall) Def() string {
+	// OptTail "call" FastMathFlags OptCallingConv ReturnAttrs Type Value "(" Args ")" FuncAttrs OperandBundles OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	if inst.Tail != enum.TailNone {
+		fmt.Fprintf(buf, "%v ", inst.Tail)
+	}
+	buf.WriteString("call")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %v", flag)
+	}
+	if inst.CallingConv != enum.CallingConvNone {
+		fmt.Fprintf(buf, " %v", inst.CallingConv)
+	}
+	for _, attr := range inst.ReturnAttrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	fmt.Fprintf(buf, " %v %v(", inst.Type(), inst.Callee.Ident())
+	for i, arg := range inst.Args {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(arg.String())
+	}
+	buf.WriteString(")")
+	for _, attr := range inst.FuncAttrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	if len(inst.OperandBundles) > 0 {
+		buf.WriteString("[")
+		for _, operandBundle := range inst.OperandBundles {
+			fmt.Fprintf(buf, " %v", operandBundle)
+		}
+		buf.WriteString("]")
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstVAArg is an LLVM IR va_arg instruction.
@@ -361,7 +463,7 @@ type InstVAArg struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewVAArg returns a new va_arg instruction based on the given variable
@@ -396,6 +498,17 @@ func (inst *InstVAArg) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstVAArg) Def() string {
+	// "va_arg" Type Value "," Type OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "va_arg %v, %v", inst.ArgList, inst.ArgType)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLandingPad is an LLVM IR landingpad instruction.
@@ -413,7 +526,7 @@ type InstLandingPad struct {
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewLandingPad returns a new landingpad instruction based on the given result
@@ -448,6 +561,23 @@ func (inst *InstLandingPad) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstLandingPad) Def() string {
+	// "landingpad" Type OptCleanup Clauses OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "landingpad %v", inst.ResultType)
+	if inst.Cleanup {
+		buf.WriteString(" cleanup")
+	}
+	for _, clause := range inst.Clauses {
+		fmt.Fprintf(buf, " %v", clause)
+	}
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCatchPad is an LLVM IR catchpad instruction.
@@ -457,17 +587,17 @@ type InstCatchPad struct {
 	// Exception scope.
 	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
 	// Exception arguments.
-	Args []enum.Arg
+	Args []Arg
 
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
 // scope and exception arguments.
-func NewCatchPad(scope *TermCatchSwitch, args ...enum.Arg) *InstCatchPad {
+func NewCatchPad(scope *TermCatchSwitch, args ...Arg) *InstCatchPad {
 	return &InstCatchPad{Scope: scope, Args: args}
 }
 
@@ -497,6 +627,24 @@ func (inst *InstCatchPad) SetName(name string) {
 	inst.LocalName = name
 }
 
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstCatchPad) Def() string {
+	// "catchpad" "within" LocalIdent "[" ExceptionArgs "]" OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "catchpad within %v [", inst.Scope)
+	for i, arg := range inst.Args {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(arg.String())
+	}
+	buf.WriteString("]")
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCleanupPad is an LLVM IR cleanuppad instruction.
@@ -506,17 +654,17 @@ type InstCleanupPad struct {
 	// Exception scope.
 	Scope enum.ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
-	Args []enum.Arg
+	Args []Arg
 
 	// extra.
 
 	// (optional) Metadata.
-	// TODO: add metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
 // exception scope and exception arguments.
-func NewCleanupPad(scope enum.ExceptionScope, args ...enum.Arg) *InstCleanupPad {
+func NewCleanupPad(scope enum.ExceptionScope, args ...Arg) *InstCleanupPad {
 	return &InstCleanupPad{Scope: scope, Args: args}
 }
 
@@ -544,4 +692,22 @@ func (inst *InstCleanupPad) Name() string {
 // SetName sets the name of the instruction.
 func (inst *InstCleanupPad) SetName(name string) {
 	inst.LocalName = name
+}
+
+// Def returns the LLVM syntax representation of the instruction.
+func (inst *InstCleanupPad) Def() string {
+	// "cleanuppad" "within" ExceptionScope "[" ExceptionArgs "]" OptCommaSepMetadataAttachmentList
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "cleanuppad within %v [", inst.Scope)
+	for i, arg := range inst.Args {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(arg.String())
+	}
+	buf.WriteString("]")
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %v", md)
+	}
+	return buf.String()
 }

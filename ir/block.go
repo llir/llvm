@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/l/internal/enc"
 	"github.com/llir/l/ir/types"
@@ -54,19 +55,17 @@ func (block *BasicBlock) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the basic block definition.
 func (block *BasicBlock) Def() string {
-	panic("not yet implemented")
-	/*
-		// OptLabelIdent Instructions Terminator
-		buf := &strings.Builder{}
-		if isLocalID(block.LocalName) {
-			fmt.Fprintf(buf, "; <label>:%v\n", enc.Label(block.LocalName))
-		} else if len(block.LocalName) > 0 {
-			fmt.Fprintf(buf, "%v\n", enc.Label(block.LocalName))
-		}
-		for _, inst := range block.Insts {
-			fmt.Fprintf(buf, "\t%v\n", inst.Def())
-		}
-		fmt.Fprintf(buf, "\t%v", block.Term.Def())
-		return buf.String()
-	*/
+	// OptLabelIdent Instructions Terminator
+	buf := &strings.Builder{}
+	if isLocalID(block.LocalName) {
+		//fmt.Fprintf(buf, "; <label>:%v\n", enc.Label(block.LocalName))
+	} else if len(block.LocalName) > 0 {
+		// TODO: Store block name without ':' suffix or '%' prefix.
+		fmt.Fprintf(buf, "%v\n", enc.Label(block.LocalName))
+	}
+	for _, inst := range block.Insts {
+		fmt.Fprintf(buf, "\t%v\n", inst.Def())
+	}
+	fmt.Fprintf(buf, "\t%v", block.Term.Def())
+	return buf.String()
 }

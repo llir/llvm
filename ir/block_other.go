@@ -55,7 +55,7 @@ func (block *BasicBlock) NewSelect(cond, x, y value.Value) *InstSelect {
 // callee and function arguments.
 //
 // TODO: specify the set of underlying types of callee.
-func (block *BasicBlock) NewCall(callee value.Value, args ...enum.Arg) *InstCall {
+func (block *BasicBlock) NewCall(callee value.Value, args ...Arg) *InstCall {
 	inst := NewCall(callee, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -85,7 +85,7 @@ func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*enum.C
 
 // NewCatchPad appends a new catchpad instruction to the basic block based on
 // the given exception scope and exception arguments.
-func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...enum.Arg) *InstCatchPad {
+func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...Arg) *InstCatchPad {
 	inst := NewCatchPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -95,7 +95,7 @@ func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...enum.Arg) *
 
 // NewCleanupPad appends a new cleanuppad instruction to the basic block based
 // on the given exception scope and exception arguments.
-func (block *BasicBlock) NewCleanupPad(scope enum.ExceptionScope, args ...enum.Arg) *InstCleanupPad {
+func (block *BasicBlock) NewCleanupPad(scope enum.ExceptionScope, args ...Arg) *InstCleanupPad {
 	inst := NewCleanupPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst

@@ -4,13 +4,7 @@
 
 package enum
 
-type Arg interface {
-	isArg()
-}
-
 type AtomicOp uint
-
-type AtomicOrdering uint
 
 type Clause struct {
 }

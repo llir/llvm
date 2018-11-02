@@ -67,7 +67,7 @@ func (block *BasicBlock) NewIndirectBr(addr *ConstBlockAddress, validTargets ...
 // for normal and exceptional execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func (block *BasicBlock) NewInvoke(invokee value.Value, args []enum.Arg, normal, exception *BasicBlock) *TermInvoke {
+func (block *BasicBlock) NewInvoke(invokee value.Value, args []Arg, normal, exception *BasicBlock) *TermInvoke {
 	term := NewInvoke(invokee, args, normal, exception)
 	block.Term = term
 	return term
