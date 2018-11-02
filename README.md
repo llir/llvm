@@ -13,16 +13,7 @@ The aim of this project is to provide a pure Go library for interacting with [LL
 ## Installation
 
 ```bash
-go get github.com/llir/llvm/...
-```
-
-## Hacking
-
-Anyone wishing to hack on the project may need to download the [Gocc](https://github.com/goccmack/gocc) tool, which is used to generate the LLVM IR assembly lexer and parser from a [BNF grammar](https://github.com/llir/llvm/blob/master/asm/internal/ll.bnf).
-
-```bash
-go get github.com/goccmack/gocc
-make -C $GOPATH/src/github.com/llir/llvm/asm/internal
+go get -u github.com/llir/llvm/...
 ```
 
 ## Usage
@@ -278,7 +269,11 @@ Hand-written lexer and preliminary work on a recursive descent parser for LLVM I
 
 Primary focus of version 0.3: *grammar covering the entire LLVM IR language*.
 
-The grammar for LLVM IR is now complete and covers the entire LLVM IR language, based on the source code of the official LLVM project as of 2018-02-19 (rev [llvm-mirror/llvm@db070bb](https://github.com/llvm-mirror/llvm/commit/db070bbdacd303ae7da129f59beaf35024d94c53)).
+The grammar for LLVM IR is now complete and covers the entire LLVM IR language (as of LLVM 7.0).
+
+Lexers and parsers for LLVM IR assembly are automatically generated from a [EBNF grammar](https://github.com/llir/ll/blob/master/ll.tm) using [Textmapper](https://github.com/inspirer/textmapper).
+
+The Textmapper generated source code has been split into a [dedicated repository](https://github.com/llir/ll).
 
 ### Version 0.4 (to be released)
 
