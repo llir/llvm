@@ -4,6 +4,7 @@ lang = "llvm"
 package = "github.com/mewmew/l-tm/asm/ll"
 eventBased = true
 eventFields = true
+eventAST = true
 
 # TODO: check when to use Fooopt and when to use Foo? (as based on the AST
 # they produce)
@@ -809,13 +810,13 @@ SelectionKind -> SelectionKind
 #       Const OptionalAttrs
 
 GlobalDecl -> GlobalDecl
-	: Name=GlobalIdent '=' ExternLinkage PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+	: Name=GlobalIdent '=' ExternLinkage Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GlobalDef -> GlobalDef
-	: Name=GlobalIdent '=' Linkageopt PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
+	: Name=GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant GlobalAttrs=(',' GlobalAttr)+? FuncAttrs=(',' FuncAttr)+?
 ;
 
 # TODO: Check if ExternallyInitialized can be inlined or handled in a cleaner way. ref: https://github.com/inspirer/textmapper/issues/14
@@ -859,11 +860,11 @@ IndirectSymbolDef -> IndirectSymbolDef
 ;
 
 AliasDef -> AliasDef
-	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias' Typ=Type ',' AliaseeType=Type Aliasee=Constant
 ;
 
 IFuncDef -> IFuncDef
-	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) PreemptionSpecifieropt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
+	: Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'ifunc' Typ=Type ',' ResolverType=Type Resolver=Constant
 ;
 
 # ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -875,7 +876,7 @@ IFuncDef -> IFuncDef
 #   ::= 'declare' FunctionHeader
 
 FuncDecl -> FuncDecl
-	: 'declare' Metadata=FuncMetadata Header=FuncHeader
+	: 'declare' Metadata=MetadataAttachment* Header=FuncHeader
 ;
 
 # ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -886,8 +887,12 @@ FuncDecl -> FuncDecl
 #
 #   ::= 'define' FunctionHeader (!dbg !56)* '{' ...
 
+# ref: ParseOptionalFunctionMetadata
+#
+#   ::= (!dbg !57)*
+
 FuncDef -> FuncDef
-	: 'define' Header=FuncHeader Metadata=FuncMetadata Body=FuncBody
+	: 'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
 ;
 
 # ref: ParseFunctionHeader
@@ -901,13 +906,14 @@ FuncDef -> FuncDef
 # The shift/reduce conflict is present since FuncAttr also contains 'align'.
 
 FuncHeader -> FuncHeader
-	: (Linkage | ExternLinkage)? PreemptionSpecifieropt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+	: (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttr* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttr* Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 ;
 
-# TODO: Rename GCNode to GC when collision with token 'gc' has been resolved.
-# Both define an identifier GC, the former in listener.go and the latter in token.go.
-
-# TODO: Create issue in Textmapper to track this upstream.
+# NODE: Named GCNode instead of GC to avoid collisions with 'gc' token. Both
+# define an identifier GC, the former in listener.go and the latter in
+# token.go.
+#
+# Upstream issue https://github.com/inspirer/textmapper/issues/18
 
 GC -> GCNode
 	: 'gc' Name=StringLit
@@ -1157,11 +1163,9 @@ ArrayType -> ArrayType
 #     ::= '<' '{' '}' '>'
 #     ::= '<' '{' Type (',' Type)* '}' '>'
 
-# TODO: Figure out how to represent packed; ref: https://github.com/inspirer/textmapper/issues/14
-
 StructType -> StructType
 	: '{' Fields=(Type separator ',')+? '}'
-	| '<' '{' Fields=(Type separator ',')+? '}' '>'
+	| '<' '{' Fields=(Type separator ',')+? '}' '>'   -> PackedStructType
 ;
 
 OpaqueType -> OpaqueType
@@ -1232,7 +1236,6 @@ Constant -> Constant
 	| NoneConst
 	| StructConst
 	| ArrayConst
-	| CharArrayConst
 	| VectorConst
 	| ZeroInitializerConst
 	# @42
@@ -1317,10 +1320,7 @@ StructConst -> StructConst
 
 ArrayConst -> ArrayConst
 	: '[' Elems=(TypeConst separator ',')* ']'
-;
-
-CharArrayConst -> CharArrayConst
-	: 'c' Val=StringLit
+	| 'c' Val=StringLit                          -> CharArrayConst
 ;
 
 # --- [ Vector Constants ] -----------------------------------------------------
@@ -1434,7 +1434,7 @@ ConstantExpr -> ConstantExpr
 # ref: ParseValID
 
 AddExpr -> AddExpr
-	: 'add' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'add' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1450,7 +1450,7 @@ FAddExpr -> FAddExpr
 # ref: ParseValID
 
 SubExpr -> SubExpr
-	: 'sub' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'sub' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1466,7 +1466,7 @@ FSubExpr -> FSubExpr
 # ref: ParseValID
 
 MulExpr -> MulExpr
-	: 'mul' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'mul' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1534,7 +1534,7 @@ FRemExpr -> FRemExpr
 # ref: ParseValID
 
 ShlExpr -> ShlExpr
-	: 'shl' OverflowFlags '(' X=TypeConst ',' Y=TypeConst ')'
+	: 'shl' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 ;
 
 # ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1643,10 +1643,10 @@ GetElementPtrExpr -> GetElementPtrExpr
 #   ::= [inrange] TypeAndValue (',' [inrange] TypeAndValue)*
 
 GEPIndex -> GEPIndex
-	: Inrangeopt Index=TypeConst
+	: InRangeopt Index=TypeConst
 ;
 
-Inrange -> Inrange
+InRange -> InRange
 	: 'inrange'
 ;
 
@@ -1793,7 +1793,7 @@ SelectExpr -> SelectExpr
 #   ::= LabelStr? Instruction*
 
 BasicBlock -> BasicBlock
-	: Name=LabelIdent? Insts=Instruction* Term=Terminator
+	: Name=LabelIdentopt Insts=Instruction* Term=Terminator
 ;
 
 # === [ Instructions ] =========================================================
@@ -1805,17 +1805,15 @@ BasicBlock -> BasicBlock
 %interface Instruction;
 
 Instruction -> Instruction
-	# Instructions not producing values.
-	: StoreInst
-	| FenceInst
-	| CmpXchgInst
-	| AtomicRMWInst
 	# Instructions producing values.
-	| LocalDef
+	: LocalDefInst
 	| ValueInstruction
+	# Instructions not producing values.
+	| StoreInst
+	| FenceInst
 ;
 
-LocalDef -> LocalDef
+LocalDefInst -> LocalDefInst
 	: Name=LocalIdent '=' Inst=ValueInstruction
 ;
 
@@ -1852,6 +1850,8 @@ ValueInstruction -> ValueInstruction
 	# Memory instructions
 	| AllocaInst
 	| LoadInst
+	| CmpXchgInst
+	| AtomicRMWInst
 	| GetElementPtrInst
 	# Conversion instructions
 	| TruncInst
@@ -1889,8 +1889,12 @@ ValueInstruction -> ValueInstruction
 #
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
+# ref: ParseInstructionMetadata
+#
+#   ::= !dbg !42 (',' !dbg !57)*
+
 AddInst -> AddInst
-	: 'add' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'add' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1902,7 +1906,7 @@ AddInst -> AddInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 FAddInst -> FAddInst
-	: 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+	: 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1914,7 +1918,7 @@ FAddInst -> FAddInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 SubInst -> SubInst
-	: 'sub' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'sub' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1926,7 +1930,7 @@ SubInst -> SubInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 FSubInst -> FSubInst
-	: 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+	: 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1938,7 +1942,7 @@ FSubInst -> FSubInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 MulInst -> MulInst
-	: 'mul' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'mul' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1950,7 +1954,7 @@ MulInst -> MulInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 FMulInst -> FMulInst
-	: 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+	: 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1962,7 +1966,7 @@ FMulInst -> FMulInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 UDivInst -> UDivInst
-	: 'udiv' Exactopt X=TypeValue ',' Y=Value InstMetadata
+	: 'udiv' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1974,7 +1978,7 @@ UDivInst -> UDivInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 SDivInst -> SDivInst
-	: 'sdiv' Exactopt X=TypeValue ',' Y=Value InstMetadata
+	: 'sdiv' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1986,7 +1990,7 @@ SDivInst -> SDivInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 FDivInst -> FDivInst
-	: 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+	: 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1998,7 +2002,7 @@ FDivInst -> FDivInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 URemInst -> URemInst
-	: 'urem' X=TypeValue ',' Y=Value InstMetadata
+	: 'urem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2010,7 +2014,7 @@ URemInst -> URemInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 SRemInst -> SRemInst
-	: 'srem' X=TypeValue ',' Y=Value InstMetadata
+	: 'srem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2022,7 +2026,7 @@ SRemInst -> SRemInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 FRemInst -> FRemInst
-	: 'frem' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value InstMetadata
+	: 'frem' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ Bitwise instructions ] -------------------------------------------------
@@ -2036,7 +2040,7 @@ FRemInst -> FRemInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 ShlInst -> ShlInst
-	: 'shl' OverflowFlags X=TypeValue ',' Y=Value InstMetadata
+	: 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2048,7 +2052,7 @@ ShlInst -> ShlInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 LShrInst -> LShrInst
-	: 'lshr' Exactopt X=TypeValue ',' Y=Value InstMetadata
+	: 'lshr' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2060,7 +2064,7 @@ LShrInst -> LShrInst
 #  ::= ArithmeticOps TypeAndValue ',' Value
 
 AShrInst -> AShrInst
-	: 'ashr' Exactopt X=TypeValue ',' Y=Value InstMetadata
+	: 'ashr' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2072,7 +2076,7 @@ AShrInst -> AShrInst
 #  ::= ArithmeticOps TypeAndValue ',' Value {
 
 AndInst -> AndInst
-	: 'and' X=TypeValue ',' Y=Value InstMetadata
+	: 'and' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2084,7 +2088,7 @@ AndInst -> AndInst
 #  ::= ArithmeticOps TypeAndValue ',' Value {
 
 OrInst -> OrInst
-	: 'or' X=TypeValue ',' Y=Value InstMetadata
+	: 'or' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2096,7 +2100,7 @@ OrInst -> OrInst
 #  ::= ArithmeticOps TypeAndValue ',' Value {
 
 XorInst -> XorInst
-	: 'xor' X=TypeValue ',' Y=Value InstMetadata
+	: 'xor' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ Vector instructions ] --------------------------------------------------
@@ -2110,7 +2114,7 @@ XorInst -> XorInst
 #   ::= 'extractelement' TypeAndValue ',' TypeAndValue
 
 ExtractElementInst -> ExtractElementInst
-	: 'extractelement' X=TypeValue ',' Index=TypeValue InstMetadata
+	: 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2122,7 +2126,7 @@ ExtractElementInst -> ExtractElementInst
 #   ::= 'insertelement' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
 InsertElementInst -> InsertElementInst
-	: 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue InstMetadata
+	: 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2134,7 +2138,7 @@ InsertElementInst -> InsertElementInst
 #   ::= 'shufflevector' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
 ShuffleVectorInst -> ShuffleVectorInst
-	: 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue InstMetadata
+	: 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ Aggregate instructions ] -----------------------------------------------
@@ -2148,7 +2152,7 @@ ShuffleVectorInst -> ShuffleVectorInst
 #   ::= 'extractvalue' TypeAndValue (',' uint32)+
 
 ExtractValueInst -> ExtractValueInst
-   : 'extractvalue' X=TypeValue Indices=(',' UintLit)+ InstMetadata
+   : 'extractvalue' X=TypeValue Indices=(',' UintLit)+ Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2160,7 +2164,7 @@ ExtractValueInst -> ExtractValueInst
 #   ::= 'insertvalue' TypeAndValue ',' TypeAndValue (',' uint32)+
 
 InsertValueInst -> InsertValueInst
-   : 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+ InstMetadata
+   : 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+ Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ Memory instructions ] --------------------------------------------------
@@ -2175,7 +2179,7 @@ InsertValueInst -> InsertValueInst
 #       (',' 'align' i32)? (',', 'addrspace(n))?
 
 AllocaInst -> AllocaInst
-	: 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Alignment)? (',' AddrSpace)? InstMetadata
+	: 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Alignment)? (',' AddrSpace)? Metadata=(',' MetadataAttachment)+?
 ;
 
 InAlloca -> InAlloca
@@ -2198,9 +2202,9 @@ SwiftError -> SwiftError
 
 LoadInst -> LoadInst
 	# Load.
-	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)? InstMetadata
+	: 'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)? Metadata=(',' MetadataAttachment)+?
 	# Atomic load.
-	| 'load' 'atomic' Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+	| 'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2214,8 +2218,8 @@ LoadInst -> LoadInst
 #       'singlethread'? AtomicOrdering (',' 'align' i32)?
 
 StoreInst -> StoreInst
-	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)? InstMetadata
-	| 'store' 'atomic' Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? InstMetadata
+	: 'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)? Metadata=(',' MetadataAttachment)+?
+	| 'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt AtomicOrdering (',' Alignment)? Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2227,7 +2231,7 @@ StoreInst -> StoreInst
 #   ::= 'fence' 'singlethread'? AtomicOrdering
 
 FenceInst -> FenceInst
-	: 'fence' SyncScopeopt AtomicOrdering InstMetadata
+	: 'fence' SyncScopeopt AtomicOrdering Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2240,7 +2244,7 @@ FenceInst -> FenceInst
 #       TypeAndValue 'singlethread'? AtomicOrdering AtomicOrdering
 
 CmpXchgInst -> CmpXchgInst
-	: 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ',' New=TypeValue SyncScopeopt Success=AtomicOrdering Failure=AtomicOrdering InstMetadata
+	: 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ',' New=TypeValue SyncScopeopt Success=AtomicOrdering Failure=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 ;
 
 Weak -> Weak
@@ -2257,10 +2261,10 @@ Weak -> Weak
 #       'singlethread'? AtomicOrdering
 
 AtomicRMWInst -> AtomicRMWInst
-	: 'atomicrmw' Volatileopt Op=BinOp Ptr=TypeValue ',' X=TypeValue SyncScopeopt AtomicOrdering InstMetadata
+	: 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue SyncScopeopt AtomicOrdering Metadata=(',' MetadataAttachment)+?
 ;
 
-BinOp -> BinOp
+AtomicOp -> AtomicOp
 	: 'add'
 	| 'and'
 	| 'max'
@@ -2283,7 +2287,7 @@ BinOp -> BinOp
 #   ::= 'getelementptr' 'inbounds'? TypeAndValue (',' TypeAndValue)*
 
 GetElementPtrInst -> GetElementPtrInst
-	: 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(',' TypeValue)* InstMetadata
+	: 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(',' TypeValue)* Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ Conversion instructions ] ----------------------------------------------
@@ -2297,7 +2301,7 @@ GetElementPtrInst -> GetElementPtrInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 TruncInst -> TruncInst
-	: 'trunc' From=TypeValue 'to' To=Type InstMetadata
+	: 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2309,7 +2313,7 @@ TruncInst -> TruncInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 ZExtInst -> ZExtInst
-	: 'zext' From=TypeValue 'to' To=Type InstMetadata
+	: 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2321,7 +2325,7 @@ ZExtInst -> ZExtInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 SExtInst -> SExtInst
-	: 'sext' From=TypeValue 'to' To=Type InstMetadata
+	: 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2333,7 +2337,7 @@ SExtInst -> SExtInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 FPTruncInst -> FPTruncInst
-	: 'fptrunc' From=TypeValue 'to' To=Type InstMetadata
+	: 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2345,7 +2349,7 @@ FPTruncInst -> FPTruncInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 FPExtInst -> FPExtInst
-	: 'fpext' From=TypeValue 'to' To=Type InstMetadata
+	: 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2357,7 +2361,7 @@ FPExtInst -> FPExtInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 FPToUIInst -> FPToUIInst
-	: 'fptoui' From=TypeValue 'to' To=Type InstMetadata
+	: 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2369,7 +2373,7 @@ FPToUIInst -> FPToUIInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 FPToSIInst -> FPToSIInst
-	: 'fptosi' From=TypeValue 'to' To=Type InstMetadata
+	: 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2381,7 +2385,7 @@ FPToSIInst -> FPToSIInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 UIToFPInst -> UIToFPInst
-	: 'uitofp' From=TypeValue 'to' To=Type InstMetadata
+	: 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2393,7 +2397,7 @@ UIToFPInst -> UIToFPInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 SIToFPInst -> SIToFPInst
-	: 'sitofp' From=TypeValue 'to' To=Type InstMetadata
+	: 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2405,7 +2409,7 @@ SIToFPInst -> SIToFPInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 PtrToIntInst -> PtrToIntInst
-	: 'ptrtoint' From=TypeValue 'to' To=Type InstMetadata
+	: 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2417,7 +2421,7 @@ PtrToIntInst -> PtrToIntInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 IntToPtrInst -> IntToPtrInst
-	: 'inttoptr' From=TypeValue 'to' To=Type InstMetadata
+	: 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2429,7 +2433,7 @@ IntToPtrInst -> IntToPtrInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 BitCastInst -> BitCastInst
-	: 'bitcast' From=TypeValue 'to' To=Type InstMetadata
+	: 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2441,7 +2445,7 @@ BitCastInst -> BitCastInst
 #   ::= CastOpc TypeAndValue 'to' Type
 
 AddrSpaceCastInst -> AddrSpaceCastInst
-	: 'addrspacecast' From=TypeValue 'to' To=Type InstMetadata
+	: 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ Other instructions ] ---------------------------------------------------
@@ -2455,7 +2459,7 @@ AddrSpaceCastInst -> AddrSpaceCastInst
 #  ::= 'icmp' IPredicates TypeAndValue ',' Value
 
 ICmpInst -> ICmpInst
-	: 'icmp' Pred=IPred X=TypeValue ',' Y=Value InstMetadata
+	: 'icmp' Pred=IPred X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2467,7 +2471,7 @@ ICmpInst -> ICmpInst
 #  ::= 'fcmp' FPredicates TypeAndValue ',' Value
 
 FCmpInst -> FCmpInst
-	: 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value InstMetadata
+	: 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2479,7 +2483,7 @@ FCmpInst -> FCmpInst
 #   ::= 'phi' Type '[' Value ',' Value ']' (',' '[' Value ',' Value ']')*
 
 PhiInst -> PhiInst
-	: 'phi' Typ=Type Incs=(Inc separator ',')+ InstMetadata
+	: 'phi' Typ=Type Incs=(Inc separator ',')+ Metadata=(',' MetadataAttachment)+?
 ;
 
 Inc -> Inc
@@ -2495,7 +2499,7 @@ Inc -> Inc
 #   ::= 'select' TypeAndValue ',' TypeAndValue ',' TypeAndValue
 
 SelectInst -> SelectInst
-	: 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue InstMetadata
+	: 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2513,8 +2517,19 @@ SelectInst -> SelectInst
 #   ::= 'notail' 'call'  OptionalFastMathFlags OptionalCallingConv
 #           OptionalAttrs Type Value ParameterList OptionalAttrs
 
+# ref: ParseOptionalOperandBundles
+#
+#    ::= empty
+#    ::= '[' OperandBundle [, OperandBundle ]* ']'
+#
+#  OperandBundle
+#    ::= bundle-tag '(' ')'
+#    ::= bundle-tag '(' Type Value [, Type Value ]* ')'
+#
+#  bundle-tag ::= String Constant
+
 CallInst -> CallInst
-	: Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt RetType=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles InstMetadata
+	: Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Typ=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles=('[' (OperandBundle separator ',')+ ']')? Metadata=(',' MetadataAttachment)+?
 ;
 
 Tail -> Tail
@@ -2532,7 +2547,7 @@ Tail -> Tail
 #   ::= 'va_arg' TypeAndValue ',' Type
 
 VAArgInst -> VAArgInst
-	: 'va_arg' ArgList=TypeValue ',' ArgType=Type InstMetadata
+	: 'va_arg' ArgList=TypeValue ',' ArgType=Type Metadata=(',' MetadataAttachment)+?
 ;
 
 # ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2548,7 +2563,7 @@ VAArgInst -> VAArgInst
 #   ::= 'filter' TypeAndValue ( ',' TypeAndValue )*
 
 LandingPadInst -> LandingPadInst
-	: 'landingpad' Typ=Type Cleanupopt Clauses=Clause* InstMetadata
+	: 'landingpad' Typ=Type Cleanupopt Clauses=Clause* Metadata=(',' MetadataAttachment)+?
 ;
 
 Cleanup -> Cleanup
@@ -2567,27 +2582,27 @@ CatchClause -> CatchClause
 ;
 
 FilterClause -> FilterClause
-	: 'filter' Typ=Type Val=ArrayConst
+	: 'filter' XTyp=Type X=ArrayConst
 ;
 
-# --- [ catchpad ] -------------------------------------------------------------
+# ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseCatchPad
 #
 #   ::= 'catchpad' ParamList 'to' TypeAndValue 'unwind' TypeAndValue
 
 CatchPadInst -> CatchPadInst
-	: 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
+	: 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 ;
 
-# --- [ cleanuppad ] -----------------------------------------------------------
+# ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ref: ParseCleanupPad
 #
 #   ::= 'cleanuppad' within Parent ParamList
 
 CleanupPadInst -> CleanupPadInst
-	: 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg separator ',')* ']' InstMetadata
+	: 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 ;
 
 # === [ Terminators ] ==========================================================
@@ -2599,17 +2614,30 @@ CleanupPadInst -> CleanupPadInst
 %interface Terminator;
 
 Terminator -> Terminator
-	: RetTerm
+	# Terminators producing values.
+	: LocalDefTerm
+	| ValueTerminator
+	# Terminators not producing values.
+	| RetTerm
 	| BrTerm
 	| CondBrTerm
 	| SwitchTerm
 	| IndirectBrTerm
-	| InvokeTerm
 	| ResumeTerm
-	| CatchSwitchTerm
 	| CatchRetTerm
 	| CleanupRetTerm
 	| UnreachableTerm
+;
+
+LocalDefTerm -> LocalDefTerm
+	: Name=LocalIdent '=' Term=ValueTerminator
+;
+
+%interface ValueTerminator;
+
+ValueTerminator -> ValueTerminator
+	: InvokeTerm
+	| CatchSwitchTerm
 ;
 
 # --- [ ret ] ------------------------------------------------------------------
@@ -2623,9 +2651,9 @@ Terminator -> Terminator
 
 RetTerm -> RetTerm
 	# Void return.
-	: 'ret' XTyp=VoidType InstMetadata
+	: 'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
 	# Value return.
-	| 'ret' XTyp=ConcreteType X=Value InstMetadata
+	| 'ret' XTyp=ConcreteType X=Value Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ br ] -------------------------------------------------------------------
@@ -2639,7 +2667,7 @@ RetTerm -> RetTerm
 
 # Unconditional branch.
 BrTerm -> BrTerm
-	: 'br' Target=Label InstMetadata
+	: 'br' Target=Label Metadata=(',' MetadataAttachment)+?
 ;
 
 # TODO: replace `IntType Value` with TypeValue when the parser generator
@@ -2647,7 +2675,7 @@ BrTerm -> BrTerm
 
 # Conditional branch.
 CondBrTerm -> CondBrTerm
-	: 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label InstMetadata
+	: 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ switch ] ---------------------------------------------------------------
@@ -2661,7 +2689,7 @@ CondBrTerm -> CondBrTerm
 #    ::= (TypeAndValue ',' TypeAndValue)*
 
 SwitchTerm -> SwitchTerm
-	: 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' InstMetadata
+	: 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' Metadata=(',' MetadataAttachment)+?
 ;
 
 Case -> Case
@@ -2677,7 +2705,7 @@ Case -> Case
 #    ::= 'indirectbr' TypeAndValue ',' '[' LabelList ']'
 
 IndirectBrTerm -> IndirectBrTerm
-	: 'indirectbr' Addr=TypeValue ',' '[' Targets=(Label separator ',')+ ']' InstMetadata
+	: 'indirectbr' Addr=TypeValue ',' '[' ValidTargets=(Label separator ',')+ ']' Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ invoke ] ---------------------------------------------------------------
@@ -2690,7 +2718,7 @@ IndirectBrTerm -> IndirectBrTerm
 #       OptionalAttrs 'to' TypeAndValue 'unwind' TypeAndValue
 
 InvokeTerm -> InvokeTerm
-	: 'invoke' CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Invokee=TypeValue '(' Args ')' FuncAttrs=FuncAttr* OperandBundles 'to' Normal=Label 'unwind' Exception=Label InstMetadata
+	: 'invoke' CallingConvopt ReturnAttrs=ReturnAttr* AddrSpaceopt Typ=Type Invokee=Value '(' Args ')' FuncAttrs=FuncAttr* OperandBundles=('[' (OperandBundle separator ',')+ ']')? 'to' Normal=Label 'unwind' Exception=Label Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ resume ] ---------------------------------------------------------------
@@ -2702,7 +2730,7 @@ InvokeTerm -> InvokeTerm
 #   ::= 'resume' TypeAndValue
 
 ResumeTerm -> ResumeTerm
-	: 'resume' X=TypeValue InstMetadata
+	: 'resume' X=TypeValue Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ catchswitch ] ----------------------------------------------------------
@@ -2714,7 +2742,7 @@ ResumeTerm -> ResumeTerm
 #   ::= 'catchswitch' within Parent
 
 CatchSwitchTerm -> CatchSwitchTerm
-	: 'catchswitch' 'within' Scope=ExceptionScope '[' Handlers=(Label separator ',')+ ']' 'unwind' UnwindTarget InstMetadata
+	: 'catchswitch' 'within' Scope=ExceptionScope '[' Handlers=(Label separator ',')+ ']' 'unwind' UnwindTarget Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ catchret ] -------------------------------------------------------------
@@ -2726,7 +2754,7 @@ CatchSwitchTerm -> CatchSwitchTerm
 #   ::= 'catchret' from Parent Value 'to' TypeAndValue
 
 CatchRetTerm -> CatchRetTerm
-	: 'catchret' 'from' From=Value 'to' To=Label InstMetadata
+	: 'catchret' 'from' From=Value 'to' To=Label Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ cleanupret ] -----------------------------------------------------------
@@ -2738,7 +2766,7 @@ CatchRetTerm -> CatchRetTerm
 #   ::= 'cleanupret' from Value unwind ('to' 'caller' | TypeAndValue)
 
 CleanupRetTerm -> CleanupRetTerm
-	: 'cleanupret' 'from' From=Value 'unwind' UnwindTarget InstMetadata
+	: 'cleanupret' 'from' From=Value 'unwind' UnwindTarget Metadata=(',' MetadataAttachment)+?
 ;
 
 # --- [ unreachable ] ----------------------------------------------------------
@@ -2748,7 +2776,7 @@ CleanupRetTerm -> CleanupRetTerm
 # ref: ParseInstruction
 
 UnreachableTerm -> UnreachableTerm
-	: 'unreachable' InstMetadata
+	: 'unreachable' Metadata=(',' MetadataAttachment)+?
 ;
 
 # === [ Metadata Nodes and Metadata Strings ] ==================================
@@ -4189,6 +4217,10 @@ Arg -> Arg
 	| Typ=MetadataType Val=Metadata
 ;
 
+Atomic -> Atomic
+	: 'atomic'
+;
+
 # ref: ParseOrdering
 #
 #   ::= AtomicOrdering
@@ -4254,7 +4286,14 @@ AttrString -> AttrString
 #   ::= 'amdgpu_kernel'
 #   ::= 'cc' UINT
 
+%interface CallingConv;
+
 CallingConv -> CallingConv
+	: CallingConvEnum
+	| CallingConvInt
+;
+
+CallingConvEnum -> CallingConvEnum
 	: 'aarch64_vector_pcs'
 	| 'amdgpu_cs'
 	| 'amdgpu_es'
@@ -4295,7 +4334,10 @@ CallingConv -> CallingConv
 	| 'x86_stdcallcc'
 	| 'x86_thiscallcc'
 	| 'x86_vectorcallcc'
-	| 'cc' UintLit # TODO: Check how the AST looks like for this case.
+;
+
+CallingConvInt -> CallingConvInt
+	: 'cc' UintLit
 ;
 
 # ref: parseOptionalComdat
@@ -4312,7 +4354,7 @@ Comdat -> Comdat
 
 Dereferenceable -> Dereferenceable
 	: 'dereferenceable' '(' N=UintLit ')'
-	| 'dereferenceable_or_null' '(' N=UintLit ')'
+	| 'dereferenceable_or_null' '(' N=UintLit ')' # TODO: distinguish dereferenceable_or_null from dereferenceable during IR translation.
 ;
 
 # https://llvm.org/docs/LangRef.html#dll-storage-classes
@@ -4326,6 +4368,10 @@ Dereferenceable -> Dereferenceable
 DLLStorageClass -> DLLStorageClass
 	: 'dllexport'
 	| 'dllimport'
+;
+
+Ellipsis -> Ellipsis
+	: '...'
 ;
 
 Exact -> Exact
@@ -4400,6 +4446,7 @@ FuncAttr -> FuncAttr
 	| AlignPair
 	| AlignStackPair
 	# used in functions.
+	# TODO: Figure out how to enable Alignment in FuncAttr again.
 	#| Alignment # NOTE: removed to resolve reduce/reduce conflict, see above.
 	| AllocSize
 	| StackAlignment
@@ -4450,13 +4497,10 @@ FuncAttribute -> FuncAttribute
 	| 'writeonly'
 ;
 
-# ref: ParseOptionalFunctionMetadata
-#
-#   ::= (!dbg !57)*
-
-FuncMetadata -> FuncMetadata
-	: MetadataAttachments=MetadataAttachment*
-;
+# TODO: consider removing remove GlobalAttr in favour of using (',' Section)?
+# (',' Comdat)? (',' Alignment)? (',' MetadataAttachment)* as was used in the
+# LangRef spec of LLVM IR. Note that the LLVM C++ parser is implemented using
+# GlobalAttr, and does not follow the LangRef spec.
 
 %interface GlobalAttr;
 
@@ -4470,14 +4514,6 @@ GlobalAttr -> GlobalAttr
 
 InBounds -> InBounds
 	: 'inbounds'
-;
-
-# ref: ParseInstructionMetadata
-#
-#   ::= !dbg !42 (',' !dbg !57)*
-
-InstMetadata -> InstMetadata
-   : MetadataAttachments=(',' MetadataAttachment)+?
 ;
 
 # ref: ParseCmpPredicate
@@ -4516,6 +4552,10 @@ Label -> Label
 #   ::= 'extern_weak'
 #   ::= 'external'
 
+# TODO: Check if it is possible to merge Linkage and ExternLinkage. Currently,
+# this is not possible as it leads to shift/reduce conflicts. Perhaps when the
+# parser generator is better capable at resolving conflicts.
+
 Linkage -> Linkage
 	: 'appending'
 	| 'available_externally'
@@ -4533,29 +4573,13 @@ ExternLinkage -> ExternLinkage
 	| 'external'
 ;
 
-# ref: ParseOptionalOperandBundles
-#
-#    ::= empty
-#    ::= '[' OperandBundle [, OperandBundle ]* ']'
-#
-#  OperandBundle
-#    ::= bundle-tag '(' ')'
-#    ::= bundle-tag '(' Type Value [, Type Value ]* ')'
-#
-#  bundle-tag ::= String Constant
-
-# TODO: inline OperandBundles to avoid OperandBundles as a node in the AST?
-
-OperandBundles -> OperandBundles
-	: ('[' OperandBundles=(OperandBundle separator ',')+ ']')?
-;
-
 OperandBundle -> OperandBundle
 	: Tag=StringLit '(' Inputs=(TypeValue separator ',')* ')'
 ;
 
-OverflowFlags -> OverflowFlags
-	: ('nsw' | 'nuw')*
+OverflowFlag -> OverflowFlag
+	: 'nsw'
+	| 'nuw'
 ;
 
 # ref: ParseArgumentList
@@ -4567,11 +4591,12 @@ OverflowFlags -> OverflowFlags
 #   ::= ArgTypeList ',' '...'
 #   ::= ArgType (',' ArgType)*
 
-# TODO: Figure out how to handle variadic. ref: https://github.com/inspirer/textmapper/issues/14
+# NOTE: The grammar for Params of FuncType contains Attrs and Name. However, the
+# semantic check will report an error if any of those are present in the input.
 
 Params -> Params
-	: '...'?
-	| Params=(Param separator ',')+ (',' '...')?
+	: Variadic=Ellipsisopt
+	| Params=(Param separator ',')+ Variadic=(',' Ellipsis)?
 ;
 
 Param -> Param
@@ -4618,7 +4643,7 @@ ParamAttribute -> ParamAttribute
 
 # ref: ParseOptionalDSOLocal
 
-PreemptionSpecifier -> PreemptionSpecifier
+Preemption -> Preemption
 	: 'dso_local'
 	| 'dso_preemptable'
 ;
@@ -4651,7 +4676,7 @@ Section -> Section
 	: 'section' Name=StringLit
 ;
 
-# TODO: StackAlignment rename to AlignStack?
+# TODO: rename StackAlignment to AlignStack?
 
 # ref: ParseOptionalStackAlignment
 #
@@ -4693,11 +4718,11 @@ TLSModel -> TLSModel
 ;
 
 TypeConst -> TypeConst
-	: Typ=Type Val=Constant
+	: Typ=FirstClassType Val=Constant
 ;
 
 TypeValue -> TypeValue
-	: Typ=Type Val=Value
+	: Typ=FirstClassType Val=Value
 ;
 
 # ref: ParseOptionalUnnamedAddr
@@ -4706,6 +4731,10 @@ UnnamedAddr -> UnnamedAddr
 	: 'local_unnamed_addr'
 	| 'unnamed_addr'
 ;
+
+# TODO: Make UnwindTarget into an interface? The current issue is that
+# catchswitch becomes ambiguous with the following error reported:
+# `'Handlers' cannot be a list, since it precedes UnwindTarget`
 
 UnwindTarget -> UnwindTarget
 	: 'to' 'caller'

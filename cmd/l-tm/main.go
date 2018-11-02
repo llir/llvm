@@ -7,35 +7,29 @@ import (
 	"time"
 
 	"github.com/mewmew/l-tm/asm"
-	"github.com/mewmew/l-tm/asm/ll/ast"
 )
 
 func main() {
+	flag.BoolVar(&asm.DoTypeResolution, "types", true, "enable type resolution of type definitions")
+	flag.BoolVar(&asm.DoGlobalResolution, "globals", true, "enable global resolution of global variable and function declarations and definitions")
 	flag.Parse()
 	for _, llPath := range flag.Args() {
 		fmt.Printf("=== [ %v ] =======================\n", llPath)
 		fmt.Println()
-		start := time.Now()
+		fileStart := time.Now()
+		parseStart := time.Now()
 		module, err := asm.ParseFile(llPath)
 		if err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
-		fmt.Println("took:", time.Since(start))
+		fmt.Println("parsing into AST took:", time.Since(parseStart))
 		fmt.Println()
-		fmt.Println("module:", module.Text())
-		for _, entity := range module.TopLevelEntities() {
-			fmt.Printf("entity %T: %v\n", entity, entity.Text())
-			switch entity := entity.(type) {
-			case *ast.SourceFilename:
-				fmt.Println("   name:", entity.Name().Text())
-			case *ast.TargetDataLayout:
-				fmt.Println("   datalayout:", entity.DataLayout().Text())
-			case *ast.TargetTriple:
-				fmt.Println("   target triple:", entity.TargetTriple().Text())
-			case *ast.ModuleAsm:
-				fmt.Println("   module asm:", entity.Asm().Text())
-			}
+		m, err := asm.Translate(module)
+		if err != nil {
+			log.Fatalf("%q: %+v", llPath, err)
 		}
-		fmt.Println()
+		_ = m
+		//pretty.Println(m)
+		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
 	}
 }
