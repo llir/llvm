@@ -1,4 +1,5 @@
 all:
+	string2enum -linecomment -type AtomicOrdering /home/u/Desktop/go/src/github.com/llir/l/ir/enum
 	string2enum -linecomment -type CallingConv /home/u/Desktop/go/src/github.com/llir/l/ir/enum
 	string2enum -linecomment -type DLLStorageClass /home/u/Desktop/go/src/github.com/llir/l/ir/enum
 	string2enum -linecomment -type FastMathFlag /home/u/Desktop/go/src/github.com/llir/l/ir/enum
