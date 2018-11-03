@@ -13,7 +13,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/inst_bitwise.ll"},
 		{path: "testdata/inst_vector.ll"},
 		{path: "testdata/inst_aggregate.ll"},
-		//{path: "testdata/inst_memory.ll"},
+		{path: "testdata/inst_memory.ll"},
 		{path: "testdata/inst_conversion.ll"},
 		//{path: "testdata/inst_other.ll"},
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
+	"github.com/pkg/errors"
 )
 
 // --- [ Memory instructions ] -------------------------------------------------
@@ -18,7 +19,33 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAlloca, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) In-alloca.
+	i.InAlloca = old.InAlloca() != nil
+	// (optional) Swift error.
+	i.SwiftError = old.SwiftError() != nil
+	// Element type.
+	elemType, err := fgen.gen.irType(old.ElemType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.ElemType = elemType
+	// (optional) Number of elements.
+	if n := old.NElems(); n != nil {
+		nelems, err := fgen.astToIRTypeValue(*n)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.NElems = nelems
+	}
+	// (optional) Alignment.
+	if n := old.Alignment(); n != nil {
+		i.Alignment = irAlignment(*n)
+	}
+	// (optional) Address space; stored in i.Typ.
+	if n := old.AddrSpace(); n != nil {
+		i.Type()
+		i.Typ.AddrSpace = irAddrSpace(*n)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
