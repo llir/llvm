@@ -74,6 +74,7 @@ func (inst *InstExtractElement) SetName(name string) {
 func (inst *InstExtractElement) Def() string {
 	// "extractelement" Type Value "," Type Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "extractelement %v, %v", inst.X, inst.Index)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -146,6 +147,7 @@ func (inst *InstInsertElement) SetName(name string) {
 func (inst *InstInsertElement) Def() string {
 	// "insertelement" Type Value "," Type Value "," Type Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "insertelement %v, %v, %v", inst.X, inst.Elem, inst.Index)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -220,6 +222,7 @@ func (inst *InstShuffleVector) SetName(name string) {
 func (inst *InstShuffleVector) Def() string {
 	// "shufflevector" Type Value "," Type Value "," Type Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "shufflevector %v, %v, %v", inst.X, inst.Y, inst.Mask)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)

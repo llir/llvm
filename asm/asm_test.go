@@ -19,9 +19,14 @@ func TestParseFile(t *testing.T) {
 	}
 	for _, g := range golden {
 		m, err := ParseFile(g.path)
+		if err != nil {
+			t.Errorf("unable to read %q; %v", g.path, err)
+			continue
+		}
 		buf, err := ioutil.ReadFile(g.path)
 		if err != nil {
 			t.Errorf("unable to read %q; %v", g.path, err)
+			continue
 		}
 		want := string(buf)
 		if err != nil {

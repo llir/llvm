@@ -384,6 +384,9 @@ func (term *TermInvoke) Succs() []*BasicBlock {
 func (term *TermInvoke) Def() string {
 	// "invoke" OptCallingConv ReturnAttrs Type Value "(" Args ")" FuncAttrs OperandBundles "to" LabelType LocalIdent "unwind" LabelType LocalIdent OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	if !term.Type().Equal(types.Void) {
+		fmt.Fprintf(buf, "%v = ", term.Ident())
+	}
 	buf.WriteString("invoke")
 	if term.CallingConv != enum.CallingConvNone {
 		fmt.Fprintf(buf, " %v", term.CallingConv)
@@ -522,6 +525,7 @@ func (term *TermCatchSwitch) Succs() []*BasicBlock {
 func (term *TermCatchSwitch) Def() string {
 	// "catchswitch" "within" ExceptionScope "[" LabelList "]" "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", term.Ident())
 	fmt.Fprintf(buf, "catchswitch within %v [", term.Scope)
 	for i, handler := range term.Handlers {
 		if i != 0 {
