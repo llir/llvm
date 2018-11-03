@@ -11,6 +11,7 @@ func TestParseFile(t *testing.T) {
 	}{
 		{path: "testdata/inst_binary.ll"},
 		{path: "testdata/inst_bitwise.ll"},
+		{path: "testdata/inst_vector.ll"},
 	}
 	for _, g := range golden {
 		_, err := ParseFile(g.path)
@@ -27,6 +28,7 @@ func TestTranslate(t *testing.T) {
 	}{
 		{path: "testdata/inst_binary.ll"},
 		{path: "testdata/inst_bitwise.ll"},
+		{path: "testdata/inst_vector.ll"},
 	}
 	for _, g := range golden {
 		m, err := ParseFile(g.path)
