@@ -60,7 +60,28 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLoad, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) Atomic.
+	i.Atomic = old.Atomic() != nil
+	// (optional) Volatile.
+	i.Volatile = old.Volatile() != nil
+	// Source address.
+	src, err := fgen.astToIRTypeValue(old.Src())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Src = src
+	// (optional) Sync scope.
+	if n := old.SyncScope(); n != nil {
+		i.SyncScope = n.Scope().Text()
+	}
+	// (optional) Atomic memory ordering constraints.
+	if n := old.Ordering(); n != nil {
+		i.Ordering = irAtomicOrdering(*n)
+	}
+	// (optional) Alignment.
+	if n := old.Alignment(); n != nil {
+		i.Alignment = irAlignment(*n)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -75,7 +96,34 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstStore, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) Atomic.
+	i.Atomic = old.Atomic() != nil
+	// (optional) Volatile.
+	i.Volatile = old.Volatile() != nil
+	// Source value.
+	src, err := fgen.astToIRTypeValue(old.Src())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Src = src
+	// Destination address.
+	dst, err := fgen.astToIRTypeValue(old.Dst())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Dst = dst
+	// (optional) Sync scope.
+	if n := old.SyncScope(); n != nil {
+		i.SyncScope = n.Scope().Text()
+	}
+	// (optional) Atomic memory ordering constraints.
+	if n := old.Ordering(); n != nil {
+		i.Ordering = irAtomicOrdering(*n)
+	}
+	// (optional) Alignment.
+	if n := old.Alignment(); n != nil {
+		i.Alignment = irAlignment(*n)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -90,7 +138,12 @@ func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFence, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) Sync scope.
+	if n := old.SyncScope(); n != nil {
+		i.SyncScope = n.Scope().Text()
+	}
+	// Atomic memory ordering constraints.
+	i.Ordering = irAtomicOrdering(old.Ordering())
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -105,7 +158,36 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCmpXchg, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) Weak.
+	i.Weak = old.Weak() != nil
+	// (optional) Volatile.
+	i.Volatile = old.Volatile() != nil
+	// Address to read from, compare against and store to.
+	ptr, err := fgen.astToIRTypeValue(old.Ptr())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Ptr = ptr
+	// Value to compare against.
+	cmp, err := fgen.astToIRTypeValue(old.Cmp())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Cmp = cmp
+	// New value to store.
+	new, err := fgen.astToIRTypeValue(old.New())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.New = new
+	// (optional) Sync scope.
+	if n := old.SyncScope(); n != nil {
+		i.SyncScope = n.Scope().Text()
+	}
+	// Atomic memory ordering constraints on success.
+	i.SuccessOrdering = irAtomicOrdering(old.SuccessOrdering())
+	// Atomic memory ordering constraints on failure.
+	i.FailureOrdering = irAtomicOrdering(old.FailureOrdering())
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -120,7 +202,28 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAtomicRMW, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) Volatile.
+	i.Volatile = old.Volatile() != nil
+	// Atomic operation.
+	i.Op = irAtomicOp(old.Op())
+	// Destination address.
+	dst, err := fgen.astToIRTypeValue(old.Dst())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Dst = dst
+	// Operand.
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// (optional) Sync scope.
+	if n := old.SyncScope(); n != nil {
+		i.SyncScope = n.Scope().Text()
+	}
+	// Atomic memory ordering constraints.
+	i.Ordering = irAtomicOrdering(old.Ordering())
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -135,7 +238,28 @@ func (fgen *funcGen) astToIRInstGetElementPtr(inst ir.Instruction, old *ast.GetE
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstGetElementPtr, got %T", inst))
 	}
-	// TODO: implement
+	// (optional) In-bounds.
+	i.InBounds = old.InBounds() != nil
+	// Element type.
+	elemType, err := fgen.gen.irType(old.ElemType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.ElemType = elemType
+	// Source address.
+	src, err := fgen.astToIRTypeValue(old.Src())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Src = src
+	// Element indicies.
+	for _, oldIndex := range old.Indices() {
+		index, err := fgen.astToIRTypeValue(oldIndex)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.Indices = append(i.Indices, index)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil

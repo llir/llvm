@@ -4,6 +4,7 @@ ENUM_DIR=${GODIR}/src/github.com/llir/llvm/ir/enum
 all: gen
 
 gen:
+	string2enum -linecomment -type AtomicOp ${ENUM_DIR}
 	string2enum -linecomment -type AtomicOrdering ${ENUM_DIR}
 	string2enum -linecomment -type CallingConv ${ENUM_DIR}
 	string2enum -linecomment -type DLLStorageClass ${ENUM_DIR}

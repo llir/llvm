@@ -303,9 +303,9 @@ type InstCmpXchg struct {
 	// New value to store.
 	New value.Value
 	// Atomic memory ordering constraints on success.
-	Success enum.AtomicOrdering
+	SuccessOrdering enum.AtomicOrdering
 	// Atomic memory ordering constraints on failure.
-	Failure enum.AtomicOrdering
+	FailureOrdering enum.AtomicOrdering
 
 	// extra.
 
@@ -325,8 +325,8 @@ type InstCmpXchg struct {
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
 // value to compare against, new value to store, and atomic orderings for
 // success and failure.
-func NewCmpXchg(ptr, cmp, new value.Value, success, failure enum.AtomicOrdering) *InstCmpXchg {
-	return &InstCmpXchg{Ptr: ptr, Cmp: cmp, New: new, Success: success, Failure: failure}
+func NewCmpXchg(ptr, cmp, new value.Value, successOrdering, failureOrdering enum.AtomicOrdering) *InstCmpXchg {
+	return &InstCmpXchg{Ptr: ptr, Cmp: cmp, New: new, SuccessOrdering: successOrdering, FailureOrdering: failureOrdering}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -376,8 +376,8 @@ func (inst *InstCmpXchg) Def() string {
 	if len(inst.SyncScope) > 0 {
 		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
 	}
-	fmt.Fprintf(buf, " %v", inst.Success)
-	fmt.Fprintf(buf, " %v", inst.Failure)
+	fmt.Fprintf(buf, " %v", inst.SuccessOrdering)
+	fmt.Fprintf(buf, " %v", inst.FailureOrdering)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
 	}

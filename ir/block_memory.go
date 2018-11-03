@@ -53,8 +53,8 @@ func (block *BasicBlock) NewFence(ordering enum.AtomicOrdering) *InstFence {
 // NewCmpXchg appends a new cmpxchg instruction to the basic block based on the
 // given address, value to compare against, new value to store, and atomic
 // orderings for success and failure.
-func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, success, failure enum.AtomicOrdering) *InstCmpXchg {
-	inst := NewCmpXchg(ptr, cmp, new, success, failure)
+func (block *BasicBlock) NewCmpXchg(ptr, cmp, new value.Value, successOrdering, failureOrdering enum.AtomicOrdering) *InstCmpXchg {
+	inst := NewCmpXchg(ptr, cmp, new, successOrdering, failureOrdering)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

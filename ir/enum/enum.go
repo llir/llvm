@@ -1,6 +1,26 @@
 // Package enum defines enumerate types of LLVM IR.
 package enum
 
+//go:generate stringer -linecomment -type AtomicOp
+
+// AtomicOp is an AtomicRMW binary operation.
+type AtomicOp uint8
+
+// AtomicRMW binary operations.
+const (
+	AtomicOpAdd  AtomicOp = iota + 1 // add
+	AtomicOpAnd                      // and
+	AtomicOpMax                      // max
+	AtomicOpMin                      // min
+	AtomicOpNAnd                     // nand
+	AtomicOpOr                       // or
+	AtomicOpSub                      // sub
+	AtomicOpUMax                     // umax
+	AtomicOpUMin                     // umin
+	AtomicOpXChg                     // xchg
+	AtomicOpXor                      // xor
+)
+
 //go:generate stringer -linecomment -type AtomicOrdering
 
 // AtomicOrdering is an atomic ordering attribute.
