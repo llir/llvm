@@ -1,11 +1,11 @@
 package asm
 
 import (
+	"github.com/llir/ll/ast"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
-	"github.com/llir/ll/ast"
-	"github.com/llir/llvm/internal/enc"
 	"github.com/pkg/errors"
 )
 

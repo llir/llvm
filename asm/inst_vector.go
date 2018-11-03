@@ -31,7 +31,8 @@ func (fgen *funcGen) astToIRInstExtractElement(inst ir.Instruction, old *ast.Ext
 		return nil, errors.WithStack(err)
 	}
 	i.Index = index
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -62,7 +63,8 @@ func (fgen *funcGen) astToIRInstInsertElement(inst ir.Instruction, old *ast.Inse
 		return nil, errors.WithStack(err)
 	}
 	i.Index = index
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -92,6 +94,7 @@ func (fgen *funcGen) astToIRInstShuffleVector(inst ir.Instruction, old *ast.Shuf
 		return nil, errors.WithStack(err)
 	}
 	i.Mask = mask
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }

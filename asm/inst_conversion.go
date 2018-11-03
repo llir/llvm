@@ -31,7 +31,8 @@ func (fgen *funcGen) astToIRInstTrunc(inst ir.Instruction, old *ast.TruncInst) (
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -56,7 +57,8 @@ func (fgen *funcGen) astToIRInstZExt(inst ir.Instruction, old *ast.ZExtInst) (*i
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -81,7 +83,8 @@ func (fgen *funcGen) astToIRInstSExt(inst ir.Instruction, old *ast.SExtInst) (*i
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -106,7 +109,8 @@ func (fgen *funcGen) astToIRInstFPTrunc(inst ir.Instruction, old *ast.FPTruncIns
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -131,7 +135,8 @@ func (fgen *funcGen) astToIRInstFPExt(inst ir.Instruction, old *ast.FPExtInst) (
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -156,7 +161,8 @@ func (fgen *funcGen) astToIRInstFPToUI(inst ir.Instruction, old *ast.FPToUIInst)
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -181,7 +187,8 @@ func (fgen *funcGen) astToIRInstFPToSI(inst ir.Instruction, old *ast.FPToSIInst)
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -206,7 +213,8 @@ func (fgen *funcGen) astToIRInstUIToFP(inst ir.Instruction, old *ast.UIToFPInst)
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -231,7 +239,8 @@ func (fgen *funcGen) astToIRInstSIToFP(inst ir.Instruction, old *ast.SIToFPInst)
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -256,7 +265,8 @@ func (fgen *funcGen) astToIRInstPtrToInt(inst ir.Instruction, old *ast.PtrToIntI
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -281,7 +291,8 @@ func (fgen *funcGen) astToIRInstIntToPtr(inst ir.Instruction, old *ast.IntToPtrI
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -306,7 +317,8 @@ func (fgen *funcGen) astToIRInstBitCast(inst ir.Instruction, old *ast.BitCastIns
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -331,6 +343,7 @@ func (fgen *funcGen) astToIRInstAddrSpaceCast(inst ir.Instruction, old *ast.Addr
 		return nil, errors.WithStack(err)
 	}
 	i.To = to
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }

@@ -147,7 +147,8 @@ func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) error 
 		return errors.WithStack(err)
 	}
 	t.X = x
-	// TODO: handle metadata.
+	// Metadata attachments.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 

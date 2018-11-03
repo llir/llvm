@@ -22,10 +22,10 @@ package asm
 import (
 	"fmt"
 
+	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
-	"github.com/llir/ll/ast"
 	"github.com/pkg/errors"
 )
 
