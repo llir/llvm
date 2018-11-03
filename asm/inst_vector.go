@@ -77,12 +77,13 @@ func (fgen *funcGen) astToIRInstShuffleVector(inst ir.Instruction, old *ast.Shuf
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstShuffleVector, got %T", inst))
 	}
-	// Vectors.
+	// X vector.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	i.X = x
+	// Y vector.
 	y, err := fgen.astToIRTypeValue(old.Y())
 	if err != nil {
 		return nil, errors.WithStack(err)

@@ -274,7 +274,10 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstAlloca{LocalName: name, ElemType: elemType}, nil
+		i := &ir.InstAlloca{LocalName: name, ElemType: elemType}
+		// Cache i.Typ.
+		i.Type()
+		return i, nil
 	case *ast.LoadInst:
 		elemType, err := fgen.gen.irType(old.ElemType())
 		if err != nil {
@@ -289,9 +292,22 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		typ := types.NewStruct(oldType, types.I8)
 		return &ir.InstCmpXchg{LocalName: name, Typ: typ}, nil
 	case *ast.AtomicRMWInst:
-		return &ir.InstAtomicRMW{LocalName: name}, nil
+		dstType, err := fgen.gen.irType(old.Dst().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		t, ok := dstType.(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid pointer type; expected *types.PointerType, got %T", dstType))
+		}
+		return &ir.InstAtomicRMW{LocalName: name, Typ: t.ElemType}, nil
 	case *ast.GetElementPtrInst:
-		return &ir.InstGetElementPtr{LocalName: name}, nil
+		// TODO: handle address space of Src?
+		elemType, err := fgen.gen.irType(old.ElemType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstGetElementPtr{LocalName: name, Typ: types.NewPointer(elemType)}, nil
 	// Conversion instructions
 	case *ast.TruncInst:
 		to, err := fgen.gen.irType(old.To())
@@ -373,9 +389,35 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		return &ir.InstAddrSpaceCast{LocalName: name, To: to}, nil
 	// Other instructions
 	case *ast.ICmpInst:
-		return &ir.InstICmp{LocalName: name}, nil
+		xType, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		var typ types.Type
+		switch xType := xType.(type) {
+		case *types.IntType, *types.PointerType:
+			typ = types.I1
+		case *types.VectorType:
+			typ = types.NewVector(xType.Len, types.I1)
+		default:
+			panic(fmt.Errorf("invalid icmp operand type; expected *types.IntType, *types.PointerType or *types.VectorType, got %T", xType))
+		}
+		return &ir.InstICmp{LocalName: name, Typ: typ}, nil
 	case *ast.FCmpInst:
-		return &ir.InstFCmp{LocalName: name}, nil
+		xType, err := fgen.gen.irType(old.X().Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		var typ types.Type
+		switch xType := xType.(type) {
+		case *types.FloatType:
+			typ = types.I1
+		case *types.VectorType:
+			typ = types.NewVector(xType.Len, types.I1)
+		default:
+			panic(fmt.Errorf("invalid fcmp operand type; expected *types.FloatType or *types.VectorType, got %T", xType))
+		}
+		return &ir.InstFCmp{LocalName: name, Typ: typ}, nil
 	case *ast.PhiInst:
 		typ, err := fgen.gen.irType(old.Typ())
 		if err != nil {
@@ -398,12 +440,22 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		}
 		return &ir.InstCall{LocalName: name, Typ: typ}, nil
 	case *ast.VAArgInst:
-		return &ir.InstVAArg{LocalName: name}, nil
+		argType, err := fgen.gen.irType(old.ArgType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstVAArg{LocalName: name, ArgType: argType}, nil
 	case *ast.LandingPadInst:
-		return &ir.InstLandingPad{LocalName: name}, nil
+		resultType, err := fgen.gen.irType(old.ResultType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &ir.InstLandingPad{LocalName: name, ResultType: resultType}, nil
 	case *ast.CatchPadInst:
+		// Result type is always token.
 		return &ir.InstCatchPad{LocalName: name}, nil
 	case *ast.CleanupPadInst:
+		// Result type is always token.
 		return &ir.InstCleanupPad{LocalName: name}, nil
 	default:
 		panic(fmt.Errorf("support for AST value instruction type %T not yet implemented", old))

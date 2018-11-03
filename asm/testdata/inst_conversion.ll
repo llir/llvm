@@ -10,7 +10,7 @@ define void @f() {
 	sitofp i32 -6 to double
 	ptrtoint i8* null to i32
 	inttoptr i32 1234 to i8*
-	bitcast { i32, i32 } { i32 10, i32 20 } to i64
+	bitcast { i32, i32 }* null to i64*
 	addrspacecast i8* null to i8 addrspace(1)*
 	ret void
 }

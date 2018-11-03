@@ -47,6 +47,8 @@ func (fgen *funcGen) astToIRInstLShr(inst ir.Instruction, old *ast.LShrInst) (*i
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLShr, got %T", inst))
 	}
+	// (optional) Exact.
+	i.Exact = irOptExact(old.Exact())
 	// X operand.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
@@ -73,6 +75,8 @@ func (fgen *funcGen) astToIRInstAShr(inst ir.Instruction, old *ast.AShrInst) (*i
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAShr, got %T", inst))
 	}
+	// (optional) Exact.
+	i.Exact = irOptExact(old.Exact())
 	// X operand.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {

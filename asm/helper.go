@@ -154,6 +154,9 @@ func stringLitBytes(n ast.StringLit) []byte {
 
 // ___ [ Helpers ] _____________________________________________________________
 
+// TODO: remove irOptFoo in favour of using if n != nil { irFoo } during
+// translation.
+
 // irOptAddrSpace returns the IR address space corresponding to the given
 // optional AST address space.
 func irOptAddrSpace(n *ast.AddrSpace) types.AddrSpace {
@@ -164,17 +167,16 @@ func irOptAddrSpace(n *ast.AddrSpace) types.AddrSpace {
 	return types.AddrSpace(x)
 }
 
-// irCase returns the IR switch case corresponding to the given AST switch case.
-func (fgen *funcGen) irCase(n ast.Case) (*ir.Case, error) {
-	x, err := fgen.gen.irTypeConst(n.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	target, err := fgen.irBasicBlock(n.Target())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return ir.NewCase(x, target), nil
+// irAddrSpace returns the IR address space corresponding to the given AST
+// address space.
+func irAddrSpace(n ast.AddrSpace) types.AddrSpace {
+	return types.AddrSpace(uintLit(n.N()))
+}
+
+// irAlignment returns the IR alignment corresponding to the given AST
+// alignment.
+func irAlignment(n ast.Alignment) int {
+	return int(uintLit(n.N()))
 }
 
 // irOptCallingConv returns the IR calling convention corresponding to the given
@@ -217,6 +219,19 @@ func irOptCallingConv(n ast.CallingConv) enum.CallingConv {
 	default:
 		panic(fmt.Errorf("support for calling convention type %T not yet implemented", n))
 	}
+}
+
+// irCase returns the IR switch case corresponding to the given AST switch case.
+func (fgen *funcGen) irCase(n ast.Case) (*ir.Case, error) {
+	x, err := fgen.gen.irTypeConst(n.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	target, err := fgen.irBasicBlock(n.Target())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ir.NewCase(x, target), nil
 }
 
 // irOptDLLStorageClass returns the IR DLL storage class corresponding to the
