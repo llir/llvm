@@ -4,8 +4,6 @@
 
 package enum
 
-type AtomicOp uint
-
 type Clause struct {
 }
 

@@ -179,6 +179,18 @@ func irAlignment(n ast.Alignment) int {
 	return int(uintLit(n.N()))
 }
 
+// irAtomicOp returns the IR atomic operation corresponding to the given AST
+// atomic operation.
+func irAtomicOp(n ast.AtomicOp) enum.AtomicOp {
+	return asmenum.AtomicOpFromString(n.Text())
+}
+
+// irAtomicOrdering returns the IR atomic ordering corresponding to the given
+// AST atomic ordering.
+func irAtomicOrdering(n ast.AtomicOrdering) enum.AtomicOrdering {
+	return asmenum.AtomicOrderingFromString(n.Text())
+}
+
 // irOptCallingConv returns the IR calling convention corresponding to the given
 // optional AST calling convention.
 func irOptCallingConv(n ast.CallingConv) enum.CallingConv {
