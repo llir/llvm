@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
-	"github.com/llir/ll/ast"
 	"github.com/pkg/errors"
 )
 
@@ -66,6 +66,8 @@ type generator struct {
 	// gs maps from global identifier (without '@' prefix) to corresponding
 	// IR value.
 	gs map[string]ir.Constant
+
+	// TOOD: add rw mutex to gen.todo for access to blockaddress constant.
 
 	// Fix dummy basic blocks after translation of function bodies and assignment
 	// of local IDs.
