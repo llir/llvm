@@ -5,11 +5,12 @@ import (
 	"io/ioutil"
 
 	"github.com/llir/ll/ast"
+	"github.com/llir/llvm/ir"
 	"github.com/pkg/errors"
 )
 
 // ParseFile parses the given LLVM IR assembly file into an LLVM IR module.
-func ParseFile(path string) (*ast.Module, error) {
+func ParseFile(path string) (*ir.Module, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -20,11 +21,11 @@ func ParseFile(path string) (*ast.Module, error) {
 
 // Parse parses the given LLVM IR assembly file into an LLVM IR module, reading
 // from content.
-func Parse(path, content string) (*ast.Module, error) {
+func Parse(path, content string) (*ir.Module, error) {
 	tree, err := ast.Parse(path, content)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	root := ast.ToLlvmNode(tree.Root())
-	return root.(*ast.Module), nil
+	return translate(root.(*ast.Module))
 }

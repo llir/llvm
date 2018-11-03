@@ -19,9 +19,9 @@ var (
 	DoGlobalResolution = true
 )
 
-// Translate translates the AST of the given module to an equivalent LLVM IR
+// translate translates the AST of the given module to an equivalent LLVM IR
 // module.
-func Translate(module *ast.Module) (*ir.Module, error) {
+func translate(module *ast.Module) (*ir.Module, error) {
 	gen := newGenerator()
 	// Resolve types.
 	if DoTypeResolution {
