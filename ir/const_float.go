@@ -51,7 +51,9 @@ func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
 	// TODO: implement NewFloatFromString. return 0 for now.
 	if strings.HasPrefix(s, "0x") {
-		panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
+		log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
+		return NewFloat(typ, 0), nil
+		//panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
 	}
 	switch typ.Kind {
 	case types.FloatKindDouble:
@@ -66,8 +68,10 @@ func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
 		}
 		return c, nil
 	default:
+		// TODO: re-enable panic.
 		log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
-		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", typ.Kind))
+		return NewFloat(typ, 0), nil
+		//panic(fmt.Errorf("support for floating-point kind %v not yet implemented", typ.Kind))
 	}
 }
 
