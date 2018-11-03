@@ -64,6 +64,7 @@ func (inst *InstTrunc) SetName(name string) {
 func (inst *InstTrunc) Def() string {
 	// "trunc" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "trunc %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -124,6 +125,7 @@ func (inst *InstZExt) SetName(name string) {
 func (inst *InstZExt) Def() string {
 	// "zext" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "zext %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -184,6 +186,7 @@ func (inst *InstSExt) SetName(name string) {
 func (inst *InstSExt) Def() string {
 	// "sext" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "sext %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -244,6 +247,7 @@ func (inst *InstFPTrunc) SetName(name string) {
 func (inst *InstFPTrunc) Def() string {
 	// "fptrunc" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "fptrunc %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -304,6 +308,7 @@ func (inst *InstFPExt) SetName(name string) {
 func (inst *InstFPExt) Def() string {
 	// "fpext" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "fpext %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -364,6 +369,7 @@ func (inst *InstFPToUI) SetName(name string) {
 func (inst *InstFPToUI) Def() string {
 	// "fptoui" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "fptoui %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -424,6 +430,7 @@ func (inst *InstFPToSI) SetName(name string) {
 func (inst *InstFPToSI) Def() string {
 	// "fptosi" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "fptosi %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -484,6 +491,7 @@ func (inst *InstUIToFP) SetName(name string) {
 func (inst *InstUIToFP) Def() string {
 	// "uitofp" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "uitofp %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -544,6 +552,7 @@ func (inst *InstSIToFP) SetName(name string) {
 func (inst *InstSIToFP) Def() string {
 	// "sitofp" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "sitofp %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -604,6 +613,7 @@ func (inst *InstPtrToInt) SetName(name string) {
 func (inst *InstPtrToInt) Def() string {
 	// "ptrtoint" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "ptrtoint %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -664,6 +674,7 @@ func (inst *InstIntToPtr) SetName(name string) {
 func (inst *InstIntToPtr) Def() string {
 	// "inttoptr" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "inttoptr %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -724,6 +735,7 @@ func (inst *InstBitCast) SetName(name string) {
 func (inst *InstBitCast) Def() string {
 	// "bitcast" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "bitcast %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -784,6 +796,7 @@ func (inst *InstAddrSpaceCast) SetName(name string) {
 func (inst *InstAddrSpaceCast) Def() string {
 	// "addrspacecast" Type Value "to" Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "addrspacecast %v to %v", inst.From, inst.To)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)

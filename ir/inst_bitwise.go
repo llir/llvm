@@ -70,6 +70,7 @@ func (inst *InstShl) SetName(name string) {
 func (inst *InstShl) Def() string {
 	// "shl" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("shl")
 	for _, flag := range inst.OverflowFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -139,6 +140,7 @@ func (inst *InstLShr) SetName(name string) {
 func (inst *InstLShr) Def() string {
 	// "lshr" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("lshr")
 	if inst.Exact {
 		buf.WriteString(" exact")
@@ -208,6 +210,7 @@ func (inst *InstAShr) SetName(name string) {
 func (inst *InstAShr) Def() string {
 	// "ashr" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("ashr")
 	if inst.Exact {
 		buf.WriteString(" exact")
@@ -275,6 +278,7 @@ func (inst *InstAnd) SetName(name string) {
 func (inst *InstAnd) Def() string {
 	// "and" Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "and %v, %v", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -338,6 +342,7 @@ func (inst *InstOr) SetName(name string) {
 func (inst *InstOr) Def() string {
 	// "or" Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "or %v, %v", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -401,6 +406,7 @@ func (inst *InstXor) SetName(name string) {
 func (inst *InstXor) Def() string {
 	// "xor" Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "xor %v, %v", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)

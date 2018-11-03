@@ -70,6 +70,7 @@ func (inst *InstExtractValue) SetName(name string) {
 func (inst *InstExtractValue) Def() string {
 	// "extractvalue" Type Value "," IndexList OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "extractvalue %v", inst.X)
 	for _, index := range inst.Indices {
 		fmt.Fprintf(buf, ", %v", index)
@@ -141,6 +142,7 @@ func (inst *InstInsertValue) SetName(name string) {
 func (inst *InstInsertValue) Def() string {
 	// "insertvalue" Type Value "," Type Value "," IndexList OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "insertvalue %v, %v", inst.X, inst.Elem)
 	for _, index := range inst.Indices {
 		fmt.Fprintf(buf, ", %v", index)

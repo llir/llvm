@@ -70,6 +70,7 @@ func (inst *InstAdd) SetName(name string) {
 func (inst *InstAdd) Def() string {
 	// "add" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("add")
 	for _, flag := range inst.OverflowFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -139,6 +140,7 @@ func (inst *InstFAdd) SetName(name string) {
 func (inst *InstFAdd) Def() string {
 	// "fadd" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("fadd")
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -208,6 +210,7 @@ func (inst *InstSub) SetName(name string) {
 func (inst *InstSub) Def() string {
 	// "sub" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("sub")
 	for _, flag := range inst.OverflowFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -277,6 +280,7 @@ func (inst *InstFSub) SetName(name string) {
 func (inst *InstFSub) Def() string {
 	// "fsub" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("fsub")
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -346,6 +350,7 @@ func (inst *InstMul) SetName(name string) {
 func (inst *InstMul) Def() string {
 	// "mul" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("mul")
 	for _, flag := range inst.OverflowFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -415,6 +420,7 @@ func (inst *InstFMul) SetName(name string) {
 func (inst *InstFMul) Def() string {
 	// "fmul" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("fmul")
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -484,6 +490,7 @@ func (inst *InstUDiv) SetName(name string) {
 func (inst *InstUDiv) Def() string {
 	// "udiv" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("udiv")
 	if inst.Exact {
 		buf.WriteString(" exact")
@@ -553,6 +560,7 @@ func (inst *InstSDiv) SetName(name string) {
 func (inst *InstSDiv) Def() string {
 	// "sdiv" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("sdiv")
 	if inst.Exact {
 		buf.WriteString(" exact")
@@ -622,6 +630,7 @@ func (inst *InstFDiv) SetName(name string) {
 func (inst *InstFDiv) Def() string {
 	// "fdiv" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("fdiv")
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -689,6 +698,7 @@ func (inst *InstURem) SetName(name string) {
 func (inst *InstURem) Def() string {
 	// "urem" Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "urem %v, %v", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -752,6 +762,7 @@ func (inst *InstSRem) SetName(name string) {
 func (inst *InstSRem) Def() string {
 	// "srem" Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "srem %v, %v", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -817,6 +828,7 @@ func (inst *InstFRem) SetName(name string) {
 func (inst *InstFRem) Def() string {
 	// "frem" FastMathFlags Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("frem")
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %v", flag)

@@ -77,6 +77,7 @@ func (inst *InstAlloca) SetName(name string) {
 func (inst *InstAlloca) Def() string {
 	// "alloca" OptInAlloca OptSwiftError Type OptCommaTypeValue OptCommaAlignment OptCommaAddrSpace OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("alloca")
 	if inst.InAlloca {
 		buf.WriteString(" inalloca")
@@ -171,6 +172,7 @@ func (inst *InstLoad) Def() string {
 	// "load" "atomic" OptVolatile Type "," Type Value OptSyncScope AtomicOrdering OptCommaAlignment OptCommaSepMetadataAttachmentList
 	// "load" OptVolatile Type "," Type Value OptCommaAlignment OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("load")
 	if inst.Atomic {
 		buf.WriteString(" atomic")
@@ -362,6 +364,7 @@ func (inst *InstCmpXchg) SetName(name string) {
 func (inst *InstCmpXchg) Def() string {
 	// "cmpxchg" OptWeak OptVolatile Type Value "," Type Value "," Type Value OptSyncScope AtomicOrdering AtomicOrdering OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("cmpxchg")
 	if inst.Weak {
 		buf.WriteString(" weak")
@@ -452,6 +455,7 @@ func (inst *InstAtomicRMW) SetName(name string) {
 func (inst *InstAtomicRMW) Def() string {
 	// "atomicrmw" OptVolatile BinOp Type Value "," Type Value OptSyncScope AtomicOrdering OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("atomicrmw")
 	if inst.Volatile {
 		buf.WriteString(" volatile")
@@ -530,6 +534,7 @@ func (inst *InstGetElementPtr) SetName(name string) {
 func (inst *InstGetElementPtr) Def() string {
 	// "getelementptr" OptInBounds Type "," Type Value GEPIndices OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("getelementptr")
 	if inst.InBounds {
 		buf.WriteString(" inbounds")

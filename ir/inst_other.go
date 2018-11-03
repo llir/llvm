@@ -78,6 +78,7 @@ func (inst *InstICmp) SetName(name string) {
 func (inst *InstICmp) Def() string {
 	// "icmp" IPred Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "icmp %v %v, %v", inst.Pred, inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -153,6 +154,7 @@ func (inst *InstFCmp) SetName(name string) {
 func (inst *InstFCmp) Def() string {
 	// "fcmp" FastMathFlags FPred Type Value "," Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	buf.WriteString("fcmp")
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %v", flag)
@@ -220,6 +222,7 @@ func (inst *InstPhi) SetName(name string) {
 func (inst *InstPhi) Def() string {
 	// "phi" Type IncList OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "phi %v ", inst.Typ)
 	for i, inc := range inst.Incs {
 		if i != 0 {
@@ -313,6 +316,7 @@ func (inst *InstSelect) SetName(name string) {
 func (inst *InstSelect) Def() string {
 	// "select" Type Value "," Type Value "," Type Value OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "select %v, %v, %v", inst.Cond, inst.X, inst.Y)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -412,6 +416,9 @@ func (inst *InstCall) SetName(name string) {
 func (inst *InstCall) Def() string {
 	// OptTail "call" FastMathFlags OptCallingConv ReturnAttrs Type Value "(" Args ")" FuncAttrs OperandBundles OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	if !inst.Type().Equal(types.Void) {
+		fmt.Fprintf(buf, "%v = ", inst.Ident())
+	}
 	if inst.Tail != enum.TailNone {
 		fmt.Fprintf(buf, "%v ", inst.Tail)
 	}
@@ -502,6 +509,7 @@ func (inst *InstVAArg) SetName(name string) {
 func (inst *InstVAArg) Def() string {
 	// "va_arg" Type Value "," Type OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "va_arg %v, %v", inst.ArgList, inst.ArgType)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -565,6 +573,7 @@ func (inst *InstLandingPad) SetName(name string) {
 func (inst *InstLandingPad) Def() string {
 	// "landingpad" Type OptCleanup Clauses OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "landingpad %v", inst.ResultType)
 	if inst.Cleanup {
 		buf.WriteString(" cleanup")
@@ -631,6 +640,7 @@ func (inst *InstCatchPad) SetName(name string) {
 func (inst *InstCatchPad) Def() string {
 	// "catchpad" "within" LocalIdent "[" ExceptionArgs "]" OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "catchpad within %v [", inst.Scope)
 	for i, arg := range inst.Args {
 		if i != 0 {
@@ -698,6 +708,7 @@ func (inst *InstCleanupPad) SetName(name string) {
 func (inst *InstCleanupPad) Def() string {
 	// "cleanuppad" "within" ExceptionScope "[" ExceptionArgs "]" OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "cleanuppad within %v [", inst.Scope)
 	for i, arg := range inst.Args {
 		if i != 0 {

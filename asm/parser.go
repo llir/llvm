@@ -27,7 +27,7 @@ func Parse(path, content string) (*ir.Module, error) {
 	parseStart := time.Now()
 	tree, err := ast.Parse(path, content)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.Wrapf(err, "unable to parse %q into AST", path)
 	}
 	root := ast.ToLlvmNode(tree.Root())
 	fmt.Println("parsing into AST took:", time.Since(parseStart))

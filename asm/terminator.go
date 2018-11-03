@@ -60,6 +60,7 @@ func (fgen *funcGen) newIRValueTerm(name string, old ast.ValueTerminator) (ir.Te
 		}
 		return &ir.TermInvoke{LocalName: name, Typ: typ}, nil
 	case *ast.CatchSwitchTerm:
+		// Result type is always token.
 		return &ir.TermCatchSwitch{LocalName: name}, nil
 	default:
 		panic(fmt.Errorf("support for value terminator %T not yet implemented", old))
