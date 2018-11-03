@@ -5,12 +5,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/llir/ll/ast"
+	asmenum "github.com/llir/llvm/asm/enum"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
-	asmenum "github.com/llir/llvm/asm/enum"
-	"github.com/llir/ll/ast"
-	"github.com/llir/llvm/internal/enc"
 	"github.com/pkg/errors"
 )
 
@@ -226,6 +226,12 @@ func irOptDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {
 		return enum.DLLStorageClassNone
 	}
 	return asmenum.DLLStorageClassFromString(n.Text())
+}
+
+// irOptExact returns the exact boolean corresponding to the given optional AST
+// exact.
+func irOptExact(n *ast.Exact) bool {
+	return n != nil
 }
 
 // irOptExternallyInitialized returns the externally initialized boolean

@@ -30,7 +30,8 @@ func (fgen *funcGen) astToIRInstExtractValue(inst ir.Instruction, old *ast.Extra
 	for _, index := range indices {
 		i.Indices = append(i.Indices, int64(index))
 	}
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -60,6 +61,7 @@ func (fgen *funcGen) astToIRInstInsertValue(inst ir.Instruction, old *ast.Insert
 	for _, index := range indices {
 		i.Indices = append(i.Indices, int64(index))
 	}
-	// TODO: add support for metadata.
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }

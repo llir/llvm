@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/llir/llvm/ir/types"
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
 

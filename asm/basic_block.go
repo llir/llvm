@@ -1,8 +1,8 @@
 package asm
 
 import (
-	"github.com/llir/llvm/ir"
 	"github.com/llir/ll/ast"
+	"github.com/llir/llvm/ir"
 	"github.com/pkg/errors"
 )
 
