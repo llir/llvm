@@ -2,7 +2,9 @@
 package asm
 
 import (
+	"fmt"
 	"io/ioutil"
+	"time"
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
@@ -22,10 +24,13 @@ func ParseFile(path string) (*ir.Module, error) {
 // Parse parses the given LLVM IR assembly file into an LLVM IR module, reading
 // from content.
 func Parse(path, content string) (*ir.Module, error) {
+	parseStart := time.Now()
 	tree, err := ast.Parse(path, content)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	root := ast.ToLlvmNode(tree.Root())
+	fmt.Println("parsing into AST took:", time.Since(parseStart))
+	fmt.Println()
 	return translate(root.(*ast.Module))
 }

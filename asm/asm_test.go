@@ -18,7 +18,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/inst_other.ll"},
 	}
 	for _, g := range golden {
-		module, err := ParseFile(g.path)
+		m, err := ParseFile(g.path)
 		buf, err := ioutil.ReadFile(g.path)
 		if err != nil {
 			t.Errorf("unable to read %q; %v", g.path, err)
@@ -28,7 +28,7 @@ func TestParseFile(t *testing.T) {
 			t.Errorf("unable to parse %q into AST; %v", g.path, err)
 			continue
 		}
-		got := module.Def()
+		got := m.Def()
 		if want != got {
 			t.Errorf("module mismatch; expected `%s`, got `%s`", want, got)
 			continue
