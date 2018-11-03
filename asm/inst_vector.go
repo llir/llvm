@@ -51,7 +51,7 @@ func (fgen *funcGen) astToIRInstInsertElement(inst ir.Instruction, old *ast.Inse
 	}
 	i.X = x
 	// Element to insert.
-	elem, err := fgen.astToIRTypeValue(old.Index())
+	elem, err := fgen.astToIRTypeValue(old.Elem())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
