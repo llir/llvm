@@ -5,8 +5,10 @@ import (
 	"log"
 	"math"
 	"math/big"
+	"strings"
 
 	"github.com/llir/llvm/ir/types"
+	"github.com/pkg/errors"
 )
 
 // --- [ Floating-point constants ] --------------------------------------------
@@ -47,9 +49,26 @@ func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 //         0xM[0-9A-Fa-f]{32} // HexPPC128
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
 func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
-	log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
 	// TODO: implement NewFloatFromString. return 0 for now.
-	return NewFloat(typ, 0), nil
+	if strings.HasPrefix(s, "0x") {
+		panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
+	}
+	switch typ.Kind {
+	case types.FloatKindDouble:
+		const precision = 53
+		x, _, err := big.ParseFloat(s, 10, precision, big.ToNearestEven)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		c := &ConstFloat{
+			Typ: typ,
+			X:   x,
+		}
+		return c, nil
+	default:
+		log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
+		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", typ.Kind))
+	}
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
@@ -66,5 +85,21 @@ func (c *ConstFloat) Type() types.Type {
 // Ident returns the identifier associated with the constant.
 func (c *ConstFloat) Ident() string {
 	// float_lit
-	panic("not yet implemented")
+	// TODO: add support for hexadecimal format.
+	// TODO: add support for NaN.
+
+	// Insert decimal point if not present.
+	//    3e4 -> 3.0e4
+	//    42  -> 42.0
+	s := c.X.Text('f', -1)
+	if !strings.ContainsRune(s, '.') {
+		if pos := strings.IndexByte(s, 'e'); pos != -1 {
+			s = s[:pos] + ".0" + s[pos:]
+		} else {
+			s += ".0"
+		}
+	}
+	// Drop explicit plus sign in exponents.
+	//    3.0e+4 -> 3.0e4
+	return strings.Replace(s, "e+", "e", -1)
 }
