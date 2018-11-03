@@ -12,6 +12,8 @@ import (
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// astToIRInstExtractValue translates the given AST extractvalue instruction
+// into an equivalent IR instruction.
 func (fgen *funcGen) astToIRInstExtractValue(inst ir.Instruction, old *ast.ExtractValueInst) (*ir.InstExtractValue, error) {
 	i, ok := inst.(*ir.InstExtractValue)
 	if !ok {
@@ -34,6 +36,8 @@ func (fgen *funcGen) astToIRInstExtractValue(inst ir.Instruction, old *ast.Extra
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// astToIRInstInsertValue translates the given AST insertvalue instruction into
+// an equivalent IR instruction.
 func (fgen *funcGen) astToIRInstInsertValue(inst ir.Instruction, old *ast.InsertValueInst) (*ir.InstInsertValue, error) {
 	i, ok := inst.(*ir.InstInsertValue)
 	if !ok {
