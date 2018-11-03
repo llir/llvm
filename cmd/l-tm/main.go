@@ -17,14 +17,7 @@ func main() {
 		fmt.Printf("=== [ %v ] =======================\n", llPath)
 		fmt.Println()
 		fileStart := time.Now()
-		parseStart := time.Now()
-		module, err := asm.ParseFile(llPath)
-		if err != nil {
-			log.Fatalf("%q: %+v", llPath, err)
-		}
-		fmt.Println("parsing into AST took:", time.Since(parseStart))
-		fmt.Println()
-		m, err := asm.Translate(module)
+		m, err := asm.ParseFile(llPath)
 		if err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
