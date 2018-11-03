@@ -1,0 +1,20 @@
+GODIR=`echo ${GOPATH} | awk '{split($$0, arr, ":"); print arr[2]}'`
+ENUM_DIR=${GODIR}/src/github.com/llir/llvm/ir/enum
+
+all: gen
+
+gen:
+	string2enum -linecomment -type AtomicOrdering ${ENUM_DIR}
+	string2enum -linecomment -type CallingConv ${ENUM_DIR}
+	string2enum -linecomment -type DLLStorageClass ${ENUM_DIR}
+	string2enum -linecomment -type FastMathFlag ${ENUM_DIR}
+	string2enum -linecomment -type FPred ${ENUM_DIR}
+	string2enum -linecomment -type IPred ${ENUM_DIR}
+	string2enum -linecomment -type Linkage ${ENUM_DIR}
+	string2enum -linecomment -type OverflowFlag ${ENUM_DIR}
+	string2enum -linecomment -type Preemption ${ENUM_DIR}
+	string2enum -linecomment -type SelectionKind ${ENUM_DIR}
+	string2enum -linecomment -type Tail ${ENUM_DIR}
+	string2enum -linecomment -type TLSModel ${ENUM_DIR}
+	string2enum -linecomment -type UnnamedAddr ${ENUM_DIR}
+	string2enum -linecomment -type Visibility ${ENUM_DIR}
