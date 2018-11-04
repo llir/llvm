@@ -591,26 +591,21 @@ func (inst *InstLandingPad) Def() string {
 
 // Clause is a landingpad catch or filter clause.
 type Clause struct {
-	// Catch clause if true, and filter clause otherwise.
-	Catch bool
+	// Clause type (catch or filter).
+	Type enum.ClauseType
 	// Operand.
 	X value.Value
 }
 
-// NewClause returns a new landingpad catch or filter clause for the given
+// NewClause returns a new landingpad clause based on the given clause type and
 // operand.
-func NewClause(catch bool, x value.Value) *Clause {
-	return &Clause{Catch: catch, X: x}
+func NewClause(clauseType enum.ClauseType, x value.Value) *Clause {
+	return &Clause{Type: clauseType, X: x}
 }
 
-// String returns the string representation of the landingpad catch or filter
-// clause.
+// String returns the string representation of the landingpad clause.
 func (clause *Clause) String() string {
-	clauseType := "filter"
-	if clause.Catch {
-		clauseType = "catch"
-	}
-	return fmt.Sprintf("%s %s", clauseType, clause.X)
+	return fmt.Sprintf("%s %s", clause.Type, clause.X)
 }
 
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

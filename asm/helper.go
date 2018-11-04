@@ -263,16 +263,8 @@ func (fgen *funcGen) irClause(n ast.Clause) (*ir.Clause, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	var catch bool
-	switch text := n.ClauseType().Text(); text {
-	case "catch":
-		catch = true
-	case "filter":
-		catch = false
-	default:
-		panic(fmt.Errorf("support for clause type %q not yet implemented", text))
-	}
-	return ir.NewClause(catch, x), nil
+	clauseType := asmenum.ClauseTypeFromString(n.ClauseType().Text())
+	return ir.NewClause(clauseType, x), nil
 }
 
 // irOptDLLStorageClass returns the IR DLL storage class corresponding to the

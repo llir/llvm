@@ -7,6 +7,7 @@ gen:
 	string2enum -linecomment -type AtomicOp ${ENUM_DIR}
 	string2enum -linecomment -type AtomicOrdering ${ENUM_DIR}
 	string2enum -linecomment -type CallingConv ${ENUM_DIR}
+	string2enum -linecomment -type ClauseType ${ENUM_DIR}
 	string2enum -linecomment -type DLLStorageClass ${ENUM_DIR}
 	string2enum -linecomment -type FastMathFlag ${ENUM_DIR}
 	string2enum -linecomment -type FPred ${ENUM_DIR}
