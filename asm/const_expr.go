@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -12,7 +11,7 @@ import (
 
 // === [ Constant expressions ] ================================================
 
-func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (ir.Expression, error) {
+func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (constant.Expression, error) {
 	switch old := old.(type) {
 	// Binary expressions
 	case *ast.AddExpr:

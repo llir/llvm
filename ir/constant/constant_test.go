@@ -1,12 +1,14 @@
 package constant
 
-import "github.com/llir/llvm/ir"
+import (
+	"github.com/llir/llvm/ir"
+)
 
 // Assert that each constant implements the ir.Constant interface.
 var (
 	// Constant expressions.
-	// Checked in expression_test.go as ir.Expression embeds ir.Constant.
-	_ ir.Constant = ir.Expression(nil)
+	// Checked in expression_test.go as constant.Expression embeds ir.Constant.
+	_ ir.Constant = Expression(nil)
 
 	// Constants.
 	_ ir.Constant = (*Int)(nil)
