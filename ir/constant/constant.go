@@ -1,3 +1,4 @@
+// Package constant implements values representing immutable LLVM IR constants.
 package constant
 
 import (
