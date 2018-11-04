@@ -6,18 +6,22 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // TODO: move to the right place.
 
-// TODO: figure out definition of arg.
+// TODO: figure out definition of Arg.
 type Arg interface {
-	String() string
-	isArg()
+	value.Value
+	//String() string
+	//isArg()
 }
 
+// TODO: figure out definition of ExceptionScope.
 type ExceptionScope interface {
-	isExceptionScope()
+	value.Value
+	//isExceptionScope()
 }
 
 // TODO: add proper implementations.
