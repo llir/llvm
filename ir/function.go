@@ -42,11 +42,11 @@ type Function struct {
 	// (optional) Calling convention; zero value if not present.
 	CallingConv enum.CallingConv
 	// (optional) Return attributes.
-	ReturnAttrs []enum.ReturnAttribute
+	ReturnAttrs []ReturnAttribute
 	// (optional) Unnamed address.
 	UnnamedAddr enum.UnnamedAddr
 	// (optional) Function attributes.
-	FuncAttrs []enum.FuncAttribute
+	FuncAttrs []FuncAttribute
 	// (optional) Section; nil if not present.
 	Section string
 	// (optional) Comdat; nil if not present.

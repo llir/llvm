@@ -49,7 +49,7 @@ type Global struct {
 	// (optional) Alignment; zero if not present.
 	Align int64
 	// (optional) Function attributes.
-	FuncAttrs []enum.FuncAttribute
+	FuncAttrs []FuncAttribute
 	// (optional) Metadata attachments.
 	// TODO: add support for metadata.
 	//Metadata []*metadata.MetadataAttachment

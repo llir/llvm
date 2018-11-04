@@ -179,6 +179,11 @@ func irAlignment(n ast.Alignment) int {
 	return int(uintLit(n.N()))
 }
 
+// irArg translates the given AST argument into an equivalent IR argument.
+func (fgen *funcGen) irArg(oldArg ast.Arg) (ir.Arg, error) {
+	panic("not yet implemented")
+}
+
 // irAtomicOp returns the IR atomic operation corresponding to the given AST
 // atomic operation.
 func irAtomicOp(n ast.AtomicOp) enum.AtomicOp {
@@ -197,6 +202,12 @@ func irOptCallingConv(n ast.CallingConv) enum.CallingConv {
 	if n == nil {
 		return enum.CallingConvNone
 	}
+	return irCallingConv(n)
+}
+
+// irCallingConv returns the IR calling convention corresponding to the given
+// AST calling convention.
+func irCallingConv(n ast.CallingConv) enum.CallingConv {
 	switch n := n.(type) {
 	case *ast.CallingConvEnum:
 		return asmenum.CallingConvFromString(n.Text())
@@ -278,6 +289,18 @@ func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
 	return flags
 }
 
+// irFPred returns the IR floating-point comparison predicate corresponding to
+// the given AST floating-point comparison predicate.
+func irFPred(n ast.FPred) enum.FPred {
+	return asmenum.FPredFromString(n.Text())
+}
+
+// irFuncAttribute returns the IR function attribute corresponding to the given
+// AST function attribute.
+func irFuncAttribute(n ast.FuncAttr) ir.FuncAttribute {
+	panic("not yet implemented")
+}
+
 // irImmutable returns the immutable (constant or global) boolean corresponding
 // to the given optional AST immutable.
 func irImmutable(n ast.Immutable) bool {
@@ -296,6 +319,32 @@ func irImmutable(n ast.Immutable) bool {
 // optional AST in-bounds.
 func irOptInBounds(n *ast.InBounds) bool {
 	return n != nil
+}
+
+// irIncoming translates the given AST incoming value into an equivalent IR
+// incoming value.
+func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.LocalIdent) (*ir.Incoming, error) {
+	x, err := fgen.astToIRValue(xType, oldX)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	predName := local(oldPred)
+	v, ok := fgen.ls[predName]
+	if !ok {
+		return nil, errors.Errorf("unable to locate local identifier %q", predName)
+	}
+	pred, ok := v.(*ir.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
+	}
+	inc := ir.NewIncoming(x, pred)
+	return inc, nil
+}
+
+// irIPred returns the IR integer comparison predicate corresponding to the
+// given AST integer comparison predicate.
+func irIPred(n ast.IPred) enum.IPred {
+	return asmenum.IPredFromString(n.Text())
 }
 
 // irOptInRange returns the in-range boolean corresponding to the given optional
@@ -343,6 +392,12 @@ func irOptPreemption(n *ast.Preemption) enum.Preemption {
 	return asmenum.PreemptionFromString(n.Text())
 }
 
+// irReturnAttribute returns the IR return attribute corresponding to the given
+// AST return attribute.
+func irReturnAttribute(n ast.ReturnAttr) ir.ReturnAttribute {
+	panic("not yet implemented")
+}
+
 // irOptSelectionKind returns the IR Comdat selection kind corresponding to the
 // given optional AST Comdat selection kind.
 func irOptSelectionKind(n *ast.SelectionKind) enum.SelectionKind {
@@ -350,6 +405,17 @@ func irOptSelectionKind(n *ast.SelectionKind) enum.SelectionKind {
 		return enum.SelectionKindAny
 	}
 	return asmenum.SelectionKindFromString(n.Text())
+}
+
+// irOperandBundle returns the IR operand bundle corresponding to the given AST
+// operand bundle.
+func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) ir.OperandBundle {
+	panic("not yet implemented")
+}
+
+// irTail returns the IR tail corresponding to the given AST tail.
+func irTail(n ast.Tail) enum.Tail {
+	return asmenum.TailFromString(n.Text())
 }
 
 // irOptTLSModelFromThreadLocal returns the IR TLS model corresponding to the

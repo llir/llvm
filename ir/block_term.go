@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -88,7 +87,7 @@ func (block *BasicBlock) NewResume(x value.Value) *TermResume {
 // NewCatchSwitch sets the terminator of the basic block to a new catchswitch
 // terminator based on the given exception scope, exception handlers and unwind
 // target.
-func (block *BasicBlock) NewCatchSwitch(scope enum.ExceptionScope, handlers []*BasicBlock, unwindTarget enum.UnwindTarget) *TermCatchSwitch {
+func (block *BasicBlock) NewCatchSwitch(scope ExceptionScope, handlers []*BasicBlock, unwindTarget UnwindTarget) *TermCatchSwitch {
 	term := NewCatchSwitch(scope, handlers, unwindTarget)
 	block.Term = term
 	return term
@@ -108,7 +107,7 @@ func (block *BasicBlock) NewCatchRet(from *InstCatchPad, to *BasicBlock) *TermCa
 
 // NewCleanupRet sets the terminator of the basic block to a new cleanupret
 // terminator based on the given exit cleanuppad and unwind target.
-func (block *BasicBlock) NewCleanupRet(from *InstCleanupPad, to enum.UnwindTarget) *TermCleanupRet {
+func (block *BasicBlock) NewCleanupRet(from *InstCleanupPad, to UnwindTarget) *TermCleanupRet {
 	term := NewCleanupRet(from, to)
 	block.Term = term
 	return term

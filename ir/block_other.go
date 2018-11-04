@@ -75,7 +75,7 @@ func (block *BasicBlock) NewVAArg(vaList value.Value, argType types.Type) *InstV
 
 // NewLandingPad appends a new landingpad instruction to the basic block based
 // on the given result type and filter/catch clauses.
-func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*enum.Clause) *InstLandingPad {
+func (block *BasicBlock) NewLandingPad(resultType types.Type, clauses ...*Clause) *InstLandingPad {
 	inst := NewLandingPad(resultType, clauses...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -95,7 +95,7 @@ func (block *BasicBlock) NewCatchPad(scope *TermCatchSwitch, args ...Arg) *InstC
 
 // NewCleanupPad appends a new cleanuppad instruction to the basic block based
 // on the given exception scope and exception arguments.
-func (block *BasicBlock) NewCleanupPad(scope enum.ExceptionScope, args ...Arg) *InstCleanupPad {
+func (block *BasicBlock) NewCleanupPad(scope ExceptionScope, args ...Arg) *InstCleanupPad {
 	inst := NewCleanupPad(scope, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst

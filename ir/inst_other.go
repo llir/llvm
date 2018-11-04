@@ -348,13 +348,13 @@ type InstCall struct {
 	// (optional) Calling convention; zero if not present.
 	CallingConv enum.CallingConv
 	// (optional) Return attributes.
-	ReturnAttrs []enum.ReturnAttribute
+	ReturnAttrs []ReturnAttribute
 	// (optional) Address space; zero if not present.
 	AddrSpace types.AddrSpace
 	// (optional) Function attributes.
-	FuncAttrs []enum.FuncAttribute
+	FuncAttrs []FuncAttribute
 	// (optional) Operand bundles.
-	OperandBundles []enum.OperandBundle
+	OperandBundles []OperandBundle
 	// (optional) Metadata.
 	Metadata []MetadataAttachment
 }
@@ -529,7 +529,7 @@ type InstLandingPad struct {
 	Cleanup bool
 	// Filter and catch clauses; zero or more if Cleanup is true, otherwise one
 	// or more.
-	Clauses []*enum.Clause
+	Clauses []*Clause
 
 	// extra.
 
@@ -539,7 +539,7 @@ type InstLandingPad struct {
 
 // NewLandingPad returns a new landingpad instruction based on the given result
 // type and filter/catch clauses.
-func NewLandingPad(resultType types.Type, clauses ...*enum.Clause) *InstLandingPad {
+func NewLandingPad(resultType types.Type, clauses ...*Clause) *InstLandingPad {
 	return &InstLandingPad{ResultType: resultType, Clauses: clauses}
 }
 
@@ -662,7 +662,7 @@ type InstCleanupPad struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope enum.ExceptionScope // TODO: rename to Parent? rename to From?
+	Scope ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
 	Args []Arg
 
@@ -674,7 +674,7 @@ type InstCleanupPad struct {
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
 // exception scope and exception arguments.
-func NewCleanupPad(scope enum.ExceptionScope, args ...Arg) *InstCleanupPad {
+func NewCleanupPad(scope ExceptionScope, args ...Arg) *InstCleanupPad {
 	return &InstCleanupPad{Scope: scope, Args: args}
 }
 
