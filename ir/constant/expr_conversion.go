@@ -1,8 +1,9 @@
-package ir
+package constant
 
 import (
 	"fmt"
 
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -13,14 +14,14 @@ import (
 // ExprTrunc is an LLVM IR trunc expression.
 type ExprTrunc struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewTruncExpr returns a new trunc expression based on the given source value
-// and target type.
-func NewTruncExpr(from Constant, to types.Type) *ExprTrunc {
+// NewTrunc returns a new trunc expression based on the given source value and
+// target type.
+func NewTrunc(from ir.Constant, to types.Type) *ExprTrunc {
 	return &ExprTrunc{From: from, To: to}
 }
 
@@ -43,7 +44,7 @@ func (e *ExprTrunc) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprTrunc) Simplify() Constant {
+func (e *ExprTrunc) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -52,14 +53,14 @@ func (e *ExprTrunc) Simplify() Constant {
 // ExprZExt is an LLVM IR zext expression.
 type ExprZExt struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewZExtExpr returns a new zext expression based on the given source value and
+// NewZExt returns a new zext expression based on the given source value and
 // target type.
-func NewZExtExpr(from Constant, to types.Type) *ExprZExt {
+func NewZExt(from ir.Constant, to types.Type) *ExprZExt {
 	return &ExprZExt{From: from, To: to}
 }
 
@@ -82,7 +83,7 @@ func (e *ExprZExt) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprZExt) Simplify() Constant {
+func (e *ExprZExt) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -91,14 +92,14 @@ func (e *ExprZExt) Simplify() Constant {
 // ExprSExt is an LLVM IR sext expression.
 type ExprSExt struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewSExtExpr returns a new sext expression based on the given source value and
+// NewSExt returns a new sext expression based on the given source value and
 // target type.
-func NewSExtExpr(from Constant, to types.Type) *ExprSExt {
+func NewSExt(from ir.Constant, to types.Type) *ExprSExt {
 	return &ExprSExt{From: from, To: to}
 }
 
@@ -121,7 +122,7 @@ func (e *ExprSExt) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprSExt) Simplify() Constant {
+func (e *ExprSExt) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -130,14 +131,14 @@ func (e *ExprSExt) Simplify() Constant {
 // ExprFPTrunc is an LLVM IR fptrunc expression.
 type ExprFPTrunc struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPTruncExpr returns a new fptrunc expression based on the given source
-// value and target type.
-func NewFPTruncExpr(from Constant, to types.Type) *ExprFPTrunc {
+// NewFPTrunc returns a new fptrunc expression based on the given source value
+// and target type.
+func NewFPTrunc(from ir.Constant, to types.Type) *ExprFPTrunc {
 	return &ExprFPTrunc{From: from, To: to}
 }
 
@@ -160,7 +161,7 @@ func (e *ExprFPTrunc) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFPTrunc) Simplify() Constant {
+func (e *ExprFPTrunc) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -169,14 +170,14 @@ func (e *ExprFPTrunc) Simplify() Constant {
 // ExprFPExt is an LLVM IR fpext expression.
 type ExprFPExt struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPExtExpr returns a new fpext expression based on the given source value
-// and target type.
-func NewFPExtExpr(from Constant, to types.Type) *ExprFPExt {
+// NewFPExt returns a new fpext expression based on the given source value and
+// target type.
+func NewFPExt(from ir.Constant, to types.Type) *ExprFPExt {
 	return &ExprFPExt{From: from, To: to}
 }
 
@@ -199,7 +200,7 @@ func (e *ExprFPExt) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFPExt) Simplify() Constant {
+func (e *ExprFPExt) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -208,14 +209,14 @@ func (e *ExprFPExt) Simplify() Constant {
 // ExprFPToUI is an LLVM IR fptoui expression.
 type ExprFPToUI struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPToUIExpr returns a new fptoui expression based on the given source value
-// and target type.
-func NewFPToUIExpr(from Constant, to types.Type) *ExprFPToUI {
+// NewFPToUI returns a new fptoui expression based on the given source value and
+// target type.
+func NewFPToUI(from ir.Constant, to types.Type) *ExprFPToUI {
 	return &ExprFPToUI{From: from, To: to}
 }
 
@@ -238,7 +239,7 @@ func (e *ExprFPToUI) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFPToUI) Simplify() Constant {
+func (e *ExprFPToUI) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -247,14 +248,14 @@ func (e *ExprFPToUI) Simplify() Constant {
 // ExprFPToSI is an LLVM IR fptosi expression.
 type ExprFPToSI struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewFPToSIExpr returns a new fptosi expression based on the given source value
-// and target type.
-func NewFPToSIExpr(from Constant, to types.Type) *ExprFPToSI {
+// NewFPToSI returns a new fptosi expression based on the given source value and
+// target type.
+func NewFPToSI(from ir.Constant, to types.Type) *ExprFPToSI {
 	return &ExprFPToSI{From: from, To: to}
 }
 
@@ -277,7 +278,7 @@ func (e *ExprFPToSI) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFPToSI) Simplify() Constant {
+func (e *ExprFPToSI) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -286,14 +287,14 @@ func (e *ExprFPToSI) Simplify() Constant {
 // ExprUIToFP is an LLVM IR uitofp expression.
 type ExprUIToFP struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewUIToFPExpr returns a new uitofp expression based on the given source value
-// and target type.
-func NewUIToFPExpr(from Constant, to types.Type) *ExprUIToFP {
+// NewUIToFP returns a new uitofp expression based on the given source value and
+// target type.
+func NewUIToFP(from ir.Constant, to types.Type) *ExprUIToFP {
 	return &ExprUIToFP{From: from, To: to}
 }
 
@@ -316,7 +317,7 @@ func (e *ExprUIToFP) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprUIToFP) Simplify() Constant {
+func (e *ExprUIToFP) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -325,14 +326,14 @@ func (e *ExprUIToFP) Simplify() Constant {
 // ExprSIToFP is an LLVM IR sitofp expression.
 type ExprSIToFP struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewSIToFPExpr returns a new sitofp expression based on the given source value
-// and target type.
-func NewSIToFPExpr(from Constant, to types.Type) *ExprSIToFP {
+// NewSIToFP returns a new sitofp expression based on the given source value and
+// target type.
+func NewSIToFP(from ir.Constant, to types.Type) *ExprSIToFP {
 	return &ExprSIToFP{From: from, To: to}
 }
 
@@ -355,7 +356,7 @@ func (e *ExprSIToFP) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprSIToFP) Simplify() Constant {
+func (e *ExprSIToFP) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -364,14 +365,14 @@ func (e *ExprSIToFP) Simplify() Constant {
 // ExprPtrToInt is an LLVM IR ptrtoint expression.
 type ExprPtrToInt struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewPtrToIntExpr returns a new ptrtoint expression based on the given source
-// value and target type.
-func NewPtrToIntExpr(from Constant, to types.Type) *ExprPtrToInt {
+// NewPtrToInt returns a new ptrtoint expression based on the given source value
+// and target type.
+func NewPtrToInt(from ir.Constant, to types.Type) *ExprPtrToInt {
 	return &ExprPtrToInt{From: from, To: to}
 }
 
@@ -394,7 +395,7 @@ func (e *ExprPtrToInt) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprPtrToInt) Simplify() Constant {
+func (e *ExprPtrToInt) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -403,14 +404,14 @@ func (e *ExprPtrToInt) Simplify() Constant {
 // ExprIntToPtr is an LLVM IR inttoptr expression.
 type ExprIntToPtr struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewIntToPtrExpr returns a new inttoptr expression based on the given source
-// value and target type.
-func NewIntToPtrExpr(from Constant, to types.Type) *ExprIntToPtr {
+// NewIntToPtr returns a new inttoptr expression based on the given source value
+// and target type.
+func NewIntToPtr(from ir.Constant, to types.Type) *ExprIntToPtr {
 	return &ExprIntToPtr{From: from, To: to}
 }
 
@@ -433,7 +434,7 @@ func (e *ExprIntToPtr) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprIntToPtr) Simplify() Constant {
+func (e *ExprIntToPtr) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -442,14 +443,14 @@ func (e *ExprIntToPtr) Simplify() Constant {
 // ExprBitCast is an LLVM IR bitcast expression.
 type ExprBitCast struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewBitCastExpr returns a new bitcast expression based on the given source
-// value and target type.
-func NewBitCastExpr(from Constant, to types.Type) *ExprBitCast {
+// NewBitCast returns a new bitcast expression based on the given source value
+// and target type.
+func NewBitCast(from ir.Constant, to types.Type) *ExprBitCast {
 	return &ExprBitCast{From: from, To: to}
 }
 
@@ -472,7 +473,7 @@ func (e *ExprBitCast) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprBitCast) Simplify() Constant {
+func (e *ExprBitCast) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -481,14 +482,14 @@ func (e *ExprBitCast) Simplify() Constant {
 // ExprAddrSpaceCast is an LLVM IR addrspacecast expression.
 type ExprAddrSpaceCast struct {
 	// Value before conversion.
-	From Constant
+	From ir.Constant
 	// Type after conversion.
 	To types.Type
 }
 
-// NewAddrSpaceCastExpr returns a new addrspacecast expression based on the
-// given source value and target type.
-func NewAddrSpaceCastExpr(from Constant, to types.Type) *ExprAddrSpaceCast {
+// NewAddrSpaceCast returns a new addrspacecast expression based on the given
+// source value and target type.
+func NewAddrSpaceCast(from ir.Constant, to types.Type) *ExprAddrSpaceCast {
 	return &ExprAddrSpaceCast{From: from, To: to}
 }
 
@@ -511,6 +512,6 @@ func (e *ExprAddrSpaceCast) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprAddrSpaceCast) Simplify() Constant {
+func (e *ExprAddrSpaceCast) Simplify() ir.Constant {
 	panic("not yet implemented")
 }

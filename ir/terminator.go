@@ -253,7 +253,7 @@ type TermIndirectBr struct {
 // NewIndirectBr returns a new indirectbr terminator based on the given target
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
-func NewIndirectBr(addr *ConstBlockAddress, validTargets ...*BasicBlock) *TermIndirectBr {
+func NewIndirectBr(addr Constant, validTargets ...*BasicBlock) *TermIndirectBr {
 	return &TermIndirectBr{Addr: addr, ValidTargets: validTargets}
 }
 

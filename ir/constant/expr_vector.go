@@ -1,8 +1,9 @@
-package ir
+package constant
 
 import (
 	"fmt"
 
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -13,14 +14,14 @@ import (
 // ExprExtractElement is an LLVM IR extractelement expression.
 type ExprExtractElement struct {
 	// Vector.
-	X Constant
+	X ir.Constant
 	// Element index.
-	Index Constant
+	Index ir.Constant
 }
 
-// NewExtractElementExpr returns a new extractelement expression based on the
-// given vector and element index.
-func NewExtractElementExpr(x, index Constant) *ExprExtractElement {
+// NewExtractElement returns a new extractelement expression based on the given
+// vector and element index.
+func NewExtractElement(x, index ir.Constant) *ExprExtractElement {
 	return &ExprExtractElement{X: x, Index: index}
 }
 
@@ -45,7 +46,7 @@ func (e *ExprExtractElement) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprExtractElement) Simplify() Constant {
+func (e *ExprExtractElement) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -54,16 +55,16 @@ func (e *ExprExtractElement) Simplify() Constant {
 // ExprInsertElement is an LLVM IR insertelement expression.
 type ExprInsertElement struct {
 	// Vector.
-	X Constant
+	X ir.Constant
 	// Element to insert.
-	Elem Constant
+	Elem ir.Constant
 	// Element index.
-	Index Constant
+	Index ir.Constant
 }
 
-// NewInsertElementExpr returns a new insertelement expression based on the
-// given vector, element and element index.
-func NewInsertElementExpr(x, elem, index Constant) *ExprInsertElement {
+// NewInsertElement returns a new insertelement expression based on the given
+// vector, element and element index.
+func NewInsertElement(x, elem, index ir.Constant) *ExprInsertElement {
 	return &ExprInsertElement{X: x, Elem: elem, Index: index}
 }
 
@@ -87,7 +88,7 @@ func (e *ExprInsertElement) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprInsertElement) Simplify() Constant {
+func (e *ExprInsertElement) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -96,14 +97,14 @@ func (e *ExprInsertElement) Simplify() Constant {
 // ExprShuffleVector is an LLVM IR shufflevector expression.
 type ExprShuffleVector struct {
 	// Vectors.
-	X, Y Constant
+	X, Y ir.Constant
 	// Shuffle mask.
-	Mask Constant
+	Mask ir.Constant
 }
 
-// NewShuffleVectorExpr returns a new shufflevector expression based on the
-// given vectors and shuffle mask.
-func NewShuffleVectorExpr(x, y, mask Constant) *ExprShuffleVector {
+// NewShuffleVector returns a new shufflevector expression based on the given
+// vectors and shuffle mask.
+func NewShuffleVector(x, y, mask ir.Constant) *ExprShuffleVector {
 	return &ExprShuffleVector{X: x, Y: y, Mask: mask}
 }
 
@@ -126,6 +127,6 @@ func (e *ExprShuffleVector) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprShuffleVector) Simplify() Constant {
+func (e *ExprShuffleVector) Simplify() ir.Constant {
 	panic("not yet implemented")
 }

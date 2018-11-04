@@ -1,9 +1,10 @@
-package ir
+package constant
 
 import (
 	"fmt"
 	"strings"
 
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 )
@@ -15,7 +16,7 @@ import (
 // ExprAdd is an LLVM IR add expression.
 type ExprAdd struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 
 	// extra.
 
@@ -23,8 +24,8 @@ type ExprAdd struct {
 	OverflowFlags []enum.OverflowFlag
 }
 
-// NewAddExpr returns a new add expression based on the given operands.
-func NewAddExpr(x, y Constant) *ExprAdd {
+// NewAdd returns a new add expression based on the given operands.
+func NewAdd(x, y ir.Constant) *ExprAdd {
 	return &ExprAdd{X: x, Y: y}
 }
 
@@ -53,7 +54,7 @@ func (e *ExprAdd) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprAdd) Simplify() Constant {
+func (e *ExprAdd) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -62,11 +63,11 @@ func (e *ExprAdd) Simplify() Constant {
 // ExprFAdd is an LLVM IR fadd expression.
 type ExprFAdd struct {
 	// Operands.
-	X, Y Constant // floating-point scalar or vector constants
+	X, Y ir.Constant // floating-point scalar or vector constants
 }
 
-// NewFAddExpr returns a new fadd expression based on the given operands.
-func NewFAddExpr(x, y Constant) *ExprFAdd {
+// NewFAdd returns a new fadd expression based on the given operands.
+func NewFAdd(x, y ir.Constant) *ExprFAdd {
 	return &ExprFAdd{X: x, Y: y}
 }
 
@@ -89,7 +90,7 @@ func (e *ExprFAdd) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFAdd) Simplify() Constant {
+func (e *ExprFAdd) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -98,7 +99,7 @@ func (e *ExprFAdd) Simplify() Constant {
 // ExprSub is an LLVM IR sub expression.
 type ExprSub struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 
 	// extra.
 
@@ -106,8 +107,8 @@ type ExprSub struct {
 	OverflowFlags []enum.OverflowFlag
 }
 
-// NewSubExpr returns a new sub expression based on the given operands.
-func NewSubExpr(x, y Constant) *ExprSub {
+// NewSub returns a new sub expression based on the given operands.
+func NewSub(x, y ir.Constant) *ExprSub {
 	return &ExprSub{X: x, Y: y}
 }
 
@@ -136,7 +137,7 @@ func (e *ExprSub) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprSub) Simplify() Constant {
+func (e *ExprSub) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -145,11 +146,11 @@ func (e *ExprSub) Simplify() Constant {
 // ExprFSub is an LLVM IR fsub expression.
 type ExprFSub struct {
 	// Operands.
-	X, Y Constant // floating-point scalar or vector constants
+	X, Y ir.Constant // floating-point scalar or vector constants
 }
 
-// NewFSubExpr returns a new fsub expression based on the given operands.
-func NewFSubExpr(x, y Constant) *ExprFSub {
+// NewFSub returns a new fsub expression based on the given operands.
+func NewFSub(x, y ir.Constant) *ExprFSub {
 	return &ExprFSub{X: x, Y: y}
 }
 
@@ -172,7 +173,7 @@ func (e *ExprFSub) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFSub) Simplify() Constant {
+func (e *ExprFSub) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -181,7 +182,7 @@ func (e *ExprFSub) Simplify() Constant {
 // ExprMul is an LLVM IR mul expression.
 type ExprMul struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 
 	// extra.
 
@@ -189,8 +190,8 @@ type ExprMul struct {
 	OverflowFlags []enum.OverflowFlag
 }
 
-// NewMulExpr returns a new mul expression based on the given operands.
-func NewMulExpr(x, y Constant) *ExprMul {
+// NewMul returns a new mul expression based on the given operands.
+func NewMul(x, y ir.Constant) *ExprMul {
 	return &ExprMul{X: x, Y: y}
 }
 
@@ -219,7 +220,7 @@ func (e *ExprMul) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprMul) Simplify() Constant {
+func (e *ExprMul) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -228,11 +229,11 @@ func (e *ExprMul) Simplify() Constant {
 // ExprFMul is an LLVM IR fmul expression.
 type ExprFMul struct {
 	// Operands.
-	X, Y Constant // floating-point scalar or vector constants
+	X, Y ir.Constant // floating-point scalar or vector constants
 }
 
-// NewFMulExpr returns a new fmul expression based on the given operands.
-func NewFMulExpr(x, y Constant) *ExprFMul {
+// NewFMul returns a new fmul expression based on the given operands.
+func NewFMul(x, y ir.Constant) *ExprFMul {
 	return &ExprFMul{X: x, Y: y}
 }
 
@@ -255,7 +256,7 @@ func (e *ExprFMul) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFMul) Simplify() Constant {
+func (e *ExprFMul) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -264,7 +265,7 @@ func (e *ExprFMul) Simplify() Constant {
 // ExprUDiv is an LLVM IR udiv expression.
 type ExprUDiv struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 
 	// extra.
 
@@ -272,8 +273,8 @@ type ExprUDiv struct {
 	Exact bool
 }
 
-// NewUDivExpr returns a new udiv expression based on the given operands.
-func NewUDivExpr(x, y Constant) *ExprUDiv {
+// NewUDiv returns a new udiv expression based on the given operands.
+func NewUDiv(x, y ir.Constant) *ExprUDiv {
 	return &ExprUDiv{X: x, Y: y}
 }
 
@@ -302,7 +303,7 @@ func (e *ExprUDiv) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprUDiv) Simplify() Constant {
+func (e *ExprUDiv) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -311,7 +312,7 @@ func (e *ExprUDiv) Simplify() Constant {
 // ExprSDiv is an LLVM IR sdiv expression.
 type ExprSDiv struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 
 	// extra.
 
@@ -319,8 +320,8 @@ type ExprSDiv struct {
 	Exact bool
 }
 
-// NewSDivExpr returns a new sdiv expression based on the given operands.
-func NewSDivExpr(x, y Constant) *ExprSDiv {
+// NewSDiv returns a new sdiv expression based on the given operands.
+func NewSDiv(x, y ir.Constant) *ExprSDiv {
 	return &ExprSDiv{X: x, Y: y}
 }
 
@@ -349,7 +350,7 @@ func (e *ExprSDiv) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprSDiv) Simplify() Constant {
+func (e *ExprSDiv) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -358,11 +359,11 @@ func (e *ExprSDiv) Simplify() Constant {
 // ExprFDiv is an LLVM IR fdiv expression.
 type ExprFDiv struct {
 	// Operands.
-	X, Y Constant // floating-point scalar or vector constants
+	X, Y ir.Constant // floating-point scalar or vector constants
 }
 
-// NewFDivExpr returns a new fdiv expression based on the given operands.
-func NewFDivExpr(x, y Constant) *ExprFDiv {
+// NewFDiv returns a new fdiv expression based on the given operands.
+func NewFDiv(x, y ir.Constant) *ExprFDiv {
 	return &ExprFDiv{X: x, Y: y}
 }
 
@@ -385,7 +386,7 @@ func (e *ExprFDiv) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFDiv) Simplify() Constant {
+func (e *ExprFDiv) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -394,11 +395,11 @@ func (e *ExprFDiv) Simplify() Constant {
 // ExprURem is an LLVM IR urem expression.
 type ExprURem struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 }
 
-// NewURemExpr returns a new urem expression based on the given operands.
-func NewURemExpr(x, y Constant) *ExprURem {
+// NewURem returns a new urem expression based on the given operands.
+func NewURem(x, y ir.Constant) *ExprURem {
 	return &ExprURem{X: x, Y: y}
 }
 
@@ -421,7 +422,7 @@ func (e *ExprURem) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprURem) Simplify() Constant {
+func (e *ExprURem) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -430,11 +431,11 @@ func (e *ExprURem) Simplify() Constant {
 // ExprSRem is an LLVM IR srem expression.
 type ExprSRem struct {
 	// Operands.
-	X, Y Constant // integer scalar or vector constants
+	X, Y ir.Constant // integer scalar or vector constants
 }
 
-// NewSRemExpr returns a new srem expression based on the given operands.
-func NewSRemExpr(x, y Constant) *ExprSRem {
+// NewSRem returns a new srem expression based on the given operands.
+func NewSRem(x, y ir.Constant) *ExprSRem {
 	return &ExprSRem{X: x, Y: y}
 }
 
@@ -457,7 +458,7 @@ func (e *ExprSRem) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprSRem) Simplify() Constant {
+func (e *ExprSRem) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -466,11 +467,11 @@ func (e *ExprSRem) Simplify() Constant {
 // ExprFRem is an LLVM IR frem expression.
 type ExprFRem struct {
 	// Operands.
-	X, Y Constant // floating-point scalar or vector constants
+	X, Y ir.Constant // floating-point scalar or vector constants
 }
 
-// NewFRemExpr returns a new frem expression based on the given operands.
-func NewFRemExpr(x, y Constant) *ExprFRem {
+// NewFRem returns a new frem expression based on the given operands.
+func NewFRem(x, y ir.Constant) *ExprFRem {
 	return &ExprFRem{X: x, Y: y}
 }
 
@@ -493,6 +494,6 @@ func (e *ExprFRem) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFRem) Simplify() Constant {
+func (e *ExprFRem) Simplify() ir.Constant {
 	panic("not yet implemented")
 }

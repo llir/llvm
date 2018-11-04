@@ -1,4 +1,4 @@
-package ir
+package constant
 
 import (
 	"fmt"
@@ -8,23 +8,23 @@ import (
 
 // --- [ Token constants ] -----------------------------------------------------
 
-// ConstNone is an LLVM IR none token constant.
-type ConstNone struct {
+// none is an LLVM IR none token constant.
+type none struct {
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
-func (c *ConstNone) String() string {
+func (c *none) String() string {
 	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
-func (*ConstNone) Type() types.Type {
+func (*none) Type() types.Type {
 	return types.Token
 }
 
 // Ident returns the identifier associated with the constant.
-func (*ConstNone) Ident() string {
+func (*none) Ident() string {
 	// "none"
 	return "none"
 }

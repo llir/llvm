@@ -1,4 +1,4 @@
-package ir
+package constant
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 
 // --- [ Integer constants ] ---------------------------------------------------
 
-// ConstInt is an LLVM IR integer constant.
-type ConstInt struct {
+// Int is an LLVM IR integer constant.
+type Int struct {
 	// Integer type.
 	Typ *types.IntType
 	// Integer constant.
@@ -20,8 +20,8 @@ type ConstInt struct {
 
 // NewInt returns a new integer constant based on the given integer type and
 // 64-bit interger value.
-func NewInt(typ *types.IntType, x int64) *ConstInt {
-	return &ConstInt{Typ: typ, X: big.NewInt(x)}
+func NewInt(typ *types.IntType, x int64) *Int {
+	return &Int{Typ: typ, X: big.NewInt(x)}
 }
 
 // NewIntFromString returns a new integer constant based on the given integer
@@ -35,28 +35,28 @@ func NewInt(typ *types.IntType, x int64) *ConstInt {
 //         [-]? [0-9]+
 //    * hexadecimal integer literal
 //         TODO: add support for hexadecimal integer literal notation.
-func NewIntFromString(typ *types.IntType, s string) (*ConstInt, error) {
+func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 	// TODO: handle boolean literals and hexadecimal integer literals.
 	x, _ := (&big.Int{}).SetString(s, 10)
 	if x == nil {
 		return nil, errors.Errorf("unable to parse integer constant %q", s)
 	}
-	return &ConstInt{Typ: typ, X: x}, nil
+	return &Int{Typ: typ, X: x}, nil
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
-func (c *ConstInt) String() string {
+func (c *Int) String() string {
 	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
-func (c *ConstInt) Type() types.Type {
+func (c *Int) Type() types.Type {
 	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
-func (c *ConstInt) Ident() string {
+func (c *Int) Ident() string {
 	// int_lit
 	if c.Typ.BitSize == 1 {
 		// "true"

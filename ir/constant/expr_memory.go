@@ -1,9 +1,10 @@
-package ir
+package constant
 
 import (
 	"fmt"
 	"strings"
 
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -16,7 +17,7 @@ type ExprGetElementPtr struct {
 	// Element type.
 	ElemType types.Type
 	// Source address.
-	Src Constant
+	Src ir.Constant
 	// Element indicies.
 	Indices []*Index
 
@@ -25,9 +26,9 @@ type ExprGetElementPtr struct {
 	InBounds bool
 }
 
-// NewGetElementPtrExpr returns a new getelementptr expression based on the
-// given element type, source address and element indices.
-func NewGetElementPtrExpr(elemType types.Type, src Constant, indices ...*Index) *ExprGetElementPtr {
+// NewGetElementPtr returns a new getelementptr expression based on the given
+// element type, source address and element indices.
+func NewGetElementPtr(elemType types.Type, src ir.Constant, indices ...*Index) *ExprGetElementPtr {
 	return &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 }
 
@@ -61,7 +62,7 @@ func (e *ExprGetElementPtr) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprGetElementPtr) Simplify() Constant {
+func (e *ExprGetElementPtr) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -70,7 +71,7 @@ func (e *ExprGetElementPtr) Simplify() Constant {
 // Index is an index of a getelementptr constant expression.
 type Index struct {
 	// Element index.
-	Index Constant
+	Index ir.Constant
 
 	// extra.
 
@@ -81,7 +82,7 @@ type Index struct {
 }
 
 // NewIndex returns a new gep element index.
-func NewIndex(index Constant) *Index {
+func NewIndex(index ir.Constant) *Index {
 	return &Index{Index: index}
 }
 

@@ -1,4 +1,4 @@
-package ir
+package constant
 
 import (
 	"fmt"
@@ -8,30 +8,30 @@ import (
 
 // --- [ Undefined values ] ----------------------------------------------------
 
-// ConstUndef is an LLVM IR undefined value.
-type ConstUndef struct {
+// Undef is an LLVM IR undefined value.
+type Undef struct {
 	// Undefined value type.
 	Typ types.Type
 }
 
 // NewUndef returns a new undefined value based on the given type.
-func NewUndef(typ types.Type) *ConstUndef {
-	return &ConstUndef{Typ: typ}
+func NewUndef(typ types.Type) *Undef {
+	return &Undef{Typ: typ}
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
-func (c *ConstUndef) String() string {
+func (c *Undef) String() string {
 	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
-func (c *ConstUndef) Type() types.Type {
+func (c *Undef) Type() types.Type {
 	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
-func (*ConstUndef) Ident() string {
+func (*Undef) Ident() string {
 	// "undef"
 	return "undef"
 }
