@@ -1,9 +1,10 @@
-package ir
+package constant
 
 import (
 	"fmt"
 	"strings"
 
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -14,14 +15,14 @@ import (
 // ExprExtractValue is an LLVM IR extractvalue expression.
 type ExprExtractValue struct {
 	// Aggregate value.
-	X Constant
+	X ir.Constant
 	// Element indices.
 	Indices []int64
 }
 
-// NewExtractValueExpr returns a new extractvalue expression based on the given
+// NewExtractValue returns a new extractvalue expression based on the given
 // aggregate value and indicies.
-func NewExtractValueExpr(x Constant, indices ...int64) *ExprExtractValue {
+func NewExtractValue(x ir.Constant, indices ...int64) *ExprExtractValue {
 	return &ExprExtractValue{X: x, Indices: indices}
 }
 
@@ -50,7 +51,7 @@ func (e *ExprExtractValue) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprExtractValue) Simplify() Constant {
+func (e *ExprExtractValue) Simplify() ir.Constant {
 	panic("not yet implemented")
 }
 
@@ -59,16 +60,16 @@ func (e *ExprExtractValue) Simplify() Constant {
 // ExprInsertValue is an LLVM IR insertvalue expression.
 type ExprInsertValue struct {
 	// Aggregate value.
-	X Constant
+	X ir.Constant
 	// Element to insert.
-	Elem Constant
+	Elem ir.Constant
 	// Element indices.
 	Indices []int64
 }
 
-// NewInsertValueExpr returns a new insertvalue expression based on the given
+// NewInsertValue returns a new insertvalue expression based on the given
 // aggregate value, element and indicies.
-func NewInsertValueExpr(x, elem Constant, indices ...int64) *ExprInsertValue {
+func NewInsertValue(x, elem ir.Constant, indices ...int64) *ExprInsertValue {
 	return &ExprInsertValue{X: x, Elem: elem, Indices: indices}
 }
 
@@ -97,6 +98,6 @@ func (e *ExprInsertValue) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprInsertValue) Simplify() Constant {
+func (e *ExprInsertValue) Simplify() ir.Constant {
 	panic("not yet implemented")
 }

@@ -1,4 +1,4 @@
-package ir
+package constant
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ import (
 
 // --- [ Floating-point constants ] --------------------------------------------
 
-// ConstFloat is an LLVM IR floating-point constant.
-type ConstFloat struct {
+// Float is an LLVM IR floating-point constant.
+type Float struct {
 	// Floating-point type.
 	Typ *types.FloatType
 	// Floating-point constant.
@@ -25,12 +25,12 @@ type ConstFloat struct {
 
 // NewFloat returns a new floating-point constant based on the given
 // floating-point type and double precision floating-point value.
-func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
+func NewFloat(typ *types.FloatType, x float64) *Float {
 	if math.IsNaN(x) {
 		// TODO: store sign of NaN?
-		return &ConstFloat{Typ: typ, NaN: true}
+		return &Float{Typ: typ, NaN: true}
 	}
-	return &ConstFloat{Typ: typ, X: big.NewFloat(x)}
+	return &Float{Typ: typ, X: big.NewFloat(x)}
 }
 
 // NewFloatFromString returns a new floating-point constant based on the given
@@ -48,7 +48,7 @@ func NewFloat(typ *types.FloatType, x float64) *ConstFloat {
 //         0xL[0-9A-Fa-f]{32} // HexFP128
 //         0xM[0-9A-Fa-f]{32} // HexPPC128
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
-func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
+func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 	// TODO: implement NewFloatFromString. return 0 for now.
 	if strings.HasPrefix(s, "0x") {
 		log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
@@ -62,7 +62,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		c := &ConstFloat{
+		c := &Float{
 			Typ: typ,
 			X:   x,
 		}
@@ -73,7 +73,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		c := &ConstFloat{
+		c := &Float{
 			Typ: typ,
 			X:   x,
 		}
@@ -85,17 +85,17 @@ func NewFloatFromString(typ *types.FloatType, s string) (*ConstFloat, error) {
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
-func (c *ConstFloat) String() string {
+func (c *Float) String() string {
 	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
-func (c *ConstFloat) Type() types.Type {
+func (c *Float) Type() types.Type {
 	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
-func (c *ConstFloat) Ident() string {
+func (c *Float) Ident() string {
 	// float_lit
 	// TODO: add support for hexadecimal format.
 	// TODO: add support for NaN.

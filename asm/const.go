@@ -5,6 +5,7 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
@@ -63,7 +64,7 @@ func (gen *generator) irTypeConst(old ast.TypeConst) (ir.Constant, error) {
 
 // --- [ Boolean Constants ] ---------------------------------------------------
 
-func (gen *generator) irBoolConst(t types.Type, old *ast.BoolConst) (*ir.ConstInt, error) {
+func (gen *generator) irBoolConst(t types.Type, old *ast.BoolConst) (*constant.Int, error) {
 	typ, ok := t.(*types.IntType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of boolean constant; expected *types.IntType, got %T", t)
@@ -73,53 +74,53 @@ func (gen *generator) irBoolConst(t types.Type, old *ast.BoolConst) (*ir.ConstIn
 	}
 	v := boolLit(old.BoolLit())
 	if v {
-		return ir.True, nil
+		return constant.True, nil
 	}
-	return ir.False, nil
+	return constant.False, nil
 }
 
 // --- [ Integer Constants ] ---------------------------------------------------
 
-func (gen *generator) irIntConst(t types.Type, old *ast.IntConst) (*ir.ConstInt, error) {
+func (gen *generator) irIntConst(t types.Type, old *ast.IntConst) (*constant.Int, error) {
 	typ, ok := t.(*types.IntType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of integer constant; expected *types.IntType, got %T", t)
 	}
 	s := old.IntLit().Text()
-	return ir.NewIntFromString(typ, s)
+	return constant.NewIntFromString(typ, s)
 }
 
 // --- [ Floating-point Constants ] --------------------------------------------
 
-func (gen *generator) irFloatConst(t types.Type, old *ast.FloatConst) (*ir.ConstFloat, error) {
+func (gen *generator) irFloatConst(t types.Type, old *ast.FloatConst) (*constant.Float, error) {
 	typ, ok := t.(*types.FloatType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of floating-point constant; expected *types.FloatType, got %T", t)
 	}
 	s := old.FloatLit().Text()
-	return ir.NewFloatFromString(typ, s)
+	return constant.NewFloatFromString(typ, s)
 }
 
 // --- [ Null Pointer Constants ] ----------------------------------------------
 
-func (gen *generator) irNullConst(t types.Type, old *ast.NullConst) (*ir.ConstNull, error) {
+func (gen *generator) irNullConst(t types.Type, old *ast.NullConst) (*constant.Null, error) {
 	typ, ok := t.(*types.PointerType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of null constant; expected *types.PointerType, got %T", t)
 	}
-	return ir.NewNull(typ), nil
+	return constant.NewNull(typ), nil
 }
 
 // --- [ Token Constants ] -----------------------------------------------------
 
-func (gen *generator) irNoneConst(t types.Type, old *ast.NoneConst) (*ir.ConstNone, error) {
+func (gen *generator) irNoneConst(t types.Type, old *ast.NoneConst) (ir.Constant, error) {
 	// TODO: validate type t.
-	return ir.None, nil
+	return constant.None, nil
 }
 
 // --- [ Structure Constants ] -------------------------------------------------
 
-func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*ir.ConstStruct, error) {
+func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*constant.Struct, error) {
 	typ, ok := t.(*types.StructType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of struct constant; expected *types.StructType, got %T", t)
@@ -132,12 +133,12 @@ func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*ir.Con
 		}
 		fields = append(fields, field)
 	}
-	return ir.NewStruct(typ, fields...), nil
+	return constant.NewStruct(typ, fields...), nil
 }
 
 // --- [ Array Constants ] -----------------------------------------------------
 
-func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*ir.ConstArray, error) {
+func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant.Array, error) {
 	typ, ok := t.(*types.ArrayType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of array constant; expected *types.ArrayType, got %T", t)
@@ -150,21 +151,21 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*ir.Const
 		}
 		elems = append(elems, elem)
 	}
-	return ir.NewArray(typ, elems...), nil
+	return constant.NewArray(typ, elems...), nil
 }
 
-func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*ir.ConstCharArray, error) {
+func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*constant.CharArray, error) {
 	data := stringLitBytes(old.Val())
-	// TODO: decide whether to update ir.NewCharArray to include a type as its
-	// first parameter, thus making it consistent with ir.NewArray.
-	expr := ir.NewCharArray(data)
+	// TODO: decide whether to update constant.NewCharArray to include a type as its
+	// first parameter, thus making it consistent with constant.NewArray.
+	expr := constant.NewCharArray(data)
 	// TODO: validate t against expr.Typ.
 	return expr, nil
 }
 
 // --- [ Vector Constants ] ----------------------------------------------------
 
-func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*ir.ConstVector, error) {
+func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*constant.Vector, error) {
 	typ, ok := t.(*types.VectorType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of vector constant; expected *types.VectorType, got %T", t)
@@ -177,24 +178,24 @@ func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*ir.Con
 		}
 		elems = append(elems, elem)
 	}
-	return ir.NewVector(typ, elems...), nil
+	return constant.NewVector(typ, elems...), nil
 }
 
 // --- [ Zero Initialization Constants ] ---------------------------------------
 
-func (gen *generator) irZeroInitializerConst(t types.Type, old *ast.ZeroInitializerConst) (*ir.ConstZeroInitializer, error) {
-	return ir.NewZeroInitializer(t), nil
+func (gen *generator) irZeroInitializerConst(t types.Type, old *ast.ZeroInitializerConst) (*constant.ZeroInitializer, error) {
+	return constant.NewZeroInitializer(t), nil
 }
 
 // --- [ Undefined Values ] ----------------------------------------------------
 
-func (gen *generator) irUndefConst(t types.Type, old *ast.UndefConst) (*ir.ConstUndef, error) {
-	return ir.NewUndef(t), nil
+func (gen *generator) irUndefConst(t types.Type, old *ast.UndefConst) (*constant.Undef, error) {
+	return constant.NewUndef(t), nil
 }
 
 // --- [ Addresses of Basic Blocks ] -------------------------------------------
 
-func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressConst) (*ir.ConstBlockAddress, error) {
+func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressConst) (*constant.BlockAddress, error) {
 	// Function.
 	funcName := global(old.Func())
 	f, err := gen.function(funcName)
@@ -209,14 +210,14 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 	block := &ir.BasicBlock{
 		LocalName: blockName,
 	}
-	expr := ir.NewBlockAddress(f, block)
+	expr := constant.NewBlockAddress(f, block)
 	gen.todo = append(gen.todo, expr)
 	// TODO: validate type t against expr.Typ. Store t in todo?
 	return expr, nil
 }
 
 // Pre-condition: translate function body and assign local IDs of c.Func.
-func fixBlockAddressConst(c *ir.ConstBlockAddress) error {
+func fixBlockAddressConst(c *constant.BlockAddress) error {
 	f := c.Func
 	blockName := c.Block.LocalName
 	for _, block := range f.Blocks {

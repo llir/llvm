@@ -1,4 +1,4 @@
-package ir
+package constant
 
 import (
 	"fmt"
@@ -8,31 +8,31 @@ import (
 
 // --- [ zeroinitializer constants ] -------------------------------------------
 
-// ConstZeroInitializer is an LLVM IR zeroinitializer constant.
-type ConstZeroInitializer struct {
+// ZeroInitializer is an LLVM IR zeroinitializer constant.
+type ZeroInitializer struct {
 	// zeroinitializer type.
 	Typ types.Type
 }
 
 // NewZeroInitializer returns a new zeroinitializer constant based on the given
 // type.
-func NewZeroInitializer(typ types.Type) *ConstZeroInitializer {
-	return &ConstZeroInitializer{Typ: typ}
+func NewZeroInitializer(typ types.Type) *ZeroInitializer {
+	return &ZeroInitializer{Typ: typ}
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
-func (c *ConstZeroInitializer) String() string {
+func (c *ZeroInitializer) String() string {
 	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
-func (c *ConstZeroInitializer) Type() types.Type {
+func (c *ZeroInitializer) Type() types.Type {
 	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
-func (c *ConstZeroInitializer) Ident() string {
+func (c *ZeroInitializer) Ident() string {
 	// "zeroinitializer"
 	return "zeroinitializer"
 }

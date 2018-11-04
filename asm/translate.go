@@ -6,6 +6,7 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
@@ -71,7 +72,7 @@ type generator struct {
 
 	// Fix dummy basic blocks after translation of function bodies and assignment
 	// of local IDs.
-	todo []*ir.ConstBlockAddress
+	todo []*constant.BlockAddress
 }
 
 // newGenerator returns a new generator for translating an LLVM IR module from
