@@ -257,6 +257,24 @@ func (fgen *funcGen) irCase(n ast.Case) (*ir.Case, error) {
 	return ir.NewCase(x, target), nil
 }
 
+// irClause returns the IR clause corresponding to the given AST clause.
+func (fgen *funcGen) irClause(n ast.Clause) (*ir.Clause, error) {
+	x, err := fgen.astToIRTypeValue(n.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	var catch bool
+	switch text := n.ClauseType().Text(); text {
+	case "catch":
+		catch = true
+	case "filter":
+		catch = false
+	default:
+		panic(fmt.Errorf("support for clause type %q not yet implemented", text))
+	}
+	return ir.NewClause(catch, x), nil
+}
+
 // irOptDLLStorageClass returns the IR DLL storage class corresponding to the
 // given optional AST DLL storage class.
 func irOptDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {

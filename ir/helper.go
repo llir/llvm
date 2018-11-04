@@ -37,9 +37,6 @@ type OperandBundle struct {
 	// TODO: implement body.
 }
 
-type Clause struct {
-}
-
 // TODO: consider getting rid of UnwindTarget, and let unwind targets be of type
 // *ir.BasicBlock, where a nil value indicates the caller, and a non-nil value
 // is the unwind target basic block?
