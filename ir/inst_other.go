@@ -587,6 +587,32 @@ func (inst *InstLandingPad) Def() string {
 	return buf.String()
 }
 
+// ___ [ Landingpad clause ] ___________________________________________________
+
+// Clause is a landingpad catch or filter clause.
+type Clause struct {
+	// Catch clause if true, and filter clause otherwise.
+	Catch bool
+	// Operand.
+	X value.Value
+}
+
+// NewClause returns a new landingpad catch or filter clause for the given
+// operand.
+func NewClause(catch bool, x value.Value) *Clause {
+	return &Clause{Catch: catch, X: x}
+}
+
+// String returns the string representation of the landingpad catch or filter
+// clause.
+func (clause *Clause) String() string {
+	clauseType := "filter"
+	if clause.Catch {
+		clauseType = "catch"
+	}
+	return fmt.Sprintf("%s %s", clauseType, clause.X)
+}
+
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCatchPad is an LLVM IR catchpad instruction.

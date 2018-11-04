@@ -209,7 +209,18 @@ func (fgen *funcGen) astToIRInstVAArg(inst ir.Instruction, old *ast.VAArgInst) (
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstVAArg, got %T", inst))
 	}
-	// TODO: implement
+	// Variable argument list.
+	argList, err := fgen.astToIRTypeValue(old.ArgList())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.ArgList = argList
+	// Argument type.
+	argType, err := fgen.gen.irType(old.ArgType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.ArgType = argType
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -224,7 +235,22 @@ func (fgen *funcGen) astToIRInstLandingPad(inst ir.Instruction, old *ast.Landing
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLandingPad, got %T", inst))
 	}
-	// TODO: implement
+	// Result type.
+	resultType, err := fgen.gen.irType(old.ResultType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.ResultType = resultType
+	// (optional) Cleanup landing pad.
+	i.Cleanup = old.Cleanup() != nil
+	// Filter and catch clauses.
+	for _, oldClause := range old.Clauses() {
+		clause, err := fgen.irClause(oldClause)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.Clauses = append(i.Clauses, clause)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
