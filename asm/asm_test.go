@@ -15,7 +15,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/inst_aggregate.ll"},
 		{path: "testdata/inst_memory.ll"},
 		{path: "testdata/inst_conversion.ll"},
-		//{path: "testdata/inst_other.ll"},
+		{path: "testdata/inst_other.ll"},
 	}
 	for _, g := range golden {
 		m, err := ParseFile(g.path)

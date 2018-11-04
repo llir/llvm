@@ -306,13 +306,13 @@ type TermInvoke struct {
 	// (optional) Calling convention; zero if not present.
 	CallingConv enum.CallingConv
 	// (optional) Return attributes.
-	ReturnAttrs []enum.ReturnAttribute
+	ReturnAttrs []ReturnAttribute
 	// (optional) Address space; zero if not present.
 	AddrSpace types.AddrSpace
 	// (optional) Function attributes.
-	FuncAttrs []enum.FuncAttribute
+	FuncAttrs []FuncAttribute
 	// (optional) Operand bundles.
-	OperandBundles []enum.OperandBundle
+	OperandBundles []OperandBundle
 	// (optional) Metadata.
 	Metadata []MetadataAttachment
 }
@@ -462,11 +462,11 @@ type TermCatchSwitch struct {
 	// Name of local variable associated with the result.
 	LocalName string
 	// Exception scope.
-	Scope enum.ExceptionScope // TODO: rename to Parent? rename to From?
+	Scope ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception handlers.
 	Handlers []*BasicBlock
 	// Unwind target; basic block or caller function.
-	UnwindTarget enum.UnwindTarget // TODO: rename to To? rename to DefaultTarget?
+	UnwindTarget UnwindTarget // TODO: rename to To? rename to DefaultTarget?
 
 	// extra.
 
@@ -478,7 +478,7 @@ type TermCatchSwitch struct {
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
 // exception scope, exception handlers and unwind target.
-func NewCatchSwitch(scope enum.ExceptionScope, handlers []*BasicBlock, unwindTarget enum.UnwindTarget) *TermCatchSwitch {
+func NewCatchSwitch(scope ExceptionScope, handlers []*BasicBlock, unwindTarget UnwindTarget) *TermCatchSwitch {
 	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
 }
 
@@ -590,7 +590,7 @@ type TermCleanupRet struct {
 	// Exit cleanuppad.
 	From *InstCleanupPad
 	// Unwind target; basic block or caller function.
-	UnwindTarget enum.UnwindTarget
+	UnwindTarget UnwindTarget
 
 	// extra.
 
@@ -602,7 +602,7 @@ type TermCleanupRet struct {
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
 // cleanuppad and unwind target.
-func NewCleanupRet(from *InstCleanupPad, unwindTarget enum.UnwindTarget) *TermCleanupRet {
+func NewCleanupRet(from *InstCleanupPad, unwindTarget UnwindTarget) *TermCleanupRet {
 	return &TermCleanupRet{From: from, UnwindTarget: unwindTarget}
 }
 

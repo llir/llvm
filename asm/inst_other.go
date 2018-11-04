@@ -5,6 +5,8 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/types"
+	"github.com/pkg/errors"
 )
 
 // --- [ Other instructions ] --------------------------------------------------
@@ -18,7 +20,20 @@ func (fgen *funcGen) astToIRInstICmp(inst ir.Instruction, old *ast.ICmpInst) (*i
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstICmp, got %T", inst))
 	}
-	// TODO: implement
+	// Integer comparison predicate.
+	i.Pred = irIPred(old.Pred())
+	// X operand.
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(x.Type(), old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -33,9 +48,22 @@ func (fgen *funcGen) astToIRInstFCmp(inst ir.Instruction, old *ast.FCmpInst) (*i
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFCmp, got %T", inst))
 	}
-	// Fast math flags.
+	// (optional) Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
-	// TODO: implement
+	// Floating-point comparison predicate.
+	i.Pred = irFPred(old.Pred())
+	// X operand.
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRValue(x.Type(), old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -50,7 +78,18 @@ func (fgen *funcGen) astToIRInstPhi(inst ir.Instruction, old *ast.PhiInst) (*ir.
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstPhi, got %T", inst))
 	}
-	// TODO: implement
+	typ, err := fgen.gen.irType(old.Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Incoming values.
+	for _, oldInc := range old.Incs() {
+		inc, err := fgen.irIncoming(typ, oldInc.X(), oldInc.Pred())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.Incs = append(i.Incs, inc)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -65,7 +104,24 @@ func (fgen *funcGen) astToIRInstSelect(inst ir.Instruction, old *ast.SelectInst)
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSelect, got %T", inst))
 	}
-	// TODO: implement
+	// Selection condition.
+	cond, err := fgen.astToIRTypeValue(old.Cond())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Cond = cond
+	// X operand.
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.X = x
+	// Y operand.
+	y, err := fgen.astToIRTypeValue(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Y = y
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -80,8 +136,65 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCall, got %T", inst))
 	}
-	// Fast math flags.
+	// (optional) Tail.
+	if n := old.Tail(); n != nil {
+		i.Tail = irTail(*n)
+	}
+	// (optional) Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
+	// (optional) Calling convention.
+	if n := old.CallingConv(); n != nil {
+		i.CallingConv = irCallingConv(n)
+	}
+	// (optional) Return attributes.
+	for _, oldRetAttr := range old.ReturnAttrs() {
+		// TODO: add support for return attributes.
+		break
+		retAttr := irReturnAttribute(oldRetAttr)
+		i.ReturnAttrs = append(i.ReturnAttrs, retAttr)
+	}
+	// (optional) Address space.
+	if n := old.AddrSpace(); n != nil {
+		i.AddrSpace = irAddrSpace(*n)
+	}
+	// Callee.
+	typ, err := fgen.gen.irType(old.Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	t, ok := typ.(*types.FuncType)
+	if !ok {
+		// Preliminary function signature. Only used by astToIRValue for inline
+		// assembly callees and constrant expressions.
+		t = types.NewFunc(typ)
+	}
+	callee, err := fgen.astToIRValue(t, old.Callee())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Callee = callee
+	// Function arguments.
+	for _, oldArg := range old.Args().Args() {
+		arg, err := fgen.irArg(oldArg)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.Args = append(i.Args, arg)
+	}
+	// (optional) Function attributes.
+	for _, oldFuncAttr := range old.FuncAttrs() {
+		// TODO: add support for function attributes.
+		break
+		funcAttr := irFuncAttribute(oldFuncAttr)
+		i.FuncAttrs = append(i.FuncAttrs, funcAttr)
+	}
+	// (optional) Operand bundles.
+	for _, oldOperandBundle := range old.OperandBundles() {
+		// TODO: add support for operand bundles.
+		break
+		operandBundle := fgen.irOperandBundle(oldOperandBundle)
+		i.OperandBundles = append(i.OperandBundles, operandBundle)
+	}
 	// Calling convention.
 	i.CallingConv = irOptCallingConv(old.CallingConv())
 	return i, nil

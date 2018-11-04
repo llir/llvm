@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
-	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -17,8 +16,39 @@ type Arg interface {
 	isArg()
 }
 
-// TODO: remove IsUnwindTarget? or unexport.
-func (*BasicBlock) IsUnwindTarget() {}
+type ExceptionScope interface {
+	isExceptionScope()
+}
+
+// TODO: add proper implementations.
+type FuncAttribute interface {
+	isFuncAttribute()
+}
+
+type ParamAttribute interface {
+	isParamAttribute()
+}
+
+type ReturnAttribute interface {
+	isReturnAttribute()
+}
+
+type OperandBundle struct {
+	// TODO: implement body.
+}
+
+type Clause struct {
+}
+
+// TODO: consider getting rid of UnwindTarget, and let unwind targets be of type
+// *ir.BasicBlock, where a nil value indicates the caller, and a non-nil value
+// is the unwind target basic block?
+type UnwindTarget interface {
+	isUnwindTarget()
+}
+
+// TODO: remove isUnwindTarget? or unexport.
+func (*BasicBlock) isUnwindTarget() {}
 
 // --- [ Function parameters ] -------------------------------------------------
 
@@ -32,7 +62,7 @@ type Param struct {
 	// extra.
 
 	// (optional) Parameter attributes.
-	Attrs []enum.ParamAttribute
+	Attrs []ParamAttribute
 }
 
 // NewParam returns a new function parameter based on the given type and name.
