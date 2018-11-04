@@ -12,7 +12,7 @@ bar:
 	br label %baz
 baz:
 	%3 = phi i32 [ 10, %foo ], [ 20, %bar ], [ 30, %baz ]
-	%4 = select i1 true,	 i32 11, i32 22
+	%4 = select i1 true, i32 11, i32 22
 	%5 = call i32 @g()
 	%6 = va_arg i8* null, i32
 	%7 = landingpad { i8*, i32 } catch i8** null
