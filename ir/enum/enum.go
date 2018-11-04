@@ -101,6 +101,17 @@ const (
 	CallingConvAMDGPUES      // cc 96
 )
 
+//go:generate stringer -linecomment -type ClauseType
+
+// ClauseType specifies the clause type of a landingpad clause.
+type ClauseType uint8
+
+// Clause types.
+const (
+	ClauseTypeCatch  ClauseType = iota + 1 // catch
+	ClauseTypeFilter                       // filter
+)
+
 //go:generate stringer -linecomment -type DLLStorageClass
 
 // DLLStorageClass specifies the DLL storage class of a global identifier.
