@@ -265,7 +265,25 @@ func (fgen *funcGen) astToIRInstCatchPad(inst ir.Instruction, old *ast.CatchPadI
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCatchPad, got %T", inst))
 	}
-	// TODO: implement
+	// Exception scope.
+	name := local(old.Scope())
+	v, ok := fgen.ls[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate local identifier %q", name)
+	}
+	scope, ok := v.(*ir.TermCatchSwitch)
+	if !ok {
+		return nil, errors.Errorf("invalid scope type; expected *ir.TermCatchSwitch, got %T", v)
+	}
+	i.Scope = scope
+	// Exception arguments.
+	for _, oldArg := range old.Args() {
+		arg, err := fgen.irExceptionArg(oldArg)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.Args = append(i.Args, arg)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -280,7 +298,20 @@ func (fgen *funcGen) astToIRInstCleanupPad(inst ir.Instruction, old *ast.Cleanup
 	if !ok {
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCleanupPad, got %T", inst))
 	}
-	// TODO: implement
+	// Exception scope.
+	scope, err := fgen.irExceptionScope(old.Scope())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Scope = scope
+	// Exception arguments.
+	for _, oldArg := range old.Args() {
+		arg, err := fgen.irExceptionArg(oldArg)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		i.Args = append(i.Args, arg)
+	}
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil

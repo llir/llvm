@@ -662,7 +662,7 @@ func (inst *InstCatchPad) Def() string {
 	// "catchpad" "within" LocalIdent "[" ExceptionArgs "]" OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "catchpad within %v [", inst.Scope)
+	fmt.Fprintf(buf, "catchpad within %v [", inst.Scope.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -730,7 +730,7 @@ func (inst *InstCleanupPad) Def() string {
 	// "cleanuppad" "within" ExceptionScope "[" ExceptionArgs "]" OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "cleanuppad within %v [", inst.Scope)
+	fmt.Fprintf(buf, "cleanuppad within %v [", inst.Scope.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")

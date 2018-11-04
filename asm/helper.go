@@ -9,6 +9,7 @@ import (
 	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -280,6 +281,41 @@ func irOptDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {
 // exact.
 func irOptExact(n *ast.Exact) bool {
 	return n != nil
+}
+
+// irExceptionArg returns the IR exception argument corresponding to the given
+// AST exception argument.
+func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (ir.Arg, error) {
+	typ, err := fgen.gen.irType(n.Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	switch val := n.Val().(type) {
+	case ast.Value:
+		return fgen.astToIRValue(typ, val)
+	case ast.Metadata:
+		panic("support for metadata values not yet implemented")
+	default:
+		panic(fmt.Errorf("spport for exception argument value %T not yet implemented", val))
+	}
+}
+
+// irExceptionScope returns the IR exception scope corresponding to the given
+// AST exception scope.
+func (fgen *funcGen) irExceptionScope(n ast.ExceptionScope) (ir.ExceptionScope, error) {
+	switch n := n.(type) {
+	case *ast.NoneConst:
+		return constant.None, nil
+	case *ast.LocalIdent:
+		name := local(*n)
+		v, ok := fgen.ls[name]
+		if !ok {
+			return nil, errors.Errorf("unable to locate local identifier %q", name)
+		}
+		return v, nil
+	default:
+		panic(fmt.Errorf("spport for exception scope %T not yet implemented", n))
+	}
 }
 
 // irOptExternallyInitialized returns the externally initialized boolean
