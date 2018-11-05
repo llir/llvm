@@ -24,6 +24,28 @@ type ExceptionScope interface {
 	//isExceptionScope()
 }
 
+// TODO: consider getting rid of UnwindTarget, and let unwind targets be of type
+// *ir.BasicBlock, where a nil value indicates the caller, and a non-nil value
+// is the unwind target basic block?
+
+// TODO: figure out definition of UnwindTarget.
+type UnwindTarget interface {
+	//value.Value
+	isUnwindTarget()
+}
+
+type UnwindToCaller struct{}
+
+// String returns the string representation of the unwind to caller target.
+func (*UnwindToCaller) String() string {
+	return "to caller"
+}
+
+func (*UnwindToCaller) isUnwindTarget() {}
+
+// TODO: remove isUnwindTarget? or unexport.
+func (*BasicBlock) isUnwindTarget() {}
+
 // TODO: add proper implementations.
 type FuncAttribute interface {
 	isFuncAttribute()
@@ -40,16 +62,6 @@ type ReturnAttribute interface {
 type OperandBundle struct {
 	// TODO: implement body.
 }
-
-// TODO: consider getting rid of UnwindTarget, and let unwind targets be of type
-// *ir.BasicBlock, where a nil value indicates the caller, and a non-nil value
-// is the unwind target basic block?
-type UnwindTarget interface {
-	isUnwindTarget()
-}
-
-// TODO: remove isUnwindTarget? or unexport.
-func (*BasicBlock) isUnwindTarget() {}
 
 // --- [ Function parameters ] -------------------------------------------------
 

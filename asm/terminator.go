@@ -168,7 +168,8 @@ func (fgen *funcGen) astToIRTermBr(term ir.Terminator, old *ast.BrTerm) error {
 		return errors.WithStack(err)
 	}
 	t.Target = target
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -204,7 +205,8 @@ func (fgen *funcGen) astToIRTermCondBr(term ir.Terminator, old *ast.CondBrTerm) 
 		return errors.WithStack(err)
 	}
 	t.TargetFalse = targetFalse
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -237,7 +239,8 @@ func (fgen *funcGen) astToIRTermSwitch(term ir.Terminator, old *ast.SwitchTerm) 
 		}
 		t.Cases = append(t.Cases, c)
 	}
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -264,7 +267,8 @@ func (fgen *funcGen) astToIRTermIndirectBr(term ir.Terminator, old *ast.Indirect
 		}
 		t.ValidTargets = append(t.ValidTargets, validTarget)
 	}
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -279,8 +283,8 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	// Calling convention.
 	//t.CallingConv = irCallingConv(old.CallingConv())
-	_ = t
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -294,8 +298,8 @@ func (fgen *funcGen) astToIRTermResume(term ir.Terminator, old *ast.ResumeTerm) 
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermResume, got %T", term))
 	}
 	// TODO: implement.
-	_ = t
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -308,9 +312,28 @@ func (fgen *funcGen) astToIRTermCatchSwitch(term ir.Terminator, old *ast.CatchSw
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchSwitch, got %T", term))
 	}
-	// TODO: implement.
-	_ = t
-	// TODO: handle metadata.
+	// Exception scope.
+	scope, err := fgen.irExceptionScope(old.Scope())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Scope = scope
+	// Exception handlers.
+	for _, oldHandler := range old.Handlers() {
+		handler, err := fgen.irLabel(oldHandler)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		t.Handlers = append(t.Handlers, handler)
+	}
+	// Unwind target; basic block or caller function.
+	unwindTarget, err := fgen.irUnwindTarget(old.UnwindTarget())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.UnwindTarget = unwindTarget
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -324,8 +347,8 @@ func (fgen *funcGen) astToIRTermCatchRet(term ir.Terminator, old *ast.CatchRetTe
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchRet, got %T", term))
 	}
 	// TODO: implement.
-	_ = t
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -339,8 +362,8 @@ func (fgen *funcGen) astToIRTermCleanupRet(term ir.Terminator, old *ast.CleanupR
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCleanupRet, got %T", term))
 	}
 	// TODO: implement.
-	_ = t
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -354,7 +377,7 @@ func (fgen *funcGen) astToIRTermUnreachable(term ir.Terminator, old *ast.Unreach
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermUnreachable, got %T", term))
 	}
 	// TODO: implement.
-	_ = t
-	// TODO: handle metadata.
+	// (optional) Metadata.
+	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }

@@ -56,14 +56,30 @@ type Module struct {
 func (m *Module) Def() string {
 	buf := &strings.Builder{}
 	// Type definitions.
+	if len(m.TypeDefs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, t := range m.TypeDefs {
 		// LocalIdent "=" "type" OpaqueType
 		// LocalIdent "=" "type" Type
 		fmt.Fprintf(buf, "%s = type %s\n", t, t.Def())
 	}
 	// TODO: implement Module.Def.
+	// Global declarations and definitions.
+	if len(m.Globals) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
+	for _, g := range m.Globals {
+		fmt.Fprintln(buf, g.Def())
+	}
 	// Function declarations and definitions.
-	for _, f := range m.Funcs {
+	if len(m.Funcs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
+	for i, f := range m.Funcs {
+		if i != 0 {
+			buf.WriteString("\n")
+		}
 		fmt.Fprintln(buf, f.Def())
 	}
 	// TODO: implement Module.Def.
