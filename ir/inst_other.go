@@ -334,7 +334,12 @@ type InstCall struct {
 	// TODO: specify the set of underlying types of Callee.
 	Callee value.Value
 	// Function arguments.
-	Args []Arg
+	//
+	// Arg has one of the following underlying types:
+	//    value.Value
+	//    *ir.Arg
+	//    TODO: add metadata value?
+	Args []value.Value
 
 	// extra.
 
@@ -363,7 +368,7 @@ type InstCall struct {
 // arguments.
 //
 // TODO: specify the set of underlying types of callee.
-func NewCall(callee value.Value, args ...Arg) *InstCall {
+func NewCall(callee value.Value, args ...value.Value) *InstCall {
 	return &InstCall{Callee: callee, Args: args}
 }
 
@@ -617,7 +622,11 @@ type InstCatchPad struct {
 	// Exception scope.
 	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
 	// Exception arguments.
-	Args []Arg
+	//
+	// Arg has one of the following underlying types:
+	//    value.Value
+	//    TODO: add metadata value?
+	Args []value.Value
 
 	// extra.
 
@@ -627,7 +636,7 @@ type InstCatchPad struct {
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
 // scope and exception arguments.
-func NewCatchPad(scope *TermCatchSwitch, args ...Arg) *InstCatchPad {
+func NewCatchPad(scope *TermCatchSwitch, args ...value.Value) *InstCatchPad {
 	return &InstCatchPad{Scope: scope, Args: args}
 }
 
@@ -685,7 +694,11 @@ type InstCleanupPad struct {
 	// Exception scope.
 	Scope ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
-	Args []Arg
+	//
+	// Arg has one of the following underlying types:
+	//    value.Value
+	//    TODO: add metadata value?
+	Args []value.Value
 
 	// extra.
 
@@ -695,7 +708,7 @@ type InstCleanupPad struct {
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
 // exception scope and exception arguments.
-func NewCleanupPad(scope ExceptionScope, args ...Arg) *InstCleanupPad {
+func NewCleanupPad(scope ExceptionScope, args ...value.Value) *InstCleanupPad {
 	return &InstCleanupPad{Scope: scope, Args: args}
 }
 

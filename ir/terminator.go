@@ -290,7 +290,11 @@ type TermInvoke struct {
 	// TODO: specify the set of underlying types of Invokee.
 	Invokee value.Value
 	// Function arguments.
-	Args []Arg
+	//
+	// Arg has one of the following underlying types:
+	//    value.Value
+	//    TODO: add metadata value?
+	Args []value.Value
 	// Normal control flow return point.
 	Normal *BasicBlock
 	// Exception control flow return point.
@@ -322,7 +326,7 @@ type TermInvoke struct {
 // execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func NewInvoke(invokee value.Value, args []Arg, normal, exception *BasicBlock) *TermInvoke {
+func NewInvoke(invokee value.Value, args []value.Value, normal, exception *BasicBlock) *TermInvoke {
 	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
 }
 
