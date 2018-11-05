@@ -197,6 +197,20 @@ func irAtomicOrdering(n ast.AtomicOrdering) enum.AtomicOrdering {
 	return asmenum.AtomicOrderingFromString(n.Text())
 }
 
+// irBasicBlock returns the IR basic block corresponding to the given AST label.
+func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
+	name := local(old.Name())
+	v, ok := fgen.ls[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate local identifier %q", name)
+	}
+	block, ok := v.(*ir.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
+	}
+	return block, nil
+}
+
 // irOptCallingConv returns the IR calling convention corresponding to the given
 // optional AST calling convention.
 func irOptCallingConv(n ast.CallingConv) enum.CallingConv {
@@ -387,21 +401,6 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	return inc, nil
 }
 
-// irLabel returns the IR basic block corresponding to the given
-// AST label.
-func (fgen *funcGen) irLabel(n ast.Label) (*ir.BasicBlock, error) {
-	name := local(n.Name())
-	v, ok := fgen.ls[name]
-	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(name))
-	}
-	block, ok := v.(*ir.BasicBlock)
-	if !ok {
-		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
-	}
-	return block, nil
-}
-
 // irIPred returns the IR integer comparison predicate corresponding to the
 // given AST integer comparison predicate.
 func irIPred(n ast.IPred) enum.IPred {
@@ -517,7 +516,7 @@ func irOptUnnamedAddr(n *ast.UnnamedAddr) enum.UnnamedAddr {
 // unwind target.
 func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error) {
 	if n := n.Label(); n != nil {
-		return fgen.irLabel(*n)
+		return fgen.irBasicBlock(*n)
 	}
 	if n := n.UnwindToCaller(); n != nil {
 		return &ir.UnwindToCaller{}, nil
