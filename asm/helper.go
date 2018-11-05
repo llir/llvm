@@ -12,6 +12,7 @@ import (
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
 )
 
@@ -181,8 +182,36 @@ func irAlignment(n ast.Alignment) int {
 }
 
 // irArg translates the given AST argument into an equivalent IR argument.
-func (fgen *funcGen) irArg(oldArg ast.Arg) (ir.Arg, error) {
-	panic("not yet implemented")
+func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
+	typ, err := fgen.gen.irType(old.Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	switch oldVal := old.Val().(type) {
+	case ast.Value:
+		var attrs []ir.ParamAttribute
+		for _, oldAttr := range old.Attrs() {
+			// TODO: translate param attribute.
+			_ = oldAttr
+		}
+		x, err := fgen.astToIRValue(typ, oldVal)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		if len(attrs) > 0 {
+			arg := &ir.Arg{
+				Attrs: attrs,
+				Value: x,
+			}
+			return arg, nil
+		}
+		return x, nil
+	case ast.Metadata:
+		// TODO: add support for metadata arguments.
+		panic("support for metadata arguments not yet implemented")
+	default:
+		panic(fmt.Errorf("support for value %T not yet implemented", oldVal))
+	}
 }
 
 // irAtomicOp returns the IR atomic operation corresponding to the given AST
@@ -299,7 +328,7 @@ func irOptExact(n *ast.Exact) bool {
 
 // irExceptionArg returns the IR exception argument corresponding to the given
 // AST exception argument.
-func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (ir.Arg, error) {
+func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (value.Value, error) {
 	typ, err := fgen.gen.irType(n.Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)

@@ -12,10 +12,9 @@ import (
 // TODO: move to the right place.
 
 // TODO: figure out definition of Arg.
-type Arg interface {
+type Arg struct {
 	value.Value
-	//String() string
-	//isArg()
+	Attrs []ParamAttribute
 }
 
 // TODO: figure out definition of ExceptionScope.
