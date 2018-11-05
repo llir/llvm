@@ -162,13 +162,13 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	t, ok := typ.(*types.FuncType)
+	sig, ok := typ.(*types.FuncType)
 	if !ok {
 		// Preliminary function signature. Only used by astToIRValue for inline
 		// assembly callees and constrant expressions.
-		t = types.NewFunc(typ)
+		sig = types.NewFunc(typ)
 	}
-	callee, err := fgen.astToIRValue(t, old.Callee())
+	callee, err := fgen.astToIRValue(sig, old.Callee())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -195,8 +195,8 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 		operandBundle := fgen.irOperandBundle(oldOperandBundle)
 		i.OperandBundles = append(i.OperandBundles, operandBundle)
 	}
-	// Calling convention.
-	i.CallingConv = irOptCallingConv(old.CallingConv())
+	// (optional) Metadata.
+	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 

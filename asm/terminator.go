@@ -148,7 +148,7 @@ func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) error 
 		return errors.WithStack(err)
 	}
 	t.X = x
-	// Metadata attachments.
+	// (optional) Metadata attachments.
 	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
 }
@@ -281,8 +281,71 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermInvoke, got %T", term))
 	}
-	// Calling convention.
-	//t.CallingConv = irCallingConv(old.CallingConv())
+	// (optional) Calling convention.
+	if n := old.CallingConv(); n != nil {
+		t.CallingConv = irCallingConv(n)
+	}
+	// (optional) Return attributes.
+	for _, oldRetAttr := range old.ReturnAttrs() {
+		// TODO: add support for return attributes.
+		break
+		retAttr := irReturnAttribute(oldRetAttr)
+		t.ReturnAttrs = append(t.ReturnAttrs, retAttr)
+	}
+	// (optional) Address space.
+	if n := old.AddrSpace(); n != nil {
+		t.AddrSpace = irAddrSpace(*n)
+	}
+	// Invokee.
+	typ, err := fgen.gen.irType(old.Typ())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	sig, ok := typ.(*types.FuncType)
+	if !ok {
+		// Preliminary function signature. Only used by astToIRValue for inline
+		// assembly invokees and constrant expressions.
+		sig = types.NewFunc(typ)
+	}
+	invokee, err := fgen.astToIRValue(sig, old.Invokee())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Invokee = invokee
+	// Function arguments.
+	for _, oldArg := range old.Args().Args() {
+		arg, err := fgen.irArg(oldArg)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		t.Args = append(t.Args, arg)
+	}
+	// (optional) Function attributes.
+	for _, oldFuncAttr := range old.FuncAttrs() {
+		// TODO: add support for function attributes.
+		break
+		funcAttr := irFuncAttribute(oldFuncAttr)
+		t.FuncAttrs = append(t.FuncAttrs, funcAttr)
+	}
+	// (optional) Operand bundles.
+	for _, oldOperandBundle := range old.OperandBundles() {
+		// TODO: add support for operand bundles.
+		break
+		operandBundle := fgen.irOperandBundle(oldOperandBundle)
+		t.OperandBundles = append(t.OperandBundles, operandBundle)
+	}
+	// Normal control flow return point.
+	normal, err := fgen.irBasicBlock(old.Normal())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Normal = normal
+	// Exception control flow return point.
+	exception, err := fgen.irBasicBlock(old.Exception())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.Exception = exception
 	// (optional) Metadata.
 	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
@@ -297,7 +360,12 @@ func (fgen *funcGen) astToIRTermResume(term ir.Terminator, old *ast.ResumeTerm) 
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermResume, got %T", term))
 	}
-	// TODO: implement.
+	// Exception argument to propagate.
+	x, err := fgen.astToIRTypeValue(old.X())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.X = x
 	// (optional) Metadata.
 	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
@@ -320,13 +388,13 @@ func (fgen *funcGen) astToIRTermCatchSwitch(term ir.Terminator, old *ast.CatchSw
 	t.Scope = scope
 	// Exception handlers.
 	for _, oldHandler := range old.Handlers() {
-		handler, err := fgen.irLabel(oldHandler)
+		handler, err := fgen.irBasicBlock(oldHandler)
 		if err != nil {
 			return errors.WithStack(err)
 		}
 		t.Handlers = append(t.Handlers, handler)
 	}
-	// Unwind target; basic block or caller function.
+	// Unwind target.
 	unwindTarget, err := fgen.irUnwindTarget(old.UnwindTarget())
 	if err != nil {
 		return errors.WithStack(err)
@@ -346,7 +414,22 @@ func (fgen *funcGen) astToIRTermCatchRet(term ir.Terminator, old *ast.CatchRetTe
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchRet, got %T", term))
 	}
-	// TODO: implement.
+	// Exit catchpad.
+	v, err := fgen.astToIRValue(types.Token, old.From())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	catchpad, ok := v.(*ir.InstCatchPad)
+	if !ok {
+		return errors.Errorf("invalid catchpad type; expected *ir.InstCatchPad, got %T", v)
+	}
+	t.From = catchpad
+	// Target basic block to transfer control flow to.
+	to, err := fgen.irBasicBlock(old.To())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.To = to
 	// (optional) Metadata.
 	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
@@ -361,7 +444,22 @@ func (fgen *funcGen) astToIRTermCleanupRet(term ir.Terminator, old *ast.CleanupR
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCleanupRet, got %T", term))
 	}
-	// TODO: implement.
+	// Exit cleanuppad.
+	v, err := fgen.astToIRValue(types.Token, old.From())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	cleanuppad, ok := v.(*ir.InstCleanupPad)
+	if !ok {
+		return errors.Errorf("invalid cleanuppad type; expected *ir.InstCleanupPad, got %T", v)
+	}
+	t.From = cleanuppad
+	// Unwind target.
+	unwindTarget, err := fgen.irUnwindTarget(old.UnwindTarget())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	t.UnwindTarget = unwindTarget
 	// (optional) Metadata.
 	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
@@ -376,7 +474,6 @@ func (fgen *funcGen) astToIRTermUnreachable(term ir.Terminator, old *ast.Unreach
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermUnreachable, got %T", term))
 	}
-	// TODO: implement.
 	// (optional) Metadata.
 	t.Metadata = irMetadataAttachments(old.Metadata())
 	return nil
