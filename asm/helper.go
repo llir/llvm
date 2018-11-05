@@ -310,7 +310,7 @@ func (fgen *funcGen) irExceptionScope(n ast.ExceptionScope) (ir.ExceptionScope, 
 		name := local(*n)
 		v, ok := fgen.ls[name]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local identifier %q", name)
+			return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(name))
 		}
 		return v, nil
 	default:
@@ -377,7 +377,7 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	predName := local(oldPred)
 	v, ok := fgen.ls[predName]
 	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", predName)
+		return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(predName))
 	}
 	pred, ok := v.(*ir.BasicBlock)
 	if !ok {
@@ -385,6 +385,21 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	}
 	inc := ir.NewIncoming(x, pred)
 	return inc, nil
+}
+
+// irLabel returns the IR basic block corresponding to the given
+// AST label.
+func (fgen *funcGen) irLabel(n ast.Label) (*ir.BasicBlock, error) {
+	name := local(n.Name())
+	v, ok := fgen.ls[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(name))
+	}
+	block, ok := v.(*ir.BasicBlock)
+	if !ok {
+		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
+	}
+	return block, nil
 }
 
 // irIPred returns the IR integer comparison predicate corresponding to the
@@ -496,6 +511,18 @@ func irOptUnnamedAddr(n *ast.UnnamedAddr) enum.UnnamedAddr {
 		return enum.UnnamedAddrNone
 	}
 	return asmenum.UnnamedAddrFromString(n.Text())
+}
+
+// irUnwindTarget returns the IR unwind target corresponding to the given AST
+// unwind target.
+func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error) {
+	if n := n.Label(); n != nil {
+		return fgen.irLabel(*n)
+	}
+	if n := n.UnwindToCaller(); n != nil {
+		return &ir.UnwindToCaller{}, nil
+	}
+	panic("unreachable")
 }
 
 // irOptVariadic returns the variadic boolean corresponding to the given

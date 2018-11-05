@@ -526,7 +526,7 @@ func (term *TermCatchSwitch) Def() string {
 	// "catchswitch" "within" ExceptionScope "[" LabelList "]" "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%v = ", term.Ident())
-	fmt.Fprintf(buf, "catchswitch within %v [", term.Scope)
+	fmt.Fprintf(buf, "catchswitch within %v [", term.Scope.Ident())
 	for i, handler := range term.Handlers {
 		if i != 0 {
 			buf.WriteString(", ")
