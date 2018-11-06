@@ -329,7 +329,35 @@ func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
 // irFuncAttribute returns the IR function attribute corresponding to the given
 // AST function attribute.
 func irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
-	panic("not yet implemented")
+	switch n := n.(type) {
+	case *ast.AttrString:
+		return ir.AttrString(unquote(n.Text()))
+	case *ast.AttrPair:
+		return ir.AttrPair{
+			Key:   unquote(n.Key().Text()),
+			Value: unquote(n.Val().Text()),
+		}
+	case ast.AttrGroupID:
+		// TODO: add support for AttrGroupID.
+		panic("support for function attribute AttrGroupID not yet implemented")
+	case ast.AlignPair:
+		// TODO: add support for AlignPair.
+		panic("support for function attribute AlignPair not yet implemented")
+	case ast.AlignStackPair:
+		// TODO: add support for AlignStackPair.
+		panic("support for function attribute AlignStackPair not yet implemented")
+	//case ast.Alignment: // TODO: add support for Alignment.
+	case ast.AllocSize:
+		// TODO: add support for AllocSize.
+		panic("support for function attribute AllocSize not yet implemented")
+	case ast.StackAlignment:
+		// TODO: add support for StackAlignment.
+		panic("support for function attribute StackAlignment not yet implemented")
+	case *ast.FuncAttr:
+		return asmenum.FuncAttrFromString(n.Text())
+	default:
+		panic(fmt.Errorf("support for function attribute %T not yet implemented", n))
+	}
 }
 
 // irImmutable returns the immutable (constant or global) boolean corresponding

@@ -23,7 +23,8 @@ baz:
 	%5 = call i32 @g()
 	call void @h(i32 30)
 	%6 = va_arg i8* null, i32
-	%7 = landingpad { i8*, i32 } catch i8** null
+	%7 = landingpad { i8*, i32 }
+		catch i8** null
 	ret void
 
 handler0:

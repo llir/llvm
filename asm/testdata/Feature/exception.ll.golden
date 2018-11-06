@@ -35,7 +35,6 @@ exit:
 	ret void
 }
 
-
 define void @cleanupret1() personality i32 (...)* @__gxx_personality_v0 {
 entry:
 	invoke void @_Z3quxv() optsize
@@ -51,7 +50,6 @@ pad:
 exit:
 	ret void
 }
-
 
 define void @cleanupret2() personality i32 (...)* @__gxx_personality_v0 {
 entry:
@@ -85,7 +83,6 @@ exit:
 	ret void
 }
 
-
 define void @catchret1() personality i32 (...)* @__gxx_personality_v0 {
 entry:
 	invoke void @_Z3quxv() optsize
@@ -104,7 +101,6 @@ catch:
 exit:
 	ret void
 }
-
 
 define void @catchret2() personality i32 (...)* @__gxx_personality_v0 {
 entry:

@@ -168,6 +168,7 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 		// Preliminary function signature. Only used by astToIRValue for inline
 		// assembly callees and constrant expressions.
 		sig = types.NewFunc(typ)
+		// TODO: add parameters to sig.
 	}
 	callee, err := fgen.astToIRValue(sig, old.Callee())
 	if err != nil {
@@ -184,8 +185,6 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	}
 	// (optional) Function attributes.
 	for _, oldFuncAttr := range old.FuncAttrs() {
-		// TODO: add support for function attributes.
-		break
 		funcAttr := irFuncAttribute(oldFuncAttr)
 		i.FuncAttrs = append(i.FuncAttrs, funcAttr)
 	}

@@ -212,6 +212,10 @@ const (
 	FuncAttrWriteOnly                                   // writeonly
 )
 
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
+func (FuncAttr) IsFuncAttribute() {}
+
 //go:generate stringer -linecomment -type IPred
 
 // IPred is an integer comparison predicate.
@@ -289,6 +293,10 @@ const (
 	ParamAttrZeroExt                     // zeroext
 )
 
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
+func (ParamAttr) IsParamAttribute() {}
+
 //go:generate stringer -linecomment -type Preemption
 
 // Preemption specifies the preemtion of a global identifier.
@@ -314,6 +322,10 @@ const (
 	ReturnAttrSignExt                   // signext
 	ReturnAttrZeroExt                   // zeroext
 )
+
+// IsReturnAttribute ensures that only return attributes can be assigned to the
+// ir.ReturnAttribute interface.
+func (ReturnAttr) IsReturnAttribute() {}
 
 //go:generate stringer -linecomment -type SelectionKind
 
