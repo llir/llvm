@@ -306,6 +306,7 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 		// Preliminary function signature. Only used by astToIRValue for inline
 		// assembly invokees and constrant expressions.
 		sig = types.NewFunc(typ)
+		// TODO: add parameters to sig.
 	}
 	invokee, err := fgen.astToIRValue(sig, old.Invokee())
 	if err != nil {
@@ -322,8 +323,6 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	// (optional) Function attributes.
 	for _, oldFuncAttr := range old.FuncAttrs() {
-		// TODO: add support for function attributes.
-		break
 		funcAttr := irFuncAttribute(oldFuncAttr)
 		t.FuncAttrs = append(t.FuncAttrs, funcAttr)
 	}

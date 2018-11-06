@@ -45,18 +45,71 @@ func (*UnwindToCaller) isUnwindTarget() {}
 // TODO: remove isUnwindTarget? or unexport.
 func (*BasicBlock) isUnwindTarget() {}
 
-// TODO: add proper implementations.
+// FuncAttribute is a function attribute.
 type FuncAttribute interface {
-	isFuncAttribute()
+	// IsFuncAttribute ensures that only function attributes can be assigned to
+	// the ir.FuncAttribute interface.
+	IsFuncAttribute()
 }
 
+// ParamAttribute is a parameter attribute.
 type ParamAttribute interface {
-	isParamAttribute()
+	// IsParamAttribute ensures that only parameter attributes can be assigned to
+	// the ir.ParamAttribute interface.
+	IsParamAttribute()
 }
 
+// ReturnAttribute is a return attribute.
 type ReturnAttribute interface {
-	isReturnAttribute()
+	// IsReturnAttribute ensures that only return attributes can be assigned to
+	// the ir.ReturnAttribute interface.
+	IsReturnAttribute()
 }
+
+// AttrString is an attribute string (used in function, parameter and return
+// attributes).
+type AttrString string
+
+// String returns the string representation of the attribute string.
+func (a AttrString) String() string {
+	return enc.Quote([]byte(a))
+}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to
+// the ir.FuncAttribute interface.
+func (AttrString) IsFuncAttribute() {}
+
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
+func (AttrString) IsParamAttribute() {}
+
+// IsReturnAttribute ensures that only return attributes can be assigned to
+// the ir.ReturnAttribute interface.
+func (AttrString) IsReturnAttribute() {}
+
+// AttrPair is an attribute key-value pair (used in function, parameter and
+// return attributes).
+type AttrPair struct {
+	Key   string
+	Value string
+}
+
+// String returns the string representation of the attribute key-value pair.
+func (a AttrPair) String() string {
+	return fmt.Sprintf("%s=%s", enc.Quote([]byte(a.Key)), enc.Quote([]byte(a.Value)))
+}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to
+// the ir.FuncAttribute interface.
+func (AttrPair) IsFuncAttribute() {}
+
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
+func (AttrPair) IsParamAttribute() {}
+
+// IsReturnAttribute ensures that only return attributes can be assigned to
+// the ir.ReturnAttribute interface.
+func (AttrPair) IsReturnAttribute() {}
 
 type OperandBundle struct {
 	// TODO: implement body.

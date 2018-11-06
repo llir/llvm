@@ -245,8 +245,11 @@ func (gen *generator) astToIRGlobalDecl(global ir.Constant, old *ast.GlobalDecl)
 	// (optional) Comdat definition.
 	// (optional) Alignment.
 	// ### [/ Global attributes ] ###
-	// TODO: handle FuncAttrs.
 	// (optional) Function attributes.
+	for _, oldFuncAttr := range old.FuncAttrs() {
+		funcAttr := irFuncAttribute(oldFuncAttr)
+		g.FuncAttrs = append(g.FuncAttrs, funcAttr)
+	}
 	// TODO: handle metadata.
 	// (optional) Metadata.
 	return g, nil
@@ -306,8 +309,11 @@ func (gen *generator) astToIRGlobalDef(global ir.Constant, old *ast.GlobalDef) (
 	// (optional) Comdat definition.
 	// (optional) Alignment.
 	// ### [/ Global attributes ] ###
-	// TODO: handle FuncAttrs.
 	// (optional) Function attributes.
+	for _, oldFuncAttr := range old.FuncAttrs() {
+		funcAttr := irFuncAttribute(oldFuncAttr)
+		g.FuncAttrs = append(g.FuncAttrs, funcAttr)
+	}
 	// TODO: handle metadata.
 	// (optional) Metadata.
 	return g, nil
@@ -384,6 +390,10 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) erro
 		f.Typ.AddrSpace = irAddrSpace(*n)
 	}
 	// (optional) Function attributes.
+	for _, oldFuncAttr := range old.FuncAttrs() {
+		funcAttr := irFuncAttribute(oldFuncAttr)
+		f.FuncAttrs = append(f.FuncAttrs, funcAttr)
+	}
 	// TODO: handle FuncAttrs.
 	// (optional) Section.
 	// TODO: handle section.
@@ -392,11 +402,29 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) erro
 	// (optional) Garbage collection.
 	// TODO: handle gc.
 	// (optional) Prefix.
-	// TODO: handle prefix.
+	if n := old.Prefix(); n != nil {
+		prefix, err := gen.irTypeConst(n.TypeConst())
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		f.Prefix = prefix
+	}
 	// (optional) Prologue.
-	// TODO: handle prologue.
+	if n := old.Prologue(); n != nil {
+		prologue, err := gen.irTypeConst(n.TypeConst())
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		f.Prologue = prologue
+	}
 	// (optional) Personality.
-	// TOOD: handle personality.
+	if n := old.Personality(); n != nil {
+		personality, err := gen.irTypeConst(n.TypeConst())
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		f.Personality = personality
+	}
 	return nil
 }
 
