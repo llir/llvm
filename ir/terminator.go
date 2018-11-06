@@ -235,6 +235,11 @@ func NewCase(x Constant, target *BasicBlock) *Case {
 	return &Case{X: x, Target: target}
 }
 
+// String returns the string representation of the switch case.
+func (c *Case) String() string {
+	return fmt.Sprintf("%v, %v", c.X.Ident(), c.Target.Ident())
+}
+
 // --- [ indirectbr ] ----------------------------------------------------------
 
 // TermIndirectBr is an LLVM IR indirectbr terminator.

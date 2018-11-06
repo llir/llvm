@@ -288,7 +288,10 @@ func bodyString(body *Function) string {
 	// "{" BasicBlockList UseListOrders "}"
 	buf := &strings.Builder{}
 	buf.WriteString("{\n")
-	for _, block := range body.Blocks {
+	for i, block := range body.Blocks {
+		if i != 0 {
+			buf.WriteString("\n")
+		}
 		fmt.Fprintf(buf, "%v\n", block.Def())
 	}
 	// TODO: add support for use list orders.
