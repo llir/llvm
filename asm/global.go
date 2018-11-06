@@ -242,7 +242,18 @@ func (gen *generator) astToIRGlobalDecl(global ir.Constant, old *ast.GlobalDecl)
 	// ### [ Global attributes ] ###
 	// TODO: handle GlobalAttrs.
 	// (optional) Section name.
-	// (optional) Comdat definition.
+	// (optional) Comdat.
+	if n := old.Comdat(); n != nil {
+		comdatName := g.GlobalName
+		if n := n.Name(); n != nil {
+			comdatName = comdat(*n)
+		}
+		comdatDef, ok := gen.comdats[comdatName]
+		if !ok {
+			return nil, errors.Errorf("unable to locate Comdat identifier %q used in global declaration of %q", comdatName, g.GlobalName)
+		}
+		g.Comdat = comdatDef
+	}
 	// (optional) Alignment.
 	// ### [/ Global attributes ] ###
 	// (optional) Function attributes.
@@ -306,7 +317,18 @@ func (gen *generator) astToIRGlobalDef(global ir.Constant, old *ast.GlobalDef) (
 	// ### [ Global attributes ] ###
 	// TODO: handle GlobalAttrs.
 	// (optional) Section name.
-	// (optional) Comdat definition.
+	// (optional) Comdat.
+	if n := old.Comdat(); n != nil {
+		comdatName := g.GlobalName
+		if n := n.Name(); n != nil {
+			comdatName = comdat(*n)
+		}
+		comdatDef, ok := gen.comdats[comdatName]
+		if !ok {
+			return nil, errors.Errorf("unable to locate Comdat identifier %q used in global definition of %q", comdatName, g.GlobalName)
+		}
+		g.Comdat = comdatDef
+	}
 	// (optional) Alignment.
 	// ### [/ Global attributes ] ###
 	// (optional) Function attributes.
@@ -402,7 +424,17 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) erro
 	// (optional) Section.
 	// TODO: handle section.
 	// (optional) Comdat.
-	// TODO: handle comdat.
+	if n := old.Comdat(); n != nil {
+		comdatName := f.GlobalName
+		if n := n.Name(); n != nil {
+			comdatName = comdat(*n)
+		}
+		comdatDef, ok := gen.comdats[comdatName]
+		if !ok {
+			return errors.Errorf("unable to locate Comdat identifier %q used in function header of %q", comdatName, f.GlobalName)
+		}
+		f.Comdat = comdatDef
+	}
 	// (optional) Garbage collection.
 	// TODO: handle gc.
 	// (optional) Prefix.

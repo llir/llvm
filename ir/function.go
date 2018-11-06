@@ -220,64 +220,68 @@ func (f *Function) AssignIDs() error {
 // ### [ Helper functions ] ####################################################
 
 // headerString returns the string representation of the function header.
-func headerString(hdr *Function) string {
+func headerString(f *Function) string {
 	// OptPreemptionSpecifier OptVisibility OptDLLStorageClass OptCallingConv
 	// ReturnAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs
 	// OptSection OptComdat OptGC OptPrefix OptPrologue OptPersonality
 	buf := &strings.Builder{}
-	if hdr.Preemption != enum.PreemptionNone {
-		fmt.Fprintf(buf, " %v", hdr.Preemption)
+	if f.Preemption != enum.PreemptionNone {
+		fmt.Fprintf(buf, " %v", f.Preemption)
 	}
-	if hdr.Visibility != enum.VisibilityNone {
-		fmt.Fprintf(buf, " %v", hdr.Visibility)
+	if f.Visibility != enum.VisibilityNone {
+		fmt.Fprintf(buf, " %v", f.Visibility)
 	}
-	if hdr.DLLStorageClass != enum.DLLStorageClassNone {
-		fmt.Fprintf(buf, " %v", hdr.DLLStorageClass)
+	if f.DLLStorageClass != enum.DLLStorageClassNone {
+		fmt.Fprintf(buf, " %v", f.DLLStorageClass)
 	}
-	if hdr.CallingConv != enum.CallingConvNone {
-		fmt.Fprintf(buf, " %v", callingConvString(hdr.CallingConv))
+	if f.CallingConv != enum.CallingConvNone {
+		fmt.Fprintf(buf, " %v", callingConvString(f.CallingConv))
 	}
-	for _, attr := range hdr.ReturnAttrs {
+	for _, attr := range f.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)
 	}
-	fmt.Fprintf(buf, " %v", hdr.Sig.RetType)
-	fmt.Fprintf(buf, " %v(", enc.Global(hdr.GlobalName))
-	for i, param := range hdr.Params {
+	fmt.Fprintf(buf, " %v", f.Sig.RetType)
+	fmt.Fprintf(buf, " %v(", enc.Global(f.GlobalName))
+	for i, param := range f.Params {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(param.Def())
 	}
-	if hdr.Sig.Variadic {
-		if len(hdr.Params) > 0 {
+	if f.Sig.Variadic {
+		if len(f.Params) > 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString("...")
 	}
 	buf.WriteString(")")
-	if hdr.UnnamedAddr != enum.UnnamedAddrNone {
-		fmt.Fprintf(buf, " %v", hdr.UnnamedAddr)
+	if f.UnnamedAddr != enum.UnnamedAddrNone {
+		fmt.Fprintf(buf, " %v", f.UnnamedAddr)
 	}
-	for _, attr := range hdr.FuncAttrs {
+	for _, attr := range f.FuncAttrs {
 		fmt.Fprintf(buf, " %v", attr)
 	}
-	if len(hdr.Section) > 0 {
-		fmt.Fprintf(buf, " section %v", enc.Quote([]byte(hdr.Section)))
+	if len(f.Section) > 0 {
+		fmt.Fprintf(buf, " section %v", enc.Quote([]byte(f.Section)))
 	}
-	if hdr.Comdat != nil {
-		fmt.Fprintf(buf, " %v", hdr.Comdat)
+	if f.Comdat != nil {
+		if f.Comdat.Name == f.GlobalName {
+			buf.WriteString(" comdat")
+		} else {
+			fmt.Fprintf(buf, " %s", f.Comdat)
+		}
 	}
-	if len(hdr.GC) > 0 {
-		fmt.Fprintf(buf, " gc %v", enc.Quote([]byte(hdr.GC)))
+	if len(f.GC) > 0 {
+		fmt.Fprintf(buf, " gc %v", enc.Quote([]byte(f.GC)))
 	}
-	if hdr.Prefix != nil {
-		fmt.Fprintf(buf, " prefix %v", hdr.Prefix)
+	if f.Prefix != nil {
+		fmt.Fprintf(buf, " prefix %v", f.Prefix)
 	}
-	if hdr.Prologue != nil {
-		fmt.Fprintf(buf, " prologue %v", hdr.Prologue)
+	if f.Prologue != nil {
+		fmt.Fprintf(buf, " prologue %v", f.Prologue)
 	}
-	if hdr.Personality != nil {
-		fmt.Fprintf(buf, " personality %v", hdr.Personality)
+	if f.Personality != nil {
+		fmt.Fprintf(buf, " personality %v", f.Personality)
 	}
 	return buf.String()
 }

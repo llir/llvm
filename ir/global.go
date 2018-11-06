@@ -44,7 +44,7 @@ type Global struct {
 	ExternallyInitialized bool
 	// (optional) Section name; empty if not present.
 	Section string
-	// (optional) Comdat definition; nil if not present.
+	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef
 	// (optional) Alignment; zero if not present.
 	Align int64
@@ -141,7 +141,11 @@ func (g *Global) Def() string {
 		fmt.Fprintf(buf, ", section %s", quote(g.Section))
 	}
 	if g.Comdat != nil {
-		fmt.Fprintf(buf, ", %s", g.Comdat)
+		if g.Comdat.Name == g.GlobalName {
+			buf.WriteString(", comdat")
+		} else {
+			fmt.Fprintf(buf, ", %s", g.Comdat)
+		}
 	}
 	if g.Align != 0 {
 		fmt.Fprintf(buf, ", align %d", g.Align)
