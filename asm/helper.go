@@ -179,16 +179,16 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 	}
 	switch oldVal := old.Val().(type) {
 	case ast.Value:
-		var attrs []ir.ParamAttribute
-		for _, oldAttr := range old.Attrs() {
-			// TODO: translate param attribute.
-			_ = oldAttr
-		}
 		x, err := fgen.astToIRValue(typ, oldVal)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		if len(attrs) > 0 {
+		if len(old.Attrs()) > 0 {
+			var attrs []ir.ParamAttribute
+			for _, oldAttr := range old.Attrs() {
+				attr := irParamAttribute(oldAttr)
+				attrs = append(attrs, attr)
+			}
 			arg := &ir.Arg{
 				Attrs: attrs,
 				Value: x,
@@ -337,20 +337,20 @@ func irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 			Key:   unquote(n.Key().Text()),
 			Value: unquote(n.Val().Text()),
 		}
-	case ast.AttrGroupID:
+	case *ast.AttrGroupID:
 		// TODO: add support for AttrGroupID.
 		panic("support for function attribute AttrGroupID not yet implemented")
-	case ast.AlignPair:
+	case *ast.AlignPair:
 		// TODO: add support for AlignPair.
 		panic("support for function attribute AlignPair not yet implemented")
-	case ast.AlignStackPair:
+	case *ast.AlignStackPair:
 		// TODO: add support for AlignStackPair.
 		panic("support for function attribute AlignStackPair not yet implemented")
 	//case ast.Alignment: // TODO: add support for Alignment.
-	case ast.AllocSize:
+	case *ast.AllocSize:
 		// TODO: add support for AllocSize.
 		panic("support for function attribute AllocSize not yet implemented")
-	case ast.StackAlignment:
+	case *ast.StackAlignment:
 		// TODO: add support for StackAlignment.
 		panic("support for function attribute StackAlignment not yet implemented")
 	case *ast.FuncAttr:
@@ -422,6 +422,30 @@ func irOverflowFlags(ns []ast.OverflowFlag) []enum.OverflowFlag {
 		flags = append(flags, flag)
 	}
 	return flags
+}
+
+// irParamAttribute returns the IR parameter attribute corresponding to the given
+// AST parameter attribute.
+func irParamAttribute(n ast.ParamAttribute) ir.ParamAttribute {
+	switch n := n.(type) {
+	case *ast.AttrString:
+		return ir.AttrString(unquote(n.Text()))
+	case *ast.AttrPair:
+		return ir.AttrPair{
+			Key:   unquote(n.Key().Text()),
+			Value: unquote(n.Val().Text()),
+		}
+	case *ast.Alignment:
+		// TODO: add support for Alignment.
+		panic("support for parameter attribute Alignment not yet implemented")
+	case *ast.Dereferenceable:
+		// TODO: add support for Dereferenceable.
+		panic("support for parameter attribute Dereferenceable not yet implemented")
+	case *ast.ParamAttr:
+		return asmenum.ParamAttrFromString(n.Text())
+	default:
+		panic(fmt.Errorf("support for parameter attribute %T not yet implemented", n))
+	}
 }
 
 // irReturnAttribute returns the IR return attribute corresponding to the given

@@ -375,10 +375,14 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) erro
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		// Parameter attributes.
-		// TODO: handle Attrs.
+		// Name.
 		name := optLocal(p.Name())
 		param := ir.NewParam(typ, name)
+		// (optional) Parameter attributes.
+		for _, oldAttr := range p.Attrs() {
+			attr := irParamAttribute(oldAttr)
+			param.Attrs = append(param.Attrs, attr)
+		}
 		f.Params = append(f.Params, param)
 	}
 	// (optional) Unnamed address.
