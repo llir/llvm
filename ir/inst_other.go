@@ -581,10 +581,10 @@ func (inst *InstLandingPad) Def() string {
 	fmt.Fprintf(buf, "%v = ", inst.Ident())
 	fmt.Fprintf(buf, "landingpad %v", inst.ResultType)
 	if inst.Cleanup {
-		buf.WriteString(" cleanup")
+		buf.WriteString("\n\t\tcleanup")
 	}
 	for _, clause := range inst.Clauses {
-		fmt.Fprintf(buf, " %v", clause)
+		fmt.Fprintf(buf, "\n\t\t%v", clause)
 	}
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
