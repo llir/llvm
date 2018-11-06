@@ -11,10 +11,13 @@ gen:
 	string2enum -linecomment -type DLLStorageClass ${ENUM_DIR}
 	string2enum -linecomment -type FastMathFlag ${ENUM_DIR}
 	string2enum -linecomment -type FPred ${ENUM_DIR}
+	string2enum -linecomment -type FuncAttr ${ENUM_DIR}
 	string2enum -linecomment -type IPred ${ENUM_DIR}
 	string2enum -linecomment -type Linkage ${ENUM_DIR}
 	string2enum -linecomment -type OverflowFlag ${ENUM_DIR}
+	string2enum -linecomment -type ParamAttr ${ENUM_DIR}
 	string2enum -linecomment -type Preemption ${ENUM_DIR}
+	string2enum -linecomment -type ReturnAttr ${ENUM_DIR}
 	string2enum -linecomment -type SelectionKind ${ENUM_DIR}
 	string2enum -linecomment -type Tail ${ENUM_DIR}
 	string2enum -linecomment -type TLSModel ${ENUM_DIR}

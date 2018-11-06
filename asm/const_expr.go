@@ -278,7 +278,7 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 	expr := constant.NewGetElementPtr(elemType, src, indices...)
 	// TODO: validate type t against expr.Typ.
 	// In-bounds.
-	expr.InBounds = irOptInBounds(old.InBounds())
+	expr.InBounds = old.InBounds() != nil
 	return expr, nil
 }
 
@@ -289,7 +289,7 @@ func (gen *generator) irGEPIndex(old ast.GEPIndex) (*constant.Index, error) {
 		return nil, errors.WithStack(err)
 	}
 	index := constant.NewIndex(idx)
-	index.InRange = irOptInRange(old.InRange())
+	index.InRange = old.InRange() != nil
 	return index, nil
 }
 

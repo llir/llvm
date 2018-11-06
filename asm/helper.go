@@ -159,16 +159,6 @@ func stringLitBytes(n ast.StringLit) []byte {
 // TODO: remove irOptFoo in favour of using if n != nil { irFoo } during
 // translation.
 
-// irOptAddrSpace returns the IR address space corresponding to the given
-// optional AST address space.
-func irOptAddrSpace(n *ast.AddrSpace) types.AddrSpace {
-	if n == nil {
-		return 0
-	}
-	x := uintLit(n.N())
-	return types.AddrSpace(x)
-}
-
 // irAddrSpace returns the IR address space corresponding to the given AST
 // address space.
 func irAddrSpace(n ast.AddrSpace) types.AddrSpace {
@@ -214,18 +204,6 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 	}
 }
 
-// irAtomicOp returns the IR atomic operation corresponding to the given AST
-// atomic operation.
-func irAtomicOp(n ast.AtomicOp) enum.AtomicOp {
-	return asmenum.AtomicOpFromString(n.Text())
-}
-
-// irAtomicOrdering returns the IR atomic ordering corresponding to the given
-// AST atomic ordering.
-func irAtomicOrdering(n ast.AtomicOrdering) enum.AtomicOrdering {
-	return asmenum.AtomicOrderingFromString(n.Text())
-}
-
 // irBasicBlock returns the IR basic block corresponding to the given AST label.
 func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
 	name := local(old.Name())
@@ -238,15 +216,6 @@ func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
 		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
 	}
 	return block, nil
-}
-
-// irOptCallingConv returns the IR calling convention corresponding to the given
-// optional AST calling convention.
-func irOptCallingConv(n ast.CallingConv) enum.CallingConv {
-	if n == nil {
-		return enum.CallingConvNone
-	}
-	return irCallingConv(n)
 }
 
 // irCallingConv returns the IR calling convention corresponding to the given
@@ -311,21 +280,6 @@ func (fgen *funcGen) irClause(n ast.Clause) (*ir.Clause, error) {
 	return ir.NewClause(clauseType, x), nil
 }
 
-// irOptDLLStorageClass returns the IR DLL storage class corresponding to the
-// given optional AST DLL storage class.
-func irOptDLLStorageClass(n *ast.DLLStorageClass) enum.DLLStorageClass {
-	if n == nil {
-		return enum.DLLStorageClassNone
-	}
-	return asmenum.DLLStorageClassFromString(n.Text())
-}
-
-// irOptExact returns the exact boolean corresponding to the given optional AST
-// exact.
-func irOptExact(n *ast.Exact) bool {
-	return n != nil
-}
-
 // irExceptionArg returns the IR exception argument corresponding to the given
 // AST exception argument.
 func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (value.Value, error) {
@@ -361,12 +315,6 @@ func (fgen *funcGen) irExceptionScope(n ast.ExceptionScope) (ir.ExceptionScope, 
 	}
 }
 
-// irOptExternallyInitialized returns the externally initialized boolean
-// corresponding to the given optional AST externally initialized.
-func irOptExternallyInitialized(n *ast.ExternallyInitialized) bool {
-	return n != nil
-}
-
 // irFastMathFlags returns the IR fast math flags corresponding to the given AST
 // fast math flags.
 func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
@@ -378,20 +326,14 @@ func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
 	return flags
 }
 
-// irFPred returns the IR floating-point comparison predicate corresponding to
-// the given AST floating-point comparison predicate.
-func irFPred(n ast.FPred) enum.FPred {
-	return asmenum.FPredFromString(n.Text())
-}
-
 // irFuncAttribute returns the IR function attribute corresponding to the given
 // AST function attribute.
-func irFuncAttribute(n ast.FuncAttr) ir.FuncAttribute {
+func irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 	panic("not yet implemented")
 }
 
 // irImmutable returns the immutable (constant or global) boolean corresponding
-// to the given optional AST immutable.
+// to the given AST immutable.
 func irImmutable(n ast.Immutable) bool {
 	text := n.Text()
 	switch text {
@@ -402,12 +344,6 @@ func irImmutable(n ast.Immutable) bool {
 	default:
 		panic(fmt.Errorf("support for immutable %q not yet implemented", text))
 	}
-}
-
-// irOptInBounds returns the in-bounds boolean corresponding to the given
-// optional AST in-bounds.
-func irOptInBounds(n *ast.InBounds) bool {
-	return n != nil
 }
 
 // irIncoming translates the given AST incoming value into an equivalent IR
@@ -428,18 +364,6 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	}
 	inc := ir.NewIncoming(x, pred)
 	return inc, nil
-}
-
-// irIPred returns the IR integer comparison predicate corresponding to the
-// given AST integer comparison predicate.
-func irIPred(n ast.IPred) enum.IPred {
-	return asmenum.IPredFromString(n.Text())
-}
-
-// irOptInRange returns the in-range boolean corresponding to the given optional
-// AST in-range.
-func irOptInRange(n *ast.InRange) bool {
-	return n != nil
 }
 
 // irOptLinkage returns the IR linkage corresponding to the given optional AST
@@ -472,28 +396,10 @@ func irOverflowFlags(ns []ast.OverflowFlag) []enum.OverflowFlag {
 	return flags
 }
 
-// irOptPreemption returns the IR preemption corresponding to the given optional
-// AST preemption.
-func irOptPreemption(n *ast.Preemption) enum.Preemption {
-	if n == nil {
-		return enum.PreemptionNone
-	}
-	return asmenum.PreemptionFromString(n.Text())
-}
-
 // irReturnAttribute returns the IR return attribute corresponding to the given
 // AST return attribute.
-func irReturnAttribute(n ast.ReturnAttr) ir.ReturnAttribute {
+func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 	panic("not yet implemented")
-}
-
-// irOptSelectionKind returns the IR Comdat selection kind corresponding to the
-// given optional AST Comdat selection kind.
-func irOptSelectionKind(n *ast.SelectionKind) enum.SelectionKind {
-	if n == nil {
-		return enum.SelectionKindAny
-	}
-	return asmenum.SelectionKindFromString(n.Text())
 }
 
 // irOperandBundle returns the IR operand bundle corresponding to the given AST
@@ -502,43 +408,16 @@ func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) ir.OperandBundle {
 	panic("not yet implemented")
 }
 
-// irTail returns the IR tail corresponding to the given AST tail.
-func irTail(n ast.Tail) enum.Tail {
-	return asmenum.TailFromString(n.Text())
-}
-
-// irOptTLSModelFromThreadLocal returns the IR TLS model corresponding to the
-// given optional AST thread local storage.
-func irOptTLSModelFromThreadLocal(n *ast.ThreadLocal) enum.TLSModel {
-	if n == nil {
-		return enum.TLSModelNone
+// irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given
+// AST thread local storage.
+func irTLSModelFromThreadLocal(n ast.ThreadLocal) enum.TLSModel {
+	if n := n.Model(); n != nil {
+		// e.g. thread_local(initialexec)
+		return asmenum.TLSModelFromString(n.Text())
 	}
-	model := irOptTLSModel(n.Model())
-	if model == enum.TLSModelNone {
-		// If no explicit model is given, the "general dynamic" model is used.
-		//    thread_local
-		return enum.TLSModelGeneric
-	}
-	// e.g. thread_local(initialexec)
-	return model
-}
-
-// irOptTLSModel returns the IR TLS model corresponding to the given optional
-// AST TLS model.
-func irOptTLSModel(n *ast.TLSModel) enum.TLSModel {
-	if n == nil {
-		return enum.TLSModelNone
-	}
-	return asmenum.TLSModelFromString(n.Text())
-}
-
-// irOptUnnamedAddr returns the IR unnamed address corresponding to the given
-// optional AST unnamed address.
-func irOptUnnamedAddr(n *ast.UnnamedAddr) enum.UnnamedAddr {
-	if n == nil {
-		return enum.UnnamedAddrNone
-	}
-	return asmenum.UnnamedAddrFromString(n.Text())
+	// If no explicit model is given, the "general dynamic" model is used.
+	//    thread_local
+	return enum.TLSModelGeneric
 }
 
 // irUnwindTarget returns the IR unwind target corresponding to the given AST
@@ -551,21 +430,6 @@ func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error)
 		return &ir.UnwindToCaller{}, nil
 	}
 	panic("unreachable")
-}
-
-// irOptVariadic returns the variadic boolean corresponding to the given
-// optional AST ellipsis.
-func irOptVariadic(n *ast.Ellipsis) bool {
-	return n != nil
-}
-
-// irOptVisibility returns the IR visibility kind corresponding to the given
-// optional AST visibility kind.
-func irOptVisibility(n *ast.Visibility) enum.Visibility {
-	if n == nil {
-		return enum.VisibilityNone
-	}
-	return asmenum.VisibilityFromString(n.Text())
 }
 
 // ### [ Helpers ] #############################################################

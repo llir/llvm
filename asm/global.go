@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
+	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
@@ -148,7 +149,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 			sig.Params = append(sig.Params, param)
 		}
 		// Variadic.
-		sig.Variadic = irOptVariadic(ps.Variadic())
+		sig.Variadic = ps.Variadic() != nil
 		f.Sig = sig
 		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
@@ -172,7 +173,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 			sig.Params = append(sig.Params, param)
 		}
 		// Variadic.
-		sig.Variadic = irOptVariadic(ps.Variadic())
+		sig.Variadic = ps.Variadic() != nil
 		f.Sig = sig
 		f.Typ = types.NewPointer(f.Sig)
 		return f, nil
@@ -200,69 +201,116 @@ func (gen *generator) astToIRGlobal(g ir.Constant, old ast.LlvmNode) (ir.Constan
 
 // ~~~ [ Global Variable Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) astToIRGlobalDecl(g ir.Constant, old *ast.GlobalDecl) (*ir.Global, error) {
-	global, ok := g.(*ir.Global)
+// astToIRGlobalDecl translates the given AST global declaration into an
+// equivalent IR global declaration.
+func (gen *generator) astToIRGlobalDecl(global ir.Constant, old *ast.GlobalDecl) (*ir.Global, error) {
+	g, ok := global.(*ir.Global)
 	if !ok {
-		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", g))
+		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", global))
 	}
-	// Linkage.
-	global.Linkage = irOptLinkage(old.ExternLinkage())
-	// Preemption.
-	global.Preemption = irOptPreemption(old.Preemption())
-	// Visibility.
-	global.Visibility = irOptVisibility(old.Visibility())
-	// DLL storage class.
-	global.DLLStorageClass = irOptDLLStorageClass(old.DLLStorageClass())
-	// Thread local storage model.
-	global.TLSModel = irOptTLSModelFromThreadLocal(old.ThreadLocal())
-	// Unnamed address.
-	global.UnnamedAddr = irOptUnnamedAddr(old.UnnamedAddr())
-	// Address space.
-	global.Typ.AddrSpace = irOptAddrSpace(old.AddrSpace())
-	// Externally initialized.
-	global.ExternallyInitialized = irOptExternallyInitialized(old.ExternallyInitialized())
-	// Immutable (constant or global).
-	global.Immutable = irImmutable(old.Immutable())
-	// Content type already stored during index.
+	// (optional) Linkage.
+	g.Linkage = asmenum.LinkageFromString(old.ExternLinkage().Text())
+	// (optional) Preemption.
+	if n := old.Preemption(); n != nil {
+		g.Preemption = asmenum.PreemptionFromString(n.Text())
+	}
+	// (optional) Visibility.
+	if n := old.Visibility(); n != nil {
+		g.Visibility = asmenum.VisibilityFromString(n.Text())
+	}
+	// (optional) DLL storage class.
+	if n := old.DLLStorageClass(); n != nil {
+		g.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
+	}
+	// (optional) Thread local storage model.
+	if n := old.ThreadLocal(); n != nil {
+		g.TLSModel = irTLSModelFromThreadLocal(*n)
+	}
+	// (optional) Unnamed address.
+	if n := old.UnnamedAddr(); n != nil {
+		g.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
+	}
+	// (optional) Address space; stored in g.Typ.
+	if n := old.AddrSpace(); n != nil {
+		g.Typ.AddrSpace = irAddrSpace(*n)
+	}
+	// (optional) Externally initialized.
+	g.ExternallyInitialized = old.ExternallyInitialized() != nil
+	// Immutability of global variable (constant or global).
+	g.Immutable = irImmutable(old.Immutable())
+	// Content type: already stored during index.
+	// ### [ Global attributes ] ###
 	// TODO: handle GlobalAttrs.
+	// (optional) Section name.
+	// (optional) Comdat definition.
+	// (optional) Alignment.
+	// ### [/ Global attributes ] ###
 	// TODO: handle FuncAttrs.
-	return global, nil
+	// (optional) Function attributes.
+	// TODO: handle metadata.
+	// (optional) Metadata.
+	return g, nil
 }
 
 // ~~~ [ Global Variable Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) astToIRGlobalDef(g ir.Constant, old *ast.GlobalDef) (*ir.Global, error) {
-	global, ok := g.(*ir.Global)
+// astToIRGlobalDef translates the given AST global definition into an
+// equivalent IR global definition.
+func (gen *generator) astToIRGlobalDef(global ir.Constant, old *ast.GlobalDef) (*ir.Global, error) {
+	g, ok := global.(*ir.Global)
 	if !ok {
-		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", g))
+		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", global))
 	}
-	// Linkage.
-	global.Linkage = irOptLinkage(old.Linkage())
-	// Preemption.
-	global.Preemption = irOptPreemption(old.Preemption())
-	// Visibility.
-	global.Visibility = irOptVisibility(old.Visibility())
-	// DLL storage class.
-	global.DLLStorageClass = irOptDLLStorageClass(old.DLLStorageClass())
-	// Thread local storage model.
-	global.TLSModel = irOptTLSModelFromThreadLocal(old.ThreadLocal())
-	// Unnamed address.
-	global.UnnamedAddr = irOptUnnamedAddr(old.UnnamedAddr())
-	// Address space.
-	global.Typ.AddrSpace = irOptAddrSpace(old.AddrSpace())
-	// Externally initialized.
-	global.ExternallyInitialized = irOptExternallyInitialized(old.ExternallyInitialized())
-	// Immutable (constant or global).
-	global.Immutable = irImmutable(old.Immutable())
-	// Content type already stored during index.
-	init, err := gen.irConstant(global.ContentType, old.Init())
+	// (optional) Linkage.
+	if n := old.Linkage(); n != nil {
+		g.Linkage = asmenum.LinkageFromString(n.Text())
+	}
+	// (optional) Preemption.
+	if n := old.Preemption(); n != nil {
+		g.Preemption = asmenum.PreemptionFromString(n.Text())
+	}
+	// (optional) Visibility.
+	if n := old.Visibility(); n != nil {
+		g.Visibility = asmenum.VisibilityFromString(n.Text())
+	}
+	// (optional) DLL storage class.
+	if n := old.DLLStorageClass(); n != nil {
+		g.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
+	}
+	// (optional) Thread local storage model.
+	if n := old.ThreadLocal(); n != nil {
+		g.TLSModel = irTLSModelFromThreadLocal(*n)
+	}
+	// (optional) Unnamed address.
+	if n := old.UnnamedAddr(); n != nil {
+		g.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
+	}
+	// (optional) Address space; stored in g.Typ.
+	if n := old.AddrSpace(); n != nil {
+		g.Typ.AddrSpace = irAddrSpace(*n)
+	}
+	// (optional) Externally initialized.
+	g.ExternallyInitialized = old.ExternallyInitialized() != nil
+	// Immutability of global variable (constant or global).
+	g.Immutable = irImmutable(old.Immutable())
+	// Content type: already stored during index.
+	// Initial value.
+	init, err := gen.irConstant(g.ContentType, old.Init())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	global.Init = init
+	g.Init = init
+	// ### [ Global attributes ] ###
 	// TODO: handle GlobalAttrs.
+	// (optional) Section name.
+	// (optional) Comdat definition.
+	// (optional) Alignment.
+	// ### [/ Global attributes ] ###
 	// TODO: handle FuncAttrs.
-	return global, nil
+	// (optional) Function attributes.
+	// TODO: handle metadata.
+	// (optional) Metadata.
+	return g, nil
 }
 
 // ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -271,36 +319,50 @@ func (gen *generator) astToIRGlobalDef(g ir.Constant, old *ast.GlobalDef) (*ir.G
 
 // ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) astToIRFuncDecl(g ir.Constant, old *ast.FuncDecl) (*ir.Function, error) {
-	f, ok := g.(*ir.Function)
+// astToIRFuncDecl translates the given AST function declaration into an
+// equivalent IR function declaration.
+func (gen *generator) astToIRFuncDecl(fn ir.Constant, old *ast.FuncDecl) (*ir.Function, error) {
+	f, ok := fn.(*ir.Function)
 	if !ok {
-		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", g))
+		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", fn))
 	}
-	// Metadata.
-	// TODO: translate function metadata.
+	// (optional) Metadata.
+	f.Metadata = irMetadataAttachments(old.Metadata())
+	// Function header.
 	if err := gen.astToIRFuncHeader(f, old.Header()); err != nil {
 		return nil, errors.WithStack(err)
 	}
 	return f, nil
 }
 
-func (gen *generator) astToIRFuncHeader(f *ir.Function, hdr ast.FuncHeader) error {
-	// Linkage.
-	f.Linkage = irOptLinkage(hdr.ExternLinkage())
-	// Preemption.
-	f.Preemption = irOptPreemption(hdr.Preemption())
-	// Visibility.
-	f.Visibility = irOptVisibility(hdr.Visibility())
-	// DLL storage class.
-	f.DLLStorageClass = irOptDLLStorageClass(hdr.DLLStorageClass())
-	// Calling convention.
-	// TODO: translate CallingConv.
-	// Return attributes.
-	// TODO: handle ReturnAttrs.
-	// Return type; already handled.
-	// Function name; already handled.
+// astToIRFuncHeader translates the given AST function header into an equivalent
+// IR function header.
+func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) error {
+	// (optional) Linkage.
+	if n := old.Linkage(); n != nil {
+		f.Linkage = asmenum.LinkageFromString(n.Text())
+	}
+	// (optional) Preemption.
+	if n := old.Preemption(); n != nil {
+		f.Preemption = asmenum.PreemptionFromString(n.Text())
+	}
+	// (optional) Visibility.
+	if n := old.Visibility(); n != nil {
+		f.Visibility = asmenum.VisibilityFromString(n.Text())
+	}
+	// (optional) DLL storage class.
+	if n := old.DLLStorageClass(); n != nil {
+		f.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
+	}
+	// (optional) Calling convention.
+	if n := old.CallingConv(); n != nil {
+		f.CallingConv = irCallingConv(n)
+	}
+	// (optional) Return attributes.
+	// TODO: handle RetAttrs.
+	// Return type: already stored during index.
 	// Function parameters.
-	ps := hdr.Params()
+	ps := old.Params()
 	for _, p := range ps.Params() {
 		// Type.
 		typ, err := gen.irType(p.Typ())
@@ -313,47 +375,53 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, hdr ast.FuncHeader) erro
 		param := ir.NewParam(typ, name)
 		f.Params = append(f.Params, param)
 	}
-
-	// Unnamed address.
-	f.UnnamedAddr = irOptUnnamedAddr(hdr.UnnamedAddr())
-	// Address space.
-	f.Typ.AddrSpace = irOptAddrSpace(hdr.AddrSpace())
-	// Function attributes.
+	// (optional) Unnamed address.
+	if n := old.UnnamedAddr(); n != nil {
+		f.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
+	}
+	// (optional) Address space; stored in f.Typ.
+	if n := old.AddrSpace(); n != nil {
+		f.Typ.AddrSpace = irAddrSpace(*n)
+	}
+	// (optional) Function attributes.
 	// TODO: handle FuncAttrs.
-	// Section.
-	// TODO: handle Section.
-	// Comdat.
-	// TODO: handle Comdat.
-	// GC.
-	// TODO: handle GC.
-	// Prefix.
-	// TODO: handle Prefix.
-	// Prologue.
-	// TODO: handle Prologue.
-	// Personality.
-	// TODO: handle Personality.
+	// (optional) Section.
+	// TODO: handle section.
+	// (optional) Comdat.
+	// TODO: handle comdat.
+	// (optional) Garbage collection.
+	// TODO: handle gc.
+	// (optional) Prefix.
+	// TODO: handle prefix.
+	// (optional) Prologue.
+	// TODO: handle prologue.
+	// (optional) Personality.
+	// TOOD: handle personality.
 	return nil
 }
 
 // ~~~ [ Function Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (gen *generator) astToIRFuncDef(g ir.Constant, old *ast.FuncDef) (*ir.Function, error) {
-	f, ok := g.(*ir.Function)
+// astToIRFuncDef translates the given AST function definition into an
+// equivalent IR function definition.
+func (gen *generator) astToIRFuncDef(fn ir.Constant, old *ast.FuncDef) (*ir.Function, error) {
+	f, ok := fn.(*ir.Function)
 	if !ok {
-		panic(fmt.Errorf("invalid IR type for AST function definition; expected *ir.Function, got %T", g))
+		panic(fmt.Errorf("invalid IR type for AST function definition; expected *ir.Function, got %T", fn))
 	}
+	// Function header.
 	if err := gen.astToIRFuncHeader(f, old.Header()); err != nil {
 		return nil, errors.WithStack(err)
 	}
-	// Metadata.
-	// TODO: translate function metadata.
+	// (optional) Metadata.
+	f.Metadata = irMetadataAttachments(old.Metadata())
 	// Basic blocks.
 	fgen := newFuncGen(gen, f)
 	_, err := fgen.resolveLocals(old.Body())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	// Use list orders.
+	// (optional) Use list orders.
 	// TODO: translate use list orders.
 	return f, nil
 }

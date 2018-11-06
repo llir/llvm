@@ -166,6 +166,52 @@ const (
 	FPredUNO                // uno
 )
 
+//go:generate stringer -linecomment -type FuncAttr
+
+// FuncAttr is a function attribute.
+type FuncAttr uint8
+
+// Function attributes.
+const (
+	FuncAttrAlwaysInline                FuncAttr = iota // alwaysinline
+	FuncAttrArgMemOnly                                  // argmemonly
+	FuncAttrBuiltin                                     // builtin
+	FuncAttrCold                                        // cold
+	FuncAttrConvergent                                  // convergent
+	FuncAttrInaccessibleMemOrArgMemOnly                 // inaccessiblemem_or_argmemonly
+	FuncAttrInaccessibleMemOnly                         // inaccessiblememonly
+	FuncAttrInlineHint                                  // inlinehint
+	FuncAttrJumpTable                                   // jumptable
+	FuncAttrMinSize                                     // minsize
+	FuncAttrNaked                                       // naked
+	FuncAttrNoBuiltin                                   // nobuiltin
+	FuncAttrNoDuplicate                                 // noduplicate
+	FuncAttrNoImplicitFloat                             // noimplicitfloat
+	FuncAttrNoInline                                    // noinline
+	FuncAttrNonLazyBind                                 // nonlazybind
+	FuncAttrNoRecurse                                   // norecurse
+	FuncAttrNoRedZone                                   // noredzone
+	FuncAttrNoReturn                                    // noreturn
+	FuncAttrNoUnwind                                    // nounwind
+	FuncAttrOptNone                                     // optnone
+	FuncAttrOptSize                                     // optsize
+	FuncAttrReadNone                                    // readnone
+	FuncAttrReadOnly                                    // readonly
+	FuncAttrReturnsTwice                                // returns_twice
+	FuncAttrSafeStack                                   // safestack
+	FuncAttrSanitizeAddress                             // sanitize_address
+	FuncAttrSanitizeHWAddress                           // sanitize_hwaddress
+	FuncAttrSanitizeMemory                              // sanitize_memory
+	FuncAttrSanitizeThread                              // sanitize_thread
+	FuncAttrSpeculatable                                // speculatable
+	FuncAttrSSP                                         // ssp
+	FuncAttrSSPReq                                      // sspreq
+	FuncAttrSSPStrong                                   // sspstrong
+	FuncAttrStrictFP                                    // strictfp
+	FuncAttrUwtable                                     // uwtable
+	FuncAttrWriteOnly                                   // writeonly
+)
+
 //go:generate stringer -linecomment -type IPred
 
 // IPred is an integer comparison predicate.
@@ -218,6 +264,31 @@ const (
 	OverflowFlagNUW                     // nuw
 )
 
+//go:generate stringer -linecomment -type ParamAttr
+
+// ParamAttr is a parameter attribute.
+type ParamAttr uint8
+
+// Parameter attributes.
+const (
+	ParamAttrByval      ParamAttr = iota // byval
+	ParamAttrInAlloca                    // inalloca
+	ParamAttrInReg                       // inreg
+	ParamAttrNest                        // nest
+	ParamAttrNoAlias                     // noalias
+	ParamAttrNoCapture                   // nocapture
+	ParamAttrNonNull                     // nonnull
+	ParamAttrReadNone                    // readnone
+	ParamAttrReadOnly                    // readonly
+	ParamAttrReturned                    // returned
+	ParamAttrSignExt                     // signext
+	ParamAttrSRet                        // sret
+	ParamAttrSwiftError                  // swifterror
+	ParamAttrSwiftSelf                   // swiftself
+	ParamAttrWriteOnly                   // writeonly
+	ParamAttrZeroExt                     // zeroext
+)
+
 //go:generate stringer -linecomment -type Preemption
 
 // Preemption specifies the preemtion of a global identifier.
@@ -228,6 +299,20 @@ const (
 	PreemptionNone           Preemption = iota // none
 	PreemptionDSOLocal                         // dso_local
 	PreemptionDSOPreemptable                   // dso_preemptable
+)
+
+//go:generate stringer -linecomment -type ReturnAttr
+
+// ReturnAttr is a return argument attribute.
+type ReturnAttr uint8
+
+// Return argument attributes.
+const (
+	ReturnAttrInReg   ReturnAttr = iota // inreg
+	ReturnAttrNoAlias                   // noalias
+	ReturnAttrNonNull                   // nonnull
+	ReturnAttrSignExt                   // signext
+	ReturnAttrZeroExt                   // zeroext
 )
 
 //go:generate stringer -linecomment -type SelectionKind
