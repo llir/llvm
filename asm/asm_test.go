@@ -26,7 +26,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Feature/alignment.ll"},
 		//{path: "testdata/Feature/attributes.ll"},
 		{path: "testdata/Feature/basictest.ll"},
-		//{path: "testdata/Feature/callingconventions.ll"},
+		{path: "testdata/Feature/callingconventions.ll"},
 		//{path: "testdata/Feature/calltest.ll"},
 		//{path: "testdata/Feature/casttest.ll"},
 		//{path: "testdata/Feature/cfgstructures.ll"},

@@ -235,7 +235,7 @@ func headerString(hdr *Function) string {
 		fmt.Fprintf(buf, " %v", hdr.DLLStorageClass)
 	}
 	if hdr.CallingConv != enum.CallingConvNone {
-		fmt.Fprintf(buf, " %v", hdr.CallingConv)
+		fmt.Fprintf(buf, " %v", callingConvString(hdr.CallingConv))
 	}
 	for _, attr := range hdr.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)
