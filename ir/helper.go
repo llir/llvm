@@ -12,10 +12,24 @@ import (
 
 // TODO: move to the right place.
 
-// TODO: figure out definition of Arg.
+// Arg is a function argument.
 type Arg struct {
+	// Argument value.
 	value.Value
+	// (optional) Parameter attributes.
 	Attrs []ParamAttribute
+}
+
+// String returns a string representation of the function argument.
+func (arg *Arg) String() string {
+	// ConcreteType ParamAttrs Value
+	buf := &strings.Builder{}
+	buf.WriteString(arg.Type().String())
+	for _, attr := range arg.Attrs {
+		fmt.Fprintf(buf, " %v", attr)
+	}
+	fmt.Fprintf(buf, " %v", arg.Ident())
+	return buf.String()
 }
 
 // TODO: figure out definition of ExceptionScope.
