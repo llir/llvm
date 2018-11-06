@@ -398,7 +398,7 @@ func (term *TermInvoke) Def() string {
 	}
 	buf.WriteString("invoke")
 	if term.CallingConv != enum.CallingConvNone {
-		fmt.Fprintf(buf, " %v", term.CallingConv)
+		fmt.Fprintf(buf, " %v", callingConvString(term.CallingConv))
 	}
 	for _, attr := range term.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)

@@ -225,8 +225,8 @@ func irCallingConv(n ast.CallingConv) enum.CallingConv {
 	case *ast.CallingConvEnum:
 		return asmenum.CallingConvFromString(n.Text())
 	case *ast.CallingConvInt:
-		x := uintLit(n.UintLit())
-		switch x {
+		cc := uintLit(n.UintLit())
+		switch cc {
 		case 11:
 			return enum.CallingConvHiPE
 		case 86:
@@ -250,7 +250,7 @@ func irCallingConv(n ast.CallingConv) enum.CallingConv {
 		case 96:
 			return enum.CallingConvAMDGPUES
 		default:
-			panic(fmt.Errorf("support for calling convention %d not yet implemented", x))
+			return enum.CallingConvNNN + enum.CallingConv(cc)
 		}
 	default:
 		panic(fmt.Errorf("support for calling convention type %T not yet implemented", n))

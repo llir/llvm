@@ -432,7 +432,7 @@ func (inst *InstCall) Def() string {
 		fmt.Fprintf(buf, " %v", flag)
 	}
 	if inst.CallingConv != enum.CallingConvNone {
-		fmt.Fprintf(buf, " %v", inst.CallingConv)
+		fmt.Fprintf(buf, " %v", callingConvString(inst.CallingConv))
 	}
 	for _, attr := range inst.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)

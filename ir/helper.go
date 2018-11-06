@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -201,4 +202,14 @@ func quote(s string) string {
 // value that s quotes.
 func unquote(s string) string {
 	return string(enc.Unquote(s))
+}
+
+// callingConvString returns the string representation of the given calling
+// convention.
+func callingConvString(callingConv enum.CallingConv) string {
+	if callingConv > enum.CallingConvNNN {
+		cc := callingConv - enum.CallingConvNNN
+		return fmt.Sprintf("cc %d", cc)
+	}
+	return callingConv.String()
 }

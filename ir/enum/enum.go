@@ -40,7 +40,7 @@ const (
 //go:generate stringer -linecomment -type CallingConv
 
 // CallingConv is a calling convention.
-type CallingConv uint8
+type CallingConv uint16
 
 // TODO: Check if there are any calling conventions defined in LLVM 7.0 that are
 // missing from this list.
@@ -99,6 +99,9 @@ const (
 	CallingConvMSP430Builtin // cc 94
 	CallingConvAMDGPULS      // cc 95
 	CallingConvAMDGPUES      // cc 96
+	// Custom calling convention (user defined calling convention NNN at
+	// CallingConvNNN+NNN).
+	CallingConvNNN // cc NNN
 )
 
 //go:generate stringer -linecomment -type ClauseType
