@@ -403,7 +403,7 @@ func (term *TermInvoke) Def() string {
 	for _, attr := range term.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)
 	}
-	fmt.Fprintf(buf, "%v %v(", term.Type(), term.Invokee.Ident())
+	fmt.Fprintf(buf, " %v %v(", term.Type(), term.Invokee.Ident())
 	for i, arg := range term.Args {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -421,7 +421,7 @@ func (term *TermInvoke) Def() string {
 		}
 		buf.WriteString("]")
 	}
-	fmt.Fprintf(buf, " to %v unwind %v", term.Normal, term.Exception)
+	fmt.Fprintf(buf, "\n\t\tto %v unwind %v", term.Normal, term.Exception)
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
 	}
@@ -585,7 +585,7 @@ func (term *TermCatchRet) Succs() []*BasicBlock {
 func (term *TermCatchRet) Def() string {
 	// "catchret" "from" Value "to" LabelType LocalIdent OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "catchret from %v to %v", term.From, term.To)
+	fmt.Fprintf(buf, "catchret from %v to %v", term.From.Ident(), term.To)
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
 	}
@@ -632,7 +632,7 @@ func (term *TermCleanupRet) Succs() []*BasicBlock {
 func (term *TermCleanupRet) Def() string {
 	// "cleanupret" "from" Value "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "cleanupret from %v unwind %v", term.From, term.UnwindTarget)
+	fmt.Fprintf(buf, "cleanupret from %v unwind %v", term.From.Ident(), term.UnwindTarget)
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
 	}
