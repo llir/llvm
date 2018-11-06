@@ -25,8 +25,6 @@ func global(n ast.GlobalIdent) string {
 	text := n.Text()
 	const prefix = "@"
 	if !strings.HasPrefix(text, prefix) {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
 		panic(fmt.Errorf("invalid global identifier %q; missing '%s' prefix", text, prefix))
 	}
 	text = text[len(prefix):]
@@ -40,8 +38,6 @@ func local(n ast.LocalIdent) string {
 	text := n.Text()
 	const prefix = "%"
 	if !strings.HasPrefix(text, prefix) {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
 		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", text, prefix))
 	}
 	text = text[len(prefix):]
@@ -64,8 +60,6 @@ func label(n ast.LabelIdent) string {
 	text := n.Text()
 	const suffix = ":"
 	if !strings.HasSuffix(text, suffix) {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
 		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", text, suffix))
 	}
 	text = text[:len(text)-len(suffix)]
@@ -84,6 +78,17 @@ func optLabel(n *ast.LabelIdent) string {
 // --- [ Attribute Group Identifiers ] -----------------------------------------
 
 // --- [ Comdat Identifiers ] --------------------------------------------------
+
+// comdat returns the name (without '%' prefix) of the given Comdat identifier.
+func comdat(n ast.ComdatName) string {
+	text := n.Text()
+	const prefix = "$"
+	if !strings.HasPrefix(text, prefix) {
+		panic(fmt.Errorf("invalid Comdat identifier %q; missing '%s' prefix", text, prefix))
+	}
+	text = text[len(prefix):]
+	return unquote(text)
+}
 
 // --- [ Metadata Identifiers ] ------------------------------------------------
 

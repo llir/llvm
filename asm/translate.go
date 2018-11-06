@@ -34,6 +34,14 @@ func translate(module *ast.Module) (*ir.Module, error) {
 		fmt.Println("type resolution of type definitions took:", time.Since(typeResolutionStart))
 		fmt.Println()
 	}
+	// Resolve Comdats.
+	comdatResolutionStart := time.Now()
+	_, err := gen.resolveComdats(module)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	fmt.Println("global resolution of global variable and function declarations and definitions took:", time.Since(comdatResolutionStart))
+	fmt.Println()
 	// Resolve globals.
 	if DoGlobalResolution {
 		globalResolutionStart := time.Now()
@@ -63,6 +71,10 @@ type generator struct {
 
 	// ts maps from type name (without '%' prefix) to underlying IR type.
 	ts map[string]types.Type
+
+	// comdats maps from Comdat name (without '$' prefix) to underlying IR Comdat
+	// definition.
+	comdats map[string]*ir.ComdatDef
 
 	// gs maps from global identifier (without '@' prefix) to corresponding
 	// IR value.
