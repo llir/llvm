@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
+	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/ir"
 	"github.com/pkg/errors"
 )
@@ -76,7 +77,7 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 	}
 	// (optional) Atomic memory ordering constraints.
 	if n := old.Ordering(); n != nil {
-		i.Ordering = irAtomicOrdering(*n)
+		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
@@ -118,7 +119,7 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 	}
 	// (optional) Atomic memory ordering constraints.
 	if n := old.Ordering(); n != nil {
-		i.Ordering = irAtomicOrdering(*n)
+		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
@@ -143,7 +144,7 @@ func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (
 		i.SyncScope = n.Scope().Text()
 	}
 	// Atomic memory ordering constraints.
-	i.Ordering = irAtomicOrdering(old.Ordering())
+	i.Ordering = asmenum.AtomicOrderingFromString(old.Ordering().Text())
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -185,9 +186,9 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 		i.SyncScope = n.Scope().Text()
 	}
 	// Atomic memory ordering constraints on success.
-	i.SuccessOrdering = irAtomicOrdering(old.SuccessOrdering())
+	i.SuccessOrdering = asmenum.AtomicOrderingFromString(old.SuccessOrdering().Text())
 	// Atomic memory ordering constraints on failure.
-	i.FailureOrdering = irAtomicOrdering(old.FailureOrdering())
+	i.FailureOrdering = asmenum.AtomicOrderingFromString(old.FailureOrdering().Text())
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil
@@ -205,7 +206,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 	// (optional) Volatile.
 	i.Volatile = old.Volatile() != nil
 	// Atomic operation.
-	i.Op = irAtomicOp(old.Op())
+	i.Op = asmenum.AtomicOpFromString(old.Op().Text())
 	// Destination address.
 	dst, err := fgen.astToIRTypeValue(old.Dst())
 	if err != nil {
@@ -223,7 +224,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 		i.SyncScope = n.Scope().Text()
 	}
 	// Atomic memory ordering constraints.
-	i.Ordering = irAtomicOrdering(old.Ordering())
+	i.Ordering = asmenum.AtomicOrderingFromString(old.Ordering().Text())
 	// (optional) Metadata.
 	i.Metadata = irMetadataAttachments(old.Metadata())
 	return i, nil

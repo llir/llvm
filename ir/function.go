@@ -62,9 +62,8 @@ type Function struct {
 	// (optional) Use list orders.
 	// TODO: add support for UseListOrder.
 	//UseListOrders []*UseListOrder
-	// (optional) Metadata attachments.
-	// TODO: add support for metadata.
-	//Metadata []*metadata.MetadataAttachment
+	// (optional) Metadata.
+	Metadata []MetadataAttachment
 }
 
 // TODO: decide whether to have the function name parameter be the first

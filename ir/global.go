@@ -50,9 +50,8 @@ type Global struct {
 	Align int64
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
-	// (optional) Metadata attachments.
-	// TODO: add support for metadata.
-	//Metadata []*metadata.MetadataAttachment
+	// (optional) Metadata.
+	Metadata []MetadataAttachment
 }
 
 // NewGlobalDecl returns a new global variable declaration based on the given

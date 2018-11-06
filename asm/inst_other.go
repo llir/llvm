@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
+	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -21,7 +22,7 @@ func (fgen *funcGen) astToIRInstICmp(inst ir.Instruction, old *ast.ICmpInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstICmp, got %T", inst))
 	}
 	// Integer comparison predicate.
-	i.Pred = irIPred(old.Pred())
+	i.Pred = asmenum.IPredFromString(old.Pred().Text())
 	// X operand.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
@@ -51,7 +52,7 @@ func (fgen *funcGen) astToIRInstFCmp(inst ir.Instruction, old *ast.FCmpInst) (*i
 	// (optional) Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// Floating-point comparison predicate.
-	i.Pred = irFPred(old.Pred())
+	i.Pred = asmenum.FPredFromString(old.Pred().Text())
 	// X operand.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
@@ -138,7 +139,7 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	}
 	// (optional) Tail.
 	if n := old.Tail(); n != nil {
-		i.Tail = irTail(*n)
+		i.Tail = asmenum.TailFromString(n.Text())
 	}
 	// (optional) Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
