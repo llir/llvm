@@ -49,6 +49,8 @@ var (
 //
 //    *ir.Global     // https://godoc.org/github.com/llir/llvm/ir#Global
 //    *ir.Function   // https://godoc.org/github.com/llir/llvm/ir#Function
+//    *ir.Alias      // https://godoc.org/github.com/llir/llvm/ir#Alias
+//    *ir.IFunc      // https://godoc.org/github.com/llir/llvm/ir#IFunc
 //
 // Undefined values
 //
