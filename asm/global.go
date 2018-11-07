@@ -19,7 +19,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]constant.Co
 	// index maps from global identifier to underlying AST value.
 	index := make(map[string]ast.LlvmNode)
 	// Record order of global variable and function declarations and definitions.
-	var globalOrder, funcOrder []string
+	var globalOrder, funcOrder, aliasOrder, ifuncOrder []string
 	// Index global variable and function declarations and definitions.
 	for _, entity := range module.TopLevelEntities() {
 		switch entity := entity.(type) {
@@ -34,6 +34,22 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]constant.Co
 		case *ast.GlobalDef:
 			name := global(entity.Name())
 			globalOrder = append(globalOrder, name)
+			if prev, ok := index[name]; ok {
+				// TODO: don't report error if prev is a declaration (of same type)?
+				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
+			}
+			index[name] = entity
+		case *ast.AliasDef:
+			name := global(entity.Name())
+			aliasOrder = append(aliasOrder, name)
+			if prev, ok := index[name]; ok {
+				// TODO: don't report error if prev is a declaration (of same type)?
+				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
+			}
+			index[name] = entity
+		case *ast.IFuncDef:
+			name := global(entity.Name())
+			ifuncOrder = append(ifuncOrder, name)
 			if prev, ok := index[name]; ok {
 				// TODO: don't report error if prev is a declaration (of same type)?
 				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
@@ -55,9 +71,6 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]constant.Co
 				return nil, errors.Errorf("AST global identifier %q already present; prev `%s`, new `%s`", enc.Global(name), text(prev), text(entity))
 			}
 			index[name] = entity
-			// TODO: handle alias definitions and IFuncs.
-			//case *ast.AliasDef:
-			//case *ast.IFuncDef:
 		}
 	}
 
@@ -90,6 +103,26 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]constant.Co
 			panic(err)
 		}
 		gen.m.Globals = append(gen.m.Globals, g)
+	}
+
+	// Add alias definitions to IR module in order of occurrence in input.
+	for _, key := range aliasOrder {
+		a, err := gen.alias(key)
+		if err != nil {
+			// NOTE: panic since this would indicate a bug in the implementation.
+			panic(err)
+		}
+		gen.m.Aliases = append(gen.m.Aliases, a)
+	}
+
+	// Add IFunc definitions to IR module in order of occurrence in input.
+	for _, key := range ifuncOrder {
+		i, err := gen.ifunc(key)
+		if err != nil {
+			// NOTE: panic since this would indicate a bug in the implementation.
+			panic(err)
+		}
+		gen.m.IFuncs = append(gen.m.IFuncs, i)
 	}
 
 	// Add function declarations and definitions to IR module in order of
@@ -130,6 +163,24 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constan
 		g.ContentType = contentType
 		g.Typ = types.NewPointer(g.ContentType)
 		return g, nil
+	case *ast.AliasDef:
+		alias := &ir.Alias{GlobalName: name}
+		// Content type.
+		contentType, err := gen.irType(old.ContentType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		alias.Typ = types.NewPointer(contentType)
+		return alias, nil
+	case *ast.IFuncDef:
+		ifunc := &ir.IFunc{GlobalName: name}
+		// Content type.
+		contentType, err := gen.irType(old.ContentType())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		ifunc.Typ = types.NewPointer(contentType)
+		return ifunc, nil
 	case *ast.FuncDecl:
 		f := &ir.Function{GlobalName: name}
 		hdr := old.Header()
@@ -191,6 +242,10 @@ func (gen *generator) astToIRGlobal(g constant.Constant, old ast.LlvmNode) (cons
 		return gen.astToIRGlobalDecl(g, old)
 	case *ast.GlobalDef:
 		return gen.astToIRGlobalDef(g, old)
+	case *ast.AliasDef:
+		return gen.astToIRAliasDef(g, old)
+	case *ast.IFuncDef:
+		return gen.astToIRIFuncDef(g, old)
 	case *ast.FuncDecl:
 		return gen.astToIRFuncDecl(g, old)
 	case *ast.FuncDef:
@@ -262,8 +317,8 @@ func (gen *generator) astToIRGlobalDecl(global constant.Constant, old *ast.Globa
 		funcAttr := irFuncAttribute(oldFuncAttr)
 		g.FuncAttrs = append(g.FuncAttrs, funcAttr)
 	}
-	// TODO: handle metadata.
 	// (optional) Metadata.
+	// TODO: handle metadata.
 	return g, nil
 }
 
@@ -337,14 +392,98 @@ func (gen *generator) astToIRGlobalDef(global constant.Constant, old *ast.Global
 		funcAttr := irFuncAttribute(oldFuncAttr)
 		g.FuncAttrs = append(g.FuncAttrs, funcAttr)
 	}
-	// TODO: handle metadata.
 	// (optional) Metadata.
+	// TODO: handle metadata.
 	return g, nil
 }
 
-// ~~~ [ Indirect Symbol Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~ [ Alias Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// TODO: add alias definition and IFuncs.
+// astToIRAliasDef translates the given AST alias definition into an equivalent
+// IR alias definition.
+func (gen *generator) astToIRAliasDef(alias constant.Constant, old *ast.AliasDef) (*ir.Alias, error) {
+	a, ok := alias.(*ir.Alias)
+	if !ok {
+		panic(fmt.Errorf("invalid IR type for AST alias definition; expected *ir.Alias, got %T", alias))
+	}
+	// (optional) Linkage.
+	// TODO: handle external linkage.
+	if n := old.Linkage(); n != nil {
+		a.Linkage = asmenum.LinkageFromString(n.Text())
+	}
+	// (optional) Preemption.
+	if n := old.Preemption(); n != nil {
+		a.Preemption = asmenum.PreemptionFromString(n.Text())
+	}
+	// (optional) Visibility.
+	if n := old.Visibility(); n != nil {
+		a.Visibility = asmenum.VisibilityFromString(n.Text())
+	}
+	// (optional) DLL storage class.
+	if n := old.DLLStorageClass(); n != nil {
+		a.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
+	}
+	// (optional) Thread local storage model.
+	if n := old.ThreadLocal(); n != nil {
+		a.TLSModel = irTLSModelFromThreadLocal(*n)
+	}
+	// (optional) Unnamed address.
+	if n := old.UnnamedAddr(); n != nil {
+		a.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
+	}
+	// Content type: already stored during index.
+	// Aliasee.
+	aliasee, err := gen.irTypeConst(old.Aliasee())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	a.Aliasee = aliasee
+	return a, nil
+}
+
+// ~~~ [ IFunc Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// astToIRIFuncDef translates the given AST IFunc definition into an equivalent
+// IR IFunc definition.
+func (gen *generator) astToIRIFuncDef(ifunc constant.Constant, old *ast.IFuncDef) (*ir.IFunc, error) {
+	i, ok := ifunc.(*ir.IFunc)
+	if !ok {
+		panic(fmt.Errorf("invalid IR type for AST IFunc definition; expected *ir.IFunc, got %T", ifunc))
+	}
+	// (optional) Linkage.
+	// TODO: handle external linkage.
+	if n := old.Linkage(); n != nil {
+		i.Linkage = asmenum.LinkageFromString(n.Text())
+	}
+	// (optional) Preemption.
+	if n := old.Preemption(); n != nil {
+		i.Preemption = asmenum.PreemptionFromString(n.Text())
+	}
+	// (optional) Visibility.
+	if n := old.Visibility(); n != nil {
+		i.Visibility = asmenum.VisibilityFromString(n.Text())
+	}
+	// (optional) DLL storage class.
+	if n := old.DLLStorageClass(); n != nil {
+		i.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
+	}
+	// (optional) Thread local storage model.
+	if n := old.ThreadLocal(); n != nil {
+		i.TLSModel = irTLSModelFromThreadLocal(*n)
+	}
+	// (optional) Unnamed address.
+	if n := old.UnnamedAddr(); n != nil {
+		i.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
+	}
+	// Content type: already stored during index.
+	// Resolver.
+	resolver, err := gen.irTypeConst(old.Resolver())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Resolver = resolver
+	return i, nil
+}
 
 // ~~~ [ Function Declaration ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

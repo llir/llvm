@@ -108,6 +108,32 @@ func (gen *generator) global(name string) (*ir.Global, error) {
 	return g, nil
 }
 
+// alias returns the IR alias of the alias name.
+func (gen *generator) alias(name string) (*ir.Alias, error) {
+	v, ok := gen.gs[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate alias %q", name)
+	}
+	a, ok := v.(*ir.Alias)
+	if !ok {
+		return nil, errors.Errorf("invalid alias type of %q; expected *ir.Alias, got %T", name, v)
+	}
+	return a, nil
+}
+
+// ifunc returns the IR ifunc of the ifunc name.
+func (gen *generator) ifunc(name string) (*ir.IFunc, error) {
+	v, ok := gen.gs[name]
+	if !ok {
+		return nil, errors.Errorf("unable to locate IFunc %q", name)
+	}
+	i, ok := v.(*ir.IFunc)
+	if !ok {
+		return nil, errors.Errorf("invalid IFunc type of %q; expected *ir.IFunc, got %T", name, v)
+	}
+	return i, nil
+}
+
 // function returns the IR function of the given name.
 func (gen *generator) function(name string) (*ir.Function, error) {
 	v, ok := gen.gs[name]

@@ -33,10 +33,11 @@ type Module struct {
 	ModuleAsms []string
 	// (optional) Comdat definitions.
 	ComdatDefs []*ComdatDef
+	// (optional) Aliases.
+	Aliases []*Alias
+	// (optional) IFuncs.
+	IFuncs []*IFunc
 	/*
-		// (optional) Indirect symbol definitions (aliases and IFuncs).
-		// TODO: figure out how to represent aliases and IFuncs.
-		//IndirectSymbols []*IndirectSymbol
 		// (optional) Attribute group definitions.
 		AttrGroupDefs []*enum.AttrGroupDef
 		// (optional) Named metadata definitions.
@@ -101,11 +102,20 @@ func (m *Module) Def() string {
 	for _, g := range m.Globals {
 		fmt.Fprintln(buf, g.Def())
 	}
-	// Indirect symbol definitions (aliases and IFuncs).
-	// TODO: add support for indirect symbols.
-	//for _, s := range m.IndirectSymbols {
-	//	fmt.Fprintln(buf, s.Def())
-	//}
+	// Aliases.
+	if len(m.Aliases) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
+	for _, alias := range m.Aliases {
+		fmt.Fprintln(buf, alias.Def())
+	}
+	// IFuncs.
+	if len(m.IFuncs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
+	for _, ifunc := range m.IFuncs {
+		fmt.Fprintln(buf, ifunc.Def())
+	}
 	// Function declarations and definitions.
 	if len(m.Funcs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
