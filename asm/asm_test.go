@@ -32,7 +32,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/cfgstructures.ll"},
 		//{path: "testdata/Feature/cold.ll"},
 		{path: "testdata/Feature/comdat.ll"},
-		//{path: "testdata/Feature/constexpr.ll"},
+		{path: "testdata/Feature/constexpr.ll"},
 		//{path: "testdata/Feature/constpointer.ll"},
 		//{path: "testdata/Feature/const_pv.ll"},
 		//{path: "testdata/Feature/elf-linker-options.ll"},
@@ -96,7 +96,7 @@ func TestParseFile(t *testing.T) {
 	for _, g := range golden {
 		m, err := ParseFile(g.path)
 		if err != nil {
-			t.Errorf("unable to parse %q into AST; %v", g.path, err)
+			t.Errorf("unable to parse %q into AST; %+v", g.path, err)
 			continue
 		}
 		path := g.path
@@ -105,7 +105,7 @@ func TestParseFile(t *testing.T) {
 		}
 		buf, err := ioutil.ReadFile(path)
 		if err != nil {
-			t.Errorf("unable to read %q; %v", path, err)
+			t.Errorf("unable to read %q; %+v", path, err)
 			continue
 		}
 		want := string(buf)

@@ -3,7 +3,6 @@ package constant
 import (
 	"fmt"
 
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 )
@@ -17,12 +16,12 @@ type ExprICmp struct {
 	// Integer comparison predicate.
 	Pred enum.IPred
 	// Integer scalar or vector operands.
-	X, Y ir.Constant
+	X, Y Constant
 }
 
 // NewICmp returns a new icmp expression based on the given integer comparison
 // predicate and integer scalar or vector operands.
-func NewICmp(pred enum.IPred, x, y ir.Constant) *ExprICmp {
+func NewICmp(pred enum.IPred, x, y Constant) *ExprICmp {
 	return &ExprICmp{Pred: pred, X: x, Y: y}
 }
 
@@ -45,7 +44,7 @@ func (e *ExprICmp) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprICmp) Simplify() ir.Constant {
+func (e *ExprICmp) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -56,12 +55,12 @@ type ExprFCmp struct {
 	// Floating-point comparison predicate.
 	Pred enum.FPred
 	// Floating-point scalar or vector operands.
-	X, Y ir.Constant
+	X, Y Constant
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
 // comparison predicate and floating-point scalar or vector operands.
-func NewFCmp(pred enum.FPred, x, y ir.Constant) *ExprFCmp {
+func NewFCmp(pred enum.FPred, x, y Constant) *ExprFCmp {
 	return &ExprFCmp{Pred: pred, X: x, Y: y}
 }
 
@@ -84,7 +83,7 @@ func (e *ExprFCmp) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprFCmp) Simplify() ir.Constant {
+func (e *ExprFCmp) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -93,14 +92,14 @@ func (e *ExprFCmp) Simplify() ir.Constant {
 // ExprSelect is an LLVM IR select expression.
 type ExprSelect struct {
 	// Selection condition.
-	Cond ir.Constant
+	Cond Constant
 	// Operands.
-	X, Y ir.Constant
+	X, Y Constant
 }
 
 // NewSelect returns a new select expression based on the given selection
 // condition and operands.
-func NewSelect(cond, x, y ir.Constant) *ExprSelect {
+func NewSelect(cond, x, y Constant) *ExprSelect {
 	return &ExprSelect{Cond: cond, X: x, Y: x}
 }
 
@@ -123,6 +122,6 @@ func (e *ExprSelect) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprSelect) Simplify() ir.Constant {
+func (e *ExprSelect) Simplify() Constant {
 	panic("not yet implemented")
 }

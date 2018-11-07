@@ -2,7 +2,9 @@ package constant
 
 import (
 	"fmt"
+	"log"
 	"math/big"
+	"strings"
 
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -32,11 +34,44 @@ func NewInt(typ *types.IntType, x int64) *Int {
 //    * boolean literal
 //         true | false
 //    * integer literal
-//         [-]? [0-9]+
+//         [-]?[0-9]+
 //    * hexadecimal integer literal
-//         TODO: add support for hexadecimal integer literal notation.
+//         [us]0x[0-9A-Fa-f]+
 func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
-	// TODO: handle boolean literals and hexadecimal integer literals.
+	// Boolean literal.
+	switch s {
+	case "true":
+		if !typ.Equal(types.I1) {
+			return nil, errors.Errorf("invalid boolean type; expected i1, got %T", typ)
+		}
+		return NewInt(typ, 1), nil
+	case "false":
+		if !typ.Equal(types.I1) {
+			return nil, errors.Errorf("invalid boolean type; expected i1, got %T", typ)
+		}
+		return NewInt(typ, 0), nil
+	}
+	// Hexadecimal integer literal.
+	switch {
+	case strings.HasPrefix(s, "u0x"):
+		s = s[len("u0x"):]
+		x, _ := (&big.Int{}).SetString(s, 16)
+		if x == nil {
+			return nil, errors.Errorf("unable to parse integer constant %q", s)
+		}
+		return &Int{Typ: typ, X: x}, nil
+	case strings.HasPrefix(s, "s0x"):
+		// TODO: figure out how to handle negative values. Use typ.BitSize.
+		// e.g. what value should s0x0012312 represent?
+		log.Printf("support for signed hexadecimal integers (%q) not yet implemented", s)
+		s = s[len("s0x"):]
+		x, _ := (&big.Int{}).SetString(s, 16)
+		if x == nil {
+			return nil, errors.Errorf("unable to parse integer constant %q", s)
+		}
+		return &Int{Typ: typ, X: x}, nil
+	}
+	// Integer literal.
 	x, _ := (&big.Int{}).SetString(s, 10)
 	if x == nil {
 		return nil, errors.Errorf("unable to parse integer constant %q", s)

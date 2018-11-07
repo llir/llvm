@@ -3,8 +3,8 @@ package constant
 import (
 	"fmt"
 
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // --- [ blockaddress constants ] ----------------------------------------------
@@ -12,14 +12,14 @@ import (
 // BlockAddress is an LLVM IR blockaddress constant.
 type BlockAddress struct {
 	// Parent function.
-	Func *ir.Function
+	Func Constant // *ir.Function
 	// Basic block to take address of.
-	Block *ir.BasicBlock
+	Block value.Named // *ir.BasicBlock
 }
 
 // NewBlockAddress returns a new blockaddress constant based on the given parent
 // function and basic block.
-func NewBlockAddress(f *ir.Function, block *ir.BasicBlock) *BlockAddress {
+func NewBlockAddress(f Constant, block value.Named) *BlockAddress {
 	return &BlockAddress{Func: f, Block: block}
 }
 

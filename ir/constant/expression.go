@@ -1,7 +1,5 @@
 package constant
 
-import "github.com/llir/llvm/ir"
-
 // === [ Expressions ] =========================================================
 
 // Expression is an LLVM IR constant expression.
@@ -83,8 +81,8 @@ import "github.com/llir/llvm/ir"
 //    *constant.ExprFCmp     // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFCmp
 //    *constant.ExprSelect   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprSelect
 type Expression interface {
-	ir.Constant
+	Constant
 	// Simplify returns an equivalent (and potentially simplified) constant to
 	// the constant expression.
-	Simplify() ir.Constant
+	Simplify() Constant
 }

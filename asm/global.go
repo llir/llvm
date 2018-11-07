@@ -7,6 +7,7 @@ import (
 	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
@@ -14,7 +15,7 @@ import (
 // resolveGlobals resolves the global variable and function declarations and
 // defintions of the given module. The returned value maps from global
 // identifier (without '@' prefix) to the corresponding IR value.
-func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant, error) {
+func (gen *generator) resolveGlobals(module *ast.Module) (map[string]constant.Constant, error) {
 	// index maps from global identifier to underlying AST value.
 	index := make(map[string]ast.LlvmNode)
 	// Record order of global variable and function declarations and definitions.
@@ -62,7 +63,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 
 	// Create corresponding IR global variables and functions (without bodies but
 	// with type).
-	gen.gs = make(map[string]ir.Constant)
+	gen.gs = make(map[string]constant.Constant)
 	for name, old := range index {
 		g, err := gen.newGlobal(name, old)
 		if err != nil {
@@ -107,7 +108,7 @@ func (gen *generator) resolveGlobals(module *ast.Module) (map[string]ir.Constant
 
 // newGlobal returns a new IR value (without body but with type) based on the
 // given AST global variable or function.
-func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, error) {
+func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
 		g := &ir.Global{GlobalName: name}
@@ -184,7 +185,7 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (ir.Constant, err
 
 // astToIRGlobal translates the AST global variable or function into an
 // equivalent IR value.
-func (gen *generator) astToIRGlobal(g ir.Constant, old ast.LlvmNode) (ir.Constant, error) {
+func (gen *generator) astToIRGlobal(g constant.Constant, old ast.LlvmNode) (constant.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
 		return gen.astToIRGlobalDecl(g, old)
@@ -203,7 +204,7 @@ func (gen *generator) astToIRGlobal(g ir.Constant, old ast.LlvmNode) (ir.Constan
 
 // astToIRGlobalDecl translates the given AST global declaration into an
 // equivalent IR global declaration.
-func (gen *generator) astToIRGlobalDecl(global ir.Constant, old *ast.GlobalDecl) (*ir.Global, error) {
+func (gen *generator) astToIRGlobalDecl(global constant.Constant, old *ast.GlobalDecl) (*ir.Global, error) {
 	g, ok := global.(*ir.Global)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global declaration; expected *ir.Global, got %T", global))
@@ -270,7 +271,7 @@ func (gen *generator) astToIRGlobalDecl(global ir.Constant, old *ast.GlobalDecl)
 
 // astToIRGlobalDef translates the given AST global definition into an
 // equivalent IR global definition.
-func (gen *generator) astToIRGlobalDef(global ir.Constant, old *ast.GlobalDef) (*ir.Global, error) {
+func (gen *generator) astToIRGlobalDef(global constant.Constant, old *ast.GlobalDef) (*ir.Global, error) {
 	g, ok := global.(*ir.Global)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST global definition; expected *ir.Global, got %T", global))
@@ -349,7 +350,7 @@ func (gen *generator) astToIRGlobalDef(global ir.Constant, old *ast.GlobalDef) (
 
 // astToIRFuncDecl translates the given AST function declaration into an
 // equivalent IR function declaration.
-func (gen *generator) astToIRFuncDecl(fn ir.Constant, old *ast.FuncDecl) (*ir.Function, error) {
+func (gen *generator) astToIRFuncDecl(fn constant.Constant, old *ast.FuncDecl) (*ir.Function, error) {
 	f, ok := fn.(*ir.Function)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function declaration; expected *ir.Function, got %T", fn))
@@ -420,7 +421,6 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) erro
 		funcAttr := irFuncAttribute(oldFuncAttr)
 		f.FuncAttrs = append(f.FuncAttrs, funcAttr)
 	}
-	// TODO: handle FuncAttrs.
 	// (optional) Section.
 	// TODO: handle section.
 	// (optional) Comdat.
@@ -468,7 +468,7 @@ func (gen *generator) astToIRFuncHeader(f *ir.Function, old ast.FuncHeader) erro
 
 // astToIRFuncDef translates the given AST function definition into an
 // equivalent IR function definition.
-func (gen *generator) astToIRFuncDef(fn ir.Constant, old *ast.FuncDef) (*ir.Function, error) {
+func (gen *generator) astToIRFuncDef(fn constant.Constant, old *ast.FuncDef) (*ir.Function, error) {
 	f, ok := fn.(*ir.Function)
 	if !ok {
 		panic(fmt.Errorf("invalid IR type for AST function definition; expected *ir.Function, got %T", fn))

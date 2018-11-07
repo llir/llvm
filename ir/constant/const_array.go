@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -16,12 +15,12 @@ type Array struct {
 	// Array type.
 	Typ *types.ArrayType
 	// Array elements.
-	Elems []ir.Constant
+	Elems []Constant
 }
 
 // NewArray returns a new array constant based on the given array type and
 // elements.
-func NewArray(typ *types.ArrayType, elems ...ir.Constant) *Array {
+func NewArray(typ *types.ArrayType, elems ...Constant) *Array {
 	return &Array{Typ: typ, Elems: elems}
 }
 

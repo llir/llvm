@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 )
@@ -20,7 +21,7 @@ type Global struct {
 	// Content type.
 	ContentType types.Type
 	// Initial value; or nil if declaration.
-	Init Constant
+	Init constant.Constant
 
 	// extra.
 
@@ -62,7 +63,7 @@ func NewGlobalDecl(name string, contentType types.Type) *Global {
 
 // NewGlobalDef returns a new global variable definition based on the given
 // global variable name and initial value.
-func NewGlobalDef(name string, init Constant) *Global {
+func NewGlobalDef(name string, init constant.Constant) *Global {
 	return &Global{GlobalName: name, ContentType: init.Type(), Init: init}
 }
 

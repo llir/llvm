@@ -1,8 +1,10 @@
 package ir
 
-// Assert that each constant implements the ir.Constant interface.
+import "github.com/llir/llvm/ir/constant"
+
+// Assert that each constant implements the constant.Constant interface.
 var (
 	// Constants.
-	_ Constant = (*Global)(nil)
-	_ Constant = (*Function)(nil)
+	_ constant.Constant = (*Global)(nil)
+	_ constant.Constant = (*Function)(nil)
 )
