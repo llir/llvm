@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -510,7 +511,7 @@ func (inst *InstGetElementPtr) String() string {
 func (inst *InstGetElementPtr) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
-		inst.Typ = types.NewPointer(inst.ElemType)
+		inst.Typ = gepType(inst.ElemType, inst.Indices)
 	}
 	return inst.Typ
 }
@@ -547,4 +548,40 @@ func (inst *InstGetElementPtr) Def() string {
 		fmt.Fprintf(buf, ", %v", md)
 	}
 	return buf.String()
+}
+
+// ### [ Helper functions ] ####################################################
+
+// gepType returns the pointer type to the element at the position in the type
+// specified by the given indices, as calculated by the getelementptr
+// instruction.
+func gepType(elemType types.Type, indices []value.Value) *types.PointerType {
+	e := elemType
+	for i, index := range indices {
+		if i == 0 {
+			// Ignore checking the 0th index as it simply follows the pointer of
+			// src.
+			//
+			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+			continue
+		}
+		switch t := e.(type) {
+		case *types.PointerType:
+			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+			panic(fmt.Errorf("unable to index into element of pointer type `%v`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
+		case *types.VectorType:
+			e = t.ElemType
+		case *types.ArrayType:
+			e = t.ElemType
+		case *types.StructType:
+			idx, ok := index.(*constant.Int)
+			if !ok {
+				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
+			}
+			e = t.Fields[idx.X.Int64()]
+		default:
+			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
+		}
+	}
+	return types.NewPointer(e)
 }

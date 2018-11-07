@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -54,11 +55,11 @@ type Function struct {
 	// (optional) Garbage collection; empty if not present.
 	GC string
 	// (optional) Prefix; nil if not present.
-	Prefix Constant
+	Prefix constant.Constant
 	// (optional) Prologue; nil if not present.
-	Prologue Constant
+	Prologue constant.Constant
 	// (optional) Personality; nil if not present.
-	Personality Constant
+	Personality constant.Constant
 	// (optional) Use list orders.
 	// TODO: add support for UseListOrder.
 	//UseListOrders []*UseListOrder

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -15,12 +14,12 @@ type Vector struct {
 	// Vector type.
 	Typ *types.VectorType
 	// Vector elements.
-	Elems []ir.Constant
+	Elems []Constant
 }
 
 // NewVector returns a new vector constant based on the given vector type and
 // elements.
-func NewVector(typ *types.VectorType, elems ...ir.Constant) *Vector {
+func NewVector(typ *types.VectorType, elems ...Constant) *Vector {
 	return &Vector{Typ: typ, Elems: elems}
 }
 

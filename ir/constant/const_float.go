@@ -51,7 +51,7 @@ func NewFloat(typ *types.FloatType, x float64) *Float {
 func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 	// TODO: implement NewFloatFromString. return 0 for now.
 	if strings.HasPrefix(s, "0x") {
-		log.Printf("ir.NewFloatFromString(%q): not yet implemented", s)
+		log.Printf("constant.NewFloatFromString(%q): not yet implemented", s)
 		return NewFloat(typ, 0), nil
 		//panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
 	}

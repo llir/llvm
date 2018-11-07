@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -15,12 +14,12 @@ type Struct struct {
 	// Struct type.
 	Typ *types.StructType
 	// Struct fields.
-	Fields []ir.Constant
+	Fields []Constant
 }
 
 // NewStruct returns a new struct constant based on the given struct type and
 // fields.
-func NewStruct(typ *types.StructType, fields ...ir.Constant) *Struct {
+func NewStruct(typ *types.StructType, fields ...Constant) *Struct {
 	return &Struct{Typ: typ, Fields: fields}
 }
 

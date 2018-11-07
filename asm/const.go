@@ -12,7 +12,7 @@ import (
 
 // === [ Constants ] ===========================================================
 
-func (gen *generator) irConstant(t types.Type, old ast.Constant) (ir.Constant, error) {
+func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Constant, error) {
 	switch old := old.(type) {
 	case *ast.BoolConst:
 		return gen.irBoolConst(t, old)
@@ -52,7 +52,7 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (ir.Constant, e
 	}
 }
 
-func (gen *generator) irTypeConst(old ast.TypeConst) (ir.Constant, error) {
+func (gen *generator) irTypeConst(old ast.TypeConst) (constant.Constant, error) {
 	// Type.
 	typ, err := gen.irType(old.Typ())
 	if err != nil {
@@ -113,7 +113,7 @@ func (gen *generator) irNullConst(t types.Type, old *ast.NullConst) (*constant.N
 
 // --- [ Token Constants ] -----------------------------------------------------
 
-func (gen *generator) irNoneConst(t types.Type, old *ast.NoneConst) (ir.Constant, error) {
+func (gen *generator) irNoneConst(t types.Type, old *ast.NoneConst) (constant.Constant, error) {
 	// TODO: validate type t.
 	return constant.None, nil
 }
@@ -125,7 +125,7 @@ func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*consta
 	if !ok {
 		return nil, errors.Errorf("invalid type of struct constant; expected *types.StructType, got %T", t)
 	}
-	var fields []ir.Constant
+	var fields []constant.Constant
 	for _, f := range old.Fields() {
 		field, err := gen.irTypeConst(f)
 		if err != nil {
@@ -143,7 +143,7 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant
 	if !ok {
 		return nil, errors.Errorf("invalid type of array constant; expected *types.ArrayType, got %T", t)
 	}
-	var elems []ir.Constant
+	var elems []constant.Constant
 	for _, e := range old.Elems() {
 		elem, err := gen.irTypeConst(e)
 		if err != nil {
@@ -170,7 +170,7 @@ func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*consta
 	if !ok {
 		return nil, errors.Errorf("invalid type of vector constant; expected *types.VectorType, got %T", t)
 	}
-	var elems []ir.Constant
+	var elems []constant.Constant
 	for _, e := range old.Elems() {
 		elem, err := gen.irTypeConst(e)
 		if err != nil {
@@ -218,13 +218,16 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 
 // Pre-condition: translate function body and assign local IDs of c.Func.
 func fixBlockAddressConst(c *constant.BlockAddress) error {
-	f := c.Func
-	blockName := c.Block.LocalName
+	f, ok := c.Func.(*ir.Function)
+	if !ok {
+		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Function, got %T", c.Func))
+	}
+	blockName := c.Block.Name()
 	for _, block := range f.Blocks {
 		if block.LocalName == blockName {
 			c.Block = block
 			return nil
 		}
 	}
-	return errors.Errorf("unable to locate basic block %q in function %q", blockName, f.GlobalName)
+	return errors.Errorf("unable to locate basic block %q in function %q", c.Block.Ident(), f.Ident())
 }

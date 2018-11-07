@@ -78,7 +78,7 @@ type generator struct {
 
 	// gs maps from global identifier (without '@' prefix) to corresponding
 	// IR value.
-	gs map[string]ir.Constant
+	gs map[string]constant.Constant
 
 	// TOOD: add rw mutex to gen.todo for access to blockaddress constant.
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -17,10 +16,14 @@ type ExprGetElementPtr struct {
 	// Element type.
 	ElemType types.Type
 	// Source address.
-	Src ir.Constant
+	Src Constant
 	// Element indicies.
 	Indices []*Index
 
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) The result is a poison value if the calculated pointer is not
 	// an in bounds address of the allocated source object.
 	InBounds bool
@@ -28,7 +31,7 @@ type ExprGetElementPtr struct {
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // element type, source address and element indices.
-func NewGetElementPtr(elemType types.Type, src ir.Constant, indices ...*Index) *ExprGetElementPtr {
+func NewGetElementPtr(elemType types.Type, src Constant, indices ...*Index) *ExprGetElementPtr {
 	return &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 }
 
@@ -40,8 +43,11 @@ func (e *ExprGetElementPtr) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprGetElementPtr) Type() types.Type {
-	// TODO: cache type?
-	return types.NewPointer(e.ElemType)
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = gepType(e.ElemType, e.Indices)
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -62,7 +68,7 @@ func (e *ExprGetElementPtr) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprGetElementPtr) Simplify() ir.Constant {
+func (e *ExprGetElementPtr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -71,7 +77,7 @@ func (e *ExprGetElementPtr) Simplify() ir.Constant {
 // Index is an index of a getelementptr constant expression.
 type Index struct {
 	// Element index.
-	Index ir.Constant
+	Index Constant
 
 	// extra.
 
@@ -82,7 +88,7 @@ type Index struct {
 }
 
 // NewIndex returns a new gep element index.
-func NewIndex(index ir.Constant) *Index {
+func NewIndex(index Constant) *Index {
 	return &Index{Index: index}
 }
 
@@ -93,4 +99,40 @@ func (index *Index) String() string {
 		return fmt.Sprintf("inrange %v", index.Index)
 	}
 	return index.Index.String()
+}
+
+// ### [ Helper functions ] ####################################################
+
+// gepType returns the pointer type to the element at the position in the type
+// specified by the given indices, as calculated by the getelementptr
+// instruction.
+func gepType(elemType types.Type, indices []*Index) *types.PointerType {
+	e := elemType
+	for i, index := range indices {
+		if i == 0 {
+			// Ignore checking the 0th index as it simply follows the pointer of
+			// src.
+			//
+			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+			continue
+		}
+		switch t := e.(type) {
+		case *types.PointerType:
+			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+			panic(fmt.Errorf("unable to index into element of pointer type `%v`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
+		case *types.VectorType:
+			e = t.ElemType
+		case *types.ArrayType:
+			e = t.ElemType
+		case *types.StructType:
+			idx, ok := index.Index.(*Int)
+			if !ok {
+				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
+			}
+			e = t.Fields[idx.X.Int64()]
+		default:
+			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
+		}
+	}
+	return types.NewPointer(e)
 }

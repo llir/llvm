@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 )
@@ -16,7 +15,7 @@ import (
 // ExprShl is an LLVM IR shl expression.
 type ExprShl struct {
 	// Operands.
-	X, Y ir.Constant // integer scalars or vectors
+	X, Y Constant // integer scalars or vectors
 
 	// extra.
 
@@ -25,7 +24,7 @@ type ExprShl struct {
 }
 
 // NewShl returns a new shl expression based on the given operands.
-func NewShl(x, y ir.Constant) *ExprShl {
+func NewShl(x, y Constant) *ExprShl {
 	return &ExprShl{X: x, Y: y}
 }
 
@@ -54,7 +53,7 @@ func (e *ExprShl) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprShl) Simplify() ir.Constant {
+func (e *ExprShl) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -63,7 +62,7 @@ func (e *ExprShl) Simplify() ir.Constant {
 // ExprLShr is an LLVM IR lshr expression.
 type ExprLShr struct {
 	// Operands.
-	X, Y ir.Constant // integer scalars or vectors
+	X, Y Constant // integer scalars or vectors
 
 	// extra.
 
@@ -73,7 +72,7 @@ type ExprLShr struct {
 }
 
 // NewLShr returns a new lshr expression based on the given operands.
-func NewLShr(x, y ir.Constant) *ExprLShr {
+func NewLShr(x, y Constant) *ExprLShr {
 	return &ExprLShr{X: x, Y: y}
 }
 
@@ -102,7 +101,7 @@ func (e *ExprLShr) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprLShr) Simplify() ir.Constant {
+func (e *ExprLShr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -111,7 +110,7 @@ func (e *ExprLShr) Simplify() ir.Constant {
 // ExprAShr is an LLVM IR ashr expression.
 type ExprAShr struct {
 	// Operands.
-	X, Y ir.Constant // integer scalars or vectors
+	X, Y Constant // integer scalars or vectors
 
 	// extra.
 
@@ -121,7 +120,7 @@ type ExprAShr struct {
 }
 
 // NewAShr returns a new ashr expression based on the given operands.
-func NewAShr(x, y ir.Constant) *ExprAShr {
+func NewAShr(x, y Constant) *ExprAShr {
 	return &ExprAShr{X: x, Y: y}
 }
 
@@ -150,7 +149,7 @@ func (e *ExprAShr) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprAShr) Simplify() ir.Constant {
+func (e *ExprAShr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -159,11 +158,11 @@ func (e *ExprAShr) Simplify() ir.Constant {
 // ExprAnd is an LLVM IR and expression.
 type ExprAnd struct {
 	// Operands.
-	X, Y ir.Constant // integer scalars or vectors
+	X, Y Constant // integer scalars or vectors
 }
 
 // NewAnd returns a new and expression based on the given operands.
-func NewAnd(x, y ir.Constant) *ExprAnd {
+func NewAnd(x, y Constant) *ExprAnd {
 	return &ExprAnd{X: x, Y: y}
 }
 
@@ -186,7 +185,7 @@ func (e *ExprAnd) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprAnd) Simplify() ir.Constant {
+func (e *ExprAnd) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -195,11 +194,11 @@ func (e *ExprAnd) Simplify() ir.Constant {
 // ExprOr is an LLVM IR or expression.
 type ExprOr struct {
 	// Operands.
-	X, Y ir.Constant // integer scalars or vectors
+	X, Y Constant // integer scalars or vectors
 }
 
 // NewOr returns a new or expression based on the given operands.
-func NewOr(x, y ir.Constant) *ExprOr {
+func NewOr(x, y Constant) *ExprOr {
 	return &ExprOr{X: x, Y: y}
 }
 
@@ -222,7 +221,7 @@ func (e *ExprOr) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprOr) Simplify() ir.Constant {
+func (e *ExprOr) Simplify() Constant {
 	panic("not yet implemented")
 }
 
@@ -231,11 +230,11 @@ func (e *ExprOr) Simplify() ir.Constant {
 // ExprXor is an LLVM IR xor expression.
 type ExprXor struct {
 	// Operands.
-	X, Y ir.Constant // integer scalars or vectors
+	X, Y Constant // integer scalars or vectors
 }
 
 // NewXor returns a new xor expression based on the given operands.
-func NewXor(x, y ir.Constant) *ExprXor {
+func NewXor(x, y Constant) *ExprXor {
 	return &ExprXor{X: x, Y: y}
 }
 
@@ -258,6 +257,6 @@ func (e *ExprXor) Ident() string {
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
-func (e *ExprXor) Simplify() ir.Constant {
+func (e *ExprXor) Simplify() Constant {
 	panic("not yet implemented")
 }

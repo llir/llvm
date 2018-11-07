@@ -1,6 +1,9 @@
 package ir
 
-import "github.com/llir/llvm/ir/types"
+import (
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
+)
 
 // --- [ Global variables ] ----------------------------------------------------
 
@@ -14,7 +17,7 @@ func (m *Module) NewGlobalDecl(name string, contentType types.Type) *Global {
 
 // NewGlobalDef appends a new global variable definition to the module based on
 // the given global variable name and initial value.
-func (m *Module) NewGlobalDef(name string, init Constant) *Global {
+func (m *Module) NewGlobalDef(name string, init constant.Constant) *Global {
 	g := NewGlobalDef(name, init)
 	m.Globals = append(m.Globals, g)
 	return g

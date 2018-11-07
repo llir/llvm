@@ -1,6 +1,7 @@
 package ir
 
 import (
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -8,7 +9,7 @@ import (
 var (
 	// Constants.
 	// Checked in constant_test.go as ir.Constant embeds value.Value.
-	_ value.Value = Constant(nil)
+	_ value.Value = constant.Constant(nil)
 	// Named values.
 	// Checked in value_test.go as value.Named embeds value.Value.
 	_ value.Value = value.Named(nil)
