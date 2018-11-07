@@ -19,6 +19,8 @@ type ExprShl struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
 }
@@ -36,7 +38,11 @@ func (e *ExprShl) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprShl) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -66,6 +72,8 @@ type ExprLShr struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) The result is a poison value if any of the bits shifted out are
 	// non-zero.
 	Exact bool
@@ -84,7 +92,11 @@ func (e *ExprLShr) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprLShr) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -114,6 +126,8 @@ type ExprAShr struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) The result is a poison value if any of the bits shifted out are
 	// non-zero.
 	Exact bool
@@ -132,7 +146,11 @@ func (e *ExprAShr) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprAShr) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -159,6 +177,11 @@ func (e *ExprAShr) Simplify() Constant {
 type ExprAnd struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewAnd returns a new and expression based on the given operands.
@@ -174,7 +197,11 @@ func (e *ExprAnd) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprAnd) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -195,6 +222,11 @@ func (e *ExprAnd) Simplify() Constant {
 type ExprOr struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewOr returns a new or expression based on the given operands.
@@ -210,7 +242,11 @@ func (e *ExprOr) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprOr) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -231,6 +267,11 @@ func (e *ExprOr) Simplify() Constant {
 type ExprXor struct {
 	// Operands.
 	X, Y Constant // integer scalars or vectors
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewXor returns a new xor expression based on the given operands.
@@ -246,7 +287,11 @@ func (e *ExprXor) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprXor) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.

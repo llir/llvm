@@ -291,6 +291,7 @@ func (inst *InstSelect) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstSelect) Type() types.Type {
+	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = inst.X.Type()
 	}

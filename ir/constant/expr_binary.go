@@ -19,6 +19,8 @@ type ExprAdd struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
 }
@@ -36,7 +38,11 @@ func (e *ExprAdd) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprAdd) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -63,6 +69,11 @@ func (e *ExprAdd) Simplify() Constant {
 type ExprFAdd struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewFAdd returns a new fadd expression based on the given operands.
@@ -78,7 +89,11 @@ func (e *ExprFAdd) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprFAdd) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -102,6 +117,8 @@ type ExprSub struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
 }
@@ -119,7 +136,11 @@ func (e *ExprSub) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprSub) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -146,6 +167,11 @@ func (e *ExprSub) Simplify() Constant {
 type ExprFSub struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewFSub returns a new fsub expression based on the given operands.
@@ -161,7 +187,11 @@ func (e *ExprFSub) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprFSub) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -185,6 +215,8 @@ type ExprMul struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
 }
@@ -202,7 +234,11 @@ func (e *ExprMul) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprMul) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -229,6 +265,11 @@ func (e *ExprMul) Simplify() Constant {
 type ExprFMul struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewFMul returns a new fmul expression based on the given operands.
@@ -244,7 +285,11 @@ func (e *ExprFMul) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprFMul) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -268,6 +313,8 @@ type ExprUDiv struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) The result is a poison value if X is not a multiple of Y.
 	Exact bool
 }
@@ -285,7 +332,11 @@ func (e *ExprUDiv) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprUDiv) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -315,6 +366,8 @@ type ExprSDiv struct {
 
 	// extra.
 
+	// Type of result produced by the constant expression.
+	Typ types.Type
 	// (optional) The result is a poison value if the result would be rounded.
 	Exact bool
 }
@@ -332,7 +385,11 @@ func (e *ExprSDiv) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprSDiv) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -359,6 +416,11 @@ func (e *ExprSDiv) Simplify() Constant {
 type ExprFDiv struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewFDiv returns a new fdiv expression based on the given operands.
@@ -374,7 +436,11 @@ func (e *ExprFDiv) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprFDiv) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -395,6 +461,11 @@ func (e *ExprFDiv) Simplify() Constant {
 type ExprURem struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewURem returns a new urem expression based on the given operands.
@@ -410,7 +481,11 @@ func (e *ExprURem) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprURem) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -431,6 +506,11 @@ func (e *ExprURem) Simplify() Constant {
 type ExprSRem struct {
 	// Operands.
 	X, Y Constant // integer scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewSRem returns a new srem expression based on the given operands.
@@ -446,7 +526,11 @@ func (e *ExprSRem) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprSRem) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -467,6 +551,11 @@ func (e *ExprSRem) Simplify() Constant {
 type ExprFRem struct {
 	// Operands.
 	X, Y Constant // floating-point scalar or vector constants
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewFRem returns a new frem expression based on the given operands.
@@ -482,7 +571,11 @@ func (e *ExprFRem) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprFRem) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
+	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -11,6 +12,8 @@ import (
 
 // === [ Constant expressions ] ================================================
 
+// irConstantExpr translates the given AST constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (constant.Expression, error) {
 	switch old := old.(type) {
 	// Binary expressions
@@ -109,153 +112,495 @@ func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (consta
 
 // ~~~ [ add ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irAddExpr translates the given AST add constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irAddExpr(t types.Type, old *ast.AddExpr) (*constant.ExprAdd, error) {
-	panic("not yet implemented")
+	// (optional) Overflow flags.
+	overflowFlags := irOverflowFlags(old.OverflowFlags())
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewAdd(x, y)
+	expr.OverflowFlags = overflowFlags
+	return expr, nil
 }
 
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFAddExpr translates the given AST fadd constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFAddExpr(t types.Type, old *ast.FAddExpr) (*constant.ExprFAdd, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFAdd(x, y)
+	return expr, nil
 }
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irSubExpr translates the given AST sub constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irSubExpr(t types.Type, old *ast.SubExpr) (*constant.ExprSub, error) {
-	panic("not yet implemented")
+	// (optional) Overflow flags.
+	overflowFlags := irOverflowFlags(old.OverflowFlags())
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewSub(x, y)
+	expr.OverflowFlags = overflowFlags
+	return expr, nil
 }
 
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFSubExpr translates the given AST fsub constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFSubExpr(t types.Type, old *ast.FSubExpr) (*constant.ExprFSub, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFSub(x, y)
+	return expr, nil
 }
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irMulExpr translates the given AST mul constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irMulExpr(t types.Type, old *ast.MulExpr) (*constant.ExprMul, error) {
-	panic("not yet implemented")
+	// (optional) Overflow flags.
+	overflowFlags := irOverflowFlags(old.OverflowFlags())
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewMul(x, y)
+	expr.OverflowFlags = overflowFlags
+	return expr, nil
 }
 
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFMulExpr translates the given AST fmul constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFMulExpr(t types.Type, old *ast.FMulExpr) (*constant.ExprFMul, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFMul(x, y)
+	return expr, nil
 }
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irUDivExpr translates the given AST udiv constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irUDivExpr(t types.Type, old *ast.UDivExpr) (*constant.ExprUDiv, error) {
-	panic("not yet implemented")
+	// (optional) Exact.
+	exact := old.Exact() != nil
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewUDiv(x, y)
+	expr.Exact = exact
+	return expr, nil
 }
 
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irSDivExpr translates the given AST sdiv constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irSDivExpr(t types.Type, old *ast.SDivExpr) (*constant.ExprSDiv, error) {
-	panic("not yet implemented")
+	// (optional) Exact.
+	exact := old.Exact() != nil
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewSDiv(x, y)
+	expr.Exact = exact
+	return expr, nil
 }
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFDivExpr translates the given AST fdiv constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFDivExpr(t types.Type, old *ast.FDivExpr) (*constant.ExprFDiv, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFDiv(x, y)
+	return expr, nil
 }
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irURemExpr translates the given AST urem constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irURemExpr(t types.Type, old *ast.URemExpr) (*constant.ExprURem, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewURem(x, y)
+	return expr, nil
 }
 
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irSRemExpr translates the given AST srem constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irSRemExpr(t types.Type, old *ast.SRemExpr) (*constant.ExprSRem, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewSRem(x, y)
+	return expr, nil
 }
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFRemExpr translates the given AST frem constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFRemExpr(t types.Type, old *ast.FRemExpr) (*constant.ExprFRem, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFRem(x, y)
+	return expr, nil
 }
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
 // ~~~ [ shl ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irShlExpr translates the given AST shl constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irShlExpr(t types.Type, old *ast.ShlExpr) (*constant.ExprShl, error) {
-	panic("not yet implemented")
+	// (optional) Overflow flags.
+	overflowFlags := irOverflowFlags(old.OverflowFlags())
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewShl(x, y)
+	expr.OverflowFlags = overflowFlags
+	return expr, nil
 }
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irLShrExpr translates the given AST lshr constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irLShrExpr(t types.Type, old *ast.LShrExpr) (*constant.ExprLShr, error) {
-	panic("not yet implemented")
+	// (optional) Exact.
+	exact := old.Exact() != nil
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewLShr(x, y)
+	expr.Exact = exact
+	return expr, nil
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irAShrExpr translates the given AST ashr constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irAShrExpr(t types.Type, old *ast.AShrExpr) (*constant.ExprAShr, error) {
-	panic("not yet implemented")
+	// (optional) Exact.
+	exact := old.Exact() != nil
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewAShr(x, y)
+	expr.Exact = exact
+	return expr, nil
 }
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irAndExpr translates the given AST and constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irAndExpr(t types.Type, old *ast.AndExpr) (*constant.ExprAnd, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewAnd(x, y)
+	return expr, nil
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irOrExpr translates the given AST or constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irOrExpr(t types.Type, old *ast.OrExpr) (*constant.ExprOr, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewOr(x, y)
+	return expr, nil
 }
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irXorExpr translates the given AST xor constant expression into an equivalent
+// IR constant expression.
 func (gen *generator) irXorExpr(t types.Type, old *ast.XorExpr) (*constant.ExprXor, error) {
-	panic("not yet implemented")
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewXor(x, y)
+	return expr, nil
 }
 
 // --- [ Vector expressions ] --------------------------------------------------
 
 // ~~~ [ extractelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irExtractElementExpr translates the given AST extractelement constant
+// expression into an equivalent IR constant expression.
 func (gen *generator) irExtractElementExpr(t types.Type, old *ast.ExtractElementExpr) (*constant.ExprExtractElement, error) {
-	panic("not yet implemented")
+	// Vector.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Index.
+	index, err := gen.irTypeConst(old.Index())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewExtractElement(x, index)
+	return expr, nil
 }
 
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irInsertElementExpr translates the given AST insertelement constant
+// expression into an equivalent IR constant expression.
 func (gen *generator) irInsertElementExpr(t types.Type, old *ast.InsertElementExpr) (*constant.ExprInsertElement, error) {
-	panic("not yet implemented")
+	// Vector.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Element.
+	elem, err := gen.irTypeConst(old.Elem())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Index.
+	index, err := gen.irTypeConst(old.Index())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewInsertElement(x, elem, index)
+	return expr, nil
 }
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irShuffleVectorExpr translates the given AST shufflevector constant
+// expression into an equivalent IR constant expression.
 func (gen *generator) irShuffleVectorExpr(t types.Type, old *ast.ShuffleVectorExpr) (*constant.ExprShuffleVector, error) {
-	panic("not yet implemented")
+	// X vector.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// X vector.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Shuffle mask.
+	mask, err := gen.irTypeConst(old.Mask())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewShuffleVector(x, y, mask)
+	return expr, nil
 }
 
 // --- [ Aggregate expressions ] -----------------------------------------------
 
 // ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irExtractValueExpr translates the given AST extractvalue constant expression
+// into an equivalent IR constant expression.
 func (gen *generator) irExtractValueExpr(t types.Type, old *ast.ExtractValueExpr) (*constant.ExprExtractValue, error) {
-	panic("not yet implemented")
+	// Aggregate value.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Element indices.
+	var indices []int64
+	for _, index := range uintSlice(old.Indices()) {
+		indices = append(indices, int64(index))
+	}
+	expr := constant.NewExtractValue(x, indices...)
+	return expr, nil
 }
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irInsertValueExpr translates the given AST insertvalue constant expression
+// into an equivalent IR constant expression.
 func (gen *generator) irInsertValueExpr(t types.Type, old *ast.InsertValueExpr) (*constant.ExprInsertValue, error) {
-	panic("not yet implemented")
+	// Aggregate value.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Element.
+	elem, err := gen.irTypeConst(old.Elem())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Element indices.
+	var indices []int64
+	for _, index := range uintSlice(old.Indices()) {
+		indices = append(indices, int64(index))
+	}
+	expr := constant.NewInsertValue(x, elem, indices...)
+	return expr, nil
 }
 
 // --- [ Memory expressions ] --------------------------------------------------
 
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irGetElementPtrExpr translates the given AST getelementptr constant
+// expression into an equivalent IR constant expression.
 func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrExpr) (*constant.ExprGetElementPtr, error) {
+	// (optional) In-bounds.
+	inBounds := old.InBounds() != nil
 	// Element type.
 	elemType, err := gen.irType(old.ElemType())
 	if err != nil {
@@ -277,19 +622,23 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 	}
 	expr := constant.NewGetElementPtr(elemType, src, indices...)
 	// TODO: validate type t against expr.Typ.
-	// In-bounds.
-	expr.InBounds = old.InBounds() != nil
+	// (optional) In-bounds.
+	expr.InBounds = inBounds
 	return expr, nil
 }
 
+// irGEPIndex translates the given AST getelementptr index into an equivalent IR
+// getelementptr index.
 func (gen *generator) irGEPIndex(old ast.GEPIndex) (*constant.Index, error) {
+	// (optional) In-range.
+	inRange := old.InRange() != nil
 	// Index.
 	idx, err := gen.irTypeConst(old.Index())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	index := constant.NewIndex(idx)
-	index.InRange = old.InRange() != nil
+	index.InRange = inRange
 	return index, nil
 }
 
@@ -297,6 +646,8 @@ func (gen *generator) irGEPIndex(old ast.GEPIndex) (*constant.Index, error) {
 
 // ~~~ [ trunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irTruncExpr translates the given AST trunc constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irTruncExpr(t types.Type, old *ast.TruncExpr) (*constant.ExprTrunc, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -315,6 +666,8 @@ func (gen *generator) irTruncExpr(t types.Type, old *ast.TruncExpr) (*constant.E
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irZExtExpr translates the given AST zext constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irZExtExpr(t types.Type, old *ast.ZExtExpr) (*constant.ExprZExt, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -333,6 +686,8 @@ func (gen *generator) irZExtExpr(t types.Type, old *ast.ZExtExpr) (*constant.Exp
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irSExtExpr translates the given AST sext constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irSExtExpr(t types.Type, old *ast.SExtExpr) (*constant.ExprSExt, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -351,6 +706,8 @@ func (gen *generator) irSExtExpr(t types.Type, old *ast.SExtExpr) (*constant.Exp
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFPTruncExpr translates the given AST fptrunc constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFPTruncExpr(t types.Type, old *ast.FPTruncExpr) (*constant.ExprFPTrunc, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -369,6 +726,8 @@ func (gen *generator) irFPTruncExpr(t types.Type, old *ast.FPTruncExpr) (*consta
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFPExtExpr translates the given AST fpext constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFPExtExpr(t types.Type, old *ast.FPExtExpr) (*constant.ExprFPExt, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -387,6 +746,8 @@ func (gen *generator) irFPExtExpr(t types.Type, old *ast.FPExtExpr) (*constant.E
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFPToUIExpr translates the given AST fptoui constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFPToUIExpr(t types.Type, old *ast.FPToUIExpr) (*constant.ExprFPToUI, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -405,6 +766,8 @@ func (gen *generator) irFPToUIExpr(t types.Type, old *ast.FPToUIExpr) (*constant
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFPToSIExpr translates the given AST fptosi constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFPToSIExpr(t types.Type, old *ast.FPToSIExpr) (*constant.ExprFPToSI, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -423,6 +786,8 @@ func (gen *generator) irFPToSIExpr(t types.Type, old *ast.FPToSIExpr) (*constant
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irUIToFPExpr translates the given AST uitofp constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irUIToFPExpr(t types.Type, old *ast.UIToFPExpr) (*constant.ExprUIToFP, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -441,6 +806,8 @@ func (gen *generator) irUIToFPExpr(t types.Type, old *ast.UIToFPExpr) (*constant
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irSIToFPExpr translates the given AST sitofp constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irSIToFPExpr(t types.Type, old *ast.SIToFPExpr) (*constant.ExprSIToFP, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -459,6 +826,8 @@ func (gen *generator) irSIToFPExpr(t types.Type, old *ast.SIToFPExpr) (*constant
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irPtrToIntExpr translates the given AST ptrtoint constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irPtrToIntExpr(t types.Type, old *ast.PtrToIntExpr) (*constant.ExprPtrToInt, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -477,6 +846,8 @@ func (gen *generator) irPtrToIntExpr(t types.Type, old *ast.PtrToIntExpr) (*cons
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irIntToPtrExpr translates the given AST inttoptr constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irIntToPtrExpr(t types.Type, old *ast.IntToPtrExpr) (*constant.ExprIntToPtr, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -495,6 +866,8 @@ func (gen *generator) irIntToPtrExpr(t types.Type, old *ast.IntToPtrExpr) (*cons
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irBitCastExpr translates the given AST bitcast constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irBitCastExpr(t types.Type, old *ast.BitCastExpr) (*constant.ExprBitCast, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -513,6 +886,8 @@ func (gen *generator) irBitCastExpr(t types.Type, old *ast.BitCastExpr) (*consta
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irAddrSpaceCastExpr translates the given AST addrspacecast constant
+// expression into an equivalent IR constant expression.
 func (gen *generator) irAddrSpaceCastExpr(t types.Type, old *ast.AddrSpaceCastExpr) (*constant.ExprAddrSpaceCast, error) {
 	// From.
 	from, err := gen.irTypeConst(old.From())
@@ -533,18 +908,66 @@ func (gen *generator) irAddrSpaceCastExpr(t types.Type, old *ast.AddrSpaceCastEx
 
 // ~~~ [ icmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irICmpExpr translates the given AST icmp constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irICmpExpr(t types.Type, old *ast.ICmpExpr) (*constant.ExprICmp, error) {
-	panic("not yet implemented")
+	// Integer comparison predicate.
+	pred := asmenum.IPredFromString(old.Pred().Text())
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewICmp(pred, x, y)
+	return expr, nil
 }
 
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irFCmpExpr translates the given AST fcmp constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irFCmpExpr(t types.Type, old *ast.FCmpExpr) (*constant.ExprFCmp, error) {
-	panic("not yet implemented")
+	// Floating-point comparison predicate.
+	pred := asmenum.FPredFromString(old.Pred().Text())
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFCmp(pred, x, y)
+	return expr, nil
 }
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irSelectExpr translates the given AST select constant expression into an
+// equivalent IR constant expression.
 func (gen *generator) irSelectExpr(t types.Type, old *ast.SelectExpr) (*constant.ExprSelect, error) {
-	panic("not yet implemented")
+	// Selection condition.
+	cond, err := gen.irTypeConst(old.Cond())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Y operand.
+	y, err := gen.irTypeConst(old.Y())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewSelect(cond, x, y)
+	return expr, nil
 }

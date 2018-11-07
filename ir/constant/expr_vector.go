@@ -16,6 +16,11 @@ type ExprExtractElement struct {
 	X Constant
 	// Element index.
 	Index Constant
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewExtractElement returns a new extractelement expression based on the given
@@ -32,9 +37,15 @@ func (e *ExprExtractElement) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprExtractElement) Type() types.Type {
-	// TODO: cache type?
-	typ := e.X.Type().(*types.VectorType)
-	return typ.ElemType
+	// Cache type if not present.
+	if e.Typ == nil {
+		t, ok := e.X.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", e.X.Type()))
+		}
+		e.Typ = t.ElemType
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -59,6 +70,11 @@ type ExprInsertElement struct {
 	Elem Constant
 	// Element index.
 	Index Constant
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewInsertElement returns a new insertelement expression based on the given
@@ -75,8 +91,15 @@ func (e *ExprInsertElement) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprInsertElement) Type() types.Type {
-	// TODO: cache type?
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		t, ok := e.X.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", e.X.Type()))
+		}
+		e.Typ = t
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -99,6 +122,11 @@ type ExprShuffleVector struct {
 	X, Y Constant
 	// Shuffle mask.
 	Mask Constant
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewShuffleVector returns a new shufflevector expression based on the given
@@ -115,7 +143,19 @@ func (e *ExprShuffleVector) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprShuffleVector) Type() types.Type {
-	return e.Mask.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		xType, ok := e.X.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", e.X.Type()))
+		}
+		maskType, ok := e.Mask.Type().(*types.VectorType)
+		if !ok {
+			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", e.Mask.Type()))
+		}
+		e.Typ = types.NewVector(maskType.Len, xType.ElemType)
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
