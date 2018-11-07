@@ -17,6 +17,11 @@ type ExprExtractValue struct {
 	X Constant
 	// Element indices.
 	Indices []int64
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewExtractValue returns a new extractvalue expression based on the given
@@ -33,7 +38,11 @@ func (e *ExprExtractValue) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprExtractValue) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = aggregateElemType(e.X.Type(), e.Indices)
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -64,6 +73,11 @@ type ExprInsertValue struct {
 	Elem Constant
 	// Element indices.
 	Indices []int64
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewInsertValue returns a new insertvalue expression based on the given
@@ -80,7 +94,11 @@ func (e *ExprInsertValue) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprInsertValue) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -99,4 +117,23 @@ func (e *ExprInsertValue) Ident() string {
 // constant expression.
 func (e *ExprInsertValue) Simplify() Constant {
 	panic("not yet implemented")
+}
+
+// ### [ Helper functions ] ####################################################
+
+// aggregateElemType returns the element type at the position in the aggregate
+// type specified by the given indices.
+func aggregateElemType(t types.Type, indices []int64) types.Type {
+	// Base case.
+	if len(indices) == 0 {
+		return t
+	}
+	switch t := t.(type) {
+	case *types.ArrayType:
+		return aggregateElemType(t.ElemType, indices[1:])
+	case *types.StructType:
+		return aggregateElemType(t.Fields[indices[0]], indices[1:])
+	default:
+		panic(fmt.Errorf("support for aggregate type %T not yet implemented", t))
+	}
 }

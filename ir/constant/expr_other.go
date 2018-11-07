@@ -17,6 +17,11 @@ type ExprICmp struct {
 	Pred enum.IPred
 	// Integer scalar or vector operands.
 	X, Y Constant
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewICmp returns a new icmp expression based on the given integer comparison
@@ -33,7 +38,18 @@ func (e *ExprICmp) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprICmp) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if e.Typ == nil {
+		switch xType := e.X.Type().(type) {
+		case *types.IntType, *types.PointerType:
+			e.Typ = types.I1
+		case *types.VectorType:
+			e.Typ = types.NewVector(xType.Len, types.I1)
+		default:
+			panic(fmt.Errorf("invalid icmp operand type; expected *types.IntType, *types.PointerType or *types.VectorType, got %T", xType))
+		}
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -56,6 +72,11 @@ type ExprFCmp struct {
 	Pred enum.FPred
 	// Floating-point scalar or vector operands.
 	X, Y Constant
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
@@ -72,7 +93,18 @@ func (e *ExprFCmp) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprFCmp) Type() types.Type {
-	panic("not yet implemented")
+	// Cache type if not present.
+	if e.Typ == nil {
+		switch xType := e.X.Type().(type) {
+		case *types.FloatType:
+			e.Typ = types.I1
+		case *types.VectorType:
+			e.Typ = types.NewVector(xType.Len, types.I1)
+		default:
+			panic(fmt.Errorf("invalid fcmp operand type; expected *types.FloatType or *types.VectorType, got %T", xType))
+		}
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
@@ -95,6 +127,11 @@ type ExprSelect struct {
 	Cond Constant
 	// Operands.
 	X, Y Constant
+
+	// extra.
+
+	// Type of result produced by the constant expression.
+	Typ types.Type
 }
 
 // NewSelect returns a new select expression based on the given selection
@@ -111,7 +148,11 @@ func (e *ExprSelect) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprSelect) Type() types.Type {
-	return e.X.Type()
+	// Cache type if not present.
+	if e.Typ == nil {
+		e.Typ = e.X.Type()
+	}
+	return e.Typ
 }
 
 // Ident returns the identifier associated with the constant expression.
