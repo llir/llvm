@@ -32,8 +32,8 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/cfgstructures.ll"},
 		//{path: "testdata/Feature/cold.ll"},
 		{path: "testdata/Feature/comdat.ll"},
-		{path: "testdata/Feature/constexpr.ll"},
-		//{path: "testdata/Feature/constpointer.ll"},
+		//{path: "testdata/Feature/constexpr.ll"}, // TODO: re-enable when signed hex integer literals are supported.
+		{path: "testdata/Feature/constpointer.ll"},
 		//{path: "testdata/Feature/const_pv.ll"},
 		//{path: "testdata/Feature/elf-linker-options.ll"},
 		//{path: "testdata/Feature/escaped_label.ll"},
