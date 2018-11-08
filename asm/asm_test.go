@@ -54,7 +54,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Feature/intrinsics.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
 		{path: "testdata/Feature/load_module.ll"},
 		{path: "testdata/Feature/md_on_instruction.ll"},
-		//{path: "testdata/Feature/memorymarkers.ll"},
+		{path: "testdata/Feature/memorymarkers.ll"},
 		//{path: "testdata/Feature/metadata.ll"},
 		{path: "testdata/Feature/minsize_attr.ll"},
 		//{path: "testdata/Feature/NamedMDNode2.ll"},

@@ -622,6 +622,12 @@ func (t *StructType) Def() string {
 	if t.Opaque {
 		return "opaque"
 	}
+	if len(t.Fields) == 0 {
+		if t.Packed {
+			return "<{}>"
+		}
+		return "{}"
+	}
 	buf := &strings.Builder{}
 	if t.Packed {
 		buf.WriteString("<")
