@@ -1,0 +1,1 @@
+declare void @llvm.nvvm.barrier0()
