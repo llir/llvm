@@ -36,9 +36,9 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/constpointer.ll"},
 		{path: "testdata/Feature/const_pv.ll"},
 		{path: "testdata/Feature/elf-linker-options.ll"},
-		//{path: "testdata/Feature/escaped_label.ll"},
+		{path: "testdata/Feature/escaped_label.ll"},
 		{path: "testdata/Feature/exception.ll"},
-		//{path: "testdata/Feature/float.ll"},
+		//{path: "testdata/Feature/float.ll"}, // TODO: re-enable when hex float literals are supported.
 		//{path: "testdata/Feature/fold-fpcast.ll"}, // TODO: re-enable when hex float literals are supported.
 		{path: "testdata/Feature/forwardreftest.ll"},
 		//{path: "testdata/Feature/fp-intrinsics.ll"},
