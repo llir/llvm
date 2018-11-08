@@ -27,7 +27,7 @@ type InstExtractElement struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewExtractElement returns a new extractelement instruction based on the given
@@ -100,7 +100,7 @@ type InstInsertElement struct {
 	// Type of result produced by the instruction.
 	Typ *types.VectorType
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewInsertElement returns a new insertelement instruction based on the given
@@ -171,7 +171,7 @@ type InstShuffleVector struct {
 	// Type of result produced by the instruction.
 	Typ *types.VectorType
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given

@@ -48,7 +48,7 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 		i.Typ.AddrSpace = irAddrSpace(*n)
 	}
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -84,7 +84,7 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 		i.Alignment = irAlignment(*n)
 	}
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -126,7 +126,7 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 		i.Alignment = irAlignment(*n)
 	}
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -146,7 +146,7 @@ func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (
 	// Atomic memory ordering constraints.
 	i.Ordering = asmenum.AtomicOrderingFromString(old.Ordering().Text())
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -190,7 +190,7 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 	// Atomic memory ordering constraints on failure.
 	i.FailureOrdering = asmenum.AtomicOrderingFromString(old.FailureOrdering().Text())
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -226,7 +226,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 	// Atomic memory ordering constraints.
 	i.Ordering = asmenum.AtomicOrderingFromString(old.Ordering().Text())
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -262,6 +262,6 @@ func (fgen *funcGen) astToIRInstGetElementPtr(inst ir.Instruction, old *ast.GetE
 		i.Indices = append(i.Indices, index)
 	}
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }

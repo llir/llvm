@@ -27,7 +27,7 @@ type InstExtractValue struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewExtractValue returns a new extractvalue instruction based on the given
@@ -99,7 +99,7 @@ type InstInsertValue struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewInsertValue returns a new insertvalue instruction based on the given

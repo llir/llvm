@@ -36,7 +36,7 @@ type InstAlloca struct {
 	// (optional) Alignment; zero if not present.
 	Alignment int
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -126,7 +126,7 @@ type InstLoad struct {
 	// (optional) Alignment; zero if not present.
 	Alignment int
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -219,7 +219,7 @@ type InstStore struct {
 	// (optional) Alignment; zero if not present.
 	Alignment int
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewStore returns a new store instruction based on the given source value and
@@ -268,7 +268,7 @@ type InstFence struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
@@ -320,7 +320,7 @@ type InstCmpXchg struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -409,7 +409,7 @@ type InstAtomicRMW struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
@@ -492,7 +492,7 @@ type InstGetElementPtr struct {
 	// (optional) In-bounds.
 	InBounds bool
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given

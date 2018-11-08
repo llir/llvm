@@ -34,7 +34,7 @@ func (fgen *funcGen) astToIRInstShl(inst ir.Instruction, old *ast.ShlInst) (*ir.
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -62,7 +62,7 @@ func (fgen *funcGen) astToIRInstLShr(inst ir.Instruction, old *ast.LShrInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -90,7 +90,7 @@ func (fgen *funcGen) astToIRInstAShr(inst ir.Instruction, old *ast.AShrInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -116,7 +116,7 @@ func (fgen *funcGen) astToIRInstAnd(inst ir.Instruction, old *ast.AndInst) (*ir.
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -142,7 +142,7 @@ func (fgen *funcGen) astToIRInstOr(inst ir.Instruction, old *ast.OrInst) (*ir.In
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }
 
@@ -168,6 +168,6 @@ func (fgen *funcGen) astToIRInstXor(inst ir.Instruction, old *ast.XorInst) (*ir.
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = irMetadataAttachments(old.Metadata())
+	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return i, nil
 }

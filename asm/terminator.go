@@ -149,7 +149,7 @@ func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) error 
 	}
 	t.X = x
 	// (optional) Metadata attachments.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -169,7 +169,7 @@ func (fgen *funcGen) astToIRTermBr(term ir.Terminator, old *ast.BrTerm) error {
 	}
 	t.Target = target
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -206,7 +206,7 @@ func (fgen *funcGen) astToIRTermCondBr(term ir.Terminator, old *ast.CondBrTerm) 
 	}
 	t.TargetFalse = targetFalse
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -240,7 +240,7 @@ func (fgen *funcGen) astToIRTermSwitch(term ir.Terminator, old *ast.SwitchTerm) 
 		t.Cases = append(t.Cases, c)
 	}
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -268,7 +268,7 @@ func (fgen *funcGen) astToIRTermIndirectBr(term ir.Terminator, old *ast.Indirect
 		t.ValidTargets = append(t.ValidTargets, validTarget)
 	}
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -346,7 +346,7 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	t.Exception = exception
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -366,7 +366,7 @@ func (fgen *funcGen) astToIRTermResume(term ir.Terminator, old *ast.ResumeTerm) 
 	}
 	t.X = x
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -400,7 +400,7 @@ func (fgen *funcGen) astToIRTermCatchSwitch(term ir.Terminator, old *ast.CatchSw
 	}
 	t.UnwindTarget = unwindTarget
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -430,7 +430,7 @@ func (fgen *funcGen) astToIRTermCatchRet(term ir.Terminator, old *ast.CatchRetTe
 	}
 	t.To = to
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -460,7 +460,7 @@ func (fgen *funcGen) astToIRTermCleanupRet(term ir.Terminator, old *ast.CleanupR
 	}
 	t.UnwindTarget = unwindTarget
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }
 
@@ -474,6 +474,6 @@ func (fgen *funcGen) astToIRTermUnreachable(term ir.Terminator, old *ast.Unreach
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermUnreachable, got %T", term))
 	}
 	// (optional) Metadata.
-	t.Metadata = irMetadataAttachments(old.Metadata())
+	t.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
 	return nil
 }

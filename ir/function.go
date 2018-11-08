@@ -64,7 +64,7 @@ type Function struct {
 	// TODO: add support for UseListOrder.
 	//UseListOrders []*UseListOrder
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // TODO: decide whether to have the function name parameter be the first
@@ -126,12 +126,11 @@ func (f *Function) Def() string {
 		//
 		//    "declare" MetadataAttachments OptExternLinkage FunctionHeader
 		buf.WriteString("declare")
-		// TODO: add metadata support.
-		//for _, md := range f.Metadata {
-		//	fmt.Fprintf(buf, " %v", md)
-		//}
+		for _, md := range f.Metadata {
+			fmt.Fprintf(buf, " %s", md)
+		}
 		if f.Linkage != enum.LinkageNone {
-			fmt.Fprintf(buf, " %v", f.Linkage)
+			fmt.Fprintf(buf, " %s", f.Linkage)
 		}
 		buf.WriteString(headerString(f))
 		return buf.String()
@@ -141,14 +140,13 @@ func (f *Function) Def() string {
 	//    "define" OptLinkage FunctionHeader MetadataAttachments FunctionBody
 	buf.WriteString("define")
 	if f.Linkage != enum.LinkageNone {
-		fmt.Fprintf(buf, " %v", f.Linkage)
+		fmt.Fprintf(buf, " %s", f.Linkage)
 	}
 	buf.WriteString(headerString(f))
-	// TODO: add metadata support.
-	//for _, md := range f.Metadata {
-	//	fmt.Fprintf(buf, " %v", md)
-	//}
-	fmt.Fprintf(buf, " %v", bodyString(f))
+	for _, md := range f.Metadata {
+		fmt.Fprintf(buf, " %s", md)
+	}
+	fmt.Fprintf(buf, " %s", bodyString(f))
 	return buf.String()
 }
 
