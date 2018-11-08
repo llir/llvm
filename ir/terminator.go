@@ -404,7 +404,14 @@ func (term *TermInvoke) Def() string {
 	for _, attr := range term.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)
 	}
-	fmt.Fprintf(buf, " %v %v(", term.Type(), term.Invokee.Ident())
+	// Use function signature instead of return type for variadic functions.
+	typ := term.Type()
+	if t, ok := term.Typ.(*types.FuncType); ok {
+		if t.Variadic {
+			typ = t
+		}
+	}
+	fmt.Fprintf(buf, " %v %v(", typ, term.Invokee.Ident())
 	for i, arg := range term.Args {
 		if i != 0 {
 			buf.WriteString(", ")

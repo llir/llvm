@@ -125,6 +125,9 @@ func (m *Module) Def() string {
 		fmt.Fprintln(buf, f.Def())
 	}
 	// Attribute group definitions.
+	if len(m.AttrGroupDefs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, a := range m.AttrGroupDefs {
 		fmt.Fprintln(buf, a.Def())
 	}

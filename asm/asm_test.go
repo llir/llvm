@@ -21,10 +21,10 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/inst_other.ll"},
 		{path: "testdata/terminator.ll"},
 		// LLVM Features.
-		//{path: "testdata/Feature/alias2.ll"},
-		//{path: "testdata/Feature/aliases.ll"},
-		//{path: "testdata/Feature/alignment.ll"},
-		//{path: "testdata/Feature/attributes.ll"},
+		//{path: "testdata/Feature/alias2.ll"}, // TODO: fix grammar. syntax error at line 12
+		//{path: "testdata/Feature/aliases.ll"}, // TODO: fix grammar. syntax error at line 29
+		//{path: "testdata/Feature/alignment.ll"}, // TODO: fix grammar. syntax error at line 7
+		{path: "testdata/Feature/attributes.ll"},
 		{path: "testdata/Feature/basictest.ll"},
 		{path: "testdata/Feature/callingconventions.ll"},
 		{path: "testdata/Feature/calltest.ll"},
