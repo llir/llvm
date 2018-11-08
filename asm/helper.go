@@ -497,7 +497,26 @@ func irParamAttribute(n ast.ParamAttribute) ir.ParamAttribute {
 // irReturnAttribute returns the IR return attribute corresponding to the given
 // AST return attribute.
 func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
-	panic("not yet implemented")
+	switch n := n.(type) {
+	// TODO: add support for *ast.AttrString and *ast.AttrPair when supported by grammar.
+	//case *ast.AttrString:
+	//	return ir.AttrString(unquote(n.Text()))
+	//case *ast.AttrPair:
+	//	return ir.AttrPair{
+	//		Key:   unquote(n.Key().Text()),
+	//		Value: unquote(n.Val().Text()),
+	//	}
+	case *ast.Alignment:
+		// TODO: add support for Alignment.
+		panic("support for return attribute Alignment not yet implemented")
+	case *ast.Dereferenceable:
+		// TODO: add support for Dereferenceable.
+		panic("support for return attribute Dereferenceable not yet implemented")
+	case *ast.ReturnAttr:
+		return asmenum.ReturnAttrFromString(n.Text())
+	default:
+		panic(fmt.Errorf("support for return attribute %T not yet implemented", n))
+	}
 }
 
 // irOperandBundle returns the IR operand bundle corresponding to the given AST

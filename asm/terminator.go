@@ -307,8 +307,6 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	// (optional) Return attributes.
 	for _, oldRetAttr := range old.ReturnAttrs() {
-		// TODO: add support for return attributes.
-		break
 		retAttr := irReturnAttribute(oldRetAttr)
 		t.ReturnAttrs = append(t.ReturnAttrs, retAttr)
 	}
