@@ -7,12 +7,10 @@ import (
 
 // irMetadataAttachments returns the IR metadata attachments corresponding to
 // the given AST metadata attachments.
-func irMetadataAttachments(ns []ast.MetadataAttachment) []ir.MetadataAttachment {
-	// TODO: implement.
-	return nil
-	var mds []ir.MetadataAttachment
+func (gen *generator) irMetadataAttachments(ns []ast.MetadataAttachment) []*ir.MetadataAttachment {
+	var mds []*ir.MetadataAttachment
 	for _, n := range ns {
-		md := irMetadataAttachment(n)
+		md := gen.irMetadataAttachment(n)
 		mds = append(mds, md)
 	}
 	return mds
@@ -20,6 +18,6 @@ func irMetadataAttachments(ns []ast.MetadataAttachment) []ir.MetadataAttachment 
 
 // irMetadataAttachment returns the IR metadata attachment corresponding to
 // the given AST metadata attachment.
-func irMetadataAttachment(n ast.MetadataAttachment) ir.MetadataAttachment {
+func (gen *generator) irMetadataAttachment(n ast.MetadataAttachment) *ir.MetadataAttachment {
 	panic("not yet implemented")
 }

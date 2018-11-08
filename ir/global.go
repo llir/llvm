@@ -52,7 +52,7 @@ type Global struct {
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Metadata.
-	Metadata []MetadataAttachment
+	Metadata []*MetadataAttachment
 }
 
 // NewGlobalDecl returns a new global variable declaration based on the given
