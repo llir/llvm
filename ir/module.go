@@ -129,10 +129,16 @@ func (m *Module) Def() string {
 		fmt.Fprintln(buf, a.Def())
 	}
 	// Named metadata definitions.
+	if len(m.NamedMetadataDefs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, md := range m.NamedMetadataDefs {
 		fmt.Fprintln(buf, md.Def())
 	}
 	// Metadata definitions.
+	if len(m.MetadataDefs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, md := range m.MetadataDefs {
 		fmt.Fprintln(buf, md.Def())
 	}

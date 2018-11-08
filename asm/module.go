@@ -289,7 +289,10 @@ func (gen *generator) translateNamedMetadataDefs() error {
 func (gen *generator) translateNamedMetadataDef(new *metadata.NamedMetadataDef, old *ast.NamedMetadataDef) error {
 	// Nodes.
 	for _, oldNode := range old.MDNodes() {
-		node := gen.irMetadataNode(oldNode)
+		node, err := gen.irMetadataNode(oldNode)
+		if err != nil {
+			return errors.WithStack(err)
+		}
 		new.Nodes = append(new.Nodes, node)
 	}
 	return nil
@@ -320,41 +323,19 @@ func (gen *generator) translateMetadataDef(new *metadata.MetadataDef, old *ast.M
 	// Node.
 	switch oldNode := old.MDNode().(type) {
 	case *ast.MDTuple:
-		new.Node = gen.irMDTuple(oldNode)
+		node, err := gen.irMDTuple(oldNode)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		new.Node = node
 	case ast.SpecializedMDNode:
-		new.Node = gen.irSpecializedMDNode(oldNode)
+		node, err := gen.irSpecializedMDNode(oldNode)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		new.Node = node
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}
 	return nil
-}
-
-// ### [ Helper functions ] ####################################################
-
-func (gen *generator) irMetadataNode(old ast.MetadataNode) metadata.MetadataNode {
-	switch old := old.(type) {
-	case *ast.MetadataID:
-		id := metadataID(*old)
-		node, ok := gen.new.metadataDefs[id]
-		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
-		}
-		return node
-	case *ast.DIExpression:
-		return irDIExpression(old)
-	default:
-		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
-	}
-}
-
-func irDIExpression(old *ast.DIExpression) *metadata.DIExpression {
-	panic("not yet implemented")
-}
-
-func (gen *generator) irMDTuple(old *ast.MDTuple) *metadata.MDTuple {
-	panic("not yet implemented")
-}
-
-func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) metadata.SpecializedMDNode {
-	panic("not yet implemented")
 }

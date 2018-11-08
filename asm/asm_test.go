@@ -35,7 +35,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Feature/constexpr.ll"}, // TODO: re-enable when signed hex integer literals are supported.
 		{path: "testdata/Feature/constpointer.ll"},
 		{path: "testdata/Feature/const_pv.ll"},
-		//{path: "testdata/Feature/elf-linker-options.ll"},
+		{path: "testdata/Feature/elf-linker-options.ll"},
 		//{path: "testdata/Feature/escaped_label.ll"},
 		{path: "testdata/Feature/exception.ll"},
 		//{path: "testdata/Feature/float.ll"},
@@ -114,7 +114,7 @@ func TestParseFile(t *testing.T) {
 			if err := diffutil.Diff(want, got, false); err != nil {
 				panic(err)
 			}
-			t.Errorf("module mismatch; expected `%s`, got `%s`", want, got)
+			t.Errorf("module mismatch %q; expected `%s`, got `%s`", path, want, got)
 			continue
 		}
 	}
