@@ -1,0 +1,8 @@
+@GlobalValueName = global i32 0
+
+define i32 @foo(i32 %in) {
+somelabel:
+	%GV = load i32, i32* @GlobalValueName
+	%add = add i32 %in, %GV
+	ret i32 %add
+}
