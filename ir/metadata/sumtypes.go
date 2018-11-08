@@ -18,6 +18,7 @@ type MDField interface {
 }
 
 type SpecializedMDNode interface {
+	fmt.Stringer
 }
 
 type IntOrMDField interface {

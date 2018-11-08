@@ -20,8 +20,8 @@ func (fgen *funcGen) newIRTerm(old ast.Terminator) (ir.Terminator, error) {
 	switch old := old.(type) {
 	// Value terminators.
 	case *ast.LocalDefTerm:
-		name := local(old.Name())
-		return fgen.newIRValueTerm(name, old.Term())
+		ident := localIdent(old.Name())
+		return fgen.newIRValueTerm(ident, old.Term())
 	case ast.ValueTerminator:
 		return fgen.newIRValueTerm("", old)
 	// Non-value terminators.
@@ -75,14 +75,14 @@ func (fgen *funcGen) astToIRTerm(term ir.Terminator, old ast.Terminator) error {
 	switch old := old.(type) {
 	// Value terminators.
 	case *ast.LocalDefTerm:
-		name := local(old.Name())
-		v, ok := fgen.ls[name]
+		ident := localIdent(old.Name())
+		v, ok := fgen.ls[ident]
 		if !ok {
-			return errors.Errorf("unable to locate local variable %q", enc.Local(name))
+			return errors.Errorf("unable to locate local variable %q", enc.Local(ident))
 		}
 		t, ok := v.(ir.Terminator)
 		if !ok {
-			return errors.Errorf("invalid terminator type of %q; expected ir.Terminator, got %T", enc.Local(name), v)
+			return errors.Errorf("invalid terminator type of %q; expected ir.Terminator, got %T", enc.Local(ident), v)
 		}
 		return fgen.astToIRValueTerm(t, old.Term())
 	case ast.ValueTerminator:
@@ -323,7 +323,7 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	// (optional) Function attributes.
 	for _, oldFuncAttr := range old.FuncAttrs() {
-		funcAttr := irFuncAttribute(oldFuncAttr)
+		funcAttr := fgen.gen.irFuncAttribute(oldFuncAttr)
 		t.FuncAttrs = append(t.FuncAttrs, funcAttr)
 	}
 	// (optional) Operand bundles.

@@ -15,68 +15,28 @@ import (
 // resolveTypeDefs resolves the type definitions of the given module. The
 // returned value maps from type name (without '%' prefix) to the underlying
 // type.
-func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type, error) {
-	// index maps from type name to underlying AST type.
-	index := make(map[string]ast.LlvmNode)
-	// Record order of type definitions.
-	added := make(map[string]bool)
-	var order []string
-	// Index named AST types.
-	for _, entity := range module.TopLevelEntities() {
-		switch entity := entity.(type) {
-		case *ast.TypeDef:
-			alias := local(entity.Alias())
-			if !added[alias] {
-				// Only record the first type definition of each type name.
-				//
-				// Type definitions of opaque types may contain several type
-				// definitions with the same type name.
-				order = append(order, alias)
-			}
-			added[alias] = true
-			typ := entity.Typ()
-			switch typ.(type) {
-			case *ast.OpaqueType:
-			case ast.Type:
-			default:
-				panic(fmt.Errorf("support for type %T not yet implemented", typ))
-			}
-			if prev, ok := index[alias]; ok {
-				if _, ok := prev.(*ast.OpaqueType); !ok {
-					return nil, errors.Errorf("AST type definition with alias %q already present; prev `%s`, new `%s`", enc.Local(alias), text(prev), text(typ))
-				}
-			}
-			index[alias] = typ
-		}
-	}
-
+func (gen *generator) resolveTypeDefs() error {
 	// Create corresponding named IR types (without bodies).
-	gen.ts = make(map[string]types.Type)
-	for alias, old := range index {
+	gen.new.typeDefs = make(map[string]types.Type)
+	for alias, old := range gen.old.typeDefs {
 		// track is used to identify self-referential named types.
 		track := make(map[string]bool)
-		t, err := newIRType(alias, old, index, track)
+		t, err := newIRType(alias, old.Typ(), gen.old.typeDefs, track)
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return errors.WithStack(err)
 		}
-		gen.ts[alias] = t
+		gen.new.typeDefs[alias] = t
 	}
 
 	// Translate type defintions (including bodies).
-	for alias, old := range index {
-		t := gen.ts[alias]
-		_, err := gen.astToIRTypeDef(t, old)
+	for alias, old := range gen.old.typeDefs {
+		t := gen.new.typeDefs[alias]
+		_, err := gen.astToIRTypeDef(t, old.Typ())
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return errors.WithStack(err)
 		}
 	}
-
-	// Add type definitions to IR module in order of occurrence in input.
-	for _, key := range order {
-		t := gen.ts[key]
-		gen.m.TypeDefs = append(gen.m.TypeDefs, t)
-	}
-	return gen.ts, nil
+	return nil
 }
 
 // newIRType returns a new IR type (without body) based on the given AST type.
@@ -96,7 +56,7 @@ func (gen *generator) resolveTypeDefs(module *ast.Module) (map[string]types.Type
 //
 //    ; struct type containing pointer to itself.
 //    %d = type { %d* }
-func newIRType(alias string, old ast.LlvmNode, index map[string]ast.LlvmNode, track map[string]bool) (types.Type, error) {
+func newIRType(alias string, old ast.LlvmNode, index map[string]*ast.TypeDef, track map[string]bool) (types.Type, error) {
 	switch old := old.(type) {
 	case *ast.OpaqueType:
 		return &types.StructType{Alias: alias}, nil
@@ -124,8 +84,8 @@ func newIRType(alias string, old ast.LlvmNode, index map[string]ast.LlvmNode, tr
 			return nil, errors.Errorf("invalid named type; self-referential with type name(s) %s", strings.Join(names, ", "))
 		}
 		track[alias] = true
-		newAlias := local(old.Name())
-		newTyp := index[newAlias]
+		newAlias := localIdent(old.Name())
+		newTyp := index[newAlias].Typ()
 		return newIRType(newAlias, newTyp, index, track)
 	case *ast.PointerType:
 		return &types.PointerType{Alias: alias}, nil
@@ -503,10 +463,10 @@ func (gen *generator) astToIRPackedStructType(t types.Type, old *ast.PackedStruc
 
 func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.Type, error) {
 	// Resolve named type.
-	alias := local(old.Name())
-	typ, ok := gen.ts[alias]
+	ident := localIdent(old.Name())
+	typ, ok := gen.new.typeDefs[ident]
 	if !ok {
-		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.Local(alias))
+		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.Local(ident))
 	}
 	return typ, nil
 }

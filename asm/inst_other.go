@@ -185,7 +185,7 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	}
 	// (optional) Function attributes.
 	for _, oldFuncAttr := range old.FuncAttrs() {
-		funcAttr := irFuncAttribute(oldFuncAttr)
+		funcAttr := fgen.gen.irFuncAttribute(oldFuncAttr)
 		i.FuncAttrs = append(i.FuncAttrs, funcAttr)
 	}
 	// (optional) Operand bundles.
@@ -266,10 +266,10 @@ func (fgen *funcGen) astToIRInstCatchPad(inst ir.Instruction, old *ast.CatchPadI
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCatchPad, got %T", inst))
 	}
 	// Exception scope.
-	name := local(old.Scope())
-	v, ok := fgen.ls[name]
+	ident := localIdent(old.Scope())
+	v, ok := fgen.ls[ident]
 	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", name)
+		return nil, errors.Errorf("unable to locate local identifier %q", ident)
 	}
 	scope, ok := v.(*ir.TermCatchSwitch)
 	if !ok {

@@ -20,77 +20,114 @@ import (
 
 // --- [ Global Identifiers ] --------------------------------------------------
 
-// global returns the name (without '@' prefix) of the given global identifier.
-func global(n ast.GlobalIdent) string {
-	text := n.Text()
+// globalIdent returns the identifier (without '@' prefix) of the given global
+// identifier.
+func globalIdent(n ast.GlobalIdent) string {
+	ident := n.Text()
 	const prefix = "@"
-	if !strings.HasPrefix(text, prefix) {
-		panic(fmt.Errorf("invalid global identifier %q; missing '%s' prefix", text, prefix))
+	if !strings.HasPrefix(ident, prefix) {
+		panic(fmt.Errorf("invalid global identifier %q; missing '%s' prefix", ident, prefix))
 	}
-	text = text[len(prefix):]
-	return unquote(text)
+	ident = ident[len(prefix):]
+	return unquote(ident)
 }
 
 // --- [ Local Identifiers ] ---------------------------------------------------
 
-// local returns the name (without '%' prefix) of the given local identifier.
-func local(n ast.LocalIdent) string {
-	text := n.Text()
+// localIdent returns the identifier (without '%' prefix) of the given local
+// identifier.
+func localIdent(n ast.LocalIdent) string {
+	ident := n.Text()
 	const prefix = "%"
-	if !strings.HasPrefix(text, prefix) {
-		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", text, prefix))
+	if !strings.HasPrefix(ident, prefix) {
+		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", ident, prefix))
 	}
-	text = text[len(prefix):]
-	return unquote(text)
+	ident = ident[len(prefix):]
+	return unquote(ident)
 }
 
-// optLocal returns the name (without '%' prefix) of the given optional local
-// identifier.
-func optLocal(n *ast.LocalIdent) string {
+// optLocalIdent returns the identifier (without '%' prefix) of the given
+// optional local identifier.
+func optLocalIdent(n *ast.LocalIdent) string {
 	if n == nil {
 		return ""
 	}
-	return local(*n)
+	return localIdent(*n)
 }
 
 // --- [ Label Identifiers ] ---------------------------------------------------
 
-// label returns the name (without ':' suffix) of the given label identifier.
-func label(n ast.LabelIdent) string {
-	text := n.Text()
+// labelIdent returns the identifier (without ':' suffix) of the given label
+// identifier.
+func labelIdent(n ast.LabelIdent) string {
+	ident := n.Text()
 	const suffix = ":"
-	if !strings.HasSuffix(text, suffix) {
-		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", text, suffix))
+	if !strings.HasSuffix(ident, suffix) {
+		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", ident, suffix))
 	}
-	text = text[:len(text)-len(suffix)]
-	return unquote(text)
+	ident = ident[:len(ident)-len(suffix)]
+	return unquote(ident)
 }
 
-// optLabel returns the name (without ':' suffix) of the given optional label
-// identifier.
-func optLabel(n *ast.LabelIdent) string {
+// optLabelIdent returns the identifier (without ':' suffix) of the given
+// optional label identifier.
+func optLabelIdent(n *ast.LabelIdent) string {
 	if n == nil {
 		return ""
 	}
-	return label(*n)
+	return labelIdent(*n)
 }
 
 // --- [ Attribute Group Identifiers ] -----------------------------------------
 
+// attrGroupID returns the ID (without '#' prefix) of the given attribute group
+// ID.
+func attrGroupID(n ast.AttrGroupID) string {
+	id := n.Text()
+	const prefix = "#"
+	if !strings.HasPrefix(id, prefix) {
+		panic(fmt.Errorf("invalid attribute group ID %q; missing '%s' prefix", id, prefix))
+	}
+	id = id[len(prefix):]
+	return unquote(id)
+}
+
 // --- [ Comdat Identifiers ] --------------------------------------------------
 
-// comdat returns the name (without '%' prefix) of the given Comdat identifier.
-func comdat(n ast.ComdatName) string {
-	text := n.Text()
+// comdatName returns the name (without '%' prefix) of the given comdat name.
+func comdatName(n ast.ComdatName) string {
+	name := n.Text()
 	const prefix = "$"
-	if !strings.HasPrefix(text, prefix) {
-		panic(fmt.Errorf("invalid Comdat identifier %q; missing '%s' prefix", text, prefix))
+	if !strings.HasPrefix(name, prefix) {
+		panic(fmt.Errorf("invalid comdat name %q; missing '%s' prefix", name, prefix))
 	}
-	text = text[len(prefix):]
-	return unquote(text)
+	name = name[len(prefix):]
+	return unquote(name)
 }
 
 // --- [ Metadata Identifiers ] ------------------------------------------------
+
+// metadataIdent returns the identifier (without '!' prefix) of the given
+// metadata identifier.
+func metadataIdent(ident string) string {
+	const prefix = "!"
+	if !strings.HasPrefix(ident, prefix) {
+		panic(fmt.Errorf("invalid metadata identifier %q; missing '%s' prefix", ident, prefix))
+	}
+	ident = ident[len(prefix):]
+	return unquote(ident)
+}
+
+// metadataName returns the name (without '!' prefix) of the given metadata
+// name.
+func metadataName(n ast.MetadataName) string {
+	return metadataIdent(n.Text())
+}
+
+// metadataID returns the ID (without '!' prefix) of the given metadata ID.
+func metadataID(n ast.MetadataID) string {
+	return metadataIdent(n.Text())
+}
 
 // === [ Literals ] ============================================================
 
@@ -211,10 +248,10 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 
 // irBasicBlock returns the IR basic block corresponding to the given AST label.
 func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
-	name := local(old.Name())
-	v, ok := fgen.ls[name]
+	ident := localIdent(old.Name())
+	v, ok := fgen.ls[ident]
 	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", name)
+		return nil, errors.Errorf("unable to locate local identifier %q", ident)
 	}
 	block, ok := v.(*ir.BasicBlock)
 	if !ok {
@@ -309,10 +346,10 @@ func (fgen *funcGen) irExceptionScope(n ast.ExceptionScope) (ir.ExceptionScope, 
 	case *ast.NoneConst:
 		return constant.None, nil
 	case *ast.LocalIdent:
-		name := local(*n)
-		v, ok := fgen.ls[name]
+		ident := localIdent(*n)
+		v, ok := fgen.ls[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(name))
+			return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(ident))
 		}
 		return v, nil
 	default:
@@ -333,7 +370,7 @@ func irFastMathFlags(ns []ast.FastMathFlag) []enum.FastMathFlag {
 
 // irFuncAttribute returns the IR function attribute corresponding to the given
 // AST function attribute.
-func irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
+func (gen *generator) irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 	switch n := n.(type) {
 	case *ast.AttrString:
 		return ir.AttrString(unquote(n.Text()))
@@ -343,8 +380,12 @@ func irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 			Value: unquote(n.Val().Text()),
 		}
 	case *ast.AttrGroupID:
-		// TODO: add support for AttrGroupID.
-		panic("support for function attribute AttrGroupID not yet implemented")
+		id := attrGroupID(*n)
+		def, ok := gen.new.attrGroupDefs[id]
+		if !ok {
+			panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
+		}
+		return def
 	case *ast.AlignPair:
 		// TODO: add support for AlignPair.
 		panic("support for function attribute AlignPair not yet implemented")
@@ -386,7 +427,7 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	predName := local(oldPred)
+	predName := localIdent(oldPred)
 	v, ok := fgen.ls[predName]
 	if !ok {
 		return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(predName))

@@ -62,6 +62,7 @@ func (*BasicBlock) isUnwindTarget() {}
 
 // FuncAttribute is a function attribute.
 type FuncAttribute interface {
+	fmt.Stringer
 	// IsFuncAttribute ensures that only function attributes can be assigned to
 	// the ir.FuncAttribute interface.
 	IsFuncAttribute()

@@ -39,10 +39,10 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Const
 	case *ast.BlockAddressConst:
 		return gen.irBlockAddressConst(t, old)
 	case *ast.GlobalIdent:
-		name := global(*old)
-		v, ok := gen.gs[name]
+		ident := globalIdent(*old)
+		v, ok := gen.new.globals[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate global identifier %q", name)
+			return nil, errors.Errorf("unable to locate global identifier %q", ident)
 		}
 		return v, nil
 	case ast.ConstantExpr:
@@ -197,13 +197,17 @@ func (gen *generator) irUndefConst(t types.Type, old *ast.UndefConst) (*constant
 
 func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressConst) (*constant.BlockAddress, error) {
 	// Function.
-	funcName := global(old.Func())
-	f, err := gen.function(funcName)
-	if err != nil {
-		return nil, errors.WithStack(err)
+	funcName := globalIdent(old.Func())
+	v, ok := gen.new.globals[funcName]
+	if !ok {
+		return nil, errors.Errorf("unable to locate global identifier %q", funcName)
+	}
+	f, ok := v.(*ir.Function)
+	if !ok {
+		return nil, errors.Errorf("invalid function type; expected *ir.Function, got %T", v)
 	}
 	// Basic block.
-	blockName := local(old.Block())
+	blockName := localIdent(old.Block())
 	// Add dummy basic block to track the name recorded by the AST. Resolve the
 	// proper basic block after translation of function bodies and assignment of
 	// local IDs.

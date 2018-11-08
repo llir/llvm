@@ -7,7 +7,9 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/enum"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // === [ Modules ] =============================================================
@@ -37,20 +39,16 @@ type Module struct {
 	Aliases []*Alias
 	// (optional) IFuncs.
 	IFuncs []*IFunc
-	/*
-		// (optional) Attribute group definitions.
-		AttrGroupDefs []*enum.AttrGroupDef
-		// (optional) Named metadata definitions.
-		// TODO: figure out how to represent metadata.
-		//NamedMetadataDefs []*metadata.NamedMetadataDef
-		// (optional) Metadata definitions.
-		// TODO: figure out how to represent metadata.
-		//MetadataDefs []*metadata.MetadataDef
-		// (optional) Use-list order directives.
-		UseListOrders []*enum.UseListOrder
-		// (optional) Basic block specific use-list order directives.
-		UseListOrderBBs []*UseListOrderBB
-	*/
+	// (optional) Attribute group definitions.
+	AttrGroupDefs []*AttrGroupDef
+	// (optional) Named metadata definitions.
+	NamedMetadataDefs []*metadata.NamedMetadataDef
+	// (optional) Metadata definitions.
+	MetadataDefs []*metadata.MetadataDef
+	// (optional) Use-list order directives.
+	UseListOrders []*UseListOrder
+	// (optional) Basic block specific use-list order directives.
+	UseListOrderBBs []*UseListOrderBB
 }
 
 // Def returns the LLVM syntax representation of the module.
@@ -127,30 +125,25 @@ func (m *Module) Def() string {
 		fmt.Fprintln(buf, f.Def())
 	}
 	// Attribute group definitions.
-	// TODO: add support for AttrGoupDefs.
-	//for _, a := range m.AttrGroupDefs {
-	//	fmt.Fprintln(buf, a.Def())
-	//}
+	for _, a := range m.AttrGroupDefs {
+		fmt.Fprintln(buf, a.Def())
+	}
 	// Named metadata definitions.
-	// TODO: add support for named metadata definitions.
-	//for _, md := range m.NamedMetadataDefs {
-	//	fmt.Fprintln(buf, md.Def())
-	//}
+	for _, md := range m.NamedMetadataDefs {
+		fmt.Fprintln(buf, md.Def())
+	}
 	// Metadata definitions.
-	// TODO: add support for metadata definitions.
-	//for _, md := range m.MetadataDefs {
-	//	fmt.Fprintln(buf, md.Def())
-	//}
+	for _, md := range m.MetadataDefs {
+		fmt.Fprintln(buf, md.Def())
+	}
 	// Use-list orders.
-	// TODO: add support for use-list orders.
-	//for _, u := range m.UseListOrders {
-	//	fmt.Fprintln(buf, u.Def())
-	//}
+	for _, u := range m.UseListOrders {
+		fmt.Fprintln(buf, u.Def())
+	}
 	// Basic block specific use-list orders.
-	// TODO: add support for basic block specific use-list orders.
-	//for _, u := range m.UseListOrderBBs {
-	//	fmt.Fprintln(buf, u.Def())
-	//}
+	for _, u := range m.UseListOrderBBs {
+		fmt.Fprintln(buf, u.Def())
+	}
 	return buf.String()
 }
 
@@ -173,4 +166,96 @@ func (c *ComdatDef) String() string {
 func (c *ComdatDef) Def() string {
 	// ComdatName "=" "comdat" SelectionKind
 	return fmt.Sprintf("%s = comdat %s", enc.Comdat(c.Name), c.Kind)
+}
+
+// ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// AttrGroupDef is an attribute group definition.
+type AttrGroupDef struct {
+	// Attribute group ID (without '#' prefix).
+	ID string
+	// Function attributes.
+	FuncAttrs []FuncAttribute
+}
+
+// String returns the string representation of the attribute group definition.
+func (a *AttrGroupDef) String() string {
+	return enc.AttrGroupID(a.ID)
+}
+
+// Def returns the LLVM syntax representation of the attribute group definition.
+func (a *AttrGroupDef) Def() string {
+	// "attributes" AttrGroupID "=" "{" FuncAttrs "}"
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "attributes %s = { ", enc.AttrGroupID(a.ID))
+	for i, attr := range a.FuncAttrs {
+		if i != 0 {
+			buf.WriteString(" ")
+		}
+		// Note, alignment is printed as `align = 8` in attribute groups.
+		// TODO: add support for Alignment.
+		//if attr, ok := attr.(*Alignment); ok {
+		//	fmt.Fprintf(buf, "align = %d", attr.Align)
+		//	continue
+		//}
+		buf.WriteString(attr.String())
+	}
+	buf.WriteString(" }")
+	return buf.String()
+}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
+func (*AttrGroupDef) IsFuncAttribute() {}
+
+// ~~~ [ Use-list Order Directives ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// UseListOrder is a use-list order directive.
+type UseListOrder struct {
+	// Value.
+	Value value.Value
+	// Use-list order.
+	Indices []int64
+}
+
+// Def returns the LLVM syntax representation of the use-list order directive
+// definition.
+func (u *UseListOrder) Def() string {
+	//  "uselistorder" Type Value "," "{" IndexList "}"
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "uselistorder %s, {", u.Value)
+	for i, index := range u.Indices {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		fmt.Fprintf(buf, "%d", index)
+	}
+	buf.WriteString("}")
+	return buf.String()
+}
+
+// UseListOrderBB is a basic block specific use-list order directive.
+type UseListOrderBB struct {
+	// Function.
+	Func *Function
+	// Basic block.
+	Block *BasicBlock
+	// Use-list order.
+	Indices []int64
+}
+
+// Def returns the LLVM syntax representation of the basic block specific use-
+// list order directive definition.
+func (u *UseListOrderBB) Def() string {
+	//  "uselistorder_bb" GlobalIdent "," LocalIdent "," "{" IndexList "}"
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "uselistorder_bb %s, %s, {", u.Func.Ident(), u.Block.Ident())
+	for i, index := range u.Indices {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		fmt.Fprintf(buf, "%d", index)
+	}
+	buf.WriteString("}")
+	return buf.String()
 }
