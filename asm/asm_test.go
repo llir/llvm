@@ -66,11 +66,11 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Feature/packed.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
 		{path: "testdata/Feature/packed_struct.ll"},
 		{path: "testdata/Feature/paramattrs.ll"},
-		//{path: "testdata/Feature/ppcld.ll"},
-		//{path: "testdata/Feature/prefixdata.ll"},
-		//{path: "testdata/Feature/prologuedata.ll"},
-		//{path: "testdata/Feature/properties.ll"},
-		//{path: "testdata/Feature/prototype.ll"},
+		//{path: "testdata/Feature/ppcld.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
+		{path: "testdata/Feature/prefixdata.ll"},
+		{path: "testdata/Feature/prologuedata.ll"},
+		{path: "testdata/Feature/properties.ll"},
+		{path: "testdata/Feature/prototype.ll"},
 		//{path: "testdata/Feature/recursivetype.ll"},
 		//{path: "testdata/Feature/seh-nounwind.ll"},
 		//{path: "testdata/Feature/simplecalltest.ll"},

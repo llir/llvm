@@ -1,0 +1,9 @@
+@i = linkonce_odr global i32 1
+
+define void @f() prefix i32 1 {
+	ret void
+}
+
+define void @g() prefix i32* @i {
+	ret void
+}
