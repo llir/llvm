@@ -10,7 +10,7 @@ import (
 //
 // Examples:
 //    "foo" -> "@foo"
-//    "a b" -> `@"a\20b"`
+//    "a b" -> `@"a b"`
 //    "世" -> `@"\E4\B8\96"`
 //
 // References:
@@ -23,7 +23,7 @@ func Global(name string) string {
 //
 // Examples:
 //    "foo" -> "%foo"
-//    "a b" -> `%"a\20b"`
+//    "a b" -> `%"a b"`
 //    "世" -> `%"\E4\B8\96"`
 //
 // References:
@@ -36,7 +36,7 @@ func Local(name string) string {
 //
 // Examples:
 //    "foo" -> "foo:"
-//    "a b" -> `"a\20b":`
+//    "a b" -> `"a b":`
 //    "世" -> `"\E4\B8\96":`
 //
 // References:
@@ -61,7 +61,7 @@ func AttrGroupID(id string) string {
 //
 // Examples:
 //    "foo" -> $%foo"
-//    "a b" -> `$"a\20b"`
+//    "a b" -> `$"a b"`
 //    "世" -> `$"\E4\B8\96"`
 //
 // References:
@@ -81,8 +81,7 @@ func Comdat(name string) string {
 //    http://www.llvm.org/docs/LangRef.html#identifiers
 func Metadata(name string) string {
 	valid := func(b byte) bool {
-		const metadataCharset = tail + `\`
-		return strings.IndexByte(metadataCharset, b) != -1
+		return strings.IndexByte(tail, b) != -1
 	}
 	return "!" + string(Escape([]byte(name), valid))
 }
@@ -103,57 +102,46 @@ const (
 	// identifier (i.e. all characters in the identifier except the first). All
 	// characters of a label may be from the tail set, even the first character.
 	tail = head + decimal
+	// quotedIdent is the set of valid characters in quoted identifiers, which
+	// excludes ASCII control characters, double quote, backslash and extended
+	// ASCII characters.
+	quotedIdent = " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 )
 
-/*
-// TODO: Replace when the compiler catches up.
-//
-// Alternative, but slower implementation of EscapeIdent.
-//
-//    benchmark                      old ns/op     new ns/op     delta
-//    BenchmarkGlobalNoReplace-4     97.2          126           +29.63%
-//    BenchmarkGlobalReplace-4       233           311           +33.48%
-//    BenchmarkLocalNoReplace-4      97.1          126           +29.76%
-//    BenchmarkLocalReplace-4        233           312           +33.91%
-
 // EscapeIdent replaces any characters which are not valid in identifiers with
 // corresponding hexadecimal escape sequence (\XX).
 func EscapeIdent(s string) string {
-	valid := func(b byte) bool {
-		const identCharset = tail
-		return strings.IndexByte(identCharset, b) != -1
-	}
-	if new := Escape(s, valid); len(new) > len(s) {
-		return `"` + new + `"`
-	}
-	return s
-}
-*/
-
-// EscapeIdent replaces any characters which are not valid in identifiers with
-// corresponding hexadecimal escape sequence (\XX).
-func EscapeIdent(s string) string {
-	// Check if a replacement is required.
+	replace := false
 	extra := 0
 	for i := 0; i < len(s); i++ {
 		if strings.IndexByte(tail, s[i]) == -1 {
-			// Two extra bytes are required for each invalid byte; e.g.
-			//    "#" -> `\23`
+			// Check if a replacement is required.
+			//
+			// Note, there are characters which are not valid in an identifier
+			// (e.g. '#') but are valid in a quoted identifier, and therefore
+			// require a replacement (i.e. quoted identifier), but no extra
+			// characters for the escape sequence.
+			replace = true
+		}
+		if strings.IndexByte(quotedIdent, s[i]) == -1 {
+			// Two extra bytes are required for each byte not valid in a quoted
+			// identifier; e.g.
+			//
+			//    "\t" -> `\09`
 			//    "世" -> `\E4\B8\96`
 			extra += 2
 		}
 	}
-	if extra == 0 {
+	if !replace {
 		return s
 	}
-
 	// Replace invalid characters.
 	const hextable = "0123456789ABCDEF"
 	buf := make([]byte, len(s)+extra)
 	j := 0
 	for i := 0; i < len(s); i++ {
 		b := s[i]
-		if strings.IndexByte(tail, b) != -1 {
+		if strings.IndexByte(quotedIdent, b) != -1 {
 			buf[j] = b
 			j++
 			continue
@@ -192,7 +180,6 @@ func Escape(s []byte, valid func(b byte) bool) string {
 	if extra == 0 {
 		return string(s)
 	}
-
 	// Replace invalid characters.
 	const hextable = "0123456789ABCDEF"
 	buf := make([]byte, len(s)+extra)
