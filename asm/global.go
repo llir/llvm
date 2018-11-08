@@ -479,9 +479,9 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.CallingConv = irCallingConv(n)
 	}
 	// (optional) Return attributes.
-	for _, oldReturnAttr := range old.ReturnAttrs() {
-		returnAttr := irReturnAttribute(oldReturnAttr)
-		new.ReturnAttrs = append(new.ReturnAttrs, returnAttr)
+	for _, oldRetAttr := range old.ReturnAttrs() {
+		retAttr := irReturnAttribute(oldRetAttr)
+		new.ReturnAttrs = append(new.ReturnAttrs, retAttr)
 	}
 	// Return type: handled in newGlobal.
 	// Function parameters.

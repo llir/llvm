@@ -165,8 +165,6 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	}
 	// (optional) Return attributes.
 	for _, oldRetAttr := range old.ReturnAttrs() {
-		// TODO: add support for return attributes.
-		break
 		retAttr := irReturnAttribute(oldRetAttr)
 		i.ReturnAttrs = append(i.ReturnAttrs, retAttr)
 	}
