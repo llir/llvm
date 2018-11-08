@@ -1,0 +1,4 @@
+!llvm.linker.options = !{!0, !1}
+
+!0 = !{!"option 0", !"value 0"}
+!1 = !{!"option 1", !"value 1"}

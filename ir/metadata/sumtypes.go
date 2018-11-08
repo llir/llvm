@@ -27,3 +27,7 @@ type IntOrMDField interface {
 type DIExpressionField interface {
 	fmt.Stringer
 }
+
+type Metadata interface {
+	fmt.Stringer
+}
