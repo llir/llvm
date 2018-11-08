@@ -31,7 +31,11 @@ func (fgen *funcGen) astToIRInstExtractValue(inst ir.Instruction, old *ast.Extra
 		i.Indices = append(i.Indices, int64(index))
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -62,6 +66,10 @@ func (fgen *funcGen) astToIRInstInsertValue(inst ir.Instruction, old *ast.Insert
 		i.Indices = append(i.Indices, int64(index))
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -64,7 +65,7 @@ type Function struct {
 	// TODO: add support for UseListOrder.
 	//UseListOrders []*UseListOrder
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // TODO: decide whether to have the function name parameter be the first

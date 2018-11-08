@@ -34,7 +34,11 @@ func (fgen *funcGen) astToIRInstAdd(inst ir.Instruction, old *ast.AddInst) (*ir.
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -62,7 +66,11 @@ func (fgen *funcGen) astToIRInstFAdd(inst ir.Instruction, old *ast.FAddInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -90,7 +98,11 @@ func (fgen *funcGen) astToIRInstSub(inst ir.Instruction, old *ast.SubInst) (*ir.
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -118,7 +130,11 @@ func (fgen *funcGen) astToIRInstFSub(inst ir.Instruction, old *ast.FSubInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -146,7 +162,11 @@ func (fgen *funcGen) astToIRInstMul(inst ir.Instruction, old *ast.MulInst) (*ir.
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -174,7 +194,11 @@ func (fgen *funcGen) astToIRInstFMul(inst ir.Instruction, old *ast.FMulInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -202,7 +226,11 @@ func (fgen *funcGen) astToIRInstUDiv(inst ir.Instruction, old *ast.UDivInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -230,7 +258,11 @@ func (fgen *funcGen) astToIRInstSDiv(inst ir.Instruction, old *ast.SDivInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -258,7 +290,11 @@ func (fgen *funcGen) astToIRInstFDiv(inst ir.Instruction, old *ast.FDivInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -284,7 +320,11 @@ func (fgen *funcGen) astToIRInstURem(inst ir.Instruction, old *ast.URemInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -310,7 +350,11 @@ func (fgen *funcGen) astToIRInstSRem(inst ir.Instruction, old *ast.SRemInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -338,6 +382,10 @@ func (fgen *funcGen) astToIRInstFRem(inst ir.Instruction, old *ast.FRemInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }

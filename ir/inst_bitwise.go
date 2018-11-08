@@ -6,6 +6,7 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/enum"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -28,7 +29,7 @@ type InstShl struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewShl returns a new shl instruction based on the given operands.
@@ -98,7 +99,7 @@ type InstLShr struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewLShr returns a new lshr instruction based on the given operands.
@@ -168,7 +169,7 @@ type InstAShr struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewAShr returns a new ashr instruction based on the given operands.
@@ -236,7 +237,7 @@ type InstAnd struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewAnd returns a new and instruction based on the given operands.
@@ -300,7 +301,7 @@ type InstOr struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewOr returns a new or instruction based on the given operands.
@@ -364,7 +365,7 @@ type InstXor struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewXor returns a new xor instruction based on the given operands.
