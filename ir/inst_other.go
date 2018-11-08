@@ -438,7 +438,14 @@ func (inst *InstCall) Def() string {
 	for _, attr := range inst.ReturnAttrs {
 		fmt.Fprintf(buf, " %v", attr)
 	}
-	fmt.Fprintf(buf, " %v %v(", inst.Type(), inst.Callee.Ident())
+	// Use function signature instead of return type for variadic functions.
+	typ := inst.Type()
+	if t, ok := inst.Typ.(*types.FuncType); ok {
+		if t.Variadic {
+			typ = t
+		}
+	}
+	fmt.Fprintf(buf, " %v %v(", typ, inst.Callee.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")
