@@ -21,6 +21,7 @@ package asm
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
@@ -307,7 +308,8 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstGetElementPtr{LocalName: name, Typ: types.NewPointer(elemType)}, nil
+		typ := gepType(elemType, old.Indices())
+		return &ir.InstGetElementPtr{LocalName: name, Typ: typ}, nil
 	// Conversion instructions
 	case *ast.TruncInst:
 		to, err := fgen.gen.irType(old.To())
@@ -627,4 +629,42 @@ func aggregateElemType(t types.Type, indices []uint64) types.Type {
 	default:
 		panic(fmt.Errorf("support for aggregate type %T not yet implemented", t))
 	}
+}
+
+// gepType returns the pointer type to the element at the position in the type
+// specified by the given indices, as calculated by the getelementptr
+// instruction.
+func gepType(elemType types.Type, indices []ast.TypeValue) *types.PointerType {
+	e := elemType
+	for i, index := range indices {
+		if i == 0 {
+			// Ignore checking the 0th index as it simply follows the pointer of
+			// src.
+			//
+			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
+			continue
+		}
+		switch t := e.(type) {
+		case *types.PointerType:
+			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
+			panic(fmt.Errorf("unable to index into element of pointer type `%v`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
+		case *types.VectorType:
+			e = t.ElemType
+		case *types.ArrayType:
+			e = t.ElemType
+		case *types.StructType:
+			idx, ok := index.Val().(*ast.IntConst)
+			if !ok {
+				panic(fmt.Errorf("invalid index type for structure element; expected *ast.IntConst, got %T", index))
+			}
+			i, err := strconv.ParseInt(idx.Text(), 10, 64)
+			if err != nil {
+				panic(fmt.Errorf("unable to parse integer %q; %v", idx.Text(), err))
+			}
+			e = t.Fields[i]
+		default:
+			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
+		}
+	}
+	return types.NewPointer(e)
 }
