@@ -32,7 +32,11 @@ func (fgen *funcGen) astToIRInstTrunc(inst ir.Instruction, old *ast.TruncInst) (
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -58,7 +62,11 @@ func (fgen *funcGen) astToIRInstZExt(inst ir.Instruction, old *ast.ZExtInst) (*i
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -84,7 +92,11 @@ func (fgen *funcGen) astToIRInstSExt(inst ir.Instruction, old *ast.SExtInst) (*i
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -110,7 +122,11 @@ func (fgen *funcGen) astToIRInstFPTrunc(inst ir.Instruction, old *ast.FPTruncIns
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -136,7 +152,11 @@ func (fgen *funcGen) astToIRInstFPExt(inst ir.Instruction, old *ast.FPExtInst) (
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -162,7 +182,11 @@ func (fgen *funcGen) astToIRInstFPToUI(inst ir.Instruction, old *ast.FPToUIInst)
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -188,7 +212,11 @@ func (fgen *funcGen) astToIRInstFPToSI(inst ir.Instruction, old *ast.FPToSIInst)
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -214,7 +242,11 @@ func (fgen *funcGen) astToIRInstUIToFP(inst ir.Instruction, old *ast.UIToFPInst)
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -240,7 +272,11 @@ func (fgen *funcGen) astToIRInstSIToFP(inst ir.Instruction, old *ast.SIToFPInst)
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -266,7 +302,11 @@ func (fgen *funcGen) astToIRInstPtrToInt(inst ir.Instruction, old *ast.PtrToIntI
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -292,7 +332,11 @@ func (fgen *funcGen) astToIRInstIntToPtr(inst ir.Instruction, old *ast.IntToPtrI
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -318,7 +362,11 @@ func (fgen *funcGen) astToIRInstBitCast(inst ir.Instruction, old *ast.BitCastIns
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -344,6 +392,10 @@ func (fgen *funcGen) astToIRInstAddrSpaceCast(inst ir.Instruction, old *ast.Addr
 	}
 	i.To = to
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }

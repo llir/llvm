@@ -5,26 +5,57 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/internal/enc"
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/pkg/errors"
 )
 
 // irMetadataAttachments returns the IR metadata attachments corresponding to
 // the given AST metadata attachments.
-func (gen *generator) irMetadataAttachments(ns []ast.MetadataAttachment) []*ir.MetadataAttachment {
-	var mds []*ir.MetadataAttachment
+func (gen *generator) irMetadataAttachments(ns []ast.MetadataAttachment) ([]*metadata.MetadataAttachment, error) {
+	var mds []*metadata.MetadataAttachment
 	for _, n := range ns {
-		md := gen.irMetadataAttachment(n)
+		md, err := gen.irMetadataAttachment(n)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
 		mds = append(mds, md)
 	}
-	return mds
+	return mds, nil
 }
 
 // irMetadataAttachment returns the IR metadata attachment corresponding to
 // the given AST metadata attachment.
-func (gen *generator) irMetadataAttachment(n ast.MetadataAttachment) *ir.MetadataAttachment {
-	panic("not yet implemented")
+func (gen *generator) irMetadataAttachment(old ast.MetadataAttachment) (*metadata.MetadataAttachment, error) {
+	// Name.
+	name := metadataName(old.Name())
+	// Node.
+	node, err := gen.irMDNode(old.MDNode())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	md := &metadata.MetadataAttachment{
+		Name: name,
+		Node: node,
+	}
+	return md, nil
+}
+
+func (gen *generator) irMDNode(old ast.MDNode) (metadata.MDNode, error) {
+	switch old := old.(type) {
+	case *ast.MDTuple:
+		return gen.irMDTuple(old)
+	case *ast.MetadataID:
+		id := metadataID(*old)
+		node, ok := gen.new.metadataDefs[id]
+		if !ok {
+			panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
+		}
+		return node, nil
+	case ast.SpecializedMDNode:
+		return gen.irSpecializedMDNode(old)
+	default:
+		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
+	}
 }
 
 func irDIExpression(old *ast.DIExpression) *metadata.DIExpression {

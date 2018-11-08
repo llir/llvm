@@ -236,7 +236,11 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 		new.Align = int64(uintLit(n.N()))
 	}
 	// (optional) Metadata.
-	new.Metadata = gen.irMetadataAttachments(old.Metadata())
+	md, err := gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	new.Metadata = md
 	// (optional) Function attributes.
 	for _, oldFuncAttr := range old.FuncAttrs() {
 		funcAttr := gen.irFuncAttribute(oldFuncAttr)
@@ -308,7 +312,11 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 		new.Align = int64(uintLit(n.N()))
 	}
 	// (optional) Metadata.
-	new.Metadata = gen.irMetadataAttachments(old.Metadata())
+	md, err := gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	new.Metadata = md
 	// (optional) Function attributes.
 	for _, oldFuncAttr := range old.FuncAttrs() {
 		funcAttr := gen.irFuncAttribute(oldFuncAttr)
@@ -406,7 +414,11 @@ func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IFuncDef) error 
 // translateFuncDecl translates the given AST function declaration to IR.
 func (gen *generator) translateFuncDecl(new *ir.Function, old *ast.FuncDecl) error {
 	// (optional) Metadata.
-	new.Metadata = gen.irMetadataAttachments(old.Metadata())
+	md, err := gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	new.Metadata = md
 	// Function header.
 	if err := gen.translateFuncHeader(new, old.Header()); err != nil {
 		return errors.WithStack(err)
@@ -423,7 +435,11 @@ func (gen *generator) translateFuncDef(new *ir.Function, old *ast.FuncDef) error
 		return errors.WithStack(err)
 	}
 	// (optional) Metadata.
-	new.Metadata = gen.irMetadataAttachments(old.Metadata())
+	md, err := gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	new.Metadata = md
 	// Basic blocks.
 	fgen := newFuncGen(gen, new)
 	if err := fgen.resolveLocals(old.Body()); err != nil {

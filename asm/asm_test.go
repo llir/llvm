@@ -41,19 +41,19 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Feature/float.ll"}, // TODO: re-enable when hex float literals are supported.
 		//{path: "testdata/Feature/fold-fpcast.ll"}, // TODO: re-enable when hex float literals are supported.
 		{path: "testdata/Feature/forwardreftest.ll"},
-		//{path: "testdata/Feature/fp-intrinsics.ll"},
+		//{path: "testdata/Feature/fp-intrinsics.ll"}, // TODO: add support for metadata function arguments.
 		{path: "testdata/Feature/global_pv.ll"},
-		//{path: "testdata/Feature/globalredefinition3.ll"},
+		//{path: "testdata/Feature/globalredefinition3.ll"}, // TODO: figure out how to test. should report error "redefinition of global '@B'"
 		{path: "testdata/Feature/global_section.ll"},
 		{path: "testdata/Feature/globalvars.ll"},
 		{path: "testdata/Feature/indirectcall2.ll"},
 		{path: "testdata/Feature/indirectcall.ll"},
-		//{path: "testdata/Feature/inlineasm.ll"},
+		//{path: "testdata/Feature/inlineasm.ll"}, // TODO: add support for inline assembly values.
 		{path: "testdata/Feature/instructions.ll"},
 		{path: "testdata/Feature/intrinsic-noduplicate.ll"},
 		//{path: "testdata/Feature/intrinsics.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
 		{path: "testdata/Feature/load_module.ll"},
-		//{path: "testdata/Feature/md_on_instruction.ll"},
+		{path: "testdata/Feature/md_on_instruction.ll"},
 		//{path: "testdata/Feature/memorymarkers.ll"},
 		//{path: "testdata/Feature/metadata.ll"},
 		{path: "testdata/Feature/minsize_attr.ll"},

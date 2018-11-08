@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -27,7 +28,7 @@ type InstExtractValue struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewExtractValue returns a new extractvalue instruction based on the given
@@ -99,7 +100,7 @@ type InstInsertValue struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*MetadataAttachment
+	Metadata []*metadata.MetadataAttachment
 }
 
 // NewInsertValue returns a new insertvalue instruction based on the given

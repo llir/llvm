@@ -36,7 +36,11 @@ func (fgen *funcGen) astToIRInstICmp(inst ir.Instruction, old *ast.ICmpInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -66,7 +70,11 @@ func (fgen *funcGen) astToIRInstFCmp(inst ir.Instruction, old *ast.FCmpInst) (*i
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -92,7 +100,11 @@ func (fgen *funcGen) astToIRInstPhi(inst ir.Instruction, old *ast.PhiInst) (*ir.
 		i.Incs = append(i.Incs, inc)
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -124,7 +136,11 @@ func (fgen *funcGen) astToIRInstSelect(inst ir.Instruction, old *ast.SelectInst)
 	}
 	i.Y = y
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -196,7 +212,11 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 		i.OperandBundles = append(i.OperandBundles, operandBundle)
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -222,7 +242,11 @@ func (fgen *funcGen) astToIRInstVAArg(inst ir.Instruction, old *ast.VAArgInst) (
 	}
 	i.ArgType = argType
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -252,7 +276,11 @@ func (fgen *funcGen) astToIRInstLandingPad(inst ir.Instruction, old *ast.Landing
 		i.Clauses = append(i.Clauses, clause)
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -285,7 +313,11 @@ func (fgen *funcGen) astToIRInstCatchPad(inst ir.Instruction, old *ast.CatchPadI
 		i.Args = append(i.Args, arg)
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }
 
@@ -313,6 +345,10 @@ func (fgen *funcGen) astToIRInstCleanupPad(inst ir.Instruction, old *ast.Cleanup
 		i.Args = append(i.Args, arg)
 	}
 	// (optional) Metadata.
-	i.Metadata = fgen.gen.irMetadataAttachments(old.Metadata())
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	i.Metadata = md
 	return i, nil
 }

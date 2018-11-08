@@ -27,7 +27,7 @@ func (fgen *funcGen) astToIRValue(typ types.Type, old ast.Value) (value.Value, e
 		return v, nil
 	case *ast.InlineAsm:
 		// TODO: implement
-		panic("not yet implemented")
+		panic("support for AST value *ast.InlineAsm not yet implemented")
 	case ast.Constant:
 		return fgen.gen.irConstant(typ, old)
 	default:
