@@ -12,17 +12,17 @@ import (
 func (fgen *funcGen) astToIRValue(typ types.Type, old ast.Value) (value.Value, error) {
 	switch old := old.(type) {
 	case *ast.GlobalIdent:
-		name := global(*old)
-		v, ok := fgen.gen.gs[name]
+		ident := globalIdent(*old)
+		v, ok := fgen.gen.new.globals[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate global identifier %q", name)
+			return nil, errors.Errorf("unable to locate global identifier %q", ident)
 		}
 		return v, nil
 	case *ast.LocalIdent:
-		name := local(*old)
-		v, ok := fgen.ls[name]
+		ident := localIdent(*old)
+		v, ok := fgen.ls[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local identifier %q", name)
+			return nil, errors.Errorf("unable to locate local identifier %q", ident)
 		}
 		return v, nil
 	case *ast.InlineAsm:

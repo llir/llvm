@@ -68,7 +68,7 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 	// Note: Function parameters are already translated in astToIRFuncHeader.
 	f := fgen.f
 	for _, oldBlock := range oldBlocks {
-		blockName := optLabel(oldBlock.Name())
+		blockName := optLabelIdent(oldBlock.Name())
 		block := ir.NewBlock(blockName)
 		for _, oldInst := range oldBlock.Insts() {
 			inst, err := fgen.newIRInst(oldInst)

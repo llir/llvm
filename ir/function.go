@@ -48,7 +48,7 @@ type Function struct {
 	UnnamedAddr enum.UnnamedAddr
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
-	// (optional) Section; nil if not present.
+	// (optional) Section name; empty if not present.
 	Section string
 	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef

@@ -52,11 +52,11 @@ func newFuncGen(gen *generator, f *ir.Function) *funcGen {
 // resolveLocals resolves the local va1riables, basic blocks and function
 // parameters of the given function body. The returned value maps from local
 // identifier (without '%' prefix) to the corresponding IR value.
-func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, error) {
+func (fgen *funcGen) resolveLocals(body ast.FuncBody) error {
 	// Create instructions (without bodies), in preparation for index.
 	oldBlocks := body.Blocks()
 	if err := fgen.indexLocals(oldBlocks); err != nil {
-		return nil, errors.WithStack(err)
+		return errors.WithStack(err)
 	}
 	// Translate instructions.
 	f := fgen.f
@@ -65,7 +65,7 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 		for j, inst := range block.Insts {
 			old := insts[j]
 			if _, err := fgen.astToIRInst(inst, old); err != nil {
-				return nil, errors.WithStack(err)
+				return errors.WithStack(err)
 			}
 		}
 	}
@@ -73,10 +73,10 @@ func (fgen *funcGen) resolveLocals(body ast.FuncBody) (map[string]value.Value, e
 	for i, block := range f.Blocks {
 		old := oldBlocks[i].Term()
 		if err := fgen.astToIRTerm(block.Term, old); err != nil {
-			return nil, errors.WithStack(err)
+			return errors.WithStack(err)
 		}
 	}
-	return fgen.ls, nil
+	return nil
 }
 
 // newIRInst returns a new IR instruction (without body but with type) based on
@@ -85,8 +85,8 @@ func (fgen *funcGen) newIRInst(old ast.Instruction) (ir.Instruction, error) {
 	switch old := old.(type) {
 	// Value instructions.
 	case *ast.LocalDefInst:
-		name := local(old.Name())
-		return fgen.newIRValueInst(name, old.Inst())
+		ident := localIdent(old.Name())
+		return fgen.newIRValueInst(ident, old.Inst())
 	case ast.ValueInstruction:
 		return fgen.newIRValueInst("", old)
 	// Non-value instructions.
@@ -469,14 +469,14 @@ func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.I
 	switch old := old.(type) {
 	// Value instruction.
 	case *ast.LocalDefInst:
-		name := local(old.Name())
-		v, ok := fgen.ls[name]
+		ident := localIdent(old.Name())
+		v, ok := fgen.ls[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local variable %q", name)
+			return nil, errors.Errorf("unable to locate local identifier %q", ident)
 		}
 		i, ok := v.(ir.Instruction)
 		if !ok {
-			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", name, v)
+			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", ident, v)
 		}
 		return fgen.astToIRValueInst(i, old.Inst())
 	case ast.ValueInstruction:
