@@ -489,7 +489,7 @@ type InstGetElementPtr struct {
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ types.Type
+	Typ types.Type // *types.PointerType or *types.VectorType
 	// (optional) In-bounds.
 	InBounds bool
 	// (optional) Metadata.
@@ -556,7 +556,7 @@ func (inst *InstGetElementPtr) Def() string {
 // gepType returns the pointer type to the element at the position in the type
 // specified by the given indices, as calculated by the getelementptr
 // instruction.
-func gepType(elemType types.Type, indices []value.Value) *types.PointerType {
+func gepType(elemType types.Type, indices []value.Value) types.Type {
 	e := elemType
 	for i, index := range indices {
 		if i == 0 {
@@ -582,6 +582,17 @@ func gepType(elemType types.Type, indices []value.Value) *types.PointerType {
 			e = t.Fields[idx.X.Int64()]
 		default:
 			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
+		}
+	}
+	// TODO: Validate how index vectors in gep are supposed to work.
+	//
+	// Example from dir.ll:
+	//    %113 = getelementptr inbounds %struct.fileinfo, %struct.fileinfo* %96, <2 x i64> %110, !dbg !4736
+	//    %116 = bitcast i8** %115 to <2 x %struct.fileinfo*>*, !dbg !4738
+	//    store <2 x %struct.fileinfo*> %113, <2 x %struct.fileinfo*>* %116, align 8, !dbg !4738, !tbaa !1793
+	if len(indices) > 0 {
+		if t, ok := indices[0].Type().(*types.VectorType); ok {
+			return types.NewVector(t.Len, types.NewPointer(e))
 		}
 	}
 	return types.NewPointer(e)
