@@ -1,0 +1,7 @@
+declare void @samename()
+
+!llvm.stuff = !{!0, !1}
+!samename = !{!0, !1}
+
+!0 = !{i32 42}
+!1 = !{!"foo"}
