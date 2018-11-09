@@ -49,7 +49,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/globalvars.ll"},
 		{path: "testdata/Feature/indirectcall2.ll"},
 		{path: "testdata/Feature/indirectcall.ll"},
-		//{path: "testdata/Feature/inlineasm.ll"}, // TODO: add support for inline assembly values.
+		{path: "testdata/Feature/inlineasm.ll"},
 		{path: "testdata/Feature/instructions.ll"},
 		{path: "testdata/Feature/intrinsic-noduplicate.ll"},
 		//{path: "testdata/Feature/intrinsics.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
