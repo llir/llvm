@@ -9,8 +9,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TODO: handle OR of diFlags (e.g. DIFlagPrototyped | DIFlagNoReturn).
-
 // === [ SpecializedMDNode ] ===================================================
 
 func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.SpecializedMDNode, error) {
@@ -488,7 +486,28 @@ func (gen *generator) irDILexicalBlock(old *ast.DILexicalBlock) (*metadata.DILex
 // --- [ DILexicalBlockFile ] --------------------------------------------------
 
 func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metadata.DILexicalBlockFile, error) {
-	panic("support for *ast.DILexicalBlockFile not yet implemented")
+	md := &metadata.DILexicalBlockFile{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.ScopeField:
+			scope, err := gen.irMDField(oldField.Scope())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Scope = scope
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.File = file
+		case *ast.DiscriminatorIntField:
+			md.Discriminator = intLit(oldField.Discriminator())
+		default:
+			panic(fmt.Errorf("support for DILexicalBlockFile field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DILocalVariable ] -----------------------------------------------------

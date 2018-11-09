@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -26,8 +27,18 @@ func (fgen *funcGen) astToIRValue(typ types.Type, old ast.Value) (value.Value, e
 		}
 		return v, nil
 	case *ast.InlineAsm:
-		// TODO: implement
-		panic("support for AST value *ast.InlineAsm not yet implemented")
+		asm := &ir.InlineAsm{}
+		// (optional) Side effect.
+		asm.SideEffect = old.SideEffect() != nil
+		// (optional) Stack alignment.
+		asm.AlignStack = old.AlignStack() != nil
+		// (optional) Intel dialect.
+		asm.IntelDialect = old.IntelDialect() != nil
+		// Assembly instructions.
+		asm.Asm = stringLit(old.Asm())
+		// Constraints.
+		asm.Constraint = stringLit(old.Constraints())
+		return asm, nil
 	case ast.Constant:
 		return fgen.gen.irConstant(typ, old)
 	default:
