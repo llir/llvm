@@ -553,9 +553,9 @@ func (inst *InstGetElementPtr) Def() string {
 
 // ### [ Helper functions ] ####################################################
 
-// gepType returns the pointer type to the element at the position in the type
-// specified by the given indices, as calculated by the getelementptr
-// instruction.
+// gepType returns the pointer type or vector of pointers type to the element at
+// the position in the type specified by the given indices, as calculated by the
+// getelementptr instruction.
 func gepType(elemType types.Type, indices []value.Value) types.Type {
 	e := elemType
 	for i, index := range indices {
