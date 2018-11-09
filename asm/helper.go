@@ -211,9 +211,6 @@ func stringLitBytes(n ast.StringLit) []byte {
 
 // ___ [ Helpers ] _____________________________________________________________
 
-// TODO: remove irOptFoo in favour of using if n != nil { irFoo } during
-// translation.
-
 // irAddrSpace returns the IR address space corresponding to the given AST
 // address space.
 func irAddrSpace(n ast.AddrSpace) types.AddrSpace {
@@ -341,6 +338,17 @@ func (fgen *funcGen) irClause(n ast.Clause) (*ir.Clause, error) {
 	return ir.NewClause(clauseType, x), nil
 }
 
+// irDIFlags returns the IR debug info flags corresponding to the given AST
+// debug info flags.
+func irDIFlags(old ast.DIFlags) enum.DIFlag {
+	var flags enum.DIFlag
+	for _, oldFlag := range old.Flags() {
+		flag := asmenum.DIFlagFromString(oldFlag.Text())
+		flags |= flag
+	}
+	return flags
+}
+
 // irExceptionArg returns the IR exception argument corresponding to the given
 // AST exception argument.
 func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (value.Value, error) {
@@ -352,7 +360,14 @@ func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (value.Value, error) {
 	case ast.Value:
 		return fgen.astToIRValue(typ, val)
 	case ast.Metadata:
-		panic("support for metadata values not yet implemented")
+		md, err := fgen.irMetadata(val)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		v := &metadata.Value{
+			Value: md,
+		}
+		return v, nil
 	default:
 		panic(fmt.Errorf("spport for exception argument value %T not yet implemented", val))
 	}
@@ -525,8 +540,7 @@ func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 	//		Value: unquote(n.Val().Text()),
 	//	}
 	case *ast.Alignment:
-		// TODO: add support for Alignment.
-		panic("support for return attribute Alignment not yet implemented")
+		return ir.Alignment(uintLit(n.N()))
 	case *ast.Dereferenceable:
 		// TODO: add support for Dereferenceable.
 		panic("support for return attribute Dereferenceable not yet implemented")
@@ -540,6 +554,7 @@ func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 // irOperandBundle returns the IR operand bundle corresponding to the given AST
 // operand bundle.
 func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) ir.OperandBundle {
+	// TODO: add support for operand bundles.
 	panic("not yet implemented")
 }
 
