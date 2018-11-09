@@ -219,8 +219,8 @@ func irAddrSpace(n ast.AddrSpace) types.AddrSpace {
 
 // irAlignment returns the IR alignment corresponding to the given AST
 // alignment.
-func irAlignment(n ast.Alignment) int {
-	return int(uintLit(n.N()))
+func irAlignment(n ast.Alignment) ir.Alignment {
+	return ir.Alignment(uintLit(n.N()))
 }
 
 // irArg translates the given AST argument into an equivalent IR argument.

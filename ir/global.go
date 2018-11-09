@@ -49,8 +49,7 @@ type Global struct {
 	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef
 	// (optional) Alignment; zero if not present.
-	// TODO: use Alignment type.
-	Align int64
+	Align Alignment
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Metadata.
@@ -151,15 +150,13 @@ func (g *Global) Def() string {
 		}
 	}
 	if g.Align != 0 {
-		fmt.Fprintf(buf, ", align %d", g.Align)
+		fmt.Fprintf(buf, ", %s", g.Align)
 	}
-	// TODO: add metadata.
-	//for _, md := range g.Metadata {
-	//	fmt.Fprintf(buf, ", %s", md)
-	//}
-	// TODO: add function attributes.
-	//for _, attr := range g.FuncAttrs {
-	//	fmt.Fprintf(buf, " %s", attr)
-	//}
+	for _, md := range g.Metadata {
+		fmt.Fprintf(buf, ", %s", md)
+	}
+	for _, attr := range g.FuncAttrs {
+		fmt.Fprintf(buf, " %s", attr)
+	}
 	return buf.String()
 }
