@@ -10,6 +10,12 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
+// Convenience literals.
+var (
+	// Null metadata literal.
+	Null = &NullLit{}
+)
+
 // ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NamedMetadataDef is a named metadata definition.
@@ -152,7 +158,7 @@ func (m *MetadataAttachment) String() string {
 	return fmt.Sprintf("%s %s", enc.Metadata(m.Name), m.Node)
 }
 
-// --- [ Integer literal ] -----------------------------------------------------
+// --- [ Integer literals ] -----------------------------------------------------
 
 // IntLit is an integer literal.
 type IntLit int64
@@ -162,6 +168,24 @@ func (i IntLit) String() string {
 	return strconv.FormatInt(int64(i), 10)
 }
 
+// UintLit is an unsigned integer literal.
+type UintLit uint64
+
+// String returns the string representation of the unsigned integer literal.
+func (i UintLit) String() string {
+	return strconv.FormatUint(uint64(i), 10)
+}
+
 // IsDIExpressionField ensures that only DIExpression fields can be assigned to
 // the metadata.DIExpressionField interface.
-func (IntLit) IsDIExpressionField() {}
+func (UintLit) IsDIExpressionField() {}
+
+// --- [ Null literal ] --------------------------------------------------------
+
+// NullLit is a metadata null literal.
+type NullLit struct{}
+
+// String returns the string representation of the metadata null literal.
+func (i *NullLit) String() string {
+	return "null"
+}

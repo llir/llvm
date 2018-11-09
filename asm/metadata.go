@@ -76,9 +76,8 @@ func (gen *generator) irMDTuple(old *ast.MDTuple) (*metadata.MDTuple, error) {
 
 func (gen *generator) irMDField(old ast.MDField) (metadata.MDField, error) {
 	switch old := old.(type) {
-	case ast.NullLit:
-		// TODO: add support.
-		panic("support for metadata field null literal not yet implemented")
+	case *ast.NullLit:
+		return metadata.Null, nil
 	case ast.Metadata:
 		return gen.irMetadata(old)
 	default:

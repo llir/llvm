@@ -89,7 +89,7 @@ func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType
 		case *ast.EncodingField:
 			md.Encoding = asmenum.DwarfAttEncodingFromString(oldField.Encoding().Text())
 		case *ast.FlagsField:
-			md.Flags = asmenum.DIFlagFromString(oldField.Flags().Text())
+			md.Flags = irDIFlags(oldField.Flags())
 		default:
 			panic(fmt.Errorf("support for DIBasicType field %T not yet implemented", old))
 		}
@@ -205,7 +205,7 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 		case *ast.OffsetField:
 			md.Offset = intLit(oldField.OffsetField())
 		case *ast.FlagsField:
-			md.Flags = asmenum.DIFlagFromString(oldField.Flags().Text())
+			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.ElementsField:
 			elements, err := gen.irMDField(oldField.Elements())
 			if err != nil {
@@ -279,7 +279,7 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 			// TODO: rename OffsetField method to Offset once https://github.com/inspirer/textmapper/issues/13 is resolved.
 			md.Offset = intLit(oldField.OffsetField())
 		case *ast.FlagsField:
-			md.Flags = asmenum.DIFlagFromString(oldField.Flags().Text())
+			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.ExtraDataField:
 			extraData, err := gen.irMDField(oldField.ExtraData())
 			if err != nil {
@@ -332,8 +332,8 @@ func (gen *generator) irDIExpression(old *ast.DIExpression) (*metadata.DIExpress
 
 func (gen *generator) irDIExpressionField(old ast.DIExpressionField) (metadata.DIExpressionField, error) {
 	switch old := old.(type) {
-	case *ast.IntLit:
-		return metadata.IntLit(intLit(*old)), nil
+	case *ast.UintLit:
+		return metadata.UintLit(uintLit(*old)), nil
 	case *ast.DwarfOp:
 		return asmenum.DwarfOpFromString(old.Text()), nil
 	default:
@@ -522,7 +522,7 @@ func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DIL
 			}
 			md.Type = typ
 		case *ast.FlagsField:
-			md.Flags = asmenum.DIFlagFromString(oldField.Flags().Text())
+			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.AlignField:
 			md.Align = intLit(oldField.Align())
 		default:
@@ -642,7 +642,7 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 		case *ast.ThisAdjustmentField:
 			md.ThisAdjustment = intLit(oldField.ThisAdjustment())
 		case *ast.FlagsField:
-			md.Flags = asmenum.DIFlagFromString(oldField.Flags().Text())
+			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.IsOptimizedField:
 			md.IsOptimized = boolLit(oldField.IsOptimized())
 		case *ast.UnitField:
@@ -710,7 +710,7 @@ func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.D
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.FlagsField:
-			md.Flags = asmenum.DIFlagFromString(oldField.Flags().Text())
+			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.CCField:
 			md.CC = asmenum.DwarfCCFromString(oldField.CC().Text())
 		case *ast.TypesField:

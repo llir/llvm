@@ -19,6 +19,10 @@ type Alignment int64
 // the ir.ParamAttribute interface.
 func (Alignment) IsParamAttribute() {}
 
+// IsReturnAttribute ensures that only return attributes can be assigned to the
+// ir.ReturnAttribute interface.
+func (Alignment) IsReturnAttribute() {}
+
 // Arg is a function argument.
 type Arg struct {
 	// Argument value.
