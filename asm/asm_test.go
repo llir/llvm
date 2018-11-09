@@ -42,7 +42,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Feature/float.ll"}, // TODO: re-enable when hex float literals are supported.
 		//{path: "testdata/Feature/fold-fpcast.ll"}, // TODO: re-enable when hex float literals are supported.
 		{path: "testdata/Feature/forwardreftest.ll"},
-		//{path: "testdata/Feature/fp-intrinsics.ll"}, // TODO: add support for metadata function arguments.
+		{path: "testdata/Feature/fp-intrinsics.ll"},
 		{path: "testdata/Feature/global_pv.ll"},
 		//{path: "testdata/Feature/globalredefinition3.ll"}, // TODO: figure out how to test. should report error "redefinition of global '@B'"
 		{path: "testdata/Feature/global_section.ll"},

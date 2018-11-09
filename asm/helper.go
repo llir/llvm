@@ -11,6 +11,7 @@ import (
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -239,8 +240,14 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 		}
 		return x, nil
 	case ast.Metadata:
-		// TODO: add support for metadata arguments.
-		panic("support for metadata arguments not yet implemented")
+		md, err := fgen.gen.irMetadata(oldVal)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		v := &metadata.Value{
+			Value: md,
+		}
+		return v, nil
 	default:
 		panic(fmt.Errorf("support for value %T not yet implemented", oldVal))
 	}
