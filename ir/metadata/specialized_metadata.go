@@ -85,7 +85,7 @@ func (md *DICompileUnit) String() string {
 		field = fmt.Sprintf("producer: %s", quote(md.Producer))
 		fields = append(fields, field)
 	}
-	// Note, to match Clang output isOptimized is always output, even though its
+	// Note, to match Clang output isOptimized is always output, even though it's
 	// optional.
 	field = fmt.Sprintf("isOptimized: %t", md.IsOptimized)
 	fields = append(fields, field)
@@ -427,7 +427,7 @@ func (md *DIGlobalVariable) String() string {
 		field := fmt.Sprintf("type: %s", md.Type)
 		fields = append(fields, field)
 	}
-	// Note, to match Clang output isLocal is always output, even though its
+	// Note, to match Clang output isLocal is always output, even though it's
 	// optional.
 	field = fmt.Sprintf("isLocal: %t", md.IsLocal)
 	fields = append(fields, field)
@@ -665,7 +665,7 @@ type DILocation struct {
 func (md *DILocation) String() string {
 	// "!DILocation" "(" DILocationFields ")"
 	var fields []string
-	// Note, to match Clang output line is always output, even though its
+	// Note, to match Clang output line is always output, even though it's
 	// optional.
 	field := fmt.Sprintf("line: %d", md.Line)
 	fields = append(fields, field)
@@ -910,7 +910,7 @@ func (md *DISubprogram) String() string {
 		field := fmt.Sprintf("type: %s", md.Type)
 		fields = append(fields, field)
 	}
-	// Note, to match Clang output isLocal is always output, even though its
+	// Note, to match Clang output isLocal is always output, even though it's
 	// optional.
 	field := fmt.Sprintf("isLocal: %t", md.IsLocal)
 	fields = append(fields, field)
@@ -942,7 +942,7 @@ func (md *DISubprogram) String() string {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
 		fields = append(fields, field)
 	}
-	// Note, to match Clang output isOptimized is always output, even though its
+	// Note, to match Clang output isOptimized is always output, even though it's
 	// optional.
 	field = fmt.Sprintf("isOptimized: %t", md.IsOptimized)
 	fields = append(fields, field)
