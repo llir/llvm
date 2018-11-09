@@ -93,10 +93,10 @@ func (md *DICompileUnit) String() string {
 		field = fmt.Sprintf("mdFlags: %s", quote(md.Flags))
 		fields = append(fields, field)
 	}
-	if md.RuntimeVersion != 0 {
-		field = fmt.Sprintf("runtimeVersion: %d", md.RuntimeVersion)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output runtimeVersion is always output, even though
+	// its optional.
+	field = fmt.Sprintf("runtimeVersion: %d", md.RuntimeVersion)
+	fields = append(fields, field)
 	if len(md.SplitDebugFilename) > 0 {
 		field = fmt.Sprintf("mdSplitDebugFilename: %s", quote(md.SplitDebugFilename))
 		fields = append(fields, field)
@@ -427,10 +427,10 @@ func (md *DIGlobalVariable) String() string {
 		field := fmt.Sprintf("type: %s", md.Type)
 		fields = append(fields, field)
 	}
-	if md.IsLocal {
-		field := fmt.Sprintf("isLocal: %t", md.IsLocal)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output isLocal is always output, even though its
+	// optional.
+	field = fmt.Sprintf("isLocal: %t", md.IsLocal)
+	fields = append(fields, field)
 	if md.IsDefinition {
 		field := fmt.Sprintf("isDefinition: %t", md.IsDefinition)
 		fields = append(fields, field)
@@ -665,15 +665,15 @@ type DILocation struct {
 func (md *DILocation) String() string {
 	// "!DILocation" "(" DILocationFields ")"
 	var fields []string
-	if md.Line != 0 {
-		field := fmt.Sprintf("line: %d", md.Line)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output line is always output, even though its
+	// optional.
+	field := fmt.Sprintf("line: %d", md.Line)
+	fields = append(fields, field)
 	if md.Column != 0 {
 		field := fmt.Sprintf("column: %d", md.Column)
 		fields = append(fields, field)
 	}
-	field := fmt.Sprintf("scope: %s", md.Scope)
+	field = fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
 	if md.InlinedAt != nil {
 		field := fmt.Sprintf("inlinedAt: %s", md.InlinedAt)
@@ -884,12 +884,14 @@ type DISubprogram struct {
 func (md *DISubprogram) String() string {
 	// "!DISubprogram" "(" DISubprogramFields ")"
 	var fields []string
-	if md.Scope != nil {
-		field := fmt.Sprintf("scope: %s", md.Scope)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output, the output order is changed to output name
+	// before scope.
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
+		fields = append(fields, field)
+	}
+	if md.Scope != nil {
+		field := fmt.Sprintf("scope: %s", md.Scope)
 		fields = append(fields, field)
 	}
 	if len(md.LinkageName) > 0 {
@@ -908,10 +910,10 @@ func (md *DISubprogram) String() string {
 		field := fmt.Sprintf("type: %s", md.Type)
 		fields = append(fields, field)
 	}
-	if md.IsLocal {
-		field := fmt.Sprintf("isLocal: %t", md.IsLocal)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output isLocal is always output, even though its
+	// optional.
+	field := fmt.Sprintf("isLocal: %t", md.IsLocal)
+	fields = append(fields, field)
 	if md.IsDefinition {
 		field := fmt.Sprintf("isDefinition: %t", md.IsDefinition)
 		fields = append(fields, field)
