@@ -85,10 +85,10 @@ func (md *DICompileUnit) String() string {
 		field = fmt.Sprintf("producer: %s", quote(md.Producer))
 		fields = append(fields, field)
 	}
-	if md.IsOptimized {
-		field = fmt.Sprintf("isOptimized: %t", md.IsOptimized)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output isOptimized is always output, even though its
+	// optional.
+	field = fmt.Sprintf("isOptimized: %t", md.IsOptimized)
+	fields = append(fields, field)
 	if len(md.Flags) > 0 {
 		field = fmt.Sprintf("mdFlags: %s", quote(md.Flags))
 		fields = append(fields, field)
@@ -942,10 +942,10 @@ func (md *DISubprogram) String() string {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
 		fields = append(fields, field)
 	}
-	if md.IsOptimized {
-		field := fmt.Sprintf("isOptimized: %t", md.IsOptimized)
-		fields = append(fields, field)
-	}
+	// Note, to match Clang output isOptimized is always output, even though its
+	// optional.
+	field = fmt.Sprintf("isOptimized: %t", md.IsOptimized)
+	fields = append(fields, field)
 	if md.Unit != nil {
 		field := fmt.Sprintf("unit: %s", md.Unit)
 		fields = append(fields, field)
