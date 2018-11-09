@@ -2,6 +2,7 @@ package ir
 
 import (
 	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -13,8 +14,10 @@ var (
 	// Named values.
 	// Checked in value_test.go as value.Named embeds value.Value.
 	_ value.Value = value.Named(nil)
-
-	// TODO: add literal metadata value?
+	// Inline assembler expressions.
+	_ value.Value = (*InlineAsm)(nil)
+	// Metadata values.
+	_ value.Value = (*metadata.Value)(nil)
 )
 
 // Assert that each named value implements the value.Named interface.
@@ -24,8 +27,6 @@ var (
 	_ value.Named = (*Function)(nil)
 	_ value.Named = (*Param)(nil)
 	_ value.Named = (*BasicBlock)(nil)
-
-	// TODO: add named metadata value?
 
 	// Instructions.
 	// Binary instructions.
