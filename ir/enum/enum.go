@@ -496,6 +496,10 @@ const (
 	DwarfOpLLVMFragment DwarfOp = 0x1000 // DW_OP_LLVM_fragment
 )
 
+// IsDIExpressionField ensures that only DIExpression fields can be assigned to
+// the metadata.DIExpressionField interface.
+func (DwarfOp) IsDIExpressionField() {}
+
 //go:generate stringer -linecomment -type DwarfTag
 
 // DwarfTag is a DWARF tag.

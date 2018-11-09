@@ -3,6 +3,7 @@ package metadata
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
@@ -150,3 +151,17 @@ func (m *MetadataAttachment) String() string {
 	// !dbg !42
 	return fmt.Sprintf("%s %s", enc.Metadata(m.Name), m.Node)
 }
+
+// --- [ Integer literal ] -----------------------------------------------------
+
+// IntLit is an integer literal.
+type IntLit int64
+
+// String returns the string representation of the integer literal.
+func (i IntLit) String() string {
+	return strconv.FormatInt(int64(i), 10)
+}
+
+// IsDIExpressionField ensures that only DIExpression fields can be assigned to
+// the metadata.DIExpressionField interface.
+func (IntLit) IsDIExpressionField() {}

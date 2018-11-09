@@ -12,6 +12,13 @@ import (
 
 // TODO: move to the right place.
 
+// Alignment is a memory alignment attribute.
+type Alignment int64
+
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
+func (Alignment) IsParamAttribute() {}
+
 // Arg is a function argument.
 type Arg struct {
 	// Argument value.

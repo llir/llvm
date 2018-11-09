@@ -176,6 +176,18 @@ func uintSlice(ns []ast.UintLit) []uint64 {
 	return xs
 }
 
+// intLit returns the integer value corresponding to the given integer literal.
+func intLit(n ast.IntLit) int64 {
+	text := n.Text()
+	x, err := strconv.ParseInt(text, 10, 64)
+	if err != nil {
+		// NOTE: Panic instead of returning error as this case should not be
+		// possible given the grammar.
+		panic(fmt.Errorf("unable to parse integer literal %q; %v", text, err))
+	}
+	return x
+}
+
 // --- [ Floating-point literals ] ---------------------------------------------
 
 // --- [ String literals ] -----------------------------------------------------
@@ -489,8 +501,7 @@ func irParamAttribute(n ast.ParamAttribute) ir.ParamAttribute {
 			Value: unquote(n.Val().Text()),
 		}
 	case *ast.Alignment:
-		// TODO: add support for Alignment.
-		panic("support for parameter attribute Alignment not yet implemented")
+		return ir.Alignment(uintLit(n.N()))
 	case *ast.Dereferenceable:
 		// TODO: add support for Dereferenceable.
 		panic("support for parameter attribute Dereferenceable not yet implemented")
