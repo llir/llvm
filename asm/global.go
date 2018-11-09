@@ -233,7 +233,7 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
-		new.Align = int64(uintLit(n.N()))
+		new.Align = irAlignment(*n)
 	}
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())
@@ -309,7 +309,7 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
-		new.Align = int64(uintLit(n.N()))
+		new.Align = irAlignment(*n)
 	}
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())

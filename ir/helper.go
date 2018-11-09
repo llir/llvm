@@ -15,6 +15,12 @@ import (
 // Alignment is a memory alignment attribute.
 type Alignment int64
 
+// String returns the string representation of the alignment attribute.
+func (align Alignment) String() string {
+	// Note, alignment is printed as `align = 8` in attribute groups.
+	return fmt.Sprintf("align %d", int64(align))
+}
+
 // IsParamAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
 func (Alignment) IsParamAttribute() {}

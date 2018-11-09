@@ -35,8 +35,7 @@ type InstAlloca struct {
 	// (optional) Swift error.
 	SwiftError bool
 	// (optional) Alignment; zero if not present.
-	// TODO: use Alignment type.
-	Alignment int
+	Align Alignment
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -92,8 +91,8 @@ func (inst *InstAlloca) Def() string {
 	if inst.NElems != nil {
 		fmt.Fprintf(buf, ", %v", inst.NElems)
 	}
-	if inst.Alignment != 0 {
-		fmt.Fprintf(buf, ", align %v", inst.Alignment)
+	if inst.Align != 0 {
+		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
 	if inst.Typ.AddrSpace != 0 {
 		fmt.Fprintf(buf, ", %v", inst.Typ.AddrSpace)
@@ -126,8 +125,7 @@ type InstLoad struct {
 	// (optional) Atomic memory ordering constraints; zero if not present.
 	Ordering enum.AtomicOrdering
 	// (optional) Alignment; zero if not present.
-	// TODO: use Alignment type.
-	Alignment int
+	Align Alignment
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -191,8 +189,8 @@ func (inst *InstLoad) Def() string {
 	if inst.Ordering != enum.AtomicOrderingNone {
 		fmt.Fprintf(buf, " %v", inst.Ordering)
 	}
-	if inst.Alignment != 0 {
-		fmt.Fprintf(buf, ", align %v", inst.Alignment)
+	if inst.Align != 0 {
+		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)
@@ -220,8 +218,7 @@ type InstStore struct {
 	// (optional) Atomic memory ordering constraints; zero if not present.
 	Ordering enum.AtomicOrdering
 	// (optional) Alignment; zero if not present.
-	// TODO: use Alignment type.
-	Alignment int
+	Align Alignment
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -251,8 +248,8 @@ func (inst *InstStore) Def() string {
 	if inst.Ordering != enum.AtomicOrderingNone {
 		fmt.Fprintf(buf, " %v", inst.Ordering)
 	}
-	if inst.Alignment != 0 {
-		fmt.Fprintf(buf, ", align %v", inst.Alignment)
+	if inst.Align != 0 {
+		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %v", md)

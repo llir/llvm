@@ -239,7 +239,7 @@ func NewCase(x constant.Constant, target *BasicBlock) *Case {
 
 // String returns the string representation of the switch case.
 func (c *Case) String() string {
-	return fmt.Sprintf("%v, %v", c.X.Ident(), c.Target.Ident())
+	return fmt.Sprintf("%v, %v", c.X, c.Target)
 }
 
 // --- [ indirectbr ] ----------------------------------------------------------

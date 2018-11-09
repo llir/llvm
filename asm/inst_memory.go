@@ -40,7 +40,7 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
-		i.Alignment = irAlignment(*n)
+		i.Align = irAlignment(*n)
 	}
 	// (optional) Address space; stored in i.Typ.
 	if n := old.AddrSpace(); n != nil {
@@ -85,7 +85,7 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
-		i.Alignment = irAlignment(*n)
+		i.Align = irAlignment(*n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
@@ -131,7 +131,7 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 	}
 	// (optional) Alignment.
 	if n := old.Alignment(); n != nil {
-		i.Alignment = irAlignment(*n)
+		i.Align = irAlignment(*n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
