@@ -138,22 +138,21 @@ func (fgen *funcGen) astToIRTermRet(term ir.Terminator, old *ast.RetTerm) error 
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	// (optional) Metadata attachments.
+	// Check if not void return.
+	if !typ.Equal(types.Void) {
+		// Return value.
+		x, err := fgen.astToIRValue(typ, old.X())
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		t.X = x
+	}
+	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	t.Metadata = md
-	if typ.Equal(types.Void) {
-		// void return.
-		return nil
-	}
-	// Return value.
-	x, err := fgen.astToIRValue(typ, old.X())
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	t.X = x
 	return nil
 }
 
