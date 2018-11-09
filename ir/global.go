@@ -49,6 +49,7 @@ type Global struct {
 	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef
 	// (optional) Alignment; zero if not present.
+	// TODO: use Alignment type.
 	Align int64
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute

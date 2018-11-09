@@ -971,7 +971,7 @@ func (md *DISubprogram) String() string {
 
 // DISubrange is a specialized metadata node.
 type DISubrange struct {
-	Count      IntOrMDField // required.
+	Count      MDFieldOrInt // required.
 	LowerBound int64        // optional; zero value if not present.
 }
 

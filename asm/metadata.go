@@ -126,10 +126,6 @@ func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 	}
 }
 
-func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.SpecializedMDNode, error) {
-	panic("not yet implemented")
-}
-
 func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.MetadataNode, error) {
 	switch old := old.(type) {
 	case *ast.MetadataID:
