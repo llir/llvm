@@ -240,7 +240,7 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 		}
 		return x, nil
 	case ast.Metadata:
-		md, err := fgen.gen.irMetadata(oldVal)
+		md, err := fgen.irMetadata(oldVal)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}

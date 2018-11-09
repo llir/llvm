@@ -86,11 +86,28 @@ func (gen *generator) irMDField(old ast.MDField) (metadata.MDField, error) {
 	}
 }
 
+func (fgen *funcGen) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
+	switch old := old.(type) {
+	case *ast.TypeValue:
+		return fgen.astToIRTypeValue(*old)
+	default:
+		return fgen.gen.irMetadata(old)
+	}
+}
+
 func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 	switch old := old.(type) {
 	case *ast.TypeValue:
-		// TODO: figure out how to handle local values.
-		panic("support for metadata type value not yet implemented")
+		typ, err := gen.irType(old.Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		switch oldVal := old.Val().(type) {
+		case ast.Constant:
+			return gen.irConstant(typ, oldVal)
+		default:
+			panic(fmt.Errorf("support for metadata value %T not yet implemented", oldVal))
+		}
 	case *ast.MDString:
 		return &metadata.MDString{Value: stringLit(old.Val())}, nil
 	case *ast.MDTuple:

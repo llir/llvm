@@ -56,10 +56,10 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/load_module.ll"},
 		{path: "testdata/Feature/md_on_instruction.ll"},
 		{path: "testdata/Feature/memorymarkers.ll"},
-		//{path: "testdata/Feature/metadata.ll"}, // TODO: add support for metadata function arguments.
+		{path: "testdata/Feature/metadata.ll"},
 		{path: "testdata/Feature/minsize_attr.ll"},
-		//{path: "testdata/Feature/NamedMDNode2.ll"}, // TODO: add support for metadata value.
-		//{path: "testdata/Feature/NamedMDNode.ll"}, // TODO: add support for metadata value.
+		{path: "testdata/Feature/NamedMDNode2.ll"},
+		{path: "testdata/Feature/NamedMDNode.ll"},
 		{path: "testdata/Feature/newcasts.ll"},
 		{path: "testdata/Feature/optnone.ll"},
 		{path: "testdata/Feature/optnone-llc.ll"},
