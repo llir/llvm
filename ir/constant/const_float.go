@@ -137,7 +137,7 @@ func (c *Float) Ident() string {
 	// Insert decimal point if not present.
 	//    3e4 -> 3.0e4
 	//    42  -> 42.0
-	s := c.X.Text('f', -1)
+	s := c.X.Text('g', -1)
 	if !strings.ContainsRune(s, '.') {
 		if pos := strings.IndexByte(s, 'e'); pos != -1 {
 			s = s[:pos] + ".0" + s[pos:]
@@ -145,7 +145,5 @@ func (c *Float) Ident() string {
 			s += ".0"
 		}
 	}
-	// Drop explicit plus sign in exponents.
-	//    3.0e+4 -> 3.0e4
-	return strings.Replace(s, "e+", "e", -1)
+	return s
 }
