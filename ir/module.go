@@ -51,8 +51,9 @@ type Module struct {
 	UseListOrderBBs []*UseListOrderBB
 }
 
-// Def returns the LLVM syntax representation of the module.
-func (m *Module) Def() string {
+// String returns the string representation of the module in LLVM IR assembly
+// syntax.
+func (m *Module) String() string {
 	buf := &strings.Builder{}
 	// Source filename.
 	if len(m.SourceFilename) > 0 {
