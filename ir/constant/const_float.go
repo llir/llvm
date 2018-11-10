@@ -56,9 +56,9 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 	if strings.HasPrefix(s, "0x") {
 		switch {
 		case strings.HasPrefix(s, "0xK"):
-			s = s[len("0xK"):]
-			part1 := s[:4]
-			part2 := s[4:]
+			hex := s[len("0xK"):]
+			part1 := hex[:4]
+			part2 := hex[4:]
 			se, err := strconv.ParseUint(part1, 16, 16)
 			if err != nil {
 				return nil, errors.WithStack(err)
@@ -74,6 +74,46 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				X:   x,
 				NaN: nan,
 			}, nil
+		case strings.HasPrefix(s, "0xL"):
+			//s = s[len("0xL"):]
+		case strings.HasPrefix(s, "0xM"):
+			//s = s[len("0xM"):]
+		case strings.HasPrefix(s, "0xH"):
+			//s = s[len("0xH"):]
+		default:
+			hex := s[len("0x"):]
+			x, err := strconv.ParseUint(hex, 16, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			switch typ.Kind {
+			case types.FloatKindFloat:
+				// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
+				//
+				// The exact bit representation of the float is laid out with the
+				// corresponding bitwise representation of a double:  the sign bit is
+				// copied over, the exponent is encoded in the larger width, and the 23
+				// bits of significand fills in the top 23 bits of significand in the
+				// double.  A double has 52 bits of significand, so this means that the
+				// last 29 bits of significand will always be ignored.  As an
+				// error-detection measure, the IR parser requires them to be zero.
+				f := math.Float64frombits(x)
+				// precision=24 is handled during read-out. use precision=53 for
+				// internal storage.
+				c := big.NewFloat(f)
+				return &Float{
+					Typ: typ,
+					X:   c,
+				}, nil
+			case types.FloatKindDouble:
+				f := math.Float64frombits(x)
+				return &Float{
+					Typ: typ,
+					X:   big.NewFloat(f),
+				}, nil
+			default:
+				panic(fmt.Errorf("support for hexadecimal floating-point literal %q of kind %v not yet implemented", s, typ.Kind))
+			}
 		}
 		log.Printf("constant.NewFloatFromString(%q): not yet implemented", s)
 		return NewFloat(typ, 0), nil
@@ -122,7 +162,7 @@ func (c *Float) Type() types.Type {
 func (c *Float) Ident() string {
 	// float_lit
 	// TODO: add support for hexadecimal format.
-	// TODO: add support for NaN.
+	// TODO: add support for NaN, +-Inf.
 
 	switch c.Typ.Kind {
 	case types.FloatKindX86FP80:
@@ -132,6 +172,24 @@ func (c *Float) Ident() string {
 		_ = acc
 		se, m := f.Bits()
 		return fmt.Sprintf("0xK%04X%016X", se, m)
+	case types.FloatKindFloat:
+		// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
+		//
+		// The exact bit representation of the float is laid out with the
+		// corresponding bitwise representation of a double:  the sign bit is
+		// copied over, the exponent is encoded in the larger width, and the 23
+		// bits of significand fills in the top 23 bits of significand in the
+		// double.  A double has 52 bits of significand, so this means that the
+		// last 29 bits of significand will always be ignored.  As an
+		// error-detection measure, the IR parser requires them to be zero.
+		if !exact32(c.X) {
+			f, acc := c.X.Float64()
+			// TODO: check acc.
+			_ = acc
+			x := math.Float64bits(f)
+			x &= 0xFFFFFFFFE0000000 // clear 29 least significant bits.
+			return fmt.Sprintf("0x%016X", x)
+		}
 	}
 
 	// Insert decimal point if not present.
@@ -146,4 +204,16 @@ func (c *Float) Ident() string {
 		}
 	}
 	return s
+}
+
+// exact32 reports whether the given floating-point value may be represented
+// exactly as a 32-bit floating-point value.
+func exact32(x *big.Float) bool {
+	f1, _ := x.Float32()
+	s1 := strconv.FormatFloat(float64(f1), 'g', -1, 32)
+	f2, _ := x.Float64()
+	s2 := strconv.FormatFloat(f2, 'g', -1, 64)
+	fmt.Println("s1:", s1)
+	fmt.Println("s2:", s2)
+	return s1 == s2
 }
