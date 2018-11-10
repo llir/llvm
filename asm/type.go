@@ -188,7 +188,7 @@ func (gen *generator) astToIRFuncType(t types.Type, old *ast.FuncType) (types.Ty
 		typ.Params = append(typ.Params, param)
 	}
 	// Variadic.
-	typ.Variadic = ps.Variadic() != nil
+	typ.Variadic = ps.Variadic().IsValid()
 	return typ, nil
 }
 
@@ -297,8 +297,8 @@ func (gen *generator) astToIRPointerType(t types.Type, old *ast.PointerType) (ty
 	}
 	typ.ElemType = elemType
 	// Address space.
-	if n := old.AddrSpace(); n != nil {
-		typ.AddrSpace = irAddrSpace(*n)
+	if n := old.AddrSpace(); n.IsValid() {
+		typ.AddrSpace = irAddrSpace(n)
 	}
 	return typ, nil
 }

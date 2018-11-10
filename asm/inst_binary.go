@@ -212,7 +212,7 @@ func (fgen *funcGen) astToIRInstUDiv(inst ir.Instruction, old *ast.UDivInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstUDiv, got %T", inst))
 	}
 	// (optional) Exact.
-	i.Exact = old.Exact() != nil
+	i.Exact = old.Exact().IsValid()
 	// X operand.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {
@@ -244,7 +244,7 @@ func (fgen *funcGen) astToIRInstSDiv(inst ir.Instruction, old *ast.SDivInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstSDiv, got %T", inst))
 	}
 	// (optional) Exact.
-	i.Exact = old.Exact() != nil
+	i.Exact = old.Exact().IsValid()
 	// X operand.
 	x, err := fgen.astToIRTypeValue(old.X())
 	if err != nil {

@@ -310,8 +310,8 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 		t.ReturnAttrs = append(t.ReturnAttrs, retAttr)
 	}
 	// (optional) Address space.
-	if n := old.AddrSpace(); n != nil {
-		t.AddrSpace = irAddrSpace(*n)
+	if n := old.AddrSpace(); n.IsValid() {
+		t.AddrSpace = irAddrSpace(n)
 	}
 	// Invokee.
 	typ, err := fgen.gen.irType(old.Typ())

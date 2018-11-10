@@ -21,9 +21,9 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAlloca, got %T", inst))
 	}
 	// (optional) In-alloca.
-	i.InAlloca = old.InAlloca() != nil
+	i.InAlloca = old.InAlloca().IsValid()
 	// (optional) Swift error.
-	i.SwiftError = old.SwiftError() != nil
+	i.SwiftError = old.SwiftError().IsValid()
 	// Element type.
 	elemType, err := fgen.gen.irType(old.ElemType())
 	if err != nil {
@@ -31,21 +31,21 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 	}
 	i.ElemType = elemType
 	// (optional) Number of elements.
-	if n := old.NElems(); n != nil {
-		nelems, err := fgen.astToIRTypeValue(*n)
+	if n := old.NElems(); n.IsValid() {
+		nelems, err := fgen.astToIRTypeValue(n)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		i.NElems = nelems
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n != nil {
-		i.Align = irAlignment(*n)
+	if n := old.Alignment(); n.IsValid() {
+		i.Align = irAlignment(n)
 	}
 	// (optional) Address space; stored in i.Typ.
-	if n := old.AddrSpace(); n != nil {
+	if n := old.AddrSpace(); n.IsValid() {
 		i.Type()
-		i.Typ.AddrSpace = irAddrSpace(*n)
+		i.Typ.AddrSpace = irAddrSpace(n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
@@ -66,9 +66,9 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLoad, got %T", inst))
 	}
 	// (optional) Atomic.
-	i.Atomic = old.Atomic() != nil
+	i.Atomic = old.Atomic().IsValid()
 	// (optional) Volatile.
-	i.Volatile = old.Volatile() != nil
+	i.Volatile = old.Volatile().IsValid()
 	// Source address.
 	src, err := fgen.astToIRTypeValue(old.Src())
 	if err != nil {
@@ -76,16 +76,16 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 	}
 	i.Src = src
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n != nil {
+	if n := old.SyncScope(); n.IsValid() {
 		i.SyncScope = n.Scope().Text()
 	}
 	// (optional) Atomic memory ordering constraints.
-	if n := old.Ordering(); n != nil {
+	if n := old.Ordering(); n.IsValid() {
 		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n != nil {
-		i.Align = irAlignment(*n)
+	if n := old.Alignment(); n.IsValid() {
+		i.Align = irAlignment(n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
@@ -106,9 +106,9 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstStore, got %T", inst))
 	}
 	// (optional) Atomic.
-	i.Atomic = old.Atomic() != nil
+	i.Atomic = old.Atomic().IsValid()
 	// (optional) Volatile.
-	i.Volatile = old.Volatile() != nil
+	i.Volatile = old.Volatile().IsValid()
 	// Source value.
 	src, err := fgen.astToIRTypeValue(old.Src())
 	if err != nil {
@@ -122,16 +122,16 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 	}
 	i.Dst = dst
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n != nil {
+	if n := old.SyncScope(); n.IsValid() {
 		i.SyncScope = n.Scope().Text()
 	}
 	// (optional) Atomic memory ordering constraints.
-	if n := old.Ordering(); n != nil {
+	if n := old.Ordering(); n.IsValid() {
 		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n != nil {
-		i.Align = irAlignment(*n)
+	if n := old.Alignment(); n.IsValid() {
+		i.Align = irAlignment(n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
@@ -152,7 +152,7 @@ func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFence, got %T", inst))
 	}
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n != nil {
+	if n := old.SyncScope(); n.IsValid() {
 		i.SyncScope = n.Scope().Text()
 	}
 	// Atomic memory ordering constraints.
@@ -176,9 +176,9 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCmpXchg, got %T", inst))
 	}
 	// (optional) Weak.
-	i.Weak = old.Weak() != nil
+	i.Weak = old.Weak().IsValid()
 	// (optional) Volatile.
-	i.Volatile = old.Volatile() != nil
+	i.Volatile = old.Volatile().IsValid()
 	// Address to read from, compare against and store to.
 	ptr, err := fgen.astToIRTypeValue(old.Ptr())
 	if err != nil {
@@ -198,7 +198,7 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 	}
 	i.New = new
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n != nil {
+	if n := old.SyncScope(); n.IsValid() {
 		i.SyncScope = n.Scope().Text()
 	}
 	// Atomic memory ordering constraints on success.
@@ -224,7 +224,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAtomicRMW, got %T", inst))
 	}
 	// (optional) Volatile.
-	i.Volatile = old.Volatile() != nil
+	i.Volatile = old.Volatile().IsValid()
 	// Atomic operation.
 	i.Op = asmenum.AtomicOpFromString(old.Op().Text())
 	// Destination address.
@@ -240,7 +240,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 	}
 	i.X = x
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n != nil {
+	if n := old.SyncScope(); n.IsValid() {
 		i.SyncScope = n.Scope().Text()
 	}
 	// Atomic memory ordering constraints.
@@ -264,7 +264,7 @@ func (fgen *funcGen) astToIRInstGetElementPtr(inst ir.Instruction, old *ast.GetE
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstGetElementPtr, got %T", inst))
 	}
 	// (optional) In-bounds.
-	i.InBounds = old.InBounds() != nil
+	i.InBounds = old.InBounds().IsValid()
 	// Element type.
 	elemType, err := fgen.gen.irType(old.ElemType())
 	if err != nil {

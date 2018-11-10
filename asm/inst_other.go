@@ -154,23 +154,25 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCall, got %T", inst))
 	}
 	// (optional) Tail.
-	if n := old.Tail(); n != nil {
+	if n := old.Tail(); n.IsValid() {
 		i.Tail = asmenum.TailFromString(n.Text())
 	}
 	// (optional) Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// (optional) Calling convention.
-	if n := old.CallingConv(); n != nil {
-		i.CallingConv = irCallingConv(n)
-	}
+	// TODO: should the CallingConv interface include IsValid? upstream issue https://github.com/inspirer/textmapper/issues/19
+	//if n := old.CallingConv(); n.IsValid() {
+	//	i.CallingConv = irCallingConv(n)
+	//}
+	i.CallingConv = irCallingConv(old.CallingConv())
 	// (optional) Return attributes.
 	for _, oldRetAttr := range old.ReturnAttrs() {
 		retAttr := irReturnAttribute(oldRetAttr)
 		i.ReturnAttrs = append(i.ReturnAttrs, retAttr)
 	}
 	// (optional) Address space.
-	if n := old.AddrSpace(); n != nil {
-		i.AddrSpace = irAddrSpace(*n)
+	if n := old.AddrSpace(); n.IsValid() {
+		i.AddrSpace = irAddrSpace(n)
 	}
 	// Callee.
 	typ, err := fgen.gen.irType(old.Typ())
@@ -264,7 +266,7 @@ func (fgen *funcGen) astToIRInstLandingPad(inst ir.Instruction, old *ast.Landing
 	}
 	i.ResultType = resultType
 	// (optional) Cleanup landing pad.
-	i.Cleanup = old.Cleanup() != nil
+	i.Cleanup = old.Cleanup().IsValid()
 	// Filter and catch clauses.
 	for _, oldClause := range old.Clauses() {
 		clause, err := fgen.irClause(oldClause)

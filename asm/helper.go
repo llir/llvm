@@ -49,11 +49,11 @@ func localIdent(n ast.LocalIdent) string {
 
 // optLocalIdent returns the identifier (without '%' prefix) of the given
 // optional local identifier.
-func optLocalIdent(n *ast.LocalIdent) string {
-	if n == nil {
+func optLocalIdent(n ast.LocalIdent) string {
+	if !n.IsValid() {
 		return ""
 	}
-	return localIdent(*n)
+	return localIdent(n)
 }
 
 // --- [ Label Identifiers ] ---------------------------------------------------
@@ -72,11 +72,11 @@ func labelIdent(n ast.LabelIdent) string {
 
 // optLabelIdent returns the identifier (without ':' suffix) of the given
 // optional label identifier.
-func optLabelIdent(n *ast.LabelIdent) string {
-	if n == nil {
+func optLabelIdent(n ast.LabelIdent) string {
+	if !n.IsValid() {
 		return ""
 	}
-	return labelIdent(*n)
+	return labelIdent(n)
 }
 
 // --- [ Attribute Group Identifiers ] -----------------------------------------
@@ -279,6 +279,12 @@ func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
 // irCallingConv returns the IR calling convention corresponding to the given
 // AST calling convention.
 func irCallingConv(n ast.CallingConv) enum.CallingConv {
+	// TODO: should the CallingConv interface include IsValid? upstream issue https://github.com/inspirer/textmapper/issues/19
+	// If so, remove the check for IsValid here and add to caller instead.
+	if !n.LlvmNode().IsValid() {
+		panic("really here?")
+		return enum.CallingConvNone
+	}
 	switch n := n.(type) {
 	case *ast.CallingConvEnum:
 		return asmenum.CallingConvFromString(n.Text())
@@ -561,7 +567,7 @@ func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) ir.OperandBundle {
 // irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given
 // AST thread local storage.
 func irTLSModelFromThreadLocal(n ast.ThreadLocal) enum.TLSModel {
-	if n := n.Model(); n != nil {
+	if n := n.Model(); n.IsValid() {
 		// e.g. thread_local(initialexec)
 		return asmenum.TLSModelFromString(n.Text())
 	}
@@ -573,10 +579,10 @@ func irTLSModelFromThreadLocal(n ast.ThreadLocal) enum.TLSModel {
 // irUnwindTarget returns the IR unwind target corresponding to the given AST
 // unwind target.
 func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error) {
-	if n := n.Label(); n != nil {
-		return fgen.irBasicBlock(*n)
+	if n := n.Label(); n.IsValid() {
+		return fgen.irBasicBlock(n)
 	}
-	if n := n.UnwindToCaller(); n != nil {
+	if n := n.UnwindToCaller(); n.IsValid() {
 		return &ir.UnwindToCaller{}, nil
 	}
 	panic("unreachable")

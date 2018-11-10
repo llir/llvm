@@ -239,7 +239,7 @@ func (gen *generator) irFMulExpr(t types.Type, old *ast.FMulExpr) (*constant.Exp
 // equivalent IR constant expression.
 func (gen *generator) irUDivExpr(t types.Type, old *ast.UDivExpr) (*constant.ExprUDiv, error) {
 	// (optional) Exact.
-	exact := old.Exact() != nil
+	exact := old.Exact().IsValid()
 	// X operand.
 	x, err := gen.irTypeConst(old.X())
 	if err != nil {
@@ -261,7 +261,7 @@ func (gen *generator) irUDivExpr(t types.Type, old *ast.UDivExpr) (*constant.Exp
 // equivalent IR constant expression.
 func (gen *generator) irSDivExpr(t types.Type, old *ast.SDivExpr) (*constant.ExprSDiv, error) {
 	// (optional) Exact.
-	exact := old.Exact() != nil
+	exact := old.Exact().IsValid()
 	// X operand.
 	x, err := gen.irTypeConst(old.X())
 	if err != nil {
@@ -383,7 +383,7 @@ func (gen *generator) irShlExpr(t types.Type, old *ast.ShlExpr) (*constant.ExprS
 // equivalent IR constant expression.
 func (gen *generator) irLShrExpr(t types.Type, old *ast.LShrExpr) (*constant.ExprLShr, error) {
 	// (optional) Exact.
-	exact := old.Exact() != nil
+	exact := old.Exact().IsValid()
 	// X operand.
 	x, err := gen.irTypeConst(old.X())
 	if err != nil {
@@ -405,7 +405,7 @@ func (gen *generator) irLShrExpr(t types.Type, old *ast.LShrExpr) (*constant.Exp
 // equivalent IR constant expression.
 func (gen *generator) irAShrExpr(t types.Type, old *ast.AShrExpr) (*constant.ExprAShr, error) {
 	// (optional) Exact.
-	exact := old.Exact() != nil
+	exact := old.Exact().IsValid()
 	// X operand.
 	x, err := gen.irTypeConst(old.X())
 	if err != nil {
@@ -600,7 +600,7 @@ func (gen *generator) irInsertValueExpr(t types.Type, old *ast.InsertValueExpr) 
 // expression into an equivalent IR constant expression.
 func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrExpr) (*constant.ExprGetElementPtr, error) {
 	// (optional) In-bounds.
-	inBounds := old.InBounds() != nil
+	inBounds := old.InBounds().IsValid()
 	// Element type.
 	elemType, err := gen.irType(old.ElemType())
 	if err != nil {
@@ -631,7 +631,7 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 // getelementptr index.
 func (gen *generator) irGEPIndex(old ast.GEPIndex) (*constant.Index, error) {
 	// (optional) In-range.
-	inRange := old.InRange() != nil
+	inRange := old.InRange().IsValid()
 	// Index.
 	idx, err := gen.irTypeConst(old.Index())
 	if err != nil {
