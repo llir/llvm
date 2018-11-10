@@ -42,13 +42,13 @@ entry:
 
 define double @f6() {
 entry:
-	%result = call double @llvm.experimental.constrained.pow.f64(double 42.1, double 3.0, metadata !"round.dynamic", metadata !"fpexcept.strict")
+	%result = call double @llvm.experimental.constrained.pow.f64(double 0x40450CCCCCCCCCCD, double 3.0, metadata !"round.dynamic", metadata !"fpexcept.strict")
 	ret double %result
 }
 
 define double @f7() {
 entry:
-	%result = call double @llvm.experimental.constrained.powi.f64(double 42.1, i32 3, metadata !"round.dynamic", metadata !"fpexcept.strict")
+	%result = call double @llvm.experimental.constrained.powi.f64(double 0x40450CCCCCCCCCCD, i32 3, metadata !"round.dynamic", metadata !"fpexcept.strict")
 	ret double %result
 }
 
@@ -72,7 +72,7 @@ entry:
 
 define double @f11() {
 entry:
-	%result = call double @llvm.experimental.constrained.exp2.f64(double 42.1, metadata !"round.dynamic", metadata !"fpexcept.strict")
+	%result = call double @llvm.experimental.constrained.exp2.f64(double 0x40450CCCCCCCCCCD, metadata !"round.dynamic", metadata !"fpexcept.strict")
 	ret double %result
 }
 
@@ -96,19 +96,19 @@ entry:
 
 define double @f15() {
 entry:
-	%result = call double @llvm.experimental.constrained.rint.f64(double 42.1, metadata !"round.dynamic", metadata !"fpexcept.strict")
+	%result = call double @llvm.experimental.constrained.rint.f64(double 0x40450CCCCCCCCCCD, metadata !"round.dynamic", metadata !"fpexcept.strict")
 	ret double %result
 }
 
 define double @f16() {
 entry:
-	%result = call double @llvm.experimental.constrained.nearbyint.f64(double 42.1, metadata !"round.dynamic", metadata !"fpexcept.strict")
+	%result = call double @llvm.experimental.constrained.nearbyint.f64(double 0x40450CCCCCCCCCCD, metadata !"round.dynamic", metadata !"fpexcept.strict")
 	ret double %result
 }
 
 define double @f17() {
 entry:
-	%result = call double @llvm.experimental.constrained.fma.f64(double 42.1, double 42.1, double 42.1, metadata !"round.dynamic", metadata !"fpexcept.strict")
+	%result = call double @llvm.experimental.constrained.fma.f64(double 0x40450CCCCCCCCCCD, double 0x40450CCCCCCCCCCD, double 0x40450CCCCCCCCCCD, metadata !"round.dynamic", metadata !"fpexcept.strict")
 	ret double %result
 }
 
