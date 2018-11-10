@@ -65,9 +65,10 @@ type UnwindTarget interface {
 	isUnwindTarget()
 }
 
+// UnwindToCaller specifies the caller as an unwind target.
 type UnwindToCaller struct{}
 
-// String returns the string representation of the unwind to caller target.
+// String returns the string representation of the unwind target.
 func (*UnwindToCaller) String() string {
 	return "to caller"
 }

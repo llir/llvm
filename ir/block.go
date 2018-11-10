@@ -30,16 +30,19 @@ func NewBlock(name string) *BasicBlock {
 // String returns the LLVM syntax representation of the basic block as a
 // type-value pair.
 func (block *BasicBlock) String() string {
+	// LabelType LocalIdent
 	return fmt.Sprintf("%v %v", block.Type(), block.Ident())
 }
 
 // Type returns the type of the basic block.
 func (block *BasicBlock) Type() types.Type {
+	// LabelType
 	return types.Label
 }
 
 // Ident returns the identifier associated with the basic block.
 func (block *BasicBlock) Ident() string {
+	// LocalIdent
 	return enc.Local(block.LocalName)
 }
 
@@ -60,7 +63,6 @@ func (block *BasicBlock) Def() string {
 	if isLocalID(block.LocalName) {
 		//fmt.Fprintf(buf, "; <label>:%v\n", enc.Label(block.LocalName))
 	} else if len(block.LocalName) > 0 {
-		// TODO: Store block name without ':' suffix or '%' prefix.
 		fmt.Fprintf(buf, "%v\n", enc.Label(block.LocalName))
 	}
 	for _, inst := range block.Insts {

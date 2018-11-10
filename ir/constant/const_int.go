@@ -87,6 +87,7 @@ func (c *Int) String() string {
 
 // Type returns the type of the constant.
 func (c *Int) Type() types.Type {
+	// int_lit
 	return c.Typ
 }
 
