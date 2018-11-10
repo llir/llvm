@@ -29,11 +29,11 @@ func (fgen *funcGen) astToIRValue(typ types.Type, old ast.Value) (value.Value, e
 	case *ast.InlineAsm:
 		asm := &ir.InlineAsm{}
 		// (optional) Side effect.
-		asm.SideEffect = old.SideEffect() != nil
+		asm.SideEffect = old.SideEffect().IsValid()
 		// (optional) Stack alignment.
-		asm.AlignStack = old.AlignStack() != nil
+		asm.AlignStack = old.AlignStack().IsValid()
 		// (optional) Intel dialect.
-		asm.IntelDialect = old.IntelDialect() != nil
+		asm.IntelDialect = old.IntelDialect().IsValid()
 		// Assembly instructions.
 		asm.Asm = stringLit(old.Asm())
 		// Constraints.
