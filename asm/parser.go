@@ -3,6 +3,7 @@ package asm
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"time"
 
@@ -18,12 +19,33 @@ func ParseFile(path string) (*ir.Module, error) {
 		return nil, errors.WithStack(err)
 	}
 	content := string(buf)
-	return Parse(path, content)
+	return ParseString(path, content)
 }
 
 // Parse parses the given LLVM IR assembly file into an LLVM IR module, reading
-// from content.
-func Parse(path, content string) (*ir.Module, error) {
+// from r. An optional path to the source file may be specified for error
+// reporting.
+func Parse(path string, r io.Reader) (*ir.Module, error) {
+	buf, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	content := string(buf)
+	return ParseString(path, content)
+}
+
+// ParseBytes parses the given LLVM IR assembly file into an LLVM IR module,
+// reading from b. An optional path to the source file may be specified for
+// error reporting.
+func ParseBytes(path string, b []byte) (*ir.Module, error) {
+	content := string(b)
+	return ParseString(path, content)
+}
+
+// ParseString parses the given LLVM IR assembly file into an LLVM IR module,
+// reading from content. An optional path to the source file may be specified
+// for error reporting.
+func ParseString(path, content string) (*ir.Module, error) {
 	parseStart := time.Now()
 	tree, err := ast.Parse(path, content)
 	if err != nil {
