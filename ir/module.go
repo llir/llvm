@@ -51,6 +51,11 @@ type Module struct {
 	UseListOrderBBs []*UseListOrderBB
 }
 
+// NewModule returns a new LLVM IR module.
+func NewModule() *Module {
+	return &Module{}
+}
+
 // String returns the string representation of the module in LLVM IR assembly
 // syntax.
 func (m *Module) String() string {
