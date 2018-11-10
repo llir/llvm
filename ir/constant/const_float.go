@@ -5,7 +5,10 @@ import (
 	"log"
 	"math"
 	"math/big"
+	"strconv"
 	"strings"
+
+	"github.com/mewmew/floats/float80x86"
 
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -51,6 +54,27 @@ func NewFloat(typ *types.FloatType, x float64) *Float {
 func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 	// TODO: implement NewFloatFromString. return 0 for now.
 	if strings.HasPrefix(s, "0x") {
+		switch {
+		case strings.HasPrefix(s, "0xK"):
+			s = s[len("0xK"):]
+			part1 := s[:4]
+			part2 := s[4:]
+			se, err := strconv.ParseUint(part1, 16, 16)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			m, err := strconv.ParseUint(part2, 16, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			f := float80x86.NewFromBits(uint16(se), m)
+			x, nan := f.Big()
+			return &Float{
+				Typ: typ,
+				X:   x,
+				NaN: nan,
+			}, nil
+		}
 		log.Printf("constant.NewFloatFromString(%q): not yet implemented", s)
 		return NewFloat(typ, 0), nil
 		//panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
@@ -99,6 +123,16 @@ func (c *Float) Ident() string {
 	// float_lit
 	// TODO: add support for hexadecimal format.
 	// TODO: add support for NaN.
+
+	switch c.Typ.Kind {
+	case types.FloatKindX86FP80:
+		// TODO: handle NaN.
+		f, acc := float80x86.NewFromBig(c.X)
+		// TODO: check acc.
+		_ = acc
+		se, m := f.Bits()
+		return fmt.Sprintf("0xK%04X%016X", se, m)
+	}
 
 	// Insert decimal point if not present.
 	//    3e4 -> 3.0e4
