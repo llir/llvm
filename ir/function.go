@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
@@ -66,6 +67,9 @@ type Function struct {
 	//UseListOrders []*UseListOrder
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
+
+	// mu prevents races on assignIDs.
+	mu sync.Mutex
 }
 
 // NewFunction returns a new function based on the given function name, return
@@ -132,6 +136,9 @@ func (f *Function) Def() string {
 	// Function definition.
 	//
 	//    "define" OptLinkage FunctionHeader MetadataAttachments FunctionBody
+	if err := f.AssignIDs(); err != nil {
+		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
+	}
 	buf.WriteString("define")
 	if f.Linkage != enum.LinkageNone {
 		fmt.Fprintf(buf, " %s", f.Linkage)
@@ -149,6 +156,8 @@ func (f *Function) AssignIDs() error {
 	if len(f.Blocks) == 0 {
 		return nil
 	}
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	id := 0
 	names := make(map[string]value.Value)
 	setName := func(n value.Named) error {

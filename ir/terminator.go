@@ -85,7 +85,7 @@ func (term *TermRet) Def() string {
 
 // TermBr is an unconditional LLVM IR br terminator.
 type TermBr struct {
-	// Target basic block.
+	// Target branch.
 	Target *BasicBlock
 
 	// extra.
@@ -128,9 +128,9 @@ func (term *TermBr) Def() string {
 type TermCondBr struct {
 	// Branching condition.
 	Cond value.Value
-	// True condition target basic block.
+	// True condition target branch.
 	TargetTrue *BasicBlock
-	// False condition target basic block.
+	// False condition target branch.
 	TargetFalse *BasicBlock
 
 	// extra.
@@ -173,7 +173,7 @@ func (term *TermCondBr) Def() string {
 type TermSwitch struct {
 	// Control variable.
 	X value.Value
-	// Default target basic block.
+	// Default target branch.
 	TargetDefault *BasicBlock
 	// Switch cases.
 	Cases []*Case
@@ -227,7 +227,7 @@ func (term *TermSwitch) Def() string {
 type Case struct {
 	// Case comparand.
 	X constant.Constant // integer constant or interger constant expression
-	// Case target basic block.
+	// Case target branch.
 	Target *BasicBlock
 }
 

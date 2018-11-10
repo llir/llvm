@@ -182,7 +182,7 @@ func (inst *InstLoad) Def() string {
 	if inst.Volatile {
 		buf.WriteString(" volatile")
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.Typ, inst.Src)
+	fmt.Fprintf(buf, " %v, %v", inst.Type(), inst.Src)
 	if len(inst.SyncScope) > 0 {
 		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
 	}

@@ -124,8 +124,10 @@ func (g *Global) Def() string {
 	if g.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", g.UnnamedAddr)
 	}
-	if g.Typ.AddrSpace != 0 {
-		fmt.Fprintf(buf, " %s", g.Typ.AddrSpace)
+	if t, ok := g.Type().(*types.PointerType); ok {
+		if t.AddrSpace != 0 {
+			fmt.Fprintf(buf, " %s", t.AddrSpace)
+		}
 	}
 	if g.ExternallyInitialized {
 		buf.WriteString(" externallyinitialized")
