@@ -18,14 +18,14 @@ import (
 
 // Function is an LLVM IR function.
 type Function struct {
-	// Function signature.
-	Sig *types.FuncType
 	// Function name (without '@' prefix).
 	GlobalName string
+	// Function signature.
+	Sig *types.FuncType
 	// Function parameters.
 	Params []*Param
 	// Basic blocks.
-	Blocks []*BasicBlock
+	Blocks []*BasicBlock // nil if declaration.
 
 	// extra.
 
@@ -68,22 +68,15 @@ type Function struct {
 	Metadata []*metadata.MetadataAttachment
 }
 
-// TODO: decide whether to have the function name parameter be the first
-// argument (to be consistent with NewGlobal) or after retType (to be consistent
-// with order of occurence in LLVM IR syntax).
-
 // NewFunction returns a new function based on the given function name, return
 // type and function parameters.
 func NewFunction(name string, retType types.Type, params ...*Param) *Function {
-	panic("not yet implemented")
-	/*
-		paramTypes := make([]types.Type, len(params))
-		for i, param := range f.Params {
-			paramType[i] = param.Type()
-		}
-		sig := types.NewFunc(f.RetType, paramTypes...)
-		return &Function{Sig: sig, GlobalName: name, Params: params}
-	*/
+	paramTypes := make([]types.Type, len(params))
+	for i, param := range params {
+		paramTypes[i] = param.Type()
+	}
+	sig := types.NewFunc(retType, paramTypes...)
+	return &Function{GlobalName: name, Sig: sig, Params: params}
 }
 
 // String returns the LLVM syntax representation of the function as a type-value
