@@ -182,14 +182,14 @@ func (c *Float) Ident() string {
 		// double.  A double has 52 bits of significand, so this means that the
 		// last 29 bits of significand will always be ignored.  As an
 		// error-detection measure, the IR parser requires them to be zero.
-		if !exact32(c.X) {
+		if c.NaN || c.X.IsInf() || !exact32(c.X) {
 			f, _ := c.X.Float64()
 			x := math.Float64bits(f)
 			x &= 0xFFFFFFFFE0000000 // clear 29 least significant bits.
 			return fmt.Sprintf("0x%016X", x)
 		}
 	case types.FloatKindDouble:
-		if !exact64(c.X) {
+		if c.NaN || c.X.IsInf() || !exact64(c.X) {
 			f, _ := c.X.Float64()
 			x := math.Float64bits(f)
 			// Note, to match Clang output we do not zero-pad the hexadecimal
