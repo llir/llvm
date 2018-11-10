@@ -101,6 +101,8 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				// precision=24 is handled during read-out. use precision=53 for
 				// internal storage.
 				c := big.NewFloat(f)
+				const precision = 24
+				c.SetPrec(precision)
 				return &Float{
 					Typ: typ,
 					X:   c,
