@@ -110,7 +110,7 @@ func TestParseFile(t *testing.T) {
 			continue
 		}
 		want := string(buf)
-		got := m.Def()
+		got := m.String()
 		if want != got {
 			if err := diffutil.Diff(want, got, false, filepath.Base(path)); err != nil {
 				panic(err)
