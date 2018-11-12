@@ -17,7 +17,7 @@ func diFlagsString(flags enum.DIFlag) string {
 	if flag := flags & 0x3; flag != 0 {
 		ss = append(ss, flag.String())
 	}
-	for mask := enum.DIFlagFwdDecl; mask <= enum.DIFlagTypePassByReference; mask <<= 1 {
+	for mask := enum.DIFlagFirst; mask <= enum.DIFlagLast; mask <<= 1 {
 		if flags&mask != 0 {
 			ss = append(ss, mask.String())
 		}

@@ -319,7 +319,11 @@ func (md *DIEnumerator) String() string {
 	var fields []string
 	field := fmt.Sprintf("name: %s", quote(md.Name))
 	fields = append(fields, field)
-	field = fmt.Sprintf("value: %d", md.Value)
+	if md.IsUnsigned {
+		field = fmt.Sprintf("value: %d", uint64(md.Value))
+	} else {
+		field = fmt.Sprintf("value: %d", md.Value)
+	}
 	fields = append(fields, field)
 	if md.IsUnsigned {
 		field := fmt.Sprintf("isUnsigned: %t", md.IsUnsigned)

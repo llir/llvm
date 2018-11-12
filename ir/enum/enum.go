@@ -131,7 +131,7 @@ const (
 //go:generate stringer -type DIFlag
 
 // DIFlag is a debug info flag bitfield.
-type DIFlag int64
+type DIFlag uint64
 
 // Debug info flags.
 //
@@ -164,11 +164,20 @@ const (
 	DIFlagMainSubprogram      DIFlag = 1 << 21
 	DIFlagTypePassByValue     DIFlag = 1 << 22
 	DIFlagTypePassByReference DIFlag = 1 << 23
+	DIFlagFixedEnum           DIFlag = 1 << 24
+	DIFlagThunk               DIFlag = 1 << 25
+	DIFlagTrivial             DIFlag = 1 << 26
 	DIFlagIndirectVirtualBase DIFlag = DIFlagFwdDecl | DIFlagVirtual
+
 	// Mask for accessibility.
-	//DIFlagAccessibility DIFlag = DIFlagPrivate | DIFlagProtected | DIFlagPublic
+	DIFlagAccessibility DIFlag = DIFlagPrivate | DIFlagProtected | DIFlagPublic
 	// Mask for inheritance.
-	//DIFlagPtrToMemberRep DIFlag = DIFlagSingleInheritance | DIFlagMultipleInheritance | DIFlagVirtualInheritance
+	DIFlagPtrToMemberRep DIFlag = DIFlagSingleInheritance | DIFlagMultipleInheritance | DIFlagVirtualInheritance
+
+	// Track first and last debug info flag, used by diFlagsString in
+	// ir/metadata/helper.go.
+	DIFlagFirst = DIFlagFwdDecl
+	DIFlagLast  = DIFlagTrivial
 )
 
 //go:generate stringer -linecomment -type DLLStorageClass

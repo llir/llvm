@@ -2,6 +2,7 @@ package asm
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/llir/ll/ast"
 	asmenum "github.com/llir/llvm/asm/enum"
@@ -297,12 +298,28 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 
 func (gen *generator) irDIEnumerator(old *ast.DIEnumerator) (*metadata.DIEnumerator, error) {
 	md := &metadata.DIEnumerator{}
+	isUnsigned := false
+	for _, oldField := range old.Fields() {
+		if oldField, ok := oldField.(*ast.IsUnsignedField); ok {
+			isUnsigned = boolLit(oldField.IsUnsigned())
+			break
+		}
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.ValueIntField:
-			md.Value = intLit(oldField.Value())
+			if isUnsigned {
+				text := oldField.Value().Text()
+				x, err := strconv.ParseUint(text, 10, 64)
+				if err != nil {
+					panic(fmt.Errorf("unable to parse unsigned integer literal %q; %v", text, err))
+				}
+				md.Value = int64(x)
+			} else {
+				md.Value = intLit(oldField.Value())
+			}
 		case *ast.IsUnsignedField:
 			md.IsUnsigned = boolLit(oldField.IsUnsigned())
 		default:
@@ -840,7 +857,30 @@ func (gen *generator) irDITemplateTypeParameter(old *ast.DITemplateTypeParameter
 // --- [ DITemplateValueParameter ] --------------------------------------------
 
 func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParameter) (*metadata.DITemplateValueParameter, error) {
-	panic("support for *ast.DITemplateValueParameter not yet implemented")
+	md := &metadata.DITemplateValueParameter{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.TagField:
+			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.TypeField:
+			typ, err := gen.irMDField(oldField.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Type = typ
+		case *ast.ValueField:
+			value, err := gen.irMDField(oldField.Value())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Value = value
+		default:
+			panic(fmt.Errorf("support for DITemplateValueParameter field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ GenericDINode ] -------------------------------------------------------
