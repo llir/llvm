@@ -667,3 +667,8 @@ func IsPointer(t Type) bool {
 	_, ok := t.(*PointerType)
 	return ok
 }
+
+// Equal reports whether t and u are of equal type.
+func Equal(t, u Type) bool {
+	return t.Equal(u)
+}
