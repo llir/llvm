@@ -97,7 +97,7 @@ func (a *Alias) Def() string {
 		fmt.Fprintf(buf, " %s", a.DLLStorageClass)
 	}
 	if a.TLSModel != enum.TLSModelNone {
-		fmt.Fprintf(buf, " %s", a.TLSModel)
+		fmt.Fprintf(buf, " %s", tlsModelString(a.TLSModel))
 	}
 	if a.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", a.UnnamedAddr)

@@ -867,10 +867,10 @@ type TLSModel uint8
 const (
 	TLSModelNone TLSModel = iota // none
 	// If no explicit model is given, the "general dynamic" model is used.
-	TLSModelGeneric      // thread_local
-	TLSModelInitialExec  // thread_local(initialexec)
-	TLSModelLocalDynamic // thread_local(localdynamic)
-	TLSModelLocalExec    // thread_local(localexec)
+	TLSModelGeneric      // generic
+	TLSModelInitialExec  // initialexec
+	TLSModelLocalDynamic // localdynamic
+	TLSModelLocalExec    // localexec
 )
 
 //go:generate stringer -linecomment -type UnnamedAddr

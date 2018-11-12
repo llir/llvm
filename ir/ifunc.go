@@ -97,7 +97,7 @@ func (i *IFunc) Def() string {
 		fmt.Fprintf(buf, " %s", i.DLLStorageClass)
 	}
 	if i.TLSModel != enum.TLSModelNone {
-		fmt.Fprintf(buf, " %s", i.TLSModel)
+		fmt.Fprintf(buf, " %s", tlsModelString(i.TLSModel))
 	}
 	if i.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", i.UnnamedAddr)

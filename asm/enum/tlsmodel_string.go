@@ -5,9 +5,9 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
-const _TLSModel_name = "nonethread_localthread_local(initialexec)thread_local(localdynamic)thread_local(localexec)"
+const _TLSModel_name = "nonegenericinitialexeclocaldynamiclocalexec"
 
-var _TLSModel_index = [...]uint8{0, 4, 16, 41, 67, 90}
+var _TLSModel_index = [...]uint8{0, 4, 11, 22, 34, 43}
 
 func TLSModelFromString(s string) enum.TLSModel {
 	if len(s) == 0 {

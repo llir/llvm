@@ -146,13 +146,13 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/Generic/dbg-at-specficiation.ll"},
 		//{path: "testdata/DebugInfo/Generic/dead-argument-order.ll"},
 		//{path: "testdata/DebugInfo/Generic/debug-info-always-inline.ll"},
-		{path: "testdata/DebugInfo/Generic/debug-info-enum.ll"}, // handles max int and uint in DIEnumerator
+		{path: "testdata/DebugInfo/Generic/debug-info-enum.ll"},
 		//{path: "testdata/DebugInfo/Generic/debuginfofinder-forward-declaration.ll"},
 		//{path: "testdata/DebugInfo/Generic/debuginfofinder-imported-global-variable.ll"},
 		//{path: "testdata/DebugInfo/Generic/debuginfofinder-inlined-cu.ll"},
 		//{path: "testdata/DebugInfo/Generic/debuginfofinder-multiple-cu.ll"},
 		//{path: "testdata/DebugInfo/Generic/debug-info-qualifiers.ll"},
-		{path: "testdata/DebugInfo/Generic/debug-label-mi.ll"}, // test DILabel
+		{path: "testdata/DebugInfo/Generic/debug-label-mi.ll"},
 		//{path: "testdata/DebugInfo/Generic/debug-label-opt.ll"},
 		//{path: "testdata/DebugInfo/Generic/debug-names-empty-cu.ll"},
 		//{path: "testdata/DebugInfo/Generic/debug-names-empty-name.ll"},
@@ -317,7 +317,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/debug-loc-offset.ll"},
 		//{path: "testdata/DebugInfo/X86/debug-macro.ll"},
 		//{path: "testdata/DebugInfo/X86/debug-names-split-dwarf.ll"},
-		//{path: "testdata/DebugInfo/X86/debug-ranges-offset.ll"}, // TODO: add support for TLSModel initialexec.
+		{path: "testdata/DebugInfo/X86/debug-ranges-offset.ll"},
 		//{path: "testdata/DebugInfo/X86/decl-derived-member.ll"},
 		//{path: "testdata/DebugInfo/X86/default-subrange-array.ll"},
 		//{path: "testdata/DebugInfo/X86/deleted-bit-piece.ll"},

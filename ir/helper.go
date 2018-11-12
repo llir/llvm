@@ -279,3 +279,12 @@ func callingConvString(callingConv enum.CallingConv) string {
 	}
 	return s
 }
+
+// tlsModelString returns the string representation of the given thread local
+// storage model.
+func tlsModelString(model enum.TLSModel) string {
+	if model == enum.TLSModelGeneric {
+		return "thread_local"
+	}
+	return fmt.Sprintf("thread_local(%s)", model)
+}
