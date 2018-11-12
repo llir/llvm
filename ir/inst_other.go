@@ -377,7 +377,7 @@ type InstCall struct {
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Operand bundles.
-	OperandBundles []OperandBundle
+	OperandBundles []*OperandBundle
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -480,11 +480,14 @@ func (inst *InstCall) Def() string {
 		fmt.Fprintf(buf, " %s", attr)
 	}
 	if len(inst.OperandBundles) > 0 {
-		buf.WriteString("[")
-		for _, operandBundle := range inst.OperandBundles {
-			fmt.Fprintf(buf, " %s", operandBundle)
+		buf.WriteString(" [ ")
+		for i, operandBundle := range inst.OperandBundles {
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(operandBundle.String())
 		}
-		buf.WriteString("]")
+		buf.WriteString(" ]")
 	}
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %s", md)

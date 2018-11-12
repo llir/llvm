@@ -538,9 +538,19 @@ func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 
 // irOperandBundle returns the IR operand bundle corresponding to the given AST
 // operand bundle.
-func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) ir.OperandBundle {
-	// TODO: add support for operand bundles.
-	panic("not yet implemented")
+func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) (*ir.OperandBundle, error) {
+	// Tag.
+	tag := stringLit(n.Tag())
+	// Inputs.
+	var inputs []value.Value
+	for _, oldInput := range n.Inputs() {
+		input, err := fgen.astToIRTypeValue(oldInput)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		inputs = append(inputs, input)
+	}
+	return ir.NewOperandBundle(tag, inputs...), nil
 }
 
 // irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given

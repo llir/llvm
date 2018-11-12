@@ -204,9 +204,10 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	}
 	// (optional) Operand bundles.
 	for _, oldOperandBundle := range old.OperandBundles() {
-		// TODO: add support for operand bundles.
-		break
-		operandBundle := fgen.irOperandBundle(oldOperandBundle)
+		operandBundle, err := fgen.irOperandBundle(oldOperandBundle)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
 		i.OperandBundles = append(i.OperandBundles, operandBundle)
 	}
 	// (optional) Metadata.

@@ -332,7 +332,7 @@ type TermInvoke struct {
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Operand bundles.
-	OperandBundles []OperandBundle
+	OperandBundles []*OperandBundle
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -439,11 +439,14 @@ func (term *TermInvoke) Def() string {
 		fmt.Fprintf(buf, " %s", attr)
 	}
 	if len(term.OperandBundles) > 0 {
-		buf.WriteString("[")
-		for _, operandBundle := range term.OperandBundles {
-			fmt.Fprintf(buf, " %s", operandBundle)
+		buf.WriteString(" [ ")
+		for i, operandBundle := range term.OperandBundles {
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(operandBundle.String())
 		}
-		buf.WriteString("]")
+		buf.WriteString(" ]")
 	}
 	fmt.Fprintf(buf, "\n\t\tto %s unwind %s", term.Normal, term.Exception)
 	for _, md := range term.Metadata {

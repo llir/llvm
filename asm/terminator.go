@@ -345,9 +345,10 @@ func (fgen *funcGen) astToIRTermInvoke(term ir.Terminator, old *ast.InvokeTerm) 
 	}
 	// (optional) Operand bundles.
 	for _, oldOperandBundle := range old.OperandBundles() {
-		// TODO: add support for operand bundles.
-		break
-		operandBundle := fgen.irOperandBundle(oldOperandBundle)
+		operandBundle, err := fgen.irOperandBundle(oldOperandBundle)
+		if err != nil {
+			return errors.WithStack(err)
+		}
 		t.OperandBundles = append(t.OperandBundles, operandBundle)
 	}
 	// Normal control flow return point.

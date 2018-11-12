@@ -102,10 +102,31 @@ type FuncAttribute interface {
 	IsFuncAttribute()
 }
 
-// TODO: figure out definition of OperandBundle.
-
 // OperandBundle is an operand bundle.
 type OperandBundle struct {
+	Tag    string
+	Inputs []value.Value
+}
+
+// NewOperandBundle returns a new operand bundle based on the given tag and
+// input values.
+func NewOperandBundle(tag string, inputs ...value.Value) *OperandBundle {
+	return &OperandBundle{Tag: tag, Inputs: inputs}
+}
+
+// String returns a string representation of the operand bundle.
+func (o *OperandBundle) String() string {
+	// Tag=StringLit '(' Inputs=(TypeValue separator ',')* ')'
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%s(", quote(o.Tag))
+	for i, input := range o.Inputs {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(input.String())
+	}
+	buf.WriteString(")")
+	return buf.String()
 }
 
 // ParamAttribute is a parameter attribute.
