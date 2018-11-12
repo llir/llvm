@@ -875,7 +875,22 @@ func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.D
 // --- [ DITemplateTypeParameter ] ---------------------------------------------
 
 func (gen *generator) irDITemplateTypeParameter(old *ast.DITemplateTypeParameter) (*metadata.DITemplateTypeParameter, error) {
-	panic("support for *ast.DITemplateTypeParameter not yet implemented")
+	md := &metadata.DITemplateTypeParameter{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.TypeField:
+			typ, err := gen.irMDField(oldField.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Type = typ
+		default:
+			panic(fmt.Errorf("support for DITemplateTypeParameter field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DITemplateValueParameter ] --------------------------------------------
