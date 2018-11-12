@@ -10,7 +10,7 @@ var _ChecksumKind_index = [...]uint8{0, 7, 15}
 
 func (i ChecksumKind) String() string {
 	i -= 1
-	if i < 0 || i >= ChecksumKind(len(_ChecksumKind_index)-1) {
+	if i >= ChecksumKind(len(_ChecksumKind_index)-1) {
 		return "ChecksumKind(" + strconv.FormatInt(int64(i+1), 10) + ")"
 	}
 	return _ChecksumKind_name[_ChecksumKind_index[i]:_ChecksumKind_index[i+1]]

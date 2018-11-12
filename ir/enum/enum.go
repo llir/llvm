@@ -42,9 +42,6 @@ const (
 // CallingConv is a calling convention.
 type CallingConv uint16
 
-// TODO: Check if there are any calling conventions defined in LLVM 7.0 that are
-// missing from this list.
-
 // Calling conventions.
 //
 // From include/llvm/IR/CallingConv.h
@@ -100,16 +97,12 @@ const (
 	CallingConvMSP430Builtin CallingConv = 94 // cc 94
 	CallingConvAMDGPU_LS     CallingConv = 95 // amdgpu_ls
 	CallingConvAMDGPU_ES     CallingConv = 96 // amdgpu_es
-
-	// Custom calling convention (user defined calling convention NNN at
-	// CallingConvNNN+NNN).
-	CallingConvNNN // cc NNN
 )
 
 //go:generate stringer -linecomment -type ChecksumKind
 
 // ChecksumKind is a checksum algorithm.
-type ChecksumKind int64
+type ChecksumKind uint8
 
 // Checksum algorithms.
 //
@@ -768,10 +761,15 @@ const (
 type NameTableKind uint8
 
 // Name table kinds.
+//
+// From include/llvm/IR/DebugInfoMetadata.h
 const (
-	NameTableKindNone    NameTableKind = iota // None
-	NameTableKindDefault                      // Default
-	NameTableKindGNU                          // GNU
+	// Note, the default name table kind is defined as 0 in LLVM. To have the
+	// zero-value name table kind mean no name table kind, re-define the default
+	// name table kind 2, and use 0 for none.
+	NameTableKindNone    NameTableKind = 0 // None
+	NameTableKindGNU     NameTableKind = 1 // GNU
+	NameTableKindDefault NameTableKind = 2 // Default
 )
 
 //go:generate stringer -linecomment -type OverflowFlag

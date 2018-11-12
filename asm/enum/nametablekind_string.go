@@ -5,9 +5,9 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
-const _NameTableKind_name = "NoneDefaultGNU"
+const _NameTableKind_name = "NoneGNUDefault"
 
-var _NameTableKind_index = [...]uint8{0, 4, 11, 14}
+var _NameTableKind_index = [...]uint8{0, 4, 7, 14}
 
 func NameTableKindFromString(s string) enum.NameTableKind {
 	if len(s) == 0 {

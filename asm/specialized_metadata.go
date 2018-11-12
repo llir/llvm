@@ -1047,7 +1047,18 @@ func irNameTableKind(old ast.NameTableKind) enum.NameTableKind {
 	case *ast.NameTableKindEnum:
 		return asmenum.NameTableKindFromString(old.Text())
 	case *ast.NameTableKindInt:
-		return enum.NameTableKind(uintLit(old.UintLit()))
+		kind := uintLit(old.UintLit())
+		switch kind {
+		case 0:
+			// Note, the default name table kind is defined as 0 in LLVM. To have the
+			// zero-value name table kind mean no name table kind, re-define the default
+			// name table kind 2, and use 0 for none.
+			return enum.NameTableKindDefault
+		case 2:
+			return enum.NameTableKindNone
+		default:
+			return enum.NameTableKind(kind)
+		}
 	default:
 		panic(fmt.Errorf("support for name table kind %T not yet implemented", old))
 	}
