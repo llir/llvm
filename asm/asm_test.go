@@ -111,7 +111,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/vector-cast-constant-exprs.ll"},
 		{path: "testdata/Feature/weak_constant.ll"},
 		//{path: "testdata/Feature/weirdnames.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
-		//{path: "testdata/Feature/x86ld.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
+		{path: "testdata/Feature/x86ld.ll"},
 
 		// Coreutils.
 		/*
