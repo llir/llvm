@@ -187,15 +187,9 @@ func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
 	case *ir.InstAShr:
 		x, y := e.evalValue(inst.X), e.evalValue(inst.Y)
 		result := x >> y
-        // sign extend.
+		// sign extend.
 		if x&0x80000000 != 0 {
-			for i := uint32(31); i >= 0; i-- {
-				mask := uint32(1 << i)
-				if result&mask != 0 {
-					break
-				}
-				result |= mask
-			}
+			result = signExt(result)
 		}
 		return result
 	case *ir.InstAnd:
@@ -238,6 +232,18 @@ func (e *evaluator) evalValue(v value.Value) uint32 {
 	default:
 		panic(fmt.Errorf("support for value type %T not yet implemented", v))
 	}
+}
+
+// signExt sign extends x.
+func signExt(x uint32) uint32 {
+	for i := uint32(31); i >= 0; i-- {
+		mask := uint32(1 << i)
+		if x&mask != 0 {
+			break
+		}
+		x |= mask
+	}
+	return x
 }
 ```
 
