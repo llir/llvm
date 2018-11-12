@@ -342,7 +342,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/DW_AT_specification.ll"},
 		//{path: "testdata/DebugInfo/X86/DW_AT_stmt_list_sec_offset.ll"},
 		//{path: "testdata/DebugInfo/X86/dw_op_minus_direct.ll"},
-		//{path: "testdata/DebugInfo/X86/dw_op_minus.ll"}, // TODO: add support for TLSModel initialexec.
+		{path: "testdata/DebugInfo/X86/dw_op_minus.ll"},
 		//{path: "testdata/DebugInfo/X86/DW_TAG_friend.ll"},
 		//{path: "testdata/DebugInfo/X86/earlydup-crash.ll"},
 		//{path: "testdata/DebugInfo/X86/elf-names.ll"},
@@ -440,7 +440,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/rnglists_base_attr.ll"},
 		//{path: "testdata/DebugInfo/X86/rnglists_curanges.ll"},
 		//{path: "testdata/DebugInfo/X86/rvalue-ref.ll"},
-		//{path: "testdata/DebugInfo/X86/safestack-byval.ll"}, // TODO: add support for TLSModel initialexec.
+		{path: "testdata/DebugInfo/X86/safestack-byval.ll"},
 		{path: "testdata/DebugInfo/X86/sdag-combine.ll"},
 		//{path: "testdata/DebugInfo/X86/sdag-dangling-dbgvalue.ll"},
 		//{path: "testdata/DebugInfo/X86/sdag-dbgvalue-phi-use-1.ll"},
