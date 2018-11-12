@@ -36,7 +36,7 @@ func Example() {
 	// Create an external function declaration and append it to the module.
 	//
 	//    int abs(int x);
-	abs := m.NewFunction("abs", i32, ir.NewParam(i32, "x"))
+	abs := m.NewFunction("abs", i32, ir.NewParam("x", i32))
 
 	// Create a global variable definition and append it to the module.
 	//

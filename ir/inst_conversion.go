@@ -38,7 +38,7 @@ func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstTrunc) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -63,12 +63,12 @@ func (inst *InstTrunc) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstTrunc) Def() string {
-	// "trunc" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "trunc %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "trunc %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -99,7 +99,7 @@ func NewZExt(from value.Value, to types.Type) *InstZExt {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstZExt) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -124,12 +124,12 @@ func (inst *InstZExt) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstZExt) Def() string {
-	// "zext" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "zext %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "zext %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -160,7 +160,7 @@ func NewSExt(from value.Value, to types.Type) *InstSExt {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstSExt) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -185,12 +185,12 @@ func (inst *InstSExt) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSExt) Def() string {
-	// "sext" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "sext %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "sext %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -221,7 +221,7 @@ func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstFPTrunc) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -246,12 +246,12 @@ func (inst *InstFPTrunc) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPTrunc) Def() string {
-	// "fptrunc" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "fptrunc %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "fptrunc %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -282,7 +282,7 @@ func NewFPExt(from value.Value, to types.Type) *InstFPExt {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstFPExt) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -307,12 +307,12 @@ func (inst *InstFPExt) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPExt) Def() string {
-	// "fpext" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "fpext %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "fpext %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -343,7 +343,7 @@ func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstFPToUI) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -368,12 +368,12 @@ func (inst *InstFPToUI) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToUI) Def() string {
-	// "fptoui" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "fptoui %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "fptoui %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -404,7 +404,7 @@ func NewFPToSI(from value.Value, to types.Type) *InstFPToSI {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstFPToSI) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -429,12 +429,12 @@ func (inst *InstFPToSI) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToSI) Def() string {
-	// "fptosi" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "fptosi %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "fptosi %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -465,7 +465,7 @@ func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstUIToFP) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -490,12 +490,12 @@ func (inst *InstUIToFP) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstUIToFP) Def() string {
-	// "uitofp" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "uitofp %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "uitofp %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -526,7 +526,7 @@ func NewSIToFP(from value.Value, to types.Type) *InstSIToFP {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstSIToFP) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -551,12 +551,12 @@ func (inst *InstSIToFP) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSIToFP) Def() string {
-	// "sitofp" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "sitofp %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "sitofp %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -587,7 +587,7 @@ func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstPtrToInt) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -612,12 +612,12 @@ func (inst *InstPtrToInt) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstPtrToInt) Def() string {
-	// "ptrtoint" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "ptrtoint %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "ptrtoint %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -648,7 +648,7 @@ func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstIntToPtr) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -673,12 +673,12 @@ func (inst *InstIntToPtr) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstIntToPtr) Def() string {
-	// "inttoptr" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "inttoptr %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "inttoptr %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -709,7 +709,7 @@ func NewBitCast(from value.Value, to types.Type) *InstBitCast {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstBitCast) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -734,12 +734,12 @@ func (inst *InstBitCast) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstBitCast) Def() string {
-	// "bitcast" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "bitcast %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "bitcast %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -770,7 +770,7 @@ func NewAddrSpaceCast(from value.Value, to types.Type) *InstAddrSpaceCast {
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstAddrSpaceCast) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -795,12 +795,13 @@ func (inst *InstAddrSpaceCast) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAddrSpaceCast) Def() string {
-	// "addrspacecast" Type Value "to" Type OptCommaSepMetadataAttachmentList
+	// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "addrspacecast %v to %v", inst.From, inst.To)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "addrspacecast %s to %s", inst.From, inst.To)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }

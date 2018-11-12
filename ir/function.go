@@ -68,7 +68,7 @@ type Function struct {
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 
-	// mu prevents races on assignIDs.
+	// mu prevents races on AssignIDs.
 	mu sync.Mutex
 }
 
@@ -80,13 +80,16 @@ func NewFunction(name string, retType types.Type, params ...*Param) *Function {
 		paramTypes[i] = param.Type()
 	}
 	sig := types.NewFunc(retType, paramTypes...)
-	return &Function{GlobalName: name, Sig: sig, Params: params}
+	f := &Function{GlobalName: name, Sig: sig, Params: params}
+	// Compute type.
+	f.Type()
+	return f
 }
 
 // String returns the LLVM syntax representation of the function as a type-value
 // pair.
 func (f *Function) String() string {
-	return fmt.Sprintf("%v %v", f.Type(), f.Ident())
+	return fmt.Sprintf("%s %s", f.Type(), f.Ident())
 }
 
 // Type returns the type of the function.
@@ -116,13 +119,16 @@ func (f *Function) SetName(name string) {
 // Def returns the LLVM syntax representation of the function definition or
 // declaration.
 func (f *Function) Def() string {
-	// "declare" MetadataAttachments OptExternLinkage FunctionHeader
-	// "define" OptLinkage FunctionHeader MetadataAttachments FunctionBody
+	// Function declaration.
+	//
+	//    'declare' Metadata=MetadataAttachment* Header=FuncHeader
+	//
+	// Function definition.
+	//
+	//    'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
 	buf := &strings.Builder{}
 	if len(f.Blocks) == 0 {
 		// Function declaration.
-		//
-		//    "declare" MetadataAttachments OptExternLinkage FunctionHeader
 		buf.WriteString("declare")
 		for _, md := range f.Metadata {
 			fmt.Fprintf(buf, " %s", md)
@@ -134,8 +140,6 @@ func (f *Function) Def() string {
 		return buf.String()
 	}
 	// Function definition.
-	//
-	//    "define" OptLinkage FunctionHeader MetadataAttachments FunctionBody
 	if err := f.AssignIDs(); err != nil {
 		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
 	}
@@ -223,27 +227,28 @@ func (f *Function) AssignIDs() error {
 
 // headerString returns the string representation of the function header.
 func headerString(f *Function) string {
-	// OptPreemptionSpecifier OptVisibility OptDLLStorageClass OptCallingConv
-	// ReturnAttrs Type GlobalIdent "(" Params ")" OptUnnamedAddr FuncAttrs
-	// OptSection OptComdat OptGC OptPrefix OptPrologue OptPersonality
+	// (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt
+	// CallingConvopt ReturnAttrs=ReturnAttribute* RetType=Type Name=GlobalIdent
+	// '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttribute*
+	// Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
 	buf := &strings.Builder{}
 	if f.Preemption != enum.PreemptionNone {
-		fmt.Fprintf(buf, " %v", f.Preemption)
+		fmt.Fprintf(buf, " %s", f.Preemption)
 	}
 	if f.Visibility != enum.VisibilityNone {
-		fmt.Fprintf(buf, " %v", f.Visibility)
+		fmt.Fprintf(buf, " %s", f.Visibility)
 	}
 	if f.DLLStorageClass != enum.DLLStorageClassNone {
-		fmt.Fprintf(buf, " %v", f.DLLStorageClass)
+		fmt.Fprintf(buf, " %s", f.DLLStorageClass)
 	}
 	if f.CallingConv != enum.CallingConvNone {
-		fmt.Fprintf(buf, " %v", callingConvString(f.CallingConv))
+		fmt.Fprintf(buf, " %s", callingConvString(f.CallingConv))
 	}
 	for _, attr := range f.ReturnAttrs {
-		fmt.Fprintf(buf, " %v", attr)
+		fmt.Fprintf(buf, " %s", attr)
 	}
-	fmt.Fprintf(buf, " %v", f.Sig.RetType)
-	fmt.Fprintf(buf, " %v(", enc.Global(f.GlobalName))
+	fmt.Fprintf(buf, " %s", f.Sig.RetType)
+	fmt.Fprintf(buf, " %s(", enc.Global(f.GlobalName))
 	for i, param := range f.Params {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -258,13 +263,13 @@ func headerString(f *Function) string {
 	}
 	buf.WriteString(")")
 	if f.UnnamedAddr != enum.UnnamedAddrNone {
-		fmt.Fprintf(buf, " %v", f.UnnamedAddr)
+		fmt.Fprintf(buf, " %s", f.UnnamedAddr)
 	}
 	for _, attr := range f.FuncAttrs {
-		fmt.Fprintf(buf, " %v", attr)
+		fmt.Fprintf(buf, " %s", attr)
 	}
 	if len(f.Section) > 0 {
-		fmt.Fprintf(buf, " section %v", enc.Quote([]byte(f.Section)))
+		fmt.Fprintf(buf, " section %s", enc.Quote([]byte(f.Section)))
 	}
 	if f.Comdat != nil {
 		if f.Comdat.Name == f.GlobalName {
@@ -274,34 +279,34 @@ func headerString(f *Function) string {
 		}
 	}
 	if len(f.GC) > 0 {
-		fmt.Fprintf(buf, " gc %v", enc.Quote([]byte(f.GC)))
+		fmt.Fprintf(buf, " gc %s", enc.Quote([]byte(f.GC)))
 	}
 	if f.Prefix != nil {
-		fmt.Fprintf(buf, " prefix %v", f.Prefix)
+		fmt.Fprintf(buf, " prefix %s", f.Prefix)
 	}
 	if f.Prologue != nil {
-		fmt.Fprintf(buf, " prologue %v", f.Prologue)
+		fmt.Fprintf(buf, " prologue %s", f.Prologue)
 	}
 	if f.Personality != nil {
-		fmt.Fprintf(buf, " personality %v", f.Personality)
+		fmt.Fprintf(buf, " personality %s", f.Personality)
 	}
 	return buf.String()
 }
 
 // bodyString returns the string representation of the function body.
 func bodyString(body *Function) string {
-	// "{" BasicBlockList UseListOrders "}"
+	// '{' Blocks=BasicBlock+ UseListOrders=UseListOrder* '}'
 	buf := &strings.Builder{}
 	buf.WriteString("{\n")
 	for i, block := range body.Blocks {
 		if i != 0 {
 			buf.WriteString("\n")
 		}
-		fmt.Fprintf(buf, "%v\n", block.Def())
+		fmt.Fprintf(buf, "%s\n", block.Def())
 	}
 	// TODO: add support for use list orders.
 	//for _, useList := range body.UseListOrders {
-	//	fmt.Fprintf(buf, "%v\n", useList)
+	//	fmt.Fprintf(buf, "%s\n", useList)
 	//}
 	buf.WriteString("}")
 	return buf.String()

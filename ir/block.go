@@ -30,19 +30,16 @@ func NewBlock(name string) *BasicBlock {
 // String returns the LLVM syntax representation of the basic block as a
 // type-value pair.
 func (block *BasicBlock) String() string {
-	// LabelType LocalIdent
-	return fmt.Sprintf("%v %v", block.Type(), block.Ident())
+	return fmt.Sprintf("%s %s", block.Type(), block.Ident())
 }
 
 // Type returns the type of the basic block.
 func (block *BasicBlock) Type() types.Type {
-	// LabelType
 	return types.Label
 }
 
 // Ident returns the identifier associated with the basic block.
 func (block *BasicBlock) Ident() string {
-	// LocalIdent
 	return enc.Local(block.LocalName)
 }
 
@@ -58,16 +55,16 @@ func (block *BasicBlock) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the basic block definition.
 func (block *BasicBlock) Def() string {
-	// OptLabelIdent Instructions Terminator
+	// Name=LabelIdentopt Insts=Instruction* Term=Terminator
 	buf := &strings.Builder{}
 	if isLocalID(block.LocalName) {
-		//fmt.Fprintf(buf, "; <label>:%v\n", enc.Label(block.LocalName))
+		//fmt.Fprintf(buf, "; <label>:%s\n", enc.Label(block.LocalName))
 	} else if len(block.LocalName) > 0 {
-		fmt.Fprintf(buf, "%v\n", enc.Label(block.LocalName))
+		fmt.Fprintf(buf, "%s\n", enc.Label(block.LocalName))
 	}
 	for _, inst := range block.Insts {
-		fmt.Fprintf(buf, "\t%v\n", inst.Def())
+		fmt.Fprintf(buf, "\t%s\n", inst.Def())
 	}
-	fmt.Fprintf(buf, "\t%v", block.Term.Def())
+	fmt.Fprintf(buf, "\t%s", block.Term.Def())
 	return buf.String()
 }

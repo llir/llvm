@@ -34,13 +34,16 @@ type InstShl struct {
 
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
-	return &InstShl{X: x, Y: y}
+	inst := &InstShl{X: x, Y: y}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstShl) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -69,16 +72,17 @@ func (inst *InstShl) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstShl) Def() string {
-	// "shl" OverflowFlags Type Value "," Value OptCommaSepMetadataAttachmentList
+	// 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("shl")
 	for _, flag := range inst.OverflowFlags {
-		fmt.Fprintf(buf, " %v", flag)
+		fmt.Fprintf(buf, " %s", flag)
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	fmt.Fprintf(buf, " %s, %s", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -104,13 +108,16 @@ type InstLShr struct {
 
 // NewLShr returns a new lshr instruction based on the given operands.
 func NewLShr(x, y value.Value) *InstLShr {
-	return &InstLShr{X: x, Y: y}
+	inst := &InstLShr{X: x, Y: y}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstLShr) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -139,16 +146,17 @@ func (inst *InstLShr) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstLShr) Def() string {
-	// "lshr" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
+	// 'lshr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("lshr")
 	if inst.Exact {
 		buf.WriteString(" exact")
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	fmt.Fprintf(buf, " %s, %s", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -174,13 +182,16 @@ type InstAShr struct {
 
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
-	return &InstAShr{X: x, Y: y}
+	inst := &InstAShr{X: x, Y: y}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstAShr) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -209,16 +220,17 @@ func (inst *InstAShr) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAShr) Def() string {
-	// "ashr" OptExact Type Value "," Value OptCommaSepMetadataAttachmentList
+	// 'ashr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("ashr")
 	if inst.Exact {
 		buf.WriteString(" exact")
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.X, inst.Y.Ident())
+	fmt.Fprintf(buf, " %s, %s", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -242,13 +254,16 @@ type InstAnd struct {
 
 // NewAnd returns a new and instruction based on the given operands.
 func NewAnd(x, y value.Value) *InstAnd {
-	return &InstAnd{X: x, Y: y}
+	inst := &InstAnd{X: x, Y: y}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstAnd) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -277,12 +292,12 @@ func (inst *InstAnd) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAnd) Def() string {
-	// "and" Type Value "," Value OptCommaSepMetadataAttachmentList
+	// 'and' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "and %v, %v", inst.X, inst.Y.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "and %s, %s", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -306,13 +321,16 @@ type InstOr struct {
 
 // NewOr returns a new or instruction based on the given operands.
 func NewOr(x, y value.Value) *InstOr {
-	return &InstOr{X: x, Y: y}
+	inst := &InstOr{X: x, Y: y}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstOr) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -341,12 +359,12 @@ func (inst *InstOr) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstOr) Def() string {
-	// "or" Type Value "," Value OptCommaSepMetadataAttachmentList
+	// 'or' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "or %v, %v", inst.X, inst.Y.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "or %s, %s", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -370,13 +388,16 @@ type InstXor struct {
 
 // NewXor returns a new xor instruction based on the given operands.
 func NewXor(x, y value.Value) *InstXor {
-	return &InstXor{X: x, Y: y}
+	inst := &InstXor{X: x, Y: y}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstXor) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -405,12 +426,12 @@ func (inst *InstXor) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstXor) Def() string {
-	// "xor" Type Value "," Value OptCommaSepMetadataAttachmentList
+	// 'xor' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "xor %v, %v", inst.X, inst.Y.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "xor %s, %s", inst.X, inst.Y.Ident())
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }

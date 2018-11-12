@@ -59,13 +59,19 @@ type Global struct {
 // NewGlobalDecl returns a new global variable declaration based on the given
 // global variable name and content type.
 func NewGlobalDecl(name string, contentType types.Type) *Global {
-	return &Global{GlobalName: name, ContentType: contentType}
+	global := &Global{GlobalName: name, ContentType: contentType}
+	// Compute type.
+	global.Type()
+	return global
 }
 
 // NewGlobalDef returns a new global variable definition based on the given
 // global variable name and initial value.
 func NewGlobalDef(name string, init constant.Constant) *Global {
-	return &Global{GlobalName: name, ContentType: init.Type(), Init: init}
+	global := &Global{GlobalName: name, ContentType: init.Type(), Init: init}
+	// Compute type.
+	global.Type()
+	return global
 }
 
 // String returns the LLVM syntax representation of the global variable as a
@@ -101,9 +107,21 @@ func (g *Global) SetName(name string) {
 // Def returns the LLVM syntax representation of the global variable definition
 // or declaration.
 func (g *Global) Def() string {
-	// GlobalIdent "=" OptLinkage OptPreemptionSpecifier OptVisibility
-	// OptDLLStorageClass OptThreadLocal OptUnnamedAddr OptAddrSpace
-	// OptExternallyInitialized Immutable Type Constant GlobalAttrs FuncAttrs
+	// Global declaration.
+	//
+	//    Name=GlobalIdent '=' ExternLinkage Preemptionopt Visibilityopt
+	//    DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt
+	//    ExternallyInitializedopt Immutable ContentType=Type (',' Section)? (','
+	//    Comdat)? (',' Alignment)? Metadata=(',' MetadataAttachment)+?
+	//    FuncAttrs=(',' FuncAttribute)+?
+	//
+	// Global definition.
+	//
+	//    Name=GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt
+	//    DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt
+	//    ExternallyInitializedopt Immutable ContentType=Type Init=Constant (','
+	//    Section)? (',' Comdat)? (',' Alignment)? Metadata=(','
+	//    MetadataAttachment)+? FuncAttrs=(',' FuncAttribute)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", g.Ident())
 	if g.Linkage != enum.LinkageNone {
@@ -139,6 +157,7 @@ func (g *Global) Def() string {
 	}
 	fmt.Fprintf(buf, " %s", g.ContentType)
 	if g.Init != nil {
+		// Global definition.
 		fmt.Fprintf(buf, " %s", g.Init.Ident())
 	}
 	if g.Section != "" {

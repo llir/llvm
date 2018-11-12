@@ -38,11 +38,10 @@ type IFunc struct {
 // NewIFunc returns a new indirect function based on the given IFunc name and
 // resolver.
 func NewIFunc(name string, resolver constant.Constant) *IFunc {
-	typ, ok := resolver.Type().(*types.PointerType)
-	if !ok {
-		panic(fmt.Errorf("invalid resolver type; expected *types.PointerType, got %T", resolver.Type()))
-	}
-	return &IFunc{GlobalName: name, Resolver: resolver, Typ: typ}
+	ifunc := &IFunc{GlobalName: name, Resolver: resolver}
+	// Compute type.
+	ifunc.Type()
+	return ifunc
 }
 
 // String returns the LLVM syntax representation of the IFunc as a type-value
@@ -57,7 +56,7 @@ func (i *IFunc) Type() types.Type {
 	if i.Typ == nil {
 		typ, ok := i.Resolver.Type().(*types.PointerType)
 		if !ok {
-			panic(fmt.Errorf("invalid resolver type; expected *types.PointerType, got %T", i.Resolver.Type()))
+			panic(fmt.Errorf("invalid resolver type of %q; expected *types.PointerType, got %T", i.Ident(), i.Resolver.Type()))
 		}
 		i.Typ = typ
 	}

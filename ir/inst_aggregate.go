@@ -34,13 +34,15 @@ type InstExtractValue struct {
 // NewExtractValue returns a new extractvalue instruction based on the given
 // aggregate value and indicies.
 func NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
-	return &InstExtractValue{X: x, Indices: indices}
+	inst := &InstExtractValue{X: x, Indices: indices}
+	// Compute type.
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstExtractValue) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -69,15 +71,16 @@ func (inst *InstExtractValue) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractValue) Def() string {
-	// "extractvalue" Type Value "," IndexList OptCommaSepMetadataAttachmentList
+	// 'extractvalue' X=TypeValue Indices=(',' UintLit)+ Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "extractvalue %v", inst.X)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "extractvalue %s", inst.X)
 	for _, index := range inst.Indices {
-		fmt.Fprintf(buf, ", %v", index)
+		fmt.Fprintf(buf, ", %d", index)
 	}
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -106,13 +109,15 @@ type InstInsertValue struct {
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.
 func NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
-	return &InstInsertValue{X: x, Elem: elem, Indices: indices}
+	inst := &InstInsertValue{X: x, Elem: elem, Indices: indices}
+	// Compute type.
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstInsertValue) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -141,15 +146,16 @@ func (inst *InstInsertValue) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstInsertValue) Def() string {
-	// "insertvalue" Type Value "," Type Value "," IndexList OptCommaSepMetadataAttachmentList
+	// 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+
+	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
-	fmt.Fprintf(buf, "insertvalue %v, %v", inst.X, inst.Elem)
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "insertvalue %s, %s", inst.X, inst.Elem)
 	for _, index := range inst.Indices {
-		fmt.Fprintf(buf, ", %v", index)
+		fmt.Fprintf(buf, ", %d", index)
 	}
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }

@@ -62,22 +62,22 @@ func (m *Module) String() string {
 	buf := &strings.Builder{}
 	// Source filename.
 	if len(m.SourceFilename) > 0 {
-		// "source_filename" "=" StringLit
+		// 'source_filename' '=' Name=StringLit
 		fmt.Fprintf(buf, "source_filename = %s\n", quote(m.SourceFilename))
 	}
 	// Data layout.
 	if len(m.DataLayout) > 0 {
-		// "target" "datalayout" "=" StringLit
+		// 'target' 'datalayout' '=' DataLayout=StringLit
 		fmt.Fprintf(buf, "target datalayout = %s\n", quote(m.DataLayout))
 	}
 	// Target triple.
 	if len(m.TargetTriple) > 0 {
-		// "target" "triple" "=" StringLit
+		// 'target' 'triple' '=' TargetTriple=StringLit
 		fmt.Fprintf(buf, "target triple = %s\n", quote(m.TargetTriple))
 	}
 	// Module-level inline assembly.
 	for _, asm := range m.ModuleAsms {
-		// "module" "asm" StringLit
+		// 'module' 'asm' Asm=StringLit
 		fmt.Fprintf(buf, "module asm %s\n", quote(asm))
 	}
 	// Type definitions.
@@ -85,11 +85,12 @@ func (m *Module) String() string {
 		buf.WriteString("\n")
 	}
 	for _, t := range m.TypeDefs {
-		// LocalIdent "=" "type" OpaqueType
-		// LocalIdent "=" "type" Type
+		// Alias=LocalIdent '=' 'type' Typ=OpaqueType
+		//
+		// Alias=LocalIdent '=' 'type' Typ=Type
 		fmt.Fprintf(buf, "%s = type %s\n", t, t.Def())
 	}
-	// Global declarations and definitions.
+	// Comdat definitions.
 	if len(m.ComdatDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
@@ -179,7 +180,7 @@ func (c *ComdatDef) String() string {
 
 // Def returns the LLVM syntax representation of the Comdat definition.
 func (c *ComdatDef) Def() string {
-	// ComdatName "=" "comdat" SelectionKind
+	// Name=ComdatName '=' 'comdat' Kind=SelectionKind
 	return fmt.Sprintf("%s = comdat %s", enc.Comdat(c.Name), c.Kind)
 }
 
@@ -200,7 +201,7 @@ func (a *AttrGroupDef) String() string {
 
 // Def returns the LLVM syntax representation of the attribute group definition.
 func (a *AttrGroupDef) Def() string {
-	// "attributes" AttrGroupID "=" "{" FuncAttrs "}"
+	// 'attributes' ID=AttrGroupID '=' '{' Attrs=FuncAttribute* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "attributes %s = { ", enc.AttrGroupID(a.ID))
 	for i, attr := range a.FuncAttrs {
@@ -208,20 +209,15 @@ func (a *AttrGroupDef) Def() string {
 			buf.WriteString(" ")
 		}
 		// Note, alignment is printed as `align = 8` in attribute groups.
-		// TODO: add support for Alignment.
-		//if attr, ok := attr.(*Alignment); ok {
-		//	fmt.Fprintf(buf, "align = %d", attr.Align)
-		//	continue
-		//}
+		if attr, ok := attr.(Alignment); ok {
+			fmt.Fprintf(buf, "align = %d", int64(attr))
+			continue
+		}
 		buf.WriteString(attr.String())
 	}
 	buf.WriteString(" }")
 	return buf.String()
 }
-
-// IsFuncAttribute ensures that only function attributes can be assigned to the
-// ir.FuncAttribute interface.
-func (*AttrGroupDef) IsFuncAttribute() {}
 
 // ~~~ [ Use-list Order Directives ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -236,7 +232,7 @@ type UseListOrder struct {
 // Def returns the LLVM syntax representation of the use-list order directive
 // definition.
 func (u *UseListOrder) Def() string {
-	//  "uselistorder" Type Value "," "{" IndexList "}"
+	//  'uselistorder' TypeValue ',' '{' Indices=(UintLit separator ',')+ '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "uselistorder %s, {", u.Value)
 	for i, index := range u.Indices {
@@ -262,7 +258,8 @@ type UseListOrderBB struct {
 // Def returns the LLVM syntax representation of the basic block specific use-
 // list order directive definition.
 func (u *UseListOrderBB) Def() string {
-	//  "uselistorder_bb" GlobalIdent "," LocalIdent "," "{" IndexList "}"
+	//  'uselistorder_bb' Func=GlobalIdent ',' Block=LocalIdent ',' '{'
+	//  Indices=(UintLit separator ',')+ '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "uselistorder_bb %s, %s, {", u.Func.Ident(), u.Block.Ident())
 	for i, index := range u.Indices {

@@ -37,11 +37,10 @@ type Alias struct {
 
 // NewAlias returns a new alias based on the given alias name and aliasee.
 func NewAlias(name string, aliasee constant.Constant) *Alias {
-	typ, ok := aliasee.Type().(*types.PointerType)
-	if !ok {
-		panic(fmt.Errorf("invalid aliasee type; expected *types.PointerType, got %T", aliasee.Type()))
-	}
-	return &Alias{GlobalName: name, Aliasee: aliasee, Typ: typ}
+	alias := &Alias{GlobalName: name, Aliasee: aliasee}
+	// Compute type.
+	alias.Type()
+	return alias
 }
 
 // String returns the LLVM syntax representation of the alias as a type-value
@@ -56,7 +55,7 @@ func (a *Alias) Type() types.Type {
 	if a.Typ == nil {
 		typ, ok := a.Aliasee.Type().(*types.PointerType)
 		if !ok {
-			panic(fmt.Errorf("invalid aliasee type; expected *types.PointerType, got %T", a.Aliasee.Type()))
+			panic(fmt.Errorf("invalid aliasee type of %q; expected *types.PointerType, got %T", a.Ident(), a.Aliasee.Type()))
 		}
 		a.Typ = typ
 	}
@@ -80,8 +79,9 @@ func (a *Alias) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the alias definition.
 func (a *Alias) Def() string {
-	// GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt
-	// ThreadLocalopt UnnamedAddropt 'alias' Type ',' Type Constant
+	// Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt
+	// Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias'
+	// ContentType=Type ',' Aliasee=TypeConst
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", a.Ident())
 	if a.Linkage != enum.LinkageNone {

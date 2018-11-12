@@ -42,13 +42,16 @@ type InstAlloca struct {
 
 // NewAlloca returns a new alloca instruction based on the given element type.
 func NewAlloca(elemType types.Type) *InstAlloca {
-	return &InstAlloca{ElemType: elemType}
+	inst := &InstAlloca{ElemType: elemType}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstAlloca) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -77,9 +80,10 @@ func (inst *InstAlloca) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAlloca) Def() string {
-	// "alloca" OptInAlloca OptSwiftError Type OptCommaTypeValue OptCommaAlignment OptCommaAddrSpace OptCommaSepMetadataAttachmentList
+	// 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)?
+	// (',' Alignment)? (',' AddrSpace)? Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("alloca")
 	if inst.InAlloca {
 		buf.WriteString(" inalloca")
@@ -87,18 +91,18 @@ func (inst *InstAlloca) Def() string {
 	if inst.SwiftError {
 		buf.WriteString(" swifterror")
 	}
-	fmt.Fprintf(buf, " %v", inst.ElemType)
+	fmt.Fprintf(buf, " %s", inst.ElemType)
 	if inst.NElems != nil {
-		fmt.Fprintf(buf, ", %v", inst.NElems)
+		fmt.Fprintf(buf, ", %s", inst.NElems)
 	}
 	if inst.Align != 0 {
 		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
 	if inst.Typ.AddrSpace != 0 {
-		fmt.Fprintf(buf, ", %v", inst.Typ.AddrSpace)
+		fmt.Fprintf(buf, ", %s", inst.Typ.AddrSpace)
 	}
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -132,13 +136,16 @@ type InstLoad struct {
 
 // NewLoad returns a new load instruction based on the given source address.
 func NewLoad(src value.Value) *InstLoad {
-	return &InstLoad{Src: src}
+	inst := &InstLoad{Src: src}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstLoad) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -171,10 +178,18 @@ func (inst *InstLoad) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstLoad) Def() string {
-	// "load" "atomic" OptVolatile Type "," Type Value OptSyncScope AtomicOrdering OptCommaAlignment OptCommaSepMetadataAttachmentList
-	// "load" OptVolatile Type "," Type Value OptCommaAlignment OptCommaSepMetadataAttachmentList
+	// Load instruction.
+	//
+	//    'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)?
+	//    Metadata=(',' MetadataAttachment)+?
+	//
+	// Atomic load instruction.
+	//
+	//    'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt
+	//    Ordering=AtomicOrdering (',' Alignment)? Metadata=(','
+	//    MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("load")
 	if inst.Atomic {
 		buf.WriteString(" atomic")
@@ -182,18 +197,18 @@ func (inst *InstLoad) Def() string {
 	if inst.Volatile {
 		buf.WriteString(" volatile")
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.Type(), inst.Src)
+	fmt.Fprintf(buf, " %s, %s", inst.Typ, inst.Src)
 	if len(inst.SyncScope) > 0 {
-		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+		fmt.Fprintf(buf, " syncscope(%s)", quote(inst.SyncScope))
 	}
 	if inst.Ordering != enum.AtomicOrderingNone {
-		fmt.Fprintf(buf, " %v", inst.Ordering)
+		fmt.Fprintf(buf, " %s", inst.Ordering)
 	}
 	if inst.Align != 0 {
 		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -231,8 +246,16 @@ func NewStore(src, dst value.Value) *InstStore {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstStore) Def() string {
-	// "store" "atomic" OptVolatile Type Value "," Type Value OptSyncScope AtomicOrdering OptCommaAlignment OptCommaSepMetadataAttachmentList
-	// "store" OptVolatile Type Value "," Type Value OptCommaAlignment OptCommaSepMetadataAttachmentList
+	// Store instruction.
+	//
+	//    'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)?
+	//    Metadata=(',' MetadataAttachment)+?
+	//
+	// Atomic store instruction.
+	//
+	//    'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt
+	//    Ordering=AtomicOrdering (',' Alignment)? Metadata=(','
+	//    MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("store")
 	if inst.Atomic {
@@ -241,18 +264,18 @@ func (inst *InstStore) Def() string {
 	if inst.Volatile {
 		buf.WriteString(" volatile")
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.Src, inst.Dst)
+	fmt.Fprintf(buf, " %s, %s", inst.Src, inst.Dst)
 	if len(inst.SyncScope) > 0 {
-		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+		fmt.Fprintf(buf, " syncscope(%s)", quote(inst.SyncScope))
 	}
 	if inst.Ordering != enum.AtomicOrderingNone {
-		fmt.Fprintf(buf, " %v", inst.Ordering)
+		fmt.Fprintf(buf, " %s", inst.Ordering)
 	}
 	if inst.Align != 0 {
 		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -279,15 +302,16 @@ func NewFence(ordering enum.AtomicOrdering) *InstFence {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFence) Def() string {
-	// "fence" OptSyncScope AtomicOrdering OptCommaSepMetadataAttachmentList
+	// 'fence' SyncScopeopt Ordering=AtomicOrdering Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("fence")
 	if len(inst.SyncScope) > 0 {
-		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+		fmt.Fprintf(buf, " syncscope(%s)", quote(inst.SyncScope))
 	}
-	fmt.Fprintf(buf, " %v", inst.Ordering)
+	fmt.Fprintf(buf, " %s", inst.Ordering)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -328,13 +352,16 @@ type InstCmpXchg struct {
 // value to compare against, new value to store, and atomic orderings for
 // success and failure.
 func NewCmpXchg(ptr, cmp, new value.Value, successOrdering, failureOrdering enum.AtomicOrdering) *InstCmpXchg {
-	return &InstCmpXchg{Ptr: ptr, Cmp: cmp, New: new, SuccessOrdering: successOrdering, FailureOrdering: failureOrdering}
+	inst := &InstCmpXchg{Ptr: ptr, Cmp: cmp, New: new, SuccessOrdering: successOrdering, FailureOrdering: failureOrdering}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstCmpXchg) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -364,9 +391,11 @@ func (inst *InstCmpXchg) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstCmpXchg) Def() string {
-	// "cmpxchg" OptWeak OptVolatile Type Value "," Type Value "," Type Value OptSyncScope AtomicOrdering AtomicOrdering OptCommaSepMetadataAttachmentList
+	// 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ','
+	// New=TypeValue SyncScopeopt SuccessOrdering=AtomicOrdering
+	// FailureOrdering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("cmpxchg")
 	if inst.Weak {
 		buf.WriteString(" weak")
@@ -374,14 +403,14 @@ func (inst *InstCmpXchg) Def() string {
 	if inst.Volatile {
 		buf.WriteString(" volatile")
 	}
-	fmt.Fprintf(buf, " %v, %v, %v", inst.Ptr, inst.Cmp, inst.New)
+	fmt.Fprintf(buf, " %s, %s, %s", inst.Ptr, inst.Cmp, inst.New)
 	if len(inst.SyncScope) > 0 {
-		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+		fmt.Fprintf(buf, " syncscope(%s)", quote(inst.SyncScope))
 	}
-	fmt.Fprintf(buf, " %v", inst.SuccessOrdering)
-	fmt.Fprintf(buf, " %v", inst.FailureOrdering)
+	fmt.Fprintf(buf, " %s", inst.SuccessOrdering)
+	fmt.Fprintf(buf, " %s", inst.FailureOrdering)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -416,13 +445,16 @@ type InstAtomicRMW struct {
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
 // operation, destination address, operand and atomic ordering.
 func NewAtomicRMW(op enum.AtomicOp, dst, x value.Value, ordering enum.AtomicOrdering) *InstAtomicRMW {
-	return &InstAtomicRMW{Op: op, Dst: dst, X: x, Ordering: ordering}
+	inst := &InstAtomicRMW{Op: op, Dst: dst, X: x, Ordering: ordering}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstAtomicRMW) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -455,20 +487,21 @@ func (inst *InstAtomicRMW) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAtomicRMW) Def() string {
-	// "atomicrmw" OptVolatile BinOp Type Value "," Type Value OptSyncScope AtomicOrdering OptCommaSepMetadataAttachmentList
+	// 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue
+	// SyncScopeopt Ordering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("atomicrmw")
 	if inst.Volatile {
 		buf.WriteString(" volatile")
 	}
-	fmt.Fprintf(buf, " %v %v, %v", inst.Op, inst.Dst, inst.X)
+	fmt.Fprintf(buf, " %s %s, %s", inst.Op, inst.Dst, inst.X)
 	if len(inst.SyncScope) > 0 {
-		fmt.Fprintf(buf, " syncscope(%v)", enc.Quote([]byte(inst.SyncScope)))
+		fmt.Fprintf(buf, " syncscope(%s)", quote(inst.SyncScope))
 	}
-	fmt.Fprintf(buf, " %v", inst.Ordering)
+	fmt.Fprintf(buf, " %s", inst.Ordering)
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -499,13 +532,16 @@ type InstGetElementPtr struct {
 // NewGetElementPtr returns a new getelementptr instruction based on the given
 // element type, source address and element indices.
 func NewGetElementPtr(elemType types.Type, src value.Value, indices ...value.Value) *InstGetElementPtr {
-	return &InstGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
+	inst := &InstGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
 // type-value pair.
 func (inst *InstGetElementPtr) String() string {
-	return fmt.Sprintf("%v %v", inst.Type(), inst.Ident())
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
 // Type returns the type of the instruction.
@@ -534,19 +570,20 @@ func (inst *InstGetElementPtr) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstGetElementPtr) Def() string {
-	// "getelementptr" OptInBounds Type "," Type Value GEPIndices OptCommaSepMetadataAttachmentList
+	// 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(','
+	// TypeValue)* Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", inst.Ident())
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("getelementptr")
 	if inst.InBounds {
 		buf.WriteString(" inbounds")
 	}
-	fmt.Fprintf(buf, " %v, %v", inst.ElemType, inst.Src)
+	fmt.Fprintf(buf, " %s, %s", inst.ElemType, inst.Src)
 	for _, index := range inst.Indices {
-		fmt.Fprintf(buf, ", %v", index)
+		fmt.Fprintf(buf, ", %s", index)
 	}
 	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -569,7 +606,7 @@ func gepType(elemType types.Type, indices []value.Value) types.Type {
 		switch t := e.(type) {
 		case *types.PointerType:
 			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
-			panic(fmt.Errorf("unable to index into element of pointer type `%v`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
+			panic(fmt.Errorf("unable to index into element of pointer type `%s`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
 		case *types.VectorType:
 			e = t.ElemType
 		case *types.ArrayType:
