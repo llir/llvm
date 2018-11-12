@@ -115,7 +115,7 @@ func main() {
 	// Parse the LLVM IR assembly file `eval.ll`.
 	m, err := asm.ParseFile("testdata/eval.ll")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("%+v", err)
 	}
 	// Evalute and print the return value of the `@main` function.
 	for _, f := range m.Funcs {
@@ -129,7 +129,7 @@ func main() {
 
 // evaluator is a function evaluator.
 type evaluator struct {
-	// Function.
+	// Function being evaluated.
 	f *ir.Function
 	// Function arguments.
 	args []value.Value
@@ -145,21 +145,20 @@ func newEvaluator(f *ir.Function, args ...value.Value) *evaluator {
 func (e *evaluator) eval() uint32 {
 	f := e.f
 	if !types.Equal(f.Sig.RetType, types.I32) {
-		panic(fmt.Errorf("support for function return type %v not yet implemented", f.Sig.RetType))
+		panic(fmt.Errorf("support for function return type %s not yet implemented", f.Sig.RetType))
 	}
 	for _, block := range f.Blocks {
 		switch term := block.Term.(type) {
 		case *ir.TermRet:
-			// NOTE: support for functions with more than one RET terminator not
+			// Note: support for functions with more than one ret terminator not
 			// yet implemented.
 			if term.X != nil {
-				// Evaluate the result of the first return value of a function is
-				// evaluated.
+				// The result of the first return value of a function is evaluated.
 				return e.evalValue(term.X)
 			}
 		}
 	}
-	panic(fmt.Errorf("unable to locate RET terminator in function %q", f.Ident()))
+	panic(fmt.Errorf("unable to locate ret terminator in function %q", f.Ident()))
 }
 
 // evalInst evaluates inst and returns the corresponding 32-bit integer.
@@ -188,6 +187,7 @@ func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
 	case *ir.InstAShr:
 		x, y := e.evalValue(inst.X), e.evalValue(inst.Y)
 		result := x >> y
+        // sign extend.
 		if x&0x80000000 != 0 {
 			for i := uint32(31); i >= 0; i-- {
 				mask := uint32(1 << i)
