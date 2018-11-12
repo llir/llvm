@@ -258,6 +258,8 @@ const (
 type DwarfLang int64
 
 // DWARF languages.
+//
+// From include/llvm/BinaryFormat/Dwarf.def
 const (
 	// DWARF v2.
 	DwarfLangC89       DwarfLang = 0x0001 // DW_LANG_C89

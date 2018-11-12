@@ -6,6 +6,7 @@ import (
 
 	"github.com/llir/ll/ast"
 	asmenum "github.com/llir/llvm/asm/enum"
+	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/pkg/errors"
 )
@@ -103,7 +104,7 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.LanguageField:
-			md.Language = asmenum.DwarfLangFromString(oldField.Language().Text())
+			md.Language = irDwarfLang(oldField.Language())
 		case *ast.FileField:
 			file, err := gen.irMDField(oldField.File())
 			if err != nil {
@@ -212,7 +213,7 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 			}
 			md.Elements = elements
 		case *ast.RuntimeLangField:
-			md.RuntimeLang = asmenum.DwarfLangFromString(oldField.RuntimeLang().Text())
+			md.RuntimeLang = irDwarfLang(oldField.RuntimeLang())
 		case *ast.VtableHolderField:
 			vtableHolder, err := gen.irMDField(oldField.VtableHolder())
 			if err != nil {
@@ -922,5 +923,16 @@ func (gen *generator) irMDFieldOrInt(old ast.MDFieldOrInt) (metadata.MDFieldOrIn
 		return metadata.IntLit(intLit(*old)), nil
 	default:
 		panic(fmt.Errorf("support for metadata field %T not yet implemented", old))
+	}
+}
+
+func irDwarfLang(old ast.DwarfLang) enum.DwarfLang {
+	switch old := old.(type) {
+	case *ast.DwarfLangEnum:
+		return asmenum.DwarfLangFromString(old.Text())
+	case *ast.DwarfLangInt:
+		return enum.DwarfLang(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for Dwarf language %T not yet implemented", old))
 	}
 }
