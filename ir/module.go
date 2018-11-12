@@ -208,12 +208,17 @@ func (a *AttrGroupDef) Def() string {
 		if i != 0 {
 			buf.WriteString(" ")
 		}
-		// Note, alignment is printed as `align = 8` in attribute groups.
-		if attr, ok := attr.(Align); ok {
+		switch attr := attr.(type) {
+		case Align:
+			// Note, alignment is printed as `align = 8` in attribute groups.
 			fmt.Fprintf(buf, "align = %d", int64(attr))
-			continue
+		case AlignStack:
+			// Note, stack alignment is printed as `alignstack = 8` in attribute
+			// groups.
+			fmt.Fprintf(buf, "alignstack = %d", int64(attr))
+		default:
+			buf.WriteString(attr.String())
 		}
-		buf.WriteString(attr.String())
 	}
 	buf.WriteString(" }")
 	return buf.String()

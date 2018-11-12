@@ -36,11 +36,9 @@ func (*AttrGroupDef) IsFuncAttribute() {}
 // ir.FuncAttribute interface.
 func (Align) IsFuncAttribute() {}
 
-// TODO: add support for AlignStack function attributes.
-
 // IsFuncAttribute ensures that only function attributes can be assigned to the
 // ir.FuncAttribute interface.
-//func (AlignStack) IsFuncAttribute() {}
+func (AlignStack) IsFuncAttribute() {}
 
 // TODO: add support for AllocSize function attributes.
 

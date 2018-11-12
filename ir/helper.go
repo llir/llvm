@@ -19,6 +19,15 @@ func (align Align) String() string {
 	return fmt.Sprintf("align %d", int64(align))
 }
 
+// AlignStack is a stack alignment attribute.
+type AlignStack int64
+
+// String returns the string representation of the stack alignment attribute.
+func (align AlignStack) String() string {
+	// Note, stack alignment is printed as `alignstack = 8` in attribute groups.
+	return fmt.Sprintf("alignstack %d", int64(align))
+}
+
 // Arg is a function argument.
 type Arg struct {
 	// Argument value.

@@ -143,8 +143,6 @@ func boolLit(n ast.BoolLit) bool {
 	case "false":
 		return false
 	default:
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
 		panic(fmt.Errorf("invalid boolean literal; expected `true` or `false`, got `%v`", text))
 	}
 }
@@ -155,11 +153,6 @@ func uintLit(n ast.UintLit) uint64 {
 	text := n.Text()
 	x, err := strconv.ParseUint(text, 10, 64)
 	if err != nil {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
-
-		// TODO: figure out how to update the grammar for UintLit to remove the
-		// optional sign.
 		panic(fmt.Errorf("unable to parse unsigned integer literal %q; %v", text, err))
 	}
 	return x
@@ -181,8 +174,6 @@ func intLit(n ast.IntLit) int64 {
 	text := n.Text()
 	x, err := strconv.ParseInt(text, 10, 64)
 	if err != nil {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
 		panic(fmt.Errorf("unable to parse integer literal %q; %v", text, err))
 	}
 	return x
@@ -194,12 +185,8 @@ func intLit(n ast.IntLit) int64 {
 
 // stringLit returns the string corresponding to the given string literal.
 func stringLit(n ast.StringLit) string {
-	text := n.Text()
-	s := enc.Unquote(text)
-	return string(s)
+	return string(stringLitBytes(n))
 }
-
-// TODO: remove stringLitBytes if not used.
 
 // stringLitBytes returns the byte slice corresponding to the given string literal.
 func stringLitBytes(n ast.StringLit) []byte {
@@ -419,16 +406,15 @@ func (gen *generator) irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 			panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
 		}
 		return def
-	//case *ast.Align: // TODO: add support for Align.
+	// TODO: add support for Align.
+	//case *ast.Align:
+	//	return ir.Align(uintLit(n.N()))
 	case *ast.AlignPair:
-		// TODO: add support for AlignPair.
-		panic("support for function attribute AlignPair not yet implemented")
+		return ir.Align(uintLit(n.N()))
 	case *ast.AlignStack:
-		// TODO: add support for AlignStack.
-		panic("support for function attribute AlignStack not yet implemented")
+		return ir.AlignStack(uintLit(n.N()))
 	case *ast.AlignStackPair:
-		// TODO: add support for AlignStackPair.
-		panic("support for function attribute AlignStackPair not yet implemented")
+		return ir.AlignStack(uintLit(n.N()))
 	case *ast.AllocSize:
 		// TODO: add support for AllocSize.
 		panic("support for function attribute AllocSize not yet implemented")
