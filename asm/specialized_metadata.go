@@ -585,13 +585,51 @@ func (gen *generator) irDILocation(old *ast.DILocation) (*metadata.DILocation, e
 // --- [ DIMacro ] -------------------------------------------------------------
 
 func (gen *generator) irDIMacro(old *ast.DIMacro) (*metadata.DIMacro, error) {
-	panic("support for *ast.DIMacro not yet implemented")
+	md := &metadata.DIMacro{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.TypeMacinfoField:
+			md.Type = asmenum.DwarfMacinfoFromString(oldField.Typ().Text())
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.ValueStringField:
+			md.Value = stringLit(oldField.Value())
+		default:
+			panic(fmt.Errorf("support for DIMacro field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DIMacroFile ] ---------------------------------------------------------
 
 func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile, error) {
-	panic("support for *ast.DIMacroFile not yet implemented")
+	md := &metadata.DIMacroFile{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.TypeMacinfoField:
+			md.Type = asmenum.DwarfMacinfoFromString(oldField.Typ().Text())
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.File = file
+		case *ast.NodesField:
+			nodes, err := gen.irMDField(oldField.Nodes())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Nodes = nodes
+		default:
+			panic(fmt.Errorf("support for DIMacroFile field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DIModule ] ------------------------------------------------------------
