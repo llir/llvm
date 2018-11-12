@@ -76,7 +76,7 @@ func (t *VoidType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *VoidType) Def() string {
-	// "void"
+	// 'void'
 	return "void"
 }
 
@@ -137,7 +137,7 @@ func (t *FuncType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *FuncType) Def() string {
-	// Type "(" Params ")"
+	// RetType=Type '(' Params ')'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%v (", t.RetType)
 	for i, param := range t.Params {
@@ -196,7 +196,7 @@ func (t *IntType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *IntType) Def() string {
-	// int_type
+	// int_type_tok
 	return fmt.Sprintf("i%d", t.BitSize)
 }
 
@@ -233,6 +233,7 @@ func (t *FloatType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *FloatType) Def() string {
+	// FloatKind
 	return t.Kind.String()
 }
 
@@ -282,7 +283,7 @@ func (t *MMXType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *MMXType) Def() string {
-	// "x86_mmx"
+	// 'x86_mmx'
 	return "x86_mmx"
 }
 
@@ -327,7 +328,7 @@ func (t *PointerType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *PointerType) Def() string {
-	// Type OptAddrSpace "*"
+	// Elem=Type AddrSpaceopt '*'
 	buf := &strings.Builder{}
 	buf.WriteString(t.ElemType.String())
 	if t.AddrSpace != 0 {
@@ -347,7 +348,7 @@ type AddrSpace int64
 
 // String returns the string representation of the pointer type address space.
 func (a AddrSpace) String() string {
-	// "addrspace" "(" int_lit ")"
+	// 'addrspace' '(' N=UintLit ')'
 	return fmt.Sprintf("addrspace(%d)", int64(a))
 }
 
@@ -393,7 +394,7 @@ func (t *VectorType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *VectorType) Def() string {
-	// "<" int_lit "x" Type ">"
+	// '<' Len=UintLit 'x' Elem=Type '>'
 	return fmt.Sprintf("<%d x %v>", t.Len, t.ElemType)
 }
 
@@ -428,7 +429,7 @@ func (t *LabelType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *LabelType) Def() string {
-	// "label"
+	// 'label'
 	return "label"
 }
 
@@ -463,7 +464,7 @@ func (t *TokenType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *TokenType) Def() string {
-	// "token"
+	// 'token'
 	return "token"
 }
 
@@ -498,7 +499,7 @@ func (t *MetadataType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *MetadataType) Def() string {
-	// "metadata"
+	// 'metadata'
 	return "metadata"
 }
 
@@ -549,7 +550,7 @@ func (t *ArrayType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *ArrayType) Def() string {
-	// "[" int_lit "x" Type "]"
+	// '[' Len=UintLit 'x' Elem=Type ']'
 	return fmt.Sprintf("[%d x %v]", t.Len, t.ElemType)
 }
 
@@ -616,9 +617,17 @@ func (t *StructType) String() string {
 
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *StructType) Def() string {
-	// "opaque"
-	// "{" Types "}"
-	// "<" "{" Types "}" ">"
+	// Opaque struct type.
+	//
+	//    'opaque'
+	//
+	// Struct type.
+	//
+	//    '{' Fields=(Type separator ',')+? '}'
+	//
+	// Packed struct type.
+	//
+	//    '<' '{' Fields=(Type separator ',')+? '}' '>'   -> PackedStructType
 	if t.Opaque {
 		return "opaque"
 	}

@@ -7,3 +7,4 @@
 * check names of fields of instructions against Haskell LLVM library. e.g. name of CleanupPad.Scope. Should it be Parent or From instead of Scope?
 * move isFoo and IsFoo to sumtype.go
 * rename TypeDef.Alias to TypeDef.LocalName (also rename Alias= to Name= in TypeDef rule of grammar)?
+* change `NewArray(typ *types.ArrayType, elems ...Constant) *Array` into `NewArray(elems ...Constant) *Array`, move Typ computation to Type method, and invoke Type method from NewArray. Do the same for remaining constants, where applicable?

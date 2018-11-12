@@ -37,7 +37,7 @@ func (c *Array) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *Array) Ident() string {
-	// "[" TypeConsts "]"
+	// '[' Elems=(TypeConst separator ',')* ']'
 	buf := &strings.Builder{}
 	buf.WriteString("[")
 	for i, elem := range c.Elems {
