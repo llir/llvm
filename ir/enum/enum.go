@@ -496,10 +496,6 @@ const (
 	DwarfOpLLVMFragment DwarfOp = 0x1000 // DW_OP_LLVM_fragment
 )
 
-// IsDIExpressionField ensures that only DIExpression fields can be assigned to
-// the metadata.DIExpressionField interface.
-func (DwarfOp) IsDIExpressionField() {}
-
 //go:generate stringer -linecomment -type DwarfTag
 
 // DwarfTag is a DWARF tag.
@@ -712,10 +708,6 @@ const (
 	FuncAttrWriteOnly                                   // writeonly
 )
 
-// IsFuncAttribute ensures that only function attributes can be assigned to the
-// ir.FuncAttribute interface.
-func (FuncAttr) IsFuncAttribute() {}
-
 //go:generate stringer -linecomment -type IPred
 
 // IPred is an integer comparison predicate.
@@ -805,10 +797,6 @@ const (
 	ParamAttrZeroExt                     // zeroext
 )
 
-// IsParamAttribute ensures that only parameter attributes can be assigned to
-// the ir.ParamAttribute interface.
-func (ParamAttr) IsParamAttribute() {}
-
 //go:generate stringer -linecomment -type Preemption
 
 // Preemption specifies the preemtion of a global identifier.
@@ -834,10 +822,6 @@ const (
 	ReturnAttrSignExt                   // signext
 	ReturnAttrZeroExt                   // zeroext
 )
-
-// IsReturnAttribute ensures that only return attributes can be assigned to the
-// ir.ReturnAttribute interface.
-func (ReturnAttr) IsReturnAttribute() {}
 
 //go:generate stringer -linecomment -type SelectionKind
 

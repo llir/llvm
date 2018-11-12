@@ -18,6 +18,36 @@ func (*Alias) IsConstant() {}
 // constant.Constant interface.
 func (*IFunc) IsConstant() {}
 
+// === [ ir.FuncAttribute ] ====================================================
+
+// IsFuncAttribute ensures that only function attributes can be assigned to
+// the ir.FuncAttribute interface.
+func (AttrString) IsFuncAttribute() {}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to
+// the ir.FuncAttribute interface.
+func (AttrPair) IsFuncAttribute() {}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
+func (*AttrGroupDef) IsFuncAttribute() {}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
+func (Align) IsFuncAttribute() {}
+
+// TODO: add support for AlignStack function attributes.
+
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
+//func (AlignStack) IsFuncAttribute() {}
+
+// TODO: add support for AllocSize function attributes.
+
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
+//func (AllocSize) IsFuncAttribute() {}
+
 // === [ ir.Instruction ] ======================================================
 
 // Binary instructions.
@@ -86,7 +116,7 @@ func (*InstLandingPad) isInstruction() {}
 func (*InstCatchPad) isInstruction()   {}
 func (*InstCleanupPad) isInstruction() {}
 
-// === [ ir.ParamAttribute ] ==================================================
+// === [ ir.ParamAttribute ] ===================================================
 
 // IsParamAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
@@ -106,7 +136,7 @@ func (Align) IsParamAttribute() {}
 // the ir.ParamAttribute interface.
 //func (Dereferenceable) IsParamAttribute() {}
 
-// === [ ir.ReturnAttribute ] =================================================
+// === [ ir.ReturnAttribute ] ==================================================
 
 // IsReturnAttribute ensures that only return attributes can be assigned to
 // the ir.ReturnAttribute interface.
@@ -125,36 +155,6 @@ func (Align) IsReturnAttribute() {}
 // IsReturnAttribute ensures that only return attributes can be assigned to
 // the ir.ReturnAttribute interface.
 //func (Dereferenceable) IsReturnAttribute() {}
-
-// === [ ir.FuncAttribute ] ===================================================
-
-// IsFuncAttribute ensures that only function attributes can be assigned to
-// the ir.FuncAttribute interface.
-func (AttrString) IsFuncAttribute() {}
-
-// IsFuncAttribute ensures that only function attributes can be assigned to
-// the ir.FuncAttribute interface.
-func (AttrPair) IsFuncAttribute() {}
-
-// IsFuncAttribute ensures that only function attributes can be assigned to the
-// ir.FuncAttribute interface.
-func (*AttrGroupDef) IsFuncAttribute() {}
-
-// IsFuncAttribute ensures that only function attributes can be assigned to the
-// ir.FuncAttribute interface.
-func (Align) IsFuncAttribute() {}
-
-// TODO: add support for AlignStack function attributes.
-
-// IsFuncAttribute ensures that only function attributes can be assigned to the
-// ir.FuncAttribute interface.
-//func (AlignStack) IsFuncAttribute() {}
-
-// TODO: add support for AllocSize function attributes.
-
-// IsFuncAttribute ensures that only function attributes can be assigned to the
-// ir.FuncAttribute interface.
-//func (AllocSize) IsFuncAttribute() {}
 
 // === [ ir.UnwindTarget ] =====================================================
 
