@@ -269,7 +269,7 @@ func headerString(f *Function) string {
 		fmt.Fprintf(buf, " %s", attr)
 	}
 	if len(f.Section) > 0 {
-		fmt.Fprintf(buf, " section %s", enc.Quote([]byte(f.Section)))
+		fmt.Fprintf(buf, " section %s", quote(f.Section))
 	}
 	if f.Comdat != nil {
 		if f.Comdat.Name == f.GlobalName {
@@ -279,7 +279,7 @@ func headerString(f *Function) string {
 		}
 	}
 	if len(f.GC) > 0 {
-		fmt.Fprintf(buf, " gc %s", enc.Quote([]byte(f.GC)))
+		fmt.Fprintf(buf, " gc %s", quote(f.GC))
 	}
 	if f.Prefix != nil {
 		fmt.Fprintf(buf, " prefix %s", f.Prefix)
