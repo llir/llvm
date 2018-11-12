@@ -707,7 +707,28 @@ func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile
 // --- [ DIModule ] ------------------------------------------------------------
 
 func (gen *generator) irDIModule(old *ast.DIModule) (*metadata.DIModule, error) {
-	panic("support for *ast.DIModule not yet implemented")
+	md := &metadata.DIModule{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.ScopeField:
+			scope, err := gen.irMDField(oldField.Scope())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Scope = scope
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.ConfigMacrosField:
+			md.ConfigMacros = stringLit(oldField.ConfigMacros())
+		case *ast.IncludePathField:
+			md.IncludePath = stringLit(oldField.IncludePath())
+		case *ast.IsysrootField:
+			md.Isysroot = stringLit(oldField.Isysroot())
+		default:
+			panic(fmt.Errorf("support for DIModule field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DINamespace ] ---------------------------------------------------------

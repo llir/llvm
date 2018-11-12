@@ -260,7 +260,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/bitfields.ll"},
 		//{path: "testdata/DebugInfo/X86/block-capture.ll"},
 		//{path: "testdata/DebugInfo/X86/byvalstruct.ll"},
-		//{path: "testdata/DebugInfo/X86/clang-module.ll"}, // TODO: add support for DIModule
+		{path: "testdata/DebugInfo/X86/clang-module.ll"},
 		//{path: "testdata/DebugInfo/X86/clone-module-2.ll"},
 		//{path: "testdata/DebugInfo/X86/clone-module.ll"},
 		//{path: "testdata/DebugInfo/X86/coff_debug_info_type.ll"},
