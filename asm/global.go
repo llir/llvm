@@ -496,7 +496,7 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		}
 		// Name.
 		name := optLocalIdent(p.Name())
-		param := ir.NewParam(typ, name)
+		param := ir.NewParam(name, typ)
 		// (optional) Parameter attributes.
 		for _, oldParamAttr := range p.Attrs() {
 			paramAttr := irParamAttribute(oldParamAttr)
