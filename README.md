@@ -283,4 +283,4 @@ Introduce API for use-def chains.
 
 ## License
 
-The llir/llvm project is released into the [public domain](UNLICENSE). Documentation and comments directly copied from the official LLVM project are licensed under a [BSD-style license](http://releases.llvm.org/5.0.0/LICENSE.TXT).
+The llir/llvm project is released into the [public domain](UNLICENSE). Documentation and test cases directly copied from the official LLVM project are licensed under a [BSD-style license](http://releases.llvm.org/5.0.0/LICENSE.TXT).
