@@ -10,7 +10,7 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// Alignment is a memory alignment attribute.
+// Align is a memory alignment attribute.
 type Align int64
 
 // String returns the string representation of the alignment attribute.
@@ -39,10 +39,23 @@ func (arg *Arg) String() string {
 	buf := &strings.Builder{}
 	buf.WriteString(arg.Type().String())
 	for _, attr := range arg.Attrs {
-		fmt.Fprintf(buf, " %v", attr)
+		fmt.Fprintf(buf, " %s", attr)
 	}
-	fmt.Fprintf(buf, " %v", arg.Ident())
+	fmt.Fprintf(buf, " %s", arg.Ident())
 	return buf.String()
+}
+
+// AttrPair is an attribute key-value pair (used in function, parameter and
+// return attributes).
+type AttrPair struct {
+	Key   string
+	Value string
+}
+
+// String returns the string representation of the attribute key-value pair.
+func (a AttrPair) String() string {
+	// Key=StringLit '=' Val=StringLit
+	return fmt.Sprintf("%s=%s", quote(a.Key), quote(a.Value))
 }
 
 // AttrString is an attribute string (used in function, parameter and return
@@ -63,11 +76,27 @@ type ExceptionScope interface {
 }
 
 // FuncAttribute is a function attribute.
+//
+// A FuncAttribute has one of the following underlying types.
+//
+//    ir.AttrString
+//    ir.AttrPair
+//    *ir.AttrGroupDef
+//    ir.Align
+//    ir.AlignStack
+//    ir.AllocSize
+//    enum.FuncAttr
 type FuncAttribute interface {
 	fmt.Stringer
 	// IsFuncAttribute ensures that only function attributes can be assigned to
 	// the ir.FuncAttribute interface.
 	IsFuncAttribute()
+}
+
+// TODO: figure out definition of OperandBundle.
+
+// OperandBundle is an operand bundle.
+type OperandBundle struct {
 }
 
 // ParamAttribute is a parameter attribute.
@@ -103,7 +132,14 @@ type ReturnAttribute interface {
 }
 
 // UnwindTarget is an unwind target.
+//
+// An UnwindTarget has one of the following underlying types.
+//
+//    *ir.BasicBlock
+//    ir.UnwindToCaller
 type UnwindTarget interface {
+	// isUnwindTarget ensures that only unwind targets can be assigned to the
+	// ir.UnwindTarget interface.
 	isUnwindTarget()
 }
 
@@ -111,39 +147,11 @@ type UnwindTarget interface {
 type UnwindToCaller struct{}
 
 // String returns the string representation of the unwind target.
-func (*UnwindToCaller) String() string {
+func (UnwindToCaller) String() string {
 	return "to caller"
 }
 
-// AttrPair is an attribute key-value pair (used in function, parameter and
-// return attributes).
-type AttrPair struct {
-	Key   string
-	Value string
-}
-
-// String returns the string representation of the attribute key-value pair.
-func (a AttrPair) String() string {
-	return fmt.Sprintf("%s=%s", enc.Quote([]byte(a.Key)), enc.Quote([]byte(a.Value)))
-}
-
-// IsFuncAttribute ensures that only function attributes can be assigned to
-// the ir.FuncAttribute interface.
-func (AttrPair) IsFuncAttribute() {}
-
-// IsParamAttribute ensures that only parameter attributes can be assigned to
-// the ir.ParamAttribute interface.
-func (AttrPair) IsParamAttribute() {}
-
-// IsReturnAttribute ensures that only return attributes can be assigned to
-// the ir.ReturnAttribute interface.
-func (AttrPair) IsReturnAttribute() {}
-
-type OperandBundle struct {
-	// TODO: implement body.
-}
-
-// --- [ Function parameters ] -------------------------------------------------
+// ___ [ Function parameter ] __________________________________________________
 
 // Param is an LLVM IR function parameter.
 type Param struct {
@@ -166,7 +174,7 @@ func NewParam(name string, typ types.Type) *Param {
 // String returns the LLVM syntax representation of the function parameter as a
 // type-value pair.
 func (p *Param) String() string {
-	return fmt.Sprintf("%v %v", p.Type(), p.Ident())
+	return fmt.Sprintf("%s %s", p.Type(), p.Ident())
 }
 
 // Type returns the type of the function parameter.
@@ -191,14 +199,14 @@ func (p *Param) SetName(name string) {
 
 // Def returns the LLVM syntax representation of the function parameter.
 func (p *Param) Def() string {
-	// Type ParamAttrs OptLocalIdent
+	// Typ=Type Attrs=ParamAttribute* Name=LocalIdent?
 	buf := &strings.Builder{}
 	buf.WriteString(p.Typ.String())
 	for _, attr := range p.Attrs {
-		fmt.Fprintf(buf, " %v", attr)
+		fmt.Fprintf(buf, " %s", attr)
 	}
 	if !isUnnamed(p.LocalName) && !isLocalID(p.LocalName) {
-		fmt.Fprintf(buf, " %v", enc.Local(p.LocalName))
+		fmt.Fprintf(buf, " %s", enc.Local(p.LocalName))
 	}
 	return buf.String()
 }

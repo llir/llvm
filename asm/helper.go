@@ -579,7 +579,7 @@ func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error)
 		return fgen.irBasicBlock(n)
 	}
 	if n := n.UnwindToCaller(); n.IsValid() {
-		return &ir.UnwindToCaller{}, nil
+		return ir.UnwindToCaller{}, nil
 	}
 	panic("unreachable")
 }
