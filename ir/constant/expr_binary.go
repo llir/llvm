@@ -27,13 +27,16 @@ type ExprAdd struct {
 
 // NewAdd returns a new add expression based on the given operands.
 func NewAdd(x, y Constant) *ExprAdd {
-	return &ExprAdd{X: x, Y: y}
+	e := &ExprAdd{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprAdd) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -47,13 +50,13 @@ func (e *ExprAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprAdd) Ident() string {
-	// "add" OverflowFlags "(" Type Constant "," Type Constant ")"
+	// 'add' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 	buf := &strings.Builder{}
 	buf.WriteString("add")
 	for _, flag := range e.OverflowFlags {
-		fmt.Fprintf(buf, " %v", flag)
+		fmt.Fprintf(buf, " %s", flag)
 	}
-	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	fmt.Fprintf(buf, " (%s, %s)", e.X, e.Y)
 	return buf.String()
 }
 
@@ -78,13 +81,16 @@ type ExprFAdd struct {
 
 // NewFAdd returns a new fadd expression based on the given operands.
 func NewFAdd(x, y Constant) *ExprFAdd {
-	return &ExprFAdd{X: x, Y: y}
+	e := &ExprFAdd{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFAdd) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -98,8 +104,8 @@ func (e *ExprFAdd) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFAdd) Ident() string {
-	// "fadd" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("fadd (%v, %v)", e.X, e.Y)
+	// 'fadd' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("fadd (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -125,13 +131,16 @@ type ExprSub struct {
 
 // NewSub returns a new sub expression based on the given operands.
 func NewSub(x, y Constant) *ExprSub {
-	return &ExprSub{X: x, Y: y}
+	e := &ExprSub{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprSub) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -145,13 +154,13 @@ func (e *ExprSub) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSub) Ident() string {
-	// "sub" OverflowFlags "(" Type Constant "," Type Constant ")"
+	// 'sub' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 	buf := &strings.Builder{}
 	buf.WriteString("sub")
 	for _, flag := range e.OverflowFlags {
-		fmt.Fprintf(buf, " %v", flag)
+		fmt.Fprintf(buf, " %s", flag)
 	}
-	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	fmt.Fprintf(buf, " (%s, %s)", e.X, e.Y)
 	return buf.String()
 }
 
@@ -176,13 +185,16 @@ type ExprFSub struct {
 
 // NewFSub returns a new fsub expression based on the given operands.
 func NewFSub(x, y Constant) *ExprFSub {
-	return &ExprFSub{X: x, Y: y}
+	e := &ExprFSub{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFSub) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -196,8 +208,8 @@ func (e *ExprFSub) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFSub) Ident() string {
-	// "fsub" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("fsub (%v, %v)", e.X, e.Y)
+	// 'fsub' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("fsub (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -223,13 +235,16 @@ type ExprMul struct {
 
 // NewMul returns a new mul expression based on the given operands.
 func NewMul(x, y Constant) *ExprMul {
-	return &ExprMul{X: x, Y: y}
+	e := &ExprMul{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprMul) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -243,13 +258,13 @@ func (e *ExprMul) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprMul) Ident() string {
-	// "mul" OverflowFlags "(" Type Constant "," Type Constant ")"
+	// 'mul' OverflowFlags=OverflowFlag* '(' X=TypeConst ',' Y=TypeConst ')'
 	buf := &strings.Builder{}
 	buf.WriteString("mul")
 	for _, flag := range e.OverflowFlags {
-		fmt.Fprintf(buf, " %v", flag)
+		fmt.Fprintf(buf, " %s", flag)
 	}
-	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	fmt.Fprintf(buf, " (%s, %s)", e.X, e.Y)
 	return buf.String()
 }
 
@@ -274,13 +289,16 @@ type ExprFMul struct {
 
 // NewFMul returns a new fmul expression based on the given operands.
 func NewFMul(x, y Constant) *ExprFMul {
-	return &ExprFMul{X: x, Y: y}
+	e := &ExprFMul{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFMul) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -294,8 +312,8 @@ func (e *ExprFMul) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFMul) Ident() string {
-	// "fmul" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("fmul (%v, %v)", e.X, e.Y)
+	// 'fmul' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("fmul (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -321,13 +339,16 @@ type ExprUDiv struct {
 
 // NewUDiv returns a new udiv expression based on the given operands.
 func NewUDiv(x, y Constant) *ExprUDiv {
-	return &ExprUDiv{X: x, Y: y}
+	e := &ExprUDiv{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprUDiv) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -341,13 +362,13 @@ func (e *ExprUDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprUDiv) Ident() string {
-	// "udiv" OptExact "(" Type Constant "," Type Constant ")"
+	// 'udiv' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
 	buf := &strings.Builder{}
 	buf.WriteString("udiv")
 	if e.Exact {
 		buf.WriteString(" exact")
 	}
-	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	fmt.Fprintf(buf, " (%s, %s)", e.X, e.Y)
 	return buf.String()
 }
 
@@ -374,13 +395,16 @@ type ExprSDiv struct {
 
 // NewSDiv returns a new sdiv expression based on the given operands.
 func NewSDiv(x, y Constant) *ExprSDiv {
-	return &ExprSDiv{X: x, Y: y}
+	e := &ExprSDiv{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprSDiv) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -394,13 +418,13 @@ func (e *ExprSDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSDiv) Ident() string {
-	// "sdiv" OptExact "(" Type Constant "," Type Constant ")"
+	// 'sdiv' Exactopt '(' X=TypeConst ',' Y=TypeConst ')'
 	buf := &strings.Builder{}
 	buf.WriteString("sdiv")
 	if e.Exact {
 		buf.WriteString(" exact")
 	}
-	fmt.Fprintf(buf, " (%v, %v)", e.X, e.Y)
+	fmt.Fprintf(buf, " (%s, %s)", e.X, e.Y)
 	return buf.String()
 }
 
@@ -425,13 +449,16 @@ type ExprFDiv struct {
 
 // NewFDiv returns a new fdiv expression based on the given operands.
 func NewFDiv(x, y Constant) *ExprFDiv {
-	return &ExprFDiv{X: x, Y: y}
+	e := &ExprFDiv{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFDiv) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -445,8 +472,8 @@ func (e *ExprFDiv) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFDiv) Ident() string {
-	// "fdiv" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("fdiv (%v, %v)", e.X, e.Y)
+	// 'fdiv' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("fdiv (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -470,13 +497,16 @@ type ExprURem struct {
 
 // NewURem returns a new urem expression based on the given operands.
 func NewURem(x, y Constant) *ExprURem {
-	return &ExprURem{X: x, Y: y}
+	e := &ExprURem{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprURem) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -490,8 +520,8 @@ func (e *ExprURem) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprURem) Ident() string {
-	// "urem" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("urem (%v, %v)", e.X, e.Y)
+	// 'urem' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("urem (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -515,13 +545,16 @@ type ExprSRem struct {
 
 // NewSRem returns a new srem expression based on the given operands.
 func NewSRem(x, y Constant) *ExprSRem {
-	return &ExprSRem{X: x, Y: y}
+	e := &ExprSRem{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprSRem) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -535,8 +568,8 @@ func (e *ExprSRem) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSRem) Ident() string {
-	// "srem" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("srem (%v, %v)", e.X, e.Y)
+	// 'srem' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("srem (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -560,13 +593,16 @@ type ExprFRem struct {
 
 // NewFRem returns a new frem expression based on the given operands.
 func NewFRem(x, y Constant) *ExprFRem {
-	return &ExprFRem{X: x, Y: y}
+	e := &ExprFRem{X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFRem) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -580,8 +616,8 @@ func (e *ExprFRem) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFRem) Ident() string {
-	// "frem" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("frem (%v, %v)", e.X, e.Y)
+	// 'frem' '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("frem (%s, %s)", e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

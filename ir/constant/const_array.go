@@ -20,18 +20,26 @@ type Array struct {
 
 // NewArray returns a new array constant based on the given array type and
 // elements.
-func NewArray(typ *types.ArrayType, elems ...Constant) *Array {
-	return &Array{Typ: typ, Elems: elems}
+func NewArray(elems ...Constant) *Array {
+	c := &Array{Elems: elems}
+	// Compute type.
+	c.Type()
+	return c
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *Array) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
 func (c *Array) Type() types.Type {
+	// Cache type if not present.
+	if c.Typ == nil {
+		elemType := c.Elems[0].Type()
+		c.Typ = types.NewArray(int64(len(c.Elems)), elemType)
+	}
 	return c.Typ
 }
 
@@ -76,7 +84,7 @@ func NewCharArrayFromString(s string) *CharArray {
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *CharArray) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
@@ -86,6 +94,6 @@ func (c *CharArray) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *CharArray) Ident() string {
-	// "c" StringLit
+	// 'c' Val=StringLit
 	return "c" + enc.Quote(c.X)
 }

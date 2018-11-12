@@ -133,7 +133,10 @@ func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*consta
 		}
 		fields = append(fields, field)
 	}
-	return constant.NewStruct(typ, fields...), nil
+	c := constant.NewStruct(fields...)
+	c.Typ.Alias = typ.Alias
+	c.Typ.Packed = typ.Packed
+	return c, nil
 }
 
 // --- [ Array Constants ] -----------------------------------------------------
@@ -151,7 +154,10 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant
 		}
 		elems = append(elems, elem)
 	}
-	return constant.NewArray(typ, elems...), nil
+	c := constant.NewArray(elems...)
+	// TODO: check that typ is equal to c.Typ.
+	_ = typ
+	return c, nil
 }
 
 func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*constant.CharArray, error) {
@@ -178,7 +184,10 @@ func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*consta
 		}
 		elems = append(elems, elem)
 	}
-	return constant.NewVector(typ, elems...), nil
+	c := constant.NewVector(elems...)
+	// TODO: check that typ is equal to c.Typ.
+	_ = typ
+	return c, nil
 }
 
 // --- [ Zero Initialization Constants ] ---------------------------------------

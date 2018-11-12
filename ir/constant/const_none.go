@@ -25,6 +25,6 @@ func (*NoneToken) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (*NoneToken) Ident() string {
-	// "none"
+	// 'none'
 	return "none"
 }
