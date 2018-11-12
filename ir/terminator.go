@@ -67,16 +67,21 @@ func (*TermRet) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermRet) Def() string {
-	// "ret" VoidType OptCommaSepMetadataAttachmentList
-	// "ret" ConcreteType Value OptCommaSepMetadataAttachmentList
+	// Void return instruction.
+	//
+	// 'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
+	//
+	// Value return instruction.
+	//
+	// 'ret' XTyp=ConcreteType X=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	if term.X == nil {
 		buf.WriteString("ret void")
 	} else {
-		fmt.Fprintf(buf, "ret %v", term.X)
+		fmt.Fprintf(buf, "ret %s", term.X)
 	}
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -113,11 +118,11 @@ func (term *TermBr) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermBr) Def() string {
-	// "br" LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	// 'br' Target=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "br %v", term.Target)
+	fmt.Fprintf(buf, "br %s", term.Target)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -158,11 +163,12 @@ func (term *TermCondBr) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermCondBr) Def() string {
-	// "br" IntType Value "," LabelType LocalIdent "," LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	// 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label
+	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "br %v, %v, %v", term.Cond, term.TargetTrue, term.TargetFalse)
+	fmt.Fprintf(buf, "br %s, %s, %s", term.Cond, term.TargetTrue, term.TargetFalse)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -208,15 +214,16 @@ func (term *TermSwitch) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermSwitch) Def() string {
-	// "switch" Type Value "," LabelType LocalIdent "[" Cases "]" OptCommaSepMetadataAttachmentList
+	// 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "switch %v, %v [\n", term.X, term.TargetDefault)
+	fmt.Fprintf(buf, "switch %s, %s [\n", term.X, term.TargetDefault)
 	for _, c := range term.Cases {
-		fmt.Fprintf(buf, "\t\t%v\n", c)
+		fmt.Fprintf(buf, "\t\t%s\n", c)
 	}
 	buf.WriteString("\t]")
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -239,7 +246,8 @@ func NewCase(x constant.Constant, target *BasicBlock) *Case {
 
 // String returns the string representation of the switch case.
 func (c *Case) String() string {
-	return fmt.Sprintf("%v, %v", c.X, c.Target)
+	// X=TypeConst ',' Target=Label
+	return fmt.Sprintf("%s, %s", c.X, c.Target)
 }
 
 // --- [ indirectbr ] ----------------------------------------------------------
@@ -271,9 +279,10 @@ func (term *TermIndirectBr) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermIndirectBr) Def() string {
-	// "indirectbr" Type Value "," "[" LabelList "]" OptCommaSepMetadataAttachmentList
+	// 'indirectbr' Addr=TypeValue ',' '[' ValidTargets=(Label separator ',')+
+	// ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "indirectbr %v, [", term.Addr)
+	fmt.Fprintf(buf, "indirectbr %s, [", term.Addr)
 	for i, target := range term.ValidTargets {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -282,7 +291,7 @@ func (term *TermIndirectBr) Def() string {
 	}
 	buf.WriteString("]")
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -334,13 +343,16 @@ type TermInvoke struct {
 //
 // TODO: specify the set of underlying types of invokee.
 func NewInvoke(invokee value.Value, args []value.Value, normal, exception *BasicBlock) *TermInvoke {
-	return &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
+	term := &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
+	// Compute type.
+	term.Type()
+	return term
 }
 
 // String returns the LLVM syntax representation of the terminator as a type-
 // value pair.
 func (term *TermInvoke) String() string {
-	return fmt.Sprintf("%v %v", term.Type(), term.Ident())
+	return fmt.Sprintf("%s %s", term.Type(), term.Ident())
 }
 
 // Type returns the type of the terminator.
@@ -393,17 +405,20 @@ func (term *TermInvoke) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermInvoke) Def() string {
-	// "invoke" OptCallingConv ReturnAttrs Type Value "(" Args ")" FuncAttrs OperandBundles "to" LabelType LocalIdent "unwind" LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	// 'invoke' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type
+	// Invokee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('['
+	// (OperandBundle separator ',')+ ']')? 'to' Normal=Label 'unwind'
+	// Exception=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	if !term.Type().Equal(types.Void) {
-		fmt.Fprintf(buf, "%v = ", term.Ident())
+		fmt.Fprintf(buf, "%s = ", term.Ident())
 	}
 	buf.WriteString("invoke")
 	if term.CallingConv != enum.CallingConvNone {
-		fmt.Fprintf(buf, " %v", callingConvString(term.CallingConv))
+		fmt.Fprintf(buf, " %s", callingConvString(term.CallingConv))
 	}
 	for _, attr := range term.ReturnAttrs {
-		fmt.Fprintf(buf, " %v", attr)
+		fmt.Fprintf(buf, " %s", attr)
 	}
 	// Use function signature instead of return type for variadic functions.
 	typ := term.Type()
@@ -412,7 +427,7 @@ func (term *TermInvoke) Def() string {
 			typ = t
 		}
 	}
-	fmt.Fprintf(buf, " %v %v(", typ, term.Invokee.Ident())
+	fmt.Fprintf(buf, " %s %s(", typ, term.Invokee.Ident())
 	for i, arg := range term.Args {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -421,18 +436,18 @@ func (term *TermInvoke) Def() string {
 	}
 	buf.WriteString(")")
 	for _, attr := range term.FuncAttrs {
-		fmt.Fprintf(buf, " %v", attr)
+		fmt.Fprintf(buf, " %s", attr)
 	}
 	if len(term.OperandBundles) > 0 {
 		buf.WriteString("[")
 		for _, operandBundle := range term.OperandBundles {
-			fmt.Fprintf(buf, " %v", operandBundle)
+			fmt.Fprintf(buf, " %s", operandBundle)
 		}
 		buf.WriteString("]")
 	}
-	fmt.Fprintf(buf, "\n\t\tto %v unwind %v", term.Normal, term.Exception)
+	fmt.Fprintf(buf, "\n\t\tto %s unwind %s", term.Normal, term.Exception)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -464,11 +479,11 @@ func (term *TermResume) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermResume) Def() string {
-	// "resume" Type Value OptCommaSepMetadataAttachmentList
+	// 'resume' X=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "resume %v", term.X)
+	fmt.Fprintf(buf, "resume %s", term.X)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -503,7 +518,7 @@ func NewCatchSwitch(scope ExceptionScope, handlers []*BasicBlock, unwindTarget U
 // String returns the LLVM syntax representation of the terminator as a type-
 // value pair.
 func (term *TermCatchSwitch) String() string {
-	return fmt.Sprintf("%v %v", term.Type(), term.Ident())
+	return fmt.Sprintf("%s %s", term.Type(), term.Ident())
 }
 
 // Type returns the type of the terminator.
@@ -541,19 +556,21 @@ func (term *TermCatchSwitch) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermCatchSwitch) Def() string {
-	// "catchswitch" "within" ExceptionScope "[" LabelList "]" "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
+	// 'catchswitch' 'within' Scope=ExceptionScope '[' Handlers=(Label separator
+	// ',')+ ']' 'unwind' UnwindTarget=UnwindTarget Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v = ", term.Ident())
-	fmt.Fprintf(buf, "catchswitch within %v [", term.Scope.Ident())
+	fmt.Fprintf(buf, "%s = ", term.Ident())
+	fmt.Fprintf(buf, "catchswitch within %s [", term.Scope.Ident())
 	for i, handler := range term.Handlers {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(handler.String())
 	}
-	fmt.Fprintf(buf, "] unwind %v", term.UnwindTarget)
+	fmt.Fprintf(buf, "] unwind %s", term.UnwindTarget)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -592,11 +609,12 @@ func (term *TermCatchRet) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermCatchRet) Def() string {
-	// "catchret" "from" Value "to" LabelType LocalIdent OptCommaSepMetadataAttachmentList
+	// 'catchret' 'from' From=Value 'to' To=Label Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "catchret from %v to %v", term.From.Ident(), term.To)
+	fmt.Fprintf(buf, "catchret from %s to %s", term.From.Ident(), term.To)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -639,11 +657,12 @@ func (term *TermCleanupRet) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermCleanupRet) Def() string {
-	// "cleanupret" "from" Value "unwind" UnwindTarget OptCommaSepMetadataAttachmentList
+	// 'cleanupret' 'from' From=Value 'unwind' UnwindTarget Metadata=(','
+	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "cleanupret from %v unwind %v", term.From.Ident(), term.UnwindTarget)
+	fmt.Fprintf(buf, "cleanupret from %s unwind %s", term.From.Ident(), term.UnwindTarget)
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }
@@ -671,11 +690,11 @@ func (term *TermUnreachable) Succs() []*BasicBlock {
 
 // Def returns the LLVM syntax representation of the terminator.
 func (term *TermUnreachable) Def() string {
-	// "unreachable" OptCommaSepMetadataAttachmentList
+	// 'unreachable' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("unreachable")
 	for _, md := range term.Metadata {
-		fmt.Fprintf(buf, ", %v", md)
+		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
 }

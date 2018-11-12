@@ -29,7 +29,7 @@ type InlineAsm struct {
 // String returns the LLVM syntax representation of the inline assembler
 // expression as a type-value pair.
 func (asm *InlineAsm) String() string {
-	return fmt.Sprintf("%v %v", asm.Type(), asm.Ident())
+	return fmt.Sprintf("%s %s", asm.Type(), asm.Ident())
 }
 
 // Type returns the type of the inline assembler expression.

@@ -10,8 +10,6 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-// TODO: move to the right place.
-
 // Alignment is a memory alignment attribute.
 type Alignment int64
 
@@ -21,14 +19,6 @@ func (align Alignment) String() string {
 	return fmt.Sprintf("align %d", int64(align))
 }
 
-// IsParamAttribute ensures that only parameter attributes can be assigned to
-// the ir.ParamAttribute interface.
-func (Alignment) IsParamAttribute() {}
-
-// IsReturnAttribute ensures that only return attributes can be assigned to the
-// ir.ReturnAttribute interface.
-func (Alignment) IsReturnAttribute() {}
-
 // Arg is a function argument.
 type Arg struct {
 	// Argument value.
@@ -37,9 +27,15 @@ type Arg struct {
 	Attrs []ParamAttribute
 }
 
+// NewArg returns a new function argument based on the given value and parameter
+// attributes.
+func NewArg(x value.Value, attrs ...ParamAttribute) *Arg {
+	return &Arg{Value: x, Attrs: attrs}
+}
+
 // String returns a string representation of the function argument.
 func (arg *Arg) String() string {
-	// ConcreteType ParamAttrs Value
+	// Typ=ConcreteType Attrs=ParamAttribute* Val=Value
 	buf := &strings.Builder{}
 	buf.WriteString(arg.Type().String())
 	for _, attr := range arg.Attrs {
@@ -49,34 +45,22 @@ func (arg *Arg) String() string {
 	return buf.String()
 }
 
+// AttrString is an attribute string (used in function, parameter and return
+// attributes).
+type AttrString string
+
+// String returns the string representation of the attribute string.
+func (a AttrString) String() string {
+	return quote(string(a))
+}
+
 // TODO: figure out definition of ExceptionScope.
+
+// ExceptionScope is an exception scope.
 type ExceptionScope interface {
 	value.Value
 	//isExceptionScope()
 }
-
-// TODO: consider getting rid of UnwindTarget, and let unwind targets be of type
-// *ir.BasicBlock, where a nil value indicates the caller, and a non-nil value
-// is the unwind target basic block?
-
-// TODO: figure out definition of UnwindTarget.
-type UnwindTarget interface {
-	//value.Value
-	isUnwindTarget()
-}
-
-// UnwindToCaller specifies the caller as an unwind target.
-type UnwindToCaller struct{}
-
-// String returns the string representation of the unwind target.
-func (*UnwindToCaller) String() string {
-	return "to caller"
-}
-
-func (*UnwindToCaller) isUnwindTarget() {}
-
-// TODO: remove isUnwindTarget? or unexport.
-func (*BasicBlock) isUnwindTarget() {}
 
 // FuncAttribute is a function attribute.
 type FuncAttribute interface {
@@ -87,39 +71,49 @@ type FuncAttribute interface {
 }
 
 // ParamAttribute is a parameter attribute.
+//
+// A ParamAttribute has one of the following underlying types.
+//
+//    ir.AttrString
+//    ir.AttrPair
+//    ir.Alignment
+//    ir.Dereferenceable
+//    enum.ParamAttr
 type ParamAttribute interface {
+	fmt.Stringer
 	// IsParamAttribute ensures that only parameter attributes can be assigned to
 	// the ir.ParamAttribute interface.
 	IsParamAttribute()
 }
 
 // ReturnAttribute is a return attribute.
+//
+// A ReturnAttribute has one of the following underlying types.
+//
+//    ir.AttrString
+//    ir.AttrPair
+//    ir.Alignment
+//    ir.Dereferenceable
+//    enum.ReturnAttr
 type ReturnAttribute interface {
+	fmt.Stringer
 	// IsReturnAttribute ensures that only return attributes can be assigned to
 	// the ir.ReturnAttribute interface.
 	IsReturnAttribute()
 }
 
-// AttrString is an attribute string (used in function, parameter and return
-// attributes).
-type AttrString string
-
-// String returns the string representation of the attribute string.
-func (a AttrString) String() string {
-	return enc.Quote([]byte(a))
+// UnwindTarget is an unwind target.
+type UnwindTarget interface {
+	isUnwindTarget()
 }
 
-// IsFuncAttribute ensures that only function attributes can be assigned to
-// the ir.FuncAttribute interface.
-func (AttrString) IsFuncAttribute() {}
+// UnwindToCaller specifies the caller as an unwind target.
+type UnwindToCaller struct{}
 
-// IsParamAttribute ensures that only parameter attributes can be assigned to
-// the ir.ParamAttribute interface.
-func (AttrString) IsParamAttribute() {}
-
-// IsReturnAttribute ensures that only return attributes can be assigned to
-// the ir.ReturnAttribute interface.
-func (AttrString) IsReturnAttribute() {}
+// String returns the string representation of the unwind target.
+func (*UnwindToCaller) String() string {
+	return "to caller"
+}
 
 // AttrPair is an attribute key-value pair (used in function, parameter and
 // return attributes).
@@ -153,10 +147,10 @@ type OperandBundle struct {
 
 // Param is an LLVM IR function parameter.
 type Param struct {
-	// Parameter type.
-	Typ types.Type
 	// (optional) Parameter name (without '%' prefix).
 	LocalName string
+	// Parameter type.
+	Typ types.Type
 
 	// extra.
 
@@ -164,9 +158,9 @@ type Param struct {
 	Attrs []ParamAttribute
 }
 
-// NewParam returns a new function parameter based on the given type and name.
-func NewParam(typ types.Type, name string) *Param {
-	return &Param{Typ: typ, LocalName: name}
+// NewParam returns a new function parameter based on the given name and type.
+func NewParam(name string, typ types.Type) *Param {
+	return &Param{LocalName: name, Typ: typ}
 }
 
 // String returns the LLVM syntax representation of the function parameter as a
