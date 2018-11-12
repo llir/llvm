@@ -307,17 +307,6 @@ func (fgen *funcGen) irClause(n ast.Clause) (*ir.Clause, error) {
 	return ir.NewClause(clauseType, x), nil
 }
 
-// irDIFlags returns the IR debug info flags corresponding to the given AST
-// debug info flags.
-func irDIFlags(old ast.DIFlags) enum.DIFlag {
-	var flags enum.DIFlag
-	for _, oldFlag := range old.Flags() {
-		flag := asmenum.DIFlagFromString(oldFlag.Text())
-		flags |= flag
-	}
-	return flags
-}
-
 // irExceptionArg returns the IR exception argument corresponding to the given
 // AST exception argument.
 func (fgen *funcGen) irExceptionArg(n ast.ExceptionArg) (value.Value, error) {

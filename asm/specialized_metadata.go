@@ -79,7 +79,7 @@ func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
-			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+			md.Tag = irDwarfTag(oldField.Tag())
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.SizeField:
@@ -87,7 +87,7 @@ func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType
 		case *ast.AlignField:
 			md.Align = intLit(oldField.Align())
 		case *ast.EncodingField:
-			md.Encoding = asmenum.DwarfAttEncodingFromString(oldField.Encoding().Text())
+			md.Encoding = irDwarfAttEncoding(oldField.Encoding())
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
 		default:
@@ -122,7 +122,7 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 		case *ast.SplitDebugFilenameField:
 			md.SplitDebugFilename = stringLit(oldField.SplitDebugFilename())
 		case *ast.EmissionKindField:
-			md.EmissionKind = asmenum.EmissionKindFromString(oldField.EmissionKind().Text())
+			md.EmissionKind = irEmissionKind(oldField.EmissionKind())
 		case *ast.EnumsField:
 			enums, err := gen.irMDField(oldField.Enums())
 			if err != nil {
@@ -160,7 +160,7 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 		case *ast.DebugInfoForProfilingField:
 			md.DebugInfoForProfiling = boolLit(oldField.DebugInfoForProfiling())
 		case *ast.NameTableKindField:
-			md.NameTableKind = asmenum.NameTableKindFromString(oldField.NameTableKind().Text())
+			md.NameTableKind = irNameTableKind(oldField.NameTableKind())
 		default:
 			panic(fmt.Errorf("support for DICompileUnit field %T not yet implemented", old))
 		}
@@ -175,7 +175,7 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
-			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+			md.Tag = irDwarfTag(oldField.Tag())
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.ScopeField:
@@ -248,7 +248,7 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
-			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+			md.Tag = irDwarfTag(oldField.Tag())
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.ScopeField:
@@ -467,7 +467,7 @@ func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.D
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
-			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+			md.Tag = irDwarfTag(oldField.Tag())
 		case *ast.ScopeField:
 			scope, err := gen.irMDField(oldField.Scope())
 			if err != nil {
@@ -661,7 +661,7 @@ func (gen *generator) irDIMacro(old *ast.DIMacro) (*metadata.DIMacro, error) {
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TypeMacinfoField:
-			md.Type = asmenum.DwarfMacinfoFromString(oldField.Typ().Text())
+			md.Type = irDwarfMacinfo(oldField.Typ())
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.NameField:
@@ -682,7 +682,7 @@ func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TypeMacinfoField:
-			md.Type = asmenum.DwarfMacinfoFromString(oldField.Typ().Text())
+			md.Type = irDwarfMacinfo(oldField.Typ())
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.FileField:
@@ -782,7 +782,7 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 			}
 			md.ContainingType = containingType
 		case *ast.VirtualityField:
-			md.Virtuality = asmenum.DwarfVirtualityFromString(oldField.Virtuality().Text())
+			md.Virtuality = irDwarfVirtuality(oldField.Virtuality())
 		case *ast.VirtualIndexField:
 			md.VirtualIndex = intLit(oldField.VirtualIndex())
 		case *ast.ThisAdjustmentField:
@@ -858,7 +858,7 @@ func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.D
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.CCField:
-			md.CC = asmenum.DwarfCCFromString(oldField.CC().Text())
+			md.CC = irDwarfCC(oldField.CC())
 		case *ast.TypesField:
 			ts, err := gen.irMDField(oldField.Types())
 			if err != nil {
@@ -885,7 +885,7 @@ func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParamet
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
-			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+			md.Tag = irDwarfTag(oldField.Tag())
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.TypeField:
@@ -926,6 +926,58 @@ func (gen *generator) irMDFieldOrInt(old ast.MDFieldOrInt) (metadata.MDFieldOrIn
 	}
 }
 
+// irDIFlags returns the IR debug info flags corresponding to the given AST
+// debug info flags.
+func irDIFlags(old ast.DIFlags) enum.DIFlag {
+	var flags enum.DIFlag
+	for _, oldFlag := range old.Flags() {
+		flag := irDIFlag(oldFlag)
+		flags |= flag
+	}
+	return flags
+}
+
+// irDIFlag returns the IR debug info flag corresponding to the given AST debug
+// info flag.
+func irDIFlag(old ast.DIFlag) enum.DIFlag {
+	switch old := old.(type) {
+	case *ast.DIFlagEnum:
+		return asmenum.DIFlagFromString(old.Text())
+	case *ast.DIFlagInt:
+		return enum.DIFlag(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for debug info flag %T not yet implemented", old))
+	}
+}
+
+// irDwarfAttEncoding returns the IR Dwarf attribute encoding corresponding to
+// the given AST Dwarf attribute encoding.
+func irDwarfAttEncoding(old ast.DwarfAttEncoding) enum.DwarfAttEncoding {
+	switch old := old.(type) {
+	case *ast.DwarfAttEncodingEnum:
+		return asmenum.DwarfAttEncodingFromString(old.Text())
+	case *ast.DwarfAttEncodingInt:
+		return enum.DwarfAttEncoding(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for Dwarf attribute encoding %T not yet implemented", old))
+	}
+}
+
+// irDwarfCC returns the IR Dwarf calling convention corresponding to the given
+// AST Dwarf calling convention.
+func irDwarfCC(old ast.DwarfCC) enum.DwarfCC {
+	switch old := old.(type) {
+	case *ast.DwarfCCEnum:
+		return asmenum.DwarfCCFromString(old.Text())
+	case *ast.DwarfCCInt:
+		return enum.DwarfCC(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for Dwarf calling convention %T not yet implemented", old))
+	}
+}
+
+// irDwarfLang returns the IR Dwarf language corresponding to the given AST
+// Dwarf language.
 func irDwarfLang(old ast.DwarfLang) enum.DwarfLang {
 	switch old := old.(type) {
 	case *ast.DwarfLangEnum:
@@ -934,5 +986,69 @@ func irDwarfLang(old ast.DwarfLang) enum.DwarfLang {
 		return enum.DwarfLang(uintLit(old.UintLit()))
 	default:
 		panic(fmt.Errorf("support for Dwarf language %T not yet implemented", old))
+	}
+}
+
+// irDwarfMacinfo returns the IR Dwarf Macinfo corresponding to the given AST
+// Dwarf Macinfo.
+func irDwarfMacinfo(old ast.DwarfMacinfo) enum.DwarfMacinfo {
+	switch old := old.(type) {
+	case *ast.DwarfMacinfoEnum:
+		return asmenum.DwarfMacinfoFromString(old.Text())
+	case *ast.DwarfMacinfoInt:
+		return enum.DwarfMacinfo(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for Dwarf Macinfo %T not yet implemented", old))
+	}
+}
+
+// irDwarfTag returns the IR Dwarf tag corresponding to the given AST Dwarf tag.
+func irDwarfTag(old ast.DwarfTag) enum.DwarfTag {
+	switch old := old.(type) {
+	case *ast.DwarfTagEnum:
+		return asmenum.DwarfTagFromString(old.Text())
+	case *ast.DwarfTagInt:
+		return enum.DwarfTag(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for Dwarf tag %T not yet implemented", old))
+	}
+}
+
+// irDwarfVirtuality returns the IR Dwarf virtuality corresponding to the given
+// AST Dwarf virtuality.
+func irDwarfVirtuality(old ast.DwarfVirtuality) enum.DwarfVirtuality {
+	switch old := old.(type) {
+	case *ast.DwarfVirtualityEnum:
+		return asmenum.DwarfVirtualityFromString(old.Text())
+	case *ast.DwarfVirtualityInt:
+		return enum.DwarfVirtuality(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for Dwarf virtuality %T not yet implemented", old))
+	}
+}
+
+// irEmissionKind returns the IR emission kind corresponding to the given AST
+// emission kind.
+func irEmissionKind(old ast.EmissionKind) enum.EmissionKind {
+	switch old := old.(type) {
+	case *ast.EmissionKindEnum:
+		return asmenum.EmissionKindFromString(old.Text())
+	case *ast.EmissionKindInt:
+		return enum.EmissionKind(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for emission kind %T not yet implemented", old))
+	}
+}
+
+// irNameTableKind returns the IR name table kind corresponding to the given AST
+// name table kind.
+func irNameTableKind(old ast.NameTableKind) enum.NameTableKind {
+	switch old := old.(type) {
+	case *ast.NameTableKindEnum:
+		return asmenum.NameTableKindFromString(old.Text())
+	case *ast.NameTableKindInt:
+		return enum.NameTableKind(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for name table kind %T not yet implemented", old))
 	}
 }
