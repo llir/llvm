@@ -422,19 +422,19 @@ func (gen *generator) irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 			panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
 		}
 		return def
+	//case *ast.Align: // TODO: add support for Align.
 	case *ast.AlignPair:
 		// TODO: add support for AlignPair.
 		panic("support for function attribute AlignPair not yet implemented")
+	case *ast.AlignStack:
+		// TODO: add support for AlignStack.
+		panic("support for function attribute AlignStack not yet implemented")
 	case *ast.AlignStackPair:
 		// TODO: add support for AlignStackPair.
 		panic("support for function attribute AlignStackPair not yet implemented")
-	//case ast.Align: // TODO: add support for Align.
 	case *ast.AllocSize:
 		// TODO: add support for AllocSize.
 		panic("support for function attribute AllocSize not yet implemented")
-	case *ast.StackAlignment:
-		// TODO: add support for StackAlignment.
-		panic("support for function attribute StackAlignment not yet implemented")
 	case *ast.FuncAttr:
 		return asmenum.FuncAttrFromString(n.Text())
 	default:
