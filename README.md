@@ -247,7 +247,7 @@ func (e *evaluator) evalValue(v value.Value) uint32 {
 
 Primary focus of version 0.2: *read and write support of LLVM IR assembly*.
 
-Lexers and parsers for LLVM IR assembly are automatically generated from a [BNF grammar](https://github.com/llir/llvm/blob/master/asm/internal/ll.bnf) using [Gocc](https://github.com/goccmack/gocc).
+Lexers and parsers for LLVM IR assembly are automatically generated from a [BNF grammar](https://github.com/llir/llvm/blob/28149269dab73cc63915a9c2c6c7b25dbd4db027/asm/internal/ll.bnf) using [Gocc](https://github.com/goccmack/gocc).
 
 A high-level API for parsing LLVM IR assembly is provided by [llvm/asm](https://godoc.org/github.com/llir/llvm/asm).
 
