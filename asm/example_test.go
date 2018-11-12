@@ -11,7 +11,7 @@ func Example() {
 	// Parse the LLVM IR assembly file `rand.ll`.
 	m, err := asm.ParseFile("testdata/rand.ll")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("%+v", err)
 	}
 	// Pretty-print the data types of the parsed LLVM IR module.
 	pretty.Println(m)

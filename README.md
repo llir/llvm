@@ -40,9 +40,9 @@ go get -u github.com/llir/llvm/...
 
 // Create convenience types and constants.
 i32 := types.I32
-zero := constant.NewInt(0, i32)
-a := constant.NewInt(0x15A4E35, i32) // multiplier of the PRNG.
-c := constant.NewInt(1, i32)         // increment of the PRNG.
+zero := constant.NewInt(i32, 0)
+a := constant.NewInt(i32, 0x15A4E35) // multiplier of the PRNG.
+c := constant.NewInt(i32, 1)         // increment of the PRNG.
 
 // Create a new LLVM IR module.
 m := ir.NewModule()
@@ -85,7 +85,7 @@ fmt.Println(m)
 // Parse the LLVM IR assembly file `rand.ll`.
 m, err := asm.ParseFile("testdata/rand.ll")
 if err != nil {
-    log.Fatal(err)
+	log.Fatalf("%+v", err)
 }
 // Pretty-print the data types of the parsed LLVM IR module.
 pretty.Println(m)
@@ -101,143 +101,143 @@ The following example program parses [eval.ll](ir/testdata/eval.ll), evaluates t
 package main
 
 import (
-    "fmt"
-    "log"
+	"fmt"
+	"log"
 
-    "github.com/llir/llvm/asm"
-    "github.com/llir/llvm/ir"
-    "github.com/llir/llvm/ir/constant"
-    "github.com/llir/llvm/ir/types"
-    "github.com/llir/llvm/ir/value"
+	"github.com/llir/llvm/asm"
+	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 func main() {
-    // Parse the LLVM IR assembly file `eval.ll`.
-    m, err := asm.ParseFile("testdata/eval.ll")
-    if err != nil {
-        log.Fatal(err)
-    }
-    // Evalute and print the return value of the `@main` function.
-    for _, f := range m.Funcs {
-        if f.Name == "main" {
-            e := newEvaluator(f)
-            fmt.Println("result:", e.eval())
-            break
-        }
-    }
+	// Parse the LLVM IR assembly file `eval.ll`.
+	m, err := asm.ParseFile("testdata/eval.ll")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Evalute and print the return value of the `@main` function.
+	for _, f := range m.Funcs {
+		if f.GlobalName == "main" {
+			e := newEvaluator(f)
+			fmt.Println("result:", e.eval())
+			break
+		}
+	}
 }
 
 // evaluator is a function evaluator.
 type evaluator struct {
-    // Function.
-    f *ir.Function
-    // Function arguments.
-    args []value.Value
+	// Function.
+	f *ir.Function
+	// Function arguments.
+	args []value.Value
 }
 
 // newEvaluator returns a new function evaluator, for evaluating the result of
 // invoking f with args.
 func newEvaluator(f *ir.Function, args ...value.Value) *evaluator {
-    return &evaluator{f: f, args: args}
+	return &evaluator{f: f, args: args}
 }
 
 // eval evalutes f and returns the corresponding 32-bit integer.
 func (e *evaluator) eval() uint32 {
-    f := e.f
-    if !types.Equal(f.Sig.Ret, types.I32) {
-        panic(fmt.Errorf("support for function return type %v not yet implemented", f.Sig.Ret))
-    }
-    for _, block := range f.Blocks {
-        switch term := block.Term.(type) {
-        case *ir.TermRet:
-            // NOTE: support for functions with more than one RET terminator not
-            // yet implemented.
-            if term.X != nil {
-                // Evaluate the result of the first return value of a function is
-                // evaluated.
-                return e.evalValue(term.X)
-            }
-        }
-    }
-    panic(fmt.Errorf("unable to locate RET terminator in function %q", f.Name))
+	f := e.f
+	if !types.Equal(f.Sig.RetType, types.I32) {
+		panic(fmt.Errorf("support for function return type %v not yet implemented", f.Sig.RetType))
+	}
+	for _, block := range f.Blocks {
+		switch term := block.Term.(type) {
+		case *ir.TermRet:
+			// NOTE: support for functions with more than one RET terminator not
+			// yet implemented.
+			if term.X != nil {
+				// Evaluate the result of the first return value of a function is
+				// evaluated.
+				return e.evalValue(term.X)
+			}
+		}
+	}
+	panic(fmt.Errorf("unable to locate RET terminator in function %q", f.Ident()))
 }
 
 // evalInst evaluates inst and returns the corresponding 32-bit integer.
 func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
-    switch inst := inst.(type) {
-    // Binary instructions.
-    case *ir.InstAdd:
-        return e.evalValue(inst.X) + e.evalValue(inst.Y)
-    case *ir.InstSub:
-        return e.evalValue(inst.X) - e.evalValue(inst.Y)
-    case *ir.InstMul:
-        return e.evalValue(inst.X) * e.evalValue(inst.Y)
-    case *ir.InstUDiv:
-        return e.evalValue(inst.X) / e.evalValue(inst.Y)
-    case *ir.InstSDiv:
-        return e.evalValue(inst.X) / e.evalValue(inst.Y)
-    case *ir.InstURem:
-        return e.evalValue(inst.X) % e.evalValue(inst.Y)
-    case *ir.InstSRem:
-        return e.evalValue(inst.X) % e.evalValue(inst.Y)
-    // Bitwise instructions.
-    case *ir.InstShl:
-        return e.evalValue(inst.X) << e.evalValue(inst.Y)
-    case *ir.InstLShr:
-        return e.evalValue(inst.X) >> e.evalValue(inst.Y)
-    case *ir.InstAShr:
-        x, y := e.evalValue(inst.X), e.evalValue(inst.Y)
-        result := x >> y
-        if x&0x80000000 != 0 {
-            for i := uint32(31); i >= 0; i-- {
-                mask := uint32(1 << i)
-                if result&mask != 0 {
-                    break
-                }
-                result |= mask
-            }
-        }
-        return result
-    case *ir.InstAnd:
-        return e.evalValue(inst.X) & e.evalValue(inst.Y)
-    case *ir.InstOr:
-        return e.evalValue(inst.X) | e.evalValue(inst.Y)
-    case *ir.InstXor:
-        return e.evalValue(inst.X) ^ e.evalValue(inst.Y)
-    // Other instructions.
-    case *ir.InstCall:
-        callee, ok := inst.Callee.(*ir.Function)
-        if !ok {
-            panic(fmt.Errorf("support for callee of type %T not yet implemented", inst.Callee))
-        }
-        ee := newEvaluator(callee, inst.Args...)
-        return ee.eval()
-    default:
-        panic(fmt.Errorf("support for instruction type %T not yet implemented", inst))
-    }
+	switch inst := inst.(type) {
+	// Binary instructions.
+	case *ir.InstAdd:
+		return e.evalValue(inst.X) + e.evalValue(inst.Y)
+	case *ir.InstSub:
+		return e.evalValue(inst.X) - e.evalValue(inst.Y)
+	case *ir.InstMul:
+		return e.evalValue(inst.X) * e.evalValue(inst.Y)
+	case *ir.InstUDiv:
+		return e.evalValue(inst.X) / e.evalValue(inst.Y)
+	case *ir.InstSDiv:
+		return e.evalValue(inst.X) / e.evalValue(inst.Y)
+	case *ir.InstURem:
+		return e.evalValue(inst.X) % e.evalValue(inst.Y)
+	case *ir.InstSRem:
+		return e.evalValue(inst.X) % e.evalValue(inst.Y)
+	// Bitwise instructions.
+	case *ir.InstShl:
+		return e.evalValue(inst.X) << e.evalValue(inst.Y)
+	case *ir.InstLShr:
+		return e.evalValue(inst.X) >> e.evalValue(inst.Y)
+	case *ir.InstAShr:
+		x, y := e.evalValue(inst.X), e.evalValue(inst.Y)
+		result := x >> y
+		if x&0x80000000 != 0 {
+			for i := uint32(31); i >= 0; i-- {
+				mask := uint32(1 << i)
+				if result&mask != 0 {
+					break
+				}
+				result |= mask
+			}
+		}
+		return result
+	case *ir.InstAnd:
+		return e.evalValue(inst.X) & e.evalValue(inst.Y)
+	case *ir.InstOr:
+		return e.evalValue(inst.X) | e.evalValue(inst.Y)
+	case *ir.InstXor:
+		return e.evalValue(inst.X) ^ e.evalValue(inst.Y)
+	// Other instructions.
+	case *ir.InstCall:
+		callee, ok := inst.Callee.(*ir.Function)
+		if !ok {
+			panic(fmt.Errorf("support for callee of type %T not yet implemented", inst.Callee))
+		}
+		ee := newEvaluator(callee, inst.Args...)
+		return ee.eval()
+	default:
+		panic(fmt.Errorf("support for instruction type %T not yet implemented", inst))
+	}
 }
 
 // evalValue evalutes v and returns the corresponding 32-bit integer.
 func (e *evaluator) evalValue(v value.Value) uint32 {
-    switch v := v.(type) {
-    case ir.Instruction:
-        return e.evalInst(v)
-    case *constant.Int:
-        return uint32(v.X.Int64())
-    case *types.Param:
-        if len(v.Name) == 0 {
-            panic("support for unnamed parameters not yet implemented")
-        }
-        f := e.f
-        for i, param := range f.Sig.Params {
-            if v.Name == param.Name {
-                return e.evalValue(e.args[i])
-            }
-        }
-        panic(fmt.Errorf("unable to locate paramater %q of function %q", v.Name, f.Name))
-    default:
-        panic(fmt.Errorf("support for value type %T not yet implemented", v))
-    }
+	switch v := v.(type) {
+	case ir.Instruction:
+		return e.evalInst(v)
+	case *constant.Int:
+		return uint32(v.X.Int64())
+	case *ir.Param:
+		if len(v.LocalName) == 0 {
+			panic("support for unnamed parameters not yet implemented")
+		}
+		f := e.f
+		for i, param := range f.Params {
+			if v.LocalName == param.LocalName {
+				return e.evalValue(e.args[i])
+			}
+		}
+		panic(fmt.Errorf("unable to locate paramater %q of function %q", v.Ident(), f.Ident()))
+	default:
+		panic(fmt.Errorf("support for value type %T not yet implemented", v))
+	}
 }
 ```
 
