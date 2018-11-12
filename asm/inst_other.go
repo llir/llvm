@@ -160,11 +160,9 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 	// (optional) Fast math flags.
 	i.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// (optional) Calling convention.
-	// TODO: should the CallingConv interface include IsValid? upstream issue https://github.com/inspirer/textmapper/issues/19
-	//if n := old.CallingConv(); n.IsValid() {
-	//	i.CallingConv = irCallingConv(n)
-	//}
-	i.CallingConv = irCallingConv(old.CallingConv())
+	if n := old.CallingConv(); n.LlvmNode().IsValid() {
+		i.CallingConv = irCallingConv(n)
+	}
 	// (optional) Return attributes.
 	for _, oldRetAttr := range old.ReturnAttrs() {
 		retAttr := irReturnAttribute(oldRetAttr)

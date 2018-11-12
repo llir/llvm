@@ -278,9 +278,6 @@ func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
 // irCallingConv returns the IR calling convention corresponding to the given
 // AST calling convention.
 func irCallingConv(n ast.CallingConv) enum.CallingConv {
-	if !n.LlvmNode().IsValid() {
-		return enum.CallingConvNone
-	}
 	switch n := n.(type) {
 	case *ast.CallingConvEnum:
 		return asmenum.CallingConvFromString(n.Text())

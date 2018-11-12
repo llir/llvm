@@ -475,11 +475,9 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Calling convention.
-	// TODO: should the CallingConv interface include IsValid? upstream issue https://github.com/inspirer/textmapper/issues/19
-	//if n := old.CallingConv(); n.IsValid() {
-	//	new.CallingConv = irCallingConv(n)
-	//}
-	new.CallingConv = irCallingConv(old.CallingConv())
+	if n := old.CallingConv(); n.LlvmNode().IsValid() {
+		new.CallingConv = irCallingConv(n)
+	}
 	// (optional) Return attributes.
 	for _, oldRetAttr := range old.ReturnAttrs() {
 		retAttr := irReturnAttribute(oldRetAttr)
