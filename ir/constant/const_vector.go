@@ -19,24 +19,32 @@ type Vector struct {
 
 // NewVector returns a new vector constant based on the given vector type and
 // elements.
-func NewVector(typ *types.VectorType, elems ...Constant) *Vector {
-	return &Vector{Typ: typ, Elems: elems}
+func NewVector(elems ...Constant) *Vector {
+	c := &Vector{Elems: elems}
+	// Compute type.
+	c.Type()
+	return c
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *Vector) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
 func (c *Vector) Type() types.Type {
+	// Cache type if not present.
+	if c.Typ == nil {
+		elemType := c.Elems[0].Type()
+		c.Typ = types.NewVector(int64(len(c.Elems)), elemType)
+	}
 	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
 func (c *Vector) Ident() string {
-	// "<" TypeConsts ">"
+	// '<' Elems=(TypeConst separator ',')* '>'
 	buf := &strings.Builder{}
 	buf.WriteString("<")
 	for i, elem := range c.Elems {

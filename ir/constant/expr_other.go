@@ -27,13 +27,16 @@ type ExprICmp struct {
 // NewICmp returns a new icmp expression based on the given integer comparison
 // predicate and integer scalar or vector operands.
 func NewICmp(pred enum.IPred, x, y Constant) *ExprICmp {
-	return &ExprICmp{Pred: pred, X: x, Y: y}
+	e := &ExprICmp{Pred: pred, X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprICmp) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -54,8 +57,8 @@ func (e *ExprICmp) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprICmp) Ident() string {
-	// "icmp" IPred "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("icmp %v (%v, %v)", e.Pred, e.X, e.Y)
+	// 'icmp' Pred=IPred '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("icmp %s (%s, %s)", e.Pred, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -82,13 +85,16 @@ type ExprFCmp struct {
 // NewFCmp returns a new fcmp expression based on the given floating-point
 // comparison predicate and floating-point scalar or vector operands.
 func NewFCmp(pred enum.FPred, x, y Constant) *ExprFCmp {
-	return &ExprFCmp{Pred: pred, X: x, Y: y}
+	e := &ExprFCmp{Pred: pred, X: x, Y: y}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFCmp) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -109,8 +115,8 @@ func (e *ExprFCmp) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFCmp) Ident() string {
-	// "fcmp" FPred "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("fcmp %v (%v, %v)", e.Pred, e.X, e.Y)
+	// 'fcmp' Pred=FPred '(' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("fcmp %s (%s, %s)", e.Pred, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -137,13 +143,16 @@ type ExprSelect struct {
 // NewSelect returns a new select expression based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y Constant) *ExprSelect {
-	return &ExprSelect{Cond: cond, X: x, Y: x}
+	e := &ExprSelect{Cond: cond, X: x, Y: x}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprSelect) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -157,8 +166,8 @@ func (e *ExprSelect) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSelect) Ident() string {
-	// "select" "(" Type Constant "," Type Constant "," Type Constant ")"
-	return fmt.Sprintf("select (%v, %v, %v)", e.Cond, e.X, e.Y)
+	// 'select' '(' Cond=TypeConst ',' X=TypeConst ',' Y=TypeConst ')'
+	return fmt.Sprintf("select (%s, %s, %s)", e.Cond, e.X, e.Y)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

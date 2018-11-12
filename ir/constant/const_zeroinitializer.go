@@ -23,7 +23,7 @@ func NewZeroInitializer(typ types.Type) *ZeroInitializer {
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *ZeroInitializer) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
@@ -33,6 +33,6 @@ func (c *ZeroInitializer) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *ZeroInitializer) Ident() string {
-	// "zeroinitializer"
+	// 'zeroinitializer'
 	return "zeroinitializer"
 }

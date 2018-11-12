@@ -21,13 +21,16 @@ type ExprTrunc struct {
 // NewTrunc returns a new trunc expression based on the given source value and
 // target type.
 func NewTrunc(from Constant, to types.Type) *ExprTrunc {
-	return &ExprTrunc{From: from, To: to}
+	e := &ExprTrunc{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprTrunc) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -37,8 +40,8 @@ func (e *ExprTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprTrunc) Ident() string {
-	// "trunc" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("trunc (%v to %v)", e.From, e.To)
+	// 'trunc' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("trunc (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -60,13 +63,16 @@ type ExprZExt struct {
 // NewZExt returns a new zext expression based on the given source value and
 // target type.
 func NewZExt(from Constant, to types.Type) *ExprZExt {
-	return &ExprZExt{From: from, To: to}
+	e := &ExprZExt{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprZExt) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -76,8 +82,8 @@ func (e *ExprZExt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprZExt) Ident() string {
-	// "zext" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("zext (%v to %v)", e.From, e.To)
+	// 'zext' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("zext (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -99,13 +105,16 @@ type ExprSExt struct {
 // NewSExt returns a new sext expression based on the given source value and
 // target type.
 func NewSExt(from Constant, to types.Type) *ExprSExt {
-	return &ExprSExt{From: from, To: to}
+	e := &ExprSExt{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprSExt) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -115,8 +124,8 @@ func (e *ExprSExt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSExt) Ident() string {
-	// "sext" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("sext (%v to %v)", e.From, e.To)
+	// 'sext' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("sext (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -138,13 +147,16 @@ type ExprFPTrunc struct {
 // NewFPTrunc returns a new fptrunc expression based on the given source value
 // and target type.
 func NewFPTrunc(from Constant, to types.Type) *ExprFPTrunc {
-	return &ExprFPTrunc{From: from, To: to}
+	e := &ExprFPTrunc{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFPTrunc) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -154,8 +166,8 @@ func (e *ExprFPTrunc) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPTrunc) Ident() string {
-	// "fptrunc" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("fptrunc (%v to %v)", e.From, e.To)
+	// 'fptrunc' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("fptrunc (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -177,13 +189,16 @@ type ExprFPExt struct {
 // NewFPExt returns a new fpext expression based on the given source value and
 // target type.
 func NewFPExt(from Constant, to types.Type) *ExprFPExt {
-	return &ExprFPExt{From: from, To: to}
+	e := &ExprFPExt{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFPExt) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -193,8 +208,8 @@ func (e *ExprFPExt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPExt) Ident() string {
-	// "fpext" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("fpext (%v to %v)", e.From, e.To)
+	// 'fpext' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("fpext (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -216,13 +231,16 @@ type ExprFPToUI struct {
 // NewFPToUI returns a new fptoui expression based on the given source value and
 // target type.
 func NewFPToUI(from Constant, to types.Type) *ExprFPToUI {
-	return &ExprFPToUI{From: from, To: to}
+	e := &ExprFPToUI{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFPToUI) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -232,8 +250,8 @@ func (e *ExprFPToUI) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPToUI) Ident() string {
-	// "fptoui" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("fptoui (%v to %v)", e.From, e.To)
+	// 'fptoui' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("fptoui (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -255,13 +273,16 @@ type ExprFPToSI struct {
 // NewFPToSI returns a new fptosi expression based on the given source value and
 // target type.
 func NewFPToSI(from Constant, to types.Type) *ExprFPToSI {
-	return &ExprFPToSI{From: from, To: to}
+	e := &ExprFPToSI{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprFPToSI) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -271,8 +292,8 @@ func (e *ExprFPToSI) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprFPToSI) Ident() string {
-	// "fptosi" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("fptosi (%v to %v)", e.From, e.To)
+	// 'fptosi' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("fptosi (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -294,13 +315,16 @@ type ExprUIToFP struct {
 // NewUIToFP returns a new uitofp expression based on the given source value and
 // target type.
 func NewUIToFP(from Constant, to types.Type) *ExprUIToFP {
-	return &ExprUIToFP{From: from, To: to}
+	e := &ExprUIToFP{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprUIToFP) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -310,8 +334,8 @@ func (e *ExprUIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprUIToFP) Ident() string {
-	// "uitofp" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("uitofp (%v to %v)", e.From, e.To)
+	// 'uitofp' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("uitofp (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -333,13 +357,16 @@ type ExprSIToFP struct {
 // NewSIToFP returns a new sitofp expression based on the given source value and
 // target type.
 func NewSIToFP(from Constant, to types.Type) *ExprSIToFP {
-	return &ExprSIToFP{From: from, To: to}
+	e := &ExprSIToFP{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprSIToFP) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -349,8 +376,8 @@ func (e *ExprSIToFP) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprSIToFP) Ident() string {
-	// "sitofp" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("sitofp (%v to %v)", e.From, e.To)
+	// 'sitofp' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("sitofp (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -372,13 +399,16 @@ type ExprPtrToInt struct {
 // NewPtrToInt returns a new ptrtoint expression based on the given source value
 // and target type.
 func NewPtrToInt(from Constant, to types.Type) *ExprPtrToInt {
-	return &ExprPtrToInt{From: from, To: to}
+	e := &ExprPtrToInt{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprPtrToInt) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -388,8 +418,8 @@ func (e *ExprPtrToInt) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprPtrToInt) Ident() string {
-	// "ptrtoint" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("ptrtoint (%v to %v)", e.From, e.To)
+	// 'ptrtoint' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("ptrtoint (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -411,13 +441,16 @@ type ExprIntToPtr struct {
 // NewIntToPtr returns a new inttoptr expression based on the given source value
 // and target type.
 func NewIntToPtr(from Constant, to types.Type) *ExprIntToPtr {
-	return &ExprIntToPtr{From: from, To: to}
+	e := &ExprIntToPtr{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprIntToPtr) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -427,8 +460,8 @@ func (e *ExprIntToPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprIntToPtr) Ident() string {
-	// "inttoptr" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("inttoptr (%v to %v)", e.From, e.To)
+	// 'inttoptr' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("inttoptr (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -450,13 +483,16 @@ type ExprBitCast struct {
 // NewBitCast returns a new bitcast expression based on the given source value
 // and target type.
 func NewBitCast(from Constant, to types.Type) *ExprBitCast {
-	return &ExprBitCast{From: from, To: to}
+	e := &ExprBitCast{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprBitCast) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -466,8 +502,8 @@ func (e *ExprBitCast) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprBitCast) Ident() string {
-	// "bitcast" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("bitcast (%v to %v)", e.From, e.To)
+	// 'bitcast' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("bitcast (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -489,13 +525,16 @@ type ExprAddrSpaceCast struct {
 // NewAddrSpaceCast returns a new addrspacecast expression based on the given
 // source value and target type.
 func NewAddrSpaceCast(from Constant, to types.Type) *ExprAddrSpaceCast {
-	return &ExprAddrSpaceCast{From: from, To: to}
+	e := &ExprAddrSpaceCast{From: from, To: to}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprAddrSpaceCast) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -505,8 +544,8 @@ func (e *ExprAddrSpaceCast) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprAddrSpaceCast) Ident() string {
-	// "addrspacecast" "(" Type Constant "to" Type ")"
-	return fmt.Sprintf("addrspacecast (%v to %v)", e.From, e.To)
+	// 'addrspacecast' '(' From=TypeConst 'to' To=Type ')'
+	return fmt.Sprintf("addrspacecast (%s to %s)", e.From, e.To)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

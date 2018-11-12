@@ -26,7 +26,7 @@ func NewBlockAddress(f Constant, block value.Named) *BlockAddress {
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *BlockAddress) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
@@ -36,6 +36,6 @@ func (c *BlockAddress) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *BlockAddress) Ident() string {
-	// "blockaddress" "(" GlobalIdent "," LocalIdent ")"
-	return fmt.Sprintf("blockaddress(%v, %v)", c.Func.Ident(), c.Block.Ident())
+	// 'blockaddress' '(' Func=GlobalIdent ',' Block=LocalIdent ')'
+	return fmt.Sprintf("blockaddress(%s, %s)", c.Func.Ident(), c.Block.Ident())
 }

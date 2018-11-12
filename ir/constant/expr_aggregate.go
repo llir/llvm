@@ -27,13 +27,16 @@ type ExprExtractValue struct {
 // NewExtractValue returns a new extractvalue expression based on the given
 // aggregate value and indicies.
 func NewExtractValue(x Constant, indices ...int64) *ExprExtractValue {
-	return &ExprExtractValue{X: x, Indices: indices}
+	e := &ExprExtractValue{X: x, Indices: indices}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprExtractValue) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -47,11 +50,11 @@ func (e *ExprExtractValue) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprExtractValue) Ident() string {
-	// "extractvalue" "(" Type Constant Indices ")"
+	// 'extractvalue' '(' X=TypeConst Indices=(',' UintLit)* ')'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "extractvalue (%v", e.X)
+	fmt.Fprintf(buf, "extractvalue (%s", e.X)
 	for _, index := range e.Indices {
-		fmt.Fprintf(buf, ", %v", index)
+		fmt.Fprintf(buf, ", %d", index)
 	}
 	buf.WriteString(")")
 	return buf.String()
@@ -83,13 +86,16 @@ type ExprInsertValue struct {
 // NewInsertValue returns a new insertvalue expression based on the given
 // aggregate value, element and indicies.
 func NewInsertValue(x, elem Constant, indices ...int64) *ExprInsertValue {
-	return &ExprInsertValue{X: x, Elem: elem, Indices: indices}
+	e := &ExprInsertValue{X: x, Elem: elem, Indices: indices}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprInsertValue) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -103,11 +109,12 @@ func (e *ExprInsertValue) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprInsertValue) Ident() string {
-	// "insertvalue" "(" Type Constant "," Type Constant Indices ")"
+	// 'insertvalue' '(' X=TypeConst ',' Elem=TypeConst Indices=(',' UintLit)*
+	// ')'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "insertvalue (%v, %v", e.X, e.Elem)
+	fmt.Fprintf(buf, "insertvalue (%s, %s", e.X, e.Elem)
 	for _, index := range e.Indices {
-		fmt.Fprintf(buf, ", %v", index)
+		fmt.Fprintf(buf, ", %d", index)
 	}
 	buf.WriteString(")")
 	return buf.String()

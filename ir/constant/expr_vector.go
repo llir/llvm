@@ -26,13 +26,16 @@ type ExprExtractElement struct {
 // NewExtractElement returns a new extractelement expression based on the given
 // vector and element index.
 func NewExtractElement(x, index Constant) *ExprExtractElement {
-	return &ExprExtractElement{X: x, Index: index}
+	e := &ExprExtractElement{X: x, Index: index}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprExtractElement) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -50,8 +53,8 @@ func (e *ExprExtractElement) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprExtractElement) Ident() string {
-	// "extractelement" "(" Type Constant "," Type Constant ")"
-	return fmt.Sprintf("extractelement (%v, %v)", e.X, e.Index)
+	// 'extractelement' '(' X=TypeConst ',' Index=TypeConst ')'
+	return fmt.Sprintf("extractelement (%s, %s)", e.X, e.Index)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -80,13 +83,16 @@ type ExprInsertElement struct {
 // NewInsertElement returns a new insertelement expression based on the given
 // vector, element and element index.
 func NewInsertElement(x, elem, index Constant) *ExprInsertElement {
-	return &ExprInsertElement{X: x, Elem: elem, Index: index}
+	e := &ExprInsertElement{X: x, Elem: elem, Index: index}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprInsertElement) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -104,8 +110,8 @@ func (e *ExprInsertElement) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprInsertElement) Ident() string {
-	// "insertelement" "(" Type Constant "," Type Constant "," Type Constant ")"
-	return fmt.Sprintf("insertelement (%v, %v, %v)", e.X, e.Elem, e.Index)
+	// 'insertelement' '(' X=TypeConst ',' Elem=TypeConst ',' Index=TypeConst ')'
+	return fmt.Sprintf("insertelement (%s, %s, %s)", e.X, e.Elem, e.Index)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the
@@ -132,13 +138,16 @@ type ExprShuffleVector struct {
 // NewShuffleVector returns a new shufflevector expression based on the given
 // vectors and shuffle mask.
 func NewShuffleVector(x, y, mask Constant) *ExprShuffleVector {
-	return &ExprShuffleVector{X: x, Y: y, Mask: mask}
+	e := &ExprShuffleVector{X: x, Y: y, Mask: mask}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprShuffleVector) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -160,8 +169,8 @@ func (e *ExprShuffleVector) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprShuffleVector) Ident() string {
-	// "shufflevector" "(" Type Constant "," Type Constant "," Type Constant ")"
-	return fmt.Sprintf("shufflevector (%v, %v, %v)", e.X, e.Y, e.Mask)
+	// 'shufflevector' '(' X=TypeConst ',' Y=TypeConst ',' Mask=TypeConst ')'
+	return fmt.Sprintf("shufflevector (%s, %s, %s)", e.X, e.Y, e.Mask)
 }
 
 // Simplify returns an equivalent (and potentially simplified) constant to the

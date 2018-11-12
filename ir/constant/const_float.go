@@ -152,7 +152,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *Float) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
@@ -162,7 +162,7 @@ func (c *Float) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (c *Float) Ident() string {
-	// float_lit
+	// FloatLit
 	// TODO: add support for hexadecimal format.
 	// TODO: add support for NaN, +-Inf.
 

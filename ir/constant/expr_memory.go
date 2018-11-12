@@ -32,13 +32,16 @@ type ExprGetElementPtr struct {
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // element type, source address and element indices.
 func NewGetElementPtr(elemType types.Type, src Constant, indices ...*Index) *ExprGetElementPtr {
-	return &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
+	e := &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
+	// Compute type.
+	e.Type()
+	return e
 }
 
 // String returns the LLVM syntax representation of the constant expression as a
 // type-value pair.
 func (e *ExprGetElementPtr) String() string {
-	return fmt.Sprintf("%v %v", e.Type(), e.Ident())
+	return fmt.Sprintf("%s %s", e.Type(), e.Ident())
 }
 
 // Type returns the type of the constant expression.
@@ -52,15 +55,16 @@ func (e *ExprGetElementPtr) Type() types.Type {
 
 // Ident returns the identifier associated with the constant expression.
 func (e *ExprGetElementPtr) Ident() string {
-	// "getelementptr" OptInBounds "(" Type "," Type Constant "," GEPConstIndices ")"
+	// 'getelementptr' InBoundsopt '(' ElemType=Type ',' Src=TypeConst
+	// Indices=(',' GEPIndex)* ')'
 	buf := &strings.Builder{}
 	buf.WriteString("getelementptr")
 	if e.InBounds {
 		buf.WriteString(" inbounds")
 	}
-	fmt.Fprintf(buf, " (%v, %v", e.ElemType, e.Src)
+	fmt.Fprintf(buf, " (%s, %s", e.ElemType, e.Src)
 	for _, index := range e.Indices {
-		fmt.Fprintf(buf, ", %v", index)
+		fmt.Fprintf(buf, ", %s", index)
 	}
 	buf.WriteString(")")
 	return buf.String()
@@ -96,7 +100,7 @@ func NewIndex(index Constant) *Index {
 func (index *Index) String() string {
 	// OptInrange Type Constant
 	if index.InRange {
-		return fmt.Sprintf("inrange %v", index.Index)
+		return fmt.Sprintf("inrange %s", index.Index)
 	}
 	return index.Index.String()
 }
@@ -119,7 +123,7 @@ func gepType(elemType types.Type, indices []*Index) types.Type {
 		switch t := e.(type) {
 		case *types.PointerType:
 			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
-			panic(fmt.Errorf("unable to index into element of pointer type `%v`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
+			panic(fmt.Errorf("unable to index into element of pointer type `%s`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
 		case *types.VectorType:
 			e = t.ElemType
 		case *types.ArrayType:

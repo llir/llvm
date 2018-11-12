@@ -22,7 +22,7 @@ func NewUndef(typ types.Type) *Undef {
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *Undef) String() string {
-	return fmt.Sprintf("%v %v", c.Type(), c.Ident())
+	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
 // Type returns the type of the constant.
@@ -32,6 +32,6 @@ func (c *Undef) Type() types.Type {
 
 // Ident returns the identifier associated with the constant.
 func (*Undef) Ident() string {
-	// "undef"
+	// 'undef'
 	return "undef"
 }

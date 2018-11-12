@@ -87,13 +87,12 @@ func (c *Int) String() string {
 
 // Type returns the type of the constant.
 func (c *Int) Type() types.Type {
-	// int_lit
 	return c.Typ
 }
 
 // Ident returns the identifier associated with the constant.
 func (c *Int) Ident() string {
-	// int_lit
+	// IntLit
 	if c.Typ.BitSize == 1 {
 		// "true"
 		// "false"
