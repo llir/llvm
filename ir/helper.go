@@ -11,10 +11,10 @@ import (
 )
 
 // Alignment is a memory alignment attribute.
-type Alignment int64
+type Align int64
 
 // String returns the string representation of the alignment attribute.
-func (align Alignment) String() string {
+func (align Align) String() string {
 	// Note, alignment is printed as `align = 8` in attribute groups.
 	return fmt.Sprintf("align %d", int64(align))
 }
@@ -76,7 +76,7 @@ type FuncAttribute interface {
 //
 //    ir.AttrString
 //    ir.AttrPair
-//    ir.Alignment
+//    ir.Align
 //    ir.Dereferenceable
 //    enum.ParamAttr
 type ParamAttribute interface {
@@ -92,7 +92,7 @@ type ParamAttribute interface {
 //
 //    ir.AttrString
 //    ir.AttrPair
-//    ir.Alignment
+//    ir.Align
 //    ir.Dereferenceable
 //    enum.ReturnAttr
 type ReturnAttribute interface {

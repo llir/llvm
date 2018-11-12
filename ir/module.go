@@ -209,7 +209,7 @@ func (a *AttrGroupDef) Def() string {
 			buf.WriteString(" ")
 		}
 		// Note, alignment is printed as `align = 8` in attribute groups.
-		if attr, ok := attr.(Alignment); ok {
+		if attr, ok := attr.(Align); ok {
 			fmt.Fprintf(buf, "align = %d", int64(attr))
 			continue
 		}

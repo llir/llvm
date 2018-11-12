@@ -100,7 +100,7 @@ func (AttrString) IsParamAttribute() {}
 
 // IsParamAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
-func (Alignment) IsParamAttribute() {}
+func (Align) IsParamAttribute() {}
 
 // TODO: add support for Dereferenceable parameter attributes.
 
@@ -122,7 +122,7 @@ func (AttrString) IsReturnAttribute() {}
 
 // IsReturnAttribute ensures that only return attributes can be assigned to the
 // ir.ReturnAttribute interface.
-func (Alignment) IsReturnAttribute() {}
+func (Align) IsReturnAttribute() {}
 
 // TODO: add support for Dereferenceable return attributes.
 
@@ -142,7 +142,7 @@ func (AttrString) IsFuncAttribute() {}
 
 // IsFuncAttribute ensures that only function attributes can be assigned to the
 // ir.FuncAttribute interface.
-func (Alignment) IsFuncAttribute() {}
+func (Align) IsFuncAttribute() {}
 
 // IsFuncAttribute ensures that only function attributes can be assigned to the
 // ir.FuncAttribute interface.
