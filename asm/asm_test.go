@@ -127,10 +127,10 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/DebugInfo/dwo.ll"},
 		//{path: "testdata/DebugInfo/macro_link.ll"}, // TODO: add support for ast.DIMacroFile
 		//{path: "testdata/DebugInfo/omit-empty.ll"}, // TODO: add support for ast.DIImportedEntity
-		{path: "testdata/DebugInfo/pr34186.ll"}, // TODO: match Clang output for metadata
-		//{path: "testdata/DebugInfo/pr34672.ll"}, // TODO: match Clang output for metadata
+		{path: "testdata/DebugInfo/pr34186.ll"},
+		{path: "testdata/DebugInfo/pr34672.ll"},
 		{path: "testdata/DebugInfo/skeletoncu.ll"},
-		//{path: "testdata/DebugInfo/strip-DIGlobalVariable.ll"}, // TODO: match Clang output for metadata
+		{path: "testdata/DebugInfo/strip-DIGlobalVariable.ll"},
 		{path: "testdata/DebugInfo/strip-loop-metadata.ll"},
 		{path: "testdata/DebugInfo/strip-module-flags.ll"},
 		//{path: "testdata/DebugInfo/unrolled-loop-remainder.ll"}, // TODO: figure out how to handle duplicate (but distinct) AttrGroupDef
