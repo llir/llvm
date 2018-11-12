@@ -445,7 +445,38 @@ func (gen *generator) irDIGlobalVariableExpression(old *ast.DIGlobalVariableExpr
 // --- [ DIImportedEntity ] ----------------------------------------------------
 
 func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.DIImportedEntity, error) {
-	panic("support for *ast.DIImportedEntity not yet implemented")
+	md := &metadata.DIImportedEntity{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.TagField:
+			md.Tag = asmenum.DwarfTagFromString(oldField.Tag().Text())
+		case *ast.ScopeField:
+			scope, err := gen.irMDField(oldField.Scope())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Scope = scope
+		case *ast.EntityField:
+			entity, err := gen.irMDField(oldField.Entity())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Entity = entity
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.File = file
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		default:
+			panic(fmt.Errorf("support for DIImportedEntity field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DILabel ] -------------------------------------------------------------
@@ -641,7 +672,24 @@ func (gen *generator) irDIModule(old *ast.DIModule) (*metadata.DIModule, error) 
 // --- [ DINamespace ] ---------------------------------------------------------
 
 func (gen *generator) irDINamespace(old *ast.DINamespace) (*metadata.DINamespace, error) {
-	panic("support for *ast.DINamespace not yet implemented")
+	md := &metadata.DINamespace{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.ScopeField:
+			scope, err := gen.irMDField(oldField.Scope())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Scope = scope
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.ExportSymbolsField:
+			md.ExportSymbols = boolLit(oldField.ExportSymbols())
+		default:
+			panic(fmt.Errorf("support for DINamespace field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DIObjCProperty ] ------------------------------------------------------

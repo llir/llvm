@@ -126,7 +126,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/debuglineinfo-path.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		{path: "testdata/DebugInfo/dwo.ll"},
 		{path: "testdata/DebugInfo/macro_link.ll"},
-		//{path: "testdata/DebugInfo/omit-empty.ll"}, // TODO: add support for ast.DIImportedEntity
+		{path: "testdata/DebugInfo/omit-empty.ll"},
 		{path: "testdata/DebugInfo/pr34186.ll"},
 		{path: "testdata/DebugInfo/pr34672.ll"},
 		{path: "testdata/DebugInfo/skeletoncu.ll"},
