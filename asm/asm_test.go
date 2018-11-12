@@ -96,7 +96,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/simplecalltest.ll"},
 		{path: "testdata/Feature/smallest.ll"},
 		{path: "testdata/Feature/small.ll"},
-		//{path: "testdata/Feature/sparcld.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
+		{path: "testdata/Feature/sparcld.ll"},
 		{path: "testdata/Feature/strip_names.ll"},
 		//{path: "testdata/Feature/terminators.ll"}, // TODO: fix grammar. syntax error at line 35
 		//{path: "testdata/Feature/testalloca.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
