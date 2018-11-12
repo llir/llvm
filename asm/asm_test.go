@@ -99,7 +99,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/sparcld.ll"},
 		{path: "testdata/Feature/strip_names.ll"},
 		//{path: "testdata/Feature/terminators.ll"}, // TODO: fix grammar. syntax error at line 35
-		//{path: "testdata/Feature/testalloca.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
+		{path: "testdata/Feature/testalloca.ll"},
 		{path: "testdata/Feature/testconstants.ll"},
 		{path: "testdata/Feature/testlogical.ll"},
 		//{path: "testdata/Feature/testtype.ll"}, // TODO: fix nil pointer dereference
@@ -108,7 +108,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/unreachable.ll"},
 		{path: "testdata/Feature/varargs.ll"},
 		{path: "testdata/Feature/varargs_new.ll"},
-		//{path: "testdata/Feature/vector-cast-constant-exprs.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
+		{path: "testdata/Feature/vector-cast-constant-exprs.ll"},
 		{path: "testdata/Feature/weak_constant.ll"},
 		//{path: "testdata/Feature/weirdnames.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
 		//{path: "testdata/Feature/x86ld.ll"}, // TODO: re-enable when floats are printed using the same format as Clang.
