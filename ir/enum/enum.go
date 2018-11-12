@@ -764,12 +764,9 @@ type NameTableKind uint8
 //
 // From include/llvm/IR/DebugInfoMetadata.h
 const (
-	// Note, the default name table kind is defined as 0 in LLVM. To have the
-	// zero-value name table kind mean no name table kind, re-define the default
-	// name table kind 2, and use 0 for none.
-	NameTableKindNone    NameTableKind = 0 // None
+	NameTableKindDefault NameTableKind = 0 // Default
 	NameTableKindGNU     NameTableKind = 1 // GNU
-	NameTableKindDefault NameTableKind = 2 // Default
+	NameTableKindNone    NameTableKind = 2 // None
 )
 
 //go:generate stringer -linecomment -type OverflowFlag

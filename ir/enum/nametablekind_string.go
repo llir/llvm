@@ -4,9 +4,9 @@ package enum
 
 import "strconv"
 
-const _NameTableKind_name = "NoneGNUDefault"
+const _NameTableKind_name = "DefaultGNUNone"
 
-var _NameTableKind_index = [...]uint8{0, 4, 7, 14}
+var _NameTableKind_index = [...]uint8{0, 7, 10, 14}
 
 func (i NameTableKind) String() string {
 	if i >= NameTableKind(len(_NameTableKind_index)-1) {
