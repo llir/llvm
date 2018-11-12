@@ -21,7 +21,7 @@ type DIBasicType struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIBasicType) String() string {
-	// "!DIBasicType" "(" DIBasicTypeFields ")"
+	// '!DIBasicType' '(' Fields=(DIBasicTypeField separator ',')* ')'
 	var fields []string
 	if md.Tag != 0 {
 		field := fmt.Sprintf("tag: %s", md.Tag)
@@ -75,7 +75,7 @@ type DICompileUnit struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DICompileUnit) String() string {
-	// "!DICompileUnit" "(" DICompileUnitFields ")"
+	// '!DICompileUnit' '(' Fields=(DICompileUnitField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("language: %s", md.Language)
 	fields = append(fields, field)
@@ -168,7 +168,7 @@ type DICompositeType struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DICompositeType) String() string {
-	// "!DICompositeType" "(" DICompositeTypeFields ")"
+	// '!DICompositeType' '(' Fields=(DICompositeTypeField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("tag: %s", md.Tag)
 	fields = append(fields, field)
@@ -255,7 +255,7 @@ type DIDerivedType struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIDerivedType) String() string {
-	// "!DIDerivedType" "(" DIDerivedTypeFields ")"
+	// '!DIDerivedType' '(' Fields=(DIDerivedTypeField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("tag: %s", md.Tag)
 	fields = append(fields, field)
@@ -315,7 +315,7 @@ type DIEnumerator struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIEnumerator) String() string {
-	// "!DIEnumerator" "(" DIEnumeratorFields ")"
+	// '!DIEnumerator' '(' Fields=(DIEnumeratorField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("name: %s", quote(md.Name))
 	fields = append(fields, field)
@@ -337,7 +337,7 @@ type DIExpression struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIExpression) String() string {
-	// "!DIExpression" "(" DIExpressionFields ")"
+	// '!DIExpression' '(' Fields=(DIExpressionField separator ',')* ')'
 	buf := &strings.Builder{}
 	buf.WriteString("!DIExpression(")
 	for i, field := range md.Fields {
@@ -363,7 +363,7 @@ type DIFile struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIFile) String() string {
-	// "!DIFile" "(" DIFileFields ")"
+	// '!DIFile' '(' Fields=(DIFileField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("filename: %s", quote(md.Filename))
 	fields = append(fields, field)
@@ -403,7 +403,7 @@ type DIGlobalVariable struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIGlobalVariable) String() string {
-	// "!DIGlobalVariable" "(" DIGlobalVariableFields ")"
+	// '!DIGlobalVariable' '(' Fields=(DIGlobalVariableField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("name: %s", quote(md.Name))
 	fields = append(fields, field)
@@ -467,7 +467,7 @@ type DIGlobalVariableExpression struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIGlobalVariableExpression) String() string {
-	// "!DIGlobalVariableExpression" "(" DIGlobalVariableExpressionFields ")"
+	// '!DIGlobalVariableExpression' '(' Fields=(DIGlobalVariableExpressionField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("var: %s", md.Var)
 	fields = append(fields, field)
@@ -494,7 +494,7 @@ type DIImportedEntity struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIImportedEntity) String() string {
-	// "!DIImportedEntity" "(" DIImportedEntityFields ")"
+	// '!DIImportedEntity' '(' Fields=(DIImportedEntityField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("tag: %s", md.Tag)
 	fields = append(fields, field)
@@ -531,7 +531,7 @@ type DILabel struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DILabel) String() string {
-	// "!DILabel" "(" DILabelFields ")"
+	// '!DILabel' '(' Fields=(DILabelField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -556,7 +556,7 @@ type DILexicalBlock struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DILexicalBlock) String() string {
-	// "!DILexicalBlock" "(" DILexicalBlockFields ")"
+	// '!DILexicalBlock' '(' Fields=(DILexicalBlockField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -586,7 +586,7 @@ type DILexicalBlockFile struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DILexicalBlockFile) String() string {
-	// "!DILexicalBlockFile" "(" DILexicalBlockFileFields ")"
+	// '!DILexicalBlockFile' '(' Fields=(DILexicalBlockFileField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -615,7 +615,7 @@ type DILocalVariable struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DILocalVariable) String() string {
-	// "!DILocalVariable" "(" DILocalVariableFields ")"
+	// '!DILocalVariable' '(' Fields=(DILocalVariableField separator ',')* ')'
 	var fields []string
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -663,7 +663,7 @@ type DILocation struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DILocation) String() string {
-	// "!DILocation" "(" DILocationFields ")"
+	// '!DILocation' '(' Fields=(DILocationField separator ',')* ')'
 	var fields []string
 	// Note, to match Clang output line is always output, even though it's
 	// optional.
@@ -698,7 +698,7 @@ type DIMacro struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIMacro) String() string {
-	// "!DIMacro" "(" DIMacroFields ")"
+	// '!DIMacro' '(' Fields=(DIMacroField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("type: %s", md.Type)
 	fields = append(fields, field)
@@ -727,7 +727,7 @@ type DIMacroFile struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIMacroFile) String() string {
-	// "!DIMacroFile" "(" DIMacroFileFields ")"
+	// '!DIMacroFile' '(' Fields=(DIMacroFileField separator ',')* ')'
 	var fields []string
 	if md.Type != 0 {
 		field := fmt.Sprintf("type: %s", md.Type)
@@ -759,7 +759,7 @@ type DIModule struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIModule) String() string {
-	// "!DIModule" "(" DIModuleFields ")"
+	// '!DIModule' '(' Fields=(DIModuleField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -791,7 +791,7 @@ type DINamespace struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DINamespace) String() string {
-	// "!DINamespace" "(" DINamespaceFields ")"
+	// '!DINamespace' '(' Fields=(DINamespaceField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -821,7 +821,7 @@ type DIObjCProperty struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DIObjCProperty) String() string {
-	// "!DIObjCProperty" "(" DIObjCPropertyFields ")"
+	// '!DIObjCProperty' '(' Fields=(DIObjCPropertyField separator ',')* ')'
 	var fields []string
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -882,7 +882,7 @@ type DISubprogram struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DISubprogram) String() string {
-	// "!DISubprogram" "(" DISubprogramFields ")"
+	// '!DISubprogram' '(' Fields=(DISubprogramField separator ',')* ')'
 	var fields []string
 	// Note, to match Clang output, the output order is changed to output name
 	// before scope.
@@ -979,7 +979,7 @@ type DISubrange struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DISubrange) String() string {
-	// "!DISubrange" "(" DISubrangeFields ")"
+	// '!DISubrange' '(' Fields=(DISubrangeField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("count: %s", md.Count)
 	fields = append(fields, field)
@@ -1001,7 +1001,7 @@ type DISubroutineType struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DISubroutineType) String() string {
-	// "!DISubroutineType" "(" DISubroutineTypeFields ")"
+	// '!DISubroutineType' '(' Fields=(DISubroutineTypeField separator ',')* ')'
 	var fields []string
 	if md.Flags != 0 {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
@@ -1026,7 +1026,7 @@ type DITemplateTypeParameter struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DITemplateTypeParameter) String() string {
-	// "!DITemplateTypeParameter" "(" DITemplateTypeParameterFields ")"
+	// '!DITemplateTypeParameter' '(' Fields=(DITemplateTypeParameterField separator ',')* ')'
 	var fields []string
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -1049,7 +1049,7 @@ type DITemplateValueParameter struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *DITemplateValueParameter) String() string {
-	// "!DITemplateValueParameter" "(" DITemplateValueParameterFields ")"
+	// '!DITemplateValueParameter' '(' Fields=(DITemplateValueParameterField separator ',')* ')'
 	var fields []string
 	if md.Tag != 0 {
 		field := fmt.Sprintf("tag: %s", md.Tag)
@@ -1079,7 +1079,7 @@ type GenericDINode struct {
 
 // String returns a string representation of the specialized metadata node.
 func (md *GenericDINode) String() string {
-	// "!GenericDINode" "(" GenericDINodeFields ")"
+	// '!GenericDINode' '(' Fields=(GenericDINodeField separator ',')* ')'
 	var fields []string
 	field := fmt.Sprintf("tag: %s", md.Tag)
 	fields = append(fields, field)

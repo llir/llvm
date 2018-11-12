@@ -33,7 +33,7 @@ func (md *NamedMetadataDef) String() string {
 
 // Def returns the LLVM syntax representation of the named metadata definition.
 func (md *NamedMetadataDef) Def() string {
-	// MetadataName "=" "!" "{" MetadataNodes "}"
+	// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = !{", enc.Metadata(md.Name))
 	for i, node := range md.Nodes {
@@ -68,8 +68,9 @@ func (md *MetadataDef) String() string {
 
 // Def returns the LLVM syntax representation of the metadata definition.
 func (md *MetadataDef) Def() string {
-	// MetadataID "=" OptDistinct MDTuple
-	// MetadataID "=" OptDistinct SpecializedMDNode
+	// ID=MetadataID '=' Distinctopt MDNode=MDTuple
+	//
+	// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", enc.Metadata(md.ID))
 	if md.Distinct {
@@ -91,7 +92,7 @@ type MDTuple struct {
 
 // String returns the string representation of the metadata node tuple.
 func (md *MDTuple) String() string {
-	// "!" MDFields
+	// '!' MDFields
 	buf := &strings.Builder{}
 	buf.WriteString("!{")
 	for i, field := range md.Fields {
@@ -138,7 +139,7 @@ type MDString struct {
 
 // String returns the string representation of the metadata string.
 func (md *MDString) String() string {
-	// "!" StringLit
+	// '!' Val=StringLit
 	return fmt.Sprintf("!%s", quote(md.Value))
 }
 
@@ -154,7 +155,7 @@ type MetadataAttachment struct {
 
 // String returns the string representation of the metadata attachment.
 func (m *MetadataAttachment) String() string {
-	// !dbg !42
+	// Name=MetadataName MDNode
 	return fmt.Sprintf("%s %s", enc.Metadata(m.Name), m.Node)
 }
 
