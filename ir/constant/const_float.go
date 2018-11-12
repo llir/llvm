@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/mewmew/floats/binary16"
 	"github.com/mewmew/floats/float80x86"
 
 	"github.com/llir/llvm/ir/types"
@@ -79,7 +80,18 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 		case strings.HasPrefix(s, "0xM"):
 			//s = s[len("0xM"):]
 		case strings.HasPrefix(s, "0xH"):
-			//s = s[len("0xH"):]
+			hex := s[len("0xK"):]
+			bits, err := strconv.ParseUint(hex, 16, 16)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			f := binary16.NewFromBits(uint16(bits))
+			x, nan := f.Big()
+			return &Float{
+				Typ: typ,
+				X:   x,
+				NaN: nan,
+			}, nil
 		default:
 			hex := s[len("0x"):]
 			x, err := strconv.ParseUint(hex, 16, 64)
@@ -87,6 +99,15 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				return nil, errors.WithStack(err)
 			}
 			switch typ.Kind {
+			case types.FloatKindHalf:
+				f := math.Float64frombits(x)
+				c := big.NewFloat(f)
+				const precision = 11
+				c.SetPrec(precision)
+				return &Float{
+					Typ: typ,
+					X:   c,
+				}, nil
 			case types.FloatKindFloat:
 				// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
 				//
@@ -98,8 +119,6 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				// last 29 bits of significand will always be ignored.  As an
 				// error-detection measure, the IR parser requires them to be zero.
 				f := math.Float64frombits(x)
-				// precision=24 is handled during read-out. use precision=53 for
-				// internal storage.
 				c := big.NewFloat(f)
 				const precision = 24
 				c.SetPrec(precision)
@@ -167,13 +186,13 @@ func (c *Float) Ident() string {
 	// TODO: add support for NaN, +-Inf.
 
 	switch c.Typ.Kind {
-	case types.FloatKindX86FP80:
+	case types.FloatKindHalf:
 		// TODO: handle NaN.
-		f, acc := float80x86.NewFromBig(c.X)
+		f, acc := binary16.NewFromBig(c.X)
 		// TODO: check acc.
 		_ = acc
-		se, m := f.Bits()
-		return fmt.Sprintf("0xK%04X%016X", se, m)
+		bits := f.Bits()
+		return fmt.Sprintf("0xH%04X", bits)
 	case types.FloatKindFloat:
 		// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
 		//
@@ -224,6 +243,15 @@ func (c *Float) Ident() string {
 			return fmt.Sprintf("0x%X", x)
 			//return fmt.Sprintf("0x%016X", x)
 		}
+	case types.FloatKindX86FP80:
+		// TODO: handle NaN.
+		f, acc := float80x86.NewFromBig(c.X)
+		// TODO: check acc.
+		_ = acc
+		se, m := f.Bits()
+		return fmt.Sprintf("0xK%04X%016X", se, m)
+		//case types.FloatKindFP128:
+		//case types.FloatKindPPCFP128:
 	}
 
 	// Insert decimal point if not present.

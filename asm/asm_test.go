@@ -22,13 +22,14 @@ func TestParseFile(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
+		{path: "testdata/hexfloat.ll"},
+		{path: "testdata/inst_aggregate.ll"},
 		{path: "testdata/inst_binary.ll"},
 		{path: "testdata/inst_bitwise.ll"},
-		{path: "testdata/inst_vector.ll"},
-		{path: "testdata/inst_aggregate.ll"},
-		{path: "testdata/inst_memory.ll"},
 		{path: "testdata/inst_conversion.ll"},
+		{path: "testdata/inst_memory.ll"},
 		{path: "testdata/inst_other.ll"},
+		{path: "testdata/inst_vector.ll"},
 		{path: "testdata/terminator.ll"},
 
 		// LLVM Features.
@@ -58,7 +59,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/elf-linker-options.ll"},
 		{path: "testdata/Feature/escaped_label.ll"},
 		{path: "testdata/Feature/exception.ll"},
-		//{path: "testdata/Feature/float.ll"}, // TODO: re-enable when hex half literals are supported.
+		{path: "testdata/Feature/float.ll"},
 		{path: "testdata/Feature/fold-fpcast.ll"},
 		{path: "testdata/Feature/forwardreftest.ll"},
 		{path: "testdata/Feature/fp-intrinsics.ll"},
