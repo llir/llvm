@@ -282,7 +282,6 @@ func irCallingConv(n ast.CallingConv) enum.CallingConv {
 	// TODO: should the CallingConv interface include IsValid? upstream issue https://github.com/inspirer/textmapper/issues/19
 	// If so, remove the check for IsValid here and add to caller instead.
 	if !n.LlvmNode().IsValid() {
-		panic("really here?")
 		return enum.CallingConvNone
 	}
 	switch n := n.(type) {

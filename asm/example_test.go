@@ -60,8 +60,8 @@ func Example() {
 	//             },
 	//             Params: {
 	//                 &ir.Param{
-	//                     Typ:       &types.IntType{Alias:"", BitSize:32},
 	//                     LocalName: "x",
+	//                     Typ:       &types.IntType{Alias:"", BitSize:32},
 	//                     Attrs:     nil,
 	//                 },
 	//             },
@@ -86,6 +86,7 @@ func Example() {
 	//             Prologue:        nil,
 	//             Personality:     nil,
 	//             Metadata:        nil,
+	//             mu:              sync.Mutex{},
 	//         },
 	//         &ir.Function{
 	//             GlobalName: "rand",
@@ -207,6 +208,7 @@ func Example() {
 	//             Prologue:        nil,
 	//             Personality:     nil,
 	//             Metadata:        nil,
+	//             mu:              sync.Mutex{},
 	//         },
 	//     },
 	//     SourceFilename:    "",
