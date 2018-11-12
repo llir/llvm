@@ -8,5 +8,5 @@ require (
 	github.com/mewspring/tools v0.0.0-20181107085742-4dbfa080ff87
 	github.com/pkg/errors v0.8.0
 	github.com/sergi/go-diff v1.0.0
-	golang.org/x/tools v0.0.0-20181112162442-680468b7556f
+	golang.org/x/tools v0.0.0-20181112210238-4b1f3b6b1646
 )
