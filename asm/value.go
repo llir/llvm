@@ -31,7 +31,7 @@ func (fgen *funcGen) astToIRValue(typ types.Type, old ast.Value) (value.Value, e
 		// (optional) Side effect.
 		asm.SideEffect = old.SideEffect().IsValid()
 		// (optional) Stack alignment.
-		asm.AlignStack = old.AlignStack().IsValid()
+		asm.AlignStack = old.AlignStackTok().IsValid()
 		// (optional) Intel dialect.
 		asm.IntelDialect = old.IntelDialect().IsValid()
 		// Assembly instructions.
