@@ -975,7 +975,26 @@ func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParamet
 // --- [ GenericDINode ] -------------------------------------------------------
 
 func (gen *generator) irGenericDINode(old *ast.GenericDINode) (*metadata.GenericDINode, error) {
-	panic("support for *ast.GenericDINode not yet implemented")
+	md := &metadata.GenericDINode{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.TagField:
+			md.Tag = irDwarfTag(oldField.Tag())
+		case *ast.HeaderField:
+			md.Header = stringLit(oldField.Header())
+		case *ast.OperandsField:
+			for _, field := range oldField.Operands().MDFields() {
+				operand, err := gen.irMDField(field)
+				if err != nil {
+					return nil, errors.WithStack(err)
+				}
+				md.Operands = append(md.Operands, operand)
+			}
+		default:
+			panic(fmt.Errorf("support for GenericDINode field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // ### [ Helper functions ] ####################################################
