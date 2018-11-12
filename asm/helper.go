@@ -217,10 +217,9 @@ func irAddrSpace(n ast.AddrSpace) types.AddrSpace {
 	return types.AddrSpace(uintLit(n.N()))
 }
 
-// irAlignment returns the IR alignment corresponding to the given AST
-// alignment.
-func irAlignment(n ast.Alignment) ir.Alignment {
-	return ir.Alignment(uintLit(n.N()))
+// irAlign returns the IR alignment corresponding to the given AST alignment.
+func irAlign(n ast.Align) ir.Align {
+	return ir.Align(uintLit(n.N()))
 }
 
 // irArg translates the given AST argument into an equivalent IR argument.
@@ -279,8 +278,6 @@ func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
 // irCallingConv returns the IR calling convention corresponding to the given
 // AST calling convention.
 func irCallingConv(n ast.CallingConv) enum.CallingConv {
-	// TODO: should the CallingConv interface include IsValid? upstream issue https://github.com/inspirer/textmapper/issues/19
-	// If so, remove the check for IsValid here and add to caller instead.
 	if !n.LlvmNode().IsValid() {
 		return enum.CallingConvNone
 	}
@@ -431,7 +428,7 @@ func (gen *generator) irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 	case *ast.AlignStackPair:
 		// TODO: add support for AlignStackPair.
 		panic("support for function attribute AlignStackPair not yet implemented")
-	//case ast.Alignment: // TODO: add support for Alignment.
+	//case ast.Align: // TODO: add support for Align.
 	case *ast.AllocSize:
 		// TODO: add support for AllocSize.
 		panic("support for function attribute AllocSize not yet implemented")
@@ -520,8 +517,8 @@ func irParamAttribute(n ast.ParamAttribute) ir.ParamAttribute {
 			Key:   unquote(n.Key().Text()),
 			Value: unquote(n.Val().Text()),
 		}
-	case *ast.Alignment:
-		return ir.Alignment(uintLit(n.N()))
+	case *ast.Align:
+		return ir.Align(uintLit(n.N()))
 	case *ast.Dereferenceable:
 		// TODO: add support for Dereferenceable.
 		panic("support for parameter attribute Dereferenceable not yet implemented")
@@ -544,8 +541,8 @@ func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 	//		Key:   unquote(n.Key().Text()),
 	//		Value: unquote(n.Val().Text()),
 	//	}
-	case *ast.Alignment:
-		return ir.Alignment(uintLit(n.N()))
+	case *ast.Align:
+		return ir.Align(uintLit(n.N()))
 	case *ast.Dereferenceable:
 		// TODO: add support for Dereferenceable.
 		panic("support for return attribute Dereferenceable not yet implemented")

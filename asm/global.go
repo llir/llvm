@@ -232,8 +232,8 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 		new.Comdat = def
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n.IsValid() {
-		new.Align = irAlignment(n)
+	if n := old.Align(); n.IsValid() {
+		new.Align = irAlign(n)
 	}
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())
@@ -308,8 +308,8 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 		new.Comdat = def
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n.IsValid() {
-		new.Align = irAlignment(n)
+	if n := old.Align(); n.IsValid() {
+		new.Align = irAlign(n)
 	}
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())

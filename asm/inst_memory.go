@@ -39,8 +39,8 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 		i.NElems = nelems
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n.IsValid() {
-		i.Align = irAlignment(n)
+	if n := old.Align(); n.IsValid() {
+		i.Align = irAlign(n)
 	}
 	// (optional) Address space; stored in i.Typ.
 	if n := old.AddrSpace(); n.IsValid() {
@@ -84,8 +84,8 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n.IsValid() {
-		i.Align = irAlignment(n)
+	if n := old.Align(); n.IsValid() {
+		i.Align = irAlign(n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
@@ -130,8 +130,8 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
-	if n := old.Alignment(); n.IsValid() {
-		i.Align = irAlignment(n)
+	if n := old.Align(); n.IsValid() {
+		i.Align = irAlign(n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())

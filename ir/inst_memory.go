@@ -35,7 +35,7 @@ type InstAlloca struct {
 	// (optional) Swift error.
 	SwiftError bool
 	// (optional) Alignment; zero if not present.
-	Align Alignment
+	Align Align
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -129,7 +129,7 @@ type InstLoad struct {
 	// (optional) Atomic memory ordering constraints; zero if not present.
 	Ordering enum.AtomicOrdering
 	// (optional) Alignment; zero if not present.
-	Align Alignment
+	Align Align
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
@@ -233,7 +233,7 @@ type InstStore struct {
 	// (optional) Atomic memory ordering constraints; zero if not present.
 	Ordering enum.AtomicOrdering
 	// (optional) Alignment; zero if not present.
-	Align Alignment
+	Align Align
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 }
