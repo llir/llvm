@@ -441,7 +441,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/rnglists_curanges.ll"},
 		//{path: "testdata/DebugInfo/X86/rvalue-ref.ll"},
 		//{path: "testdata/DebugInfo/X86/safestack-byval.ll"}, // TODO: add support for TLSModel initialexec.
-		//{path: "testdata/DebugInfo/X86/sdag-combine.ll"}, // TODO: add support for DIModule.
+		{path: "testdata/DebugInfo/X86/sdag-combine.ll"},
 		//{path: "testdata/DebugInfo/X86/sdag-dangling-dbgvalue.ll"},
 		//{path: "testdata/DebugInfo/X86/sdag-dbgvalue-phi-use-1.ll"},
 		//{path: "testdata/DebugInfo/X86/sdag-dbgvalue-phi-use-2.ll"},
