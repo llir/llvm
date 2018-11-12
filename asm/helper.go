@@ -475,8 +475,14 @@ func irParamAttribute(n ast.ParamAttribute) ir.ParamAttribute {
 	case *ast.Align:
 		return ir.Align(uintLit(n.N()))
 	case *ast.Dereferenceable:
-		// TODO: add support for Dereferenceable.
-		panic("support for parameter attribute Dereferenceable not yet implemented")
+		return ir.Dereferenceable{
+			N: uintLit(n.N()),
+		}
+	case *ast.DereferenceableOrNull:
+		return ir.Dereferenceable{
+			N:           uintLit(n.N()),
+			DerefOrNull: true,
+		}
 	case *ast.ParamAttr:
 		return asmenum.ParamAttrFromString(n.Text())
 	default:

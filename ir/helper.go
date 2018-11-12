@@ -76,6 +76,26 @@ func (a AttrString) String() string {
 	return quote(string(a))
 }
 
+// Dereferenceable is a dereferenceable memory attribute.
+type Dereferenceable struct {
+	// Number of bytes known to be dereferenceable.
+	N uint64
+	// (optional) Either dereferenceable or null if set.
+	DerefOrNull bool
+}
+
+// String returns the string representation of the dereferenceable memory
+// attribute.
+func (d Dereferenceable) String() string {
+	// 'dereferenceable' '(' N=UintLit ')'
+	//
+	// 'dereferenceable_or_null' '(' N=UintLit ')'
+	if d.DerefOrNull {
+		return fmt.Sprintf("dereferenceable_or_null(%d)", d.N)
+	}
+	return fmt.Sprintf("dereferenceable(%d)", d.N)
+}
+
 // TODO: figure out definition of ExceptionScope.
 
 // ExceptionScope is an exception scope.

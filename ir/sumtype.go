@@ -128,11 +128,9 @@ func (AttrPair) IsParamAttribute() {}
 // the ir.ParamAttribute interface.
 func (Align) IsParamAttribute() {}
 
-// TODO: add support for Dereferenceable parameter attributes.
-
 // IsParamAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
-//func (Dereferenceable) IsParamAttribute() {}
+func (Dereferenceable) IsParamAttribute() {}
 
 // === [ ir.ReturnAttribute ] ==================================================
 
@@ -148,11 +146,9 @@ func (AttrPair) IsReturnAttribute() {}
 // ir.ReturnAttribute interface.
 func (Align) IsReturnAttribute() {}
 
-// TODO: add support for Dereferenceable return attributes.
-
 // IsReturnAttribute ensures that only return attributes can be assigned to
 // the ir.ReturnAttribute interface.
-//func (Dereferenceable) IsReturnAttribute() {}
+func (Dereferenceable) IsReturnAttribute() {}
 
 // === [ ir.UnwindTarget ] =====================================================
 

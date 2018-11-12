@@ -407,7 +407,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/no_debug_ranges.ll"},
 		//{path: "testdata/DebugInfo/X86/nodebug_with_debug_loc.ll"},
 		//{path: "testdata/DebugInfo/X86/nondefault-subrange-array.ll"},
-		//{path: "testdata/DebugInfo/X86/nophysreg.ll"}, // TODO: add support for Dereferenceable
+		//{path: "testdata/DebugInfo/X86/nophysreg.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		//{path: "testdata/DebugInfo/X86/no-public-sections.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		//{path: "testdata/DebugInfo/X86/noreturn_c11.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		//{path: "testdata/DebugInfo/X86/noreturn_cpp11.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
@@ -468,7 +468,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/sroasplit-5.ll"},
 		//{path: "testdata/DebugInfo/X86/sroasplit-dbg-declare.ll"},
 		//{path: "testdata/DebugInfo/X86/stack-args.ll"},
-		//{path: "testdata/DebugInfo/X86/stack-value-dwarf2.ll"}, // TODO: add support for Dereferenceable.
+		{path: "testdata/DebugInfo/X86/stack-value-dwarf2.ll"},
 		//{path: "testdata/DebugInfo/X86/stack-value-dwarf4.ll"},
 		//{path: "testdata/DebugInfo/X86/stack-value-piece.ll"},
 		//{path: "testdata/DebugInfo/X86/static_member_array.ll"},
