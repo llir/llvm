@@ -757,7 +757,36 @@ func (gen *generator) irDINamespace(old *ast.DINamespace) (*metadata.DINamespace
 // --- [ DIObjCProperty ] ------------------------------------------------------
 
 func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObjCProperty, error) {
-	panic("support for *ast.DIObjCProperty not yet implemented")
+	md := &metadata.DIObjCProperty{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.File = file
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
+		case *ast.SetterField:
+			md.Setter = stringLit(oldField.Setter())
+		case *ast.GetterField:
+			md.Getter = stringLit(oldField.Getter())
+		case *ast.AttributesField:
+			md.Attributes = intLit(oldField.Attributes())
+		case *ast.TypeField:
+			typ, err := gen.irMDField(oldField.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Type = typ
+		default:
+			panic(fmt.Errorf("support for DIObjCProperty field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DISubprogram ] --------------------------------------------------------

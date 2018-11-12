@@ -413,7 +413,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/noreturn_cpp11.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		//{path: "testdata/DebugInfo/X86/noreturn_objc.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		//{path: "testdata/DebugInfo/X86/objc-fwd-decl.ll"},
-		//{path: "testdata/DebugInfo/X86/objc-property-void.ll"}, // TODO: add support for DIObjCProperty
+		{path: "testdata/DebugInfo/X86/objc-property-void.ll"},
 		//{path: "testdata/DebugInfo/X86/op_deref.ll"},
 		//{path: "testdata/DebugInfo/X86/parameters.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
 		//{path: "testdata/DebugInfo/X86/partial-constant.ll"},
