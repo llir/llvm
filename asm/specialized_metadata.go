@@ -499,7 +499,30 @@ func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.D
 // --- [ DILabel ] -------------------------------------------------------------
 
 func (gen *generator) irDILabel(old *ast.DILabel) (*metadata.DILabel, error) {
-	panic("support for *ast.DILabel not yet implemented")
+	md := &metadata.DILabel{}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.ScopeField:
+			scope, err := gen.irMDField(oldField.Scope())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Scope = scope
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.File = file
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
+		default:
+			panic(fmt.Errorf("support for DILabel field %T not yet implemented", old))
+		}
+	}
+	return md, nil
 }
 
 // --- [ DILexicalBlock ] ------------------------------------------------------
