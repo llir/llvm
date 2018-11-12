@@ -321,8 +321,8 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/DebugInfo/X86/decl-derived-member.ll"},
 		//{path: "testdata/DebugInfo/X86/default-subrange-array.ll"},
 		//{path: "testdata/DebugInfo/X86/deleted-bit-piece.ll"},
-		//{path: "testdata/DebugInfo/X86/DIModuleContext.ll"}, // TODO: add support for DIModule
-		//{path: "testdata/DebugInfo/X86/DIModule.ll"}, // TODO: add support for DIModule
+		{path: "testdata/DebugInfo/X86/DIModuleContext.ll"},
+		{path: "testdata/DebugInfo/X86/DIModule.ll"},
 		//{path: "testdata/DebugInfo/X86/discriminator2.ll"},
 		//{path: "testdata/DebugInfo/X86/discriminator3.ll"},
 		//{path: "testdata/DebugInfo/X86/discriminator.ll"},
