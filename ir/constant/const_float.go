@@ -185,10 +185,35 @@ func (c *Float) Ident() string {
 		// last 29 bits of significand will always be ignored.  As an
 		// error-detection measure, the IR parser requires them to be zero.
 		if c.NaN || c.X.IsInf() || !exact32(c.X) {
-			f, _ := c.X.Float64()
-			x := math.Float64bits(f)
-			x &= 0xFFFFFFFFE0000000 // clear 29 least significant bits.
-			return fmt.Sprintf("0x%016X", x)
+			// Single precision.
+			//
+			//     1 bit:  sign
+			//     8 bits: exponent
+			//    23 bits: mantissa
+			//
+			//    bias: 127
+			f, _ := c.X.Float32()
+			bits32 := math.Float32bits(f)
+			// 0b10000000000000000000000000000000
+			sign := uint64(bits32 & 0x80000000 >> 31)
+			// 0b01111111100000000000000000000000
+			const bias32 = 127
+			exp := uint64((bits32 & 0x7F800000 >> 23) - bias32)
+			// 0b00000000011111111111111111111111
+			mant := uint64(bits32 & 0x7FFFFF)
+			// Double precision.
+			//
+			//     1 bit:  sign
+			//    11 bits: exponent
+			//    52 bits: mantissa
+			//
+			//    bias: 1023
+			var bits64 uint64
+			bits64 |= sign << 53
+			const bias64 = 1023
+			bits64 |= (exp + bias64) << 52
+			bits64 |= mant << (52 - 23)
+			return fmt.Sprintf("0x%016X", bits64)
 		}
 	case types.FloatKindDouble:
 		if c.NaN || c.X.IsInf() || !exact64(c.X) {
