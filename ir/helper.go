@@ -272,9 +272,10 @@ func unquote(s string) string {
 // callingConvString returns the string representation of the given calling
 // convention.
 func callingConvString(callingConv enum.CallingConv) string {
-	if callingConv > enum.CallingConvNNN {
-		cc := callingConv - enum.CallingConvNNN
+	s := callingConv.String()
+	cc := uint(callingConv)
+	if unknown := fmt.Sprintf("CallingConv(%d)", cc); s == unknown {
 		return fmt.Sprintf("cc %d", cc)
 	}
-	return callingConv.String()
+	return s
 }

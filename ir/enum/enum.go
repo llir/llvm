@@ -46,59 +46,61 @@ type CallingConv uint16
 // missing from this list.
 
 // Calling conventions.
+//
+// From include/llvm/IR/CallingConv.h
 const (
-	CallingConvNone          CallingConv = iota // none
-	CallingConvAmdGPUCS                         // amdgpu_cs
-	CallingConvAmdGPUES                         // amdgpu_es
-	CallingConvAmdGPUGS                         // amdgpu_gs
-	CallingConvAmdGPUHS                         // amdgpu_hs
-	CallingConvAmdGPUKernel                     // amdgpu_kernel
-	CallingConvAmdGPULS                         // amdgpu_ls
-	CallingConvAmdGPUPS                         // amdgpu_ps
-	CallingConvAmdGPUVS                         // amdgpu_vs
-	CallingConvAnyReg                           // anyregcc
-	CallingConvARMAAPCSVFP                      // arm_aapcs_vfpcc
-	CallingConvARMAAPCS                         // arm_aapcscc
-	CallingConvARMAPCS                          // arm_apcscc
-	CallingConvAVRIntr                          // avr_intrcc
-	CallingConvAVRSignal                        // avr_signalcc
-	CallingConvC                                // ccc
-	CallingConvCold                             // coldcc
-	CallingConvCXXFastTLS                       // cxx_fast_tlscc
-	CallingConvFast                             // fastcc
-	CallingConvGHC                              // ghccc
-	CallingConvHHVMC                            // hhvm_ccc
-	CallingConvHHVM                             // hhvmcc
-	CallingConvIntelOCLBI                       // intel_ocl_bicc
-	CallingConvMSP430Intr                       // msp430_intrcc
-	CallingConvPreserveAll                      // preserve_allcc
-	CallingConvPreserveMost                     // preserve_mostcc
-	CallingConvPTXDevice                        // ptx_device
-	CallingConvPTXKernel                        // ptx_kernel
-	CallingConvSPIRFunc                         // spir_func
-	CallingConvSPIRKernel                       // spir_kernel
-	CallingConvSwift                            // swiftcc
-	CallingConvWebKitJS                         // webkit_jscc
-	CallingConvWin64                            // win64cc
-	CallingConvX86_64SysV                       // x86_64_sysvcc
-	CallingConvX86FastCall                      // x86_fastcallcc
-	CallingConvX86Intr                          // x86_intrcc
-	CallingConvX86RegCall                       // x86_regcallcc
-	CallingConvX86StdCall                       // x86_stdcallcc
-	CallingConvX86ThisCall                      // x86_thiscallcc
-	CallingConvX86VectorCall                    // x86_vectorcallcc
-	// Calling conventions defined through cc NNN.
-	CallingConvHiPE          // cc 11
-	CallingConvAVRBuiltin    // cc 86
-	CallingConvAMDGPUVS      // cc 87
-	CallingConvAMDGPUGS      // cc 88
-	CallingConvAMDGPUPS      // cc 89
-	CallingConvAMDGPUCS      // cc 90
-	CallingConvAMDGPUKernel  // cc 91
-	CallingConvAMDGPUHS      // cc 93
-	CallingConvMSP430Builtin // cc 94
-	CallingConvAMDGPULS      // cc 95
-	CallingConvAMDGPUES      // cc 96
+	CallingConvNone CallingConv = 0 // none
+	// Note, C calling convention is defined as 0 in LLVM. To have the zero-value
+	// calling convention mean no calling convention, re-define C calling
+	// convention as 1, and use 0 for none.
+	CallingConvC            CallingConv = 1  // ccc
+	CallingConvFast         CallingConv = 8  // fastcc
+	CallingConvCold         CallingConv = 9  // coldcc
+	CallingConvGHC          CallingConv = 10 // ghccc
+	CallingConvHiPE         CallingConv = 11 // cc 11
+	CallingConvWebKitJS     CallingConv = 12 // webkit_jscc
+	CallingConvAnyReg       CallingConv = 13 // anyregcc
+	CallingConvPreserveMost CallingConv = 14 // preserve_mostcc
+	CallingConvPreserveAll  CallingConv = 15 // preserve_allcc
+	CallingConvSwift        CallingConv = 16 // swiftcc
+	CallingConvCXXFastTLS   CallingConv = 17 // cxx_fast_tlscc
+
+	// Start of target-specific calling conventions.
+	CallingConvFirstTarget = CallingConvX86StdCall
+
+	CallingConvX86StdCall    CallingConv = 64 // x86_stdcallcc
+	CallingConvX86FastCall   CallingConv = 65 // x86_fastcallcc
+	CallingConvARM_APCS      CallingConv = 66 // arm_apcscc
+	CallingConvARM_AAPCS     CallingConv = 67 // arm_aapcscc
+	CallingConvARM_AAPCS_VFP CallingConv = 68 // arm_aapcs_vfpcc
+	CallingConvMSP430Intr    CallingConv = 69 // msp430_intrcc
+	CallingConvX86ThisCall   CallingConv = 70 // x86_thiscallcc
+	CallingConvPTXKernel     CallingConv = 71 // ptx_kernel
+	CallingConvPTXDevice     CallingConv = 72 // ptx_device
+
+	CallingConvSPIRFunc      CallingConv = 75 // spir_func
+	CallingConvSPIRKernel    CallingConv = 76 // spir_kernel
+	CallingConvIntelOCL_BI   CallingConv = 77 // intel_ocl_bicc
+	CallingConvX86_64SysV    CallingConv = 78 // x86_64_sysvcc
+	CallingConvWin64         CallingConv = 79 // win64cc
+	CallingConvX86VectorCall CallingConv = 80 // x86_vectorcallcc
+	CallingConvHHVM          CallingConv = 81 // hhvmcc
+	CallingConvHHVM_C        CallingConv = 82 // hhvm_ccc
+	CallingConvX86Intr       CallingConv = 83 // x86_intrcc
+	CallingConvAVRIntr       CallingConv = 84 // avr_intrcc
+	CallingConvAVRSignal     CallingConv = 85 // avr_signalcc
+	CallingConvAVRBuiltin    CallingConv = 86 // cc 86
+	CallingConvAMDGPU_VS     CallingConv = 87 // amdgpu_vs
+	CallingConvAMDGPU_GS     CallingConv = 88 // amdgpu_gs
+	CallingConvAMDGPU_PS     CallingConv = 89 // amdgpu_ps
+	CallingConvAMDGPU_CS     CallingConv = 90 // amdgpu_cs
+	CallingConvAMDGPUKernel  CallingConv = 91 // amdgpu_kernel
+	CallingConvX86RegCall    CallingConv = 92 // x86_regcallcc
+	CallingConvAMDGPU_HS     CallingConv = 93 // amdgpu_hs
+	CallingConvMSP430Builtin CallingConv = 94 // cc 94
+	CallingConvAMDGPU_LS     CallingConv = 95 // amdgpu_ls
+	CallingConvAMDGPU_ES     CallingConv = 96 // amdgpu_es
+
 	// Custom calling convention (user defined calling convention NNN at
 	// CallingConvNNN+NNN).
 	CallingConvNNN // cc NNN

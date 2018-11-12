@@ -4,13 +4,34 @@ package enum
 
 import "strconv"
 
-const _CallingConv_name = "noneamdgpu_csamdgpu_esamdgpu_gsamdgpu_hsamdgpu_kernelamdgpu_lsamdgpu_psamdgpu_vsanyregccarm_aapcs_vfpccarm_aapcsccarm_apcsccavr_intrccavr_signalccccccoldcccxx_fast_tlsccfastccghccchhvm_ccchhvmccintel_ocl_biccmsp430_intrccpreserve_allccpreserve_mostccptx_deviceptx_kernelspir_funcspir_kernelswiftccwebkit_jsccwin64ccx86_64_sysvccx86_fastcallccx86_intrccx86_regcallccx86_stdcallccx86_thiscallccx86_vectorcallcccc 11cc 86cc 87cc 88cc 89cc 90cc 91cc 93cc 94cc 95cc 96cc NNN"
+const (
+	_CallingConv_name_0 = "noneccc"
+	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscc"
+	_CallingConv_name_2 = "x86_stdcallccx86_fastcallccarm_apcsccarm_aapcsccarm_aapcs_vfpccmsp430_intrccx86_thiscallccptx_kernelptx_device"
+	_CallingConv_name_3 = "spir_funcspir_kernelintel_ocl_biccx86_64_sysvccwin64ccx86_vectorcallcchhvmcchhvm_cccx86_intrccavr_intrccavr_signalcccc 86amdgpu_vsamdgpu_gsamdgpu_psamdgpu_csamdgpu_kernelx86_regcallccamdgpu_hscc 94amdgpu_lsamdgpu_es"
+)
 
-var _CallingConv_index = [...]uint16{0, 4, 13, 22, 31, 40, 53, 62, 71, 80, 88, 103, 114, 124, 134, 146, 149, 155, 169, 175, 180, 188, 194, 208, 221, 235, 250, 260, 270, 279, 290, 297, 308, 315, 328, 342, 352, 365, 378, 392, 408, 413, 418, 423, 428, 433, 438, 443, 448, 453, 458, 463, 469}
+var (
+	_CallingConv_index_0 = [...]uint8{0, 4, 7}
+	_CallingConv_index_1 = [...]uint8{0, 6, 12, 17, 22, 33, 41, 56, 70, 77, 91}
+	_CallingConv_index_2 = [...]uint8{0, 13, 27, 37, 48, 63, 76, 90, 100, 110}
+	_CallingConv_index_3 = [...]uint8{0, 9, 20, 34, 47, 54, 70, 76, 84, 94, 104, 116, 121, 130, 139, 148, 157, 170, 183, 192, 197, 206, 215}
+)
 
 func (i CallingConv) String() string {
-	if i >= CallingConv(len(_CallingConv_index)-1) {
+	switch {
+	case 0 <= i && i <= 1:
+		return _CallingConv_name_0[_CallingConv_index_0[i]:_CallingConv_index_0[i+1]]
+	case 8 <= i && i <= 17:
+		i -= 8
+		return _CallingConv_name_1[_CallingConv_index_1[i]:_CallingConv_index_1[i+1]]
+	case 64 <= i && i <= 72:
+		i -= 64
+		return _CallingConv_name_2[_CallingConv_index_2[i]:_CallingConv_index_2[i+1]]
+	case 75 <= i && i <= 96:
+		i -= 75
+		return _CallingConv_name_3[_CallingConv_index_3[i]:_CallingConv_index_3[i+1]]
+	default:
 		return "CallingConv(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _CallingConv_name[_CallingConv_index[i]:_CallingConv_index[i+1]]
 }

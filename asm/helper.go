@@ -271,30 +271,13 @@ func irCallingConv(n ast.CallingConv) enum.CallingConv {
 	case *ast.CallingConvInt:
 		cc := uintLit(n.UintLit())
 		switch cc {
-		case 11:
-			return enum.CallingConvHiPE
-		case 86:
-			return enum.CallingConvAVRBuiltin
-		case 87:
-			return enum.CallingConvAMDGPUVS
-		case 88:
-			return enum.CallingConvAMDGPUGS
-		case 89:
-			return enum.CallingConvAMDGPUPS
-		case 90:
-			return enum.CallingConvAMDGPUCS
-		case 91:
-			return enum.CallingConvAMDGPUKernel
-		case 93:
-			return enum.CallingConvAMDGPUHS
-		case 94:
-			return enum.CallingConvMSP430Builtin
-		case 95:
-			return enum.CallingConvAMDGPULS
-		case 96:
-			return enum.CallingConvAMDGPUES
+		case 0:
+			// Note, C calling convention is defined as 0 in LLVM. To have the zero-value
+			// calling convention mean no calling convention, re-define C calling
+			// convention as 1, and use 0 for none.
+			return enum.CallingConvC
 		default:
-			return enum.CallingConvNNN + enum.CallingConv(cc)
+			return enum.CallingConv(cc)
 		}
 	default:
 		panic(fmt.Errorf("support for calling convention type %T not yet implemented", n))
