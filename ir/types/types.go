@@ -39,6 +39,19 @@ var (
 	I64Ptr = &PointerType{ElemType: I64} // i64*
 )
 
+// Convenience functions.
+
+// IsPointer reports whether the given type is a pointer type.
+func IsPointer(t Type) bool {
+	_, ok := t.(*PointerType)
+	return ok
+}
+
+// Equal reports whether t and u are of equal type.
+func Equal(t, u Type) bool {
+	return t.Equal(u)
+}
+
 // Type is an LLVM IR type.
 type Type interface {
 	fmt.Stringer
@@ -46,6 +59,8 @@ type Type interface {
 	Def() string
 	// Equal reports whether t and u are of equal type.
 	Equal(u Type) bool
+	// Name returns the type name alias name of the type.
+	Name() string
 }
 
 // --- [ Void types ] ----------------------------------------------------------
@@ -76,6 +91,11 @@ func (t *VoidType) String() string {
 func (t *VoidType) Def() string {
 	// 'void'
 	return "void"
+}
+
+// Name returns the type name alias name of the type.
+func (t *VoidType) Name() string {
+	return t.Alias
 }
 
 // --- [ Function types ] ------------------------------------------------------
@@ -149,6 +169,11 @@ func (t *FuncType) Def() string {
 	return buf.String()
 }
 
+// Name returns the type name alias name of the type.
+func (t *FuncType) Name() string {
+	return t.Alias
+}
+
 // --- [ Integer types ] -------------------------------------------------------
 
 // IntType is an LLVM IR integer type.
@@ -188,6 +213,11 @@ func (t *IntType) Def() string {
 	return fmt.Sprintf("i%d", t.BitSize)
 }
 
+// Name returns the type name alias name of the type.
+func (t *IntType) Name() string {
+	return t.Alias
+}
+
 // --- [ Floating-point types ] ------------------------------------------------
 
 // FloatType is an LLVM IR floating-point type.
@@ -218,6 +248,11 @@ func (t *FloatType) String() string {
 func (t *FloatType) Def() string {
 	// FloatKind
 	return t.Kind.String()
+}
+
+// Name returns the type name alias name of the type.
+func (t *FloatType) Name() string {
+	return t.Alias
 }
 
 //go:generate stringer -linecomment -type FloatKind
@@ -265,6 +300,11 @@ func (t *MMXType) Def() string {
 	return "x86_mmx"
 }
 
+// Name returns the type name alias name of the type.
+func (t *MMXType) Name() string {
+	return t.Alias
+}
+
 // --- [ Pointer types ] -------------------------------------------------------
 
 // PointerType is an LLVM IR pointer type.
@@ -309,6 +349,11 @@ func (t *PointerType) Def() string {
 	}
 	buf.WriteString("*")
 	return buf.String()
+}
+
+// Name returns the type name alias name of the type.
+func (t *PointerType) Name() string {
+	return t.Alias
 }
 
 // AddrSpace is an LLVM IR pointer type address space.
@@ -366,6 +411,11 @@ func (t *VectorType) Def() string {
 	return fmt.Sprintf("<%d x %v>", t.Len, t.ElemType)
 }
 
+// Name returns the type name alias name of the type.
+func (t *VectorType) Name() string {
+	return t.Alias
+}
+
 // --- [ Label types ] ---------------------------------------------------------
 
 // LabelType is an LLVM IR label type.
@@ -394,6 +444,11 @@ func (t *LabelType) String() string {
 func (t *LabelType) Def() string {
 	// 'label'
 	return "label"
+}
+
+// Name returns the type name alias name of the type.
+func (t *LabelType) Name() string {
+	return t.Alias
 }
 
 // --- [ Token types ] ---------------------------------------------------------
@@ -426,6 +481,11 @@ func (t *TokenType) Def() string {
 	return "token"
 }
 
+// Name returns the type name alias name of the type.
+func (t *TokenType) Name() string {
+	return t.Alias
+}
+
 // --- [ Metadata types ] ------------------------------------------------------
 
 // MetadataType is an LLVM IR metadata type.
@@ -454,6 +514,11 @@ func (t *MetadataType) String() string {
 func (t *MetadataType) Def() string {
 	// 'metadata'
 	return "metadata"
+}
+
+// Name returns the type name alias name of the type.
+func (t *MetadataType) Name() string {
+	return t.Alias
 }
 
 // --- [ Array types ] ---------------------------------------------------------
@@ -500,6 +565,11 @@ func (t *ArrayType) String() string {
 func (t *ArrayType) Def() string {
 	// '[' Len=UintLit 'x' Elem=Type ']'
 	return fmt.Sprintf("[%d x %v]", t.Len, t.ElemType)
+}
+
+// Name returns the type name alias name of the type.
+func (t *ArrayType) Name() string {
+	return t.Alias
 }
 
 // --- [ Structure types ] -----------------------------------------------------
@@ -598,15 +668,7 @@ func (t *StructType) Def() string {
 	return buf.String()
 }
 
-// Convenience functions.
-
-// IsPointer reports whether the given type is a pointer type.
-func IsPointer(t Type) bool {
-	_, ok := t.(*PointerType)
-	return ok
-}
-
-// Equal reports whether t and u are of equal type.
-func Equal(t, u Type) bool {
-	return t.Equal(u)
+// Name returns the type name alias name of the type.
+func (t *StructType) Name() string {
+	return t.Alias
 }
