@@ -4,13 +4,25 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"runtime/pprof"
 	"time"
 
 	"github.com/llir/llvm/asm"
 )
 
 func main() {
+	var cpuprofile string
+	flag.StringVar(&cpuprofile, "cpuprofile", "", "write cpu profile to file")
 	flag.Parse()
+	if cpuprofile != "" {
+		f, err := os.Create(cpuprofile)
+		if err != nil {
+			log.Fatalf("%+v", err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 	for _, llPath := range flag.Args() {
 		fmt.Printf("=== [ %v ] =======================\n", llPath)
 		fmt.Println()
