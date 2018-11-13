@@ -159,27 +159,20 @@ func (gen *generator) addDefsToModule() {
 		}
 		gen.m.Globals = append(gen.m.Globals, def)
 	}
-	for _, ident := range gen.old.aliasOrder {
+	for _, ident := range gen.old.indirectSymbolDefOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
 			panic(fmt.Errorf("unable to locate global identifier %q", enc.Global(ident)))
 		}
-		def, ok := v.(*ir.Alias)
-		if !ok {
-			panic(fmt.Errorf("invalid alias definition type; expected *ir.Alias, got %T", v))
+		switch v := v.(type) {
+		case *ir.Alias:
+			gen.m.Aliases = append(gen.m.Aliases, v)
+		case *ir.IFunc:
+			gen.m.IFuncs = append(gen.m.IFuncs, v)
+		default:
+			panic(fmt.Errorf("invalid indirect symbol definition type; expected *ir.Alias or *ir.IFunc, got %T", v))
+
 		}
-		gen.m.Aliases = append(gen.m.Aliases, def)
-	}
-	for _, ident := range gen.old.ifuncOrder {
-		v, ok := gen.new.globals[ident]
-		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", enc.Global(ident)))
-		}
-		def, ok := v.(*ir.IFunc)
-		if !ok {
-			panic(fmt.Errorf("invalid IFunc definition type; expected *ir.IFunc, got %T", v))
-		}
-		gen.m.IFuncs = append(gen.m.IFuncs, def)
 	}
 	for _, ident := range gen.old.funcOrder {
 		v, ok := gen.new.globals[ident]

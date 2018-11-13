@@ -93,12 +93,9 @@ type oldIndex struct {
 	// globalOrder records the global identifier of global declarations and
 	// definitions in their order of occurrence in the input.
 	globalOrder []string
-	// aliasOrder records the global identifier of alias definitions in their
-	// order of occurrence in the input.
-	aliasOrder []string
-	// ifuncOrder records the global identifier of IFunc definitions in their
-	// order of occurrence in the input.
-	ifuncOrder []string
+	// indirectSymbolDefOrder records the global identifier of indirect symbol
+	// definitions in their order of occurrence in the input.
+	indirectSymbolDefOrder []string
 	// funcOrder records the global identifier of function declarations and
 	// definitions in their order of occurrence in the input.
 	funcOrder []string

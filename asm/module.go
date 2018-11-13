@@ -68,20 +68,13 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
-		case *ast.AliasDef:
+		case *ast.IndirectSymbolDef:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
-			gen.old.aliasOrder = append(gen.old.aliasOrder, ident)
-		case *ast.IFuncDef:
-			ident := globalIdent(entity.Name())
-			if prev, ok := gen.old.globals[ident]; ok {
-				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
-			}
-			gen.old.globals[ident] = entity
-			gen.old.ifuncOrder = append(gen.old.ifuncOrder, ident)
+			gen.old.indirectSymbolDefOrder = append(gen.old.indirectSymbolDefOrder, ident)
 		case *ast.FuncDecl:
 			ident := globalIdent(entity.Header().Name())
 			if prev, ok := gen.old.globals[ident]; ok {

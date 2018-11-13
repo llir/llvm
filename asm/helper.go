@@ -431,6 +431,45 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	return inc, nil
 }
 
+// irIndirectSymbol returns the IR indirect symbol corresponding to the given
+// AST indirect symbol.
+func (gen *generator) irIndirectSymbol(typ *types.PointerType, old ast.IndirectSymbol) (constant.Constant, error) {
+	switch old := old.(type) {
+	case *ast.TypeConst:
+		symbol, err := gen.irTypeConst(*old)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return symbol, nil
+	case *ast.BitCastExpr:
+		symbol, err := gen.irConstant(typ, old)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return symbol, nil
+	case *ast.GetElementPtrExpr:
+		symbol, err := gen.irConstant(typ, old)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return symbol, nil
+	case *ast.AddrSpaceCastExpr:
+		symbol, err := gen.irConstant(typ, old)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return symbol, nil
+	case *ast.IntToPtrExpr:
+		symbol, err := gen.irConstant(typ, old)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return symbol, nil
+	default:
+		panic(fmt.Errorf("support for indirect symbol %T not yet implemented", old))
+	}
+}
+
 // irOptLinkage returns the IR linkage corresponding to the given optional AST
 // linkage.
 func irOptLinkage(n ast.LlvmNode) enum.Linkage {

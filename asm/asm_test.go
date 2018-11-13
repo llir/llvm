@@ -470,7 +470,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "testdata/Assembler/unnamed.ll"},
 		//{path: "testdata/Assembler/unsized-recursive-type.ll"},
 		{path: "testdata/Assembler/uselistorder_bb.ll"},
-		//{path: "testdata/Assembler/uselistorder.ll"},
+		{path: "testdata/Assembler/uselistorder.ll"},
 		//{path: "testdata/Assembler/vbool-cmp.ll"},
 		//{path: "testdata/Assembler/vector-cmp.ll"},
 		//{path: "testdata/Assembler/vector-select.ll"},

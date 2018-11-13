@@ -62,24 +62,30 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constan
 			new.Typ.AddrSpace = irAddrSpace(n)
 		}
 		return new, nil
-	case *ast.AliasDef:
-		new := &ir.Alias{GlobalName: name}
+	case *ast.IndirectSymbolDef:
 		// Content type.
 		contentType, err := gen.irType(old.ContentType())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		new.Typ = types.NewPointer(contentType)
-		return new, nil
-	case *ast.IFuncDef:
-		new := &ir.IFunc{GlobalName: name}
-		// Content type.
-		contentType, err := gen.irType(old.ContentType())
-		if err != nil {
-			return nil, errors.WithStack(err)
+		// Indirect symbol kind.
+		kind := old.IndirectSymbolKind().Text()
+		switch kind {
+		case "alias":
+			new := &ir.Alias{
+				GlobalName: name,
+				Typ:        types.NewPointer(contentType),
+			}
+			return new, nil
+		case "ifunc":
+			new := &ir.IFunc{
+				GlobalName: name,
+				Typ:        types.NewPointer(contentType),
+			}
+			return new, nil
+		default:
+			panic(fmt.Errorf("support for indirect symbol kind %q not yet implemented", kind))
 		}
-		new.Typ = types.NewPointer(contentType)
-		return new, nil
 	case *ast.FuncDecl:
 		new := &ir.Function{GlobalName: name}
 		// Function signature.
@@ -142,21 +148,27 @@ func (gen *generator) translateGlobals() error {
 			if err := gen.translateGlobalDef(new, old); err != nil {
 				return errors.WithStack(err)
 			}
-		case *ast.AliasDef:
-			new, ok := v.(*ir.Alias)
-			if !ok {
-				panic(fmt.Errorf("invalid alias definition type; expected *ir.Alias, got %T", v))
-			}
-			if err := gen.translateAliasDef(new, old); err != nil {
-				return errors.WithStack(err)
-			}
-		case *ast.IFuncDef:
-			new, ok := v.(*ir.IFunc)
-			if !ok {
-				panic(fmt.Errorf("invalid IFunc definition type; expected *ir.IFunc, got %T", v))
-			}
-			if err := gen.translateIFuncDef(new, old); err != nil {
-				return errors.WithStack(err)
+		case *ast.IndirectSymbolDef:
+			kind := old.IndirectSymbolKind().Text()
+			switch kind {
+			case "alias":
+				new, ok := v.(*ir.Alias)
+				if !ok {
+					panic(fmt.Errorf("invalid alias definition type; expected *ir.Alias, got %T", v))
+				}
+				if err := gen.translateAliasDef(new, old); err != nil {
+					return errors.WithStack(err)
+				}
+			case "ifunc":
+				new, ok := v.(*ir.IFunc)
+				if !ok {
+					panic(fmt.Errorf("invalid IFunc definition type; expected *ir.IFunc, got %T", v))
+				}
+				if err := gen.translateIFuncDef(new, old); err != nil {
+					return errors.WithStack(err)
+				}
+			default:
+				panic(fmt.Errorf("support for indirect symbol kind %q not yet implemented", kind))
 			}
 		case *ast.FuncDecl:
 			new, ok := v.(*ir.Function)
@@ -328,7 +340,7 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 // --- [ Alias definitions ] ---------------------------------------------------
 
 // translateAliasDef translates the given AST alias definition to IR.
-func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.AliasDef) error {
+func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.IndirectSymbolDef) error {
 	// (optional) Linkage.
 	// TODO: check that linkage is handled correctly.
 	if n := old.Linkage(); n.IsValid() {
@@ -359,7 +371,7 @@ func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.AliasDef) error 
 	}
 	// Content type: handled in newGlobal.
 	// Aliasee.
-	aliasee, err := gen.irTypeConst(old.Aliasee())
+	aliasee, err := gen.irIndirectSymbol(new.Typ, old.IndirectSymbol())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -370,7 +382,7 @@ func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.AliasDef) error 
 // --- [ IFunc definitions ] ---------------------------------------------------
 
 // translateIFuncDef translates the given AST IFunc definition to IR.
-func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IFuncDef) error {
+func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IndirectSymbolDef) error {
 	// (optional) Linkage.
 	// TODO: check that linkage is handled correctly.
 	if n := old.Linkage(); n.IsValid() {
@@ -401,7 +413,7 @@ func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IFuncDef) error 
 	}
 	// Content type: handled in newGlobal.
 	// Resolver.
-	resolver, err := gen.irTypeConst(old.Resolver())
+	resolver, err := gen.irIndirectSymbol(new.Typ, old.IndirectSymbol())
 	if err != nil {
 		return errors.WithStack(err)
 	}
