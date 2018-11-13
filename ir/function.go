@@ -63,8 +63,7 @@ type Function struct {
 	// (optional) Personality; nil if not present.
 	Personality constant.Constant
 	// (optional) Use list orders.
-	// TODO: add support for UseListOrder.
-	//UseListOrders []*UseListOrder
+	UseListOrders []*UseListOrder
 	// (optional) Metadata.
 	Metadata []*metadata.MetadataAttachment
 
@@ -304,10 +303,12 @@ func bodyString(body *Function) string {
 		}
 		fmt.Fprintf(buf, "%s\n", block.Def())
 	}
-	// TODO: add support for use list orders.
-	//for _, useList := range body.UseListOrders {
-	//	fmt.Fprintf(buf, "%s\n", useList)
-	//}
+	if len(body.UseListOrders) > 0 {
+		buf.WriteString("\n")
+	}
+	for _, u := range body.UseListOrders {
+		fmt.Fprintf(buf, "\t%s\n", u)
+	}
 	buf.WriteString("}")
 	return buf.String()
 }

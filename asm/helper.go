@@ -555,6 +555,96 @@ func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error)
 	panic("unreachable")
 }
 
+// irUseListOrder returns the IR use-list order corresponding to the given AST
+// use-list order.
+func (fgen *funcGen) irUseListOrder(n ast.UseListOrder) (*ir.UseListOrder, error) {
+	// Value.
+	val, err := fgen.astToIRTypeValue(n.Val())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Indices.
+	var indices []int64
+	for _, oldIndex := range n.Indices() {
+		index := int64(uintLit(oldIndex))
+		indices = append(indices, index)
+	}
+	useListOrder := &ir.UseListOrder{
+		Value:   val,
+		Indices: indices,
+	}
+	return useListOrder, nil
+}
+
+// irUseListOrder returns the IR use-list order corresponding to the given AST
+// use-list order.
+func (gen *generator) irUseListOrder(n ast.UseListOrder) (*ir.UseListOrder, error) {
+	// Value.
+	typ, err := gen.irType(n.Val().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	oldVal := n.Val().Val()
+	oldConst, ok := oldVal.(ast.Constant)
+	if !ok {
+		return nil, errors.Errorf("unable to resolve value %T in module use-list order", oldVal)
+	}
+	val, err := gen.irConstant(typ, oldConst)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	// Indices.
+	var indices []int64
+	for _, oldIndex := range n.Indices() {
+		index := int64(uintLit(oldIndex))
+		indices = append(indices, index)
+	}
+	useListOrder := &ir.UseListOrder{
+		Value:   val,
+		Indices: indices,
+	}
+	return useListOrder, nil
+}
+
+// irUseListOrderBB returns the IR basic block specific use-list order
+// corresponding to the given AST basic block specific use-list order.
+func (gen *generator) irUseListOrderBB(n ast.UseListOrderBB) (*ir.UseListOrderBB, error) {
+	// Function.
+	funcName := globalIdent(n.Func())
+	v, ok := gen.new.globals[funcName]
+	if !ok {
+		return nil, errors.Errorf("unable to locate global identifier %q", enc.Global(funcName))
+	}
+	f, ok := v.(*ir.Function)
+	if !ok {
+		return nil, errors.Errorf("invalid function type; expected *ir.Function, got %T", v)
+	}
+	// Basic block.
+	blockName := localIdent(n.Block())
+	var block *ir.BasicBlock
+	for _, bb := range f.Blocks {
+		if bb.LocalName == blockName {
+			block = bb
+			break
+		}
+	}
+	if block == nil {
+		return nil, errors.Errorf("unable to locate basic block %q of function %q", enc.Local(blockName), enc.Global(funcName))
+	}
+	// Indices.
+	var indices []int64
+	for _, oldIndex := range n.Indices() {
+		index := int64(uintLit(oldIndex))
+		indices = append(indices, index)
+	}
+	useListOrderBB := &ir.UseListOrderBB{
+		Func:    f,
+		Block:   block,
+		Indices: indices,
+	}
+	return useListOrderBB, nil
+}
+
 // ### [ Helpers ] #############################################################
 
 // unquote returns the unquoted version of s if quoted, and the original string

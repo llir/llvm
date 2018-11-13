@@ -442,11 +442,18 @@ func (gen *generator) translateFuncDef(new *ir.Function, old *ast.FuncDef) error
 	new.Metadata = md
 	// Basic blocks.
 	fgen := newFuncGen(gen, new)
-	if err := fgen.resolveLocals(old.Body()); err != nil {
+	oldBody := old.Body()
+	if err := fgen.resolveLocals(oldBody); err != nil {
 		return errors.WithStack(err)
 	}
 	// (optional) Use list orders.
-	// TODO: translate use list orders.
+	for _, oldUseListOrder := range oldBody.UseListOrders() {
+		useListOrder, err := fgen.irUseListOrder(oldUseListOrder)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		new.UseListOrders = append(new.UseListOrders, useListOrder)
+	}
 	return nil
 }
 

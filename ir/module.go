@@ -153,12 +153,18 @@ func (m *Module) String() string {
 		fmt.Fprintln(buf, md.Def())
 	}
 	// Use-list orders.
+	if len(m.UseListOrders) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, u := range m.UseListOrders {
-		fmt.Fprintln(buf, u.Def())
+		fmt.Fprintln(buf, u)
 	}
 	// Basic block specific use-list orders.
+	if len(m.UseListOrderBBs) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, u := range m.UseListOrderBBs {
-		fmt.Fprintln(buf, u.Def())
+		fmt.Fprintln(buf, u)
 	}
 	return buf.String()
 }
@@ -234,19 +240,19 @@ type UseListOrder struct {
 	Indices []int64
 }
 
-// Def returns the LLVM syntax representation of the use-list order directive
+// String returns the string representation of the use-list order directive
 // definition.
-func (u *UseListOrder) Def() string {
+func (u *UseListOrder) String() string {
 	//  'uselistorder' TypeValue ',' '{' Indices=(UintLit separator ',')+ '}'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "uselistorder %s, {", u.Value)
+	fmt.Fprintf(buf, "uselistorder %s, { ", u.Value)
 	for i, index := range u.Indices {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		fmt.Fprintf(buf, "%d", index)
 	}
-	buf.WriteString("}")
+	buf.WriteString(" }")
 	return buf.String()
 }
 
@@ -260,19 +266,19 @@ type UseListOrderBB struct {
 	Indices []int64
 }
 
-// Def returns the LLVM syntax representation of the basic block specific use-
+// String returns the string representation of the basic block specific use-
 // list order directive definition.
-func (u *UseListOrderBB) Def() string {
+func (u *UseListOrderBB) String() string {
 	//  'uselistorder_bb' Func=GlobalIdent ',' Block=LocalIdent ',' '{'
 	//  Indices=(UintLit separator ',')+ '}'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "uselistorder_bb %s, %s, {", u.Func.Ident(), u.Block.Ident())
+	fmt.Fprintf(buf, "uselistorder_bb %s, %s, { ", u.Func.Ident(), u.Block.Ident())
 	for i, index := range u.Indices {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		fmt.Fprintf(buf, "%d", index)
 	}
-	buf.WriteString("}")
+	buf.WriteString(" }")
 	return buf.String()
 }

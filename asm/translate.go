@@ -104,7 +104,21 @@ func translate(old *ast.Module) (*ir.Module, error) {
 	}
 	// NOTE: step 5-7 can be done concurrenty.
 	// 5. Translate use-list orders.
+	for _, oldUseListOrder := range gen.old.useListOrders {
+		useListOrder, err := gen.irUseListOrder(*oldUseListOrder)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		gen.m.UseListOrders = append(gen.m.UseListOrders, useListOrder)
+	}
 	// 6. Translate basic block specific use-list orders.
+	for _, oldUseListOrderBB := range gen.old.useListOrderBBs {
+		useListOrderBB, err := gen.irUseListOrderBB(*oldUseListOrderBB)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		gen.m.UseListOrderBBs = append(gen.m.UseListOrderBBs, useListOrderBB)
+	}
 	// 7. Fix basic block references in blockaddress constants.
 	for _, c := range gen.todo {
 		if err := fixBlockAddressConst(c); err != nil {
