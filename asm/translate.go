@@ -61,6 +61,7 @@ package asm
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/internal/enc"
@@ -68,40 +69,39 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TODO: remove flag after we reach our performance goals.
-var (
-	// DoTypeResolution enables type resolution of type defintions.
-	DoTypeResolution = true
-	// DoGlobalResolution enables global resolution of global variable and
-	// function delcarations and defintions.
-	DoGlobalResolution = true
-)
-
 // translate translates the given AST module into an equivalent IR module.
 func translate(old *ast.Module) (*ir.Module, error) {
 	gen := newGenerator()
 	// 1. Index AST top-level entities.
+	indexStart := time.Now()
 	if err := gen.indexTopLevelEntities(old); err != nil {
 		return nil, errors.WithStack(err)
 	}
+	dbg.Println("index AST top-level entities took:", time.Since(indexStart))
 	// 2. Resolve IR type definitions.
+	typeStart := time.Now()
 	if err := gen.resolveTypeDefs(); err != nil {
 		return nil, errors.WithStack(err)
 	}
+	dbg.Println("type resolution took:", time.Since(typeStart))
 	// 3. Translate AST comdat definitions to IR.
 	if err := gen.translateComdatDefs(); err != nil {
 		return nil, errors.WithStack(err)
 	}
 	// 4a. Index top-level identifiers and create scaffolding IR top-level
 	//     declarations and definitions (without bodies but with types).
+	createStart := time.Now()
 	if err := gen.createTopLevelEntities(); err != nil {
 		return nil, errors.WithStack(err)
 	}
+	dbg.Println("create IR top-level entities took:", time.Since(createStart))
 	// 4b. Translate AST top-level declarations and definitions to IR.
 	// NOTE: the substeps of 4b can be done concurrently.
+	translateStart := time.Now()
 	if err := gen.translateTopLevelEntities(); err != nil {
 		return nil, errors.WithStack(err)
 	}
+	dbg.Println("translate AST to IR took:", time.Since(translateStart))
 	// NOTE: step 5-7 can be done concurrenty.
 	// 5. Translate use-list orders.
 	for _, oldUseListOrder := range gen.old.useListOrders {

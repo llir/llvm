@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	flag.BoolVar(&asm.DoTypeResolution, "types", true, "enable type resolution of type definitions")
-	flag.BoolVar(&asm.DoGlobalResolution, "globals", true, "enable global resolution of global variable and function declarations and definitions")
 	flag.Parse()
 	for _, llPath := range flag.Args() {
 		fmt.Printf("=== [ %v ] =======================\n", llPath)
