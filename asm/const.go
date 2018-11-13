@@ -162,8 +162,6 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant
 
 func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*constant.CharArray, error) {
 	data := stringLitBytes(old.Val())
-	// TODO: decide whether to update constant.NewCharArray to include a type as its
-	// first parameter, thus making it consistent with constant.NewArray.
 	expr := constant.NewCharArray(data)
 	// TODO: validate t against expr.Typ.
 	return expr, nil
