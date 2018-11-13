@@ -46,8 +46,6 @@ type Type interface {
 	Def() string
 	// Equal reports whether t and u are of equal type.
 	Equal(u Type) bool
-	// SetAlias sets the type name alias of the type.
-	SetAlias(alias string)
 }
 
 // --- [ Void types ] ----------------------------------------------------------
@@ -78,11 +76,6 @@ func (t *VoidType) String() string {
 func (t *VoidType) Def() string {
 	// 'void'
 	return "void"
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *VoidType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 // --- [ Function types ] ------------------------------------------------------
@@ -156,11 +149,6 @@ func (t *FuncType) Def() string {
 	return buf.String()
 }
 
-// SetAlias sets the type name alias of the type.
-func (t *FuncType) SetAlias(alias string) {
-	t.Alias = alias
-}
-
 // --- [ Integer types ] -------------------------------------------------------
 
 // IntType is an LLVM IR integer type.
@@ -200,11 +188,6 @@ func (t *IntType) Def() string {
 	return fmt.Sprintf("i%d", t.BitSize)
 }
 
-// SetAlias sets the type name alias of the type.
-func (t *IntType) SetAlias(alias string) {
-	t.Alias = alias
-}
-
 // --- [ Floating-point types ] ------------------------------------------------
 
 // FloatType is an LLVM IR floating-point type.
@@ -235,11 +218,6 @@ func (t *FloatType) String() string {
 func (t *FloatType) Def() string {
 	// FloatKind
 	return t.Kind.String()
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *FloatType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 //go:generate stringer -linecomment -type FloatKind
@@ -287,11 +265,6 @@ func (t *MMXType) Def() string {
 	return "x86_mmx"
 }
 
-// SetAlias sets the type name alias of the type.
-func (t *MMXType) SetAlias(alias string) {
-	t.Alias = alias
-}
-
 // --- [ Pointer types ] -------------------------------------------------------
 
 // PointerType is an LLVM IR pointer type.
@@ -336,11 +309,6 @@ func (t *PointerType) Def() string {
 	}
 	buf.WriteString("*")
 	return buf.String()
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *PointerType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 // AddrSpace is an LLVM IR pointer type address space.
@@ -398,11 +366,6 @@ func (t *VectorType) Def() string {
 	return fmt.Sprintf("<%d x %v>", t.Len, t.ElemType)
 }
 
-// SetAlias sets the type name alias of the type.
-func (t *VectorType) SetAlias(alias string) {
-	t.Alias = alias
-}
-
 // --- [ Label types ] ---------------------------------------------------------
 
 // LabelType is an LLVM IR label type.
@@ -431,11 +394,6 @@ func (t *LabelType) String() string {
 func (t *LabelType) Def() string {
 	// 'label'
 	return "label"
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *LabelType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 // --- [ Token types ] ---------------------------------------------------------
@@ -468,11 +426,6 @@ func (t *TokenType) Def() string {
 	return "token"
 }
 
-// SetAlias sets the type name alias of the type.
-func (t *TokenType) SetAlias(alias string) {
-	t.Alias = alias
-}
-
 // --- [ Metadata types ] ------------------------------------------------------
 
 // MetadataType is an LLVM IR metadata type.
@@ -501,11 +454,6 @@ func (t *MetadataType) String() string {
 func (t *MetadataType) Def() string {
 	// 'metadata'
 	return "metadata"
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *MetadataType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 // --- [ Array types ] ---------------------------------------------------------
@@ -552,11 +500,6 @@ func (t *ArrayType) String() string {
 func (t *ArrayType) Def() string {
 	// '[' Len=UintLit 'x' Elem=Type ']'
 	return fmt.Sprintf("[%d x %v]", t.Len, t.ElemType)
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *ArrayType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 // --- [ Structure types ] -----------------------------------------------------
@@ -653,11 +596,6 @@ func (t *StructType) Def() string {
 		buf.WriteString(">")
 	}
 	return buf.String()
-}
-
-// SetAlias sets the type name alias of the type.
-func (t *StructType) SetAlias(alias string) {
-	t.Alias = alias
 }
 
 // Convenience functions.
