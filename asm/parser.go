@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	// dbg is a logger which logs debug messages with "asm:" prefix to standard error.
+	// dbg is a logger which logs debug messages with "asm:" prefix to standard
+	// error.
 	dbg = log.New(os.Stderr, term.MagentaBold("asm:")+" ", 0)
 )
 
