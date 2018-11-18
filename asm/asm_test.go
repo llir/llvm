@@ -100,7 +100,7 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/Feature/small.ll"},
 		{path: "testdata/Feature/sparcld.ll"},
 		{path: "testdata/Feature/strip_names.ll"},
-		//{path: "testdata/Feature/terminators.ll"}, // TODO: fix grammar. syntax error at line 35
+		{path: "testdata/Feature/terminators.ll"},
 		{path: "testdata/Feature/testalloca.ll"},
 		{path: "testdata/Feature/testconstants.ll"},
 		{path: "testdata/Feature/testlogical.ll"},
