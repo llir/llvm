@@ -265,12 +265,7 @@ func (fgen *funcGen) astToIRInstGetElementPtr(inst ir.Instruction, old *ast.GetE
 	}
 	// (optional) In-bounds.
 	i.InBounds = old.InBounds().IsValid()
-	// Element type.
-	elemType, err := fgen.gen.irType(old.ElemType())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	i.ElemType = elemType
+	// Element type; already handled in newIRValueInst.
 	// Source address.
 	src, err := fgen.astToIRTypeValue(old.Src())
 	if err != nil {

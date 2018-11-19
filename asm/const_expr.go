@@ -620,7 +620,9 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 		}
 		indices = append(indices, index)
 	}
-	expr := constant.NewGetElementPtr(elemType, src, indices...)
+	expr := constant.NewGetElementPtr(src, indices...)
+	_ = elemType
+	// TODO: validate type elemType against expr.ElemType.
 	// TODO: validate type t against expr.Typ.
 	// (optional) In-bounds.
 	expr.InBounds = inBounds

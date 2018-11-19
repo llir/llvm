@@ -72,9 +72,9 @@ func (block *BasicBlock) NewAtomicRMW(op enum.AtomicOp, dst, x value.Value, orde
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewGetElementPtr appends a new getelementptr instruction to the basic block
-// based on the given element type, source address and element indices.
-func (block *BasicBlock) NewGetElementPtr(elemType types.Type, src value.Value, indices ...value.Value) *InstGetElementPtr {
-	inst := NewGetElementPtr(elemType, src, indices...)
+// based on the given source address and element indices.
+func (block *BasicBlock) NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
+	inst := NewGetElementPtr(src, indices...)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

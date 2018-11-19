@@ -304,6 +304,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		return &ir.InstAtomicRMW{LocalName: name, Typ: t.ElemType}, nil
 	case *ast.GetElementPtrInst:
 		// TODO: handle address space of Src?
+		// Element type.
 		elemType, err := fgen.gen.irType(old.ElemType())
 		if err != nil {
 			return nil, errors.WithStack(err)
@@ -312,7 +313,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstGetElementPtr{LocalName: name, Typ: typ}, nil
+		return &ir.InstGetElementPtr{LocalName: name, ElemType: elemType, Typ: typ}, nil
 	// Conversion instructions
 	case *ast.TruncInst:
 		to, err := fgen.gen.irType(old.To())

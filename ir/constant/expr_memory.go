@@ -23,16 +23,16 @@ type ExprGetElementPtr struct {
 	// extra.
 
 	// Type of result produced by the constant expression.
-	Typ types.Type // *types.PointerType or *types.VectorType
+	Typ types.Type // *types.PointerType or *types.VectorType (with elements of pointer type)
 	// (optional) The result is a poison value if the calculated pointer is not
 	// an in bounds address of the allocated source object.
 	InBounds bool
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
-// element type, source address and element indices.
-func NewGetElementPtr(elemType types.Type, src Constant, indices ...*Index) *ExprGetElementPtr {
-	e := &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
+// source address and element indices.
+func NewGetElementPtr(src Constant, indices ...*Index) *ExprGetElementPtr {
+	e := &ExprGetElementPtr{Src: src, Indices: indices}
 	// Compute type.
 	e.Type()
 	return e
@@ -46,6 +46,21 @@ func (e *ExprGetElementPtr) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprGetElementPtr) Type() types.Type {
+	// Cache element type if not present.
+	if e.ElemType == nil {
+		switch typ := e.Src.Type().(type) {
+		case *types.PointerType:
+			e.ElemType = typ.ElemType
+		case *types.VectorType:
+			t, ok := typ.ElemType.(*types.PointerType)
+			if !ok {
+				panic(fmt.Errorf("invalid vector element type; expected *types.Pointer, got %T", typ.ElemType))
+			}
+			e.ElemType = t.ElemType
+		default:
+			panic(fmt.Errorf("support for souce type %T not yet implemented", typ))
+		}
+	}
 	// Cache type if not present.
 	if e.Typ == nil {
 		e.Typ = gepType(e.ElemType, e.Indices)
