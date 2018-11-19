@@ -58,7 +58,7 @@ func (block *BasicBlock) Def() string {
 	// Name=LabelIdentopt Insts=Instruction* Term=Terminator
 	buf := &strings.Builder{}
 	if isLocalID(block.LocalName) {
-		//fmt.Fprintf(buf, "; <label>:%s\n", enc.Label(block.LocalName))
+		fmt.Fprintf(buf, "; <label>:%s\n", block.LocalName)
 	} else if len(block.LocalName) > 0 {
 		fmt.Fprintf(buf, "%s\n", enc.Label(block.LocalName))
 	}
