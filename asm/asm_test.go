@@ -993,7 +993,7 @@ func TestParseFile(t *testing.T) {
 		*/
 
 		// SQLite.
-		//{path: "../testdata/sqlite/shell.ll"},
+		{path: "../testdata/sqlite/test/shell.ll"},
 	}
 	for _, g := range golden {
 		if filepath.HasPrefix(g.path, "../testdata/") {
