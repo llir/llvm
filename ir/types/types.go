@@ -19,11 +19,12 @@ var (
 	Token    = &TokenType{}    // token
 	Metadata = &MetadataType{} // metadata
 	// Integer types.
-	I1  = &IntType{BitSize: 1}  // i1
-	I8  = &IntType{BitSize: 8}  // i8
-	I16 = &IntType{BitSize: 16} // i16
-	I32 = &IntType{BitSize: 32} // i32
-	I64 = &IntType{BitSize: 64} // i64
+	I1   = &IntType{BitSize: 1}   // i1
+	I8   = &IntType{BitSize: 8}   // i8
+	I16  = &IntType{BitSize: 16}  // i16
+	I32  = &IntType{BitSize: 32}  // i32
+	I64  = &IntType{BitSize: 64}  // i64
+	I128 = &IntType{BitSize: 128} // i128
 	// Floating-point types.
 	Half     = &FloatType{Kind: FloatKindHalf}     // half
 	Float    = &FloatType{Kind: FloatKindFloat}    // float
@@ -32,11 +33,12 @@ var (
 	FP128    = &FloatType{Kind: FloatKindFP128}    // fp128
 	PPCFP128 = &FloatType{Kind: FloatKindPPCFP128} // ppc_fp128
 	// Integer pointer types.
-	I1Ptr  = &PointerType{ElemType: I1}  // i1*
-	I8Ptr  = &PointerType{ElemType: I8}  // i8*
-	I16Ptr = &PointerType{ElemType: I16} // i16*
-	I32Ptr = &PointerType{ElemType: I32} // i32*
-	I64Ptr = &PointerType{ElemType: I64} // i64*
+	I1Ptr   = &PointerType{ElemType: I1}   // i1*
+	I8Ptr   = &PointerType{ElemType: I8}   // i8*
+	I16Ptr  = &PointerType{ElemType: I16}  // i16*
+	I32Ptr  = &PointerType{ElemType: I32}  // i32*
+	I64Ptr  = &PointerType{ElemType: I64}  // i64*
+	I128Ptr = &PointerType{ElemType: I128} // i128*
 )
 
 // Convenience functions.
