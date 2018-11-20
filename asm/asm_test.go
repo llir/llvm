@@ -996,6 +996,13 @@ func TestParseFile(t *testing.T) {
 		//{path: "../testdata/sqlite/shell.ll"},
 	}
 	for _, g := range golden {
+		if filepath.HasPrefix(g.path, "../testdata/") {
+			if !osutil.Exists("../testdata/") {
+				// Skip test cases from the llir/testdata submodule if not present.
+				// Users may add this submodule using git clone --recursive.
+				continue
+			}
+		}
 		log.Printf("=== [ %s ] ===", g.path)
 		m, err := ParseFile(g.path)
 		if err != nil {
