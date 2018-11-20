@@ -43,9 +43,9 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Feature/OperandBundles/merge-func.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/pr26510.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/special-state.ll"},
-		//{path: "../testdata/llvm/test/Feature/alias2.ll"}, // TODO: fix grammar. syntax error at line 12
-		//{path: "../testdata/llvm/test/Feature/aliases.ll"}, // TODO: fix grammar. syntax error at line 29
-		//{path: "../testdata/llvm/test/Feature/alignment.ll"}, // TODO: fix grammar. syntax error at line 7
+		//{path: "../testdata/llvm/test/Feature/alias2.ll"}, // TODO: fix grammar. syntax error at line 12. The issue is that the aliasee (a bitcast expression in this case is missing a type (in this case, the type should be i16*). `@a1 = alias i16, bitcast (i32* @v1 to i16*)`
+		//{path: "../testdata/llvm/test/Feature/aliases.ll"}, // TODO: fix grammar. syntax error at line 29. The issue is that the aliasee (a bitcast expression in this case is missing a type (in this case, the type should be i64*). `@A = alias i64, bitcast (i32* @bar to i64*)`
+		//{path: "../testdata/llvm/test/Feature/alignment.ll"}, // TODO: fix grammar. syntax error at line 7. The issue is that there is a parsing ambiguity between GlobalAttr and FuncAttr, both of which may be empty and both of which may contain Align.
 		{path: "../testdata/llvm/test/Feature/attributes.ll"},
 		{path: "../testdata/llvm/test/Feature/basictest.ll"},
 		{path: "../testdata/llvm/test/Feature/callingconventions.ll"},
@@ -575,7 +575,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/PR20038.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/PR37395.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/ptrsize.ll"},
-		//{path: "../testdata/llvm/test/DebugInfo/Generic/recursive_inlining.ll"}, // TODO: fix grammar. syntax error at line 118
+		//{path: "../testdata/llvm/test/DebugInfo/Generic/recursive_inlining.ll"}, // TODO: fix grammar. syntax error at line 118. Issue with Align.
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/restrict.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/simplifycfg_sink_last_inst.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/skeletoncu.ll"},
@@ -733,7 +733,7 @@ func TestParseFile(t *testing.T) {
 		//{path: "../testdata/llvm/test/DebugInfo/X86/global-expression.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/global-sra-fp80-array.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/global-sra-fp80-struct.ll"},
-		//{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names-empty.ll"}, // TODO: fix grammar. syntax error at line 20
+		//{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names-empty.ll"}, // TODO: fix grammar. syntax error at line 20. Issue with gnuPubnames in metadata. Should the metadata contain gnuPubnames, or is this now NameTableKind or something else?
 		//{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names-gmlt.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names-multiple-cus.ll"},
