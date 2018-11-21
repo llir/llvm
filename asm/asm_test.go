@@ -33,8 +33,11 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/inst_vector.ll"},
 		{path: "testdata/terminator.ll"},
 
-		// Floating-point test cases.
+		// Floating-point test cases (issue #31).
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
+
+		// Distinguish named from unnamed locals (issue #39).
+		{path: "../testdata/llvm/test/Analysis/DominanceFrontier/new_pm_test.ll"},
 
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},

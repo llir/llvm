@@ -138,9 +138,8 @@ func (i LocalIdent) Ident() string {
 	name := i.LocalName
 	if x, err := strconv.ParseInt(name, 10, 64); err == nil {
 		// Print LocalName with quotes if it is a number; e.g. %"42".
-		name = fmt.Sprintf(`"%d"`, x)
+		return fmt.Sprintf(`%%"%d"`, x)
 	}
-	// TODO: validate that we don't end up quoting named numbers twice.
 	return enc.Local(name)
 }
 
