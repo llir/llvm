@@ -30,7 +30,7 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			asm := unquote(entity.Asm().Text())
 			gen.m.ModuleAsms = append(gen.m.ModuleAsms, asm)
 		case *ast.TypeDef:
-			ident := localIdent(entity.Alias())
+			ident := localIdent(entity.Name())
 			name := getTypeName(ident)
 			if prev, ok := gen.old.typeDefs[name]; ok {
 				if _, ok := prev.Typ().(*ast.OpaqueType); !ok {
