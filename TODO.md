@@ -157,3 +157,7 @@ error reported correctly. check error in test case.
 - [ ] Assembler/2004-03-30-UnclosedFunctionCrash.ll
 
 error reported correctly (syntax error). check error in test case
+
+- [ ] Analysis/CostModel/AMDGPU/fdiv.ll
+
+half 1.0
