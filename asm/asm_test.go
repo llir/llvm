@@ -42,6 +42,9 @@ func TestParseFile(t *testing.T) {
 		// Empty array constant.
 		{path: "../testdata/llvm/test/Assembler/aggregate-constant-values.ll"},
 
+		// gep with vector indices.
+		{path: "../testdata/llvm/test/Assembler/ConstantExprFold.ll"},
+
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/basic-aa-argmemonly.ll"},

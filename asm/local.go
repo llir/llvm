@@ -657,15 +657,28 @@ func (gen *generator) gepType(elemType types.Type, indices []ast.TypeValue) (typ
 		case *types.ArrayType:
 			e = t.ElemType
 		case *types.StructType:
-			idx, ok := index.Val().(*ast.IntConst)
-			if !ok {
-				panic(fmt.Errorf("invalid index type for structure element; expected *ast.IntConst, got %T", index))
+			switch index := index.Val().(type) {
+			case *ast.IntConst:
+				i, err := strconv.ParseInt(index.Text(), 10, 64)
+				if err != nil {
+					panic(fmt.Errorf("unable to parse integer %q; %v", index.Text(), err))
+				}
+				e = t.Fields[i]
+			case *ast.VectorConst:
+				// TODO: Validate how index vectors in gep are supposed to work.
+				elem := index.Elems()[0].Val()
+				idx, ok := elem.(*ast.IntConst)
+				if !ok {
+					panic(fmt.Errorf("invalid index type for structure element; expected *ast.IntConst, got %T", elem))
+				}
+				i, err := strconv.ParseInt(idx.Text(), 10, 64)
+				if err != nil {
+					panic(fmt.Errorf("unable to parse integer %q; %v", idx.Text(), err))
+				}
+				e = t.Fields[i]
+			default:
+				panic(fmt.Errorf("invalid index type for structure element; expected *ast.IntConst or *ast.VectorConst, got %T", index))
 			}
-			i, err := strconv.ParseInt(idx.Text(), 10, 64)
-			if err != nil {
-				panic(fmt.Errorf("unable to parse integer %q; %v", idx.Text(), err))
-			}
-			e = t.Fields[i]
 		default:
 			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
 		}

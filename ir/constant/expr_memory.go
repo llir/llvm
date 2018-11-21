@@ -144,11 +144,19 @@ func gepType(elemType types.Type, indices []*Index) types.Type {
 		case *types.ArrayType:
 			e = t.ElemType
 		case *types.StructType:
-			idx, ok := index.Index.(*Int)
-			if !ok {
-				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index))
+			switch index := index.Index.(type) {
+			case *Int:
+				e = t.Fields[index.X.Int64()]
+			case *Vector:
+				// TODO: Validate how index vectors in gep are supposed to work.
+				idx, ok := index.Elems[0].(*Int)
+				if !ok {
+					panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index.Elems[0]))
+				}
+				e = t.Fields[idx.X.Int64()]
+			default:
+				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int or *constant.Vector, got %T", index))
 			}
-			e = t.Fields[idx.X.Int64()]
 		default:
 			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
 		}
