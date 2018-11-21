@@ -375,7 +375,19 @@ func (gen *generator) irFuncAttribute(n ast.FuncAttribute) ir.FuncAttribute {
 		id := attrGroupID(*n)
 		def, ok := gen.new.attrGroupDefs[id]
 		if !ok {
-			panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
+			// Attribute group definition for ID not found.
+			//
+			// The input file should have contained this definition, but seeing as
+			// the LLVM test suite contains several LLVM IR files which omit the
+			// attribute group definitions, we will play nice and add an empty
+			// definition instead of panicking.
+			//
+			// This issue is tracked at: https://github.com/llir/llvm/issues/37
+			def = &ir.AttrGroupDef{ID: id}
+			gen.new.attrGroupDefs[id] = def
+			// Note, we resolve the ID to an empty definition, but to skip output
+			// the ID is not added to attrGroupDefOrder.
+			//gen.old.attrGroupDefOrder = append(gen.old.attrGroupDefOrder, id)
 		}
 		return def
 	// TODO: add support for Align.
