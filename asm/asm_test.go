@@ -44,6 +44,7 @@ func TestParseFile(t *testing.T) {
 
 		// gep with vector indices.
 		{path: "../testdata/llvm/test/Assembler/ConstantExprFold.ll"},
+		{path: "../testdata/llvm/test/Assembler/getelementptr.ll"},
 
 		// Large values in metadata.
 		{path: "../testdata/llvm/test/Assembler/ditype-large-values.ll"},

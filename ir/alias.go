@@ -103,6 +103,11 @@ func (a *Alias) Def() string {
 		fmt.Fprintf(buf, " %s", a.UnnamedAddr)
 	}
 	buf.WriteString(" alias")
-	fmt.Fprintf(buf, " %s, %s", a.Typ.ElemType, a.Aliasee)
+	fmt.Fprintf(buf, " %s, ", a.Typ.ElemType)
+	if expr, ok := a.Aliasee.(constant.Expression); ok {
+		buf.WriteString(expr.Ident())
+	} else {
+		buf.WriteString(a.Aliasee.String())
+	}
 	return buf.String()
 }

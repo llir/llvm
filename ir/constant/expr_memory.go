@@ -154,8 +154,10 @@ func gepType(elemType types.Type, indices []*Index) types.Type {
 					panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index.Elems[0]))
 				}
 				e = t.Fields[idx.X.Int64()]
+			case *ZeroInitializer:
+				e = t.Fields[0]
 			default:
-				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int or *constant.Vector, got %T", index))
+				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, *constant.Vector or *constant.ZeroInitializer, got %T", index))
 			}
 		default:
 			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
