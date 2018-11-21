@@ -58,6 +58,41 @@ invalid local ID in function "@a_linear_impl_fig_1", expected %12, got %13
 LLVM differentiates between named an unnamed IDs, e.g.
 `%42` and `; <label>:42` vs, `%"42"` and `42:`.
 
+Proposed solution:
+
+Have each instruction, function parameter and basic block embed LocalIdent (instead of LocalName), which is defined as follows.
+
+```go
+type LocalIdent struct {
+	Ident string
+	ID int64
+}
+
+func (i *LocalIdent) Ident() string {
+	ident := i.Ident
+	if i.IsUnnamed() {
+		ident = strconv.Itoa(i.ID)
+	}
+	return enc.LocalIdent(ident)
+}
+
+func (i *LocalIdent) Name() string {
+	return i.Ident
+}
+
+func (i *LocalIdent) SetName(name string) {
+	i.Ident = names
+}
+
+func (i *LocalIdent) ID() int64 {
+	return i.ID // TODO: figure out how to resolve name collition between method and field, perhaps have ID be unexported?
+}
+
+func (i *LocalIdent) SetID(id int64) {
+	i.ID = id
+}
+```
+
 - [ ] Analysis/MemorySSA/cyclicphi.ll
 
 syntax error at line 7
@@ -157,7 +192,3 @@ error reported correctly. check error in test case.
 - [ ] Assembler/2004-03-30-UnclosedFunctionCrash.ll
 
 error reported correctly (syntax error). check error in test case
-
-- [ ] Analysis/CostModel/AMDGPU/fdiv.ll
-
-half 1.0

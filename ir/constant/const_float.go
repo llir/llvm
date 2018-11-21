@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mewmew/floats/binary16"
-	"github.com/mewmew/floats/float80x86"
-
 	"github.com/llir/llvm/ir/types"
+	"github.com/mewmew/float"
+	"github.com/mewmew/float/binary16"
+	"github.com/mewmew/float/float80x86"
 	"github.com/pkg/errors"
 )
 
@@ -218,12 +218,22 @@ func (c *Float) Ident() string {
 
 	switch c.Typ.Kind {
 	case types.FloatKindHalf:
-		// TODO: handle NaN.
-		f, acc := binary16.NewFromBig(c.X)
-		// TODO: check acc.
-		_ = acc
-		bits := f.Bits()
-		return fmt.Sprintf("0xH%04X", bits)
+		if c.NaN || c.X.IsInf() || !float.IsExact16(c.X) {
+			var bits uint16
+			if c.NaN {
+				if c.X.Signbit() {
+					bits = binary16.NegNaN.Bits()
+				} else {
+					bits = binary16.NaN.Bits()
+				}
+			} else {
+				f, acc := binary16.NewFromBig(c.X)
+				// TODO: check acc.
+				_ = acc
+				bits = f.Bits()
+			}
+			return fmt.Sprintf("0xH%04X", bits)
+		}
 	case types.FloatKindFloat:
 		// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
 		//
@@ -234,7 +244,7 @@ func (c *Float) Ident() string {
 		// double.  A double has 52 bits of significand, so this means that the
 		// last 29 bits of significand will always be ignored.  As an
 		// error-detection measure, the IR parser requires them to be zero.
-		if c.NaN || c.X.IsInf() || !exact32(c.X) {
+		if c.NaN || c.X.IsInf() || !float.IsExact32(c.X) {
 			// Single precision.
 			//
 			//     1 bit:  sign
@@ -266,7 +276,7 @@ func (c *Float) Ident() string {
 			return fmt.Sprintf("0x%016X", bits64)
 		}
 	case types.FloatKindDouble:
-		if c.NaN || c.X.IsInf() || !exact64(c.X) {
+		if c.NaN || c.X.IsInf() || !float.IsExact64(c.X) {
 			f, _ := c.X.Float64()
 			x := math.Float64bits(f)
 			// Note, to match Clang output we do not zero-pad the hexadecimal
@@ -297,47 +307,4 @@ func (c *Float) Ident() string {
 		}
 	}
 	return s
-}
-
-// exact32 reports whether x may be represented exactly as a float32,
-func exact32(x *big.Float) bool {
-	f, acc := x.Float32()
-	if acc != big.Exact {
-		return false
-	}
-	s1 := strconv.FormatFloat(float64(f), 'e', -1, 32)
-	s2 := trimZeros(x.Text('e', 100))
-	return s1 == s2
-}
-
-// exact64 reports whether x may be represented exactly as a float64,
-func exact64(x *big.Float) bool {
-	f, acc := x.Float64()
-	if acc != big.Exact {
-		return false
-	}
-	s1 := strconv.FormatFloat(f, 'e', -1, 64)
-	s2 := trimZeros(x.Text('e', 100))
-	return s1 == s2
-}
-
-// trimZeros trims trailing zeroes after the decimal point in the given
-// floating-point value (represented in scientific notation). If all digits
-// after the decimal point are trimmed this way, the decimal point is also
-// trimmed.
-func trimZeros(s string) string {
-	epos := strings.Index(s, "e")
-	if epos == -1 {
-		panic(fmt.Errorf("unable to locate position of exponent (e.g. e+02) in %q", s))
-	}
-	pos := epos - 1
-	for ; pos > 0; pos-- {
-		if s[pos] != '0' {
-			break
-		}
-	}
-	if s[pos] != '.' {
-		pos++
-	}
-	return fmt.Sprintf("%s%s", s[:pos], s[epos:])
 }

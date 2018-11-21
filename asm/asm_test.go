@@ -33,6 +33,9 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/inst_vector.ll"},
 		{path: "testdata/terminator.ll"},
 
+		// Floating-point test cases.
+		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
+
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/basic-aa-argmemonly.ll"},
@@ -598,6 +601,26 @@ func TestParseFile(t *testing.T) {
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/virtual-index.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/volatile-alloca.ll"},
 
+		// LLVM test/DebugInfo.
+		{path: "../testdata/llvm/test/DebugInfo/check-debugify-preserves-analyses.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/cross-cu-scope.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/debugify-bogus-dbg-value.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/debugify-each.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/debugify-export.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/debugify.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/debugify-report-missing-locs-only.ll"},
+		//{path: "../testdata/llvm/test/DebugInfo/debuglineinfo-path.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
+		{path: "../testdata/llvm/test/DebugInfo/dwo.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/macro_link.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/omit-empty.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/pr34186.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/pr34672.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/skeletoncu.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/strip-DIGlobalVariable.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/strip-loop-metadata.ll"},
+		{path: "../testdata/llvm/test/DebugInfo/strip-module-flags.ll"},
+		//{path: "../testdata/llvm/test/DebugInfo/unrolled-loop-remainder.ll"}, // TODO: figure out how to handle duplicate (but distinct) AttrGroupDef
+
 		// LLVM test/DebugInfo/X86.
 		//{path: "../testdata/llvm/test/DebugInfo/X86/2010-04-13-PubType.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/2011-09-26-GlobalVarContext.ll"},
@@ -860,26 +883,6 @@ func TestParseFile(t *testing.T) {
 		//{path: "../testdata/llvm/test/DebugInfo/X86/void-typedef.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/xray-split-dwarf-interaction.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/X86/zextload.ll"},
-
-		// LLVM test/DebugInfo.
-		{path: "../testdata/llvm/test/DebugInfo/check-debugify-preserves-analyses.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/cross-cu-scope.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/debugify-bogus-dbg-value.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/debugify-each.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/debugify-export.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/debugify.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/debugify-report-missing-locs-only.ll"},
-		//{path: "../testdata/llvm/test/DebugInfo/debuglineinfo-path.ll"}, // TODO: figure out how to handle AttrGroupID with missing AttrGroupDef
-		{path: "../testdata/llvm/test/DebugInfo/dwo.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/macro_link.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/omit-empty.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/pr34186.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/pr34672.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/skeletoncu.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/strip-DIGlobalVariable.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/strip-loop-metadata.ll"},
-		{path: "../testdata/llvm/test/DebugInfo/strip-module-flags.ll"},
-		//{path: "../testdata/llvm/test/DebugInfo/unrolled-loop-remainder.ll"}, // TODO: figure out how to handle duplicate (but distinct) AttrGroupDef
 
 		// Coreutils.
 		/*
