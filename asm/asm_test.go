@@ -45,6 +45,9 @@ func TestParseFile(t *testing.T) {
 		// gep with vector indices.
 		{path: "../testdata/llvm/test/Assembler/ConstantExprFold.ll"},
 
+		// Large values in metadata.
+		{path: "../testdata/llvm/test/Assembler/ditype-large-values.ll"},
+
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/basic-aa-argmemonly.ll"},

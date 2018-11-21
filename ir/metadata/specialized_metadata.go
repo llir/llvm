@@ -13,8 +13,8 @@ import (
 type DIBasicType struct {
 	Tag      enum.DwarfTag         // optional; zero value if not present.
 	Name     string                // optional; empty if not present.
-	Size     int64                 // optional; zero value if not present.
-	Align    int64                 // optional; zero value if not present.
+	Size     uint64                // optional; zero value if not present.
+	Align    uint64                // optional; zero value if not present.
 	Encoding enum.DwarfAttEncoding // optional; zero value if not present.
 	Flags    enum.DIFlag           // optional.
 }
@@ -59,7 +59,7 @@ type DICompileUnit struct {
 	Producer              string             // optional; empty if not present.
 	IsOptimized           bool               // optional; zero value if not present.
 	Flags                 string             // optional; empty if not present.
-	RuntimeVersion        int64              // optional; zero value if not present.
+	RuntimeVersion        uint64             // optional; zero value if not present.
 	SplitDebugFilename    string             // optional; empty if not present.
 	EmissionKind          enum.EmissionKind  // optional; zero value if not present.
 	Enums                 MDField            // optional; nil if not present.
@@ -67,7 +67,7 @@ type DICompileUnit struct {
 	Globals               MDField            // optional; nil if not present.
 	Imports               MDField            // optional; nil if not present.
 	Macros                MDField            // optional; nil if not present.
-	DwoID                 int64              // optional; zero value if not present.
+	DwoID                 uint64             // optional; zero value if not present.
 	SplitDebugInlining    bool               // optional; zero value if not present.
 	DebugInfoForProfiling bool               // optional; zero value if not present.
 	NameTableKind         enum.NameTableKind // optional; zero value if not present.
@@ -154,9 +154,9 @@ type DICompositeType struct {
 	File           MDField        // optional; nil if not present.
 	Line           int64          // optional; zero value if not present.
 	BaseType       MDField        // optional; nil if not present.
-	Size           int64          // optional; zero value if not present.
-	Align          int64          // optional; zero value if not present.
-	Offset         int64          // optional; zero value if not present.
+	Size           uint64         // optional; zero value if not present.
+	Align          uint64         // optional; zero value if not present.
+	Offset         uint64         // optional; zero value if not present.
 	Flags          enum.DIFlag    // optional.
 	Elements       MDField        // optional; nil if not present.
 	RuntimeLang    enum.DwarfLang // optional; zero value if not present.
@@ -245,12 +245,12 @@ type DIDerivedType struct {
 	File              MDField       // optional; nil if not present.
 	Line              int64         // optional; zero value if not present.
 	BaseType          MDField       // required.
-	Size              int64         // optional; zero value if not present.
-	Align             int64         // optional; zero value if not present.
-	Offset            int64         // optional; zero value if not present.
+	Size              uint64        // optional; zero value if not present.
+	Align             uint64        // optional; zero value if not present.
+	Offset            uint64        // optional; zero value if not present.
 	Flags             enum.DIFlag   // optional.
 	ExtraData         MDField       // optional; nil if not present.
-	DwarfAddressSpace int64         // optional; zero value if not present.
+	DwarfAddressSpace uint64        // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -402,7 +402,7 @@ type DIGlobalVariable struct {
 	IsDefinition   bool    // optional; zero value if not present.
 	TemplateParams MDField // optional; nil if not present.
 	Declaration    MDField // optional; nil if not present.
-	Align          int64   // optional; zero value if not present.
+	Align          uint64  // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -585,7 +585,7 @@ func (md *DILexicalBlock) String() string {
 type DILexicalBlockFile struct {
 	Scope         MDField // required.
 	File          MDField // optional; nil if not present.
-	Discriminator int64   // required.
+	Discriminator uint64  // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -608,13 +608,13 @@ func (md *DILexicalBlockFile) String() string {
 // DILocalVariable is a specialized metadata node.
 type DILocalVariable struct {
 	Name  string      // optional; empty if not present.
-	Arg   int64       // optional; zero value if not present.
+	Arg   uint64      // optional; zero value if not present.
 	Scope MDField     // required.
 	File  MDField     // optional; nil if not present.
 	Line  int64       // optional; zero value if not present.
 	Type  MDField     // optional; nil if not present.
 	Flags enum.DIFlag // optional.
-	Align int64       // optional; zero value if not present.
+	Align uint64      // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -819,7 +819,7 @@ type DIObjCProperty struct {
 	Line       int64   // optional; zero value if not present.
 	Setter     string  // optional; empty if not present.
 	Getter     string  // optional; empty if not present.
-	Attributes int64   // optional; zero value if not present.
+	Attributes uint64  // optional; zero value if not present.
 	Type       MDField // optional; nil if not present.
 }
 
@@ -873,7 +873,7 @@ type DISubprogram struct {
 	ScopeLine      int64                // optional; zero value if not present.
 	ContainingType MDField              // optional; nil if not present.
 	Virtuality     enum.DwarfVirtuality // optional; zero value if not present.
-	VirtualIndex   int64                // optional; zero value if not present.
+	VirtualIndex   uint64               // optional; zero value if not present.
 	ThisAdjustment int64                // optional; zero value if not present.
 	Flags          enum.DIFlag          // optional.
 	IsOptimized    bool                 // optional; zero value if not present.

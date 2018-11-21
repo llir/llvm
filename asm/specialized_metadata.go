@@ -83,9 +83,9 @@ func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.SizeField:
-			md.Size = intLit(oldField.Size())
+			md.Size = uintLit(oldField.Size())
 		case *ast.AlignField:
-			md.Align = intLit(oldField.Align())
+			md.Align = uintLit(oldField.Align())
 		case *ast.EncodingField:
 			md.Encoding = irDwarfAttEncoding(oldField.Encoding())
 		case *ast.FlagsField:
@@ -118,7 +118,7 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 		case *ast.FlagsStringField:
 			md.Flags = stringLit(oldField.Flags())
 		case *ast.RuntimeVersionField:
-			md.RuntimeVersion = intLit(oldField.RuntimeVersion())
+			md.RuntimeVersion = uintLit(oldField.RuntimeVersion())
 		case *ast.SplitDebugFilenameField:
 			md.SplitDebugFilename = stringLit(oldField.SplitDebugFilename())
 		case *ast.EmissionKindField:
@@ -154,7 +154,7 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 			}
 			md.Macros = macros
 		case *ast.DwoIdField:
-			md.DwoID = intLit(oldField.DwoId())
+			md.DwoID = uintLit(oldField.DwoId())
 		case *ast.SplitDebugInliningField:
 			md.SplitDebugInlining = boolLit(oldField.SplitDebugInlining())
 		case *ast.DebugInfoForProfilingField:
@@ -199,11 +199,11 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 			}
 			md.BaseType = baseType
 		case *ast.SizeField:
-			md.Size = intLit(oldField.Size())
+			md.Size = uintLit(oldField.Size())
 		case *ast.AlignField:
-			md.Align = intLit(oldField.Align())
+			md.Align = uintLit(oldField.Align())
 		case *ast.OffsetField:
-			md.Offset = intLit(oldField.OffsetField())
+			md.Offset = uintLit(oldField.OffsetField())
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.ElementsField:
@@ -272,12 +272,12 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 			}
 			md.BaseType = baseType
 		case *ast.SizeField:
-			md.Size = intLit(oldField.Size())
+			md.Size = uintLit(oldField.Size())
 		case *ast.AlignField:
-			md.Align = intLit(oldField.Align())
+			md.Align = uintLit(oldField.Align())
 		case *ast.OffsetField:
 			// TODO: rename OffsetField method to Offset once https://github.com/inspirer/textmapper/issues/13 is resolved.
-			md.Offset = intLit(oldField.OffsetField())
+			md.Offset = uintLit(oldField.OffsetField())
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.ExtraDataField:
@@ -287,7 +287,7 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 			}
 			md.ExtraData = extraData
 		case *ast.DwarfAddressSpaceField:
-			md.DwarfAddressSpace = intLit(oldField.DwarfAddressSpace())
+			md.DwarfAddressSpace = uintLit(oldField.DwarfAddressSpace())
 		default:
 			panic(fmt.Errorf("support for DIDerivedType field %T not yet implemented", old))
 		}
@@ -427,7 +427,7 @@ func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.D
 			}
 			md.Declaration = declaration
 		case *ast.AlignField:
-			md.Align = intLit(oldField.Align())
+			md.Align = uintLit(oldField.Align())
 		default:
 			panic(fmt.Errorf("support for DIGlobalVariable field %T not yet implemented", old))
 		}
@@ -574,7 +574,7 @@ func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metada
 			}
 			md.File = file
 		case *ast.DiscriminatorIntField:
-			md.Discriminator = intLit(oldField.Discriminator())
+			md.Discriminator = uintLit(oldField.Discriminator())
 		default:
 			panic(fmt.Errorf("support for DILexicalBlockFile field %T not yet implemented", old))
 		}
@@ -591,7 +591,7 @@ func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DIL
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
 		case *ast.ArgField:
-			md.Arg = intLit(oldField.Arg())
+			md.Arg = uintLit(oldField.Arg())
 		case *ast.ScopeField:
 			scope, err := gen.irMDField(oldField.Scope())
 			if err != nil {
@@ -615,7 +615,7 @@ func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DIL
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.AlignField:
-			md.Align = intLit(oldField.Align())
+			md.Align = uintLit(oldField.Align())
 		default:
 			panic(fmt.Errorf("support for DILocalVariable field %T not yet implemented", old))
 		}
@@ -775,7 +775,7 @@ func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObj
 		case *ast.GetterField:
 			md.Getter = stringLit(oldField.Getter())
 		case *ast.AttributesField:
-			md.Attributes = intLit(oldField.Attributes())
+			md.Attributes = uintLit(oldField.Attributes())
 		case *ast.TypeField:
 			typ, err := gen.irMDField(oldField.Typ())
 			if err != nil {
@@ -834,7 +834,7 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 		case *ast.VirtualityField:
 			md.Virtuality = irDwarfVirtuality(oldField.Virtuality())
 		case *ast.VirtualIndexField:
-			md.VirtualIndex = intLit(oldField.VirtualIndex())
+			md.VirtualIndex = uintLit(oldField.VirtualIndex())
 		case *ast.ThisAdjustmentField:
 			md.ThisAdjustment = intLit(oldField.ThisAdjustment())
 		case *ast.FlagsField:
