@@ -161,6 +161,17 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 		//panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
 	}
 	switch typ.Kind {
+	case types.FloatKindHalf:
+		const precision = 11
+		x, _, err := big.ParseFloat(s, 10, precision, big.ToNearestEven)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		c := &Float{
+			Typ: typ,
+			X:   x,
+		}
+		return c, nil
 	case types.FloatKindFloat:
 		const precision = 24
 		x, _, err := big.ParseFloat(s, 10, precision, big.ToNearestEven)
