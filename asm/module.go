@@ -31,20 +31,21 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			gen.m.ModuleAsms = append(gen.m.ModuleAsms, asm)
 		case *ast.TypeDef:
 			ident := localIdent(entity.Alias())
-			if prev, ok := gen.old.typeDefs[ident]; ok {
+			name := getTypeName(ident)
+			if prev, ok := gen.old.typeDefs[name]; ok {
 				if _, ok := prev.Typ().(*ast.OpaqueType); !ok {
-					return errors.Errorf("type identifier %q already present; prev `%s`, new `%s`", enc.Local(ident), text(prev), text(entity))
+					return errors.Errorf("type identifier %q already present; prev `%s`, new `%s`", enc.Local(name), text(prev), text(entity))
 				}
 			}
-			gen.old.typeDefs[ident] = entity
-			if !addedTypeDef[ident] {
+			gen.old.typeDefs[name] = entity
+			if !addedTypeDef[name] {
 				// Only record the first type definition of each type name.
 				//
 				// Type definitions of opaque types may contain several type
 				// definitions with the same type name.
-				gen.old.typeDefOrder = append(gen.old.typeDefOrder, ident)
+				gen.old.typeDefOrder = append(gen.old.typeDefOrder, name)
 			}
-			addedTypeDef[ident] = true
+			addedTypeDef[name] = true
 		case *ast.ComdatDef:
 			name := comdatName(entity.Name())
 			if prev, ok := gen.old.comdatDefs[name]; ok {

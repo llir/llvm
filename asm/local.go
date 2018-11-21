@@ -38,7 +38,7 @@ type funcGen struct {
 	f *ir.Function
 	// ls maps from local identifier (without '%' prefix) to corresponding IR
 	// value.
-	ls map[string]value.Value
+	ls map[ir.LocalIdent]value.Value
 }
 
 // newFuncGen returns a new generator for the given IR function.
@@ -46,7 +46,7 @@ func newFuncGen(gen *generator, f *ir.Function) *funcGen {
 	return &funcGen{
 		gen: gen,
 		f:   f,
-		ls:  make(map[string]value.Value),
+		ls:  make(map[ir.LocalIdent]value.Value),
 	}
 }
 
@@ -89,7 +89,7 @@ func (fgen *funcGen) newIRInst(old ast.Instruction) (ir.Instruction, error) {
 		ident := localIdent(old.Name())
 		return fgen.newIRValueInst(ident, old.Inst())
 	case ast.ValueInstruction:
-		return fgen.newIRValueInst("", old)
+		return fgen.newIRValueInst(ir.LocalIdent{}, old)
 	// Non-value instructions.
 	case *ast.StoreInst:
 		return &ir.InstStore{}, nil
@@ -102,7 +102,7 @@ func (fgen *funcGen) newIRInst(old ast.Instruction) (ir.Instruction, error) {
 
 // newIRValueInst returns a new IR value instruction (without body but with
 // type) based on the given AST value instruction.
-func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.Instruction, error) {
+func (fgen *funcGen) newIRValueInst(ident ir.LocalIdent, old ast.ValueInstruction) (ir.Instruction, error) {
 	switch old := old.(type) {
 	// Binary instructions
 	case *ast.AddInst:
@@ -110,110 +110,110 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstAdd{LocalName: name, Typ: typ}, nil
+		return &ir.InstAdd{LocalIdent: ident, Typ: typ}, nil
 	case *ast.FAddInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFAdd{LocalName: name, Typ: typ}, nil
+		return &ir.InstFAdd{LocalIdent: ident, Typ: typ}, nil
 	case *ast.SubInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstSub{LocalName: name, Typ: typ}, nil
+		return &ir.InstSub{LocalIdent: ident, Typ: typ}, nil
 	case *ast.FSubInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFSub{LocalName: name, Typ: typ}, nil
+		return &ir.InstFSub{LocalIdent: ident, Typ: typ}, nil
 	case *ast.MulInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstMul{LocalName: name, Typ: typ}, nil
+		return &ir.InstMul{LocalIdent: ident, Typ: typ}, nil
 	case *ast.FMulInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFMul{LocalName: name, Typ: typ}, nil
+		return &ir.InstFMul{LocalIdent: ident, Typ: typ}, nil
 	case *ast.UDivInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstUDiv{LocalName: name, Typ: typ}, nil
+		return &ir.InstUDiv{LocalIdent: ident, Typ: typ}, nil
 	case *ast.SDivInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstSDiv{LocalName: name, Typ: typ}, nil
+		return &ir.InstSDiv{LocalIdent: ident, Typ: typ}, nil
 	case *ast.FDivInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFDiv{LocalName: name, Typ: typ}, nil
+		return &ir.InstFDiv{LocalIdent: ident, Typ: typ}, nil
 	case *ast.URemInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstURem{LocalName: name, Typ: typ}, nil
+		return &ir.InstURem{LocalIdent: ident, Typ: typ}, nil
 	case *ast.SRemInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstSRem{LocalName: name, Typ: typ}, nil
+		return &ir.InstSRem{LocalIdent: ident, Typ: typ}, nil
 	case *ast.FRemInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFRem{LocalName: name, Typ: typ}, nil
+		return &ir.InstFRem{LocalIdent: ident, Typ: typ}, nil
 	// Bitwise instructions
 	case *ast.ShlInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstShl{LocalName: name, Typ: typ}, nil
+		return &ir.InstShl{LocalIdent: ident, Typ: typ}, nil
 	case *ast.LShrInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstLShr{LocalName: name, Typ: typ}, nil
+		return &ir.InstLShr{LocalIdent: ident, Typ: typ}, nil
 	case *ast.AShrInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstAShr{LocalName: name, Typ: typ}, nil
+		return &ir.InstAShr{LocalIdent: ident, Typ: typ}, nil
 	case *ast.AndInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstAnd{LocalName: name, Typ: typ}, nil
+		return &ir.InstAnd{LocalIdent: ident, Typ: typ}, nil
 	case *ast.OrInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstOr{LocalName: name, Typ: typ}, nil
+		return &ir.InstOr{LocalIdent: ident, Typ: typ}, nil
 	case *ast.XorInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstXor{LocalName: name, Typ: typ}, nil
+		return &ir.InstXor{LocalIdent: ident, Typ: typ}, nil
 	// Vector instructions
 	case *ast.ExtractElementInst:
 		xType, err := fgen.gen.irType(old.X().Typ())
@@ -224,7 +224,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if !ok {
 			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", xType))
 		}
-		return &ir.InstExtractElement{LocalName: name, Typ: t.ElemType}, nil
+		return &ir.InstExtractElement{LocalIdent: ident, Typ: t.ElemType}, nil
 	case *ast.InsertElementInst:
 		xType, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
@@ -234,7 +234,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if !ok {
 			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", xType))
 		}
-		return &ir.InstInsertElement{LocalName: name, Typ: t}, nil
+		return &ir.InstInsertElement{LocalIdent: ident, Typ: t}, nil
 	case *ast.ShuffleVectorInst:
 		xType, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
@@ -253,7 +253,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 			panic(fmt.Errorf("invalid vector type; expected *types.VectorType, got %T", maskType))
 		}
 		typ := types.NewVector(mt.Len, xt.ElemType)
-		return &ir.InstShuffleVector{LocalName: name, Typ: typ}, nil
+		return &ir.InstShuffleVector{LocalIdent: ident, Typ: typ}, nil
 	// Aggregate instructions
 	case *ast.ExtractValueInst:
 		xType, err := fgen.gen.irType(old.X().Typ())
@@ -262,20 +262,20 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		}
 		indices := uintSlice(old.Indices())
 		typ := aggregateElemType(xType, indices)
-		return &ir.InstExtractValue{LocalName: name, Typ: typ}, nil
+		return &ir.InstExtractValue{LocalIdent: ident, Typ: typ}, nil
 	case *ast.InsertValueInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstInsertValue{LocalName: name, Typ: typ}, nil
+		return &ir.InstInsertValue{LocalIdent: ident, Typ: typ}, nil
 	// Memory instructions
 	case *ast.AllocaInst:
 		elemType, err := fgen.gen.irType(old.ElemType())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		i := &ir.InstAlloca{LocalName: name, ElemType: elemType}
+		i := &ir.InstAlloca{LocalIdent: ident, ElemType: elemType}
 		// Cache i.Typ.
 		i.Type()
 		return i, nil
@@ -284,14 +284,14 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstLoad{LocalName: name, Typ: elemType}, nil
+		return &ir.InstLoad{LocalIdent: ident, Typ: elemType}, nil
 	case *ast.CmpXchgInst:
 		oldType, err := fgen.gen.irType(old.New().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
 		typ := types.NewStruct(oldType, types.I8)
-		return &ir.InstCmpXchg{LocalName: name, Typ: typ}, nil
+		return &ir.InstCmpXchg{LocalIdent: ident, Typ: typ}, nil
 	case *ast.AtomicRMWInst:
 		dstType, err := fgen.gen.irType(old.Dst().Typ())
 		if err != nil {
@@ -301,7 +301,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if !ok {
 			panic(fmt.Errorf("invalid pointer type; expected *types.PointerType, got %T", dstType))
 		}
-		return &ir.InstAtomicRMW{LocalName: name, Typ: t.ElemType}, nil
+		return &ir.InstAtomicRMW{LocalIdent: ident, Typ: t.ElemType}, nil
 	case *ast.GetElementPtrInst:
 		// TODO: handle address space of Src?
 		// Element type.
@@ -313,86 +313,86 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstGetElementPtr{LocalName: name, ElemType: elemType, Typ: typ}, nil
+		return &ir.InstGetElementPtr{LocalIdent: ident, ElemType: elemType, Typ: typ}, nil
 	// Conversion instructions
 	case *ast.TruncInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstTrunc{LocalName: name, To: to}, nil
+		return &ir.InstTrunc{LocalIdent: ident, To: to}, nil
 	case *ast.ZExtInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstZExt{LocalName: name, To: to}, nil
+		return &ir.InstZExt{LocalIdent: ident, To: to}, nil
 	case *ast.SExtInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstSExt{LocalName: name, To: to}, nil
+		return &ir.InstSExt{LocalIdent: ident, To: to}, nil
 	case *ast.FPTruncInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFPTrunc{LocalName: name, To: to}, nil
+		return &ir.InstFPTrunc{LocalIdent: ident, To: to}, nil
 	case *ast.FPExtInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFPExt{LocalName: name, To: to}, nil
+		return &ir.InstFPExt{LocalIdent: ident, To: to}, nil
 	case *ast.FPToUIInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFPToUI{LocalName: name, To: to}, nil
+		return &ir.InstFPToUI{LocalIdent: ident, To: to}, nil
 	case *ast.FPToSIInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstFPToSI{LocalName: name, To: to}, nil
+		return &ir.InstFPToSI{LocalIdent: ident, To: to}, nil
 	case *ast.UIToFPInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstUIToFP{LocalName: name, To: to}, nil
+		return &ir.InstUIToFP{LocalIdent: ident, To: to}, nil
 	case *ast.SIToFPInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstSIToFP{LocalName: name, To: to}, nil
+		return &ir.InstSIToFP{LocalIdent: ident, To: to}, nil
 	case *ast.PtrToIntInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstPtrToInt{LocalName: name, To: to}, nil
+		return &ir.InstPtrToInt{LocalIdent: ident, To: to}, nil
 	case *ast.IntToPtrInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstIntToPtr{LocalName: name, To: to}, nil
+		return &ir.InstIntToPtr{LocalIdent: ident, To: to}, nil
 	case *ast.BitCastInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstBitCast{LocalName: name, To: to}, nil
+		return &ir.InstBitCast{LocalIdent: ident, To: to}, nil
 	case *ast.AddrSpaceCastInst:
 		to, err := fgen.gen.irType(old.To())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstAddrSpaceCast{LocalName: name, To: to}, nil
+		return &ir.InstAddrSpaceCast{LocalIdent: ident, To: to}, nil
 	// Other instructions
 	case *ast.ICmpInst:
 		xType, err := fgen.gen.irType(old.X().Typ())
@@ -408,7 +408,7 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		default:
 			panic(fmt.Errorf("invalid icmp operand type; expected *types.IntType, *types.PointerType or *types.VectorType, got %T", xType))
 		}
-		return &ir.InstICmp{LocalName: name, Typ: typ}, nil
+		return &ir.InstICmp{LocalIdent: ident, Typ: typ}, nil
 	case *ast.FCmpInst:
 		xType, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
@@ -423,19 +423,19 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		default:
 			panic(fmt.Errorf("invalid fcmp operand type; expected *types.FloatType or *types.VectorType, got %T", xType))
 		}
-		return &ir.InstFCmp{LocalName: name, Typ: typ}, nil
+		return &ir.InstFCmp{LocalIdent: ident, Typ: typ}, nil
 	case *ast.PhiInst:
 		typ, err := fgen.gen.irType(old.Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstPhi{LocalName: name, Typ: typ}, nil
+		return &ir.InstPhi{LocalIdent: ident, Typ: typ}, nil
 	case *ast.SelectInst:
 		typ, err := fgen.gen.irType(old.X().Typ())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstSelect{LocalName: name, Typ: typ}, nil
+		return &ir.InstSelect{LocalIdent: ident, Typ: typ}, nil
 	case *ast.CallInst:
 		// NOTE: We need to store the type of call instructions before invoking
 		// f.AssignIDs, since call instructions may be value instructions or
@@ -444,25 +444,25 @@ func (fgen *funcGen) newIRValueInst(name string, old ast.ValueInstruction) (ir.I
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstCall{LocalName: name, Typ: typ}, nil
+		return &ir.InstCall{LocalIdent: ident, Typ: typ}, nil
 	case *ast.VAArgInst:
 		argType, err := fgen.gen.irType(old.ArgType())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstVAArg{LocalName: name, ArgType: argType}, nil
+		return &ir.InstVAArg{LocalIdent: ident, ArgType: argType}, nil
 	case *ast.LandingPadInst:
 		resultType, err := fgen.gen.irType(old.ResultType())
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.InstLandingPad{LocalName: name, ResultType: resultType}, nil
+		return &ir.InstLandingPad{LocalIdent: ident, ResultType: resultType}, nil
 	case *ast.CatchPadInst:
 		// Result type is always token.
-		return &ir.InstCatchPad{LocalName: name}, nil
+		return &ir.InstCatchPad{LocalIdent: ident}, nil
 	case *ast.CleanupPadInst:
 		// Result type is always token.
-		return &ir.InstCleanupPad{LocalName: name}, nil
+		return &ir.InstCleanupPad{LocalIdent: ident}, nil
 	default:
 		panic(fmt.Errorf("support for AST value instruction type %T not yet implemented", old))
 	}
@@ -478,7 +478,7 @@ func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.I
 		ident := localIdent(old.Name())
 		v, ok := fgen.ls[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local identifier %q", ident)
+			return nil, errors.Errorf("unable to locate local identifier %q", ident.Ident())
 		}
 		i, ok := v.(ir.Instruction)
 		if !ok {

@@ -8,6 +8,7 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
@@ -18,14 +19,14 @@ import (
 func (gen *generator) resolveTypeDefs() error {
 	// Create corresponding named IR types (without bodies).
 	gen.new.typeDefs = make(map[string]types.Type)
-	for alias, old := range gen.old.typeDefs {
+	for typeName, old := range gen.old.typeDefs {
 		// track is used to identify self-referential named types.
 		track := make(map[string]bool)
-		t, err := newIRType(alias, old.Typ(), gen.old.typeDefs, track)
+		t, err := newIRType(typeName, old.Typ(), gen.old.typeDefs, track)
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		gen.new.typeDefs[alias] = t
+		gen.new.typeDefs[typeName] = t
 	}
 
 	// Translate type defintions (including bodies).
@@ -56,26 +57,26 @@ func (gen *generator) resolveTypeDefs() error {
 //
 //    ; struct type containing pointer to itself.
 //    %d = type { %d* }
-func newIRType(alias string, old ast.LlvmNode, index map[string]*ast.TypeDef, track map[string]bool) (types.Type, error) {
+func newIRType(typeName string, old ast.LlvmNode, index map[string]*ast.TypeDef, track map[string]bool) (types.Type, error) {
 	switch old := old.(type) {
 	case *ast.OpaqueType:
-		return &types.StructType{Alias: alias}, nil
+		return &types.StructType{TypeName: typeName}, nil
 	case *ast.ArrayType:
-		return &types.ArrayType{Alias: alias}, nil
+		return &types.ArrayType{TypeName: typeName}, nil
 	case *ast.FloatType:
-		return &types.FloatType{Alias: alias}, nil
+		return &types.FloatType{TypeName: typeName}, nil
 	case *ast.FuncType:
-		return &types.FuncType{Alias: alias}, nil
+		return &types.FuncType{TypeName: typeName}, nil
 	case *ast.IntType:
-		return &types.IntType{Alias: alias}, nil
+		return &types.IntType{TypeName: typeName}, nil
 	case *ast.LabelType:
-		return &types.LabelType{Alias: alias}, nil
+		return &types.LabelType{TypeName: typeName}, nil
 	case *ast.MMXType:
-		return &types.MMXType{Alias: alias}, nil
+		return &types.MMXType{TypeName: typeName}, nil
 	case *ast.MetadataType:
-		return &types.MetadataType{Alias: alias}, nil
+		return &types.MetadataType{TypeName: typeName}, nil
 	case *ast.NamedType:
-		if track[alias] {
+		if track[typeName] {
 			var names []string
 			for name := range track {
 				names = append(names, enc.Local(name))
@@ -83,22 +84,23 @@ func newIRType(alias string, old ast.LlvmNode, index map[string]*ast.TypeDef, tr
 			sort.Strings(names)
 			return nil, errors.Errorf("invalid named type; self-referential with type name(s) %s", strings.Join(names, ", "))
 		}
-		track[alias] = true
-		newAlias := localIdent(old.Name())
-		newTyp := index[newAlias].Typ()
-		return newIRType(newAlias, newTyp, index, track)
+		track[typeName] = true
+		newIdent := localIdent(old.Name())
+		newName := getTypeName(newIdent)
+		newTyp := index[newName].Typ()
+		return newIRType(newName, newTyp, index, track)
 	case *ast.PointerType:
-		return &types.PointerType{Alias: alias}, nil
+		return &types.PointerType{TypeName: typeName}, nil
 	case *ast.StructType:
-		return &types.StructType{Alias: alias}, nil
+		return &types.StructType{TypeName: typeName}, nil
 	case *ast.PackedStructType:
-		return &types.StructType{Alias: alias}, nil
+		return &types.StructType{TypeName: typeName}, nil
 	case *ast.TokenType:
-		return &types.TokenType{Alias: alias}, nil
+		return &types.TokenType{TypeName: typeName}, nil
 	case *ast.VectorType:
-		return &types.VectorType{Alias: alias}, nil
+		return &types.VectorType{TypeName: typeName}, nil
 	case *ast.VoidType:
-		return &types.VoidType{Alias: alias}, nil
+		return &types.VoidType{TypeName: typeName}, nil
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
@@ -464,9 +466,10 @@ func (gen *generator) astToIRPackedStructType(t types.Type, old *ast.PackedStruc
 func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.Type, error) {
 	// Resolve named type.
 	ident := localIdent(old.Name())
-	typ, ok := gen.new.typeDefs[ident]
+	name := getTypeName(ident)
+	typ, ok := gen.new.typeDefs[name]
 	if !ok {
-		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.Local(ident))
+		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.Local(name))
 	}
 	return typ, nil
 }
@@ -478,4 +481,17 @@ func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.
 // irType returns the IR type corresponding to the given AST type.
 func (gen *generator) irType(old ast.LlvmNode) (types.Type, error) {
 	return gen.astToIRTypeDef(nil, old)
+}
+
+// getTypeName returns the identifier (without '%' prefix) of the given global
+// identifier.
+func getTypeName(ident ir.LocalIdent) string {
+	if ident.IsUnnamed() {
+		return strconv.FormatInt(ident.LocalID, 10)
+	}
+	if x, err := strconv.ParseInt(ident.LocalName, 10, 64); err == nil {
+		// Print LocalName with quotes if it is a number; e.g. %"42".
+		return fmt.Sprintf(`"%d"`, x)
+	}
+	return ident.LocalName
 }

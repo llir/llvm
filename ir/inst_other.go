@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
@@ -18,7 +17,7 @@ import (
 // InstICmp is an LLVM IR icmp instruction.
 type InstICmp struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Integer comparison predicate.
 	Pred enum.IPred
 	// Integer scalar or vector operands.
@@ -63,21 +62,6 @@ func (inst *InstICmp) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstICmp) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstICmp) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstICmp) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstICmp) Def() string {
 	// 'icmp' Pred=IPred X=TypeValue ',' Y=Value Metadata=(','
@@ -96,7 +80,7 @@ func (inst *InstICmp) Def() string {
 // InstFCmp is an LLVM IR fcmp instruction.
 type InstFCmp struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Floating-point comparison predicate.
 	Pred enum.FPred
 	// Floating-point scalar or vector operands.
@@ -143,21 +127,6 @@ func (inst *InstFCmp) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFCmp) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFCmp) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFCmp) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFCmp) Def() string {
 	// 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value
@@ -180,7 +149,7 @@ func (inst *InstFCmp) Def() string {
 // InstPhi is an LLVM IR phi instruction.
 type InstPhi struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Incoming values.
 	Incs []*Incoming
 
@@ -213,21 +182,6 @@ func (inst *InstPhi) Type() types.Type {
 		inst.Typ = inst.Incs[0].X.Type()
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstPhi) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstPhi) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstPhi) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.
@@ -276,7 +230,7 @@ func (inc *Incoming) String() string {
 // InstSelect is an LLVM IR select instruction.
 type InstSelect struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Selection condition.
 	Cond value.Value // boolean or boolean vector
 	// Operands.
@@ -314,21 +268,6 @@ func (inst *InstSelect) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstSelect) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstSelect) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstSelect) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSelect) Def() string {
 	// 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue Metadata=(','
@@ -347,7 +286,7 @@ func (inst *InstSelect) Def() string {
 // InstCall is an LLVM IR call instruction.
 type InstCall struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Callee.
 	// TODO: specify the set of underlying types of Callee.
 	Callee value.Value
@@ -423,21 +362,6 @@ func (inst *InstCall) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstCall) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstCall) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstCall) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstCall) Def() string {
 	// Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt
@@ -500,7 +424,7 @@ func (inst *InstCall) Def() string {
 // InstVAArg is an LLVM IR va_arg instruction.
 type InstVAArg struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Variable argument list.
 	ArgList value.Value
 	// Argument type.
@@ -529,21 +453,6 @@ func (inst *InstVAArg) Type() types.Type {
 	return inst.ArgType
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstVAArg) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstVAArg) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstVAArg) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstVAArg) Def() string {
 	// 'va_arg' ArgList=TypeValue ',' ArgType=Type Metadata=(','
@@ -562,7 +471,7 @@ func (inst *InstVAArg) Def() string {
 // InstLandingPad is an LLVM IR landingpad instruction.
 type InstLandingPad struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Result type.
 	ResultType types.Type
 	// (optional) Cleanup landing pad.
@@ -592,21 +501,6 @@ func (inst *InstLandingPad) String() string {
 // Type returns the type of the instruction.
 func (inst *InstLandingPad) Type() types.Type {
 	return inst.ResultType
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstLandingPad) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstLandingPad) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstLandingPad) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.
@@ -654,7 +548,7 @@ func (clause *Clause) String() string {
 // InstCatchPad is an LLVM IR catchpad instruction.
 type InstCatchPad struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Exception scope.
 	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
 	// Exception arguments.
@@ -687,21 +581,6 @@ func (inst *InstCatchPad) Type() types.Type {
 	return types.Token
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstCatchPad) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstCatchPad) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstCatchPad) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstCatchPad) Def() string {
 	// 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator
@@ -727,7 +606,7 @@ func (inst *InstCatchPad) Def() string {
 // InstCleanupPad is an LLVM IR cleanuppad instruction.
 type InstCleanupPad struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Exception scope.
 	Scope ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception arguments.
@@ -758,21 +637,6 @@ func (inst *InstCleanupPad) String() string {
 // Type returns the type of the instruction.
 func (inst *InstCleanupPad) Type() types.Type {
 	return types.Token
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstCleanupPad) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstCleanupPad) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstCleanupPad) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

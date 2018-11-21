@@ -512,8 +512,11 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 			return errors.WithStack(err)
 		}
 		// Name.
-		name := optLocalIdent(p.Name())
-		param := ir.NewParam(name, typ)
+		param := ir.NewParam("", typ)
+		if p.Name().IsValid() {
+			ident := localIdent(p.Name())
+			param.LocalIdent = ident
+		}
 		// (optional) Parameter attributes.
 		for _, oldParamAttr := range p.Attrs() {
 			paramAttr := irParamAttribute(oldParamAttr)

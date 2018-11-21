@@ -123,7 +123,7 @@ func (e *evaluator) evalValue(v value.Value) uint32 {
 	case *constant.Int:
 		return uint32(v.X.Int64())
 	case *ir.Param:
-		if len(v.LocalName) == 0 {
+		if v.IsUnnamed() {
 			panic("support for unnamed parameters not yet implemented")
 		}
 		f := e.f

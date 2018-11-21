@@ -37,23 +37,20 @@ func globalIdent(n ast.GlobalIdent) string {
 
 // localIdent returns the identifier (without '%' prefix) of the given local
 // identifier.
-func localIdent(n ast.LocalIdent) string {
-	ident := n.Text()
+func localIdent(n ast.LocalIdent) ir.LocalIdent {
+	name := n.Text()
 	const prefix = "%"
-	if !strings.HasPrefix(ident, prefix) {
-		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", ident, prefix))
+	if !strings.HasPrefix(name, prefix) {
+		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", name, prefix))
 	}
-	ident = ident[len(prefix):]
-	return unquote(ident)
-}
-
-// optLocalIdent returns the identifier (without '%' prefix) of the given
-// optional local identifier.
-func optLocalIdent(n ast.LocalIdent) string {
-	if !n.IsValid() {
-		return ""
+	name = name[len(prefix):]
+	if id, err := strconv.ParseInt(name, 10, 64); err == nil {
+		return ir.LocalIdent{LocalID: id}
 	}
-	return localIdent(n)
+	// Unquote after trying to parse as ID, since %"42" is recognized as named
+	// and not unnamed.
+	name = unquote(name)
+	return ir.LocalIdent{LocalName: name}
 }
 
 // --- [ Label Identifiers ] ---------------------------------------------------
@@ -253,7 +250,7 @@ func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
 	ident := localIdent(old.Name())
 	v, ok := fgen.ls[ident]
 	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", ident)
+		return nil, errors.Errorf("unable to locate local identifier %q", ident.Ident())
 	}
 	block, ok := v.(*ir.BasicBlock)
 	if !ok {
@@ -341,7 +338,7 @@ func (fgen *funcGen) irExceptionScope(n ast.ExceptionScope) (ir.ExceptionScope, 
 		ident := localIdent(*n)
 		v, ok := fgen.ls[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(ident))
+			return nil, errors.Errorf("unable to locate local identifier %q", ident.Ident())
 		}
 		return v, nil
 	default:
@@ -430,10 +427,10 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	predName := localIdent(oldPred)
-	v, ok := fgen.ls[predName]
+	predIdent := localIdent(oldPred)
+	v, ok := fgen.ls[predIdent]
 	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", enc.Local(predName))
+		return nil, errors.Errorf("unable to locate local identifier %q", predIdent.Ident())
 	}
 	pred, ok := v.(*ir.BasicBlock)
 	if !ok {
@@ -671,16 +668,16 @@ func (gen *generator) irUseListOrderBB(n ast.UseListOrderBB) (*ir.UseListOrderBB
 		return nil, errors.Errorf("invalid function type; expected *ir.Function, got %T", v)
 	}
 	// Basic block.
-	blockName := localIdent(n.Block())
+	blockIdent := localIdent(n.Block())
 	var block *ir.BasicBlock
 	for _, bb := range f.Blocks {
-		if bb.LocalName == blockName {
+		if bb.LocalIdent == blockIdent {
 			block = bb
 			break
 		}
 	}
 	if block == nil {
-		return nil, errors.Errorf("unable to locate basic block %q of function %q", enc.Local(blockName), enc.Global(funcName))
+		return nil, errors.Errorf("unable to locate basic block %q of function %q", blockIdent.Ident(), enc.Global(funcName))
 	}
 	// Indices.
 	var indices []int64

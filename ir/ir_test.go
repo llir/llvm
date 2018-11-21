@@ -24,8 +24,8 @@ func TestModuleString(t *testing.T) {
 		{
 			in: &Module{
 				TypeDefs: []types.Type{&types.StructType{
-					Alias:  "foo",
-					Fields: []types.Type{types.I32},
+					TypeName: "foo",
+					Fields:   []types.Type{types.I32},
 				}},
 			},
 			want: "%foo = type { i32 }",

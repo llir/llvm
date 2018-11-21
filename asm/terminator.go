@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
@@ -23,7 +22,7 @@ func (fgen *funcGen) newIRTerm(old ast.Terminator) (ir.Terminator, error) {
 		ident := localIdent(old.Name())
 		return fgen.newIRValueTerm(ident, old.Term())
 	case ast.ValueTerminator:
-		return fgen.newIRValueTerm("", old)
+		return fgen.newIRValueTerm(ir.LocalIdent{}, old)
 	// Non-value terminators.
 	case *ast.RetTerm:
 		return &ir.TermRet{}, nil
@@ -50,7 +49,7 @@ func (fgen *funcGen) newIRTerm(old ast.Terminator) (ir.Terminator, error) {
 
 // newIRValueTerm returns a new IR value terminator (with type and without body)
 // based on the given AST value terminator.
-func (fgen *funcGen) newIRValueTerm(name string, old ast.ValueTerminator) (ir.Terminator, error) {
+func (fgen *funcGen) newIRValueTerm(ident ir.LocalIdent, old ast.ValueTerminator) (ir.Terminator, error) {
 	switch old := old.(type) {
 	case *ast.InvokeTerm:
 		// Invokee type.
@@ -58,10 +57,10 @@ func (fgen *funcGen) newIRValueTerm(name string, old ast.ValueTerminator) (ir.Te
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &ir.TermInvoke{LocalName: name, Typ: typ}, nil
+		return &ir.TermInvoke{LocalIdent: ident, Typ: typ}, nil
 	case *ast.CatchSwitchTerm:
 		// Result type is always token.
-		return &ir.TermCatchSwitch{LocalName: name}, nil
+		return &ir.TermCatchSwitch{LocalIdent: ident}, nil
 	default:
 		panic(fmt.Errorf("support for value terminator %T not yet implemented", old))
 	}
@@ -78,11 +77,11 @@ func (fgen *funcGen) astToIRTerm(term ir.Terminator, old ast.Terminator) error {
 		ident := localIdent(old.Name())
 		v, ok := fgen.ls[ident]
 		if !ok {
-			return errors.Errorf("unable to locate local variable %q", enc.Local(ident))
+			return errors.Errorf("unable to locate local variable %q", ident.Ident())
 		}
 		t, ok := v.(ir.Terminator)
 		if !ok {
-			return errors.Errorf("invalid terminator type of %q; expected ir.Terminator, got %T", enc.Local(ident), v)
+			return errors.Errorf("invalid terminator type of %q; expected ir.Terminator, got %T", ident.Ident(), v)
 		}
 		return fgen.astToIRValueTerm(t, old.Term())
 	case ast.ValueTerminator:

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
@@ -18,7 +17,7 @@ import (
 // InstAdd is an LLVM IR add instruction.
 type InstAdd struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -55,21 +54,6 @@ func (inst *InstAdd) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstAdd) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstAdd) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstAdd) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAdd) Def() string {
 	// 'add' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -92,7 +76,7 @@ func (inst *InstAdd) Def() string {
 // InstFAdd is an LLVM IR fadd instruction.
 type InstFAdd struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // floating-point scalar or floating-point vector
 
@@ -129,21 +113,6 @@ func (inst *InstFAdd) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFAdd) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFAdd) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFAdd) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFAdd) Def() string {
 	// 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -166,7 +135,7 @@ func (inst *InstFAdd) Def() string {
 // InstSub is an LLVM IR sub instruction.
 type InstSub struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -203,21 +172,6 @@ func (inst *InstSub) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstSub) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstSub) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstSub) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSub) Def() string {
 	// 'sub' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -240,7 +194,7 @@ func (inst *InstSub) Def() string {
 // InstFSub is an LLVM IR fsub instruction.
 type InstFSub struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // floating-point scalar or floating-point vector
 
@@ -277,21 +231,6 @@ func (inst *InstFSub) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFSub) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFSub) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFSub) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFSub) Def() string {
 	// 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -314,7 +253,7 @@ func (inst *InstFSub) Def() string {
 // InstMul is an LLVM IR mul instruction.
 type InstMul struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -351,21 +290,6 @@ func (inst *InstMul) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstMul) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstMul) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstMul) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstMul) Def() string {
 	// 'mul' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -388,7 +312,7 @@ func (inst *InstMul) Def() string {
 // InstFMul is an LLVM IR fmul instruction.
 type InstFMul struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // floating-point scalar or floating-point vector
 
@@ -425,21 +349,6 @@ func (inst *InstFMul) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFMul) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFMul) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFMul) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFMul) Def() string {
 	// 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -462,7 +371,7 @@ func (inst *InstFMul) Def() string {
 // InstUDiv is an LLVM IR udiv instruction.
 type InstUDiv struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -499,21 +408,6 @@ func (inst *InstUDiv) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstUDiv) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstUDiv) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstUDiv) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstUDiv) Def() string {
 	// 'udiv' Exactopt X=TypeValue ',' Y=Value Metadata=(','
@@ -536,7 +430,7 @@ func (inst *InstUDiv) Def() string {
 // InstSDiv is an LLVM IR sdiv instruction.
 type InstSDiv struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -573,21 +467,6 @@ func (inst *InstSDiv) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstSDiv) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstSDiv) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstSDiv) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSDiv) Def() string {
 	// 'sdiv' Exactopt X=TypeValue ',' Y=Value Metadata=(','
@@ -610,7 +489,7 @@ func (inst *InstSDiv) Def() string {
 // InstFDiv is an LLVM IR fdiv instruction.
 type InstFDiv struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // floating-point scalar or floating-point vector
 
@@ -647,21 +526,6 @@ func (inst *InstFDiv) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFDiv) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFDiv) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFDiv) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFDiv) Def() string {
 	// 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -684,7 +548,7 @@ func (inst *InstFDiv) Def() string {
 // InstURem is an LLVM IR urem instruction.
 type InstURem struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -719,21 +583,6 @@ func (inst *InstURem) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstURem) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstURem) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstURem) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstURem) Def() string {
 	// 'urem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
@@ -751,7 +600,7 @@ func (inst *InstURem) Def() string {
 // InstSRem is an LLVM IR srem instruction.
 type InstSRem struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -786,21 +635,6 @@ func (inst *InstSRem) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstSRem) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstSRem) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstSRem) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSRem) Def() string {
 	// 'srem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
@@ -818,7 +652,7 @@ func (inst *InstSRem) Def() string {
 // InstFRem is an LLVM IR frem instruction.
 type InstFRem struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // floating-point scalar or floating-point vector
 
@@ -853,21 +687,6 @@ func (inst *InstFRem) Type() types.Type {
 		inst.Typ = inst.X.Type()
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFRem) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFRem) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFRem) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

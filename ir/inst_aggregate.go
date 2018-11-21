@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -17,7 +16,7 @@ import (
 // InstExtractValue is an LLVM IR extractvalue instruction.
 type InstExtractValue struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Aggregate value.
 	X value.Value // array or struct
 	// Element indices.
@@ -54,21 +53,6 @@ func (inst *InstExtractValue) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstExtractValue) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstExtractValue) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstExtractValue) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractValue) Def() string {
 	// 'extractvalue' X=TypeValue Indices=(',' UintLit)+ Metadata=(','
@@ -90,7 +74,7 @@ func (inst *InstExtractValue) Def() string {
 // InstInsertValue is an LLVM IR insertvalue instruction.
 type InstInsertValue struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Aggregate value.
 	X value.Value // array or struct
 	// Element to insert.
@@ -127,21 +111,6 @@ func (inst *InstInsertValue) Type() types.Type {
 		inst.Typ = inst.X.Type()
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstInsertValue) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstInsertValue) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstInsertValue) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

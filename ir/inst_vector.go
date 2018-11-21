@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -17,7 +16,7 @@ import (
 // InstExtractElement is an LLVM IR extractelement instruction.
 type InstExtractElement struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Vector.
 	X value.Value
 	// Element index.
@@ -59,21 +58,6 @@ func (inst *InstExtractElement) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstExtractElement) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstExtractElement) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstExtractElement) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractElement) Def() string {
 	// 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(','
@@ -92,7 +76,7 @@ func (inst *InstExtractElement) Def() string {
 // InstInsertElement is an LLVM IR insertelement instruction.
 type InstInsertElement struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Vector.
 	X value.Value
 	// Element to insert.
@@ -136,21 +120,6 @@ func (inst *InstInsertElement) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstInsertElement) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstInsertElement) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstInsertElement) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstInsertElement) Def() string {
 	// 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue
@@ -169,7 +138,7 @@ func (inst *InstInsertElement) Def() string {
 // InstShuffleVector is an LLVM IR shufflevector instruction.
 type InstShuffleVector struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Vectors.
 	X, Y value.Value
 	// Shuffle mask.
@@ -213,21 +182,6 @@ func (inst *InstShuffleVector) Type() types.Type {
 		inst.Typ = types.NewVector(maskType.Len, xType.ElemType)
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstShuffleVector) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstShuffleVector) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstShuffleVector) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

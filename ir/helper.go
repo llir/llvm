@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
@@ -122,6 +123,52 @@ type FuncAttribute interface {
 	IsFuncAttribute()
 }
 
+// LocalIdent is a local identifier.
+type LocalIdent struct {
+	LocalName string
+	LocalID   int64
+}
+
+// Ident returns the identifier associated with the local identifier.
+func (i LocalIdent) Ident() string {
+	if i.IsUnnamed() {
+		id := strconv.FormatInt(i.LocalID, 10)
+		return enc.Local(id)
+	}
+	name := i.LocalName
+	if x, err := strconv.ParseInt(name, 10, 64); err == nil {
+		// Print LocalName with quotes if it is a number; e.g. %"42".
+		name = fmt.Sprintf(`"%d"`, x)
+	}
+	// TODO: validate that we don't end up quoting named numbers twice.
+	return enc.Local(name)
+}
+
+// Name returns the name of the local identifier.
+func (i LocalIdent) Name() string {
+	return i.LocalName
+}
+
+// SetName sets the name of the local identifier.
+func (i *LocalIdent) SetName(name string) {
+	i.LocalName = name
+}
+
+// ID returns the ID of the local identifier.
+func (i LocalIdent) ID() int64 {
+	return i.LocalID
+}
+
+// SetID sets the ID of the local identifier.
+func (i *LocalIdent) SetID(id int64) {
+	i.LocalID = id
+}
+
+// IsUnnamed reports whether the local identifier is unnamed.
+func (i LocalIdent) IsUnnamed() bool {
+	return len(i.LocalName) == 0
+}
+
 // OperandBundle is an operand bundle.
 type OperandBundle struct {
 	Tag    string
@@ -206,7 +253,7 @@ func (UnwindToCaller) String() string {
 // Param is an LLVM IR function parameter.
 type Param struct {
 	// (optional) Parameter name (without '%' prefix).
-	LocalName string
+	LocalIdent
 	// Parameter type.
 	Typ types.Type
 
@@ -218,7 +265,10 @@ type Param struct {
 
 // NewParam returns a new function parameter based on the given name and type.
 func NewParam(name string, typ types.Type) *Param {
-	return &Param{LocalName: name, Typ: typ}
+	return &Param{
+		LocalIdent: LocalIdent{LocalName: name},
+		Typ:        typ,
+	}
 }
 
 // String returns the LLVM syntax representation of the function parameter as a
@@ -232,21 +282,6 @@ func (p *Param) Type() types.Type {
 	return p.Typ
 }
 
-// Ident returns the identifier associated with the function parameter.
-func (p *Param) Ident() string {
-	return enc.Local(p.LocalName)
-}
-
-// Name returns the name of the function parameter.
-func (p *Param) Name() string {
-	return p.LocalName
-}
-
-// SetName sets the name of the function parameter.
-func (p *Param) SetName(name string) {
-	p.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the function parameter.
 func (p *Param) Def() string {
 	// Typ=Type Attrs=ParamAttribute* Name=LocalIdent?
@@ -255,8 +290,8 @@ func (p *Param) Def() string {
 	for _, attr := range p.Attrs {
 		fmt.Fprintf(buf, " %s", attr)
 	}
-	if !isUnnamed(p.LocalName) && !isLocalID(p.LocalName) {
-		fmt.Fprintf(buf, " %s", enc.Local(p.LocalName))
+	if !p.IsUnnamed() {
+		fmt.Fprintf(buf, " %s", p.Ident())
 	}
 	return buf.String()
 }

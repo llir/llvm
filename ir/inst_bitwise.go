@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
@@ -18,7 +17,7 @@ import (
 // InstShl is an LLVM IR shl instruction.
 type InstShl struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalar or integer vector
 
@@ -55,21 +54,6 @@ func (inst *InstShl) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstShl) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstShl) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstShl) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstShl) Def() string {
 	// 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
@@ -92,7 +76,7 @@ func (inst *InstShl) Def() string {
 // InstLShr is an LLVM IR lshr instruction.
 type InstLShr struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
 
@@ -129,21 +113,6 @@ func (inst *InstLShr) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstLShr) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstLShr) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstLShr) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstLShr) Def() string {
 	// 'lshr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
@@ -166,7 +135,7 @@ func (inst *InstLShr) Def() string {
 // InstAShr is an LLVM IR ashr instruction.
 type InstAShr struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
 
@@ -203,21 +172,6 @@ func (inst *InstAShr) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstAShr) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstAShr) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstAShr) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAShr) Def() string {
 	// 'ashr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
@@ -240,7 +194,7 @@ func (inst *InstAShr) Def() string {
 // InstAnd is an LLVM IR and instruction.
 type InstAnd struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
 
@@ -275,21 +229,6 @@ func (inst *InstAnd) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstAnd) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstAnd) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstAnd) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAnd) Def() string {
 	// 'and' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
@@ -307,7 +246,7 @@ func (inst *InstAnd) Def() string {
 // InstOr is an LLVM IR or instruction.
 type InstOr struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
 
@@ -342,21 +281,6 @@ func (inst *InstOr) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstOr) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstOr) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstOr) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstOr) Def() string {
 	// 'or' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
@@ -374,7 +298,7 @@ func (inst *InstOr) Def() string {
 // InstXor is an LLVM IR xor instruction.
 type InstXor struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Operands.
 	X, Y value.Value // integer scalars or vectors
 
@@ -407,21 +331,6 @@ func (inst *InstXor) Type() types.Type {
 		inst.Typ = inst.X.Type()
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstXor) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstXor) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstXor) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
@@ -19,7 +18,7 @@ import (
 // InstAlloca is an LLVM IR alloca instruction.
 type InstAlloca struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Element type.
 	ElemType types.Type
 	// (optional) Number of elements; nil if not present.
@@ -63,21 +62,6 @@ func (inst *InstAlloca) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstAlloca) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstAlloca) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstAlloca) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAlloca) Def() string {
 	// 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)?
@@ -112,7 +96,7 @@ func (inst *InstAlloca) Def() string {
 // InstLoad is an LLVM IR load instruction.
 type InstLoad struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Source address.
 	Src value.Value
 
@@ -159,21 +143,6 @@ func (inst *InstLoad) Type() types.Type {
 		inst.Typ = t.ElemType
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstLoad) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstLoad) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstLoad) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.
@@ -321,7 +290,7 @@ func (inst *InstFence) Def() string {
 // InstCmpXchg is an LLVM IR cmpxchg instruction.
 type InstCmpXchg struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Address to read from, compare against and store to.
 	Ptr value.Value
 	// Value to compare against.
@@ -374,21 +343,6 @@ func (inst *InstCmpXchg) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstCmpXchg) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstCmpXchg) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstCmpXchg) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstCmpXchg) Def() string {
 	// 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ','
@@ -420,7 +374,7 @@ func (inst *InstCmpXchg) Def() string {
 // InstAtomicRMW is an LLVM IR atomicrmw instruction.
 type InstAtomicRMW struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Atomic operation.
 	Op enum.AtomicOp
 	// Destination address.
@@ -470,21 +424,6 @@ func (inst *InstAtomicRMW) Type() types.Type {
 	return inst.Typ
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstAtomicRMW) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstAtomicRMW) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstAtomicRMW) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstAtomicRMW) Def() string {
 	// 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue
@@ -511,7 +450,7 @@ func (inst *InstAtomicRMW) Def() string {
 // InstGetElementPtr is an LLVM IR getelementptr instruction.
 type InstGetElementPtr struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Element type.
 	ElemType types.Type
 	// Source address.
@@ -566,21 +505,6 @@ func (inst *InstGetElementPtr) Type() types.Type {
 		inst.Typ = gepType(inst.ElemType, inst.Indices)
 	}
 	return inst.Typ
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstGetElementPtr) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstGetElementPtr) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstGetElementPtr) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

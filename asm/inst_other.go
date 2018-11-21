@@ -296,7 +296,7 @@ func (fgen *funcGen) astToIRInstCatchPad(inst ir.Instruction, old *ast.CatchPadI
 	ident := localIdent(old.Scope())
 	v, ok := fgen.ls[ident]
 	if !ok {
-		return nil, errors.Errorf("unable to locate local identifier %q", ident)
+		return nil, errors.Errorf("unable to locate local identifier %q", ident.Ident())
 	}
 	scope, ok := v.(*ir.TermCatchSwitch)
 	if !ok {

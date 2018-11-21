@@ -61,7 +61,7 @@ type Type interface {
 	Def() string
 	// Equal reports whether t and u are of equal type.
 	Equal(u Type) bool
-	// Name returns the type name alias name of the type.
+	// Name returns the type name of the type.
 	Name() string
 }
 
@@ -69,8 +69,8 @@ type Type interface {
 
 // VoidType is an LLVM IR void type.
 type VoidType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 }
 
 // Equal reports whether t and u are of equal type.
@@ -83,8 +83,8 @@ func (t *VoidType) Equal(u Type) bool {
 
 // String returns the string representation of the void type.
 func (t *VoidType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -95,17 +95,17 @@ func (t *VoidType) Def() string {
 	return "void"
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *VoidType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Function types ] ------------------------------------------------------
 
 // FuncType is an LLVM IR function type.
 type FuncType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Return type.
 	RetType Type
 	// Function parameters.
@@ -144,8 +144,8 @@ func (t *FuncType) Equal(u Type) bool {
 
 // String returns the string representation of the function type.
 func (t *FuncType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -171,17 +171,17 @@ func (t *FuncType) Def() string {
 	return buf.String()
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *FuncType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Integer types ] -------------------------------------------------------
 
 // IntType is an LLVM IR integer type.
 type IntType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Integer size in number of bits.
 	BitSize int64
 }
@@ -203,8 +203,8 @@ func (t *IntType) Equal(u Type) bool {
 
 // String returns the string representation of the integer type.
 func (t *IntType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -215,17 +215,17 @@ func (t *IntType) Def() string {
 	return fmt.Sprintf("i%d", t.BitSize)
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *IntType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Floating-point types ] ------------------------------------------------
 
 // FloatType is an LLVM IR floating-point type.
 type FloatType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Floating-point kind.
 	Kind FloatKind
 }
@@ -240,8 +240,8 @@ func (t *FloatType) Equal(u Type) bool {
 
 // String returns the string representation of the floating-point type.
 func (t *FloatType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -252,9 +252,9 @@ func (t *FloatType) Def() string {
 	return t.Kind.String()
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *FloatType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 //go:generate stringer -linecomment -type FloatKind
@@ -276,8 +276,8 @@ const (
 
 // MMXType is an LLVM IR MMX type.
 type MMXType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 }
 
 // Equal reports whether t and u are of equal type.
@@ -290,8 +290,8 @@ func (t *MMXType) Equal(u Type) bool {
 
 // String returns the string representation of the MMX type.
 func (t *MMXType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -302,17 +302,17 @@ func (t *MMXType) Def() string {
 	return "x86_mmx"
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *MMXType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Pointer types ] -------------------------------------------------------
 
 // PointerType is an LLVM IR pointer type.
 type PointerType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Element type.
 	ElemType Type
 	// Address space; or zero value for default address space.
@@ -335,8 +335,8 @@ func (t *PointerType) Equal(u Type) bool {
 
 // String returns the string representation of the pointer type.
 func (t *PointerType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -353,9 +353,9 @@ func (t *PointerType) Def() string {
 	return buf.String()
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *PointerType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // AddrSpace is an LLVM IR pointer type address space.
@@ -371,8 +371,8 @@ func (a AddrSpace) String() string {
 
 // VectorType is an LLVM IR vector type.
 type VectorType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Vector length.
 	Len int64
 	// Element type.
@@ -401,8 +401,8 @@ func (t *VectorType) Equal(u Type) bool {
 
 // String returns the string representation of the vector type.
 func (t *VectorType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -413,17 +413,17 @@ func (t *VectorType) Def() string {
 	return fmt.Sprintf("<%d x %v>", t.Len, t.ElemType)
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *VectorType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Label types ] ---------------------------------------------------------
 
 // LabelType is an LLVM IR label type.
 type LabelType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 }
 
 // Equal reports whether t and u are of equal type.
@@ -436,8 +436,8 @@ func (t *LabelType) Equal(u Type) bool {
 
 // String returns the string representation of the label type.
 func (t *LabelType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -448,17 +448,17 @@ func (t *LabelType) Def() string {
 	return "label"
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *LabelType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Token types ] ---------------------------------------------------------
 
 // TokenType is an LLVM IR token type.
 type TokenType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 }
 
 // Equal reports whether t and u are of equal type.
@@ -471,8 +471,8 @@ func (t *TokenType) Equal(u Type) bool {
 
 // String returns the string representation of the token type.
 func (t *TokenType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -483,17 +483,17 @@ func (t *TokenType) Def() string {
 	return "token"
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *TokenType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Metadata types ] ------------------------------------------------------
 
 // MetadataType is an LLVM IR metadata type.
 type MetadataType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 }
 
 // Equal reports whether t and u are of equal type.
@@ -506,8 +506,8 @@ func (t *MetadataType) Equal(u Type) bool {
 
 // String returns the string representation of the metadata type.
 func (t *MetadataType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -518,17 +518,17 @@ func (t *MetadataType) Def() string {
 	return "metadata"
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *MetadataType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Array types ] ---------------------------------------------------------
 
 // ArrayType is an LLVM IR array type.
 type ArrayType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Array length.
 	Len int64
 	// Element type.
@@ -557,8 +557,8 @@ func (t *ArrayType) Equal(u Type) bool {
 
 // String returns the string representation of the array type.
 func (t *ArrayType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -569,17 +569,17 @@ func (t *ArrayType) Def() string {
 	return fmt.Sprintf("[%d x %v]", t.Len, t.ElemType)
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *ArrayType) Name() string {
-	return t.Alias
+	return t.TypeName
 }
 
 // --- [ Structure types ] -----------------------------------------------------
 
 // StructType is an LLVM IR structure type.
 type StructType struct {
-	// Type name alias; or empty if not present.
-	Alias string
+	// Type name; or empty if not present.
+	TypeName string
 	// Packed memory layout.
 	Packed bool
 	// Struct fields.
@@ -598,12 +598,12 @@ func NewStruct(fields ...Type) *StructType {
 // Equal reports whether t and u are of equal type.
 func (t *StructType) Equal(u Type) bool {
 	if u, ok := u.(*StructType); ok {
-		if len(t.Alias) > 0 || len(u.Alias) > 0 {
+		if len(t.TypeName) > 0 || len(u.TypeName) > 0 {
 			// Identified struct types are uniqued by type names, not by structural
 			// identity.
 			//
 			// t or u is an identified struct type.
-			return t.Alias == u.Alias
+			return t.TypeName == u.TypeName
 		}
 		// Literal struct types are uniqued by structural identity.
 		if t.Packed != u.Packed {
@@ -624,8 +624,8 @@ func (t *StructType) Equal(u Type) bool {
 
 // String returns the string representation of the structure type.
 func (t *StructType) String() string {
-	if len(t.Alias) > 0 {
-		return enc.Local(t.Alias)
+	if len(t.TypeName) > 0 {
+		return enc.Local(t.TypeName)
 	}
 	return t.Def()
 }
@@ -670,7 +670,7 @@ func (t *StructType) Def() string {
 	return buf.String()
 }
 
-// Name returns the type name alias name of the type.
+// Name returns the type name of the type.
 func (t *StructType) Name() string {
-	return t.Alias
+	return t.TypeName
 }

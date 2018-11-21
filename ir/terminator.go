@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
@@ -301,7 +300,7 @@ func (term *TermIndirectBr) Def() string {
 // TermInvoke is an LLVM IR invoke terminator.
 type TermInvoke struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Invokee (callee function).
 	// TODO: specify the set of underlying types of Invokee.
 	Invokee value.Value
@@ -377,21 +376,6 @@ func (term *TermInvoke) Type() types.Type {
 		return t.RetType
 	}
 	return term.Typ
-}
-
-// Ident returns the identifier associated with the terminator.
-func (term *TermInvoke) Ident() string {
-	return enc.Local(term.LocalName)
-}
-
-// Name returns the name of the terminator.
-func (term *TermInvoke) Name() string {
-	return term.LocalName
-}
-
-// SetName sets the name of the terminator.
-func (term *TermInvoke) SetName(name string) {
-	term.LocalName = name
 }
 
 // Succs returns the successor basic blocks of the terminator.
@@ -496,7 +480,7 @@ func (term *TermResume) Def() string {
 // TermCatchSwitch is an LLVM IR catchswitch terminator.
 type TermCatchSwitch struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Exception scope.
 	Scope ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception handlers.
@@ -527,21 +511,6 @@ func (term *TermCatchSwitch) String() string {
 // Type returns the type of the terminator.
 func (term *TermCatchSwitch) Type() types.Type {
 	return types.Token
-}
-
-// Ident returns the identifier associated with the terminator.
-func (term *TermCatchSwitch) Ident() string {
-	return enc.Local(term.LocalName)
-}
-
-// Name returns the name of the terminator.
-func (term *TermCatchSwitch) Name() string {
-	return term.LocalName
-}
-
-// SetName sets the name of the terminator.
-func (term *TermCatchSwitch) SetName(name string) {
-	term.LocalName = name
 }
 
 // Succs returns the successor basic blocks of the terminator.

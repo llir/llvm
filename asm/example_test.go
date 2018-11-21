@@ -23,13 +23,13 @@ func Example() {
 	//         &ir.Global{
 	//             GlobalName:  "seed",
 	//             Immutable:   false,
-	//             ContentType: &types.IntType{Alias:"", BitSize:32},
+	//             ContentType: &types.IntType{TypeName:"", BitSize:32},
 	//             Init:        &constant.Int{
 	//                 Typ: &types.IntType{(CYCLIC REFERENCE)},
 	//                 X:   &big.Int{},
 	//             },
 	//             Typ: &types.PointerType{
-	//                 Alias:     "",
+	//                 TypeName:  "",
 	//                 ElemType:  &types.IntType{(CYCLIC REFERENCE)},
 	//                 AddrSpace: 0,
 	//             },
@@ -51,23 +51,23 @@ func Example() {
 	//         &ir.Function{
 	//             GlobalName: "abs",
 	//             Sig:        &types.FuncType{
-	//                 Alias:   "",
-	//                 RetType: &types.IntType{Alias:"", BitSize:32},
-	//                 Params:  {
-	//                     &types.IntType{Alias:"", BitSize:32},
+	//                 TypeName: "",
+	//                 RetType:  &types.IntType{TypeName:"", BitSize:32},
+	//                 Params:   {
+	//                     &types.IntType{TypeName:"", BitSize:32},
 	//                 },
 	//                 Variadic: false,
 	//             },
 	//             Params: {
 	//                 &ir.Param{
-	//                     LocalName: "x",
-	//                     Typ:       &types.IntType{Alias:"", BitSize:32},
-	//                     Attrs:     nil,
+	//                     LocalIdent: ir.LocalIdent{LocalName:"x", LocalID:0},
+	//                     Typ:        &types.IntType{TypeName:"", BitSize:32},
+	//                     Attrs:      nil,
 	//                 },
 	//             },
 	//             Blocks: nil,
 	//             Typ:    &types.PointerType{
-	//                 Alias:     "",
+	//                 TypeName:  "",
 	//                 ElemType:  &types.FuncType{(CYCLIC REFERENCE)},
 	//                 AddrSpace: 0,
 	//             },
@@ -92,52 +92,52 @@ func Example() {
 	//         &ir.Function{
 	//             GlobalName: "rand",
 	//             Sig:        &types.FuncType{
-	//                 Alias:    "",
-	//                 RetType:  &types.IntType{Alias:"", BitSize:32},
+	//                 TypeName: "",
+	//                 RetType:  &types.IntType{TypeName:"", BitSize:32},
 	//                 Params:   nil,
 	//                 Variadic: false,
 	//             },
 	//             Params: nil,
 	//             Blocks: {
 	//                 &ir.BasicBlock{
-	//                     LocalName: "0",
-	//                     Insts:     {
+	//                     LocalIdent: ir.LocalIdent{},
+	//                     Insts:      {
 	//                         &ir.InstLoad{
-	//                             LocalName: "1",
-	//                             Src:       &ir.Global{(CYCLIC REFERENCE)},
-	//                             Typ:       &types.IntType{Alias:"", BitSize:32},
-	//                             Atomic:    false,
-	//                             Volatile:  false,
-	//                             SyncScope: "",
-	//                             Ordering:  0x0,
-	//                             Align:     0,
-	//                             Metadata:  nil,
+	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:1},
+	//                             Src:        &ir.Global{(CYCLIC REFERENCE)},
+	//                             Typ:        &types.IntType{TypeName:"", BitSize:32},
+	//                             Atomic:     false,
+	//                             Volatile:   false,
+	//                             SyncScope:  "",
+	//                             Ordering:   0x0,
+	//                             Align:      0,
+	//                             Metadata:   nil,
 	//                         },
 	//                         &ir.InstMul{
-	//                             LocalName: "2",
-	//                             X:         &ir.InstLoad{(CYCLIC REFERENCE)},
-	//                             Y:         &constant.Int{
+	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:2},
+	//                             X:          &ir.InstLoad{(CYCLIC REFERENCE)},
+	//                             Y:          &constant.Int{
 	//                                 Typ: &types.IntType{(CYCLIC REFERENCE)},
 	//                                 X:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x15a4e35},
 	//                                 },
 	//                             },
-	//                             Typ:           &types.IntType{Alias:"", BitSize:32},
+	//                             Typ:           &types.IntType{TypeName:"", BitSize:32},
 	//                             OverflowFlags: nil,
 	//                             Metadata:      nil,
 	//                         },
 	//                         &ir.InstAdd{
-	//                             LocalName: "3",
-	//                             X:         &ir.InstMul{(CYCLIC REFERENCE)},
-	//                             Y:         &constant.Int{
+	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:3},
+	//                             X:          &ir.InstMul{(CYCLIC REFERENCE)},
+	//                             Y:          &constant.Int{
 	//                                 Typ: &types.IntType{(CYCLIC REFERENCE)},
 	//                                 X:   &big.Int{
 	//                                     neg: false,
 	//                                     abs: {0x1},
 	//                                 },
 	//                             },
-	//                             Typ:           &types.IntType{Alias:"", BitSize:32},
+	//                             Typ:           &types.IntType{TypeName:"", BitSize:32},
 	//                             OverflowFlags: nil,
 	//                             Metadata:      nil,
 	//                         },
@@ -152,12 +152,12 @@ func Example() {
 	//                             Metadata:  nil,
 	//                         },
 	//                         &ir.InstCall{
-	//                             LocalName: "4",
-	//                             Callee:    &ir.Function{(CYCLIC REFERENCE)},
-	//                             Args:      {
+	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:4},
+	//                             Callee:     &ir.Function{(CYCLIC REFERENCE)},
+	//                             Args:       {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
-	//                             Typ:            &types.IntType{Alias:"", BitSize:32},
+	//                             Typ:            &types.IntType{TypeName:"", BitSize:32},
 	//                             Tail:           0x0,
 	//                             FastMathFlags:  nil,
 	//                             CallingConv:    0x0,
@@ -170,12 +170,12 @@ func Example() {
 	//                     },
 	//                     Term: &ir.TermRet{
 	//                         X:  &ir.InstCall{
-	//                             LocalName: "4",
-	//                             Callee:    &ir.Function{(CYCLIC REFERENCE)},
-	//                             Args:      {
+	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:4},
+	//                             Callee:     &ir.Function{(CYCLIC REFERENCE)},
+	//                             Args:       {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
-	//                             Typ:            &types.IntType{Alias:"", BitSize:32},
+	//                             Typ:            &types.IntType{TypeName:"", BitSize:32},
 	//                             Tail:           0x0,
 	//                             FastMathFlags:  nil,
 	//                             CallingConv:    0x0,
@@ -190,7 +190,7 @@ func Example() {
 	//                 },
 	//             },
 	//             Typ: &types.PointerType{
-	//                 Alias:     "",
+	//                 TypeName:  "",
 	//                 ElemType:  &types.FuncType{(CYCLIC REFERENCE)},
 	//                 AddrSpace: 0,
 	//             },

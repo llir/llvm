@@ -161,23 +161,16 @@ func (f *Function) AssignIDs() error {
 	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	id := 0
-	names := make(map[string]value.Value)
-	setName := func(n value.Named) error {
-		got := n.Name()
-		if isUnnamed(got) {
-			name := strconv.Itoa(id)
-			n.SetName(name)
-			names[name] = n
-			id++
-		} else if isLocalID(got) {
-			want := strconv.Itoa(id)
-			if want != got {
+	id := int64(0)
+	setName := func(n local) error {
+		if n.IsUnnamed() {
+			if n.ID() != 0 && id != n.ID() {
+				want := strconv.FormatInt(id, 10)
+				got := strconv.FormatInt(n.ID(), 10)
 				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", enc.Global(f.GlobalName), enc.Local(want), enc.Local(got))
 			}
+			n.SetID(id)
 			id++
-		} else {
-			// already named; nothing to do.
 		}
 		return nil
 	}
@@ -193,7 +186,7 @@ func (f *Function) AssignIDs() error {
 			return errors.WithStack(err)
 		}
 		for _, inst := range block.Insts {
-			n, ok := inst.(value.Named)
+			n, ok := inst.(local)
 			if !ok {
 				continue
 			}
@@ -208,7 +201,7 @@ func (f *Function) AssignIDs() error {
 				return errors.WithStack(err)
 			}
 		}
-		n, ok := block.Term.(value.Named)
+		n, ok := block.Term.(local)
 		if !ok {
 			continue
 		}
@@ -321,4 +314,15 @@ func isVoidValue(n value.Named) bool {
 		return n.Type().Equal(types.Void)
 	}
 	return false
+}
+
+// local is a local variable.
+type local interface {
+	value.Named
+	// ID returns the ID of the local identifier.
+	ID() int64
+	// SetID sets the ID of the local identifier.
+	SetID(id int64)
+	// IsUnnamed reports whether the local identifier is unnamed.
+	IsUnnamed() bool
 }

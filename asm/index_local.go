@@ -2,12 +2,22 @@ package asm
 
 import (
 	"github.com/llir/ll/ast"
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
 )
+
+// local is a local variable.
+type local interface {
+	value.Named
+	// ID returns the ID of the local identifier.
+	ID() int64
+	// SetID sets the ID of the local identifier.
+	SetID(id int64)
+	// IsUnnamed reports whether the local identifier is unnamed.
+	IsUnnamed() bool
+}
 
 // indexLocals indexes the function parameters, basic blocks and local variables
 // (produced by instructions and terminators) of the given function.
@@ -30,29 +40,31 @@ func (fgen *funcGen) indexLocals(oldBlocks []ast.BasicBlock) error {
 	}
 	// Index local identifiers.
 	for _, param := range f.Params {
-		if err := fgen.addLocal(param.LocalName, param); err != nil {
+		if err := fgen.addLocal(param.LocalIdent, param); err != nil {
 			return errors.WithStack(err)
 		}
 	}
 	for _, block := range f.Blocks {
-		if err := fgen.addLocal(block.LocalName, block); err != nil {
+		if err := fgen.addLocal(block.LocalIdent, block); err != nil {
 			return errors.WithStack(err)
 		}
 		for _, inst := range block.Insts {
-			if n, ok := inst.(value.Named); ok {
+			if n, ok := inst.(local); ok {
 				if isVoidValue(n) {
 					continue
 				}
-				if err := fgen.addLocal(n.Name(), n); err != nil {
+				ident := ir.LocalIdent{LocalName: n.Name(), LocalID: n.ID()}
+				if err := fgen.addLocal(ident, n); err != nil {
 					return errors.WithStack(err)
 				}
 			}
 		}
-		if n, ok := block.Term.(value.Named); ok {
+		if n, ok := block.Term.(local); ok {
 			if isVoidValue(n) {
 				continue
 			}
-			if err := fgen.addLocal(n.Name(), n); err != nil {
+			ident := ir.LocalIdent{LocalName: n.Name(), LocalID: n.ID()}
+			if err := fgen.addLocal(ident, n); err != nil {
 				return errors.WithStack(err)
 			}
 		}
@@ -91,11 +103,11 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 
 // addLocal adds the local variable with the given name to the map of local
 // variables of the function.
-func (fgen *funcGen) addLocal(name string, v value.Value) error {
-	if prev, ok := fgen.ls[name]; ok {
-		return errors.Errorf("local identifier %q already present; prev `%s`, new `%s`", enc.Local(name), prev, v)
+func (fgen *funcGen) addLocal(ident ir.LocalIdent, v value.Value) error {
+	if prev, ok := fgen.ls[ident]; ok {
+		return errors.Errorf("local identifier %q already present; prev `%s`, new `%s`", ident.Ident(), prev, v)
 	}
-	fgen.ls[name] = v
+	fgen.ls[ident] = v
 	return nil
 }
 

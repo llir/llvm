@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -17,7 +16,7 @@ import (
 // InstTrunc is an LLVM IR trunc instruction.
 type InstTrunc struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -46,21 +45,6 @@ func (inst *InstTrunc) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstTrunc) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstTrunc) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstTrunc) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstTrunc) Def() string {
 	// 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -78,7 +62,7 @@ func (inst *InstTrunc) Def() string {
 // InstZExt is an LLVM IR zext instruction.
 type InstZExt struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -107,21 +91,6 @@ func (inst *InstZExt) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstZExt) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstZExt) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstZExt) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstZExt) Def() string {
 	// 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -139,7 +108,7 @@ func (inst *InstZExt) Def() string {
 // InstSExt is an LLVM IR sext instruction.
 type InstSExt struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -168,21 +137,6 @@ func (inst *InstSExt) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstSExt) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstSExt) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstSExt) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSExt) Def() string {
 	// 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -200,7 +154,7 @@ func (inst *InstSExt) Def() string {
 // InstFPTrunc is an LLVM IR fptrunc instruction.
 type InstFPTrunc struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -229,21 +183,6 @@ func (inst *InstFPTrunc) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFPTrunc) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFPTrunc) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFPTrunc) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPTrunc) Def() string {
 	// 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -261,7 +200,7 @@ func (inst *InstFPTrunc) Def() string {
 // InstFPExt is an LLVM IR fpext instruction.
 type InstFPExt struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -290,21 +229,6 @@ func (inst *InstFPExt) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFPExt) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFPExt) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFPExt) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPExt) Def() string {
 	// 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -322,7 +246,7 @@ func (inst *InstFPExt) Def() string {
 // InstFPToUI is an LLVM IR fptoui instruction.
 type InstFPToUI struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -351,21 +275,6 @@ func (inst *InstFPToUI) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFPToUI) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFPToUI) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFPToUI) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToUI) Def() string {
 	// 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -383,7 +292,7 @@ func (inst *InstFPToUI) Def() string {
 // InstFPToSI is an LLVM IR fptosi instruction.
 type InstFPToSI struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -412,21 +321,6 @@ func (inst *InstFPToSI) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstFPToSI) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstFPToSI) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstFPToSI) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstFPToSI) Def() string {
 	// 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -444,7 +338,7 @@ func (inst *InstFPToSI) Def() string {
 // InstUIToFP is an LLVM IR uitofp instruction.
 type InstUIToFP struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -473,21 +367,6 @@ func (inst *InstUIToFP) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstUIToFP) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstUIToFP) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstUIToFP) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstUIToFP) Def() string {
 	// 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -505,7 +384,7 @@ func (inst *InstUIToFP) Def() string {
 // InstSIToFP is an LLVM IR sitofp instruction.
 type InstSIToFP struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -534,21 +413,6 @@ func (inst *InstSIToFP) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstSIToFP) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstSIToFP) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstSIToFP) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstSIToFP) Def() string {
 	// 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -566,7 +430,7 @@ func (inst *InstSIToFP) Def() string {
 // InstPtrToInt is an LLVM IR ptrtoint instruction.
 type InstPtrToInt struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -595,21 +459,6 @@ func (inst *InstPtrToInt) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstPtrToInt) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstPtrToInt) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstPtrToInt) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstPtrToInt) Def() string {
 	// 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -627,7 +476,7 @@ func (inst *InstPtrToInt) Def() string {
 // InstIntToPtr is an LLVM IR inttoptr instruction.
 type InstIntToPtr struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -656,21 +505,6 @@ func (inst *InstIntToPtr) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstIntToPtr) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstIntToPtr) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstIntToPtr) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstIntToPtr) Def() string {
 	// 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -688,7 +522,7 @@ func (inst *InstIntToPtr) Def() string {
 // InstBitCast is an LLVM IR bitcast instruction.
 type InstBitCast struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -717,21 +551,6 @@ func (inst *InstBitCast) Type() types.Type {
 	return inst.To
 }
 
-// Ident returns the identifier associated with the instruction.
-func (inst *InstBitCast) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstBitCast) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstBitCast) SetName(name string) {
-	inst.LocalName = name
-}
-
 // Def returns the LLVM syntax representation of the instruction.
 func (inst *InstBitCast) Def() string {
 	// 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
@@ -749,7 +568,7 @@ func (inst *InstBitCast) Def() string {
 // InstAddrSpaceCast is an LLVM IR addrspacecast instruction.
 type InstAddrSpaceCast struct {
 	// Name of local variable associated with the result.
-	LocalName string
+	LocalIdent
 	// Value before conversion.
 	From value.Value
 	// Type after conversion.
@@ -776,21 +595,6 @@ func (inst *InstAddrSpaceCast) String() string {
 // Type returns the type of the instruction.
 func (inst *InstAddrSpaceCast) Type() types.Type {
 	return inst.To
-}
-
-// Ident returns the identifier associated with the instruction.
-func (inst *InstAddrSpaceCast) Ident() string {
-	return enc.Local(inst.LocalName)
-}
-
-// Name returns the name of the instruction.
-func (inst *InstAddrSpaceCast) Name() string {
-	return inst.LocalName
-}
-
-// SetName sets the name of the instruction.
-func (inst *InstAddrSpaceCast) SetName(name string) {
-	inst.LocalName = name
 }
 
 // Def returns the LLVM syntax representation of the instruction.

@@ -23,7 +23,7 @@ func (fgen *funcGen) astToIRValue(typ types.Type, old ast.Value) (value.Value, e
 		ident := localIdent(*old)
 		v, ok := fgen.ls[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate local identifier %q", ident)
+			return nil, errors.Errorf("unable to locate local identifier %q", ident.Ident())
 		}
 		return v, nil
 	case *ast.InlineAsm:

@@ -134,7 +134,7 @@ func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*consta
 		fields = append(fields, field)
 	}
 	c := constant.NewStruct(fields...)
-	c.Typ.Alias = typ.Alias
+	c.Typ.TypeName = typ.TypeName
 	c.Typ.Packed = typ.Packed
 	return c, nil
 }
@@ -214,12 +214,12 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 		return nil, errors.Errorf("invalid function type; expected *ir.Function, got %T", v)
 	}
 	// Basic block.
-	blockName := localIdent(old.Block())
+	blockIdent := localIdent(old.Block())
 	// Add dummy basic block to track the name recorded by the AST. Resolve the
 	// proper basic block after translation of function bodies and assignment of
 	// local IDs.
 	block := &ir.BasicBlock{
-		LocalName: blockName,
+		LocalIdent: blockIdent,
 	}
 	expr := constant.NewBlockAddress(f, block)
 	gen.todo = append(gen.todo, expr)
@@ -233,9 +233,12 @@ func fixBlockAddressConst(c *constant.BlockAddress) error {
 	if !ok {
 		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Function, got %T", c.Func))
 	}
-	blockName := c.Block.Name()
+	bb, ok := c.Block.(*ir.BasicBlock)
+	if !ok {
+		panic(fmt.Errorf("invalid basic block type in blockaddress constant; expected *ir.BasicBlock, got %T", c.Block))
+	}
 	for _, block := range f.Blocks {
-		if block.LocalName == blockName {
+		if block.LocalIdent == bb.LocalIdent {
 			c.Block = block
 			return nil
 		}
