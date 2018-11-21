@@ -56,7 +56,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		case *ast.GlobalDecl:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				// TODO: don't report error if prev is of same type?
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
@@ -64,7 +63,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		case *ast.GlobalDef:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				// TODO: don't report error if prev is a declaration of same type?
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
@@ -79,7 +77,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		case *ast.FuncDecl:
 			ident := globalIdent(entity.Header().Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				// TODO: don't report error if prev is of same type?
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
@@ -87,7 +84,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		case *ast.FuncDef:
 			ident := globalIdent(entity.Header().Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				// TODO: don't report error if prev is a declaration of same type?
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity

@@ -54,6 +54,12 @@ func (c *Struct) Ident() string {
 	// Packed struct constant.
 	//
 	//    '<' '{' Fields=(TypeConst separator ',')+? '}' '>'
+	if len(c.Fields) == 0 {
+		if c.Typ.Packed {
+			return "<{}>"
+		}
+		return "{}"
+	}
 	buf := &strings.Builder{}
 	if c.Typ.Packed {
 		buf.WriteString("<")

@@ -154,9 +154,15 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant
 		}
 		elems = append(elems, elem)
 	}
-	c := constant.NewArray(elems...)
-	// TODO: check that typ is equal to c.Typ.
-	_ = typ
+	if len(elems) > 0 {
+		c := constant.NewArray(elems...)
+		// TODO: check that typ is equal to c.Typ.
+		_ = typ
+		return c, nil
+	}
+	c := &constant.Array{
+		Typ: types.NewArray(0, typ.ElemType),
+	}
 	return c, nil
 }
 
@@ -182,9 +188,15 @@ func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*consta
 		}
 		elems = append(elems, elem)
 	}
-	c := constant.NewVector(elems...)
-	// TODO: check that typ is equal to c.Typ.
-	_ = typ
+	if len(elems) > 0 {
+		c := constant.NewVector(elems...)
+		// TODO: check that typ is equal to c.Typ.
+		_ = typ
+		return c, nil
+	}
+	c := &constant.Vector{
+		Typ: types.NewVector(0, typ.ElemType),
+	}
 	return c, nil
 }
 

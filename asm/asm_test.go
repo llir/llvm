@@ -39,6 +39,9 @@ func TestParseFile(t *testing.T) {
 		// Distinguish named from unnamed locals (issue #39).
 		{path: "../testdata/llvm/test/Analysis/DominanceFrontier/new_pm_test.ll"},
 
+		// Empty array constant.
+		{path: "../testdata/llvm/test/Assembler/aggregate-constant-values.ll"},
+
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/basic-aa-argmemonly.ll"},
