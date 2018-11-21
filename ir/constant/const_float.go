@@ -94,13 +94,21 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			}, nil
 		default:
 			hex := s[len("0x"):]
-			x, err := strconv.ParseUint(hex, 16, 64)
+			bits, err := strconv.ParseUint(hex, 16, 64)
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
 			switch typ.Kind {
 			case types.FloatKindHalf:
-				f := math.Float64frombits(x)
+				// TODO: verify if this is a correct implementation. We should
+				// probably be using binary16.NewFromBits.
+				f := math.Float64frombits(bits)
+				if math.IsNaN(f) {
+					return &Float{
+						Typ: typ,
+						NaN: true,
+					}, nil
+				}
 				c := big.NewFloat(f)
 				const precision = 11
 				c.SetPrec(precision)
@@ -118,7 +126,13 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				// double.  A double has 52 bits of significand, so this means that the
 				// last 29 bits of significand will always be ignored.  As an
 				// error-detection measure, the IR parser requires them to be zero.
-				f := math.Float64frombits(x)
+				f := math.Float64frombits(bits)
+				if math.IsNaN(f) {
+					return &Float{
+						Typ: typ,
+						NaN: true,
+					}, nil
+				}
 				c := big.NewFloat(f)
 				const precision = 24
 				c.SetPrec(precision)
@@ -127,7 +141,13 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 					X:   c,
 				}, nil
 			case types.FloatKindDouble:
-				f := math.Float64frombits(x)
+				f := math.Float64frombits(bits)
+				if math.IsNaN(f) {
+					return &Float{
+						Typ: typ,
+						NaN: true,
+					}, nil
+				}
 				return &Float{
 					Typ: typ,
 					X:   big.NewFloat(f),
