@@ -666,7 +666,8 @@ func (gen *generator) gepType(elemType types.Type, indices []ast.TypeValue) (typ
 				e = t.Fields[i]
 			case *ast.VectorConst:
 				// TODO: Validate how index vectors in gep are supposed to work.
-				elem := index.Elems()[0].Val()
+				elems := index.Elems()
+				elem := elems[0].Val()
 				idx, ok := elem.(*ast.IntConst)
 				if !ok {
 					panic(fmt.Errorf("invalid index type for structure element; expected *ast.IntConst, got %T", elem))
@@ -674,6 +675,21 @@ func (gen *generator) gepType(elemType types.Type, indices []ast.TypeValue) (typ
 				i, err := strconv.ParseInt(idx.Text(), 10, 64)
 				if err != nil {
 					panic(fmt.Errorf("unable to parse integer %q; %v", idx.Text(), err))
+				}
+				// Sanity check. All vector elements must be integers, and must have
+				// the same value.
+				for _, elem := range elems {
+					idx, ok := elem.Val().(*ast.IntConst)
+					if !ok {
+						panic(fmt.Errorf("invalid index type for structure element; expected *ast.IntConst, got %T", elem.Val()))
+					}
+					j, err := strconv.ParseInt(idx.Text(), 10, 64)
+					if err != nil {
+						panic(fmt.Errorf("unable to parse integer %q; %v", idx.Text(), err))
+					}
+					if i != j {
+						return nil, errors.Errorf("struct index mismatch; vector elements %d and %d differ", i, j)
+					}
 				}
 				e = t.Fields[i]
 			case *ast.ZeroInitializerConst:

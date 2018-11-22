@@ -560,7 +560,20 @@ func gepType(elemType types.Type, indices []value.Value) types.Type {
 				if !ok {
 					panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index.Elems[0]))
 				}
-				e = t.Fields[idx.X.Int64()]
+				i := idx.X.Int64()
+				// Sanity check. All vector elements must be integers, and must have
+				// the same value.
+				for _, elem := range index.Elems {
+					idx, ok := elem.(*constant.Int)
+					if !ok {
+						panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", elem))
+					}
+					j := idx.X.Int64()
+					if i != j {
+						panic(fmt.Errorf("struct index mismatch; vector elements %d and %d differ", i, j))
+					}
+				}
+				e = t.Fields[i]
 			case *constant.ZeroInitializer:
 				e = t.Fields[0]
 			default:
