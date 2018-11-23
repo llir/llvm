@@ -26,6 +26,14 @@ func NewInt(typ *types.IntType, x int64) *Int {
 	return &Int{Typ: typ, X: big.NewInt(x)}
 }
 
+// NewBool returns a new boolean constant based on the given boolean value.
+func NewBool(x bool) *Int {
+	if x {
+		return True
+	}
+	return False
+}
+
 // NewIntFromString returns a new integer constant based on the given integer
 // type and string.
 //
