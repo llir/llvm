@@ -665,7 +665,7 @@ func (gen *generator) irUseListOrderBB(n ast.UseListOrderBB) (*ir.UseListOrderBB
 	}
 	f, ok := v.(*ir.Function)
 	if !ok {
-		return nil, errors.Errorf("invalid function type; expected *ir.Function, got %T", v)
+		return nil, errors.Errorf("invalid function type of %q; expected *ir.Function, got %T", enc.Global(funcName), v)
 	}
 	// Basic block.
 	blockIdent := localIdent(n.Block())

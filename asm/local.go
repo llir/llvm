@@ -482,7 +482,7 @@ func (fgen *funcGen) astToIRInst(inst ir.Instruction, old ast.Instruction) (ir.I
 		}
 		i, ok := v.(ir.Instruction)
 		if !ok {
-			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", ident, v)
+			return nil, errors.Errorf("invalid instruction type of %q; expected ir.Instruction, got %T", ident.Ident(), v)
 		}
 		return fgen.astToIRValueInst(i, old.Inst())
 	case ast.ValueInstruction:
