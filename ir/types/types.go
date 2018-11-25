@@ -63,6 +63,8 @@ type Type interface {
 	Equal(u Type) bool
 	// Name returns the type name of the type.
 	Name() string
+	// SetName sets the type name of the type.
+	SetName(name string)
 }
 
 // --- [ Void types ] ----------------------------------------------------------
@@ -98,6 +100,11 @@ func (t *VoidType) Def() string {
 // Name returns the type name of the type.
 func (t *VoidType) Name() string {
 	return t.TypeName
+}
+
+// SetName sets the type name of the type.
+func (t *VoidType) SetName(name string) {
+	t.TypeName = name
 }
 
 // --- [ Function types ] ------------------------------------------------------
@@ -176,6 +183,11 @@ func (t *FuncType) Name() string {
 	return t.TypeName
 }
 
+// SetName sets the type name of the type.
+func (t *FuncType) SetName(name string) {
+	t.TypeName = name
+}
+
 // --- [ Integer types ] -------------------------------------------------------
 
 // IntType is an LLVM IR integer type.
@@ -220,6 +232,11 @@ func (t *IntType) Name() string {
 	return t.TypeName
 }
 
+// SetName sets the type name of the type.
+func (t *IntType) SetName(name string) {
+	t.TypeName = name
+}
+
 // --- [ Floating-point types ] ------------------------------------------------
 
 // FloatType is an LLVM IR floating-point type.
@@ -255,6 +272,11 @@ func (t *FloatType) Def() string {
 // Name returns the type name of the type.
 func (t *FloatType) Name() string {
 	return t.TypeName
+}
+
+// SetName sets the type name of the type.
+func (t *FloatType) SetName(name string) {
+	t.TypeName = name
 }
 
 //go:generate stringer -linecomment -type FloatKind
@@ -307,6 +329,11 @@ func (t *MMXType) Name() string {
 	return t.TypeName
 }
 
+// SetName sets the type name of the type.
+func (t *MMXType) SetName(name string) {
+	t.TypeName = name
+}
+
 // --- [ Pointer types ] -------------------------------------------------------
 
 // PointerType is an LLVM IR pointer type.
@@ -351,6 +378,11 @@ func (t *PointerType) Def() string {
 	}
 	buf.WriteString("*")
 	return buf.String()
+}
+
+// SetName sets the type name of the type.
+func (t *PointerType) SetName(name string) {
+	t.TypeName = name
 }
 
 // Name returns the type name of the type.
@@ -418,6 +450,11 @@ func (t *VectorType) Name() string {
 	return t.TypeName
 }
 
+// SetName sets the type name of the type.
+func (t *VectorType) SetName(name string) {
+	t.TypeName = name
+}
+
 // --- [ Label types ] ---------------------------------------------------------
 
 // LabelType is an LLVM IR label type.
@@ -451,6 +488,11 @@ func (t *LabelType) Def() string {
 // Name returns the type name of the type.
 func (t *LabelType) Name() string {
 	return t.TypeName
+}
+
+// SetName sets the type name of the type.
+func (t *LabelType) SetName(name string) {
+	t.TypeName = name
 }
 
 // --- [ Token types ] ---------------------------------------------------------
@@ -488,6 +530,11 @@ func (t *TokenType) Name() string {
 	return t.TypeName
 }
 
+// SetName sets the type name of the type.
+func (t *TokenType) SetName(name string) {
+	t.TypeName = name
+}
+
 // --- [ Metadata types ] ------------------------------------------------------
 
 // MetadataType is an LLVM IR metadata type.
@@ -521,6 +568,11 @@ func (t *MetadataType) Def() string {
 // Name returns the type name of the type.
 func (t *MetadataType) Name() string {
 	return t.TypeName
+}
+
+// SetName sets the type name of the type.
+func (t *MetadataType) SetName(name string) {
+	t.TypeName = name
 }
 
 // --- [ Array types ] ---------------------------------------------------------
@@ -572,6 +624,11 @@ func (t *ArrayType) Def() string {
 // Name returns the type name of the type.
 func (t *ArrayType) Name() string {
 	return t.TypeName
+}
+
+// SetName sets the type name of the type.
+func (t *ArrayType) SetName(name string) {
+	t.TypeName = name
 }
 
 // --- [ Structure types ] -----------------------------------------------------
@@ -673,4 +730,9 @@ func (t *StructType) Def() string {
 // Name returns the type name of the type.
 func (t *StructType) Name() string {
 	return t.TypeName
+}
+
+// SetName sets the type name of the type.
+func (t *StructType) SetName(name string) {
+	t.TypeName = name
 }
