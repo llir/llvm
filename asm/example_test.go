@@ -187,6 +187,7 @@ func Example() {
 	//                         },
 	//                         Metadata: nil,
 	//                     },
+	//                     Parent: (*ir.Function)(nil),
 	//                 },
 	//             },
 	//             Typ: &types.PointerType{
