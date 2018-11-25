@@ -12,7 +12,7 @@ import (
 // based on the given aggregate value and indicies.
 func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
 	inst := NewExtractValue(x, indices...)
-	block.Insts = append(block.Insts)
+	block.Insts = append(block.Insts, inst)
 	return inst
 }
 
@@ -22,6 +22,6 @@ func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *InstE
 // on the given aggregate value, element and indicies.
 func (block *BasicBlock) NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
 	inst := NewInsertValue(x, elem, indices...)
-	block.Insts = append(block.Insts)
+	block.Insts = append(block.Insts, inst)
 	return inst
 }

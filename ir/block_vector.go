@@ -12,7 +12,7 @@ import (
 // based on the given vector and element index.
 func (block *BasicBlock) NewExtractElement(x, index value.Value) *InstExtractElement {
 	inst := NewExtractElement(x, index)
-	block.Insts = append(block.Insts)
+	block.Insts = append(block.Insts, inst)
 	return inst
 }
 
@@ -22,7 +22,7 @@ func (block *BasicBlock) NewExtractElement(x, index value.Value) *InstExtractEle
 // based on the given vector, element and element index.
 func (block *BasicBlock) NewInsertElement(x, elem, index value.Value) *InstInsertElement {
 	inst := NewInsertElement(x, elem, index)
-	block.Insts = append(block.Insts)
+	block.Insts = append(block.Insts, inst)
 	return inst
 }
 
@@ -32,6 +32,6 @@ func (block *BasicBlock) NewInsertElement(x, elem, index value.Value) *InstInser
 // based on the given vectors and shuffle mask.
 func (block *BasicBlock) NewShuffleVector(x, y, mask value.Value) *InstShuffleVector {
 	inst := NewShuffleVector(x, y, mask)
-	block.Insts = append(block.Insts)
+	block.Insts = append(block.Insts, inst)
 	return inst
 }
