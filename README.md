@@ -20,6 +20,7 @@ go get -u github.com/llir/llvm/...
 
 * [blessedvirginmary](https://github.com/NateGraff/blessedvirginmary): LLVM IR to Bash transpiler by [@NateGraff](https://github.com/NateGraff).
 * [tre](https://github.com/zegl/tre): Go to LLVM IR compiler by [@zegl](https://github.com/zegl).
+* [µC](https://github.com/mewmew/uc): µC to LLVM IR compiler by [@sangisos](https://github.com/sangisos) and [@mewmew](https://github.com/mewmew).
 
 ## Usage
 
