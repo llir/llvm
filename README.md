@@ -16,6 +16,10 @@ The aim of this project is to provide a pure Go library for interacting with [LL
 go get -u github.com/llir/llvm/...
 ```
 
+## Users
+
+* [blessedvirginmary](https://github.com/NateGraff/blessedvirginmary): LLVM IR to Bash transpiler by [@NateGraff](https://github.com/NateGraff).
+
 ## Usage
 
 ### Output LLVM IR assembly
