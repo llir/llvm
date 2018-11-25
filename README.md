@@ -19,6 +19,7 @@ go get -u github.com/llir/llvm/...
 ## Users
 
 * [blessedvirginmary](https://github.com/NateGraff/blessedvirginmary): LLVM IR to Bash transpiler by [@NateGraff](https://github.com/NateGraff).
+* [tre](https://github.com/zegl/tre): Go to LLVM IR compiler by [@zegl](https://github.com/zegl).
 
 ## Usage
 
