@@ -187,7 +187,7 @@ func Example() {
 	//                         },
 	//                         Metadata: nil,
 	//                     },
-	//                     Parent: (*ir.Function)(nil),
+	//                     Parent: &ir.Function{(CYCLIC REFERENCE)},
 	//                 },
 	//             },
 	//             Typ: &types.PointerType{

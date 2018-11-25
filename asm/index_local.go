@@ -81,7 +81,8 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 	f := fgen.f
 	for _, oldBlock := range oldBlocks {
 		blockName := optLabelIdent(oldBlock.Name())
-		block := ir.NewBlock(blockName)
+		// Use f.NewBlock to also set Parent of block.
+		block := f.NewBlock(blockName)
 		for _, oldInst := range oldBlock.Insts() {
 			inst, err := fgen.newIRInst(oldInst)
 			if err != nil {
@@ -94,7 +95,6 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 			return errors.WithStack(err)
 		}
 		block.Term = term
-		f.Blocks = append(f.Blocks, block)
 	}
 	return nil
 }
