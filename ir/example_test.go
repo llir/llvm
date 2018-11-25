@@ -36,7 +36,7 @@ func Example() {
 	// Create an external function declaration and append it to the module.
 	//
 	//    int abs(int x);
-	abs := m.NewFunction("abs", i32, ir.NewParam("x", i32))
+	abs := m.NewFunc("abs", i32, ir.NewParam("x", i32))
 
 	// Create a global variable definition and append it to the module.
 	//
@@ -46,7 +46,7 @@ func Example() {
 	// Create a function definition and append it to the module.
 	//
 	//    int rand(void) { ... }
-	rand := m.NewFunction("rand", i32)
+	rand := m.NewFunc("rand", i32)
 
 	// Create an unnamed entry basic block and append it to the `rand` function.
 	entry := rand.NewBlock("")
