@@ -148,7 +148,7 @@ func (g *Global) Def() string {
 		}
 	}
 	if g.ExternallyInitialized {
-		buf.WriteString(" externallyinitialized")
+		buf.WriteString(" externally_initialized")
 	}
 	if g.Immutable {
 		buf.WriteString(" constant")

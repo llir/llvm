@@ -143,7 +143,7 @@ type ExprSelect struct {
 // NewSelect returns a new select expression based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y Constant) *ExprSelect {
-	e := &ExprSelect{Cond: cond, X: x, Y: x}
+	e := &ExprSelect{Cond: cond, X: x, Y: y}
 	// Compute type.
 	e.Type()
 	return e

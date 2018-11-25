@@ -77,7 +77,7 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 	i.Src = src
 	// (optional) Sync scope.
 	if n := old.SyncScope(); n.IsValid() {
-		i.SyncScope = n.Scope().Text()
+		i.SyncScope = stringLit(n.Scope())
 	}
 	// (optional) Atomic memory ordering constraints.
 	if n := old.Ordering(); n.IsValid() {
@@ -123,7 +123,7 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 	i.Dst = dst
 	// (optional) Sync scope.
 	if n := old.SyncScope(); n.IsValid() {
-		i.SyncScope = n.Scope().Text()
+		i.SyncScope = stringLit(n.Scope())
 	}
 	// (optional) Atomic memory ordering constraints.
 	if n := old.Ordering(); n.IsValid() {
@@ -153,7 +153,7 @@ func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (
 	}
 	// (optional) Sync scope.
 	if n := old.SyncScope(); n.IsValid() {
-		i.SyncScope = n.Scope().Text()
+		i.SyncScope = stringLit(n.Scope())
 	}
 	// Atomic memory ordering constraints.
 	i.Ordering = asmenum.AtomicOrderingFromString(old.Ordering().Text())
@@ -199,7 +199,7 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 	i.New = new
 	// (optional) Sync scope.
 	if n := old.SyncScope(); n.IsValid() {
-		i.SyncScope = n.Scope().Text()
+		i.SyncScope = stringLit(n.Scope())
 	}
 	// Atomic memory ordering constraints on success.
 	i.SuccessOrdering = asmenum.AtomicOrderingFromString(old.SuccessOrdering().Text())
@@ -241,7 +241,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 	i.X = x
 	// (optional) Sync scope.
 	if n := old.SyncScope(); n.IsValid() {
-		i.SyncScope = n.Scope().Text()
+		i.SyncScope = stringLit(n.Scope())
 	}
 	// Atomic memory ordering constraints.
 	i.Ordering = asmenum.AtomicOrderingFromString(old.Ordering().Text())

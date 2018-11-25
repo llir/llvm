@@ -48,7 +48,7 @@ func (gen *generator) irMDNode(old ast.MDNode) (metadata.MDNode, error) {
 		id := metadataID(*old)
 		node, ok := gen.new.metadataDefs[id]
 		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
+			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
 		}
 		return node, nil
 	case ast.SpecializedMDNode:
@@ -115,7 +115,7 @@ func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 		id := metadataID(*old)
 		node, ok := gen.new.metadataDefs[id]
 		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
+			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
 		}
 		return node, nil
 	case ast.SpecializedMDNode:
@@ -131,7 +131,7 @@ func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.MetadataNod
 		id := metadataID(*old)
 		node, ok := gen.new.metadataDefs[id]
 		if !ok {
-			return nil, errors.Errorf("unable to locate metadata ID %q", enc.Metadata(id))
+			return nil, errors.Errorf("unable to locate metadata ID %q", enc.MetadataID(id))
 		}
 		return node, nil
 	case *ast.DIExpression:

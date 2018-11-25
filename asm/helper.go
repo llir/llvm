@@ -113,7 +113,7 @@ func metadataIdent(ident string) string {
 		panic(fmt.Errorf("invalid metadata identifier %q; missing '%s' prefix", ident, prefix))
 	}
 	ident = ident[len(prefix):]
-	return unquote(ident)
+	return string(enc.Unescape(ident))
 }
 
 // metadataName returns the name (without '!' prefix) of the given metadata

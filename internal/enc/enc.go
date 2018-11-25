@@ -70,7 +70,7 @@ func Comdat(name string) string {
 	return "$" + EscapeIdent(name)
 }
 
-// Metadata encodes a metadata name to its LLVM IR assembly representation.
+// MetadataName encodes a metadata name to its LLVM IR assembly representation.
 //
 // Examples:
 //    "foo" -> "!foo"
@@ -79,11 +79,30 @@ func Comdat(name string) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func Metadata(name string) string {
+func MetadataName(name string) string {
 	valid := func(b byte) bool {
 		return strings.IndexByte(tail, b) != -1
 	}
+	if strings.ContainsRune(decimal, rune(name[0])) {
+		// Escape first character if digit, to distinguish named from unnamed
+		// metadata.
+		return "!" + `\3` + name[:1] + string(Escape([]byte(name[1:]), valid))
+	}
 	return "!" + string(Escape([]byte(name), valid))
+}
+
+// TODO: remove MetadataID if MetadataIdent is introduced, analogous to
+// ir.LocalIdent.
+
+// MetadataID encodes a metadata ID to its LLVM IR assembly representation.
+//
+// Examples:
+//    "42" -> "!42"
+//
+// References:
+//    http://www.llvm.org/docs/LangRef.html#identifiers
+func MetadataID(id string) string {
+	return "!" + id
 }
 
 const (

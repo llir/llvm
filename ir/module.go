@@ -76,6 +76,9 @@ func (m *Module) String() string {
 		fmt.Fprintf(buf, "target triple = %s\n", quote(m.TargetTriple))
 	}
 	// Module-level inline assembly.
+	if len(m.ModuleAsms) > 0 && buf.Len() > 0 {
+		buf.WriteString("\n")
+	}
 	for _, asm := range m.ModuleAsms {
 		// 'module' 'asm' Asm=StringLit
 		fmt.Fprintf(buf, "module asm %s\n", quote(asm))

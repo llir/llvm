@@ -25,6 +25,18 @@ func diFlagsString(flags enum.DIFlag) string {
 	return strings.Join(ss, " | ")
 }
 
+// TODO: fix string representation for all enums which are defined in the
+// grammar as `FooEnum | FooInt`.
+
+// dwarfTagString returns the string representation of the given Dwarf tag.
+func dwarfTagString(tag enum.DwarfTag) string {
+	s := tag.String()
+	if strings.HasPrefix(s, "DwarfTag(") && strings.HasSuffix(s, ")") {
+		return s[len("DwarfTag(") : len(s)-len(")")]
+	}
+	return s
+}
+
 // quote returns s as a double-quoted string literal.
 func quote(s string) string {
 	return enc.Quote([]byte(s))

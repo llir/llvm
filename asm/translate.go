@@ -195,14 +195,14 @@ func (gen *generator) addDefsToModule() {
 	for _, name := range gen.old.namedMetadataDefOrder {
 		def, ok := gen.new.namedMetadataDefs[name]
 		if !ok {
-			panic(fmt.Errorf("unable to locate metadata name %q", enc.Metadata(name)))
+			panic(fmt.Errorf("unable to locate metadata name %q", enc.MetadataName(name)))
 		}
 		gen.m.NamedMetadataDefs = append(gen.m.NamedMetadataDefs, def)
 	}
 	for _, id := range gen.old.metadataDefOrder {
 		def, ok := gen.new.metadataDefs[id]
 		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
+			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
 		}
 		gen.m.MetadataDefs = append(gen.m.MetadataDefs, def)
 	}

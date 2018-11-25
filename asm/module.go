@@ -98,14 +98,14 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		case *ast.NamedMetadataDef:
 			name := metadataName(entity.Name())
 			if prev, ok := gen.old.namedMetadataDefs[name]; ok {
-				return errors.Errorf("metadata name %q already present; prev `%s`, new `%s`", enc.Metadata(name), text(prev), text(entity))
+				return errors.Errorf("metadata name %q already present; prev `%s`, new `%s`", enc.MetadataName(name), text(prev), text(entity))
 			}
 			gen.old.namedMetadataDefs[name] = entity
 			gen.old.namedMetadataDefOrder = append(gen.old.namedMetadataDefOrder, name)
 		case *ast.MetadataDef:
 			id := metadataID(entity.ID())
 			if prev, ok := gen.old.metadataDefs[id]; ok {
-				return errors.Errorf("metadata ID %q already present; prev `%s`, new `%s`", enc.Metadata(id), text(prev), text(entity))
+				return errors.Errorf("metadata ID %q already present; prev `%s`, new `%s`", enc.MetadataID(id), text(prev), text(entity))
 			}
 			gen.old.metadataDefs[id] = entity
 			gen.old.metadataDefOrder = append(gen.old.metadataDefOrder, id)
@@ -265,7 +265,7 @@ func (gen *generator) translateNamedMetadataDefs() error {
 	for name, old := range gen.old.namedMetadataDefs {
 		new, ok := gen.new.namedMetadataDefs[name]
 		if !ok {
-			panic(fmt.Errorf("unable to locate metadata name %q", enc.Metadata(name)))
+			panic(fmt.Errorf("unable to locate metadata name %q", enc.MetadataName(name)))
 		}
 		if err := gen.translateNamedMetadataDef(new, old); err != nil {
 			return errors.WithStack(err)
@@ -297,7 +297,7 @@ func (gen *generator) translateMetadataDefs() error {
 	for id, old := range gen.old.metadataDefs {
 		new, ok := gen.new.metadataDefs[id]
 		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.Metadata(id)))
+			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
 		}
 		if err := gen.translateMetadataDef(new, old); err != nil {
 			return errors.WithStack(err)

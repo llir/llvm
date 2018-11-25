@@ -374,14 +374,14 @@ type VectorType struct {
 	// Type name; or empty if not present.
 	TypeName string
 	// Vector length.
-	Len int64
+	Len uint64
 	// Element type.
 	ElemType Type
 }
 
 // NewVector returns a new vector type based on the given vector length and
 // element type.
-func NewVector(len int64, elemType Type) *VectorType {
+func NewVector(len uint64, elemType Type) *VectorType {
 	return &VectorType{
 		Len:      len,
 		ElemType: elemType,
@@ -530,14 +530,14 @@ type ArrayType struct {
 	// Type name; or empty if not present.
 	TypeName string
 	// Array length.
-	Len int64
+	Len uint64
 	// Element type.
 	ElemType Type
 }
 
 // NewArray returns a new array type based on the given array length and element
 // type.
-func NewArray(len int64, elemType Type) *ArrayType {
+func NewArray(len uint64, elemType Type) *ArrayType {
 	return &ArrayType{
 		Len:      len,
 		ElemType: elemType,

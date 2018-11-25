@@ -317,8 +317,7 @@ func (gen *generator) astToIRVectorType(t types.Type, old *ast.VectorType) (type
 		panic(fmt.Errorf("invalid IR type for AST vector type; expected *types.VectorType, got %T", t))
 	}
 	// Vector length.
-	len := uintLit(old.Len())
-	typ.Len = int64(len)
+	typ.Len = uintLit(old.Len())
 	// Element type.
 	elem, err := gen.irType(old.Elem())
 	if err != nil {
@@ -385,8 +384,7 @@ func (gen *generator) astToIRArrayType(t types.Type, old *ast.ArrayType) (types.
 		panic(fmt.Errorf("invalid IR type for AST array type; expected *types.ArrayType, got %T", t))
 	}
 	// Array length.
-	len := uintLit(old.Len())
-	typ.Len = int64(len)
+	typ.Len = uintLit(old.Len())
 	// Element type.
 	elem, err := gen.irType(old.Elem())
 	if err != nil {

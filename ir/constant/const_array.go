@@ -38,7 +38,7 @@ func (c *Array) Type() types.Type {
 	// Cache type if not present.
 	if c.Typ == nil {
 		elemType := c.Elems[0].Type()
-		c.Typ = types.NewArray(int64(len(c.Elems)), elemType)
+		c.Typ = types.NewArray(uint64(len(c.Elems)), elemType)
 	}
 	return c.Typ
 }
@@ -71,7 +71,7 @@ type CharArray struct {
 // NewCharArray returns a new character array constant based on the given
 // character array contents.
 func NewCharArray(x []byte) *CharArray {
-	typ := types.NewArray(int64(len(x)), types.I8)
+	typ := types.NewArray(uint64(len(x)), types.I8)
 	return &CharArray{Typ: typ, X: x}
 }
 

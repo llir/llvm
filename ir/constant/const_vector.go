@@ -37,7 +37,7 @@ func (c *Vector) Type() types.Type {
 	// Cache type if not present.
 	if c.Typ == nil {
 		elemType := c.Elems[0].Type()
-		c.Typ = types.NewVector(int64(len(c.Elems)), elemType)
+		c.Typ = types.NewVector(uint64(len(c.Elems)), elemType)
 	}
 	return c.Typ
 }

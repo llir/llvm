@@ -247,7 +247,7 @@ type InstSelect struct {
 // NewSelect returns a new select instruction based on the given selection
 // condition and operands.
 func NewSelect(cond, x, y value.Value) *InstSelect {
-	inst := &InstSelect{Cond: cond, X: x, Y: x}
+	inst := &InstSelect{Cond: cond, X: x, Y: y}
 	// Compute type.
 	inst.Type()
 	return inst

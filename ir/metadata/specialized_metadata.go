@@ -24,7 +24,7 @@ func (md *DIBasicType) String() string {
 	// '!DIBasicType' '(' Fields=(DIBasicTypeField separator ',')* ')'
 	var fields []string
 	if md.Tag != 0 {
-		field := fmt.Sprintf("tag: %s", md.Tag)
+		field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 		fields = append(fields, field)
 	}
 	if len(md.Name) > 0 {
@@ -170,7 +170,7 @@ type DICompositeType struct {
 func (md *DICompositeType) String() string {
 	// '!DICompositeType' '(' Fields=(DICompositeTypeField separator ',')* ')'
 	var fields []string
-	field := fmt.Sprintf("tag: %s", md.Tag)
+	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -257,7 +257,7 @@ type DIDerivedType struct {
 func (md *DIDerivedType) String() string {
 	// '!DIDerivedType' '(' Fields=(DIDerivedTypeField separator ',')* ')'
 	var fields []string
-	field := fmt.Sprintf("tag: %s", md.Tag)
+	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -500,7 +500,7 @@ type DIImportedEntity struct {
 func (md *DIImportedEntity) String() string {
 	// '!DIImportedEntity' '(' Fields=(DIImportedEntityField separator ',')* ')'
 	var fields []string
-	field := fmt.Sprintf("tag: %s", md.Tag)
+	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
 	field = fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -1058,7 +1058,7 @@ func (md *DITemplateValueParameter) String() string {
 	// '!DITemplateValueParameter' '(' Fields=(DITemplateValueParameterField separator ',')* ')'
 	var fields []string
 	if md.Tag != 0 {
-		field := fmt.Sprintf("tag: %s", md.Tag)
+		field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 		fields = append(fields, field)
 	}
 	if len(md.Name) > 0 {
@@ -1087,7 +1087,7 @@ type GenericDINode struct {
 func (md *GenericDINode) String() string {
 	// '!GenericDINode' '(' Fields=(GenericDINodeField separator ',')* ')'
 	var fields []string
-	field := fmt.Sprintf("tag: %s", md.Tag)
+	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
 	if len(md.Header) > 0 {
 		field := fmt.Sprintf("header: %s", quote(md.Header))
@@ -1095,7 +1095,16 @@ func (md *GenericDINode) String() string {
 	}
 	if len(md.Operands) > 0 {
 		// TODO: figure out what operands output should look like.
-		field = fmt.Sprintf("operands: %v", md.Operands)
+		buf := &strings.Builder{}
+		buf.WriteString("{")
+		for i, o := range md.Operands {
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(o.String())
+		}
+		buf.WriteString("}")
+		field = fmt.Sprintf("operands: %s", buf)
 		fields = append(fields, field)
 	}
 	return fmt.Sprintf("!GenericDINode(%s)", strings.Join(fields, ", "))
