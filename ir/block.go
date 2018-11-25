@@ -19,6 +19,11 @@ type BasicBlock struct {
 	Insts []Instruction
 	// Terminator of the basic block.
 	Term Terminator
+
+	// extra.
+
+	// Parent function; field set by ir.Function.NewBlock.
+	Parent *Function
 }
 
 // NewBlock returns a new basic block based on the given label name. An empty

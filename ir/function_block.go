@@ -4,6 +4,7 @@ package ir
 // name. An empty label name indicates an unnamed basic block.
 func (f *Function) NewBlock(name string) *BasicBlock {
 	block := NewBlock(name)
+	block.Parent = f
 	f.Blocks = append(f.Blocks, block)
 	return block
 }
