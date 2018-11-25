@@ -71,9 +71,9 @@ type Function struct {
 	mu sync.Mutex
 }
 
-// NewFunction returns a new function based on the given function name, return
-// type and function parameters.
-func NewFunction(name string, retType types.Type, params ...*Param) *Function {
+// NewFunc returns a new function based on the given function name, return type
+// and function parameters.
+func NewFunc(name string, retType types.Type, params ...*Param) *Function {
 	paramTypes := make([]types.Type, len(params))
 	for i, param := range params {
 		paramTypes[i] = param.Type()
