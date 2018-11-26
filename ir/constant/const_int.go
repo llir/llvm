@@ -63,7 +63,8 @@ func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 	switch {
 	case strings.HasPrefix(s, "u0x"):
 		s = s[len("u0x"):]
-		x, _ := (&big.Int{}).SetString(s, 16)
+		const base = 16
+		x, _ := (&big.Int{}).SetString(s, base)
 		if x == nil {
 			return nil, errors.Errorf("unable to parse integer constant %q", s)
 		}
@@ -73,7 +74,8 @@ func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 		// e.g. what value should s0x0012312 represent?
 		log.Printf("support for signed hexadecimal integers (%q) not yet implemented", s)
 		s = s[len("s0x"):]
-		x, _ := (&big.Int{}).SetString(s, 16)
+		const base = 16
+		x, _ := (&big.Int{}).SetString(s, base)
 		if x == nil {
 			return nil, errors.Errorf("unable to parse integer constant %q", s)
 		}

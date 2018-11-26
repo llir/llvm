@@ -4,9 +4,9 @@ package types
 
 import "strconv"
 
-const _FloatKind_name = "halffloatdoublex86_fp80fp128ppc_fp128"
+const _FloatKind_name = "halffloatdoublefp128x86_fp80ppc_fp128"
 
-var _FloatKind_index = [...]uint8{0, 4, 9, 15, 23, 28, 37}
+var _FloatKind_index = [...]uint8{0, 4, 9, 15, 20, 28, 37}
 
 func (i FloatKind) String() string {
 	if i >= FloatKind(len(_FloatKind_index)-1) {

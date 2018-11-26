@@ -7,12 +7,13 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
-// Value is an LLVM IR value.
+// Value is an LLVM IR value, which may be used as an operand of instructions
+// and terminators.
 //
 // A Value has one of the following underlying types.
 //
-//    ir.Constant   // https://godoc.org/github.com/llir/llvm/ir#Constant
-//    value.Named   // https://godoc.org/github.com/llir/llvm/ir/value#Named
+//    constant.Constant   // https://godoc.org/github.com/llir/llvm/ir/constant#Constant
+//    value.Named         // https://godoc.org/github.com/llir/llvm/ir/value#Named
 //    TODO: add literal metadata value?
 type Value interface {
 	// String returns the LLVM syntax representation of the value as a type-value

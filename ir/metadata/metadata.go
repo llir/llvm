@@ -48,6 +48,8 @@ func (md *NamedMetadataDef) Def() string {
 
 // ~~~ [ Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// TODO: check if MetadataDef should implement value.Value.
+
 // MetadataDef is a metadata definition.
 type MetadataDef struct {
 	// Metadata definition ID (without '!' prefix).

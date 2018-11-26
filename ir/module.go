@@ -14,7 +14,8 @@ import (
 
 // === [ Modules ] =============================================================
 
-// Module is an LLVM IR module.
+// Module is an LLVM IR module, which consists of top-level declarations and
+// definitions.
 type Module struct {
 	// Type definitions.
 	TypeDefs []types.Type

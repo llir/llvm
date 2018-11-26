@@ -55,6 +55,21 @@ func Equal(t, u Type) bool {
 }
 
 // Type is an LLVM IR type.
+//
+// A Type has one of the following underlying types.
+//
+//    *types.VoidType       // https://godoc.org/github.com/llir/llvm/ir/types#VoidType
+//    *types.FuncType       // https://godoc.org/github.com/llir/llvm/ir/types#FuncType
+//    *types.IntType        // https://godoc.org/github.com/llir/llvm/ir/types#IntType
+//    *types.FloatType      // https://godoc.org/github.com/llir/llvm/ir/types#FloatType
+//    *types.MMXType        // https://godoc.org/github.com/llir/llvm/ir/types#MMXType
+//    *types.PointerType    // https://godoc.org/github.com/llir/llvm/ir/types#PointerType
+//    *types.VectorType     // https://godoc.org/github.com/llir/llvm/ir/types#VectorType
+//    *types.LabelType      // https://godoc.org/github.com/llir/llvm/ir/types#LabelType
+//    *types.TokenType      // https://godoc.org/github.com/llir/llvm/ir/types#TokenType
+//    *types.MetadataType   // https://godoc.org/github.com/llir/llvm/ir/types#MetadataType
+//    *types.ArrayType      // https://godoc.org/github.com/llir/llvm/ir/types#ArrayType
+//    *types.StructType     // https://godoc.org/github.com/llir/llvm/ir/types#StructType
 type Type interface {
 	fmt.Stringer
 	// Def returns the LLVM syntax representation of the definition of the type.
@@ -286,12 +301,18 @@ type FloatKind uint8
 
 // Floating-point kinds.
 const (
-	FloatKindHalf     FloatKind = iota // half
-	FloatKindFloat                     // float
-	FloatKindDouble                    // double
-	FloatKindX86FP80                   // x86_fp80
-	FloatKindFP128                     // fp128
-	FloatKindPPCFP128                  // ppc_fp128
+	// 16-bit floating-point type (IEEE 754 half precision).
+	FloatKindHalf FloatKind = iota // half
+	// 32-bit floating-point type (IEEE 754 single precision).
+	FloatKindFloat // float
+	// 64-bit floating-point type (IEEE 754 double precision).
+	FloatKindDouble // double
+	// 128-bit floating-point type (IEEE 754 quadruple precision).
+	FloatKindFP128 // fp128
+	// 80-bit floating-point type (x86 extended precision).
+	FloatKindX86FP80 // x86_fp80
+	// 128-bit floating point type (IBM extended double).
+	FloatKindPPCFP128 // ppc_fp128
 )
 
 // --- [ MMX types ] -----------------------------------------------------------
@@ -457,7 +478,7 @@ func (t *VectorType) SetName(name string) {
 
 // --- [ Label types ] ---------------------------------------------------------
 
-// LabelType is an LLVM IR label type.
+// LabelType is an LLVM IR label type, which is used for basic block values.
 type LabelType struct {
 	// Type name; or empty if not present.
 	TypeName string
@@ -633,7 +654,8 @@ func (t *ArrayType) SetName(name string) {
 
 // --- [ Structure types ] -----------------------------------------------------
 
-// StructType is an LLVM IR structure type.
+// StructType is an LLVM IR structure type. Identified (named) struct types are
+// uniqued by type names, not by structural identity.
 type StructType struct {
 	// Type name; or empty if not present.
 	TypeName string

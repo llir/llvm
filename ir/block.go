@@ -11,7 +11,7 @@ import (
 // === [ Basic blocks ] ========================================================
 
 // BasicBlock is an LLVM IR basic block; a sequence of non-branching
-// instructions terminated by a control flow instruction.
+// instructions terminated by a control flow instruction (e.g. br or ret).
 type BasicBlock struct {
 	// Name of local variable associated with the basic block.
 	LocalIdent
@@ -29,7 +29,9 @@ type BasicBlock struct {
 // NewBlock returns a new basic block based on the given label name. An empty
 // label name indicates an unnamed basic block.
 func NewBlock(name string) *BasicBlock {
-	return &BasicBlock{LocalIdent: LocalIdent{LocalName: name}}
+	block := &BasicBlock{}
+	block.SetName(name)
+	return block
 }
 
 // String returns the LLVM syntax representation of the basic block as a

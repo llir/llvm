@@ -17,7 +17,9 @@ import (
 
 // === [ Functions ] ===========================================================
 
-// Function is an LLVM IR function.
+// Function is an LLVM IR function. The body of a function definition consists
+// of a set of basic blocks, interconnected by terminator control flow
+// instructions.
 type Function struct {
 	// Function name (without '@' prefix).
 	GlobalName string
