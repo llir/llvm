@@ -199,7 +199,7 @@ func (c *ComdatDef) Def() string {
 // AttrGroupDef is an attribute group definition.
 type AttrGroupDef struct {
 	// Attribute group ID (without '#' prefix).
-	ID string
+	ID int64
 	// Function attributes.
 	FuncAttrs []FuncAttribute
 }

@@ -115,11 +115,11 @@ func TestLabel(t *testing.T) {
 
 func TestAttrGroupID(t *testing.T) {
 	golden := []struct {
-		s    string
+		s    int64
 		want string
 	}{
 		// i=0
-		{s: "42", want: "#42"},
+		{s: 42, want: "#42"},
 	}
 	for i, g := range golden {
 		got := AttrGroupID(g.s)
@@ -199,13 +199,13 @@ func TestMetadataName(t *testing.T) {
 
 func TestMetadataID(t *testing.T) {
 	golden := []struct {
-		s    string
+		s    int64
 		want string
 	}{
 		// i=0
-		{s: "2", want: "!2"},
+		{s: 2, want: "!2"},
 		// i=1
-		{s: "42", want: "!42"},
+		{s: 42, want: "!42"},
 	}
 	for i, g := range golden {
 		got := MetadataID(g.s)

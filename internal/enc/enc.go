@@ -3,6 +3,7 @@ package enc
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -53,8 +54,8 @@ func Label(name string) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func AttrGroupID(id string) string {
-	return "#" + id
+func AttrGroupID(id int64) string {
+	return "#" + strconv.FormatInt(id, 10)
 }
 
 // Comdat encodes a comdat name to its LLVM IR assembly representation.
@@ -101,8 +102,8 @@ func MetadataName(name string) string {
 //
 // References:
 //    http://www.llvm.org/docs/LangRef.html#identifiers
-func MetadataID(id string) string {
-	return "!" + id
+func MetadataID(id int64) string {
+	return "!" + strconv.FormatInt(id, 10)
 }
 
 const (

@@ -53,7 +53,7 @@ func (md *NamedMetadataDef) Def() string {
 // MetadataDef is a metadata definition.
 type MetadataDef struct {
 	// Metadata definition ID (without '!' prefix).
-	ID string
+	ID int64
 	// Metadata definition node.
 	Node MDNode // MDTuple or SpecializedMDNode
 

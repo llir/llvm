@@ -80,14 +80,18 @@ func labelIdent(n ast.LabelIdent) ir.LocalIdent {
 
 // attrGroupID returns the ID (without '#' prefix) of the given attribute group
 // ID.
-func attrGroupID(n ast.AttrGroupID) string {
-	id := n.Text()
+func attrGroupID(n ast.AttrGroupID) int64 {
+	text := n.Text()
 	const prefix = "#"
-	if !strings.HasPrefix(id, prefix) {
-		panic(fmt.Errorf("invalid attribute group ID %q; missing '%s' prefix", id, prefix))
+	if !strings.HasPrefix(text, prefix) {
+		panic(fmt.Errorf("invalid attribute group ID %q; missing '%s' prefix", text, prefix))
 	}
-	id = id[len(prefix):]
-	return unquote(id)
+	text = text[len(prefix):]
+	id, err := strconv.ParseInt(text, 10, 64)
+	if err != nil {
+		panic(fmt.Errorf("unable to parse attribute group ID %q; %v", text, err))
+	}
+	return id
 }
 
 // --- [ Comdat Identifiers ] --------------------------------------------------
@@ -105,26 +109,31 @@ func comdatName(n ast.ComdatName) string {
 
 // --- [ Metadata Identifiers ] ------------------------------------------------
 
-// metadataIdent returns the identifier (without '!' prefix) of the given
-// metadata identifier.
-func metadataIdent(ident string) string {
-	const prefix = "!"
-	if !strings.HasPrefix(ident, prefix) {
-		panic(fmt.Errorf("invalid metadata identifier %q; missing '%s' prefix", ident, prefix))
-	}
-	ident = ident[len(prefix):]
-	return string(enc.Unescape(ident))
-}
-
 // metadataName returns the name (without '!' prefix) of the given metadata
 // name.
 func metadataName(n ast.MetadataName) string {
-	return metadataIdent(n.Text())
+	name := n.Text()
+	const prefix = "!"
+	if !strings.HasPrefix(name, prefix) {
+		panic(fmt.Errorf("invalid metadata name %q; missing '%s' prefix", name, prefix))
+	}
+	name = name[len(prefix):]
+	return string(enc.Unescape(name))
 }
 
 // metadataID returns the ID (without '!' prefix) of the given metadata ID.
-func metadataID(n ast.MetadataID) string {
-	return metadataIdent(n.Text())
+func metadataID(n ast.MetadataID) int64 {
+	text := n.Text()
+	const prefix = "!"
+	if !strings.HasPrefix(text, prefix) {
+		panic(fmt.Errorf("invalid metadata ID %q; missing '%s' prefix", text, prefix))
+	}
+	text = text[len(prefix):]
+	id, err := strconv.ParseInt(text, 10, 64)
+	if err != nil {
+		panic(fmt.Errorf("unable to parse metadata ID %q; %v", text, err))
+	}
+	return id
 }
 
 // === [ Literals ] ============================================================

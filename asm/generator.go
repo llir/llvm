@@ -34,17 +34,17 @@ func newGenerator() *generator {
 			typeDefs:          make(map[string]*ast.TypeDef),
 			comdatDefs:        make(map[string]*ast.ComdatDef),
 			globals:           make(map[ir.GlobalIdent]ast.LlvmNode),
-			attrGroupDefs:     make(map[string]*ast.AttrGroupDef),
+			attrGroupDefs:     make(map[int64]*ast.AttrGroupDef),
 			namedMetadataDefs: make(map[string]*ast.NamedMetadataDef),
-			metadataDefs:      make(map[string]*ast.MetadataDef),
+			metadataDefs:      make(map[int64]*ast.MetadataDef),
 		},
 		new: newIndex{
 			typeDefs:          make(map[string]types.Type),
 			comdatDefs:        make(map[string]*ir.ComdatDef),
 			globals:           make(map[ir.GlobalIdent]constant.Constant),
-			attrGroupDefs:     make(map[string]*ir.AttrGroupDef),
+			attrGroupDefs:     make(map[int64]*ir.AttrGroupDef),
 			namedMetadataDefs: make(map[string]*metadata.NamedMetadataDef),
-			metadataDefs:      make(map[string]*metadata.MetadataDef),
+			metadataDefs:      make(map[int64]*metadata.MetadataDef),
 		},
 	}
 }
@@ -71,22 +71,23 @@ type oldIndex struct {
 	globals map[ir.GlobalIdent]ast.LlvmNode
 	// attrGroupDefs maps from attribute group ID (without '#' prefix) to
 	// attribute group definition.
-	attrGroupDefs map[string]*ast.AttrGroupDef
+	attrGroupDefs map[int64]*ast.AttrGroupDef
 	// namedMetadataDefs maps from metadata name (without '!' prefix) to named
 	// metadata definition.
 	namedMetadataDefs map[string]*ast.NamedMetadataDef
 	// metadataDefs maps from metadata ID (without '!' prefix) to metadata
 	// definition.
-	metadataDefs map[string]*ast.MetadataDef
+	metadataDefs map[int64]*ast.MetadataDef
 	// useListOrders is a slice of use-list orders in their order of occurrence
 	// in the input.
 	useListOrders []*ast.UseListOrder
 	// useListOrderBBs is a slice of basic block specific use-list orders in
 	// their order of occurrence in the input.
 	useListOrderBBs []*ast.UseListOrderBB
+
 	// comdatDefOrder records the comdat name of comdat definitions in their
 	// order of occurrence in the input.
-	comdatDefOrder []string
+	comdatDefOrder []string // TODO: check if sorted, if so, remove.
 	// globalOrder records the global identifier of global declarations and
 	// definitions in their order of occurrence in the input.
 	globalOrder []ir.GlobalIdent
@@ -98,13 +99,13 @@ type oldIndex struct {
 	funcOrder []ir.GlobalIdent
 	// attrGroupDefOrder records the attribute group ID of attribute gruop
 	// definitions in their order of occurrence in the input.
-	attrGroupDefOrder []string
+	attrGroupDefOrder []int64 // TODO: check if sorted, if so, remove.
 	// namedMetadataDefOrder records the metadata name of named metadata
 	// definitions in their order of occurrence in the input.
-	namedMetadataDefOrder []string
+	namedMetadataDefOrder []string // TODO: check if sorted, if so, remove.
 	// metadataDefOrder records the metadata ID of metadata definitions in their
 	// order of occurrence in the input.
-	metadataDefOrder []string
+	metadataDefOrder []int64 // TODO: check if sorted, if so, remove.
 }
 
 // newIndex is an index of IR top-level entities.
@@ -127,11 +128,11 @@ type newIndex struct {
 	globals map[ir.GlobalIdent]constant.Constant
 	// attrGroupDefs maps from attribute group ID (without '#' prefix) to
 	// attribute group definition.
-	attrGroupDefs map[string]*ir.AttrGroupDef
+	attrGroupDefs map[int64]*ir.AttrGroupDef
 	// namedMetadataDefs maps from metadata name (without '!' prefix) to named
 	// metadata definition.
 	namedMetadataDefs map[string]*metadata.NamedMetadataDef
 	// metadataDefs maps from metadata ID (without '!' prefix) to metadata
 	// definition.
-	metadataDefs map[string]*metadata.MetadataDef
+	metadataDefs map[int64]*metadata.MetadataDef
 }
