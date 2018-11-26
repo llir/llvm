@@ -126,7 +126,7 @@ func main() {
 	}
 	// Evalute and print the return value of the `@main` function.
 	for _, f := range m.Funcs {
-		if f.GlobalName == "main" {
+		if f.Name() == "main" {
 			e := newEvaluator(f)
 			fmt.Println("result:", e.eval())
 			break

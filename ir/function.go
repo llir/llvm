@@ -169,7 +169,7 @@ func (f *Function) AssignIDs() error {
 			if n.ID() != 0 && id != n.ID() {
 				want := strconv.FormatInt(id, 10)
 				got := strconv.FormatInt(n.ID(), 10)
-				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", enc.Global(f.GlobalName), enc.Local(want), enc.Local(got))
+				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", f.Ident(), enc.Local(want), enc.Local(got))
 			}
 			n.SetID(id)
 			id++
@@ -242,7 +242,7 @@ func headerString(f *Function) string {
 		fmt.Fprintf(buf, " %s", attr)
 	}
 	fmt.Fprintf(buf, " %s", f.Sig.RetType)
-	fmt.Fprintf(buf, " %s(", enc.Global(f.GlobalName))
+	fmt.Fprintf(buf, " %s(", f.Ident())
 	for i, param := range f.Params {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -266,7 +266,7 @@ func headerString(f *Function) string {
 		fmt.Fprintf(buf, " section %s", quote(f.Section))
 	}
 	if f.Comdat != nil {
-		if f.Comdat.Name == f.GlobalName {
+		if f.Comdat.Name == f.Name() {
 			buf.WriteString(" comdat")
 		} else {
 			fmt.Fprintf(buf, " %s", f.Comdat)

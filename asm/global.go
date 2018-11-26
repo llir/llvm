@@ -233,13 +233,13 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 	if n := old.Comdat(); n.IsValid() {
 		// When comdat name is omitted, the global name is used as an implicit
 		// comdat name.
-		name := new.GlobalName
+		name := new.Name()
 		if n := n.Name(); n.IsValid() {
 			name = comdatName(n)
 		}
 		def, ok := gen.new.comdatDefs[name]
 		if !ok {
-			return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), enc.Global(new.GlobalName))
+			return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), new.Ident())
 		}
 		new.Comdat = def
 	}
@@ -309,13 +309,13 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 	if n := old.Comdat(); n.IsValid() {
 		// When comdat name is omitted, the global name is used as an implicit
 		// comdat name.
-		name := new.GlobalName
+		name := new.Name()
 		if n := n.Name(); n.IsValid() {
 			name = comdatName(n)
 		}
 		def, ok := gen.new.comdatDefs[name]
 		if !ok {
-			return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), enc.Global(new.GlobalName))
+			return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), new.Ident())
 		}
 		new.Comdat = def
 	}
@@ -543,13 +543,13 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 	if n := old.Comdat(); n.IsValid() {
 		// When comdat name is omitted, the function name is used as an implicit
 		// comdat name.
-		name := new.GlobalName
+		name := new.Name()
 		if n := n.Name(); n.IsValid() {
 			name = comdatName(n)
 		}
 		def, ok := gen.new.comdatDefs[name]
 		if !ok {
-			return errors.Errorf("unable to locate comdat identifier %q used in function header of %q", enc.Comdat(name), enc.Global(new.GlobalName))
+			return errors.Errorf("unable to locate comdat identifier %q used in function header of %q", enc.Comdat(name), new.Ident())
 		}
 		new.Comdat = def
 	}

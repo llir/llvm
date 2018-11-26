@@ -164,7 +164,7 @@ func (g *Global) Def() string {
 		fmt.Fprintf(buf, ", section %s", quote(g.Section))
 	}
 	if g.Comdat != nil {
-		if g.Comdat.Name == g.GlobalName {
+		if g.Comdat.Name == g.Name() {
 			buf.WriteString(", comdat")
 		} else {
 			fmt.Fprintf(buf, ", %s", g.Comdat)
