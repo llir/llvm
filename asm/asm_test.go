@@ -65,6 +65,10 @@ func TestParseFile(t *testing.T) {
 		// Constant expressions.
 		{path: "../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll.golden"},
 
+		// Vector constant expressions.
+		{path: "../testdata/llvm/test/Transforms/InstCombine/vec_demanded_elts.ll"},
+		{path: "../testdata/llvm/test/Transforms/InstCombine/vector_insertelt_shuffle.ll"},
+
 		/*
 			// LLVM test/Features.
 			{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
