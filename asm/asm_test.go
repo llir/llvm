@@ -72,6 +72,10 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Transforms/InstCombine/vec_demanded_elts.ll"},
 		{path: "../testdata/llvm/test/Transforms/InstCombine/vector_insertelt_shuffle.ll"},
 
+		// Use of address space in function declaration and dereferenable
+		// parameter attribute.
+		{path: "../testdata/llvm/test/Transforms/InstSimplify/compare.ll"},
+
 		/*
 			// LLVM test/Features.
 			{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},

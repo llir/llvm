@@ -513,9 +513,7 @@ func irParamAttribute(n ast.ParamAttribute) ir.ParamAttribute {
 	case *ast.Align:
 		return ir.Align(uintLit(n.N()))
 	case *ast.Dereferenceable:
-		return ir.Dereferenceable{
-			N: uintLit(n.N()),
-		}
+		return ir.Dereferenceable{N: uintLit(n.N())}
 	case *ast.DereferenceableOrNull:
 		return ir.Dereferenceable{
 			N:           uintLit(n.N()),
@@ -543,8 +541,7 @@ func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 	case *ast.Align:
 		return ir.Align(uintLit(n.N()))
 	case *ast.Dereferenceable:
-		// TODO: add support for Dereferenceable.
-		panic("support for return attribute Dereferenceable not yet implemented")
+		return ir.Dereferenceable{N: uintLit(n.N())}
 	case *ast.ReturnAttr:
 		return asmenum.ReturnAttrFromString(n.Text())
 	default:
