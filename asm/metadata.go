@@ -58,10 +58,6 @@ func (gen *generator) irMDNode(old ast.MDNode) (metadata.MDNode, error) {
 	}
 }
 
-func irDIExpression(old *ast.DIExpression) *metadata.DIExpression {
-	panic("not yet implemented")
-}
-
 func (gen *generator) irMDTuple(old *ast.MDTuple) (*metadata.MDTuple, error) {
 	tuple := &metadata.MDTuple{}
 	for _, oldField := range old.MDFields().MDFields() {
@@ -135,7 +131,7 @@ func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.MetadataNod
 		}
 		return node, nil
 	case *ast.DIExpression:
-		return irDIExpression(old), nil
+		return gen.irDIExpression(old)
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}

@@ -33,6 +33,9 @@ func TestParseFile(t *testing.T) {
 		{path: "testdata/inst_vector.ll"},
 		{path: "testdata/terminator.ll"},
 
+		// DIExpression used in named metdata definition.
+		{path: "testdata/diexpression.ll"},
+
 		// Floating-point test cases (issue #31).
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
 
