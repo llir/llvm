@@ -17,7 +17,6 @@ import (
 func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 	// Index AST top-level entities.
 	// track added type definitions.
-	addedTypeDef := make(map[string]bool)
 	for _, entity := range old.TopLevelEntities() {
 		switch entity := entity.(type) {
 		case *ast.SourceFilename:
@@ -38,14 +37,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 				}
 			}
 			gen.old.typeDefs[name] = entity
-			if !addedTypeDef[name] {
-				// Only record the first type definition of each type name.
-				//
-				// Type definitions of opaque types may contain several type
-				// definitions with the same type name.
-				gen.old.typeDefOrder = append(gen.old.typeDefOrder, name)
-			}
-			addedTypeDef[name] = true
 		case *ast.ComdatDef:
 			name := comdatName(entity.Name())
 			if prev, ok := gen.old.comdatDefs[name]; ok {

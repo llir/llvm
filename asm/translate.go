@@ -61,6 +61,7 @@ package asm
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/llir/ll/ast"
@@ -134,13 +135,20 @@ func translate(old *ast.Module) (*ir.Module, error) {
 // addDefsToModule adds IR top-level declarations and definitions to the module
 // in order of occurrence in the input.
 func (gen *generator) addDefsToModule() {
-	for _, ident := range gen.old.typeDefOrder {
-		def, ok := gen.new.typeDefs[ident]
+	// Output type definitions in alphabetical order.
+	var typeNames []string
+	for typeName := range gen.new.typeDefs {
+		typeNames = append(typeNames, typeName)
+	}
+	sort.Strings(typeNames)
+	for _, typeName := range typeNames {
+		def, ok := gen.new.typeDefs[typeName]
 		if !ok {
-			panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(ident)))
+			panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(typeName)))
 		}
 		gen.m.TypeDefs = append(gen.m.TypeDefs, def)
 	}
+
 	for _, name := range gen.old.comdatDefOrder {
 		def, ok := gen.new.comdatDefs[name]
 		if !ok {

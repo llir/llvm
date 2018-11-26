@@ -84,9 +84,6 @@ type oldIndex struct {
 	// useListOrderBBs is a slice of basic block specific use-list orders in
 	// their order of occurrence in the input.
 	useListOrderBBs []*ast.UseListOrderBB
-	// typeDefOrder records the local identifier of type definitions in their
-	// order of occurrence in the input.
-	typeDefOrder []string
 	// comdatDefOrder records the comdat name of comdat definitions in their
 	// order of occurrence in the input.
 	comdatDefOrder []string
