@@ -123,6 +123,51 @@ type FuncAttribute interface {
 	IsFuncAttribute()
 }
 
+// GlobalIdent is a global identifier.
+type GlobalIdent struct {
+	GlobalName string
+	GlobalID   int64
+}
+
+// Ident returns the identifier associated with the global identifier.
+func (i GlobalIdent) Ident() string {
+	if i.IsUnnamed() {
+		id := strconv.FormatInt(i.GlobalID, 10)
+		return enc.Global(id)
+	}
+	name := i.GlobalName
+	if x, err := strconv.ParseInt(name, 10, 64); err == nil {
+		// Print GlobalName with quotes if it is a number; e.g. @"42".
+		return fmt.Sprintf(`@"%d"`, x)
+	}
+	return enc.Global(name)
+}
+
+// Name returns the name of the global identifier.
+func (i GlobalIdent) Name() string {
+	return i.GlobalName
+}
+
+// SetName sets the name of the global identifier.
+func (i *GlobalIdent) SetName(name string) {
+	i.GlobalName = name
+}
+
+// ID returns the ID of the global identifier.
+func (i GlobalIdent) ID() int64 {
+	return i.GlobalID
+}
+
+// SetID sets the ID of the global identifier.
+func (i *GlobalIdent) SetID(id int64) {
+	i.GlobalID = id
+}
+
+// IsUnnamed reports whether the global identifier is unnamed.
+func (i GlobalIdent) IsUnnamed() bool {
+	return len(i.GlobalName) == 0
+}
+
 // LocalIdent is a local identifier.
 type LocalIdent struct {
 	LocalName string

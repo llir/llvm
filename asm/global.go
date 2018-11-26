@@ -9,6 +9,7 @@ import (
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
 )
 
@@ -19,12 +20,12 @@ import (
 // declarations and definitions (without bodies but with types) of the given
 // module.
 func (gen *generator) createGlobals() error {
-	for name, old := range gen.old.globals {
-		new, err := gen.newGlobal(name, old)
+	for ident, old := range gen.old.globals {
+		new, err := gen.newGlobal(ident, old)
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		gen.new.globals[name] = new
+		gen.new.globals[ident] = new
 	}
 	return nil
 }
@@ -32,10 +33,11 @@ func (gen *generator) createGlobals() error {
 // newGlobal returns a new scaffolding IR value (without body but with type)
 // based on the given AST global declaration or definition, alias or IFunc
 // definition, or function declaration or definition.
-func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constant, error) {
+func (gen *generator) newGlobal(ident ir.GlobalIdent, old ast.LlvmNode) (constant.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
-		new := &ir.Global{GlobalName: name}
+		new := &ir.Global{}
+		setGlobalIdent(new, ident)
 		// Content type.
 		contentType, err := gen.irType(old.ContentType())
 		if err != nil {
@@ -49,7 +51,8 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constan
 		}
 		return new, nil
 	case *ast.GlobalDef:
-		new := &ir.Global{GlobalName: name}
+		new := &ir.Global{}
+		setGlobalIdent(new, ident)
 		// Content type.
 		contentType, err := gen.irType(old.ContentType())
 		if err != nil {
@@ -72,22 +75,19 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constan
 		kind := old.IndirectSymbolKind().Text()
 		switch kind {
 		case "alias":
-			new := &ir.Alias{
-				GlobalName: name,
-				Typ:        types.NewPointer(contentType),
-			}
+			new := &ir.Alias{Typ: types.NewPointer(contentType)}
+			setGlobalIdent(new, ident)
 			return new, nil
 		case "ifunc":
-			new := &ir.IFunc{
-				GlobalName: name,
-				Typ:        types.NewPointer(contentType),
-			}
+			new := &ir.IFunc{Typ: types.NewPointer(contentType)}
+			setGlobalIdent(new, ident)
 			return new, nil
 		default:
 			panic(fmt.Errorf("support for indirect symbol kind %q not yet implemented", kind))
 		}
 	case *ast.FuncDecl:
-		new := &ir.Function{GlobalName: name}
+		new := &ir.Function{}
+		setGlobalIdent(new, ident)
 		// Function signature.
 		sig, err := gen.sigFromHeader(old.Header())
 		if err != nil {
@@ -101,7 +101,8 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constan
 		}
 		return new, nil
 	case *ast.FuncDef:
-		new := &ir.Function{GlobalName: name}
+		new := &ir.Function{}
+		setGlobalIdent(new, ident)
 		// Function signature.
 		sig, err := gen.sigFromHeader(old.Header())
 		if err != nil {
@@ -126,10 +127,10 @@ func (gen *generator) newGlobal(name string, old ast.LlvmNode) (constant.Constan
 func (gen *generator) translateGlobals() error {
 	// TODO: make concurrent and benchmark. Each gen.translateGlobalDecl,
 	// gen.translateGlobalDef, etc can be run in a Go-routine.
-	for name, old := range gen.old.globals {
-		v, ok := gen.new.globals[name]
+	for ident, old := range gen.old.globals {
+		v, ok := gen.new.globals[ident]
 		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", enc.Global(name)))
+			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
 		}
 		switch old := old.(type) {
 		case *ast.GlobalDecl:
@@ -615,4 +616,22 @@ func text(n ast.LlvmNode) string {
 		return n.Text()
 	}
 	return ""
+}
+
+// global is a global variable.
+type global interface {
+	value.Named
+	// ID returns the ID of the global identifier.
+	ID() int64
+	// SetID sets the ID of the global identifier.
+	SetID(id int64)
+}
+
+// setGlobalIdent sets the identifier of the given global variable.
+func setGlobalIdent(g global, ident ir.GlobalIdent) {
+	if ident.IsUnnamed() {
+		g.SetID(ident.GlobalID)
+	} else {
+		g.SetName(ident.GlobalName)
+	}
 }

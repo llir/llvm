@@ -23,14 +23,20 @@ import (
 
 // globalIdent returns the identifier (without '@' prefix) of the given global
 // identifier.
-func globalIdent(n ast.GlobalIdent) string {
+func globalIdent(n ast.GlobalIdent) ir.GlobalIdent {
 	ident := n.Text()
 	const prefix = "@"
 	if !strings.HasPrefix(ident, prefix) {
 		panic(fmt.Errorf("invalid global identifier %q; missing '%s' prefix", ident, prefix))
 	}
 	ident = ident[len(prefix):]
-	return unquote(ident)
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
+		return ir.GlobalIdent{GlobalID: id}
+	}
+	// Unquote after trying to parse as ID, since %"42" is recognized as named
+	// and not unnamed.
+	ident = unquote(ident)
+	return ir.GlobalIdent{GlobalName: ident}
 }
 
 // --- [ Local Identifiers ] ---------------------------------------------------
@@ -38,42 +44,36 @@ func globalIdent(n ast.GlobalIdent) string {
 // localIdent returns the identifier (without '%' prefix) of the given local
 // identifier.
 func localIdent(n ast.LocalIdent) ir.LocalIdent {
-	name := n.Text()
+	ident := n.Text()
 	const prefix = "%"
-	if !strings.HasPrefix(name, prefix) {
-		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", name, prefix))
+	if !strings.HasPrefix(ident, prefix) {
+		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", ident, prefix))
 	}
-	name = name[len(prefix):]
-	if id, err := strconv.ParseInt(name, 10, 64); err == nil {
+	ident = ident[len(prefix):]
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
 		return ir.LocalIdent{LocalID: id}
 	}
 	// Unquote after trying to parse as ID, since %"42" is recognized as named
 	// and not unnamed.
-	name = unquote(name)
-	return ir.LocalIdent{LocalName: name}
+	ident = unquote(ident)
+	return ir.LocalIdent{LocalName: ident}
 }
 
 // --- [ Label Identifiers ] ---------------------------------------------------
 
 // labelIdent returns the identifier (without ':' suffix) of the given label
 // identifier.
-func labelIdent(n ast.LabelIdent) string {
+func labelIdent(n ast.LabelIdent) ir.LocalIdent {
 	ident := n.Text()
 	const suffix = ":"
 	if !strings.HasSuffix(ident, suffix) {
 		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", ident, suffix))
 	}
 	ident = ident[:len(ident)-len(suffix)]
-	return unquote(ident)
-}
-
-// optLabelIdent returns the identifier (without ':' suffix) of the given
-// optional label identifier.
-func optLabelIdent(n ast.LabelIdent) string {
-	if !n.IsValid() {
-		return ""
-	}
-	return labelIdent(n)
+	// Note, label identifiers are always named if present (i.e. `42:` has the
+	// label name 42, not the ID 42).
+	ident = unquote(ident)
+	return ir.LocalIdent{LocalName: ident}
 }
 
 // --- [ Attribute Group Identifiers ] -----------------------------------------
@@ -658,14 +658,14 @@ func (gen *generator) irUseListOrder(n ast.UseListOrder) (*ir.UseListOrder, erro
 // corresponding to the given AST basic block specific use-list order.
 func (gen *generator) irUseListOrderBB(n ast.UseListOrderBB) (*ir.UseListOrderBB, error) {
 	// Function.
-	funcName := globalIdent(n.Func())
-	v, ok := gen.new.globals[funcName]
+	funcIdent := globalIdent(n.Func())
+	v, ok := gen.new.globals[funcIdent]
 	if !ok {
-		return nil, errors.Errorf("unable to locate global identifier %q", enc.Global(funcName))
+		return nil, errors.Errorf("unable to locate global identifier %q", funcIdent.Ident())
 	}
 	f, ok := v.(*ir.Function)
 	if !ok {
-		return nil, errors.Errorf("invalid function type of %q; expected *ir.Function, got %T", enc.Global(funcName), v)
+		return nil, errors.Errorf("invalid function type of %q; expected *ir.Function, got %T", funcIdent.Ident(), v)
 	}
 	// Basic block.
 	blockIdent := localIdent(n.Block())
@@ -677,7 +677,7 @@ func (gen *generator) irUseListOrderBB(n ast.UseListOrderBB) (*ir.UseListOrderBB
 		}
 	}
 	if block == nil {
-		return nil, errors.Errorf("unable to locate basic block %q of function %q", blockIdent.Ident(), enc.Global(funcName))
+		return nil, errors.Errorf("unable to locate basic block %q of function %q", blockIdent.Ident(), funcIdent.Ident())
 	}
 	// Indices.
 	var indices []int64

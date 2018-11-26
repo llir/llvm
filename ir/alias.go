@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
@@ -15,7 +14,7 @@ import (
 // Alias is an alias of a global variable or constant expression.
 type Alias struct {
 	// Alias name (without '@' prefix).
-	GlobalName string
+	GlobalIdent
 	// Aliasee.
 	Aliasee constant.Constant
 
@@ -37,7 +36,8 @@ type Alias struct {
 
 // NewAlias returns a new alias based on the given alias name and aliasee.
 func NewAlias(name string, aliasee constant.Constant) *Alias {
-	alias := &Alias{GlobalName: name, Aliasee: aliasee}
+	alias := &Alias{Aliasee: aliasee}
+	alias.SetName(name)
 	// Compute type.
 	alias.Type()
 	return alias
@@ -60,21 +60,6 @@ func (a *Alias) Type() types.Type {
 		a.Typ = typ
 	}
 	return a.Typ
-}
-
-// Ident returns the identifier associated with the alias.
-func (a *Alias) Ident() string {
-	return enc.Global(a.GlobalName)
-}
-
-// Name returns the name of the alias.
-func (a *Alias) Name() string {
-	return a.GlobalName
-}
-
-// SetName sets the name of the alias.
-func (a *Alias) SetName(name string) {
-	a.GlobalName = name
 }
 
 // Def returns the LLVM syntax representation of the alias definition.

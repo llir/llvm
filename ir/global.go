@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
@@ -16,7 +15,7 @@ import (
 // Global is a global variable declaration or definition.
 type Global struct {
 	// Global variable name (without '@' prefix).
-	GlobalName string
+	GlobalIdent
 	// Immutability of global variable (constant or global).
 	Immutable bool
 	// Content type.
@@ -59,7 +58,8 @@ type Global struct {
 // NewGlobalDecl returns a new global variable declaration based on the given
 // global variable name and content type.
 func NewGlobalDecl(name string, contentType types.Type) *Global {
-	global := &Global{GlobalName: name, ContentType: contentType}
+	global := &Global{ContentType: contentType}
+	global.SetName(name)
 	// Compute type.
 	global.Type()
 	return global
@@ -68,7 +68,8 @@ func NewGlobalDecl(name string, contentType types.Type) *Global {
 // NewGlobalDef returns a new global variable definition based on the given
 // global variable name and initial value.
 func NewGlobalDef(name string, init constant.Constant) *Global {
-	global := &Global{GlobalName: name, ContentType: init.Type(), Init: init}
+	global := &Global{ContentType: init.Type(), Init: init}
+	global.SetName(name)
 	// Compute type.
 	global.Type()
 	return global
@@ -87,21 +88,6 @@ func (g *Global) Type() types.Type {
 		g.Typ = types.NewPointer(g.ContentType)
 	}
 	return g.Typ
-}
-
-// Ident returns the identifier associated with the global variable.
-func (g *Global) Ident() string {
-	return enc.Global(g.GlobalName)
-}
-
-// Name returns the name of the global variable.
-func (g *Global) Name() string {
-	return g.GlobalName
-}
-
-// SetName sets the name of the global variable.
-func (g *Global) SetName(name string) {
-	g.GlobalName = name
 }
 
 // Def returns the LLVM syntax representation of the global variable definition

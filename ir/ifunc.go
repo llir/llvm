@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
@@ -15,7 +14,7 @@ import (
 // IFunc is an indirect function (a special kind of function alias).
 type IFunc struct {
 	// IFunc name (without '@' prefix).
-	GlobalName string
+	GlobalIdent
 	// Resolver.
 	Resolver constant.Constant
 
@@ -38,7 +37,8 @@ type IFunc struct {
 // NewIFunc returns a new indirect function based on the given IFunc name and
 // resolver.
 func NewIFunc(name string, resolver constant.Constant) *IFunc {
-	ifunc := &IFunc{GlobalName: name, Resolver: resolver}
+	ifunc := &IFunc{Resolver: resolver}
+	ifunc.SetName(name)
 	// Compute type.
 	ifunc.Type()
 	return ifunc
@@ -61,21 +61,6 @@ func (i *IFunc) Type() types.Type {
 		i.Typ = typ
 	}
 	return i.Typ
-}
-
-// Ident returns the identifier associated with the IFunc.
-func (i *IFunc) Ident() string {
-	return enc.Global(i.GlobalName)
-}
-
-// Name returns the name of the IFunc.
-func (i *IFunc) Name() string {
-	return i.GlobalName
-}
-
-// SetName sets the name of the IFunc.
-func (i *IFunc) SetName(name string) {
-	i.GlobalName = name
 }
 
 // Def returns the LLVM syntax representation of the IFunc definition.

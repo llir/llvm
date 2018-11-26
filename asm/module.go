@@ -56,35 +56,35 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		case *ast.GlobalDecl:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
+				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.GlobalDef:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
+				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.IndirectSymbolDef:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
+				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.indirectSymbolDefOrder = append(gen.old.indirectSymbolDefOrder, ident)
 		case *ast.FuncDecl:
 			ident := globalIdent(entity.Header().Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
+				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.funcOrder = append(gen.old.funcOrder, ident)
 		case *ast.FuncDef:
 			ident := globalIdent(entity.Header().Name())
 			if prev, ok := gen.old.globals[ident]; ok {
-				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", enc.Global(ident), text(prev), text(entity))
+				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.funcOrder = append(gen.old.funcOrder, ident)

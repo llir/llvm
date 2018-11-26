@@ -80,9 +80,10 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 	// Note: Function parameters are already translated in astToIRFuncHeader.
 	f := fgen.f
 	for _, oldBlock := range oldBlocks {
-		blockName := optLabelIdent(oldBlock.Name())
-		// Use f.NewBlock to also set Parent of block.
-		block := f.NewBlock(blockName)
+		block := &ir.BasicBlock{}
+		if n := oldBlock.Name(); n.IsValid() {
+			block.LocalIdent = labelIdent(n)
+		}
 		for _, oldInst := range oldBlock.Insts() {
 			inst, err := fgen.newIRInst(oldInst)
 			if err != nil {
@@ -95,6 +96,8 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 			return errors.WithStack(err)
 		}
 		block.Term = term
+		block.Parent = f
+		f.Blocks = append(f.Blocks, block)
 	}
 	return nil
 }

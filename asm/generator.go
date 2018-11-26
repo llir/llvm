@@ -33,7 +33,7 @@ func newGenerator() *generator {
 		old: oldIndex{
 			typeDefs:          make(map[string]*ast.TypeDef),
 			comdatDefs:        make(map[string]*ast.ComdatDef),
-			globals:           make(map[string]ast.LlvmNode),
+			globals:           make(map[ir.GlobalIdent]ast.LlvmNode),
 			attrGroupDefs:     make(map[string]*ast.AttrGroupDef),
 			namedMetadataDefs: make(map[string]*ast.NamedMetadataDef),
 			metadataDefs:      make(map[string]*ast.MetadataDef),
@@ -41,7 +41,7 @@ func newGenerator() *generator {
 		new: newIndex{
 			typeDefs:          make(map[string]types.Type),
 			comdatDefs:        make(map[string]*ir.ComdatDef),
-			globals:           make(map[string]constant.Constant),
+			globals:           make(map[ir.GlobalIdent]constant.Constant),
 			attrGroupDefs:     make(map[string]*ir.AttrGroupDef),
 			namedMetadataDefs: make(map[string]*metadata.NamedMetadataDef),
 			metadataDefs:      make(map[string]*metadata.MetadataDef),
@@ -68,7 +68,7 @@ type oldIndex struct {
 	//    *ast.IFuncDef
 	//    *ast.FuncDecl
 	//    *ast.FuncDef
-	globals map[string]ast.LlvmNode
+	globals map[ir.GlobalIdent]ast.LlvmNode
 	// attrGroupDefs maps from attribute group ID (without '#' prefix) to
 	// attribute group definition.
 	attrGroupDefs map[string]*ast.AttrGroupDef
@@ -92,13 +92,13 @@ type oldIndex struct {
 	comdatDefOrder []string
 	// globalOrder records the global identifier of global declarations and
 	// definitions in their order of occurrence in the input.
-	globalOrder []string
+	globalOrder []ir.GlobalIdent
 	// indirectSymbolDefOrder records the global identifier of indirect symbol
 	// definitions in their order of occurrence in the input.
-	indirectSymbolDefOrder []string
+	indirectSymbolDefOrder []ir.GlobalIdent
 	// funcOrder records the global identifier of function declarations and
 	// definitions in their order of occurrence in the input.
-	funcOrder []string
+	funcOrder []ir.GlobalIdent
 	// attrGroupDefOrder records the attribute group ID of attribute gruop
 	// definitions in their order of occurrence in the input.
 	attrGroupDefOrder []string
@@ -127,7 +127,7 @@ type newIndex struct {
 	//    *ir.Alias
 	//    *ir.IFunc
 	//    *ir.Function
-	globals map[string]constant.Constant
+	globals map[ir.GlobalIdent]constant.Constant
 	// attrGroupDefs maps from attribute group ID (without '#' prefix) to
 	// attribute group definition.
 	attrGroupDefs map[string]*ir.AttrGroupDef

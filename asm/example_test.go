@@ -21,7 +21,7 @@ func Example() {
 	//     TypeDefs: nil,
 	//     Globals:  {
 	//         &ir.Global{
-	//             GlobalName:  "seed",
+	//             GlobalIdent: ir.GlobalIdent{GlobalName:"seed", GlobalID:0},
 	//             Immutable:   false,
 	//             ContentType: &types.IntType{TypeName:"", BitSize:32},
 	//             Init:        &constant.Int{
@@ -49,8 +49,8 @@ func Example() {
 	//     },
 	//     Funcs: {
 	//         &ir.Function{
-	//             GlobalName: "abs",
-	//             Sig:        &types.FuncType{
+	//             GlobalIdent: ir.GlobalIdent{GlobalName:"abs", GlobalID:0},
+	//             Sig:         &types.FuncType{
 	//                 TypeName: "",
 	//                 RetType:  &types.IntType{TypeName:"", BitSize:32},
 	//                 Params:   {
@@ -90,8 +90,8 @@ func Example() {
 	//             mu:              sync.Mutex{},
 	//         },
 	//         &ir.Function{
-	//             GlobalName: "rand",
-	//             Sig:        &types.FuncType{
+	//             GlobalIdent: ir.GlobalIdent{GlobalName:"rand", GlobalID:0},
+	//             Sig:         &types.FuncType{
 	//                 TypeName: "",
 	//                 RetType:  &types.IntType{TypeName:"", BitSize:32},
 	//                 Params:   nil,

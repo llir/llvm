@@ -151,7 +151,7 @@ func (gen *generator) addDefsToModule() {
 	for _, ident := range gen.old.globalOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", enc.Global(ident)))
+			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
 		}
 		def, ok := v.(*ir.Global)
 		if !ok {
@@ -162,7 +162,7 @@ func (gen *generator) addDefsToModule() {
 	for _, ident := range gen.old.indirectSymbolDefOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", enc.Global(ident)))
+			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
 		}
 		switch v := v.(type) {
 		case *ir.Alias:
@@ -177,7 +177,7 @@ func (gen *generator) addDefsToModule() {
 	for _, ident := range gen.old.funcOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", enc.Global(ident)))
+			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
 		}
 		def, ok := v.(*ir.Function)
 		if !ok {

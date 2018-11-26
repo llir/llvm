@@ -22,7 +22,7 @@ import (
 // instructions.
 type Function struct {
 	// Function name (without '@' prefix).
-	GlobalName string
+	GlobalIdent
 	// Function signature.
 	Sig *types.FuncType
 	// Function parameters.
@@ -81,7 +81,8 @@ func NewFunc(name string, retType types.Type, params ...*Param) *Function {
 		paramTypes[i] = param.Type()
 	}
 	sig := types.NewFunc(retType, paramTypes...)
-	f := &Function{GlobalName: name, Sig: sig, Params: params}
+	f := &Function{Sig: sig, Params: params}
+	f.SetName(name)
 	// Compute type.
 	f.Type()
 	return f
@@ -100,21 +101,6 @@ func (f *Function) Type() types.Type {
 		f.Typ = types.NewPointer(f.Sig)
 	}
 	return f.Typ
-}
-
-// Ident returns the identifier associated with the function.
-func (f *Function) Ident() string {
-	return enc.Global(f.GlobalName)
-}
-
-// Name returns the name of the function.
-func (f *Function) Name() string {
-	return f.GlobalName
-}
-
-// SetName sets the name of the function.
-func (f *Function) SetName(name string) {
-	f.GlobalName = name
 }
 
 // Def returns the LLVM syntax representation of the function definition or
