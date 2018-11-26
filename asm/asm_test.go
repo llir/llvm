@@ -59,6 +59,9 @@ func TestParseFile(t *testing.T) {
 		// fadd, fmul and fcmp constant expressions.
 		{path: "../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll.golden"},
 
+		// fsub constant expressions.
+		{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll.golden"},
+
 		/*
 			// LLVM test/Features.
 			{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
