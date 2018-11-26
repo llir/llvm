@@ -36,6 +36,9 @@ func TestParseFile(t *testing.T) {
 		// DIExpression used in named metdata definition.
 		{path: "testdata/diexpression.ll"},
 
+		// frem constant expression.
+		{path: "testdata/expr_frem.ll"},
+
 		// Floating-point test cases (issue #31).
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
 
