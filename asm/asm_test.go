@@ -468,6 +468,9 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/vector-shift.ll"},
 		{path: "../testdata/llvm/test/Assembler/x86mmx.ll"},
 
+		// LLVM test/Bitcode.
+		{path: "../testdata/llvm/test/Bitcode/disubrange.ll"},
+
 		// LLVM test/DebugInfo/Generic.
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/2009-10-16-Phi.ll"},
 		//{path: "../testdata/llvm/test/DebugInfo/Generic/2009-11-03-InsertExtractValue.ll"},
