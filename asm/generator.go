@@ -85,9 +85,6 @@ type oldIndex struct {
 	// their order of occurrence in the input.
 	useListOrderBBs []*ast.UseListOrderBB
 
-	// comdatDefOrder records the comdat name of comdat definitions in their
-	// order of occurrence in the input.
-	comdatDefOrder []string // TODO: check if sorted, if so, remove.
 	// globalOrder records the global identifier of global declarations and
 	// definitions in their order of occurrence in the input.
 	globalOrder []ir.GlobalIdent
@@ -97,15 +94,9 @@ type oldIndex struct {
 	// funcOrder records the global identifier of function declarations and
 	// definitions in their order of occurrence in the input.
 	funcOrder []ir.GlobalIdent
-	// attrGroupDefOrder records the attribute group ID of attribute gruop
-	// definitions in their order of occurrence in the input.
-	attrGroupDefOrder []int64 // TODO: check if sorted, if so, remove.
 	// namedMetadataDefOrder records the metadata name of named metadata
 	// definitions in their order of occurrence in the input.
-	namedMetadataDefOrder []string // TODO: check if sorted, if so, remove.
-	// metadataDefOrder records the metadata ID of metadata definitions in their
-	// order of occurrence in the input.
-	metadataDefOrder []int64 // TODO: check if sorted, if so, remove.
+	namedMetadataDefOrder []string
 }
 
 // newIndex is an index of IR top-level entities.

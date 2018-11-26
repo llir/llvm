@@ -137,25 +137,34 @@ func translate(old *ast.Module) (*ir.Module, error) {
 func (gen *generator) addDefsToModule() {
 	// Output type definitions in alphabetical order.
 	var typeNames []string
-	for typeName := range gen.new.typeDefs {
-		typeNames = append(typeNames, typeName)
+	for name := range gen.old.typeDefs {
+		typeNames = append(typeNames, name)
 	}
 	sort.Strings(typeNames)
-	for _, typeName := range typeNames {
-		def, ok := gen.new.typeDefs[typeName]
+	for _, name := range typeNames {
+		def, ok := gen.new.typeDefs[name]
 		if !ok {
-			panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(typeName)))
+			panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(name)))
 		}
 		gen.m.TypeDefs = append(gen.m.TypeDefs, def)
 	}
 
-	for _, name := range gen.old.comdatDefOrder {
+	// Output comdat definitions in alphabetical order.
+	var comdatNames []string
+	for name := range gen.old.comdatDefs {
+		comdatNames = append(comdatNames, name)
+	}
+	sort.Strings(comdatNames)
+	for _, name := range comdatNames {
 		def, ok := gen.new.comdatDefs[name]
 		if !ok {
 			panic(fmt.Errorf("unable to locate comdat name %q", enc.Comdat(name)))
 		}
 		gen.m.ComdatDefs = append(gen.m.ComdatDefs, def)
 	}
+
+	// Output global variable declarations and definitions in order of occurrence
+	// in the input.
 	for _, ident := range gen.old.globalOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
@@ -167,6 +176,9 @@ func (gen *generator) addDefsToModule() {
 		}
 		gen.m.Globals = append(gen.m.Globals, def)
 	}
+
+	// Output indirect symbol definitions (aliases and indirect functions) in
+	// order of occurrence in the input.
 	for _, ident := range gen.old.indirectSymbolDefOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
@@ -182,6 +194,9 @@ func (gen *generator) addDefsToModule() {
 
 		}
 	}
+
+	// Output function declarations and definitions in order of occurrence in the
+	// input.
 	for _, ident := range gen.old.funcOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
@@ -193,13 +208,25 @@ func (gen *generator) addDefsToModule() {
 		}
 		gen.m.Funcs = append(gen.m.Funcs, def)
 	}
-	for _, id := range gen.old.attrGroupDefOrder {
+
+	// Output comdat definitions in numeric order.
+	var attrGroupIDs []int64
+	for id := range gen.old.attrGroupDefs {
+		attrGroupIDs = append(attrGroupIDs, id)
+	}
+	less := func(i, j int) bool {
+		return attrGroupIDs[i] < attrGroupIDs[j]
+	}
+	sort.Slice(attrGroupIDs, less)
+	for _, id := range attrGroupIDs {
 		def, ok := gen.new.attrGroupDefs[id]
 		if !ok {
 			panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
 		}
 		gen.m.AttrGroupDefs = append(gen.m.AttrGroupDefs, def)
 	}
+
+	// Output named metadata definitions in order of occurrence in the input.
 	for _, name := range gen.old.namedMetadataDefOrder {
 		def, ok := gen.new.namedMetadataDefs[name]
 		if !ok {
@@ -207,7 +234,17 @@ func (gen *generator) addDefsToModule() {
 		}
 		gen.m.NamedMetadataDefs = append(gen.m.NamedMetadataDefs, def)
 	}
-	for _, id := range gen.old.metadataDefOrder {
+
+	// Output comdat definitions in numeric order.
+	var metadataIDs []int64
+	for id := range gen.old.metadataDefs {
+		metadataIDs = append(metadataIDs, id)
+	}
+	less = func(i, j int) bool {
+		return metadataIDs[i] < metadataIDs[j]
+	}
+	sort.Slice(metadataIDs, less)
+	for _, id := range metadataIDs {
 		def, ok := gen.new.metadataDefs[id]
 		if !ok {
 			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))

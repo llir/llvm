@@ -43,7 +43,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 				return errors.Errorf("comdat name %q already present; prev `%s`, new `%s`", enc.Comdat(name), text(prev), text(entity))
 			}
 			gen.old.comdatDefs[name] = entity
-			gen.old.comdatDefOrder = append(gen.old.comdatDefOrder, name)
 		case *ast.GlobalDecl:
 			ident := globalIdent(entity.Name())
 			if prev, ok := gen.old.globals[ident]; ok {
@@ -85,7 +84,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 				return errors.Errorf("attribute group ID %q already present; prev `%s`, new `%s`", enc.AttrGroupID(id), text(prev), text(entity))
 			}
 			gen.old.attrGroupDefs[id] = entity
-			gen.old.attrGroupDefOrder = append(gen.old.attrGroupDefOrder, id)
 		case *ast.NamedMetadataDef:
 			name := metadataName(entity.Name())
 			if prev, ok := gen.old.namedMetadataDefs[name]; ok {
@@ -99,7 +97,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 				return errors.Errorf("metadata ID %q already present; prev `%s`, new `%s`", enc.MetadataID(id), text(prev), text(entity))
 			}
 			gen.old.metadataDefs[id] = entity
-			gen.old.metadataDefOrder = append(gen.old.metadataDefOrder, id)
 		case *ast.UseListOrder:
 			gen.old.useListOrders = append(gen.old.useListOrders, entity)
 		case *ast.UseListOrderBB:
