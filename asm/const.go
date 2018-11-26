@@ -188,15 +188,12 @@ func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*consta
 		}
 		elems = append(elems, elem)
 	}
-	if len(elems) > 0 {
-		c := constant.NewVector(elems...)
-		// TODO: check that typ is equal to c.Typ.
-		_ = typ
-		return c, nil
+	if len(elems) == 0 {
+		return nil, errors.New("zero element vector is illegal")
 	}
-	c := &constant.Vector{
-		Typ: types.NewVector(0, typ.ElemType),
-	}
+	c := constant.NewVector(elems...)
+	// TODO: check that typ is equal to c.Typ.
+	_ = typ
 	return c, nil
 }
 
