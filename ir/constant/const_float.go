@@ -252,13 +252,19 @@ func (c *Float) Ident() string {
 			//    23 bits: mantissa
 			//
 			//    bias: 127
-			f, _ := c.X.Float32()
-			bits32 := math.Float32bits(f)
+			var bits32 uint32
+			if c.NaN {
+				// TODO: handle sign bit.
+				bits32 = 0xFFFFFFFF
+			} else {
+				f, _ := c.X.Float32()
+				bits32 = math.Float32bits(f)
+			}
 			// 0b10000000000000000000000000000000
 			sign := uint64(bits32 & 0x80000000 >> 31)
 			// 0b01111111100000000000000000000000
 			const bias32 = 127
-			exp := uint64((bits32 & 0x7F800000 >> 23) - bias32)
+			exp32 := (bits32 & 0x7F800000 >> 23)
 			// 0b00000000011111111111111111111111
 			mant := uint64(bits32 & 0x7FFFFF)
 			// Double precision.
@@ -269,20 +275,37 @@ func (c *Float) Ident() string {
 			//
 			//    bias: 1023
 			var bits64 uint64
-			bits64 |= sign << 53
+			bits64 |= sign << 63
 			const bias64 = 1023
-			bits64 |= (exp + bias64) << 52
+			var exp64 uint64
+			if exp32 == 0xFF {
+				// Keep every bit set in the exponent if such was the case for
+				// float32.
+				exp64 = 0x7FF
+			} else {
+				exp := uint64(exp32 - bias32)
+				exp64 = exp + bias64
+			}
+			bits64 |= exp64 << 52
 			bits64 |= mant << (52 - 23)
 			return fmt.Sprintf("0x%016X", bits64)
 		}
 	case types.FloatKindDouble:
-		if c.NaN || c.X.IsInf() || !float.IsExact64(c.X) {
+		if c.NaN {
+			f := math.NaN()
+			if c.X != nil && c.X.Signbit() {
+				f = math.Copysign(f, -1)
+			}
+			bits := math.Float64bits(f)
+			return fmt.Sprintf("0x%X", bits)
+		}
+		if c.X.IsInf() || !float.IsExact64(c.X) {
 			f, _ := c.X.Float64()
-			x := math.Float64bits(f)
+			bits := math.Float64bits(f)
 			// Note, to match Clang output we do not zero-pad the hexadecimal
 			// output.
-			return fmt.Sprintf("0x%X", x)
-			//return fmt.Sprintf("0x%016X", x)
+			return fmt.Sprintf("0x%X", bits)
+			//return fmt.Sprintf("0x%016X", bits)
 		}
 	case types.FloatKindX86FP80:
 		// TODO: handle NaN.

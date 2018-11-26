@@ -42,11 +42,15 @@ func TestParseFile(t *testing.T) {
 		// LLVM IR compatability.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 
+		// Basic block with same name as specialized metadata field (issue #49).
+		//{path: "../testdata/llvm/test/Analysis/ScalarEvolution/2008-02-15-UMax.ll"}, // TODO: syntax error at line 9. cannot use `header:` as basic block name, since it collides with token used for metadata GenericDINodeField header field
+
 		// Floating-point test cases (issue #31).
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
 
-		// float infinity.
+		// float infinity and not-a-number.
 		//{path: "../testdata/llvm/test/Assembler/2002-04-07-InfConstant.ll"}, // TODO: fix handling of float infinity hex representation.
+		{path: "../testdata/llvm/test/Analysis/BasicAA/pr18573.ll"},
 
 		// Distinguish named from unnamed locals (issue #39).
 		{path: "../testdata/llvm/test/Analysis/DominanceFrontier/new_pm_test.ll"},
