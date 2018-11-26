@@ -39,6 +39,9 @@ func TestParseFile(t *testing.T) {
 		// frem constant expression.
 		{path: "testdata/expr_frem.ll"},
 
+		// LLVM IR compatability.
+		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
+
 		// Floating-point test cases (issue #31).
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
 

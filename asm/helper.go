@@ -542,6 +542,11 @@ func irReturnAttribute(n ast.ReturnAttribute) ir.ReturnAttribute {
 		return ir.Align(uintLit(n.N()))
 	case *ast.Dereferenceable:
 		return ir.Dereferenceable{N: uintLit(n.N())}
+	case *ast.DereferenceableOrNull:
+		return ir.Dereferenceable{
+			N:           uintLit(n.N()),
+			DerefOrNull: true,
+		}
 	case *ast.ReturnAttr:
 		return asmenum.ReturnAttrFromString(n.Text())
 	default:

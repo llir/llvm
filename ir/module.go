@@ -98,11 +98,8 @@ func (m *Module) String() string {
 	if len(m.ComdatDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
-	for i, c := range m.ComdatDefs {
-		if i != 0 {
-			buf.WriteString("\n")
-		}
-		fmt.Fprintln(buf, c.Def())
+	for _, def := range m.ComdatDefs {
+		fmt.Fprintln(buf, def.Def())
 	}
 	// Global declarations and definitions.
 	if len(m.Globals) > 0 && buf.Len() > 0 {
