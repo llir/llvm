@@ -62,6 +62,9 @@ func TestParseFile(t *testing.T) {
 		// fsub constant expressions.
 		{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll.golden"},
 
+		// Constant expressions.
+		{path: "../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll.golden"},
+
 		/*
 			// LLVM test/Features.
 			{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
