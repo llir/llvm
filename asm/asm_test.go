@@ -62,13 +62,13 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/ditype-large-values.ll"},
 
 		// fadd, fmul and fcmp constant expressions.
-		{path: "../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll.golden"},
+		{path: "../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll"},
 
 		// fsub constant expressions.
-		{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll.golden"},
+		{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll"},
 
 		// Constant expressions.
-		{path: "../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll.golden"},
+		{path: "../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
 
 		// Vector constant expressions.
 		{path: "../testdata/llvm/test/Transforms/InstCombine/vec_demanded_elts.ll"},
