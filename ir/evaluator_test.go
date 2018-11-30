@@ -128,7 +128,7 @@ func (e *evaluator) evalValue(v value.Value) uint32 {
 		}
 		f := e.f
 		for i, param := range f.Params {
-			if v.LocalName == param.LocalName {
+			if v.Name() == param.Name() {
 				return e.evalValue(e.args[i])
 			}
 		}
