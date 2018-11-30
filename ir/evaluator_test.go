@@ -106,7 +106,7 @@ func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
 	case *ir.InstCall:
 		callee, ok := inst.Callee.(*ir.Function)
 		if !ok {
-			panic(fmt.Errorf("support for callee of type %T not yet implemented", inst.Callee))
+			panic(fmt.Errorf("support for callee type %T not yet implemented", inst.Callee))
 		}
 		ee := newEvaluator(callee, inst.Args...)
 		return ee.eval()
@@ -123,12 +123,9 @@ func (e *evaluator) evalValue(v value.Value) uint32 {
 	case *constant.Int:
 		return uint32(v.X.Int64())
 	case *ir.Param:
-		if v.IsUnnamed() {
-			panic("support for unnamed parameters not yet implemented")
-		}
 		f := e.f
 		for i, param := range f.Params {
-			if v.Name() == param.Name() {
+			if v.Ident() == param.Ident() {
 				return e.evalValue(e.args[i])
 			}
 		}
