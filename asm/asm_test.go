@@ -522,13 +522,12 @@ func TestParseFile(t *testing.T) {
 		// SQLite.
 		//{path: "../testdata/sqlite/test/shell.ll"},
 	}
+	hasTestdata := osutil.Exists("../../testdata/llvm")
 	for _, g := range golden {
-		if filepath.HasPrefix(g.path, "../testdata/") {
-			if !osutil.Exists("../testdata/") {
-				// Skip test cases from the llir/testdata submodule if not present.
-				// Users may add this submodule using git clone --recursive.
-				continue
-			}
+		if filepath.HasPrefix(g.path, "../testdata") && !hasTestdata {
+			// Skip test cases from the llir/testdata submodule if not downloaded.
+			// Users may add this submodule using git clone --recursive.
+			continue
 		}
 		log.Printf("=== [ %s ] ===", g.path)
 		m, err := ParseFile(g.path)
