@@ -411,7 +411,7 @@ func (fgen *funcGen) astToIRTermCatchSwitch(term ir.Terminator, old *ast.CatchSw
 	}
 	t.Scope = scope
 	// Exception handlers.
-	for _, oldHandler := range old.Handlers() {
+	for _, oldHandler := range old.Handlers().Labels() {
 		handler, err := fgen.irBasicBlock(oldHandler)
 		if err != nil {
 			return errors.WithStack(err)

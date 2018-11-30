@@ -586,13 +586,14 @@ func irTLSModelFromThreadLocal(n ast.ThreadLocal) enum.TLSModel {
 // irUnwindTarget returns the IR unwind target corresponding to the given AST
 // unwind target.
 func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error) {
-	if n := n.Label(); n.IsValid() {
-		return fgen.irBasicBlock(n)
-	}
-	if n := n.UnwindToCaller(); n.IsValid() {
+	switch n := n.(type) {
+	case *ast.Label:
+		return fgen.irBasicBlock(*n)
+	case *ast.UnwindToCaller:
 		return ir.UnwindToCaller{}, nil
+	default:
+		panic(fmt.Errorf("support for unwind target %T not yet implemented", n))
 	}
-	panic("unreachable")
 }
 
 // irUseListOrder returns the IR use-list order corresponding to the given AST
