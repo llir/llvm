@@ -11,7 +11,7 @@ import (
 
 // === [ Aliases ] =============================================================
 
-// Alias is an alias of a global variable or constant expression.
+// Alias is an alias of a global identifier or constant expression.
 type Alias struct {
 	// Alias name (without '@' prefix).
 	GlobalIdent
