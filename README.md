@@ -21,6 +21,20 @@ go get -u github.com/llir/llvm/...
 
 ## Usage
 
+### Parse LLVM IR assembly
+
+[Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/asm#example-package).
+
+```go
+// Parse the LLVM IR assembly file `rand.ll`.
+m, err := asm.ParseFile("testdata/rand.ll")
+if err != nil {
+	log.Fatalf("%+v", err)
+}
+// Pretty-print the data types of the parsed LLVM IR module.
+pretty.Println(m)
+```
+
 ### Output LLVM IR assembly
 
 [Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package).
@@ -78,20 +92,6 @@ entry.NewRet(tmp4)
 
 // Print the LLVM IR assembly of the module.
 fmt.Println(m)
-```
-
-### Parse LLVM IR assembly
-
-[Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/asm#example-package).
-
-```go
-// Parse the LLVM IR assembly file `rand.ll`.
-m, err := asm.ParseFile("testdata/rand.ll")
-if err != nil {
-	log.Fatalf("%+v", err)
-}
-// Pretty-print the data types of the parsed LLVM IR module.
-pretty.Println(m)
 ```
 
 ### Process LLVM IR
