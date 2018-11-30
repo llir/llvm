@@ -574,7 +574,7 @@ func (fgen *funcGen) irOperandBundle(n ast.OperandBundle) (*ir.OperandBundle, er
 // irTLSModelFromThreadLocal returns the IR TLS model corresponding to the given
 // AST thread local storage.
 func irTLSModelFromThreadLocal(n ast.ThreadLocal) enum.TLSModel {
-	if n := n.Model(); n.IsValid() {
+	if n, ok := n.Model(); ok {
 		// e.g. thread_local(initialexec)
 		return asmenum.TLSModelFromString(n.Text())
 	}

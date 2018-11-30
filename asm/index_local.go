@@ -81,7 +81,7 @@ func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 	f := fgen.f
 	for _, oldBlock := range oldBlocks {
 		block := &ir.BasicBlock{}
-		if n := oldBlock.Name(); n.IsValid() {
+		if n, ok := oldBlock.Name(); ok {
 			block.LocalIdent = labelIdent(n)
 		}
 		for _, oldInst := range oldBlock.Insts() {

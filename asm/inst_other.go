@@ -154,7 +154,7 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCall, got %T", inst))
 	}
 	// (optional) Tail.
-	if n := old.Tail(); n.IsValid() {
+	if n, ok := old.Tail(); ok {
 		i.Tail = asmenum.TailFromString(n.Text())
 	}
 	// (optional) Fast math flags.
@@ -169,7 +169,7 @@ func (fgen *funcGen) astToIRInstCall(inst ir.Instruction, old *ast.CallInst) (*i
 		i.ReturnAttrs = append(i.ReturnAttrs, retAttr)
 	}
 	// (optional) Address space.
-	if n := old.AddrSpace(); n.IsValid() {
+	if n, ok := old.AddrSpace(); ok {
 		i.AddrSpace = irAddrSpace(n)
 	}
 	// Callee.
@@ -265,7 +265,8 @@ func (fgen *funcGen) astToIRInstLandingPad(inst ir.Instruction, old *ast.Landing
 	}
 	i.ResultType = resultType
 	// (optional) Cleanup landing pad.
-	i.Cleanup = old.Cleanup().IsValid()
+	_, cleanup := old.Cleanup()
+	i.Cleanup = cleanup
 	// Filter and catch clauses.
 	for _, oldClause := range old.Clauses() {
 		clause, err := fgen.irClause(oldClause)

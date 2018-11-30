@@ -46,7 +46,7 @@ func (gen *generator) newGlobal(ident ir.GlobalIdent, old ast.LlvmNode) (constan
 		new.ContentType = contentType
 		new.Typ = types.NewPointer(new.ContentType)
 		// (optional) Address space.
-		if n := old.AddrSpace(); n.IsValid() {
+		if n, ok := old.AddrSpace(); ok {
 			new.Typ.AddrSpace = irAddrSpace(n)
 		}
 		return new, nil
@@ -61,7 +61,7 @@ func (gen *generator) newGlobal(ident ir.GlobalIdent, old ast.LlvmNode) (constan
 		new.ContentType = contentType
 		new.Typ = types.NewPointer(new.ContentType)
 		// (optional) Address space.
-		if n := old.AddrSpace(); n.IsValid() {
+		if n, ok := old.AddrSpace(); ok {
 			new.Typ.AddrSpace = irAddrSpace(n)
 		}
 		return new, nil
@@ -96,7 +96,7 @@ func (gen *generator) newGlobal(ident ir.GlobalIdent, old ast.LlvmNode) (constan
 		new.Sig = sig
 		new.Typ = types.NewPointer(new.Sig)
 		// (optional) Address space.
-		if n := old.Header().AddrSpace(); n.IsValid() {
+		if n, ok := old.Header().AddrSpace(); ok {
 			new.Typ.AddrSpace = irAddrSpace(n)
 		}
 		return new, nil
@@ -111,7 +111,7 @@ func (gen *generator) newGlobal(ident ir.GlobalIdent, old ast.LlvmNode) (constan
 		new.Sig = sig
 		new.Typ = types.NewPointer(new.Sig)
 		// (optional) Address space.
-		if n := old.Header().AddrSpace(); n.IsValid() {
+		if n, ok := old.Header().AddrSpace(); ok {
 			new.Typ.AddrSpace = irAddrSpace(n)
 		}
 		return new, nil
@@ -201,41 +201,42 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 	// (optional) Linkage.
 	new.Linkage = asmenum.LinkageFromString(old.ExternLinkage().Text())
 	// (optional) Preemption.
-	if n := old.Preemption(); n.IsValid() {
+	if n, ok := old.Preemption(); ok {
 		new.Preemption = asmenum.PreemptionFromString(n.Text())
 	}
 	// (optional) Visibility.
-	if n := old.Visibility(); n.IsValid() {
+	if n, ok := old.Visibility(); ok {
 		new.Visibility = asmenum.VisibilityFromString(n.Text())
 	}
 	// (optional) DLL storage class.
-	if n := old.DLLStorageClass(); n.IsValid() {
+	if n, ok := old.DLLStorageClass(); ok {
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Thread local storage model.
-	if n := old.ThreadLocal(); n.IsValid() {
+	if n, ok := old.ThreadLocal(); ok {
 		new.TLSModel = irTLSModelFromThreadLocal(n)
 	}
 	// (optional) Unnamed address.
-	if n := old.UnnamedAddr(); n.IsValid() {
+	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
 	// (optional) Address space: handled in newGlobal.
 	// (optional) Externally initialized.
-	new.ExternallyInitialized = old.ExternallyInitialized().IsValid()
+	_, externallyInitialized := old.ExternallyInitialized()
+	new.ExternallyInitialized = externallyInitialized
 	// Immutability of global variable (constant or global).
 	new.Immutable = irImmutable(old.Immutable())
 	// Content type: handled in newGlobal.
 	// (optional) Section name.
-	if n := old.Section(); n.IsValid() {
+	if n, ok := old.Section(); ok {
 		new.Section = stringLit(n.Name())
 	}
 	// (optional) Comdat.
-	if n := old.Comdat(); n.IsValid() {
+	if n, ok := old.Comdat(); ok {
 		// When comdat name is omitted, the global name is used as an implicit
 		// comdat name.
 		name := new.Name()
-		if n := n.Name(); n.IsValid() {
+		if n, ok := n.Name(); ok {
 			name = comdatName(n)
 		}
 		def, ok := gen.new.comdatDefs[name]
@@ -245,7 +246,7 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 		new.Comdat = def
 	}
 	// (optional) Alignment.
-	if n := old.Align(); n.IsValid() {
+	if n, ok := old.Align(); ok {
 		new.Align = irAlign(n)
 	}
 	// (optional) Metadata.
@@ -267,32 +268,33 @@ func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) e
 // translateGlobalDef translates the given AST global definition to IR.
 func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) error {
 	// (optional) Linkage.
-	if n := old.Linkage(); n.IsValid() {
+	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
 	// (optional) Preemption.
-	if n := old.Preemption(); n.IsValid() {
+	if n, ok := old.Preemption(); ok {
 		new.Preemption = asmenum.PreemptionFromString(n.Text())
 	}
 	// (optional) Visibility.
-	if n := old.Visibility(); n.IsValid() {
+	if n, ok := old.Visibility(); ok {
 		new.Visibility = asmenum.VisibilityFromString(n.Text())
 	}
 	// (optional) DLL storage class.
-	if n := old.DLLStorageClass(); n.IsValid() {
+	if n, ok := old.DLLStorageClass(); ok {
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Thread local storage model.
-	if n := old.ThreadLocal(); n.IsValid() {
+	if n, ok := old.ThreadLocal(); ok {
 		new.TLSModel = irTLSModelFromThreadLocal(n)
 	}
 	// (optional) Unnamed address.
-	if n := old.UnnamedAddr(); n.IsValid() {
+	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
 	// (optional) Address space: handled in newGlobal.
 	// (optional) Externally initialized.
-	new.ExternallyInitialized = old.ExternallyInitialized().IsValid()
+	_, externallyInitialized := old.ExternallyInitialized()
+	new.ExternallyInitialized = externallyInitialized
 	// Immutability of global variable (constant or global).
 	new.Immutable = irImmutable(old.Immutable())
 	// Content type: handled in newGlobal.
@@ -303,15 +305,15 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 	}
 	new.Init = init
 	// (optional) Section name.
-	if n := old.Section(); n.IsValid() {
+	if n, ok := old.Section(); ok {
 		new.Section = stringLit(n.Name())
 	}
 	// (optional) Comdat.
-	if n := old.Comdat(); n.IsValid() {
+	if n, ok := old.Comdat(); ok {
 		// When comdat name is omitted, the global name is used as an implicit
 		// comdat name.
 		name := new.Name()
-		if n := n.Name(); n.IsValid() {
+		if n, ok := n.Name(); ok {
 			name = comdatName(n)
 		}
 		def, ok := gen.new.comdatDefs[name]
@@ -321,7 +323,7 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 		new.Comdat = def
 	}
 	// (optional) Alignment.
-	if n := old.Align(); n.IsValid() {
+	if n, ok := old.Align(); ok {
 		new.Align = irAlign(n)
 	}
 	// (optional) Metadata.
@@ -344,30 +346,30 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.IndirectSymbolDef) error {
 	// (optional) Linkage.
 	// TODO: check that linkage is handled correctly.
-	if n := old.Linkage(); n.IsValid() {
+	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
-	if n := old.ExternLinkage(); n.IsValid() {
+	if n, ok := old.ExternLinkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
 	// (optional) Preemption.
-	if n := old.Preemption(); n.IsValid() {
+	if n, ok := old.Preemption(); ok {
 		new.Preemption = asmenum.PreemptionFromString(n.Text())
 	}
 	// (optional) Visibility.
-	if n := old.Visibility(); n.IsValid() {
+	if n, ok := old.Visibility(); ok {
 		new.Visibility = asmenum.VisibilityFromString(n.Text())
 	}
 	// (optional) DLL storage class.
-	if n := old.DLLStorageClass(); n.IsValid() {
+	if n, ok := old.DLLStorageClass(); ok {
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Thread local storage model.
-	if n := old.ThreadLocal(); n.IsValid() {
+	if n, ok := old.ThreadLocal(); ok {
 		new.TLSModel = irTLSModelFromThreadLocal(n)
 	}
 	// (optional) Unnamed address.
-	if n := old.UnnamedAddr(); n.IsValid() {
+	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
 	// Content type: handled in newGlobal.
@@ -386,30 +388,30 @@ func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.IndirectSymbolDe
 func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IndirectSymbolDef) error {
 	// (optional) Linkage.
 	// TODO: check that linkage is handled correctly.
-	if n := old.Linkage(); n.IsValid() {
+	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
-	if n := old.ExternLinkage(); n.IsValid() {
+	if n, ok := old.ExternLinkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
 	// (optional) Preemption.
-	if n := old.Preemption(); n.IsValid() {
+	if n, ok := old.Preemption(); ok {
 		new.Preemption = asmenum.PreemptionFromString(n.Text())
 	}
 	// (optional) Visibility.
-	if n := old.Visibility(); n.IsValid() {
+	if n, ok := old.Visibility(); ok {
 		new.Visibility = asmenum.VisibilityFromString(n.Text())
 	}
 	// (optional) DLL storage class.
-	if n := old.DLLStorageClass(); n.IsValid() {
+	if n, ok := old.DLLStorageClass(); ok {
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Thread local storage model.
-	if n := old.ThreadLocal(); n.IsValid() {
+	if n, ok := old.ThreadLocal(); ok {
 		new.TLSModel = irTLSModelFromThreadLocal(n)
 	}
 	// (optional) Unnamed address.
-	if n := old.UnnamedAddr(); n.IsValid() {
+	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
 	// Content type: handled in newGlobal.
@@ -476,22 +478,22 @@ func (gen *generator) translateFuncDef(new *ir.Function, old *ast.FuncDef) error
 func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) error {
 	// (optional) Linkage.
 	// TODO: check that linkage is handled correctly.
-	if n := old.Linkage(); n.IsValid() {
+	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
-	if n := old.ExternLinkage(); n.IsValid() {
+	if n, ok := old.ExternLinkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
 	// (optional) Preemption.
-	if n := old.Preemption(); n.IsValid() {
+	if n, ok := old.Preemption(); ok {
 		new.Preemption = asmenum.PreemptionFromString(n.Text())
 	}
 	// (optional) Visibility.
-	if n := old.Visibility(); n.IsValid() {
+	if n, ok := old.Visibility(); ok {
 		new.Visibility = asmenum.VisibilityFromString(n.Text())
 	}
 	// (optional) DLL storage class.
-	if n := old.DLLStorageClass(); n.IsValid() {
+	if n, ok := old.DLLStorageClass(); ok {
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Calling convention.
@@ -514,8 +516,8 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		}
 		// Name.
 		param := ir.NewParam("", typ)
-		if p.Name().IsValid() {
-			ident := localIdent(p.Name())
+		if n, ok := p.Name(); ok {
+			ident := localIdent(n)
 			param.LocalIdent = ident
 		}
 		// (optional) Parameter attributes.
@@ -526,7 +528,7 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.Params = append(new.Params, param)
 	}
 	// (optional) Unnamed address.
-	if n := old.UnnamedAddr(); n.IsValid() {
+	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
 	// (optional) Address space: handled in newGlobal.
@@ -537,15 +539,15 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 	}
 
 	// (optional) Section name.
-	if n := old.Section(); n.IsValid() {
+	if n, ok := old.Section(); ok {
 		new.Section = stringLit(n.Name())
 	}
 	// (optional) Comdat.
-	if n := old.Comdat(); n.IsValid() {
+	if n, ok := old.Comdat(); ok {
 		// When comdat name is omitted, the function name is used as an implicit
 		// comdat name.
 		name := new.Name()
-		if n := n.Name(); n.IsValid() {
+		if n, ok := n.Name(); ok {
 			name = comdatName(n)
 		}
 		def, ok := gen.new.comdatDefs[name]
@@ -555,11 +557,11 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.Comdat = def
 	}
 	// (optional) Garbage collection.
-	if n := old.GCNode(); n.IsValid() {
+	if n, ok := old.GCNode(); ok {
 		new.GC = stringLit(n.Name())
 	}
 	// (optional) Prefix.
-	if n := old.Prefix(); n.IsValid() {
+	if n, ok := old.Prefix(); ok {
 		prefix, err := gen.irTypeConst(n.TypeConst())
 		if err != nil {
 			return errors.WithStack(err)
@@ -567,7 +569,7 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.Prefix = prefix
 	}
 	// (optional) Prologue.
-	if n := old.Prologue(); n.IsValid() {
+	if n, ok := old.Prologue(); ok {
 		prologue, err := gen.irTypeConst(n.TypeConst())
 		if err != nil {
 			return errors.WithStack(err)
@@ -575,7 +577,7 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.Prologue = prologue
 	}
 	// (optional) Personality.
-	if n := old.Personality(); n.IsValid() {
+	if n, ok := old.Personality(); ok {
 		personality, err := gen.irTypeConst(n.TypeConst())
 		if err != nil {
 			return errors.WithStack(err)
@@ -606,7 +608,8 @@ func (gen *generator) sigFromHeader(old ast.FuncHeader) (*types.FuncType, error)
 		sig.Params = append(sig.Params, param)
 	}
 	// Variadic.
-	sig.Variadic = ps.Variadic().IsValid()
+	_, variadic := ps.Variadic()
+	sig.Variadic = variadic
 	return sig, nil
 }
 

@@ -21,9 +21,11 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAlloca, got %T", inst))
 	}
 	// (optional) In-alloca.
-	i.InAlloca = old.InAlloca().IsValid()
+	_, inAlloca := old.InAlloca()
+	i.InAlloca = inAlloca
 	// (optional) Swift error.
-	i.SwiftError = old.SwiftError().IsValid()
+	_, swiftError := old.SwiftError()
+	i.SwiftError = swiftError
 	// Element type.
 	elemType, err := fgen.gen.irType(old.ElemType())
 	if err != nil {
@@ -31,7 +33,7 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 	}
 	i.ElemType = elemType
 	// (optional) Number of elements.
-	if n := old.NElems(); n.IsValid() {
+	if n, ok := old.NElems(); ok {
 		nelems, err := fgen.astToIRTypeValue(n)
 		if err != nil {
 			return nil, errors.WithStack(err)
@@ -39,11 +41,11 @@ func (fgen *funcGen) astToIRInstAlloca(inst ir.Instruction, old *ast.AllocaInst)
 		i.NElems = nelems
 	}
 	// (optional) Alignment.
-	if n := old.Align(); n.IsValid() {
+	if n, ok := old.Align(); ok {
 		i.Align = irAlign(n)
 	}
 	// (optional) Address space; stored in i.Typ.
-	if n := old.AddrSpace(); n.IsValid() {
+	if n, ok := old.AddrSpace(); ok {
 		i.Type()
 		i.Typ.AddrSpace = irAddrSpace(n)
 	}
@@ -66,9 +68,11 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstLoad, got %T", inst))
 	}
 	// (optional) Atomic.
-	i.Atomic = old.Atomic().IsValid()
+	_, atomic := old.Atomic()
+	i.Atomic = atomic
 	// (optional) Volatile.
-	i.Volatile = old.Volatile().IsValid()
+	_, volatile := old.Volatile()
+	i.Volatile = volatile
 	// Source address.
 	src, err := fgen.astToIRTypeValue(old.Src())
 	if err != nil {
@@ -76,15 +80,15 @@ func (fgen *funcGen) astToIRInstLoad(inst ir.Instruction, old *ast.LoadInst) (*i
 	}
 	i.Src = src
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n.IsValid() {
+	if n, ok := old.SyncScope(); ok {
 		i.SyncScope = stringLit(n.Scope())
 	}
 	// (optional) Atomic memory ordering constraints.
-	if n := old.Ordering(); n.IsValid() {
+	if n, ok := old.Ordering(); ok {
 		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
-	if n := old.Align(); n.IsValid() {
+	if n, ok := old.Align(); ok {
 		i.Align = irAlign(n)
 	}
 	// (optional) Metadata.
@@ -106,9 +110,11 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstStore, got %T", inst))
 	}
 	// (optional) Atomic.
-	i.Atomic = old.Atomic().IsValid()
+	_, atomic := old.Atomic()
+	i.Atomic = atomic
 	// (optional) Volatile.
-	i.Volatile = old.Volatile().IsValid()
+	_, volatile := old.Volatile()
+	i.Volatile = volatile
 	// Source value.
 	src, err := fgen.astToIRTypeValue(old.Src())
 	if err != nil {
@@ -122,15 +128,15 @@ func (fgen *funcGen) astToIRInstStore(inst ir.Instruction, old *ast.StoreInst) (
 	}
 	i.Dst = dst
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n.IsValid() {
+	if n, ok := old.SyncScope(); ok {
 		i.SyncScope = stringLit(n.Scope())
 	}
 	// (optional) Atomic memory ordering constraints.
-	if n := old.Ordering(); n.IsValid() {
+	if n, ok := old.Ordering(); ok {
 		i.Ordering = asmenum.AtomicOrderingFromString(n.Text())
 	}
 	// (optional) Alignment.
-	if n := old.Align(); n.IsValid() {
+	if n, ok := old.Align(); ok {
 		i.Align = irAlign(n)
 	}
 	// (optional) Metadata.
@@ -152,7 +158,7 @@ func (fgen *funcGen) astToIRInstFence(inst ir.Instruction, old *ast.FenceInst) (
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFence, got %T", inst))
 	}
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n.IsValid() {
+	if n, ok := old.SyncScope(); ok {
 		i.SyncScope = stringLit(n.Scope())
 	}
 	// Atomic memory ordering constraints.
@@ -176,9 +182,11 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCmpXchg, got %T", inst))
 	}
 	// (optional) Weak.
-	i.Weak = old.Weak().IsValid()
+	_, weak := old.Weak()
+	i.Weak = weak
 	// (optional) Volatile.
-	i.Volatile = old.Volatile().IsValid()
+	_, volatile := old.Volatile()
+	i.Volatile = volatile
 	// Address to read from, compare against and store to.
 	ptr, err := fgen.astToIRTypeValue(old.Ptr())
 	if err != nil {
@@ -198,7 +206,7 @@ func (fgen *funcGen) astToIRInstCmpXchg(inst ir.Instruction, old *ast.CmpXchgIns
 	}
 	i.New = new
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n.IsValid() {
+	if n, ok := old.SyncScope(); ok {
 		i.SyncScope = stringLit(n.Scope())
 	}
 	// Atomic memory ordering constraints on success.
@@ -224,7 +232,8 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstAtomicRMW, got %T", inst))
 	}
 	// (optional) Volatile.
-	i.Volatile = old.Volatile().IsValid()
+	_, volatile := old.Volatile()
+	i.Volatile = volatile
 	// Atomic operation.
 	i.Op = asmenum.AtomicOpFromString(old.Op().Text())
 	// Destination address.
@@ -240,7 +249,7 @@ func (fgen *funcGen) astToIRInstAtomicRMW(inst ir.Instruction, old *ast.AtomicRM
 	}
 	i.X = x
 	// (optional) Sync scope.
-	if n := old.SyncScope(); n.IsValid() {
+	if n, ok := old.SyncScope(); ok {
 		i.SyncScope = stringLit(n.Scope())
 	}
 	// Atomic memory ordering constraints.
@@ -264,7 +273,8 @@ func (fgen *funcGen) astToIRInstGetElementPtr(inst ir.Instruction, old *ast.GetE
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstGetElementPtr, got %T", inst))
 	}
 	// (optional) In-bounds.
-	i.InBounds = old.InBounds().IsValid()
+	_, inBounds := old.InBounds()
+	i.InBounds = inBounds
 	// Element type; already handled in newIRValueInst.
 	// Source address.
 	src, err := fgen.astToIRTypeValue(old.Src())

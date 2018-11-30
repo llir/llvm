@@ -297,7 +297,8 @@ func (gen *generator) translateMetadataDefs() error {
 // translateMetadataDef translates the given AST metadata definition to IR.
 func (gen *generator) translateMetadataDef(new *metadata.MetadataDef, old *ast.MetadataDef) error {
 	// (optional) Distinct.
-	new.Distinct = old.Distinct().IsValid()
+	_, distinct := old.Distinct()
+	new.Distinct = distinct
 	// Node.
 	switch oldNode := old.MDNode().(type) {
 	case *ast.MDTuple:
