@@ -34,3 +34,8 @@ gen:
 	string2enum -linecomment -type TLSModel ${ENUM_DIR}
 	string2enum -linecomment -type UnnamedAddr ${ENUM_DIR}
 	string2enum -linecomment -type Visibility ${ENUM_DIR}
+
+clean:
+	$(RM) *_string.go
+
+.PHONY: all gen clean
