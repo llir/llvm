@@ -16,23 +16,23 @@ var (
 	Null = &NullLit{}
 )
 
-// ~~~ [ Named Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~ [ Named metadata definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// NamedMetadataDef is a named metadata definition.
-type NamedMetadataDef struct {
+// NamedDef is a named metadata definition.
+type NamedDef struct {
 	// Metadata definition name (without '!' prefix).
 	Name string
 	// Metadata definition nodes.
-	Nodes []MetadataNode
+	Nodes []Node
 }
 
 // String returns the string representation of the named metadata definition.
-func (md *NamedMetadataDef) String() string {
+func (md *NamedDef) String() string {
 	return enc.MetadataName(md.Name)
 }
 
 // Def returns the LLVM syntax representation of the named metadata definition.
-func (md *NamedMetadataDef) Def() string {
+func (md *NamedDef) Def() string {
 	// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = !{", enc.MetadataName(md.Name))
@@ -46,16 +46,16 @@ func (md *NamedMetadataDef) Def() string {
 	return buf.String()
 }
 
-// ~~~ [ Metadata Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~ [ Metadata definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// TODO: check if MetadataDef should implement value.Value.
+// TODO: check if metadata.Def should implement value.Value.
 
-// MetadataDef is a metadata definition.
-type MetadataDef struct {
+// Def is a metadata definition.
+type Def struct {
 	// Metadata definition ID (without '!' prefix).
 	ID int64
 	// Metadata definition node.
-	Node MDNode // MDTuple or SpecializedMDNode
+	Node MDNode // Tuple or SpecializedNode
 
 	// extra.
 
@@ -64,12 +64,12 @@ type MetadataDef struct {
 }
 
 // String returns the string representation of the metadata definition.
-func (md *MetadataDef) String() string {
+func (md *Def) String() string {
 	return enc.MetadataID(md.ID)
 }
 
 // Def returns the LLVM syntax representation of the metadata definition.
-func (md *MetadataDef) Def() string {
+func (md *Def) Def() string {
 	// ID=MetadataID '=' Distinctopt MDNode=MDTuple
 	//
 	// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
@@ -82,18 +82,18 @@ func (md *MetadataDef) Def() string {
 	return buf.String()
 }
 
-// === [ Metadata Nodes and Metadata Strings ] =================================
+// === [ Metadata nodes and metadata strings ] =================================
 
-// --- [ Metadata Tuple ] ------------------------------------------------------
+// --- [ Metadata tuple ] ------------------------------------------------------
 
-// MDTuple is a metadata node tuple.
-type MDTuple struct {
+// Tuple is a metadata node tuple.
+type Tuple struct {
 	// Metadata tuple fields.
-	Fields []MDField
+	Fields []Field
 }
 
 // String returns the string representation of the metadata node tuple.
-func (md *MDTuple) String() string {
+func (md *Tuple) String() string {
 	// '!' MDFields
 	buf := &strings.Builder{}
 	buf.WriteString("!{")
@@ -107,7 +107,7 @@ func (md *MDTuple) String() string {
 	return buf.String()
 }
 
-// --- [ Metadata Value ] ------------------------------------------------------
+// --- [ Metadata value ] ------------------------------------------------------
 
 // A Value is a metadata value.
 type Value struct {
@@ -131,24 +131,24 @@ func (md *Value) Ident() string {
 	return md.Value.String()
 }
 
-// --- [ Metadata String ] -----------------------------------------------------
+// --- [ Metadata string ] -----------------------------------------------------
 
-// MDString is a metadata string.
-type MDString struct {
+// String is a metadata string.
+type String struct {
 	// Metadata string value.
 	Value string
 }
 
 // String returns the string representation of the metadata string.
-func (md *MDString) String() string {
+func (md *String) String() string {
 	// '!' Val=StringLit
 	return fmt.Sprintf("!%s", quote(md.Value))
 }
 
-// --- [ Metadata Attachment ] -------------------------------------------------
+// --- [ Metadata attachment ] -------------------------------------------------
 
-// MetadataAttachment is a metadata attachment.
-type MetadataAttachment struct {
+// Attachment is a metadata attachment.
+type Attachment struct {
 	// Metadata attachment name (without '!' prefix); e.g. !dbg.
 	Name string
 	// Metadata attachment node.
@@ -156,7 +156,7 @@ type MetadataAttachment struct {
 }
 
 // String returns the string representation of the metadata attachment.
-func (m *MetadataAttachment) String() string {
+func (m *Attachment) String() string {
 	// Name=MetadataName MDNode
 	return fmt.Sprintf("%s %s", enc.MetadataName(m.Name), m.Node)
 }
@@ -178,10 +178,6 @@ type UintLit uint64
 func (i UintLit) String() string {
 	return strconv.FormatUint(uint64(i), 10)
 }
-
-// IsDIExpressionField ensures that only DIExpression fields can be assigned to
-// the metadata.DIExpressionField interface.
-func (UintLit) IsDIExpressionField() {}
 
 // --- [ Null literal ] --------------------------------------------------------
 

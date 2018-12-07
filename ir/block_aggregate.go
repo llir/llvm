@@ -10,7 +10,7 @@ import (
 
 // NewExtractValue appends a new extractvalue instruction to the basic block
 // based on the given aggregate value and indicies.
-func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
+func (block *BasicBlock) NewExtractValue(x value.Value, indices ...uint64) *InstExtractValue {
 	inst := NewExtractValue(x, indices...)
 	block.Insts = append(block.Insts, inst)
 	return inst
@@ -20,7 +20,7 @@ func (block *BasicBlock) NewExtractValue(x value.Value, indices ...int64) *InstE
 
 // NewInsertValue appends a new insertvalue instruction to the basic block based
 // on the given aggregate value, element and indicies.
-func (block *BasicBlock) NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
+func (block *BasicBlock) NewInsertValue(x, elem value.Value, indices ...uint64) *InstInsertValue {
 	inst := NewInsertValue(x, elem, indices...)
 	block.Insts = append(block.Insts, inst)
 	return inst

@@ -26,7 +26,7 @@ func diFlagsString(flags enum.DIFlag) string {
 }
 
 // TODO: fix string representation for all enums which are defined in the
-// grammar as `FooEnum | FooInt`.
+// grammar as `FooEnum | FooInt`, in the same way as dwarfTagString.
 
 // dwarfTagString returns the string representation of the given Dwarf tag.
 func dwarfTagString(tag enum.DwarfTag) string {

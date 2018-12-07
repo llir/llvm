@@ -18,7 +18,7 @@ type generator struct {
 	// index of IR top-level entities.
 	new newIndex
 
-	// TOOD: add rw mutex to gen.todo for access to blockaddress constant.
+	// TODO: add rw mutex to gen.todo for access to blockaddress constant.
 
 	// Fix dummy basic blocks after translation of function bodies and assignment
 	// of local IDs.
@@ -43,8 +43,8 @@ func newGenerator() *generator {
 			comdatDefs:        make(map[string]*ir.ComdatDef),
 			globals:           make(map[ir.GlobalIdent]constant.Constant),
 			attrGroupDefs:     make(map[int64]*ir.AttrGroupDef),
-			namedMetadataDefs: make(map[string]*metadata.NamedMetadataDef),
-			metadataDefs:      make(map[int64]*metadata.MetadataDef),
+			namedMetadataDefs: make(map[string]*metadata.NamedDef),
+			metadataDefs:      make(map[int64]*metadata.Def),
 		},
 	}
 }
@@ -86,14 +86,9 @@ type oldIndex struct {
 	useListOrderBBs []*ast.UseListOrderBB
 
 	// globalOrder records the global identifier of global declarations and
+	// definitions, indirect symbol definitions, and function declarations and
 	// definitions in their order of occurrence in the input.
 	globalOrder []ir.GlobalIdent
-	// indirectSymbolDefOrder records the global identifier of indirect symbol
-	// definitions in their order of occurrence in the input.
-	indirectSymbolDefOrder []ir.GlobalIdent
-	// funcOrder records the global identifier of function declarations and
-	// definitions in their order of occurrence in the input.
-	funcOrder []ir.GlobalIdent
 	// namedMetadataDefOrder records the metadata name of named metadata
 	// definitions in their order of occurrence in the input.
 	namedMetadataDefOrder []string
@@ -122,8 +117,8 @@ type newIndex struct {
 	attrGroupDefs map[int64]*ir.AttrGroupDef
 	// namedMetadataDefs maps from metadata name (without '!' prefix) to named
 	// metadata definition.
-	namedMetadataDefs map[string]*metadata.NamedMetadataDef
+	namedMetadataDefs map[string]*metadata.NamedDef
 	// metadataDefs maps from metadata ID (without '!' prefix) to metadata
 	// definition.
-	metadataDefs map[int64]*metadata.MetadataDef
+	metadataDefs map[int64]*metadata.Def
 }

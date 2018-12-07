@@ -55,18 +55,18 @@ func (md *DIBasicType) String() string {
 // DICompileUnit is a specialized metadata node.
 type DICompileUnit struct {
 	Language              enum.DwarfLang     // required.
-	File                  MDField            // required.
+	File                  Field              // required.
 	Producer              string             // optional; empty if not present.
 	IsOptimized           bool               // optional; zero value if not present.
 	Flags                 string             // optional; empty if not present.
 	RuntimeVersion        uint64             // optional; zero value if not present.
 	SplitDebugFilename    string             // optional; empty if not present.
 	EmissionKind          enum.EmissionKind  // optional; zero value if not present.
-	Enums                 MDField            // optional; nil if not present.
-	RetainedTypes         MDField            // optional; nil if not present.
-	Globals               MDField            // optional; nil if not present.
-	Imports               MDField            // optional; nil if not present.
-	Macros                MDField            // optional; nil if not present.
+	Enums                 Field              // optional; nil if not present.
+	RetainedTypes         Field              // optional; nil if not present.
+	Globals               Field              // optional; nil if not present.
+	Imports               Field              // optional; nil if not present.
+	Macros                Field              // optional; nil if not present.
 	DwoID                 uint64             // optional; zero value if not present.
 	SplitDebugInlining    bool               // optional; zero value if not present.
 	DebugInfoForProfiling bool               // optional; zero value if not present.
@@ -150,20 +150,20 @@ func (md *DICompileUnit) String() string {
 type DICompositeType struct {
 	Tag            enum.DwarfTag  // required.
 	Name           string         // optional; empty if not present.
-	Scope          MDField        // optional; nil if not present.
-	File           MDField        // optional; nil if not present.
+	Scope          Field          // optional; nil if not present.
+	File           Field          // optional; nil if not present.
 	Line           int64          // optional; zero value if not present.
-	BaseType       MDField        // optional; nil if not present.
+	BaseType       Field          // optional; nil if not present.
 	Size           uint64         // optional; zero value if not present.
 	Align          uint64         // optional; zero value if not present.
 	Offset         uint64         // optional; zero value if not present.
 	Flags          enum.DIFlag    // optional.
-	Elements       MDField        // optional; nil if not present.
+	Elements       Field          // optional; nil if not present.
 	RuntimeLang    enum.DwarfLang // optional; zero value if not present.
-	VtableHolder   MDField        // optional; nil if not present.
-	TemplateParams MDField        // optional; nil if not present.
+	VtableHolder   Field          // optional; nil if not present.
+	TemplateParams Field          // optional; nil if not present.
 	Identifier     string         // optional; empty if not present.
-	Discriminator  MDField        // optional; nil if not present.
+	Discriminator  Field          // optional; nil if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -241,15 +241,15 @@ func (md *DICompositeType) String() string {
 type DIDerivedType struct {
 	Tag               enum.DwarfTag // required.
 	Name              string        // optional; empty if not present.
-	Scope             MDField       // optional; nil if not present.
-	File              MDField       // optional; nil if not present.
+	Scope             Field         // optional; nil if not present.
+	File              Field         // optional; nil if not present.
 	Line              int64         // optional; zero value if not present.
-	BaseType          MDField       // required.
+	BaseType          Field         // required.
 	Size              uint64        // optional; zero value if not present.
 	Align             uint64        // optional; zero value if not present.
 	Offset            uint64        // optional; zero value if not present.
 	Flags             enum.DIFlag   // optional.
-	ExtraData         MDField       // optional; nil if not present.
+	ExtraData         Field         // optional; nil if not present.
 	DwarfAddressSpace uint64        // optional; zero value if not present.
 }
 
@@ -392,17 +392,17 @@ func (md *DIFile) String() string {
 
 // DIGlobalVariable is a specialized metadata node.
 type DIGlobalVariable struct {
-	Name           string  // required.
-	Scope          MDField // optional; nil if not present.
-	LinkageName    string  // optional; empty if not present.
-	File           MDField // optional; nil if not present.
-	Line           int64   // optional; zero value if not present.
-	Type           MDField // optional; nil if not present.
-	IsLocal        bool    // optional; zero value if not present.
-	IsDefinition   bool    // optional; zero value if not present.
-	TemplateParams MDField // optional; nil if not present.
-	Declaration    MDField // optional; nil if not present.
-	Align          uint64  // optional; zero value if not present.
+	Name           string // required.
+	Scope          Field  // optional; nil if not present.
+	LinkageName    string // optional; empty if not present.
+	File           Field  // optional; nil if not present.
+	Line           int64  // optional; zero value if not present.
+	Type           Field  // optional; nil if not present.
+	IsLocal        bool   // optional; zero value if not present.
+	IsDefinition   bool   // optional; zero value if not present.
+	TemplateParams Field  // optional; nil if not present.
+	Declaration    Field  // optional; nil if not present.
+	Align          uint64 // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -458,7 +458,7 @@ func (md *DIGlobalVariable) String() string {
 
 // DIGlobalVariableExpression is a specialized metadata node.
 type DIGlobalVariableExpression struct {
-	Var MDField // required.
+	Var Field // required.
 
 	// Note, the C++ source code of LLVM states that "expr:" is a required field,
 	// however, Clang is known to output DIGlobalVariableExpression specialized
@@ -466,7 +466,7 @@ type DIGlobalVariableExpression struct {
 	//
 	//    !0 = !DIGlobalVariableExpression(var: !1)
 
-	Expr MDField // required.
+	Expr Field // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -489,9 +489,9 @@ func (md *DIGlobalVariableExpression) String() string {
 // DIImportedEntity is a specialized metadata node.
 type DIImportedEntity struct {
 	Tag    enum.DwarfTag // required.
-	Scope  MDField       // required.
-	Entity MDField       // optional; nil if not present.
-	File   MDField       // optional; nil if not present.
+	Scope  Field         // required.
+	Entity Field         // optional; nil if not present.
+	File   Field         // optional; nil if not present.
 	Line   int64         // optional; zero value if not present.
 	Name   string        // optional; empty if not present.
 }
@@ -527,10 +527,10 @@ func (md *DIImportedEntity) String() string {
 
 // DILabel is a specialized metadata node.
 type DILabel struct {
-	Scope MDField // required.
-	Name  string  // required.
-	File  MDField // required.
-	Line  int64   // required.
+	Scope Field  // required.
+	Name  string // required.
+	File  Field  // required.
+	Line  int64  // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -552,10 +552,10 @@ func (md *DILabel) String() string {
 
 // DILexicalBlock is a specialized metadata node.
 type DILexicalBlock struct {
-	Scope  MDField // required.
-	File   MDField // optional; nil if not present.
-	Line   int64   // optional; zero value if not present.
-	Column int64   // optional; zero value if not present.
+	Scope  Field // required.
+	File   Field // optional; nil if not present.
+	Line   int64 // optional; zero value if not present.
+	Column int64 // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -583,9 +583,9 @@ func (md *DILexicalBlock) String() string {
 
 // DILexicalBlockFile is a specialized metadata node.
 type DILexicalBlockFile struct {
-	Scope         MDField // required.
-	File          MDField // optional; nil if not present.
-	Discriminator uint64  // required.
+	Scope         Field  // required.
+	File          Field  // optional; nil if not present.
+	Discriminator uint64 // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -609,10 +609,10 @@ func (md *DILexicalBlockFile) String() string {
 type DILocalVariable struct {
 	Name  string      // optional; empty if not present.
 	Arg   uint64      // optional; zero value if not present.
-	Scope MDField     // required.
-	File  MDField     // optional; nil if not present.
+	Scope Field       // required.
+	File  Field       // optional; nil if not present.
 	Line  int64       // optional; zero value if not present.
-	Type  MDField     // optional; nil if not present.
+	Type  Field       // optional; nil if not present.
 	Flags enum.DIFlag // optional.
 	Align uint64      // optional; zero value if not present.
 }
@@ -658,11 +658,11 @@ func (md *DILocalVariable) String() string {
 
 // DILocation is a specialized metadata node.
 type DILocation struct {
-	Line           int64   // optional; zero value if not present.
-	Column         int64   // optional; zero value if not present.
-	Scope          MDField // required.
-	InlinedAt      MDField // optional; nil if not present.
-	IsImplicitCode bool    // optional; zero value if not present.
+	Line           int64 // optional; zero value if not present.
+	Column         int64 // optional; zero value if not present.
+	Scope          Field // required.
+	InlinedAt      Field // optional; nil if not present.
+	IsImplicitCode bool  // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -725,8 +725,8 @@ func (md *DIMacro) String() string {
 type DIMacroFile struct {
 	Type  enum.DwarfMacinfo // optional; zero value if not present.
 	Line  int64             // optional; zero value if not present.
-	File  MDField           // required.
-	Nodes MDField           // optional; nil if not present.
+	File  Field             // required.
+	Nodes Field             // optional; nil if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -754,11 +754,11 @@ func (md *DIMacroFile) String() string {
 
 // DIModule is a specialized metadata node.
 type DIModule struct {
-	Scope        MDField // required.
-	Name         string  // required.
-	ConfigMacros string  // optional; empty if not present.
-	IncludePath  string  // optional; empty if not present.
-	Isysroot     string  // optional; empty if not present.
+	Scope        Field  // required.
+	Name         string // required.
+	ConfigMacros string // optional; empty if not present.
+	IncludePath  string // optional; empty if not present.
+	Isysroot     string // optional; empty if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -788,9 +788,9 @@ func (md *DIModule) String() string {
 
 // DINamespace is a specialized metadata node.
 type DINamespace struct {
-	Scope         MDField // required.
-	Name          string  // optional; empty if not present.
-	ExportSymbols bool    // optional; zero value if not present.
+	Scope         Field  // required.
+	Name          string // optional; empty if not present.
+	ExportSymbols bool   // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -814,13 +814,13 @@ func (md *DINamespace) String() string {
 
 // DIObjCProperty is a specialized metadata node.
 type DIObjCProperty struct {
-	Name       string  // optional; empty if not present.
-	File       MDField // optional; nil if not present.
-	Line       int64   // optional; zero value if not present.
-	Setter     string  // optional; empty if not present.
-	Getter     string  // optional; empty if not present.
-	Attributes uint64  // optional; zero value if not present.
-	Type       MDField // optional; nil if not present.
+	Name       string // optional; empty if not present.
+	File       Field  // optional; nil if not present.
+	Line       int64  // optional; zero value if not present.
+	Setter     string // optional; empty if not present.
+	Getter     string // optional; empty if not present.
+	Attributes uint64 // optional; zero value if not present.
+	Type       Field  // optional; nil if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -862,26 +862,26 @@ func (md *DIObjCProperty) String() string {
 
 // DISubprogram is a specialized metadata node.
 type DISubprogram struct {
-	Scope          MDField              // optional; nil if not present.
+	Scope          Field                // optional; nil if not present.
 	Name           string               // optional; empty if not present.
 	LinkageName    string               // optional; empty if not present.
-	File           MDField              // optional; nil if not present.
+	File           Field                // optional; nil if not present.
 	Line           int64                // optional; zero value if not present.
-	Type           MDField              // optional; nil if not present.
+	Type           Field                // optional; nil if not present.
 	IsLocal        bool                 // optional; zero value if not present.
 	IsDefinition   bool                 // optional; zero value if not present.
 	ScopeLine      int64                // optional; zero value if not present.
-	ContainingType MDField              // optional; nil if not present.
+	ContainingType Field                // optional; nil if not present.
 	Virtuality     enum.DwarfVirtuality // optional; zero value if not present.
 	VirtualIndex   uint64               // optional; zero value if not present.
 	ThisAdjustment int64                // optional; zero value if not present.
 	Flags          enum.DIFlag          // optional.
 	IsOptimized    bool                 // optional; zero value if not present.
-	Unit           MDField              // optional; nil if not present.
-	TemplateParams MDField              // optional; nil if not present.
-	Declaration    MDField              // optional; nil if not present.
-	RetainedNodes  MDField              // optional; nil if not present.
-	ThrownTypes    MDField              // optional; nil if not present.
+	Unit           Field                // optional; nil if not present.
+	TemplateParams Field                // optional; nil if not present.
+	Declaration    Field                // optional; nil if not present.
+	RetainedNodes  Field                // optional; nil if not present.
+	ThrownTypes    Field                // optional; nil if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -979,8 +979,8 @@ func (md *DISubprogram) String() string {
 
 // DISubrange is a specialized metadata node.
 type DISubrange struct {
-	Count      MDFieldOrInt // required.
-	LowerBound int64        // optional; zero value if not present.
+	Count      FieldOrInt // required.
+	LowerBound int64      // optional; zero value if not present.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -1002,7 +1002,7 @@ func (md *DISubrange) String() string {
 type DISubroutineType struct {
 	Flags enum.DIFlag  // optional.
 	CC    enum.DwarfCC // optional; zero value if not present.
-	Types MDField      // required.
+	Types Field        // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -1026,8 +1026,8 @@ func (md *DISubroutineType) String() string {
 
 // DITemplateTypeParameter is a specialized metadata node.
 type DITemplateTypeParameter struct {
-	Name string  // optional; empty if not present.
-	Type MDField // required.
+	Name string // optional; empty if not present.
+	Type Field  // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -1049,8 +1049,8 @@ func (md *DITemplateTypeParameter) String() string {
 type DITemplateValueParameter struct {
 	Tag   enum.DwarfTag // optional; zero value if not present.
 	Name  string        // optional; empty if not present.
-	Type  MDField       // optional; nil if not present.
-	Value MDField       // required.
+	Type  Field         // optional; nil if not present.
+	Value Field         // required.
 }
 
 // String returns a string representation of the specialized metadata node.
@@ -1080,7 +1080,7 @@ func (md *DITemplateValueParameter) String() string {
 type GenericDINode struct {
 	Tag      enum.DwarfTag // required
 	Header   string        // optional; empty if not present
-	Operands []MDField     // optional
+	Operands []Field       // optional
 }
 
 // String returns a string representation of the specialized metadata node.

@@ -20,19 +20,19 @@ type InstExtractValue struct {
 	// Aggregate value.
 	X value.Value // array or struct
 	// Element indices.
-	Indices []int64
+	Indices []uint64
 
 	// extra.
 
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewExtractValue returns a new extractvalue instruction based on the given
 // aggregate value and indicies.
-func NewExtractValue(x value.Value, indices ...int64) *InstExtractValue {
+func NewExtractValue(x value.Value, indices ...uint64) *InstExtractValue {
 	inst := &InstExtractValue{X: x, Indices: indices}
 	// Compute type.
 	return inst
@@ -80,19 +80,19 @@ type InstInsertValue struct {
 	// Element to insert.
 	Elem value.Value
 	// Element indices.
-	Indices []int64
+	Indices []uint64
 
 	// extra.
 
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.
-func NewInsertValue(x, elem value.Value, indices ...int64) *InstInsertValue {
+func NewInsertValue(x, elem value.Value, indices ...uint64) *InstInsertValue {
 	inst := &InstInsertValue{X: x, Elem: elem, Indices: indices}
 	// Compute type.
 	return inst
@@ -133,7 +133,7 @@ func (inst *InstInsertValue) Def() string {
 
 // aggregateElemType returns the element type at the position in the aggregate
 // type specified by the given indices.
-func aggregateElemType(t types.Type, indices []int64) types.Type {
+func aggregateElemType(t types.Type, indices []uint64) types.Type {
 	// Base case.
 	if len(indices) == 0 {
 		return t

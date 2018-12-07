@@ -27,7 +27,7 @@ func TestModule(t *testing.T) {
 		// LLVM IR compatability.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 	}
-	hasTestdata := osutil.Exists("../../testdata/llvm")
+	hasTestdata := osutil.Exists("../testdata/llvm")
 	for _, g := range golden {
 		if filepath.HasPrefix(g.path, "../testdata") && !hasTestdata {
 			// Skip test cases from the llir/testdata submodule if not downloaded.
