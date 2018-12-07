@@ -4,24 +4,24 @@ import "fmt"
 
 // TODO: implement.
 
-type MetadataNode interface {
+type Node interface {
 	fmt.Stringer
 }
 
-// MDTuple or SpecializedMDNode
+// Tuple or SpecializedNode
 type MDNode interface {
 	fmt.Stringer
 }
 
-type MDField interface {
+type Field interface {
 	fmt.Stringer
 }
 
-type SpecializedMDNode interface {
+type SpecializedNode interface {
 	fmt.Stringer
 }
 
-type MDFieldOrInt interface {
+type FieldOrInt interface {
 	fmt.Stringer
 }
 
@@ -31,6 +31,10 @@ type DIExpressionField interface {
 	// to the metadata.DIExpressionField interface.
 	IsDIExpressionField()
 }
+
+// IsDIExpressionField ensures that only DIExpression fields can be assigned to
+// the metadata.DIExpressionField interface.
+func (UintLit) IsDIExpressionField() {}
 
 type Metadata interface {
 	fmt.Stringer

@@ -31,8 +31,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
+		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
 		_ = m
 		//pretty.Println(m)
-		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
 	}
 }

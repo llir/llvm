@@ -4,14 +4,16 @@ import (
 	"fmt"
 
 	"github.com/llir/ll/ast"
+	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
 
-// === [ Constants ] ===========================================================
+// === [ Translate AST to IR ] =================================================
 
+// irConstant translates the AST constant into an equivalent IR constant.
 func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Constant, error) {
 	switch old := old.(type) {
 	case *ast.BoolConst:
@@ -33,18 +35,18 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Const
 	case *ast.VectorConst:
 		return gen.irVectorConst(t, old)
 	case *ast.ZeroInitializerConst:
-		return gen.irZeroInitializerConst(t, old)
+		return constant.NewZeroInitializer(t), nil
 	case *ast.UndefConst:
-		return gen.irUndefConst(t, old)
+		return constant.NewUndef(t), nil
 	case *ast.BlockAddressConst:
 		return gen.irBlockAddressConst(t, old)
 	case *ast.GlobalIdent:
 		ident := globalIdent(*old)
-		v, ok := gen.new.globals[ident]
+		c, ok := gen.new.globals[ident]
 		if !ok {
-			return nil, errors.Errorf("unable to locate global identifier %q", ident)
+			return nil, errors.Errorf("unable to locate global identifier %q", ident.Ident())
 		}
-		return v, nil
+		return c, nil
 	case ast.ConstantExpr:
 		return gen.irConstantExpr(t, old)
 	default:
@@ -52,6 +54,8 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Const
 	}
 }
 
+// irTypeConst translates the AST type-constant pair into an equivalent IR
+// constant.
 func (gen *generator) irTypeConst(old ast.TypeConst) (constant.Constant, error) {
 	// Type.
 	typ, err := gen.irType(old.Typ())
@@ -62,25 +66,25 @@ func (gen *generator) irTypeConst(old ast.TypeConst) (constant.Constant, error) 
 	return gen.irConstant(typ, old.Val())
 }
 
-// --- [ Boolean Constants ] ---------------------------------------------------
+// --- [ Boolean constants ] ---------------------------------------------------
 
+// irBoolConst translates the AST boolean constant into an equivalent IR integer
+// constant.
 func (gen *generator) irBoolConst(t types.Type, old *ast.BoolConst) (*constant.Int, error) {
 	typ, ok := t.(*types.IntType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of boolean constant; expected *types.IntType, got %T", t)
 	}
-	if typ.BitSize != 1 {
-		return nil, errors.Errorf("invalid integer type bit size of boolean constant; expected 1, got %d", typ.BitSize)
+	if !typ.Equal(types.I1) {
+		return nil, errors.Errorf("boolean type mismatch; expected %q, got %q", types.I1, typ)
 	}
-	v := boolLit(old.BoolLit())
-	if v {
-		return constant.True, nil
-	}
-	return constant.False, nil
+	return constant.NewBool(boolLit(old.BoolLit())), nil
 }
 
-// --- [ Integer Constants ] ---------------------------------------------------
+// --- [ Integer constants ] ---------------------------------------------------
 
+// irIntConst translates the AST integer constant into an equivalent IR integer
+// constant.
 func (gen *generator) irIntConst(t types.Type, old *ast.IntConst) (*constant.Int, error) {
 	typ, ok := t.(*types.IntType)
 	if !ok {
@@ -90,8 +94,10 @@ func (gen *generator) irIntConst(t types.Type, old *ast.IntConst) (*constant.Int
 	return constant.NewIntFromString(typ, s)
 }
 
-// --- [ Floating-point Constants ] --------------------------------------------
+// --- [ Floating-point constants ] --------------------------------------------
 
+// irFloatConst translates the AST floating-point constant into an equivalent IR
+// floating-point constant.
 func (gen *generator) irFloatConst(t types.Type, old *ast.FloatConst) (*constant.Float, error) {
 	typ, ok := t.(*types.FloatType)
 	if !ok {
@@ -101,116 +107,127 @@ func (gen *generator) irFloatConst(t types.Type, old *ast.FloatConst) (*constant
 	return constant.NewFloatFromString(typ, s)
 }
 
-// --- [ Null Pointer Constants ] ----------------------------------------------
+// --- [ Null pointer constants ] ----------------------------------------------
 
+// irNullConst translates the AST null pointer constant into an equivalent IR
+// null pointer constant.
 func (gen *generator) irNullConst(t types.Type, old *ast.NullConst) (*constant.Null, error) {
 	typ, ok := t.(*types.PointerType)
 	if !ok {
-		return nil, errors.Errorf("invalid type of null constant; expected *types.PointerType, got %T", t)
+		return nil, errors.Errorf("invalid type of null pointer constant; expected *types.PointerType, got %T", t)
 	}
 	return constant.NewNull(typ), nil
 }
 
-// --- [ Token Constants ] -----------------------------------------------------
+// --- [ Token constants ] -----------------------------------------------------
 
+// irNoneConst translates the AST none token constant into an equivalent IR none
+// token constant.
 func (gen *generator) irNoneConst(t types.Type, old *ast.NoneConst) (constant.Constant, error) {
-	// TODO: validate type t.
+	if !t.Equal(types.Token) {
+		return nil, errors.Errorf("invalid type of none token constant; expected %q, got %q", types.Token, t)
+	}
 	return constant.None, nil
 }
 
-// --- [ Structure Constants ] -------------------------------------------------
+// --- [ Struct constants ] ----------------------------------------------------
 
+// irStructConst translates the AST struct constant into an equivalent IR struct
+// constant.
 func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*constant.Struct, error) {
 	typ, ok := t.(*types.StructType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of struct constant; expected *types.StructType, got %T", t)
 	}
 	var fields []constant.Constant
-	for _, f := range old.Fields() {
-		field, err := gen.irTypeConst(f)
-		if err != nil {
-			return nil, errors.WithStack(err)
+	if oldFields := old.Fields(); len(oldFields) > 0 {
+		fields = make([]constant.Constant, len(oldFields))
+		for i, oldField := range oldFields {
+			field, err := gen.irTypeConst(oldField)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			fields[i] = field
 		}
-		fields = append(fields, field)
 	}
 	c := constant.NewStruct(fields...)
+	// Set type name as identified struct types are uniqued by type names.
 	c.Typ.TypeName = typ.TypeName
 	c.Typ.Packed = typ.Packed
 	return c, nil
 }
 
-// --- [ Array Constants ] -----------------------------------------------------
+// --- [ Array constants ] -----------------------------------------------------
 
+// irArrayConst translates the AST array constant into an equivalent IR array
+// constant.
 func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant.Array, error) {
 	typ, ok := t.(*types.ArrayType)
 	if !ok {
 		return nil, errors.Errorf("invalid type of array constant; expected *types.ArrayType, got %T", t)
 	}
-	var elems []constant.Constant
-	for _, e := range old.Elems() {
-		elem, err := gen.irTypeConst(e)
+	oldElems := old.Elems()
+	if len(oldElems) == 0 {
+		typ := types.NewArray(0, typ.ElemType)
+		if !t.Equal(typ) {
+			return nil, errors.Errorf("array type mismatch; expected %q, got %q", typ, t)
+		}
+		return &constant.Array{Typ: typ}, nil
+	}
+	elems := make([]constant.Constant, len(oldElems))
+	for i, oldElem := range oldElems {
+		elem, err := gen.irTypeConst(oldElem)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		elems = append(elems, elem)
+		elems[i] = elem
 	}
-	if len(elems) > 0 {
-		c := constant.NewArray(elems...)
-		// TODO: check that typ is equal to c.Typ.
-		_ = typ
-		return c, nil
-	}
-	c := &constant.Array{
-		Typ: types.NewArray(0, typ.ElemType),
+	c := constant.NewArray(elems...)
+	if !t.Equal(c.Typ) {
+		return nil, errors.Errorf("array type mismatch; expected %q, got %q", c.Typ, t)
 	}
 	return c, nil
 }
 
+// irCharArrayConst translates the AST character array constant into an
+// equivalent IR character array constant.
 func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*constant.CharArray, error) {
-	data := stringLitBytes(old.Val())
-	expr := constant.NewCharArray(data)
-	// TODO: validate t against expr.Typ.
-	return expr, nil
+	data := enc.Unquote(old.Val().Text())
+	c := constant.NewCharArray(data)
+	if !t.Equal(c.Typ) {
+		return nil, errors.Errorf("character array type mismatch; expected %q, got %q", c.Typ, t)
+	}
+	return c, nil
 }
 
-// --- [ Vector Constants ] ----------------------------------------------------
+// --- [ Vector constants ] ----------------------------------------------------
 
+// irVectorConst translates the AST vector constant into an equivalent IR vector
+// constant.
 func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*constant.Vector, error) {
-	typ, ok := t.(*types.VectorType)
-	if !ok {
-		return nil, errors.Errorf("invalid type of vector constant; expected *types.VectorType, got %T", t)
-	}
-	var elems []constant.Constant
-	for _, e := range old.Elems() {
-		elem, err := gen.irTypeConst(e)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		elems = append(elems, elem)
-	}
-	if len(elems) == 0 {
+	oldElems := old.Elems()
+	if len(oldElems) == 0 {
 		return nil, errors.New("zero element vector is illegal")
 	}
+	elems := make([]constant.Constant, len(oldElems))
+	for i, oldElem := range oldElems {
+		elem, err := gen.irTypeConst(oldElem)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		elems[i] = elem
+	}
 	c := constant.NewVector(elems...)
-	// TODO: check that typ is equal to c.Typ.
-	_ = typ
+	if !t.Equal(c.Typ) {
+		return nil, errors.Errorf("vector type mismatch; expected %q, got %q", c.Typ, t)
+	}
 	return c, nil
 }
 
-// --- [ Zero Initialization Constants ] ---------------------------------------
+// --- [ Addresses of basic blocks ] -------------------------------------------
 
-func (gen *generator) irZeroInitializerConst(t types.Type, old *ast.ZeroInitializerConst) (*constant.ZeroInitializer, error) {
-	return constant.NewZeroInitializer(t), nil
-}
-
-// --- [ Undefined Values ] ----------------------------------------------------
-
-func (gen *generator) irUndefConst(t types.Type, old *ast.UndefConst) (*constant.Undef, error) {
-	return constant.NewUndef(t), nil
-}
-
-// --- [ Addresses of Basic Blocks ] -------------------------------------------
-
+// irBlockAddressConst translates the AST blockaddress constant into an
+// equivalent IR blockaddress constant.
 func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressConst) (*constant.BlockAddress, error) {
 	// Function.
 	funcName := globalIdent(old.Func())
@@ -230,27 +247,10 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 	block := &ir.BasicBlock{
 		LocalIdent: blockIdent,
 	}
-	expr := constant.NewBlockAddress(f, block)
-	gen.todo = append(gen.todo, expr)
-	// TODO: validate type t against expr.Typ. Store t in todo?
-	return expr, nil
-}
-
-// Pre-condition: translate function body and assign local IDs of c.Func.
-func fixBlockAddressConst(c *constant.BlockAddress) error {
-	f, ok := c.Func.(*ir.Function)
-	if !ok {
-		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Function, got %T", c.Func))
+	c := constant.NewBlockAddress(f, block)
+	gen.todo = append(gen.todo, c)
+	if typ := c.Type(); !t.Equal(typ) {
+		return nil, errors.Errorf("blockaddress constant type mismatch; expected %q, got %q", typ, t)
 	}
-	bb, ok := c.Block.(*ir.BasicBlock)
-	if !ok {
-		panic(fmt.Errorf("invalid basic block type in blockaddress constant; expected *ir.BasicBlock, got %T", c.Block))
-	}
-	for _, block := range f.Blocks {
-		if block.LocalIdent == bb.LocalIdent {
-			c.Block = block
-			return nil
-		}
-	}
-	return errors.Errorf("unable to locate basic block %q in function %q", c.Block.Ident(), f.Ident())
+	return c, nil
 }

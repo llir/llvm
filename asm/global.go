@@ -9,19 +9,25 @@ import (
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
-	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
 )
 
 // === [ Create and index IR ] =================================================
 
-// createGlobals indexes global identifiers and creates scaffolding IR global
-// declarations and definitions, alias and IFunc definitions, and function
-// declarations and definitions (without bodies but with types) of the given
-// module.
-func (gen *generator) createGlobals() error {
+// createGlobalEntities indexes global identifiers and creates scaffolding IR
+// global declarations and definitions, indirect symbol definitions (aliases and
+// indirect functions), and function declarations and definitions (without
+// bodies but with types) of the given module.
+//
+// post-condition: gen.new.globals maps from global identifierD (without '@'
+// prefix) to corresponding skeleton IR value.
+func (gen *generator) createGlobalEntities() error {
+	// 4a1. Index global identifiers and create scaffolding IR global
+	//      declarations and definitions, indirect symbol definitions (aliases
+	//      and indirect functions), and function declarations and definitions
+	//      (without bodies but with types).
 	for ident, old := range gen.old.globals {
-		new, err := gen.newGlobal(ident, old)
+		new, err := gen.newGlobalEntity(ident, old)
 		if err != nil {
 			return errors.WithStack(err)
 		}
@@ -30,103 +36,118 @@ func (gen *generator) createGlobals() error {
 	return nil
 }
 
-// newGlobal returns a new scaffolding IR value (without body but with type)
-// based on the given AST global declaration or definition, alias or IFunc
-// definition, or function declaration or definition.
-func (gen *generator) newGlobal(ident ir.GlobalIdent, old ast.LlvmNode) (constant.Constant, error) {
+// newGlobalEntity returns a new scaffolding IR value (without body but with
+// type) based on the given AST global declaration or definition, indirect
+// symbol definitions (aliases and indirect functions), or function declaration
+// or definition.
+func (gen *generator) newGlobalEntity(ident ir.GlobalIdent, old ast.LlvmNode) (constant.Constant, error) {
 	switch old := old.(type) {
 	case *ast.GlobalDecl:
-		new := &ir.Global{}
-		setGlobalIdent(new, ident)
-		// Content type.
-		contentType, err := gen.irType(old.ContentType())
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		new.ContentType = contentType
-		new.Typ = types.NewPointer(new.ContentType)
-		// (optional) Address space.
-		if n, ok := old.AddrSpace(); ok {
-			new.Typ.AddrSpace = irAddrSpace(n)
-		}
-		return new, nil
-	case *ast.GlobalDef:
-		new := &ir.Global{}
-		setGlobalIdent(new, ident)
-		// Content type.
-		contentType, err := gen.irType(old.ContentType())
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		new.ContentType = contentType
-		new.Typ = types.NewPointer(new.ContentType)
-		// (optional) Address space.
-		if n, ok := old.AddrSpace(); ok {
-			new.Typ.AddrSpace = irAddrSpace(n)
-		}
-		return new, nil
+		oldAddrSpace, _ := old.AddrSpace()
+		return gen.newGlobal(ident, old.ContentType(), oldAddrSpace)
 	case *ast.IndirectSymbolDef:
-		// Content type.
-		contentType, err := gen.irType(old.ContentType())
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		// Indirect symbol kind.
-		kind := old.IndirectSymbolKind().Text()
-		switch kind {
-		case "alias":
-			new := &ir.Alias{Typ: types.NewPointer(contentType)}
-			setGlobalIdent(new, ident)
-			return new, nil
-		case "ifunc":
-			new := &ir.IFunc{Typ: types.NewPointer(contentType)}
-			setGlobalIdent(new, ident)
-			return new, nil
-		default:
-			panic(fmt.Errorf("support for indirect symbol kind %q not yet implemented", kind))
-		}
+		return gen.newIndirectSymbol(ident, old)
 	case *ast.FuncDecl:
-		new := &ir.Function{}
-		setGlobalIdent(new, ident)
-		// Function signature.
-		sig, err := gen.sigFromHeader(old.Header())
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		new.Sig = sig
-		new.Typ = types.NewPointer(new.Sig)
-		// (optional) Address space.
-		if n, ok := old.Header().AddrSpace(); ok {
-			new.Typ.AddrSpace = irAddrSpace(n)
-		}
-		return new, nil
+		return gen.newFunc(ident, old.Header())
 	case *ast.FuncDef:
-		new := &ir.Function{}
-		setGlobalIdent(new, ident)
-		// Function signature.
-		sig, err := gen.sigFromHeader(old.Header())
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		new.Sig = sig
-		new.Typ = types.NewPointer(new.Sig)
-		// (optional) Address space.
-		if n, ok := old.Header().AddrSpace(); ok {
-			new.Typ.AddrSpace = irAddrSpace(n)
-		}
-		return new, nil
+		return gen.newFunc(ident, old.Header())
 	default:
 		panic(fmt.Errorf("support for global variable, indirect symbol or function %T not yet implemented", old))
 	}
 }
 
+// newGlobal returns a new IR global variable declaration or definition (without
+// body but with type) based on the given AST content type and optional address
+// space.
+func (gen *generator) newGlobal(ident ir.GlobalIdent, oldContentType ast.Type, oldAddrSpace ast.AddrSpace) (*ir.Global, error) {
+	// Content type.
+	contentType, err := gen.irType(oldContentType)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	typ := types.NewPointer(contentType)
+	// (optional) Address space.
+	if oldAddrSpace.IsValid() {
+		typ.AddrSpace = irAddrSpace(oldAddrSpace)
+	}
+	return &ir.Global{GlobalIdent: ident, ContentType: contentType, Typ: typ}, nil
+}
+
+// newIndirectSymbol returns a new IR indirect symbol definition (without body
+// but with type) based on the given AST indirect symbol.
+func (gen *generator) newIndirectSymbol(ident ir.GlobalIdent, old *ast.IndirectSymbolDef) (constant.Constant, error) {
+	// Content type.
+	contentType, err := gen.irType(old.ContentType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	typ := types.NewPointer(contentType)
+	// Indirect symbol kind.
+	kind := old.IndirectSymbolKind().Text()
+	switch kind {
+	case "alias":
+		return &ir.Alias{GlobalIdent: ident, Typ: typ}, nil
+	case "ifunc":
+		return &ir.IFunc{GlobalIdent: ident, Typ: typ}, nil
+	default:
+		panic(fmt.Errorf("support for indirect symbol kind %q not yet implemented", kind))
+	}
+}
+
+// newFunc returns a new IR function declaration or definition (without body but
+// with type) based on the given AST function header.
+func (gen *generator) newFunc(ident ir.GlobalIdent, hdr ast.FuncHeader) (*ir.Function, error) {
+	// Function signature.
+	sig, err := gen.irSigFromHeader(hdr)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	typ := types.NewPointer(sig)
+	// (optional) Address space.
+	if n, ok := hdr.AddrSpace(); ok {
+		typ.AddrSpace = irAddrSpace(n)
+	}
+	return &ir.Function{GlobalIdent: ident, Sig: sig, Typ: typ}, nil
+}
+
+// ### [ Helper functions ] ####################################################
+
+// irSigFromHeader translates the AST function signature to an equivalent IR
+// function type.
+func (gen *generator) irSigFromHeader(old ast.FuncHeader) (*types.FuncType, error) {
+	// Return type.
+	sig := &types.FuncType{}
+	retType, err := gen.irType(old.RetType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	sig.RetType = retType
+	// Function parameters.
+	ps := old.Params()
+	if oldParams := ps.Params(); len(oldParams) > 0 {
+		sig.Params = make([]types.Type, len(oldParams))
+		for i, oldParam := range oldParams {
+			param, err := gen.irType(oldParam.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			sig.Params[i] = param
+		}
+	}
+	// Variadic.
+	_, sig.Variadic = ps.Variadic()
+	return sig, nil
+}
+
 // === [ Translate AST to IR ] =================================================
 
-// translateGlobals translates the AST global declarations and definitions of
-// the given module to IR.
-func (gen *generator) translateGlobals() error {
-	// TODO: make concurrent and benchmark. Each gen.translateGlobalDecl,
-	// gen.translateGlobalDef, etc can be run in a Go-routine.
+// translateGlobalEntities translate AST global declarations and definitions,
+// indirect symbol definitions, and function declarations and definitions to IR.
+func (gen *generator) translateGlobalEntities() error {
+	// TODO: make concurrent and benchmark difference in walltime.
+
+	// 4b1. Translate AST global declarations and definitions, indirect symbol
+	//      definitions, and function declarations and definitions to IR.
 	for ident, old := range gen.old.globals {
 		v, ok := gen.new.globals[ident]
 		if !ok {
@@ -138,15 +159,7 @@ func (gen *generator) translateGlobals() error {
 			if !ok {
 				panic(fmt.Errorf("invalid global declaration type; expected *ir.Global, got %T", v))
 			}
-			if err := gen.translateGlobalDecl(new, old); err != nil {
-				return errors.WithStack(err)
-			}
-		case *ast.GlobalDef:
-			new, ok := v.(*ir.Global)
-			if !ok {
-				panic(fmt.Errorf("invalid global definition type; expected *ir.Global, got %T", v))
-			}
-			if err := gen.translateGlobalDef(new, old); err != nil {
+			if err := gen.irGlobal(new, old); err != nil {
 				return errors.WithStack(err)
 			}
 		case *ast.IndirectSymbolDef:
@@ -157,7 +170,7 @@ func (gen *generator) translateGlobals() error {
 				if !ok {
 					panic(fmt.Errorf("invalid alias definition type; expected *ir.Alias, got %T", v))
 				}
-				if err := gen.translateAliasDef(new, old); err != nil {
+				if err := gen.irAlias(new, old); err != nil {
 					return errors.WithStack(err)
 				}
 			case "ifunc":
@@ -165,7 +178,7 @@ func (gen *generator) translateGlobals() error {
 				if !ok {
 					panic(fmt.Errorf("invalid IFunc definition type; expected *ir.IFunc, got %T", v))
 				}
-				if err := gen.translateIFuncDef(new, old); err != nil {
+				if err := gen.irIFunc(new, old); err != nil {
 					return errors.WithStack(err)
 				}
 			default:
@@ -176,7 +189,7 @@ func (gen *generator) translateGlobals() error {
 			if !ok {
 				panic(fmt.Errorf("invalid function declaration type; expected *ir.Function, got %T", v))
 			}
-			if err := gen.translateFuncDecl(new, old); err != nil {
+			if err := gen.irFuncDecl(new, old); err != nil {
 				return errors.WithStack(err)
 			}
 		case *ast.FuncDef:
@@ -184,7 +197,7 @@ func (gen *generator) translateGlobals() error {
 			if !ok {
 				panic(fmt.Errorf("invalid function definition type; expected *ir.Function, got %T", v))
 			}
-			if err := gen.translateFuncDef(new, old); err != nil {
+			if err := gen.irFuncDef(new, old); err != nil {
 				return errors.WithStack(err)
 			}
 		default:
@@ -196,80 +209,12 @@ func (gen *generator) translateGlobals() error {
 
 // --- [ Global declarations ] -------------------------------------------------
 
-// translateGlobalDecl translates the given AST global declarations to IR.
-func (gen *generator) translateGlobalDecl(new *ir.Global, old *ast.GlobalDecl) error {
-	// (optional) Linkage.
-	new.Linkage = asmenum.LinkageFromString(old.ExternLinkage().Text())
-	// (optional) Preemption.
-	if n, ok := old.Preemption(); ok {
-		new.Preemption = asmenum.PreemptionFromString(n.Text())
-	}
-	// (optional) Visibility.
-	if n, ok := old.Visibility(); ok {
-		new.Visibility = asmenum.VisibilityFromString(n.Text())
-	}
-	// (optional) DLL storage class.
-	if n, ok := old.DLLStorageClass(); ok {
-		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
-	}
-	// (optional) Thread local storage model.
-	if n, ok := old.ThreadLocal(); ok {
-		new.TLSModel = irTLSModelFromThreadLocal(n)
-	}
-	// (optional) Unnamed address.
-	if n, ok := old.UnnamedAddr(); ok {
-		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
-	}
-	// (optional) Address space: handled in newGlobal.
-	// (optional) Externally initialized.
-	_, externallyInitialized := old.ExternallyInitialized()
-	new.ExternallyInitialized = externallyInitialized
-	// Immutability of global variable (constant or global).
-	new.Immutable = irImmutable(old.Immutable())
-	// Content type: handled in newGlobal.
-	// (optional) Section name.
-	if n, ok := old.Section(); ok {
-		new.Section = stringLit(n.Name())
-	}
-	// (optional) Comdat.
-	if n, ok := old.Comdat(); ok {
-		// When comdat name is omitted, the global name is used as an implicit
-		// comdat name.
-		name := new.Name()
-		if n, ok := n.Name(); ok {
-			name = comdatName(n)
-		}
-		def, ok := gen.new.comdatDefs[name]
-		if !ok {
-			return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), new.Ident())
-		}
-		new.Comdat = def
-	}
-	// (optional) Alignment.
-	if n, ok := old.Align(); ok {
-		new.Align = irAlign(n)
-	}
-	// (optional) Metadata.
-	md, err := gen.irMetadataAttachments(old.Metadata())
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	new.Metadata = md
-	// (optional) Function attributes.
-	for _, oldFuncAttr := range old.FuncAttrs() {
-		funcAttr := gen.irFuncAttribute(oldFuncAttr)
-		new.FuncAttrs = append(new.FuncAttrs, funcAttr)
-	}
-	return nil
-}
-
-// --- [ Global definitions ] --------------------------------------------------
-
-// translateGlobalDef translates the given AST global definition to IR.
-func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) error {
+// irGlobal translates the AST global declaration into an equivalent IR
+// global declaration.
+func (gen *generator) irGlobal(new *ir.Global, old *ast.GlobalDecl) error {
 	// (optional) Linkage.
 	if n, ok := old.Linkage(); ok {
-		new.Linkage = asmenum.LinkageFromString(n.Text())
+		new.Linkage = asmenum.LinkageFromString(n.LlvmNode().Text())
 	}
 	// (optional) Preemption.
 	if n, ok := old.Preemption(); ok {
@@ -291,19 +236,20 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
-	// (optional) Address space: handled in newGlobal.
+	// (optional) Address space: handled in newGlobalEntity.
 	// (optional) Externally initialized.
-	_, externallyInitialized := old.ExternallyInitialized()
-	new.ExternallyInitialized = externallyInitialized
+	_, new.ExternallyInitialized = old.ExternallyInitialized()
 	// Immutability of global variable (constant or global).
 	new.Immutable = irImmutable(old.Immutable())
-	// Content type: handled in newGlobal.
-	// Initial value.
-	init, err := gen.irConstant(new.ContentType, old.Init())
-	if err != nil {
-		return errors.WithStack(err)
+	// Content type: handled in newGlobalEntity.
+	// Initial value (only used in global variable definitions).
+	if n, ok := old.Init(); ok {
+		init, err := gen.irConstant(new.ContentType, n)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		new.Init = init
 	}
-	new.Init = init
 	// (optional) Section name.
 	if n, ok := old.Section(); ok {
 		new.Section = stringLit(n.Name())
@@ -333,19 +279,22 @@ func (gen *generator) translateGlobalDef(new *ir.Global, old *ast.GlobalDef) err
 	}
 	new.Metadata = md
 	// (optional) Function attributes.
-	for _, oldFuncAttr := range old.FuncAttrs() {
-		funcAttr := gen.irFuncAttribute(oldFuncAttr)
-		new.FuncAttrs = append(new.FuncAttrs, funcAttr)
+	if oldFuncAttrs := old.FuncAttrs(); len(oldFuncAttrs) > 0 {
+		new.FuncAttrs = make([]ir.FuncAttribute, len(oldFuncAttrs))
+		for i, oldFuncAttr := range oldFuncAttrs {
+			funcAttr := gen.irFuncAttribute(oldFuncAttr)
+			new.FuncAttrs[i] = funcAttr
+		}
 	}
 	return nil
 }
 
 // --- [ Alias definitions ] ---------------------------------------------------
 
-// translateAliasDef translates the given AST alias definition to IR.
-func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.IndirectSymbolDef) error {
+// irAlias translates the AST indirect symbol definition (alias) into an
+// equivalent IR alias definition.
+func (gen *generator) irAlias(new *ir.Alias, old *ast.IndirectSymbolDef) error {
 	// (optional) Linkage.
-	// TODO: check that linkage is handled correctly.
 	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
@@ -372,7 +321,7 @@ func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.IndirectSymbolDe
 	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
-	// Content type: handled in newGlobal.
+	// Content type: handled in newGlobalEntity.
 	// Aliasee.
 	aliasee, err := gen.irIndirectSymbol(new.Typ, old.IndirectSymbol())
 	if err != nil {
@@ -384,10 +333,10 @@ func (gen *generator) translateAliasDef(new *ir.Alias, old *ast.IndirectSymbolDe
 
 // --- [ IFunc definitions ] ---------------------------------------------------
 
-// translateIFuncDef translates the given AST IFunc definition to IR.
-func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IndirectSymbolDef) error {
+// irIFunc translates the AST indirect symbol definition (IFunc) into an
+// equivalent IR indirect function definition.
+func (gen *generator) irIFunc(new *ir.IFunc, old *ast.IndirectSymbolDef) error {
 	// (optional) Linkage.
-	// TODO: check that linkage is handled correctly.
 	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
@@ -414,7 +363,7 @@ func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IndirectSymbolDe
 	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
-	// Content type: handled in newGlobal.
+	// Content type: handled in newGlobalEntity.
 	// Resolver.
 	resolver, err := gen.irIndirectSymbol(new.Typ, old.IndirectSymbol())
 	if err != nil {
@@ -426,8 +375,9 @@ func (gen *generator) translateIFuncDef(new *ir.IFunc, old *ast.IndirectSymbolDe
 
 // --- [ Function declarations ] -----------------------------------------------
 
-// translateFuncDecl translates the given AST function declaration to IR.
-func (gen *generator) translateFuncDecl(new *ir.Function, old *ast.FuncDecl) error {
+// irFuncDecl translates the AST function declaration into an equivalent IR
+// function declaration.
+func (gen *generator) irFuncDecl(new *ir.Function, old *ast.FuncDecl) error {
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
@@ -435,18 +385,16 @@ func (gen *generator) translateFuncDecl(new *ir.Function, old *ast.FuncDecl) err
 	}
 	new.Metadata = md
 	// Function header.
-	if err := gen.translateFuncHeader(new, old.Header()); err != nil {
-		return errors.WithStack(err)
-	}
-	return nil
+	return gen.irFuncHeader(new, old.Header())
 }
 
 // --- [ Function definitions ] ------------------------------------------------
 
-// translateFuncDef translates the given AST function definition to IR.
-func (gen *generator) translateFuncDef(new *ir.Function, old *ast.FuncDef) error {
+// irFuncDef translates the AST function definition into an equivalent IR
+// function definition.
+func (gen *generator) irFuncDef(new *ir.Function, old *ast.FuncDef) error {
 	// Function header.
-	if err := gen.translateFuncHeader(new, old.Header()); err != nil {
+	if err := gen.irFuncHeader(new, old.Header()); err != nil {
 		return errors.WithStack(err)
 	}
 	// (optional) Metadata.
@@ -462,22 +410,25 @@ func (gen *generator) translateFuncDef(new *ir.Function, old *ast.FuncDef) error
 		return errors.WithStack(err)
 	}
 	// (optional) Use list orders.
-	for _, oldUseListOrder := range oldBody.UseListOrders() {
-		useListOrder, err := fgen.irUseListOrder(oldUseListOrder)
-		if err != nil {
-			return errors.WithStack(err)
+	if oldUseListOrders := oldBody.UseListOrders(); len(oldUseListOrders) > 0 {
+		new.UseListOrders = make([]*ir.UseListOrder, len(oldUseListOrders))
+		for i, oldUseListOrder := range oldUseListOrders {
+			useListOrder, err := fgen.irUseListOrder(oldUseListOrder)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			new.UseListOrders[i] = useListOrder
 		}
-		new.UseListOrders = append(new.UseListOrders, useListOrder)
 	}
 	return nil
 }
 
 // ~~~ [ Function headers ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// translateFuncHeader translates the given AST function header to IR.
-func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) error {
+// irFuncHeader translates the AST function header into an equivalent IR
+// function.
+func (gen *generator) irFuncHeader(new *ir.Function, old ast.FuncHeader) error {
 	// (optional) Linkage.
-	// TODO: check that linkage is handled correctly.
 	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())
 	}
@@ -497,45 +448,57 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.DLLStorageClass = asmenum.DLLStorageClassFromString(n.Text())
 	}
 	// (optional) Calling convention.
-	if n := old.CallingConv(); n.LlvmNode().IsValid() {
+	if n, ok := old.CallingConv(); ok {
 		new.CallingConv = irCallingConv(n)
 	}
 	// (optional) Return attributes.
-	for _, oldRetAttr := range old.ReturnAttrs() {
-		retAttr := irReturnAttribute(oldRetAttr)
-		new.ReturnAttrs = append(new.ReturnAttrs, retAttr)
+	if oldReturnAttrs := old.ReturnAttrs(); len(oldReturnAttrs) > 0 {
+		new.ReturnAttrs = make([]ir.ReturnAttribute, len(oldReturnAttrs))
+		for i, oldRetAttr := range oldReturnAttrs {
+			retAttr := irReturnAttribute(oldRetAttr)
+			new.ReturnAttrs[i] = retAttr
+		}
 	}
-	// Return type: handled in newGlobal.
+	// Return type: handled in newGlobalEntity.
 	// Function parameters.
 	ps := old.Params()
-	for _, p := range ps.Params() {
-		// Type.
-		typ, err := gen.irType(p.Typ())
-		if err != nil {
-			return errors.WithStack(err)
+	if oldParams := ps.Params(); len(oldParams) > 0 {
+		new.Params = make([]*ir.Param, len(oldParams))
+		for i, oldParam := range oldParams {
+			// Type.
+			typ, err := gen.irType(oldParam.Typ())
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			// Name.
+			param := ir.NewParam("", typ)
+			if n, ok := oldParam.Name(); ok {
+				ident := localIdent(n)
+				param.LocalIdent = ident
+			}
+			// (optional) Parameter attributes.
+			if oldParamAttrs := oldParam.Attrs(); len(oldParamAttrs) > 0 {
+				param.Attrs = make([]ir.ParamAttribute, len(oldParamAttrs))
+				for j, oldParamAttr := range oldParamAttrs {
+					paramAttr := irParamAttribute(oldParamAttr)
+					param.Attrs[j] = paramAttr
+				}
+			}
+			new.Params[i] = param
 		}
-		// Name.
-		param := ir.NewParam("", typ)
-		if n, ok := p.Name(); ok {
-			ident := localIdent(n)
-			param.LocalIdent = ident
-		}
-		// (optional) Parameter attributes.
-		for _, oldParamAttr := range p.Attrs() {
-			paramAttr := irParamAttribute(oldParamAttr)
-			param.Attrs = append(param.Attrs, paramAttr)
-		}
-		new.Params = append(new.Params, param)
 	}
 	// (optional) Unnamed address.
 	if n, ok := old.UnnamedAddr(); ok {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
-	// (optional) Address space: handled in newGlobal.
+	// (optional) Address space: handled in newGlobalEntity.
 	// (optional) Function attributes.
-	for _, oldFuncAttr := range old.FuncAttrs() {
-		funcAttr := gen.irFuncAttribute(oldFuncAttr)
-		new.FuncAttrs = append(new.FuncAttrs, funcAttr)
+	if oldFuncAttrs := old.FuncAttrs(); len(oldFuncAttrs) > 0 {
+		new.FuncAttrs = make([]ir.FuncAttribute, len(oldFuncAttrs))
+		for i, oldFuncAttr := range oldFuncAttrs {
+			funcAttr := gen.irFuncAttribute(oldFuncAttr)
+			new.FuncAttrs[i] = funcAttr
+		}
 	}
 
 	// (optional) Section name.
@@ -585,56 +548,4 @@ func (gen *generator) translateFuncHeader(new *ir.Function, old ast.FuncHeader) 
 		new.Personality = personality
 	}
 	return nil
-}
-
-// ### [ Helper functions ] ####################################################
-
-// sigFromHeader returns the function signature of the given function header.
-func (gen *generator) sigFromHeader(old ast.FuncHeader) (*types.FuncType, error) {
-	sig := &types.FuncType{}
-	// Return type.
-	retType, err := gen.irType(old.RetType())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	sig.RetType = retType
-	// Function parameters.
-	ps := old.Params()
-	for _, p := range ps.Params() {
-		param, err := gen.irType(p.Typ())
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		sig.Params = append(sig.Params, param)
-	}
-	// Variadic.
-	_, variadic := ps.Variadic()
-	sig.Variadic = variadic
-	return sig, nil
-}
-
-// text returns the text of the given node.
-func text(n ast.LlvmNode) string {
-	if n := n.LlvmNode(); n != nil {
-		return n.Text()
-	}
-	return ""
-}
-
-// global is a global variable.
-type global interface {
-	value.Named
-	// ID returns the ID of the global identifier.
-	ID() int64
-	// SetID sets the ID of the global identifier.
-	SetID(id int64)
-}
-
-// setGlobalIdent sets the identifier of the given global variable.
-func setGlobalIdent(g global, ident ir.GlobalIdent) {
-	if ident.IsUnnamed() {
-		g.SetID(ident.GlobalID)
-	} else {
-		g.SetName(ident.GlobalName)
-	}
 }

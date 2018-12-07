@@ -43,6 +43,18 @@ var (
 
 // Convenience functions.
 
+// IsInt reports whether the given type is an integer type.
+func IsInt(t Type) bool {
+	_, ok := t.(*IntType)
+	return ok
+}
+
+// IsFloat reports whether the given type is a floating-point type.
+func IsFloat(t Type) bool {
+	_, ok := t.(*FloatType)
+	return ok
+}
+
 // IsPointer reports whether the given type is a pointer type.
 func IsPointer(t Type) bool {
 	_, ok := t.(*PointerType)

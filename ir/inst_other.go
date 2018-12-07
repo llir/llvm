@@ -28,7 +28,7 @@ type InstICmp struct {
 	// Type of result produced by the instruction.
 	Typ types.Type // boolean or boolean vector
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewICmp returns a new icmp instruction based on the given integer comparison
@@ -93,7 +93,7 @@ type InstFCmp struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -158,7 +158,7 @@ type InstPhi struct {
 	// Type of result produced by the instruction.
 	Typ types.Type // type of incoming value
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -241,7 +241,7 @@ type InstSelect struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewSelect returns a new select instruction based on the given selection
@@ -318,7 +318,7 @@ type InstCall struct {
 	// (optional) Operand bundles.
 	OperandBundles []*OperandBundle
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewCall returns a new call instruction based on the given callee and function
@@ -433,7 +433,7 @@ type InstVAArg struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewVAArg returns a new va_arg instruction based on the given variable
@@ -483,7 +483,7 @@ type InstLandingPad struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewLandingPad returns a new landingpad instruction based on the given result
@@ -561,7 +561,7 @@ type InstCatchPad struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewCatchPad returns a new catchpad instruction based on the given exception
@@ -619,7 +619,7 @@ type InstCleanupPad struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given

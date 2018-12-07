@@ -36,7 +36,7 @@ type InstAlloca struct {
 	// (optional) Alignment; zero if not present.
 	Align Align
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -115,7 +115,7 @@ type InstLoad struct {
 	// (optional) Alignment; zero if not present.
 	Align Align
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -204,7 +204,7 @@ type InstStore struct {
 	// (optional) Alignment; zero if not present.
 	Align Align
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewStore returns a new store instruction based on the given source value and
@@ -261,7 +261,7 @@ type InstFence struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
@@ -314,7 +314,7 @@ type InstCmpXchg struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -393,7 +393,7 @@ type InstAtomicRMW struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
@@ -465,7 +465,7 @@ type InstGetElementPtr struct {
 	// (optional) In-bounds.
 	InBounds bool
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given
