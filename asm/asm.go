@@ -5,12 +5,10 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"os"
 	"time"
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
-	"github.com/mewkiz/pkg/term"
 	"github.com/pkg/errors"
 )
 
@@ -18,7 +16,8 @@ import (
 var (
 	// dbg is a logger which logs debug messages with "asm:" prefix to standard
 	// error.
-	dbg = log.New(os.Stderr, term.MagentaBold("asm:")+" ", 0)
+	dbg = log.New(ioutil.Discard, "", 0)
+	//dbg = log.New(os.Stderr, term.MagentaBold("asm:")+" ", 0)
 )
 
 // ParseFile parses the given LLVM IR assembly file into an LLVM IR module.
