@@ -112,8 +112,6 @@ func (fgen *funcGen) irAllocaInst(new ir.Instruction, old *ast.AllocaInst) error
 	}
 	// (optional) Address space; stored in i.Typ.
 	if n, ok := old.AddrSpace(); ok {
-		// TODO: verify if needed. Should not be, since inst.Typ is cached in newAllocaInst.
-		//inst.Type()
 		inst.Typ.AddrSpace = irAddrSpace(n)
 	}
 	// (optional) Metadata.
