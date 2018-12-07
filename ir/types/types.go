@@ -222,11 +222,11 @@ type IntType struct {
 	// Type name; or empty if not present.
 	TypeName string
 	// Integer size in number of bits.
-	BitSize int64
+	BitSize uint64
 }
 
 // NewInt returns a new integer type based on the given integer bit size.
-func NewInt(bitSize int64) *IntType {
+func NewInt(bitSize uint64) *IntType {
 	return &IntType{
 		BitSize: bitSize,
 	}
@@ -424,12 +424,12 @@ func (t *PointerType) Name() string {
 }
 
 // AddrSpace is an LLVM IR pointer type address space.
-type AddrSpace int64
+type AddrSpace uint64
 
 // String returns the string representation of the pointer type address space.
 func (a AddrSpace) String() string {
 	// 'addrspace' '(' N=UintLit ')'
-	return fmt.Sprintf("addrspace(%d)", int64(a))
+	return fmt.Sprintf("addrspace(%d)", uint64(a))
 }
 
 // --- [ Vector types ] --------------------------------------------------------

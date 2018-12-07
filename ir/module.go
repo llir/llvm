@@ -218,11 +218,11 @@ func (a *AttrGroupDef) Def() string {
 		switch attr := attr.(type) {
 		case Align:
 			// Note, alignment is printed as `align = 8` in attribute groups.
-			fmt.Fprintf(buf, "align = %d", int64(attr))
+			fmt.Fprintf(buf, "align = %d", uint64(attr))
 		case AlignStack:
 			// Note, stack alignment is printed as `alignstack = 8` in attribute
 			// groups.
-			fmt.Fprintf(buf, "alignstack = %d", int64(attr))
+			fmt.Fprintf(buf, "alignstack = %d", uint64(attr))
 		default:
 			buf.WriteString(attr.String())
 		}

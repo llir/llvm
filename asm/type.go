@@ -240,14 +240,14 @@ func (gen *generator) irIntType(t types.Type, old *ast.IntType) (types.Type, err
 }
 
 // irBitSize returns the bit size of the given AST integer type.
-func irBitSize(n *ast.IntType) int64 {
+func irBitSize(n *ast.IntType) uint64 {
 	text := n.Text()
 	const prefix = "i"
 	if !strings.HasPrefix(text, prefix) {
 		panic(fmt.Errorf("invalid integer type %q; missing '%s' prefix", text, prefix))
 	}
 	text = text[len(prefix):]
-	x, err := strconv.ParseInt(text, 10, 64)
+	x, err := strconv.ParseUint(text, 10, 64)
 	if err != nil {
 		panic(fmt.Errorf("unable to parse bit size %q; %v", text, err))
 	}

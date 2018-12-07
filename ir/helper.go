@@ -12,21 +12,21 @@ import (
 )
 
 // Align is a memory alignment attribute.
-type Align int64
+type Align uint64
 
 // String returns the string representation of the alignment attribute.
 func (align Align) String() string {
 	// Note, alignment is printed as `align = 8` in attribute groups.
-	return fmt.Sprintf("align %d", int64(align))
+	return fmt.Sprintf("align %d", uint64(align))
 }
 
 // AlignStack is a stack alignment attribute.
-type AlignStack int64
+type AlignStack uint64
 
 // String returns the string representation of the stack alignment attribute.
 func (align AlignStack) String() string {
 	// Note, stack alignment is printed as `alignstack = 8` in attribute groups.
-	return fmt.Sprintf("alignstack(%d)", int64(align))
+	return fmt.Sprintf("alignstack(%d)", uint64(align))
 }
 
 // Arg is a function argument.
