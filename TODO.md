@@ -5,4 +5,3 @@
 	- %0 = call void @f()
 * report error in translation of global decl if comdat is used
 * rename Def to LLString (or LLVMString) analogous to fmt.GoStringer
-* use make for slices instead of append when length is known.
