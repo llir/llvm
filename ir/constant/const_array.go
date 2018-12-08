@@ -16,6 +16,9 @@ type Array struct {
 	Typ *types.ArrayType
 	// Array elements.
 	Elems []Constant
+
+	// Array implements constant.Constant.
+	constantSumtype
 }
 
 // NewArray returns a new array constant based on the given array type and
@@ -66,6 +69,9 @@ type CharArray struct {
 	Typ *types.ArrayType
 	// Character array contents.
 	X []byte
+
+	// CharArray implements constant.Constant.
+	constantSumtype
 }
 
 // NewCharArray returns a new character array constant based on the given

@@ -15,6 +15,9 @@ type BlockAddress struct {
 	Func Constant // *ir.Function
 	// Basic block to take address of.
 	Block value.Named // *ir.BasicBlock
+
+	// BlockAddress implements constant.Constant.
+	constantSumtype
 }
 
 // NewBlockAddress returns a new blockaddress constant based on the given parent

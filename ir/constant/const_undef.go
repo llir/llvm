@@ -12,6 +12,9 @@ import (
 type Undef struct {
 	// Undefined value type.
 	Typ types.Type
+
+	// Undef implements constant.Constant.
+	constantSumtype
 }
 
 // NewUndef returns a new undefined value based on the given type.

@@ -23,6 +23,9 @@ type ExprShl struct {
 	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
+
+	// ExprShl implements constant.Constant.
+	constantSumtype
 }
 
 // NewShl returns a new shl expression based on the given operands.
@@ -80,6 +83,9 @@ type ExprLShr struct {
 	// (optional) The result is a poison value if any of the bits shifted out are
 	// non-zero.
 	Exact bool
+
+	// ExprLShr implements constant.Constant.
+	constantSumtype
 }
 
 // NewLShr returns a new lshr expression based on the given operands.
@@ -137,6 +143,9 @@ type ExprAShr struct {
 	// (optional) The result is a poison value if any of the bits shifted out are
 	// non-zero.
 	Exact bool
+
+	// ExprAShr implements constant.Constant.
+	constantSumtype
 }
 
 // NewAShr returns a new ashr expression based on the given operands.
@@ -191,6 +200,9 @@ type ExprAnd struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprAnd implements constant.Constant.
+	constantSumtype
 }
 
 // NewAnd returns a new and expression based on the given operands.
@@ -239,6 +251,9 @@ type ExprOr struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprOr implements constant.Constant.
+	constantSumtype
 }
 
 // NewOr returns a new or expression based on the given operands.
@@ -287,6 +302,9 @@ type ExprXor struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprXor implements constant.Constant.
+	constantSumtype
 }
 
 // NewXor returns a new xor expression based on the given operands.

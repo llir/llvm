@@ -25,6 +25,9 @@ type Float struct {
 	X *big.Float
 	// NaN specifies whether the floating-point constant is Not-a-Number.
 	NaN bool
+
+	// Float implements constant.Constant.
+	constantSumtype
 }
 
 // NewFloat returns a new floating-point constant based on the given

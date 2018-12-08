@@ -27,6 +27,9 @@ type ExprGetElementPtr struct {
 	// (optional) The result is a poison value if the calculated pointer is not
 	// an in bounds address of the allocated source object.
 	InBounds bool
+
+	// ExprGetElementPtr implements constant.Constant.
+	constantSumtype
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given

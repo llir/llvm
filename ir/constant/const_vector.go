@@ -15,6 +15,9 @@ type Vector struct {
 	Typ *types.VectorType
 	// Vector elements.
 	Elems []Constant
+
+	// Vector implements constant.Constant.
+	constantSumtype
 }
 
 // NewVector returns a new vector constant based on the given vector type and

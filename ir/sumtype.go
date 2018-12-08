@@ -2,21 +2,12 @@ package ir
 
 // === [ constant.Constant ] ===================================================
 
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Global) IsConstant() {}
+// constantSumtype implements constant.Constant.
+type constantSumtype struct{}
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
-func (*Function) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*Alias) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*IFunc) IsConstant() {}
+func (constantSumtype) IsConstant() {}
 
 // === [ ir.FuncAttribute ] ====================================================
 

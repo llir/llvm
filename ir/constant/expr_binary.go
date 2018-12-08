@@ -23,6 +23,9 @@ type ExprAdd struct {
 	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
+
+	// ExprAdd implements constant.Constant.
+	constantSumtype
 }
 
 // NewAdd returns a new add expression based on the given operands.
@@ -77,6 +80,9 @@ type ExprFAdd struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprFAdd implements constant.Constant.
+	constantSumtype
 }
 
 // NewFAdd returns a new fadd expression based on the given operands.
@@ -127,6 +133,9 @@ type ExprSub struct {
 	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
+
+	// ExprSub implements constant.Constant.
+	constantSumtype
 }
 
 // NewSub returns a new sub expression based on the given operands.
@@ -181,6 +190,9 @@ type ExprFSub struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprFSub implements constant.Constant.
+	constantSumtype
 }
 
 // NewFSub returns a new fsub expression based on the given operands.
@@ -231,6 +243,9 @@ type ExprMul struct {
 	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
+
+	// ExprMul implements constant.Constant.
+	constantSumtype
 }
 
 // NewMul returns a new mul expression based on the given operands.
@@ -285,6 +300,9 @@ type ExprFMul struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprFMul implements constant.Constant.
+	constantSumtype
 }
 
 // NewFMul returns a new fmul expression based on the given operands.
@@ -335,6 +353,9 @@ type ExprUDiv struct {
 	Typ types.Type
 	// (optional) The result is a poison value if X is not a multiple of Y.
 	Exact bool
+
+	// ExprUDiv implements constant.Constant.
+	constantSumtype
 }
 
 // NewUDiv returns a new udiv expression based on the given operands.
@@ -391,6 +412,9 @@ type ExprSDiv struct {
 	Typ types.Type
 	// (optional) The result is a poison value if the result would be rounded.
 	Exact bool
+
+	// ExprSDiv implements constant.Constant.
+	constantSumtype
 }
 
 // NewSDiv returns a new sdiv expression based on the given operands.
@@ -445,6 +469,9 @@ type ExprFDiv struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprFDiv implements constant.Constant.
+	constantSumtype
 }
 
 // NewFDiv returns a new fdiv expression based on the given operands.
@@ -493,6 +520,9 @@ type ExprURem struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprURem implements constant.Constant.
+	constantSumtype
 }
 
 // NewURem returns a new urem expression based on the given operands.
@@ -541,6 +571,9 @@ type ExprSRem struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprSRem implements constant.Constant.
+	constantSumtype
 }
 
 // NewSRem returns a new srem expression based on the given operands.
@@ -589,6 +622,9 @@ type ExprFRem struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+
+	// ExprFRem implements constant.Constant.
+	constantSumtype
 }
 
 // NewFRem returns a new frem expression based on the given operands.

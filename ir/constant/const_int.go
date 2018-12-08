@@ -18,6 +18,9 @@ type Int struct {
 	Typ *types.IntType
 	// Integer constant.
 	X *big.Int
+
+	// Int implements constant.Constant.
+	constantSumtype
 }
 
 // NewInt returns a new integer constant based on the given integer type and

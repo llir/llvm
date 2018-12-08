@@ -5,3 +5,5 @@
 	- %0 = call void @f()
 * report error in translation of global decl if comdat is used
 * rename Def to LLString (or LLVMString) analogous to fmt.GoStringer
+* try to model subtypes using unexported fields, this will remove useless methods from Godoc.
+	e.g. `IsConstant`

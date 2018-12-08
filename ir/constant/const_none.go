@@ -10,6 +10,8 @@ import (
 
 // NoneToken is an LLVM IR none token constant.
 type NoneToken struct {
+	// NoneToken implements constant.Constant.
+	constantSumtype
 }
 
 // String returns the LLVM syntax representation of the constant as a type-value

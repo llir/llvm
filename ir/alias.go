@@ -32,6 +32,9 @@ type Alias struct {
 	TLSModel enum.TLSModel
 	// (optional) Unnamed address; zero value if not present.
 	UnnamedAddr enum.UnnamedAddr
+
+	// Alias implements constant.Constant.
+	constantSumtype
 }
 
 // NewAlias returns a new alias based on the given alias name and aliasee.

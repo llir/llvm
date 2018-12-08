@@ -71,6 +71,9 @@ type Function struct {
 
 	// mu prevents races on AssignIDs.
 	mu sync.Mutex
+
+	// Function implements constant.Constant.
+	constantSumtype
 }
 
 // NewFunc returns a new function based on the given function name, return type

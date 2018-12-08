@@ -16,6 +16,9 @@ type ExprTrunc struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprTrunc implements constant.Constant.
+	constantSumtype
 }
 
 // NewTrunc returns a new trunc expression based on the given source value and
@@ -58,6 +61,9 @@ type ExprZExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprZExt implements constant.Constant.
+	constantSumtype
 }
 
 // NewZExt returns a new zext expression based on the given source value and
@@ -100,6 +106,9 @@ type ExprSExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprSExt implements constant.Constant.
+	constantSumtype
 }
 
 // NewSExt returns a new sext expression based on the given source value and
@@ -142,6 +151,9 @@ type ExprFPTrunc struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprFPTrunc implements constant.Constant.
+	constantSumtype
 }
 
 // NewFPTrunc returns a new fptrunc expression based on the given source value
@@ -184,6 +196,9 @@ type ExprFPExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprFPExt implements constant.Constant.
+	constantSumtype
 }
 
 // NewFPExt returns a new fpext expression based on the given source value and
@@ -226,6 +241,9 @@ type ExprFPToUI struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprFPToUI implements constant.Constant.
+	constantSumtype
 }
 
 // NewFPToUI returns a new fptoui expression based on the given source value and
@@ -268,6 +286,9 @@ type ExprFPToSI struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprFPToSI implements constant.Constant.
+	constantSumtype
 }
 
 // NewFPToSI returns a new fptosi expression based on the given source value and
@@ -310,6 +331,9 @@ type ExprUIToFP struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprUIToFP implements constant.Constant.
+	constantSumtype
 }
 
 // NewUIToFP returns a new uitofp expression based on the given source value and
@@ -352,6 +376,9 @@ type ExprSIToFP struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprSIToFP implements constant.Constant.
+	constantSumtype
 }
 
 // NewSIToFP returns a new sitofp expression based on the given source value and
@@ -394,6 +421,9 @@ type ExprPtrToInt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprPtrToInt implements constant.Constant.
+	constantSumtype
 }
 
 // NewPtrToInt returns a new ptrtoint expression based on the given source value
@@ -436,6 +466,9 @@ type ExprIntToPtr struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprIntToPtr implements constant.Constant.
+	constantSumtype
 }
 
 // NewIntToPtr returns a new inttoptr expression based on the given source value
@@ -478,6 +511,9 @@ type ExprBitCast struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprBitCast implements constant.Constant.
+	constantSumtype
 }
 
 // NewBitCast returns a new bitcast expression based on the given source value
@@ -520,6 +556,9 @@ type ExprAddrSpaceCast struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+
+	// ExprAddrSpaceCast implements constant.Constant.
+	constantSumtype
 }
 
 // NewAddrSpaceCast returns a new addrspacecast expression based on the given

@@ -53,6 +53,9 @@ type Global struct {
 	FuncAttrs []FuncAttribute
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
+
+	// Global implements constant.Constant.
+	constantSumtype
 }
 
 // NewGlobalDecl returns a new global variable declaration based on the given

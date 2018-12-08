@@ -25,8 +25,9 @@ func Example() {
 	//             Immutable:   false,
 	//             ContentType: &types.IntType{TypeName:"", BitSize:0x20},
 	//             Init:        &constant.Int{
-	//                 Typ: &types.IntType{(CYCLIC REFERENCE)},
-	//                 X:   &big.Int{},
+	//                 Typ:             &types.IntType{(CYCLIC REFERENCE)},
+	//                 X:               &big.Int{},
+	//                 constantSumtype: constant.constantSumtype{},
 	//             },
 	//             Typ: &types.PointerType{
 	//                 TypeName:  "",
@@ -45,6 +46,7 @@ func Example() {
 	//             Align:                 0x0,
 	//             FuncAttrs:             nil,
 	//             Metadata:              nil,
+	//             constantSumtype:       ir.constantSumtype{},
 	//         },
 	//     },
 	//     Funcs: {
@@ -88,6 +90,7 @@ func Example() {
 	//             UseListOrders:   nil,
 	//             Metadata:        nil,
 	//             mu:              sync.Mutex{},
+	//             constantSumtype: ir.constantSumtype{},
 	//         },
 	//         &ir.Function{
 	//             GlobalIdent: ir.GlobalIdent{GlobalName:"rand", GlobalID:0},
@@ -122,6 +125,7 @@ func Example() {
 	//                                     neg: false,
 	//                                     abs: {0x15a4e35},
 	//                                 },
+	//                                 constantSumtype: constant.constantSumtype{},
 	//                             },
 	//                             Typ:           &types.IntType{TypeName:"", BitSize:0x20},
 	//                             OverflowFlags: nil,
@@ -136,6 +140,7 @@ func Example() {
 	//                                     neg: false,
 	//                                     abs: {0x1},
 	//                                 },
+	//                                 constantSumtype: constant.constantSumtype{},
 	//                             },
 	//                             Typ:           &types.IntType{TypeName:"", BitSize:0x20},
 	//                             OverflowFlags: nil,
@@ -212,6 +217,7 @@ func Example() {
 	//             UseListOrders:   nil,
 	//             Metadata:        nil,
 	//             mu:              sync.Mutex{},
+	//             constantSumtype: ir.constantSumtype{},
 	//         },
 	//     },
 	//     SourceFilename:    "",

@@ -12,6 +12,9 @@ import (
 type ZeroInitializer struct {
 	// zeroinitializer type.
 	Typ types.Type
+
+	// ZeroInitializer implements constant.Constant.
+	constantSumtype
 }
 
 // NewZeroInitializer returns a new zeroinitializer constant based on the given

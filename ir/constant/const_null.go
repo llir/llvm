@@ -12,6 +12,9 @@ import (
 type Null struct {
 	// Pointer type.
 	Typ *types.PointerType
+
+	// Null implements constant.Constant.
+	constantSumtype
 }
 
 // NewNull returns a new null pointer constant based on the given pointer type.

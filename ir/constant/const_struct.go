@@ -15,6 +15,9 @@ type Struct struct {
 	Typ *types.StructType
 	// Struct fields.
 	Fields []Constant
+
+	// Struct implements constant.Constant.
+	constantSumtype
 }
 
 // NewStruct returns a new struct constant based on the given struct type and

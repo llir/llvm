@@ -32,6 +32,9 @@ type IFunc struct {
 	TLSModel enum.TLSModel
 	// (optional) Unnamed address; zero value if not present.
 	UnnamedAddr enum.UnnamedAddr
+
+	// IFunc implements constant.Constant.
+	constantSumtype
 }
 
 // NewIFunc returns a new indirect function based on the given IFunc name and
