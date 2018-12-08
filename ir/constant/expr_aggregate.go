@@ -24,7 +24,7 @@ type ExprExtractValue struct {
 	Typ types.Type
 
 	// ExprExtractValue implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewExtractValue returns a new extractvalue expression based on the given
@@ -86,7 +86,7 @@ type ExprInsertValue struct {
 	Typ types.Type
 
 	// ExprInsertValue implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewInsertValue returns a new insertvalue expression based on the given

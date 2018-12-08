@@ -27,7 +27,7 @@ type Float struct {
 	NaN bool
 
 	// Float implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFloat returns a new floating-point constant based on the given

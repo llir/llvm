@@ -14,7 +14,7 @@ type ZeroInitializer struct {
 	Typ types.Type
 
 	// ZeroInitializer implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewZeroInitializer returns a new zeroinitializer constant based on the given

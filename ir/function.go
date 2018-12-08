@@ -73,7 +73,7 @@ type Function struct {
 	mu sync.Mutex
 
 	// Function implements constant.Constant.
-	constantSumtype
+	constant.Constant
 }
 
 // NewFunc returns a new function based on the given function name, return type
@@ -104,6 +104,11 @@ func (f *Function) Type() types.Type {
 		f.Typ = types.NewPointer(f.Sig)
 	}
 	return f.Typ
+}
+
+// Ident returns the identifier associated with the function.
+func (f *Function) Ident() string {
+	return f.GlobalIdent.Ident()
 }
 
 // Def returns the LLVM syntax representation of the function definition or

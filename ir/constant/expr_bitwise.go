@@ -25,7 +25,7 @@ type ExprShl struct {
 	OverflowFlags []enum.OverflowFlag
 
 	// ExprShl implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewShl returns a new shl expression based on the given operands.
@@ -85,7 +85,7 @@ type ExprLShr struct {
 	Exact bool
 
 	// ExprLShr implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewLShr returns a new lshr expression based on the given operands.
@@ -145,7 +145,7 @@ type ExprAShr struct {
 	Exact bool
 
 	// ExprAShr implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewAShr returns a new ashr expression based on the given operands.
@@ -202,7 +202,7 @@ type ExprAnd struct {
 	Typ types.Type
 
 	// ExprAnd implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewAnd returns a new and expression based on the given operands.
@@ -253,7 +253,7 @@ type ExprOr struct {
 	Typ types.Type
 
 	// ExprOr implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewOr returns a new or expression based on the given operands.
@@ -304,7 +304,7 @@ type ExprXor struct {
 	Typ types.Type
 
 	// ExprXor implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewXor returns a new xor expression based on the given operands.

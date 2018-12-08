@@ -25,7 +25,7 @@ type ExprAdd struct {
 	OverflowFlags []enum.OverflowFlag
 
 	// ExprAdd implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewAdd returns a new add expression based on the given operands.
@@ -82,7 +82,7 @@ type ExprFAdd struct {
 	Typ types.Type
 
 	// ExprFAdd implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFAdd returns a new fadd expression based on the given operands.
@@ -135,7 +135,7 @@ type ExprSub struct {
 	OverflowFlags []enum.OverflowFlag
 
 	// ExprSub implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewSub returns a new sub expression based on the given operands.
@@ -192,7 +192,7 @@ type ExprFSub struct {
 	Typ types.Type
 
 	// ExprFSub implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFSub returns a new fsub expression based on the given operands.
@@ -245,7 +245,7 @@ type ExprMul struct {
 	OverflowFlags []enum.OverflowFlag
 
 	// ExprMul implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewMul returns a new mul expression based on the given operands.
@@ -302,7 +302,7 @@ type ExprFMul struct {
 	Typ types.Type
 
 	// ExprFMul implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFMul returns a new fmul expression based on the given operands.
@@ -355,7 +355,7 @@ type ExprUDiv struct {
 	Exact bool
 
 	// ExprUDiv implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewUDiv returns a new udiv expression based on the given operands.
@@ -414,7 +414,7 @@ type ExprSDiv struct {
 	Exact bool
 
 	// ExprSDiv implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewSDiv returns a new sdiv expression based on the given operands.
@@ -471,7 +471,7 @@ type ExprFDiv struct {
 	Typ types.Type
 
 	// ExprFDiv implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFDiv returns a new fdiv expression based on the given operands.
@@ -522,7 +522,7 @@ type ExprURem struct {
 	Typ types.Type
 
 	// ExprURem implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewURem returns a new urem expression based on the given operands.
@@ -573,7 +573,7 @@ type ExprSRem struct {
 	Typ types.Type
 
 	// ExprSRem implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewSRem returns a new srem expression based on the given operands.
@@ -624,7 +624,7 @@ type ExprFRem struct {
 	Typ types.Type
 
 	// ExprFRem implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFRem returns a new frem expression based on the given operands.

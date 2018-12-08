@@ -34,7 +34,7 @@ type Alias struct {
 	UnnamedAddr enum.UnnamedAddr
 
 	// Alias implements constant.Constant.
-	constantSumtype
+	constant.Constant
 }
 
 // NewAlias returns a new alias based on the given alias name and aliasee.
@@ -63,6 +63,11 @@ func (a *Alias) Type() types.Type {
 		a.Typ = typ
 	}
 	return a.Typ
+}
+
+// Ident returns the identifier associated with the alias.
+func (a *Alias) Ident() string {
+	return a.GlobalIdent.Ident()
 }
 
 // Def returns the LLVM syntax representation of the alias definition.

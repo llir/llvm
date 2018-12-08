@@ -55,7 +55,7 @@ type Global struct {
 	Metadata []*metadata.Attachment
 
 	// Global implements constant.Constant.
-	constantSumtype
+	constant.Constant
 }
 
 // NewGlobalDecl returns a new global variable declaration based on the given
@@ -91,6 +91,11 @@ func (g *Global) Type() types.Type {
 		g.Typ = types.NewPointer(g.ContentType)
 	}
 	return g.Typ
+}
+
+// Ident returns the identifier associated with the global variable.
+func (g *Global) Ident() string {
+	return g.GlobalIdent.Ident()
 }
 
 // Def returns the LLVM syntax representation of the global variable definition

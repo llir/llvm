@@ -17,7 +17,7 @@ type BlockAddress struct {
 	Block value.Named // *ir.BasicBlock
 
 	// BlockAddress implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewBlockAddress returns a new blockaddress constant based on the given parent

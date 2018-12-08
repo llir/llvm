@@ -34,7 +34,7 @@ type IFunc struct {
 	UnnamedAddr enum.UnnamedAddr
 
 	// IFunc implements constant.Constant.
-	constantSumtype
+	constant.Constant
 }
 
 // NewIFunc returns a new indirect function based on the given IFunc name and
@@ -64,6 +64,11 @@ func (i *IFunc) Type() types.Type {
 		i.Typ = typ
 	}
 	return i.Typ
+}
+
+// Ident returns the identifier associated with the indirect function.
+func (i *IFunc) Ident() string {
+	return i.GlobalIdent.Ident()
 }
 
 // Def returns the LLVM syntax representation of the IFunc definition.

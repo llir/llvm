@@ -29,7 +29,7 @@ type ExprGetElementPtr struct {
 	InBounds bool
 
 	// ExprGetElementPtr implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewGetElementPtr returns a new getelementptr expression based on the given

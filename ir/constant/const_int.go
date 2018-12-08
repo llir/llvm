@@ -20,7 +20,7 @@ type Int struct {
 	X *big.Int
 
 	// Int implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewInt returns a new integer constant based on the given integer type and

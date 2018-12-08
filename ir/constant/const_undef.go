@@ -14,7 +14,7 @@ type Undef struct {
 	Typ types.Type
 
 	// Undef implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewUndef returns a new undefined value based on the given type.

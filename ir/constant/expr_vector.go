@@ -23,7 +23,7 @@ type ExprExtractElement struct {
 	Typ types.Type
 
 	// ExprExtractElement implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewExtractElement returns a new extractelement expression based on the given
@@ -83,7 +83,7 @@ type ExprInsertElement struct {
 	Typ types.Type
 
 	// ExprInsertElement implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewInsertElement returns a new insertelement expression based on the given
@@ -141,7 +141,7 @@ type ExprShuffleVector struct {
 	Typ types.Type
 
 	// ExprShuffleVector implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewShuffleVector returns a new shufflevector expression based on the given

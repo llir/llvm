@@ -18,7 +18,7 @@ type Array struct {
 	Elems []Constant
 
 	// Array implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewArray returns a new array constant based on the given array type and
@@ -71,7 +71,7 @@ type CharArray struct {
 	X []byte
 
 	// CharArray implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewCharArray returns a new character array constant based on the given

@@ -17,7 +17,7 @@ type Struct struct {
 	Fields []Constant
 
 	// Struct implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewStruct returns a new struct constant based on the given struct type and

@@ -17,7 +17,7 @@ type Vector struct {
 	Elems []Constant
 
 	// Vector implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewVector returns a new vector constant based on the given vector type and

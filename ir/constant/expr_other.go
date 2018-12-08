@@ -24,7 +24,7 @@ type ExprICmp struct {
 	Typ types.Type
 
 	// ExprICmp implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewICmp returns a new icmp expression based on the given integer comparison
@@ -85,7 +85,7 @@ type ExprFCmp struct {
 	Typ types.Type
 
 	// ExprFCmp implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFCmp returns a new fcmp expression based on the given floating-point
@@ -146,7 +146,7 @@ type ExprSelect struct {
 	Typ types.Type
 
 	// ExprSelect implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewSelect returns a new select expression based on the given selection

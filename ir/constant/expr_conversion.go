@@ -18,7 +18,7 @@ type ExprTrunc struct {
 	To types.Type
 
 	// ExprTrunc implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewTrunc returns a new trunc expression based on the given source value and
@@ -63,7 +63,7 @@ type ExprZExt struct {
 	To types.Type
 
 	// ExprZExt implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewZExt returns a new zext expression based on the given source value and
@@ -108,7 +108,7 @@ type ExprSExt struct {
 	To types.Type
 
 	// ExprSExt implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewSExt returns a new sext expression based on the given source value and
@@ -153,7 +153,7 @@ type ExprFPTrunc struct {
 	To types.Type
 
 	// ExprFPTrunc implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFPTrunc returns a new fptrunc expression based on the given source value
@@ -198,7 +198,7 @@ type ExprFPExt struct {
 	To types.Type
 
 	// ExprFPExt implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFPExt returns a new fpext expression based on the given source value and
@@ -243,7 +243,7 @@ type ExprFPToUI struct {
 	To types.Type
 
 	// ExprFPToUI implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFPToUI returns a new fptoui expression based on the given source value and
@@ -288,7 +288,7 @@ type ExprFPToSI struct {
 	To types.Type
 
 	// ExprFPToSI implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewFPToSI returns a new fptosi expression based on the given source value and
@@ -333,7 +333,7 @@ type ExprUIToFP struct {
 	To types.Type
 
 	// ExprUIToFP implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewUIToFP returns a new uitofp expression based on the given source value and
@@ -378,7 +378,7 @@ type ExprSIToFP struct {
 	To types.Type
 
 	// ExprSIToFP implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewSIToFP returns a new sitofp expression based on the given source value and
@@ -423,7 +423,7 @@ type ExprPtrToInt struct {
 	To types.Type
 
 	// ExprPtrToInt implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewPtrToInt returns a new ptrtoint expression based on the given source value
@@ -468,7 +468,7 @@ type ExprIntToPtr struct {
 	To types.Type
 
 	// ExprIntToPtr implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewIntToPtr returns a new inttoptr expression based on the given source value
@@ -513,7 +513,7 @@ type ExprBitCast struct {
 	To types.Type
 
 	// ExprBitCast implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewBitCast returns a new bitcast expression based on the given source value
@@ -558,7 +558,7 @@ type ExprAddrSpaceCast struct {
 	To types.Type
 
 	// ExprAddrSpaceCast implements constant.Constant.
-	constantSumtype
+	Constant
 }
 
 // NewAddrSpaceCast returns a new addrspacecast expression based on the given
