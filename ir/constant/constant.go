@@ -71,4 +71,7 @@ var (
 //    constant.Expression   // https://godoc.org/github.com/llir/llvm/ir/constant#Expression
 type Constant interface {
 	value.Value
+	// isConstant ensures that only constants can be assigned to the
+	// constant.Constant interface.
+	isConstant()
 }
