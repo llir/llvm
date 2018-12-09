@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"runtime/pprof"
 	"time"
 
@@ -12,17 +13,25 @@ import (
 )
 
 func main() {
-	var cpuprofile string
-	flag.StringVar(&cpuprofile, "cpuprofile", "", "write cpu profile to file")
+	var (
+		cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+		memprofile = flag.String("memprofile", "", "write mem profile to file")
+	)
 	flag.Parse()
-	if cpuprofile != "" {
-		f, err := os.Create(cpuprofile)
+
+	if *cpuprofile != "" {
+		fd, err := os.Create(*cpuprofile)
 		if err != nil {
 			log.Fatalf("%+v", err)
 		}
-		pprof.StartCPUProfile(f)
+		pprof.StartCPUProfile(fd)
 		defer pprof.StopCPUProfile()
 	}
+
+	if *memprofile != "" {
+		runtime.MemProfileRate = 1
+	}
+
 	for _, llPath := range flag.Args() {
 		fmt.Printf("=== [ %v ] =======================\n", llPath)
 		fmt.Println()
@@ -34,5 +43,17 @@ func main() {
 		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
 		_ = m
 		//pretty.Println(m)
+	}
+
+	if *memprofile != "" {
+		fd, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatalf("%+v", err)
+		}
+		runtime.GC()
+		err = pprof.WriteHeapProfile(fd)
+		if err != nil {
+			log.Fatalf("WriteHeapProfile: %v", err)
+		}
 	}
 }
