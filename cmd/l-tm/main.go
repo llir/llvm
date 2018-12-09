@@ -51,8 +51,7 @@ func main() {
 			log.Fatalf("%+v", err)
 		}
 		runtime.GC()
-		err = pprof.WriteHeapProfile(fd)
-		if err != nil {
+		if err := pprof.WriteHeapProfile(fd); err != nil {
 			log.Fatalf("WriteHeapProfile: %v", err)
 		}
 	}

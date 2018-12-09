@@ -88,7 +88,8 @@ func (gen *generator) irBoolConst(t types.Type, old *ast.BoolConst) (*constant.I
 func (gen *generator) irIntConst(t types.Type, old *ast.IntConst) (*constant.Int, error) {
 	typ, ok := t.(*types.IntType)
 	if !ok {
-		return nil, errors.Errorf("invalid type of integer constant; expected *types.IntType, got %T", t)
+		line, col := old.LineColumn()
+		return nil, errors.Errorf("%d:%d: invalid type of integer constant; expected *types.IntType, got %T", line, col, t)
 	}
 	s := old.IntLit().Text()
 	return constant.NewIntFromString(typ, s)
