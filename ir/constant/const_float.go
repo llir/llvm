@@ -307,7 +307,7 @@ func (c *Float) Ident() string {
 			return fmt.Sprintf("0x%X", bits)
 			//return fmt.Sprintf("0x%016X", bits)
 		}
-	case types.FloatKindX86FP80:
+	case types.FloatKindX86_FP80:
 		// TODO: handle NaN.
 		f, acc := float80x86.NewFromBig(c.X)
 		// TODO: check acc.

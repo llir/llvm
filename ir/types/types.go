@@ -26,12 +26,12 @@ var (
 	I64  = &IntType{BitSize: 64}  // i64
 	I128 = &IntType{BitSize: 128} // i128
 	// Floating-point types.
-	Half     = &FloatType{Kind: FloatKindHalf}     // half
-	Float    = &FloatType{Kind: FloatKindFloat}    // float
-	Double   = &FloatType{Kind: FloatKindDouble}   // double
-	X86FP80  = &FloatType{Kind: FloatKindX86FP80}  // x86_fp80
-	FP128    = &FloatType{Kind: FloatKindFP128}    // fp128
-	PPCFP128 = &FloatType{Kind: FloatKindPPCFP128} // ppc_fp128
+	Half      = &FloatType{Kind: FloatKindHalf}      // half
+	Float     = &FloatType{Kind: FloatKindFloat}     // float
+	Double    = &FloatType{Kind: FloatKindDouble}    // double
+	X86_FP80  = &FloatType{Kind: FloatKindX86_FP80}  // x86_fp80
+	FP128     = &FloatType{Kind: FloatKindFP128}     // fp128
+	PPC_FP128 = &FloatType{Kind: FloatKindPPC_FP128} // ppc_fp128
 	// Integer pointer types.
 	I1Ptr   = &PointerType{ElemType: I1}   // i1*
 	I8Ptr   = &PointerType{ElemType: I8}   // i8*
@@ -376,9 +376,9 @@ const (
 	// 128-bit floating-point type (IEEE 754 quadruple precision).
 	FloatKindFP128 // fp128
 	// 80-bit floating-point type (x86 extended precision).
-	FloatKindX86FP80 // x86_fp80
+	FloatKindX86_FP80 // x86_fp80
 	// 128-bit floating point type (IBM extended double).
-	FloatKindPPCFP128 // ppc_fp128
+	FloatKindPPC_FP128 // ppc_fp128
 )
 
 // --- [ MMX types ] -----------------------------------------------------------
