@@ -66,9 +66,9 @@
 //
 //    Note: the substeps of 8 can be done concurrently.
 //
-//    a) Add IR type definitions to the IR module in alphabetical order.
+//    a) Add IR type definitions to the IR module in natural sorting order.
 //
-//    b) Add IR comdat definitions to the IR module in alphabetical order.
+//    b) Add IR comdat definitions to the IR module in natural sorting order.
 //
 //    c) Add IR global variable declarations and definitions, indirect symbol
 //       definitions, and function declarations and definitions to the IR module
@@ -95,6 +95,7 @@ import (
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
+	"github.com/rickypai/natsort"
 )
 
 // translate translates the given AST module into an equivalent IR module.
@@ -167,9 +168,9 @@ func (gen *generator) addDefsToModule() {
 	//
 	// Note: the substeps of 8 can be done concurrently.
 	//
-	// 8a. Add IR type definitions to the IR module in alphabetical order.
+	// 8a. Add IR type definitions to the IR module in natural sorting order.
 	gen.addTypeDefsToModule()
-	// 8b. Add IR comdat definitions to the IR module in alphabetical order.
+	// 8b. Add IR comdat definitions to the IR module in natural sorting order.
 	gen.addComdatDefsToModule()
 	// 8c. Add IR global variable declarations and definitions, indirect symbol
 	//     definitions, and function declarations and definitions to the IR
@@ -184,15 +185,15 @@ func (gen *generator) addDefsToModule() {
 	gen.addMetadataDefsToModule()
 }
 
-// addTypeDefsToModule adds IR type definitions to the IR module in alphabetical
-// order.
+// addTypeDefsToModule adds IR type definitions to the IR module in natural
+// sorting order.
 func (gen *generator) addTypeDefsToModule() {
-	// 8a. Add IR type definitions to the IR module in alphabetical order.
+	// 8a. Add IR type definitions to the IR module in natural sorting order.
 	typeNames := make([]string, 0, len(gen.old.typeDefs))
 	for name := range gen.old.typeDefs {
 		typeNames = append(typeNames, name)
 	}
-	sort.Strings(typeNames)
+	natsort.Strings(typeNames)
 	if len(typeNames) > 0 {
 		gen.m.TypeDefs = make([]types.Type, len(typeNames))
 		for i, name := range typeNames {
@@ -205,15 +206,15 @@ func (gen *generator) addTypeDefsToModule() {
 	}
 }
 
-// addComdatDefsToModule adds IR comdat definitions to the IR module in
-// alphabetical order.
+// addComdatDefsToModule adds IR comdat definitions to the IR module in natural
+// sorting order.
 func (gen *generator) addComdatDefsToModule() {
-	// 8b. Add IR comdat definitions to the IR module in alphabetical order.
+	// 8b. Add IR comdat definitions to the IR module in natural sorting order.
 	comdatNames := make([]string, 0, len(gen.old.comdatDefs))
 	for name := range gen.old.comdatDefs {
 		comdatNames = append(comdatNames, name)
 	}
-	sort.Strings(comdatNames)
+	natsort.Strings(comdatNames)
 	if len(comdatNames) > 0 {
 		gen.m.ComdatDefs = make([]*ir.ComdatDef, len(comdatNames))
 		for i, name := range comdatNames {

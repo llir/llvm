@@ -242,7 +242,7 @@ func (t *FuncType) String() string {
 func (t *FuncType) Def() string {
 	// RetType=Type '(' Params ')'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v (", t.RetType)
+	fmt.Fprintf(buf, "%s (", t.RetType)
 	for i, param := range t.Params {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -461,7 +461,7 @@ func (t *PointerType) Def() string {
 	buf := &strings.Builder{}
 	buf.WriteString(t.ElemType.String())
 	if t.AddrSpace != 0 {
-		fmt.Fprintf(buf, " %v", t.AddrSpace)
+		fmt.Fprintf(buf, " %s", t.AddrSpace)
 	}
 	buf.WriteString("*")
 	return buf.String()
@@ -529,7 +529,7 @@ func (t *VectorType) String() string {
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *VectorType) Def() string {
 	// '<' Len=UintLit 'x' Elem=Type '>'
-	return fmt.Sprintf("<%d x %v>", t.Len, t.ElemType)
+	return fmt.Sprintf("<%d x %s>", t.Len, t.ElemType)
 }
 
 // Name returns the type name of the type.
@@ -705,7 +705,7 @@ func (t *ArrayType) String() string {
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *ArrayType) Def() string {
 	// '[' Len=UintLit 'x' Elem=Type ']'
-	return fmt.Sprintf("[%d x %v]", t.Len, t.ElemType)
+	return fmt.Sprintf("[%d x %s]", t.Len, t.ElemType)
 }
 
 // Name returns the type name of the type.
