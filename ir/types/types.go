@@ -43,6 +43,18 @@ var (
 
 // Convenience functions.
 
+// IsVoid reports whether the given type is a void type.
+func IsVoid(t Type) bool {
+	_, ok := t.(*VoidType)
+	return ok
+}
+
+// IsFunc reports whether the given type is a function type.
+func IsFunc(t Type) bool {
+	_, ok := t.(*FuncType)
+	return ok
+}
+
 // IsInt reports whether the given type is an integer type.
 func IsInt(t Type) bool {
 	_, ok := t.(*IntType)
@@ -55,9 +67,51 @@ func IsFloat(t Type) bool {
 	return ok
 }
 
+// IsMMX reports whether the given type is an MMX type.
+func IsMMX(t Type) bool {
+	_, ok := t.(*MMXType)
+	return ok
+}
+
 // IsPointer reports whether the given type is a pointer type.
 func IsPointer(t Type) bool {
 	_, ok := t.(*PointerType)
+	return ok
+}
+
+// IsVector reports whether the given type is a vector type.
+func IsVector(t Type) bool {
+	_, ok := t.(*VectorType)
+	return ok
+}
+
+// IsLabel reports whether the given type is a label type.
+func IsLabel(t Type) bool {
+	_, ok := t.(*LabelType)
+	return ok
+}
+
+// IsToken reports whether the given type is a token type.
+func IsToken(t Type) bool {
+	_, ok := t.(*TokenType)
+	return ok
+}
+
+// IsMetadata reports whether the given type is a metadata type.
+func IsMetadata(t Type) bool {
+	_, ok := t.(*MetadataType)
+	return ok
+}
+
+// IsArray reports whether the given type is an array type.
+func IsArray(t Type) bool {
+	_, ok := t.(*ArrayType)
+	return ok
+}
+
+// IsStruct reports whether the given type is a struct type.
+func IsStruct(t Type) bool {
+	_, ok := t.(*StructType)
 	return ok
 }
 
