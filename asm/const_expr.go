@@ -665,9 +665,9 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 		return nil, errors.WithStack(err)
 	}
 	// Indices.
-	var indices []*constant.Index
+	var indices []constant.Constant
 	if oldIndices := old.Indices(); len(oldIndices) > 0 {
-		indices = make([]*constant.Index, len(oldIndices))
+		indices = make([]constant.Constant, len(oldIndices))
 		for i, oldIndex := range oldIndices {
 			index, err := gen.irGEPIndex(oldIndex)
 			if err != nil {
