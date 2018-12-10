@@ -39,7 +39,7 @@ func TestParseFile(t *testing.T) {
 		// frem constant expression.
 		{path: "testdata/expr_frem.ll"},
 
-		// LLVM IR compatability.
+		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 
 		// Basic block with same name as specialized metadata field (issue #49).
@@ -234,7 +234,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/2009-03-24-ZextConstantExpr.ll"},
 		{path: "../testdata/llvm/test/Assembler/2009-07-24-ZeroArgGEP.ll"},
 		{path: "../testdata/llvm/test/Assembler/2010-02-05-FunctionLocalMetadataBecomesNull.ll"},
-		//{path: "../testdata/llvm/test/Assembler/addrspacecast-alias.ll"}, // TODO: fix handling of multiple addres spaces; constant expression type mismatch; expected "i8 addrspace(2)* addrspace(3)*", got "i8 addrspace(2)**
+		//{path: "../testdata/llvm/test/Assembler/addrspacecast-alias.ll"}, // TODO: fix handling of multiple address spaces; constant expression type mismatch; expected "i8 addrspace(2)* addrspace(3)*", got "i8 addrspace(2)**
 		{path: "../testdata/llvm/test/Assembler/aggregate-return-single-value.ll"},
 		{path: "../testdata/llvm/test/Assembler/alias-use-list-order.ll"},
 		{path: "../testdata/llvm/test/Assembler/align-inst-alloca.ll"},

@@ -24,7 +24,7 @@ func TestModule(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
-		// LLVM IR compatability.
+		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 	}
 	hasTestdata := osutil.Exists("../testdata/llvm")
