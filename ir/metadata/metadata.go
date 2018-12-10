@@ -35,7 +35,7 @@ func (md *NamedDef) String() string {
 func (md *NamedDef) Def() string {
 	// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = !{", enc.MetadataName(md.Name))
+	fmt.Fprintf(buf, "%s = !{", md)
 	for i, node := range md.Nodes {
 		if i != 0 {
 			buf.WriteString(", ")
