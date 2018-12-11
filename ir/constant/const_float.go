@@ -80,7 +80,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 		case strings.HasPrefix(s, "0xM"):
 			//s = s[len("0xM"):]
 		case strings.HasPrefix(s, "0xH"):
-			hex := s[len("0xK"):]
+			hex := s[len("0xH"):]
 			bits, err := strconv.ParseUint(hex, 16, 16)
 			if err != nil {
 				return nil, errors.WithStack(err)

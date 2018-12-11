@@ -52,12 +52,12 @@ func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 		if !typ.Equal(types.I1) {
 			return nil, errors.Errorf("invalid boolean type; expected i1, got %T", typ)
 		}
-		return NewInt(typ, 1), nil
+		return True, nil
 	case "false":
 		if !typ.Equal(types.I1) {
 			return nil, errors.Errorf("invalid boolean type; expected i1, got %T", typ)
 		}
-		return NewInt(typ, 0), nil
+		return False, nil
 	}
 	// Hexadecimal integer literal.
 	switch {
