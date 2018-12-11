@@ -27,5 +27,5 @@ github.com/sergi/go-diff v1.0.0 h1:Kpca3qRNrduNnOQeazBd0ysaKrUJiIuISHxogkT9RPQ=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
-golang.org/x/tools v0.0.0-20181210202511-1d424dbce8dd h1:mvLh1ybACHCjrqG/D3Gg67LFBhLSl4YBIjM2SVKlChE=
-golang.org/x/tools v0.0.0-20181210202511-1d424dbce8dd/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+golang.org/x/tools v0.0.0-20181210225255-6a3e9aa2ab77 h1:s+6psEFi3o1QryeA/qyvUoVaHMCQkYVvZ0i2ZolwSJc=
+golang.org/x/tools v0.0.0-20181210225255-6a3e9aa2ab77/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=

@@ -13,5 +13,5 @@ require (
 	github.com/rickypai/natsort v0.0.0-20180124032556-f194e6bd5b0c
 	github.com/sergi/go-diff v1.0.0
 	github.com/stretchr/testify v1.2.2 // indirect
-	golang.org/x/tools v0.0.0-20181210202511-1d424dbce8dd
+	golang.org/x/tools v0.0.0-20181210225255-6a3e9aa2ab77
 )
