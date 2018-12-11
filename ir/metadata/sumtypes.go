@@ -74,8 +74,8 @@ type SpecializedNode interface {
 //
 // A FieldOrInt has one of the following underlying types.
 //
-//    metadata.Field     // https://godoc.org/github.com/llir/llvm/ir/metadata#Field
-//    *metadata.IntLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#IntLit
+//    metadata.Field    // https://godoc.org/github.com/llir/llvm/ir/metadata#Field
+//    metadata.IntLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#IntLit
 type FieldOrInt interface {
 	fmt.Stringer
 }
@@ -84,8 +84,8 @@ type FieldOrInt interface {
 //
 // A DIExpressionField has one of the following underlying types.
 //
-//    *metadata.UintLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#UintLit
-//    *enum.DwarfOp       // https://godoc.org/github.com/llir/llvm/ir/enum#DwarfOp
+//    metadata.UintLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#UintLit
+//    enum.DwarfOp       // https://godoc.org/github.com/llir/llvm/ir/enum#DwarfOp
 type DIExpressionField interface {
 	fmt.Stringer
 	// IsDIExpressionField ensures that only DIExpression fields can be assigned
