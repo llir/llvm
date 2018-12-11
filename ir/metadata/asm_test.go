@@ -24,6 +24,7 @@ func TestModule(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
+		{path: "../../testdata/llvm/test/Assembler/debug-info.ll"},
 		{path: "../../testdata/coreutils/test/cat.ll"},
 	}
 	hasTestdata := osutil.Exists("../../testdata/llvm")
