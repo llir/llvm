@@ -30,6 +30,9 @@ func TestModule(t *testing.T) {
 		{path: "../../testdata/llvm/test/Assembler/2002-04-07-HexFloatConstants.ll"},
 		// Constant expressions.
 		{path: "../../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
+		// Coreutils.
+		{path: "../../testdata/coreutils/test/timeout.ll"},
+		{path: "../../testdata/coreutils/test/vdir.ll"},
 	}
 	hasTestdata := osutil.Exists("../../testdata/llvm")
 	for _, g := range golden {
