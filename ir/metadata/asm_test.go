@@ -24,7 +24,9 @@ func TestModule(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
+		// Specialized metadata nodes.
 		{path: "../../testdata/llvm/test/Assembler/debug-info.ll"},
+		// Coreutils.
 		{path: "../../testdata/coreutils/test/cat.ll"},
 	}
 	hasTestdata := osutil.Exists("../../testdata/llvm")

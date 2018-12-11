@@ -26,6 +26,8 @@ func TestModule(t *testing.T) {
 	}{
 		// LLVM IR compatibility.
 		{path: "../../testdata/llvm/test/Bitcode/compatibility.ll"},
+		// Hex floating-point constants.
+		{path: "../../testdata/llvm/test/Assembler/2002-04-07-HexFloatConstants.ll"},
 		// Constant expressions.
 		{path: "../../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
 	}
