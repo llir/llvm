@@ -248,3 +248,7 @@ func signExt(x uint32) uint32 {
 	return x
 }
 ```
+
+## Credits
+
+Inspiration for the [ir](https://godoc.org/github.com/llir/llvm/ir) API was taken from [goory](https://github.com/mrbenshef/goory) by [@mrbenshef](https://github.com/mrbenshef).
