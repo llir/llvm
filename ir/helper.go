@@ -199,7 +199,17 @@ func (i LocalIdent) Ident() string {
 }
 
 // Name returns the name of the local identifier.
+//
+// If unnamed, the local ID is returned. To distinguish numeric names from
+// unnamed IDs, numeric names are quoted.
 func (i LocalIdent) Name() string {
+	if i.IsUnnamed() {
+		return strconv.FormatInt(i.LocalID, 10)
+	}
+	if x, err := strconv.ParseInt(i.LocalName, 10, 64); err == nil {
+		// Print LocalName with quotes if it is a number; e.g. "42".
+		return fmt.Sprintf(`"%d"`, x)
+	}
 	return i.LocalName
 }
 
