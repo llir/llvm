@@ -144,7 +144,17 @@ func (i GlobalIdent) Ident() string {
 }
 
 // Name returns the name of the global identifier.
+//
+// If unnamed, the global ID is returned. To distinguish numeric names from
+// unnamed IDs, numeric names are quoted.
 func (i GlobalIdent) Name() string {
+	if i.IsUnnamed() {
+		return strconv.FormatInt(i.GlobalID, 10)
+	}
+	if x, err := strconv.ParseInt(i.GlobalName, 10, 64); err == nil {
+		// Print GlobalName with quotes if it is a number; e.g. @"42".
+		return fmt.Sprintf(`@"%d"`, x)
+	}
 	return i.GlobalName
 }
 

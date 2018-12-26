@@ -19,7 +19,7 @@ import (
 // indirect functions), and function declarations and definitions (without
 // bodies but with types) of the given module.
 //
-// post-condition: gen.new.globals maps from global identifierD (without '@'
+// post-condition: gen.new.globals maps from global identifier (without '@'
 // prefix) to corresponding skeleton IR value.
 func (gen *generator) createGlobalEntities() error {
 	// 4a1. Index global identifiers and create scaffolding IR global
