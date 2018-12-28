@@ -389,16 +389,15 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 	case *ast.AlignStackPair:
 		return ir.AlignStack(uintLit(old.N()))
 	case *ast.AllocSize:
-		elemSize := old.ElemSize()
-		numElems, hasN := old.N()
-		if hasN {
+		elemSizeIndex := int(uintLit(old.ElemSizeIndex()))
+		if nElemsIndex, ok := old.NElemsIndex(); ok {
 			return ir.AllocSize{
-				ElemSizeIndex: int(uintLit(elemSize)),
-				NElemsIndex:   int(uintLit(numElems)),
+				ElemSizeIndex: elemSizeIndex,
+				NElemsIndex:   int(uintLit(nElemsIndex)),
 			}
 		}
 		return ir.AllocSize{
-			ElemSizeIndex: int(uintLit(elemSize)),
+			ElemSizeIndex: elemSizeIndex,
 			NElemsIndex:   -1,
 		}
 	case *ast.FuncAttr:
