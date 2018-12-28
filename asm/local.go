@@ -152,7 +152,7 @@ func (fgen *funcGen) indexLocals() error {
 				// Skip non-value instructions.
 				continue
 			}
-			ident := ir.LocalIdent{LocalName: v.Name(), LocalID: v.ID()}
+			ident := localIdentOfValue(v)
 			if err := fgen.addLocal(ident, v); err != nil {
 				return errors.WithStack(err)
 			}
@@ -163,7 +163,7 @@ func (fgen *funcGen) indexLocals() error {
 			// Skip non-value terminators.
 			continue
 		}
-		ident := ir.LocalIdent{LocalName: v.Name(), LocalID: v.ID()}
+		ident := localIdentOfValue(v)
 		if err := fgen.addLocal(ident, v); err != nil {
 			return errors.WithStack(err)
 		}
@@ -181,4 +181,12 @@ func (fgen *funcGen) addLocal(ident ir.LocalIdent, v value.Value) error {
 	}
 	fgen.locals[ident] = v
 	return nil
+}
+
+// localIdentOfValue returns the local identifier of the given local variable.
+func localIdentOfValue(v local) ir.LocalIdent {
+	if v.IsUnnamed() {
+		return ir.LocalIdent{LocalID: v.ID()}
+	}
+	return ir.LocalIdent{LocalName: v.Name()}
 }
