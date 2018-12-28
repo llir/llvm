@@ -389,8 +389,18 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 	case *ast.AlignStackPair:
 		return ir.AlignStack(uintLit(old.N()))
 	case *ast.AllocSize:
-		// TODO: add support for AllocSize.
-		panic("support for function attribute AllocSize not yet implemented")
+		elemSize := old.ElemSize()
+		numElems, hasN := old.N()
+		if hasN {
+			return ir.AllocSize{
+				ElemSizeIndex: int(uintLit(elemSize)),
+				NElemsIndex:   int(uintLit(numElems)),
+			}
+		}
+		return ir.AllocSize{
+			ElemSizeIndex: int(uintLit(elemSize)),
+			NElemsIndex:   -1,
+		}
 	case *ast.FuncAttr:
 		return asmenum.FuncAttrFromString(old.Text())
 	default:
