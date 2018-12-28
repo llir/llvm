@@ -29,19 +29,19 @@ func (align AlignStack) String() string {
 	return fmt.Sprintf("alignstack(%d)", uint64(align))
 }
 
-// AllocSize is an attribute for functions like malloc.
+// AllocSize is an attribute for functions like malloc. If the second parameter
+// is omitted, NElemsIndex will be -1.
 type AllocSize struct {
-	ElemSize uint64
-	N        uint64
-	HasN     bool
+	ElemSizeIndex int
+	NElemsIndex   int
 }
 
 // String returns the string representation of the allocsize attribute.
 func (a AllocSize) String() string {
-	if a.HasN {
-		return fmt.Sprintf("allocsize(%d, %d)", a.ElemSize, a.N)
+	if a.NElemsIndex == -1 {
+		return fmt.Sprintf("allocsize(%d)", a.ElemSizeIndex)
 	}
-	return fmt.Sprintf("allocsize(%d)", a.ElemSize)
+	return fmt.Sprintf("allocsize(%d, %d)", a.ElemSizeIndex, a.NElemsIndex)
 }
 
 // Arg is a function argument.

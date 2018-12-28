@@ -393,13 +393,13 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 		numElems, hasN := old.N()
 		if hasN {
 			return ir.AllocSize{
-				ElemSize: uintLit(elemSize),
-				N:        uintLit(numElems),
-				HasN:     true,
+				ElemSizeIndex: int(uintLit(elemSize)),
+				NElemsIndex:   int(uintLit(numElems)),
 			}
 		}
 		return ir.AllocSize{
-			ElemSize: uintLit(elemSize),
+			ElemSizeIndex: int(uintLit(elemSize)),
+			NElemsIndex:   -1,
 		}
 	case *ast.FuncAttr:
 		return asmenum.FuncAttrFromString(old.Text())
