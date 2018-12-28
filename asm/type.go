@@ -7,40 +7,50 @@ import (
 	"strings"
 
 	"github.com/llir/ll/ast"
+	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
 )
 
-// resolveTypeDefs resolves the type definitions of the given module. The
-// returned value maps from type name (without '%' prefix) to the underlying
-// type.
+// resolveTypeDefs resolves the type definitions of the given module.
 func (gen *generator) resolveTypeDefs() error {
-	// Create corresponding named IR types (without bodies).
+	// 2. Resolve IR type definitions.
+	//
+	// 2a. Index type identifiers and create scaffolding IR type definitions
+	//     (without bodies).
+	if err := gen.createTypeDefs(); err != nil {
+		return errors.WithStack(err)
+	}
+	// 2b. Translate AST type definitions to IR.
+	return gen.translateTypeDefs()
+}
+
+// === [ Create and index IR ] =================================================
+
+// createTypeDefs indexes type identifiers and creates scaffolding IR type
+// definitions (without bodies) of the given module.
+//
+// post-condition: gen.new.typeDefs maps from type identifier (without '%'
+// prefix) to corresponding skeleton IR value.
+func (gen *generator) createTypeDefs() error {
+	// 2a. Index type identifiers and create scaffolding IR type definitions
+	//     (without bodies).
 	gen.new.typeDefs = make(map[string]types.Type)
 	for typeName, old := range gen.old.typeDefs {
 		// track is used to identify self-referential named types.
 		track := make(map[string]bool)
-		t, err := newIRType(typeName, old.Typ(), gen.old.typeDefs, track)
+		t, err := newType(typeName, old.Typ(), gen.old.typeDefs, track)
 		if err != nil {
 			return errors.WithStack(err)
 		}
 		gen.new.typeDefs[typeName] = t
 	}
-
-	// Translate type defintions (including bodies).
-	for alias, old := range gen.old.typeDefs {
-		t := gen.new.typeDefs[alias]
-		_, err := gen.astToIRTypeDef(t, old.Typ())
-		if err != nil {
-			return errors.WithStack(err)
-		}
-	}
 	return nil
 }
 
-// newIRType returns a new IR type (without body) based on the given AST type.
+// newType returns a new IR type (without body) based on the given AST type.
 // Named types are resolved to their underlying type through lookup in index. An
 // error is returned for (potentially recursive) self-referential name types.
 //
@@ -57,27 +67,39 @@ func (gen *generator) resolveTypeDefs() error {
 //
 //    ; struct type containing pointer to itself.
 //    %d = type { %d* }
-func newIRType(typeName string, old ast.LlvmNode, index map[string]*ast.TypeDef, track map[string]bool) (types.Type, error) {
+func newType(typeName string, old ast.LlvmNode, index map[string]*ast.TypeDef, track map[string]bool) (types.Type, error) {
 	switch old := old.(type) {
-	case *ast.OpaqueType:
-		return &types.StructType{TypeName: typeName}, nil
-	case *ast.ArrayType:
-		return &types.ArrayType{TypeName: typeName}, nil
-	case *ast.FloatType:
-		return &types.FloatType{TypeName: typeName}, nil
+	case *ast.VoidType:
+		return &types.VoidType{TypeName: typeName}, nil
 	case *ast.FuncType:
 		return &types.FuncType{TypeName: typeName}, nil
 	case *ast.IntType:
 		return &types.IntType{TypeName: typeName}, nil
-	case *ast.LabelType:
-		return &types.LabelType{TypeName: typeName}, nil
+	case *ast.FloatType:
+		return &types.FloatType{TypeName: typeName}, nil
 	case *ast.MMXType:
 		return &types.MMXType{TypeName: typeName}, nil
+	case *ast.PointerType:
+		return &types.PointerType{TypeName: typeName}, nil
+	case *ast.VectorType:
+		return &types.VectorType{TypeName: typeName}, nil
+	case *ast.LabelType:
+		return &types.LabelType{TypeName: typeName}, nil
+	case *ast.TokenType:
+		return &types.TokenType{TypeName: typeName}, nil
 	case *ast.MetadataType:
 		return &types.MetadataType{TypeName: typeName}, nil
+	case *ast.ArrayType:
+		return &types.ArrayType{TypeName: typeName}, nil
+	case *ast.OpaqueType:
+		return &types.StructType{TypeName: typeName}, nil
+	case *ast.StructType:
+		return &types.StructType{TypeName: typeName}, nil
+	case *ast.PackedStructType:
+		return &types.StructType{TypeName: typeName}, nil
 	case *ast.NamedType:
 		if track[typeName] {
-			var names []string
+			names := make([]string, 0, len(track))
 			for name := range track {
 				names = append(names, enc.Local(name))
 			}
@@ -88,90 +110,93 @@ func newIRType(typeName string, old ast.LlvmNode, index map[string]*ast.TypeDef,
 		newIdent := localIdent(old.Name())
 		newName := getTypeName(newIdent)
 		newTyp := index[newName].Typ()
-		return newIRType(newName, newTyp, index, track)
-	case *ast.PointerType:
-		return &types.PointerType{TypeName: typeName}, nil
-	case *ast.StructType:
-		return &types.StructType{TypeName: typeName}, nil
-	case *ast.PackedStructType:
-		return &types.StructType{TypeName: typeName}, nil
-	case *ast.TokenType:
-		return &types.TokenType{TypeName: typeName}, nil
-	case *ast.VectorType:
-		return &types.VectorType{TypeName: typeName}, nil
-	case *ast.VoidType:
-		return &types.VoidType{TypeName: typeName}, nil
+		return newType(newName, newTyp, index, track)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
 }
 
-// === [ Types ] ===============================================================
+// === [ Translate AST to IR ] =================================================
 
-// astToIRTypeDef translates the AST type into an equivalent IR type. A new IR
-// type correspoding to the AST type is created if t is nil, otherwise the body
-// of t is populated. Named types are resolved through ts.
-func (gen *generator) astToIRTypeDef(t types.Type, old ast.LlvmNode) (types.Type, error) {
+// translateTypeDefs translates the AST type definitions of the given module to
+// IR.
+func (gen *generator) translateTypeDefs() error {
+	// 2b. Translate AST type definitions to IR.
+	for typeName, old := range gen.old.typeDefs {
+		t := gen.new.typeDefs[typeName]
+		if _, err := gen.irTypeDef(t, old.Typ()); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	return nil
+}
+
+// irTypeDef translates the AST type into an equivalent IR type. A new IR type
+// correspoding to the AST type is created if t is nil, otherwise the body of t
+// is populated. Named types are resolved through gen.new.typeDefs.
+func (gen *generator) irTypeDef(t types.Type, old ast.LlvmNode) (types.Type, error) {
 	switch old := old.(type) {
-	case *ast.OpaqueType:
-		return gen.astToIROpaqueType(t, old)
-	case *ast.ArrayType:
-		return gen.astToIRArrayType(t, old)
-	case *ast.FloatType:
-		return gen.astToIRFloatType(t, old)
-	case *ast.FuncType:
-		return gen.astToIRFuncType(t, old)
-	case *ast.IntType:
-		return gen.astToIRIntType(t, old)
-	case *ast.LabelType:
-		return gen.astToIRLabelType(t, old)
-	case *ast.MMXType:
-		return gen.astToIRMMXType(t, old)
-	case *ast.MetadataType:
-		return gen.astToIRMetadataType(t, old)
-	case *ast.NamedType:
-		return gen.astToIRNamedType(t, old)
-	case *ast.PointerType:
-		return gen.astToIRPointerType(t, old)
-	case *ast.StructType:
-		return gen.astToIRStructType(t, old)
-	case *ast.PackedStructType:
-		return gen.astToIRPackedStructType(t, old)
-	case *ast.TokenType:
-		return gen.astToIRTokenType(t, old)
-	case *ast.VectorType:
-		return gen.astToIRVectorType(t, old)
 	case *ast.VoidType:
-		return gen.astToIRVoidType(t, old)
+		return gen.irVoidType(t, old)
+	case *ast.FuncType:
+		return gen.irFuncType(t, old)
+	case *ast.IntType:
+		return gen.irIntType(t, old)
+	case *ast.FloatType:
+		return gen.irFloatType(t, old)
+	case *ast.MMXType:
+		return gen.irMMXType(t, old)
+	case *ast.PointerType:
+		return gen.irPointerType(t, old)
+	case *ast.VectorType:
+		return gen.irVectorType(t, old)
+	case *ast.LabelType:
+		return gen.irLabelType(t, old)
+	case *ast.TokenType:
+		return gen.irTokenType(t, old)
+	case *ast.MetadataType:
+		return gen.irMetadataType(t, old)
+	case *ast.ArrayType:
+		return gen.irArrayType(t, old)
+	case *ast.OpaqueType:
+		return gen.irOpaqueType(t, old)
+	case *ast.StructType:
+		return gen.irStructType(t, old)
+	case *ast.PackedStructType:
+		return gen.irPackedStructType(t, old)
+	case *ast.NamedType:
+		return gen.irNamedType(t, old)
 	default:
 		panic(fmt.Errorf("support for type %T not yet implemented", old))
 	}
 }
 
-// --- [ Void Types ] ----------------------------------------------------------
+// --- [ Void types ] ----------------------------------------------------------
 
-func (gen *generator) astToIRVoidType(t types.Type, old *ast.VoidType) (types.Type, error) {
+// irVoidType translates the AST void type into an equivalent IR type. A new IR
+// type correspoding to the AST type is created if t is nil, otherwise the body
+// of t is populated.
+func (gen *generator) irVoidType(t types.Type, old *ast.VoidType) (types.Type, error) {
 	typ, ok := t.(*types.VoidType)
 	if t == nil {
 		typ = &types.VoidType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST void type; expected *types.VoidType, got %T", t))
 	}
 	// nothing to do.
 	return typ, nil
 }
 
-// --- [ Function Types ] ------------------------------------------------------
+// --- [ Function types ] ------------------------------------------------------
 
-func (gen *generator) astToIRFuncType(t types.Type, old *ast.FuncType) (types.Type, error) {
+// irFuncType translates the AST function type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irFuncType(t types.Type, old *ast.FuncType) (types.Type, error) {
 	typ, ok := t.(*types.FuncType)
 	if t == nil {
 		typ = &types.FuncType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST function type; expected *types.FuncType, got %T", t))
 	}
 	// Return type.
@@ -182,58 +207,59 @@ func (gen *generator) astToIRFuncType(t types.Type, old *ast.FuncType) (types.Ty
 	typ.RetType = retType
 	// Function parameters.
 	ps := old.Params()
-	for _, p := range ps.Params() {
-		param, err := gen.irType(p.Typ())
-		if err != nil {
-			return nil, errors.WithStack(err)
+	if oldParams := ps.Params(); len(oldParams) > 0 {
+		typ.Params = make([]types.Type, len(oldParams))
+		for i, oldParam := range oldParams {
+			param, err := gen.irType(oldParam.Typ())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			typ.Params[i] = param
 		}
-		typ.Params = append(typ.Params, param)
 	}
 	// Variadic.
-	_, variadic := ps.Variadic()
-	typ.Variadic = variadic
+	_, typ.Variadic = ps.Variadic()
 	return typ, nil
 }
 
-// --- [ Integer Types ] -------------------------------------------------------
+// --- [ Integer types ] -------------------------------------------------------
 
-func (gen *generator) astToIRIntType(t types.Type, old *ast.IntType) (types.Type, error) {
+// irIntType translates the AST integer type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irIntType(t types.Type, old *ast.IntType) (types.Type, error) {
 	typ, ok := t.(*types.IntType)
 	if t == nil {
 		typ = &types.IntType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST integer type; expected *types.IntType, got %T", t))
 	}
 	// Bit size.
-	typ.BitSize = irIntTypeBitSize(old)
+	typ.BitSize = irBitSize(old)
 	return typ, nil
 }
 
-// irIntTypeBitSize returns the integer type bit size corresponding to the given
-// AST integer type.
-func irIntTypeBitSize(n *ast.IntType) int64 {
+// irBitSize returns the bit size of the given AST integer type.
+func irBitSize(n *ast.IntType) uint64 {
 	text := n.Text()
 	const prefix = "i"
 	if !strings.HasPrefix(text, prefix) {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
 		panic(fmt.Errorf("invalid integer type %q; missing '%s' prefix", text, prefix))
 	}
 	text = text[len(prefix):]
-	x, err := strconv.ParseInt(text, 10, 64)
+	x, err := strconv.ParseUint(text, 10, 64)
 	if err != nil {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
-		panic(fmt.Errorf("unable to parse integer type bit size %q; %v", text, err))
+		panic(fmt.Errorf("unable to parse bit size %q; %v", text, err))
 	}
 	return x
 }
 
-// --- [ Floating-point Types ] ------------------------------------------------
+// --- [ Floating-point types ] ------------------------------------------------
 
-func (gen *generator) astToIRFloatType(t types.Type, old *ast.FloatType) (types.Type, error) {
+// irFloatType translates the AST floating-point type into an equivalent IR
+// type. A new IR type correspoding to the AST type is created if t is nil,
+// otherwise the body of t is populated.
+func (gen *generator) irFloatType(t types.Type, old *ast.FloatType) (types.Type, error) {
 	typ, ok := t.(*types.FloatType)
 	if t == nil {
 		typ = &types.FloatType{}
@@ -241,56 +267,36 @@ func (gen *generator) astToIRFloatType(t types.Type, old *ast.FloatType) (types.
 		panic(fmt.Errorf("invalid IR type for AST floating-point type; expected *types.FloatType, got %T", t))
 	}
 	// Floating-point kind.
-	typ.Kind = irFloatKind(old.FloatKind())
+	typ.Kind = asmenum.FloatKindFromString(old.FloatKind().Text())
 	return typ, nil
 }
 
-// irFloatKind returns the IR floating-point kind corresponding to the given AST
-// floating-point kind.
-func irFloatKind(kind ast.FloatKind) types.FloatKind {
-	text := kind.Text()
-	switch text {
-	case "half":
-		return types.FloatKindHalf
-	case "float":
-		return types.FloatKindFloat
-	case "double":
-		return types.FloatKindDouble
-	case "x86_fp80":
-		return types.FloatKindX86FP80
-	case "fp128":
-		return types.FloatKindFP128
-	case "ppc_fp128":
-		return types.FloatKindPPCFP128
-	default:
-		panic(fmt.Errorf("support for floating-point kind %q not yet implemented", text))
-	}
-}
+// --- [ MMX types ] -----------------------------------------------------------
 
-// --- [ MMX Types ] -----------------------------------------------------------
-
-func (gen *generator) astToIRMMXType(t types.Type, old *ast.MMXType) (types.Type, error) {
+// irMMXType translates the AST MMX type into an equivalent IR type. A new IR
+// type correspoding to the AST type is created if t is nil, otherwise the body
+// of t is populated.
+func (gen *generator) irMMXType(t types.Type, old *ast.MMXType) (types.Type, error) {
 	typ, ok := t.(*types.MMXType)
 	if t == nil {
 		typ = &types.MMXType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST MMX type; expected *types.MMXType, got %T", t))
 	}
 	// nothing to do.
 	return typ, nil
 }
 
-// --- [ Pointer Types ] -------------------------------------------------------
+// --- [ Pointer types ] -------------------------------------------------------
 
-func (gen *generator) astToIRPointerType(t types.Type, old *ast.PointerType) (types.Type, error) {
+// irPointerType translates the AST pointer type into an equivalent IR type. A
+// new IR type correspoding to the AST type is created if t is nil, otherwise
+// the body of t is populated.
+func (gen *generator) irPointerType(t types.Type, old *ast.PointerType) (types.Type, error) {
 	typ, ok := t.(*types.PointerType)
 	if t == nil {
 		typ = &types.PointerType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST pointer type; expected *types.PointerType, got %T", t))
 	}
 	// Element type.
@@ -306,15 +312,16 @@ func (gen *generator) astToIRPointerType(t types.Type, old *ast.PointerType) (ty
 	return typ, nil
 }
 
-// --- [ Vector Types ] --------------------------------------------------------
+// --- [ Vector types ] --------------------------------------------------------
 
-func (gen *generator) astToIRVectorType(t types.Type, old *ast.VectorType) (types.Type, error) {
+// irVectorType translates the AST vector type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irVectorType(t types.Type, old *ast.VectorType) (types.Type, error) {
 	typ, ok := t.(*types.VectorType)
 	if t == nil {
 		typ = &types.VectorType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST vector type; expected *types.VectorType, got %T", t))
 	}
 	// Vector length.
@@ -328,45 +335,48 @@ func (gen *generator) astToIRVectorType(t types.Type, old *ast.VectorType) (type
 	return typ, nil
 }
 
-// --- [ Label Types ] ---------------------------------------------------------
+// --- [ Label types ] ---------------------------------------------------------
 
-func (gen *generator) astToIRLabelType(t types.Type, old *ast.LabelType) (types.Type, error) {
+// irLabelType translates the AST label type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irLabelType(t types.Type, old *ast.LabelType) (types.Type, error) {
 	typ, ok := t.(*types.LabelType)
 	if t == nil {
 		typ = &types.LabelType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST label type; expected *types.LabelType, got %T", t))
 	}
 	// nothing to do.
 	return typ, nil
 }
 
-// --- [ Token Types ] ---------------------------------------------------------
+// --- [ Token types ] ---------------------------------------------------------
 
-func (gen *generator) astToIRTokenType(t types.Type, old *ast.TokenType) (types.Type, error) {
+// irTokenType translates the AST token type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irTokenType(t types.Type, old *ast.TokenType) (types.Type, error) {
 	typ, ok := t.(*types.TokenType)
 	if t == nil {
 		typ = &types.TokenType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST token type; expected *types.TokenType, got %T", t))
 	}
 	// nothing to do.
 	return typ, nil
 }
 
-// --- [ Metadata Types ] ------------------------------------------------------
+// --- [ Metadata types ] ------------------------------------------------------
 
-func (gen *generator) astToIRMetadataType(t types.Type, old *ast.MetadataType) (types.Type, error) {
+// irMetadataType translates the AST metadata type into an equivalent IR type. A
+// new IR type correspoding to the AST type is created if t is nil, otherwise
+// the body of t is populated.
+func (gen *generator) irMetadataType(t types.Type, old *ast.MetadataType) (types.Type, error) {
 	typ, ok := t.(*types.MetadataType)
 	if t == nil {
 		typ = &types.MetadataType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST metadata type; expected *types.MetadataType, got %T", t))
 	}
 	// nothing to do.
@@ -375,13 +385,14 @@ func (gen *generator) astToIRMetadataType(t types.Type, old *ast.MetadataType) (
 
 // --- [ Array Types ] ---------------------------------------------------------
 
-func (gen *generator) astToIRArrayType(t types.Type, old *ast.ArrayType) (types.Type, error) {
+// irArrayType translates the AST array type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irArrayType(t types.Type, old *ast.ArrayType) (types.Type, error) {
 	typ, ok := t.(*types.ArrayType)
 	if t == nil {
 		typ = &types.ArrayType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST array type; expected *types.ArrayType, got %T", t))
 	}
 	// Array length.
@@ -397,15 +408,14 @@ func (gen *generator) astToIRArrayType(t types.Type, old *ast.ArrayType) (types.
 
 // --- [ Structure Types ] -----------------------------------------------------
 
-func (gen *generator) astToIROpaqueType(t types.Type, old *ast.OpaqueType) (types.Type, error) {
+// irOpaqueType translates the AST opaque struct type into an equivalent IR
+// type.
+func (gen *generator) irOpaqueType(t types.Type, old *ast.OpaqueType) (types.Type, error) {
 	typ, ok := t.(*types.StructType)
 	if t == nil {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible given the grammar.
+		// Panic as this case should not be reachable by the grammar.
 		panic("invalid use of opaque type; only allowed in type definitions")
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST opaque type; expected *types.StructType, got %T", t))
 	}
 	// Opaque.
@@ -413,47 +423,55 @@ func (gen *generator) astToIROpaqueType(t types.Type, old *ast.OpaqueType) (type
 	return typ, nil
 }
 
-func (gen *generator) astToIRStructType(t types.Type, old *ast.StructType) (types.Type, error) {
+// irStructType translates the AST struct type into an equivalent IR type. A new
+// IR type correspoding to the AST type is created if t is nil, otherwise the
+// body of t is populated.
+func (gen *generator) irStructType(t types.Type, old *ast.StructType) (types.Type, error) {
 	typ, ok := t.(*types.StructType)
 	if t == nil {
 		typ = &types.StructType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST struct type; expected *types.StructType, got %T", t))
 	}
-	// Packed.
+	// Packed (not present).
 	// Fields.
-	for _, f := range old.Fields() {
-		field, err := gen.irType(f)
-		if err != nil {
-			return nil, errors.WithStack(err)
+	if oldFields := old.Fields(); len(oldFields) > 0 {
+		typ.Fields = make([]types.Type, len(oldFields))
+		for i, oldField := range oldFields {
+			field, err := gen.irType(oldField)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			typ.Fields[i] = field
 		}
-		typ.Fields = append(typ.Fields, field)
 	}
 	// struct body now present.
 	typ.Opaque = false
 	return typ, nil
 }
 
-func (gen *generator) astToIRPackedStructType(t types.Type, old *ast.PackedStructType) (types.Type, error) {
+// irPackedStructType translates the AST packed struct type into an equivalent
+// IR type. A new IR type correspoding to the AST type is created if t is nil,
+// otherwise the body of t is populated.
+func (gen *generator) irPackedStructType(t types.Type, old *ast.PackedStructType) (types.Type, error) {
 	typ, ok := t.(*types.StructType)
 	if t == nil {
 		typ = &types.StructType{}
 	} else if !ok {
-		// NOTE: Panic instead of returning error as this case should not be
-		// possible, and would indicate a bug in the implementation.
 		panic(fmt.Errorf("invalid IR type for AST struct type; expected *types.StructType, got %T", t))
 	}
 	// Packed.
 	typ.Packed = true
 	// Fields.
-	for _, f := range old.Fields() {
-		field, err := gen.irType(f)
-		if err != nil {
-			return nil, errors.WithStack(err)
+	if oldFields := old.Fields(); len(oldFields) > 0 {
+		typ.Fields = make([]types.Type, len(oldFields))
+		for i, oldField := range oldFields {
+			field, err := gen.irType(oldField)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			typ.Fields[i] = field
 		}
-		typ.Fields = append(typ.Fields, field)
 	}
 	// struct body now present.
 	typ.Opaque = false
@@ -462,7 +480,9 @@ func (gen *generator) astToIRPackedStructType(t types.Type, old *ast.PackedStruc
 
 // --- [ Named Types ] ---------------------------------------------------------
 
-func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.Type, error) {
+// irNamedType translates the AST named type into an equivalent IR type.
+func (gen *generator) irNamedType(t types.Type, old *ast.NamedType) (types.Type, error) {
+	// TODO: make use of t?
 	// Resolve named type.
 	ident := localIdent(old.Name())
 	name := getTypeName(ident)
@@ -475,14 +495,12 @@ func (gen *generator) astToIRNamedType(t types.Type, old *ast.NamedType) (types.
 
 // ### [ Helpers ] #############################################################
 
-// TODO: rename irType to astToIRType?
-
 // irType returns the IR type corresponding to the given AST type.
 func (gen *generator) irType(old ast.LlvmNode) (types.Type, error) {
-	return gen.astToIRTypeDef(nil, old)
+	return gen.irTypeDef(nil, old)
 }
 
-// getTypeName returns the identifier (without '%' prefix) of the given global
+// getTypeName returns the identifier (without '%' prefix) of the given type
 // identifier.
 func getTypeName(ident ir.LocalIdent) string {
 	if ident.IsUnnamed() {

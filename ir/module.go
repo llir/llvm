@@ -43,9 +43,9 @@ type Module struct {
 	// (optional) Attribute group definitions.
 	AttrGroupDefs []*AttrGroupDef
 	// (optional) Named metadata definitions.
-	NamedMetadataDefs []*metadata.NamedMetadataDef
+	NamedMetadataDefs []*metadata.NamedDef
 	// (optional) Metadata definitions.
-	MetadataDefs []*metadata.MetadataDef
+	MetadataDefs []*metadata.Def
 	// (optional) Use-list order directives.
 	UseListOrders []*UseListOrder
 	// (optional) Basic block specific use-list order directives.
@@ -218,11 +218,11 @@ func (a *AttrGroupDef) Def() string {
 		switch attr := attr.(type) {
 		case Align:
 			// Note, alignment is printed as `align = 8` in attribute groups.
-			fmt.Fprintf(buf, "align = %d", int64(attr))
+			fmt.Fprintf(buf, "align = %d", uint64(attr))
 		case AlignStack:
 			// Note, stack alignment is printed as `alignstack = 8` in attribute
 			// groups.
-			fmt.Fprintf(buf, "alignstack = %d", int64(attr))
+			fmt.Fprintf(buf, "alignstack = %d", uint64(attr))
 		default:
 			buf.WriteString(attr.String())
 		}
@@ -238,7 +238,7 @@ type UseListOrder struct {
 	// Value.
 	Value value.Value
 	// Use-list order.
-	Indices []int64
+	Indices []uint64
 }
 
 // String returns the string representation of the use-list order directive
@@ -264,7 +264,7 @@ type UseListOrderBB struct {
 	// Basic block.
 	Block *BasicBlock
 	// Use-list order.
-	Indices []int64
+	Indices []uint64
 }
 
 // String returns the string representation of the basic block specific use-

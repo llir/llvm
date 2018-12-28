@@ -1,7 +1,10 @@
 // Order of translation.
 //
-// NOTE: the substeps of 4b can be done concurrently. NOTE: step 5-7 can be done
-// concurrently.
+// Note: step 3 and the substeps of 4a can be done concurrently.
+// Note: the substeps of 4a can be done concurrently.
+// Note: the substeps of 4b can be done concurrently.
+// Note: steps 5-7 can be done concurrently.
+// Note: the substeps of 8 can be done concurrently.
 //
 // 1. Index AST top-level entities.
 //
@@ -14,13 +17,17 @@
 //
 // 3. Translate AST comdat definitions to IR.
 //
+// Note: step 3 and the substeps of 4a can be done concurrently.
+//
 // 4. Resolve remaining IR top-level entities.
 //
 //    a) Index top-level identifiers and create scaffolding IR top-level
 //       declarations and definitions (without bodies but with types).
 //
+//       Note: the substeps of 4a can be done concurrently.
+//
 //       1. Index global identifiers and create scaffolding IR global
-//          declarations and definitions, alias and IFunc definitions, and
+//          declarations and definitions, indirect symbol definitions, and
 //          function declarations and definitions (without bodies but with
 //          types).
 //
@@ -35,9 +42,9 @@
 //
 //    b) Translate AST top-level declarations and definitions to IR.
 //
-//       NOTE: the substeps of 4b can be done concurrently.
+//       Note: the substeps of 4b can be done concurrently.
 //
-//       1. Translate AST global declarations and definitions, alias and IFunc
+//       1. Translate AST global declarations and definitions, indirect symbol
 //          definitions, and function declarations and definitions to IR.
 //
 //       2. Translate AST attribute group definitions to IR.
@@ -46,7 +53,7 @@
 //
 //       4. Translate AST metadata definitions to IR.
 //
-// NOTE: step 5-7 can be done concurrenty.
+// Note: steps 5-7 can be done concurrenty.
 //
 // 5. Translate use-list orders.
 //
@@ -54,8 +61,25 @@
 //
 // 7. Fix basic block references in blockaddress constants.
 //
-// 8. Add IR top-level declarations and definitions to the module in order of
+// 8. Add IR top-level declarations and definitions to the IR module in order of
 //    occurrence in the input.
+//
+//    Note: the substeps of 8 can be done concurrently.
+//
+//    a) Add IR type definitions to the IR module in natural sorting order.
+//
+//    b) Add IR comdat definitions to the IR module in natural sorting order.
+//
+//    c) Add IR global variable declarations and definitions, indirect symbol
+//       definitions, and function declarations and definitions to the IR module
+//       in order of occurrence in the input.
+//
+//    d) Add IR attribute group definitions to the IR module in numeric order.
+//
+//    e) Add IR named metadata definitions to the IR module in order of
+//       occurrence in the input.
+//
+//    f) Add IR metadata definitions to the IR module in numeric order.
 
 package asm
 
@@ -67,7 +91,11 @@ import (
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
+	"github.com/llir/llvm/ir/metadata"
+	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
+	"github.com/rickypai/natsort"
 )
 
 // translate translates the given AST module into an equivalent IR module.
@@ -86,9 +114,11 @@ func translate(old *ast.Module) (*ir.Module, error) {
 	}
 	dbg.Println("type resolution took:", time.Since(typeStart))
 	// 3. Translate AST comdat definitions to IR.
-	if err := gen.translateComdatDefs(); err != nil {
-		return nil, errors.WithStack(err)
-	}
+	//
+	// Note: step 3 and the substeps of 4a can be done concurrently.
+	gen.translateComdatDefs()
+	// 4. Resolve remaining IR top-level entities.
+	//
 	// 4a. Index top-level identifiers and create scaffolding IR top-level
 	//     declarations and definitions (without bodies but with types).
 	createStart := time.Now()
@@ -97,28 +127,22 @@ func translate(old *ast.Module) (*ir.Module, error) {
 	}
 	dbg.Println("create IR top-level entities took:", time.Since(createStart))
 	// 4b. Translate AST top-level declarations and definitions to IR.
-	// NOTE: the substeps of 4b can be done concurrently.
+	//
+	// Note: the substeps of 4b can be done concurrently.
 	translateStart := time.Now()
 	if err := gen.translateTopLevelEntities(); err != nil {
 		return nil, errors.WithStack(err)
 	}
 	dbg.Println("translate AST to IR took:", time.Since(translateStart))
-	// NOTE: step 5-7 can be done concurrenty.
+	// Note: step 5-7 can be done concurrenty.
+	//
 	// 5. Translate use-list orders.
-	for _, oldUseListOrder := range gen.old.useListOrders {
-		useListOrder, err := gen.irUseListOrder(*oldUseListOrder)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		gen.m.UseListOrders = append(gen.m.UseListOrders, useListOrder)
+	if err := gen.translateUseListOrders(); err != nil {
+		return nil, errors.WithStack(err)
 	}
 	// 6. Translate basic block specific use-list orders.
-	for _, oldUseListOrderBB := range gen.old.useListOrderBBs {
-		useListOrderBB, err := gen.irUseListOrderBB(*oldUseListOrderBB)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		gen.m.UseListOrderBBs = append(gen.m.UseListOrderBBs, useListOrderBB)
+	if err := gen.translateUseListOrderBBs(); err != nil {
+		return nil, errors.WithStack(err)
 	}
 	// 7. Fix basic block references in blockaddress constants.
 	for _, c := range gen.todo {
@@ -126,91 +150,115 @@ func translate(old *ast.Module) (*ir.Module, error) {
 			return nil, errors.WithStack(err)
 		}
 	}
-	// 8. Add IR top-level declarations and definitions to the module in order of
-	//    occurrence in the input.
+	// 8. Add IR top-level declarations and definitions to the IR module in order
+	//    of occurrence in the input.
+	//
+	// Note: the substeps of 8 can be done concurrently.
+	addStart := time.Now()
 	gen.addDefsToModule()
+	dbg.Println("add IR definitions to IR module took:", time.Since(addStart))
 	return gen.m, nil
 }
 
-// addDefsToModule adds IR top-level declarations and definitions to the module
-// in order of occurrence in the input.
+// addDefsToModule adds IR top-level declarations and definitions to the IR
+// module in order of occurrence in the input.
 func (gen *generator) addDefsToModule() {
-	// Output type definitions in alphabetical order.
-	var typeNames []string
+	// 8. Add IR top-level declarations and definitions to the IR module in order
+	//    of occurrence in the input.
+	//
+	// Note: the substeps of 8 can be done concurrently.
+	//
+	// 8a. Add IR type definitions to the IR module in natural sorting order.
+	gen.addTypeDefsToModule()
+	// 8b. Add IR comdat definitions to the IR module in natural sorting order.
+	gen.addComdatDefsToModule()
+	// 8c. Add IR global variable declarations and definitions, indirect symbol
+	//     definitions, and function declarations and definitions to the IR
+	//     module in order of occurrence in the input.
+	gen.addGlobalEntitiesToModule()
+	// 8d. Add IR attribute group definitions to the IR module in numeric order.
+	gen.addAttrGroupDefsToModule()
+	// 8e. Add IR named metadata definitions to the IR module in order of
+	//     occurrence in the input.
+	gen.addNamedMetadataDefsToModule()
+	// 8f. Add IR metadata definitions to the IR module in numeric order.
+	gen.addMetadataDefsToModule()
+}
+
+// addTypeDefsToModule adds IR type definitions to the IR module in natural
+// sorting order.
+func (gen *generator) addTypeDefsToModule() {
+	// 8a. Add IR type definitions to the IR module in natural sorting order.
+	typeNames := make([]string, 0, len(gen.old.typeDefs))
 	for name := range gen.old.typeDefs {
 		typeNames = append(typeNames, name)
 	}
-	sort.Strings(typeNames)
-	for _, name := range typeNames {
-		def, ok := gen.new.typeDefs[name]
-		if !ok {
-			panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(name)))
+	natsort.Strings(typeNames)
+	if len(typeNames) > 0 {
+		gen.m.TypeDefs = make([]types.Type, len(typeNames))
+		for i, name := range typeNames {
+			def, ok := gen.new.typeDefs[name]
+			if !ok {
+				panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(name)))
+			}
+			gen.m.TypeDefs[i] = def
 		}
-		gen.m.TypeDefs = append(gen.m.TypeDefs, def)
 	}
+}
 
-	// Output comdat definitions in alphabetical order.
-	var comdatNames []string
+// addComdatDefsToModule adds IR comdat definitions to the IR module in natural
+// sorting order.
+func (gen *generator) addComdatDefsToModule() {
+	// 8b. Add IR comdat definitions to the IR module in natural sorting order.
+	comdatNames := make([]string, 0, len(gen.old.comdatDefs))
 	for name := range gen.old.comdatDefs {
 		comdatNames = append(comdatNames, name)
 	}
-	sort.Strings(comdatNames)
-	for _, name := range comdatNames {
-		def, ok := gen.new.comdatDefs[name]
-		if !ok {
-			panic(fmt.Errorf("unable to locate comdat name %q", enc.Comdat(name)))
+	natsort.Strings(comdatNames)
+	if len(comdatNames) > 0 {
+		gen.m.ComdatDefs = make([]*ir.ComdatDef, len(comdatNames))
+		for i, name := range comdatNames {
+			def, ok := gen.new.comdatDefs[name]
+			if !ok {
+				panic(fmt.Errorf("unable to locate comdat name %q", enc.Comdat(name)))
+			}
+			gen.m.ComdatDefs[i] = def
 		}
-		gen.m.ComdatDefs = append(gen.m.ComdatDefs, def)
 	}
+}
 
-	// Output global variable declarations and definitions in order of occurrence
-	// in the input.
+// addGlobalEntitiesToModule adds IR global variable declarations and
+// definitions, indirect symbol definitions, and function declarations and
+// definitions to the IR module in order of occurrence in the input.
+func (gen *generator) addGlobalEntitiesToModule() {
+	// 8c. Add IR global variable declarations and definitions, indirect symbol
+	//     definitions, and function declarations and definitions to the IR
+	//     module in order of occurrence in the input.
 	for _, ident := range gen.old.globalOrder {
 		v, ok := gen.new.globals[ident]
 		if !ok {
 			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
 		}
-		def, ok := v.(*ir.Global)
-		if !ok {
-			panic(fmt.Errorf("invalid global declaration or definition type; expected *ir.Global, got %T", v))
-		}
-		gen.m.Globals = append(gen.m.Globals, def)
-	}
-
-	// Output indirect symbol definitions (aliases and indirect functions) in
-	// order of occurrence in the input.
-	for _, ident := range gen.old.indirectSymbolDefOrder {
-		v, ok := gen.new.globals[ident]
-		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
-		}
-		switch v := v.(type) {
+		switch def := v.(type) {
+		case *ir.Global:
+			gen.m.Globals = append(gen.m.Globals, def)
 		case *ir.Alias:
-			gen.m.Aliases = append(gen.m.Aliases, v)
+			gen.m.Aliases = append(gen.m.Aliases, def)
 		case *ir.IFunc:
-			gen.m.IFuncs = append(gen.m.IFuncs, v)
+			gen.m.IFuncs = append(gen.m.IFuncs, def)
+		case *ir.Function:
+			gen.m.Funcs = append(gen.m.Funcs, def)
 		default:
-			panic(fmt.Errorf("invalid indirect symbol definition type; expected *ir.Alias or *ir.IFunc, got %T", v))
-
+			panic(fmt.Errorf("support for global %T not yet implemented", v))
 		}
 	}
+}
 
-	// Output function declarations and definitions in order of occurrence in the
-	// input.
-	for _, ident := range gen.old.funcOrder {
-		v, ok := gen.new.globals[ident]
-		if !ok {
-			panic(fmt.Errorf("unable to locate global identifier %q", ident.Ident()))
-		}
-		def, ok := v.(*ir.Function)
-		if !ok {
-			panic(fmt.Errorf("invalid function declaration or definition type; expected *ir.Function, got %T", v))
-		}
-		gen.m.Funcs = append(gen.m.Funcs, def)
-	}
-
-	// Output comdat definitions in numeric order.
-	var attrGroupIDs []int64
+// addAttrGroupDefsToModule adds IR attribute group definitions to the IR module
+// in numeric order.
+func (gen *generator) addAttrGroupDefsToModule() {
+	// 8d. Add IR attribute group definitions to the IR module in numeric order.
+	attrGroupIDs := make([]int64, 0, len(gen.old.attrGroupDefs))
 	for id := range gen.old.attrGroupDefs {
 		attrGroupIDs = append(attrGroupIDs, id)
 	}
@@ -218,37 +266,78 @@ func (gen *generator) addDefsToModule() {
 		return attrGroupIDs[i] < attrGroupIDs[j]
 	}
 	sort.Slice(attrGroupIDs, less)
-	for _, id := range attrGroupIDs {
-		def, ok := gen.new.attrGroupDefs[id]
-		if !ok {
-			panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
+	if len(attrGroupIDs) > 0 {
+		gen.m.AttrGroupDefs = make([]*ir.AttrGroupDef, len(attrGroupIDs))
+		for i, id := range attrGroupIDs {
+			def, ok := gen.new.attrGroupDefs[id]
+			if !ok {
+				panic(fmt.Errorf("unable to locate attribute group ID %q", enc.AttrGroupID(id)))
+			}
+			gen.m.AttrGroupDefs[i] = def
 		}
-		gen.m.AttrGroupDefs = append(gen.m.AttrGroupDefs, def)
 	}
+}
 
-	// Output named metadata definitions in order of occurrence in the input.
-	for _, name := range gen.old.namedMetadataDefOrder {
-		def, ok := gen.new.namedMetadataDefs[name]
-		if !ok {
-			panic(fmt.Errorf("unable to locate metadata name %q", enc.MetadataName(name)))
+// addNamedMetadataDefsToModule adds IR named metadata definitions to the IR
+// module in order of occurrence in the input.
+func (gen *generator) addNamedMetadataDefsToModule() {
+	// 8e. Add IR named metadata definitions to the IR module in order of
+	//     occurrence in the input.
+	if len(gen.old.namedMetadataDefOrder) > 0 {
+		gen.m.NamedMetadataDefs = make([]*metadata.NamedDef, len(gen.old.namedMetadataDefOrder))
+		for i, name := range gen.old.namedMetadataDefOrder {
+			def, ok := gen.new.namedMetadataDefs[name]
+			if !ok {
+				panic(fmt.Errorf("unable to locate metadata name %q", enc.MetadataName(name)))
+			}
+			gen.m.NamedMetadataDefs[i] = def
 		}
-		gen.m.NamedMetadataDefs = append(gen.m.NamedMetadataDefs, def)
 	}
+}
 
-	// Output comdat definitions in numeric order.
-	var metadataIDs []int64
+// addMetadataDefsToModule adds IR metadata definitions to the IR module in
+// numeric order.
+func (gen *generator) addMetadataDefsToModule() {
+	metadataIDs := make([]int64, 0, len(gen.old.metadataDefs))
 	for id := range gen.old.metadataDefs {
 		metadataIDs = append(metadataIDs, id)
 	}
-	less = func(i, j int) bool {
+	less := func(i, j int) bool {
 		return metadataIDs[i] < metadataIDs[j]
 	}
 	sort.Slice(metadataIDs, less)
-	for _, id := range metadataIDs {
-		def, ok := gen.new.metadataDefs[id]
-		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
+	if len(metadataIDs) > 0 {
+		gen.m.MetadataDefs = make([]*metadata.Def, len(metadataIDs))
+		for i, id := range metadataIDs {
+			def, ok := gen.new.metadataDefs[id]
+			if !ok {
+				panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
+			}
+			gen.m.MetadataDefs[i] = def
 		}
-		gen.m.MetadataDefs = append(gen.m.MetadataDefs, def)
 	}
+}
+
+// ### [ Helper functions ] ####################################################
+
+// fixBlockAddressConst fixes the basic block of the given blockaddress
+// constant. During translation of constants, blockaddress constants are
+// assigned dummy basic blocks since function bodies have yet to be translated.
+//
+// pre-condition: translated function body and assigned local IDs of c.Func.
+func fixBlockAddressConst(c *constant.BlockAddress) error {
+	f, ok := c.Func.(*ir.Function)
+	if !ok {
+		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Function, got %T", c.Func))
+	}
+	bb, ok := c.Block.(*ir.BasicBlock)
+	if !ok {
+		panic(fmt.Errorf("invalid basic block type in blockaddress constant; expected *ir.BasicBlock, got %T", c.Block))
+	}
+	block, err := findBlock(f, bb.LocalIdent)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	c.Block = block
+	return nil
 }

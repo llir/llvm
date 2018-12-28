@@ -18,7 +18,7 @@ type ExprGetElementPtr struct {
 	// Source address.
 	Src Constant
 	// Element indicies.
-	Indices []*Index
+	Indices []Constant // *Int, *Vector or *Index
 
 	// extra.
 
@@ -31,7 +31,7 @@ type ExprGetElementPtr struct {
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // source address and element indices.
-func NewGetElementPtr(src Constant, indices ...*Index) *ExprGetElementPtr {
+func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
 	e := &ExprGetElementPtr{Src: src, Indices: indices}
 	// Compute type.
 	e.Type()
@@ -96,7 +96,7 @@ func (e *ExprGetElementPtr) Simplify() Constant {
 // Index is an index of a getelementptr constant expression.
 type Index struct {
 	// Element index.
-	Index Constant
+	Constant
 
 	// extra.
 
@@ -108,16 +108,16 @@ type Index struct {
 
 // NewIndex returns a new gep element index.
 func NewIndex(index Constant) *Index {
-	return &Index{Index: index}
+	return &Index{Constant: index}
 }
 
 // String returns a string representation of the getelementptr index.
 func (index *Index) String() string {
 	// OptInrange Type Constant
 	if index.InRange {
-		return fmt.Sprintf("inrange %s", index.Index)
+		return fmt.Sprintf("inrange %s", index.Constant)
 	}
-	return index.Index.String()
+	return index.Constant.String()
 }
 
 // ### [ Helper functions ] ####################################################
@@ -125,9 +125,13 @@ func (index *Index) String() string {
 // gepType returns the pointer type or vector of pointers type to the element at
 // the position in the type specified by the given indices, as calculated by the
 // getelementptr instruction.
-func gepType(elemType types.Type, indices []*Index) types.Type {
+func gepType(elemType types.Type, indices []Constant) types.Type {
 	e := elemType
 	for i, index := range indices {
+		// unpack inrange indices.
+		if idx, ok := index.(*Index); ok {
+			index = idx.Constant
+		}
 		if i == 0 {
 			// Ignore checking the 0th index as it simply follows the pointer of
 			// src.
@@ -144,7 +148,7 @@ func gepType(elemType types.Type, indices []*Index) types.Type {
 		case *types.ArrayType:
 			e = t.ElemType
 		case *types.StructType:
-			switch index := index.Index.(type) {
+			switch index := index.(type) {
 			case *Int:
 				e = t.Fields[index.X.Int64()]
 			case *Vector:
@@ -183,7 +187,12 @@ func gepType(elemType types.Type, indices []*Index) types.Type {
 	//    %116 = bitcast i8** %115 to <2 x %struct.fileinfo*>*, !dbg !4738
 	//    store <2 x %struct.fileinfo*> %113, <2 x %struct.fileinfo*>* %116, align 8, !dbg !4738, !tbaa !1793
 	if len(indices) > 0 {
-		if t, ok := indices[0].Index.Type().(*types.VectorType); ok {
+		index := indices[0]
+		// unpack inrange index.
+		if idx, ok := index.(*Index); ok {
+			index = idx.Constant
+		}
+		if t, ok := index.Type().(*types.VectorType); ok {
 			return types.NewVector(t.Len, types.NewPointer(e))
 		}
 	}

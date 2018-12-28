@@ -31,8 +31,12 @@ type Float struct {
 // floating-point type and double precision floating-point value.
 func NewFloat(typ *types.FloatType, x float64) *Float {
 	if math.IsNaN(x) {
-		// TODO: store sign of NaN?
-		return &Float{Typ: typ, NaN: true}
+		f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
+		// Store sign of NaN.
+		if math.Signbit(x) {
+			f.X.SetFloat64(-1)
+		}
+		return f
 	}
 	return &Float{Typ: typ, X: big.NewFloat(x)}
 }
@@ -70,28 +74,20 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			}
 			f := float80x86.NewFromBits(uint16(se), m)
 			x, nan := f.Big()
-			return &Float{
-				Typ: typ,
-				X:   x,
-				NaN: nan,
-			}, nil
+			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		case strings.HasPrefix(s, "0xL"):
 			//s = s[len("0xL"):]
 		case strings.HasPrefix(s, "0xM"):
 			//s = s[len("0xM"):]
 		case strings.HasPrefix(s, "0xH"):
-			hex := s[len("0xK"):]
+			hex := s[len("0xH"):]
 			bits, err := strconv.ParseUint(hex, 16, 16)
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
 			f := binary16.NewFromBits(uint16(bits))
 			x, nan := f.Big()
-			return &Float{
-				Typ: typ,
-				X:   x,
-				NaN: nan,
-			}, nil
+			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		default:
 			hex := s[len("0x"):]
 			bits, err := strconv.ParseUint(hex, 16, 64)
@@ -102,14 +98,16 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			case types.FloatKindHalf:
 				// TODO: verify if this is a correct implementation. We should
 				// probably be using binary16.NewFromBits.
-				f := math.Float64frombits(bits)
-				if math.IsNaN(f) {
-					return &Float{
-						Typ: typ,
-						NaN: true,
-					}, nil
+				f16 := math.Float64frombits(bits)
+				if math.IsNaN(f16) {
+					f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
+					// Store sign of NaN.
+					if math.Signbit(f16) {
+						f.X.SetFloat64(-1)
+					}
+					return f, nil
 				}
-				c := big.NewFloat(f)
+				c := big.NewFloat(f16)
 				const precision = 11
 				c.SetPrec(precision)
 				return &Float{
@@ -126,32 +124,31 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				// double.  A double has 52 bits of significand, so this means that the
 				// last 29 bits of significand will always be ignored.  As an
 				// error-detection measure, the IR parser requires them to be zero.
-				f := math.Float64frombits(bits)
-				if math.IsNaN(f) {
-					return &Float{
-						Typ: typ,
-						NaN: true,
-					}, nil
+				f32 := math.Float64frombits(bits)
+				if math.IsNaN(f32) {
+					f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
+					// Store sign of NaN.
+					if math.Signbit(f32) {
+						f.X.SetFloat64(-1)
+					}
+					return f, nil
 				}
-				c := big.NewFloat(f)
+				x := big.NewFloat(f32)
 				const precision = 24
-				c.SetPrec(precision)
-				return &Float{
-					Typ: typ,
-					X:   c,
-				}, nil
+				x.SetPrec(precision)
+				return &Float{Typ: typ, X: x}, nil
 			case types.FloatKindDouble:
-				f := math.Float64frombits(bits)
-				if math.IsNaN(f) {
-					return &Float{
-						Typ: typ,
-						NaN: true,
-					}, nil
+				f32 := math.Float64frombits(bits)
+				if math.IsNaN(f32) {
+					f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
+					// Store sign of NaN.
+					if math.Signbit(f32) {
+						f.X.SetFloat64(-1)
+					}
+					return f, nil
 				}
-				return &Float{
-					Typ: typ,
-					X:   big.NewFloat(f),
-				}, nil
+				x := big.NewFloat(f32)
+				return &Float{Typ: typ, X: x}, nil
 			default:
 				panic(fmt.Errorf("support for hexadecimal floating-point literal %q of kind %v not yet implemented", s, typ.Kind))
 			}
@@ -307,7 +304,7 @@ func (c *Float) Ident() string {
 			return fmt.Sprintf("0x%X", bits)
 			//return fmt.Sprintf("0x%016X", bits)
 		}
-	case types.FloatKindX86FP80:
+	case types.FloatKindX86_FP80:
 		// TODO: handle NaN.
 		f, acc := float80x86.NewFromBig(c.X)
 		// TODO: check acc.

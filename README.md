@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/llir/llvm.svg?branch=master)](https://travis-ci.org/llir/llvm)
 [![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=master)](https://coveralls.io/github/llir/llvm?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/llir/llvm)](https://goreportcard.com/report/github.com/llir/llvm)
 [![GoDoc](https://godoc.org/github.com/llir/llvm?status.svg)](https://godoc.org/github.com/llir/llvm)
 
 Library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html) in pure Go.
@@ -16,6 +17,7 @@ go get -u github.com/llir/llvm/...
 
 * [blessedvirginmary](https://github.com/NateGraff/blessedvirginmary): LLVM IR to Bash transpiler by [@NateGraff](https://github.com/NateGraff).
 * [decomp](https://github.com/decomp/decomp): LLVM IR to Go decompiler by [@decomp](https://github.com/decomp).
+* [geode](https://github.com/geode-lang/geode): Geode to LLVM IR compiler by [@nickwanninger](https://github.com/nickwanninger).
 * [tre](https://github.com/zegl/tre): Go to LLVM IR compiler by [@zegl](https://github.com/zegl).
 * [uc](https://github.com/mewmew/uc): µC to LLVM IR compiler by [@sangisos](https://github.com/sangisos) and [@mewmew](https://github.com/mewmew).
 
@@ -246,3 +248,7 @@ func signExt(x uint32) uint32 {
 	return x
 }
 ```
+
+## Credits
+
+Inspiration for the [ir](https://godoc.org/github.com/llir/llvm/ir) API was taken from [goory](https://github.com/mrbenshef/goory) by [@mrbenshef](https://github.com/mrbenshef).

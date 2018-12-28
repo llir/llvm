@@ -16,7 +16,7 @@ type ExprExtractValue struct {
 	// Aggregate value.
 	X Constant
 	// Element indices.
-	Indices []int64
+	Indices []uint64
 
 	// extra.
 
@@ -26,7 +26,7 @@ type ExprExtractValue struct {
 
 // NewExtractValue returns a new extractvalue expression based on the given
 // aggregate value and indicies.
-func NewExtractValue(x Constant, indices ...int64) *ExprExtractValue {
+func NewExtractValue(x Constant, indices ...uint64) *ExprExtractValue {
 	e := &ExprExtractValue{X: x, Indices: indices}
 	// Compute type.
 	e.Type()
@@ -75,7 +75,7 @@ type ExprInsertValue struct {
 	// Element to insert.
 	Elem Constant
 	// Element indices.
-	Indices []int64
+	Indices []uint64
 
 	// extra.
 
@@ -85,7 +85,7 @@ type ExprInsertValue struct {
 
 // NewInsertValue returns a new insertvalue expression based on the given
 // aggregate value, element and indicies.
-func NewInsertValue(x, elem Constant, indices ...int64) *ExprInsertValue {
+func NewInsertValue(x, elem Constant, indices ...uint64) *ExprInsertValue {
 	e := &ExprInsertValue{X: x, Elem: elem, Indices: indices}
 	// Compute type.
 	e.Type()
@@ -130,7 +130,7 @@ func (e *ExprInsertValue) Simplify() Constant {
 
 // aggregateElemType returns the element type at the position in the aggregate
 // type specified by the given indices.
-func aggregateElemType(t types.Type, indices []int64) types.Type {
+func aggregateElemType(t types.Type, indices []uint64) types.Type {
 	// Base case.
 	if len(indices) == 0 {
 		return t

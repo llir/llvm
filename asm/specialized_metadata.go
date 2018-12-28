@@ -13,7 +13,9 @@ import (
 
 // === [ SpecializedMDNode ] ===================================================
 
-func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.SpecializedMDNode, error) {
+// irSpecializedMDNode returns the IR specialized metadata node corresponding to
+// the given AST specialized metadata node.
+func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.SpecializedNode, error) {
 	switch old := old.(type) {
 	case *ast.DIBasicType:
 		return gen.irDIBasicType(old)
@@ -74,6 +76,8 @@ func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.S
 
 // --- [ DIBasicType ] ---------------------------------------------------------
 
+// irDIBasicType returns the IR specialized metadata node DIBasicType
+// corresponding to the given AST specialized metadata node DIBasicType.
 func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType, error) {
 	md := &metadata.DIBasicType{}
 	for _, oldField := range old.Fields() {
@@ -99,6 +103,8 @@ func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType
 
 // --- [ DICompileUnit ] -------------------------------------------------------
 
+// irDICompileUnit returns the IR specialized metadata node DICompileUnit
+// corresponding to the given AST specialized metadata node DICompileUnit.
 func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompileUnit, error) {
 	md := &metadata.DICompileUnit{}
 	for _, oldField := range old.Fields() {
@@ -170,6 +176,8 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 
 // --- [ DICompositeType ] -----------------------------------------------------
 
+// irDICompositeType returns the IR specialized metadata node DICompositeType
+// corresponding to the given AST specialized metadata node DICompositeType.
 func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DICompositeType, error) {
 	md := &metadata.DICompositeType{}
 	for _, oldField := range old.Fields() {
@@ -243,6 +251,8 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 
 // --- [ DIDerivedType ] -------------------------------------------------------
 
+// irDIDerivedType returns the IR specialized metadata node DIDerivedType
+// corresponding to the given AST specialized metadata node DIDerivedType.
 func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDerivedType, error) {
 	md := &metadata.DIDerivedType{}
 	for _, oldField := range old.Fields() {
@@ -297,6 +307,8 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 
 // --- [ DIEnumerator ] --------------------------------------------------------
 
+// irDIEnumerator returns the IR specialized metadata node DIEnumerator
+// corresponding to the given AST specialized metadata node DIEnumerator.
 func (gen *generator) irDIEnumerator(old *ast.DIEnumerator) (*metadata.DIEnumerator, error) {
 	md := &metadata.DIEnumerator{}
 	isUnsigned := false
@@ -332,6 +344,8 @@ func (gen *generator) irDIEnumerator(old *ast.DIEnumerator) (*metadata.DIEnumera
 
 // --- [ DIExpression ] --------------------------------------------------------
 
+// irDIExpression returns the IR specialized metadata node DIExpression
+// corresponding to the given AST specialized metadata node DIExpression.
 func (gen *generator) irDIExpression(old *ast.DIExpression) (*metadata.DIExpression, error) {
 	md := &metadata.DIExpression{}
 	for _, oldField := range old.Fields() {
@@ -359,6 +373,8 @@ func (gen *generator) irDIExpressionField(old ast.DIExpressionField) (metadata.D
 
 // --- [ DIFile ] --------------------------------------------------------------
 
+// irDIFile returns the IR specialized metadata node DIFile corresponding to the
+// given AST specialized metadata node DIFile.
 func (gen *generator) irDIFile(old *ast.DIFile) (*metadata.DIFile, error) {
 	md := &metadata.DIFile{}
 	for _, oldField := range old.Fields() {
@@ -382,6 +398,8 @@ func (gen *generator) irDIFile(old *ast.DIFile) (*metadata.DIFile, error) {
 
 // --- [ DIGlobalVariable ] ----------------------------------------------------
 
+// irDIGlobalVariable returns the IR specialized metadata node DIGlobalVariable
+// corresponding to the given AST specialized metadata node DIGlobalVariable.
 func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.DIGlobalVariable, error) {
 	md := &metadata.DIGlobalVariable{}
 	for _, oldField := range old.Fields() {
@@ -437,6 +455,9 @@ func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.D
 
 // --- [ DIGlobalVariableExpression ] ------------------------------------------
 
+// irDIGlobalVariableExpression returns the IR specialized metadata node
+// DIGlobalVariableExpression corresponding to the given AST specialized
+// metadata node DIGlobalVariableExpression.
 func (gen *generator) irDIGlobalVariableExpression(old *ast.DIGlobalVariableExpression) (*metadata.DIGlobalVariableExpression, error) {
 	md := &metadata.DIGlobalVariableExpression{}
 	for _, oldField := range old.Fields() {
@@ -462,6 +483,8 @@ func (gen *generator) irDIGlobalVariableExpression(old *ast.DIGlobalVariableExpr
 
 // --- [ DIImportedEntity ] ----------------------------------------------------
 
+// irDIImportedEntity returns the IR specialized metadata node DIImportedEntity
+// corresponding to the given AST specialized metadata node DIImportedEntity.
 func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.DIImportedEntity, error) {
 	md := &metadata.DIImportedEntity{}
 	for _, oldField := range old.Fields() {
@@ -499,6 +522,8 @@ func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.D
 
 // --- [ DILabel ] -------------------------------------------------------------
 
+// irDILabel returns the IR specialized metadata node DILabel corresponding to
+// the given AST specialized metadata node DILabel.
 func (gen *generator) irDILabel(old *ast.DILabel) (*metadata.DILabel, error) {
 	md := &metadata.DILabel{}
 	for _, oldField := range old.Fields() {
@@ -528,6 +553,8 @@ func (gen *generator) irDILabel(old *ast.DILabel) (*metadata.DILabel, error) {
 
 // --- [ DILexicalBlock ] ------------------------------------------------------
 
+// irDILexicalBlock returns the IR specialized metadata node DILexicalBlock
+// corresponding to the given AST specialized metadata node DILexicalBlock.
 func (gen *generator) irDILexicalBlock(old *ast.DILexicalBlock) (*metadata.DILexicalBlock, error) {
 	md := &metadata.DILexicalBlock{}
 	for _, oldField := range old.Fields() {
@@ -557,6 +584,9 @@ func (gen *generator) irDILexicalBlock(old *ast.DILexicalBlock) (*metadata.DILex
 
 // --- [ DILexicalBlockFile ] --------------------------------------------------
 
+// irDILexicalBlockFile returns the IR specialized metadata node
+// DILexicalBlockFile corresponding to the given AST specialized metadata node
+// DILexicalBlockFile.
 func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metadata.DILexicalBlockFile, error) {
 	md := &metadata.DILexicalBlockFile{}
 	for _, oldField := range old.Fields() {
@@ -584,6 +614,8 @@ func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metada
 
 // --- [ DILocalVariable ] -----------------------------------------------------
 
+// irDILocalVariable returns the IR specialized metadata node DILocalVariable
+// corresponding to the given AST specialized metadata node DILocalVariable.
 func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DILocalVariable, error) {
 	md := &metadata.DILocalVariable{}
 	for _, oldField := range old.Fields() {
@@ -625,6 +657,8 @@ func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DIL
 
 // --- [ DILocation ] ----------------------------------------------------------
 
+// irDILocation returns the IR specialized metadata node DILocation
+// corresponding to the given AST specialized metadata node DILocation.
 func (gen *generator) irDILocation(old *ast.DILocation) (*metadata.DILocation, error) {
 	md := &metadata.DILocation{}
 	for _, oldField := range old.Fields() {
@@ -656,6 +690,8 @@ func (gen *generator) irDILocation(old *ast.DILocation) (*metadata.DILocation, e
 
 // --- [ DIMacro ] -------------------------------------------------------------
 
+// irDIMacro returns the IR specialized metadata node DIMacro corresponding to
+// the given AST specialized metadata node DIMacro.
 func (gen *generator) irDIMacro(old *ast.DIMacro) (*metadata.DIMacro, error) {
 	md := &metadata.DIMacro{}
 	for _, oldField := range old.Fields() {
@@ -677,6 +713,8 @@ func (gen *generator) irDIMacro(old *ast.DIMacro) (*metadata.DIMacro, error) {
 
 // --- [ DIMacroFile ] ---------------------------------------------------------
 
+// irDIMacroFile returns the IR specialized metadata node DIMacroFile
+// corresponding to the given AST specialized metadata node DIMacroFile.
 func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile, error) {
 	md := &metadata.DIMacroFile{}
 	for _, oldField := range old.Fields() {
@@ -706,6 +744,8 @@ func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile
 
 // --- [ DIModule ] ------------------------------------------------------------
 
+// irDIModule returns the IR specialized metadata node DIModule corresponding to
+// the given AST specialized metadata node DIModule.
 func (gen *generator) irDIModule(old *ast.DIModule) (*metadata.DIModule, error) {
 	md := &metadata.DIModule{}
 	for _, oldField := range old.Fields() {
@@ -733,6 +773,8 @@ func (gen *generator) irDIModule(old *ast.DIModule) (*metadata.DIModule, error) 
 
 // --- [ DINamespace ] ---------------------------------------------------------
 
+// irDINamespace returns the IR specialized metadata node DINamespace
+// corresponding to the given AST specialized metadata node DINamespace.
 func (gen *generator) irDINamespace(old *ast.DINamespace) (*metadata.DINamespace, error) {
 	md := &metadata.DINamespace{}
 	for _, oldField := range old.Fields() {
@@ -756,6 +798,8 @@ func (gen *generator) irDINamespace(old *ast.DINamespace) (*metadata.DINamespace
 
 // --- [ DIObjCProperty ] ------------------------------------------------------
 
+// irDIObjCProperty returns the IR specialized metadata node DIObjCProperty
+// corresponding to the given AST specialized metadata node DIObjCProperty.
 func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObjCProperty, error) {
 	md := &metadata.DIObjCProperty{}
 	for _, oldField := range old.Fields() {
@@ -791,6 +835,8 @@ func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObj
 
 // --- [ DISubprogram ] --------------------------------------------------------
 
+// irDISubprogram returns the IR specialized metadata node DISubprogram
+// corresponding to the given AST specialized metadata node DISubprogram.
 func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprogram, error) {
 	md := &metadata.DISubprogram{}
 	for _, oldField := range old.Fields() {
@@ -880,6 +926,8 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 
 // --- [ DISubrange ] ----------------------------------------------------------
 
+// irDISubrange returns the IR specialized metadata node DISubrange
+// corresponding to the given AST specialized metadata node DISubrange.
 func (gen *generator) irDISubrange(old *ast.DISubrange) (*metadata.DISubrange, error) {
 	md := &metadata.DISubrange{}
 	for _, oldField := range old.Fields() {
@@ -901,6 +949,8 @@ func (gen *generator) irDISubrange(old *ast.DISubrange) (*metadata.DISubrange, e
 
 // --- [ DISubroutineType ] ----------------------------------------------------
 
+// irDISubroutineType returns the IR specialized metadata node DISubroutineType
+// corresponding to the given AST specialized metadata node DISubroutineType.
 func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.DISubroutineType, error) {
 	md := &metadata.DISubroutineType{}
 	for _, oldField := range old.Fields() {
@@ -924,6 +974,9 @@ func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.D
 
 // --- [ DITemplateTypeParameter ] ---------------------------------------------
 
+// irDITemplateTypeParameter returns the IR specialized metadata node
+// DITemplateTypeParameter corresponding to the given AST specialized metadata
+// node DITemplateTypeParameter.
 func (gen *generator) irDITemplateTypeParameter(old *ast.DITemplateTypeParameter) (*metadata.DITemplateTypeParameter, error) {
 	md := &metadata.DITemplateTypeParameter{}
 	for _, oldField := range old.Fields() {
@@ -945,6 +998,9 @@ func (gen *generator) irDITemplateTypeParameter(old *ast.DITemplateTypeParameter
 
 // --- [ DITemplateValueParameter ] --------------------------------------------
 
+// irDITemplateValueParameter returns the IR specialized metadata node
+// DITemplateValueParameter corresponding to the given AST specialized metadata
+// node DITemplateValueParameter.
 func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParameter) (*metadata.DITemplateValueParameter, error) {
 	md := &metadata.DITemplateValueParameter{}
 	for _, oldField := range old.Fields() {
@@ -974,6 +1030,8 @@ func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParamet
 
 // --- [ GenericDINode ] -------------------------------------------------------
 
+// irGenericDINode returns the IR specialized metadata node GenericDINode
+// corresponding to the given AST specialized metadata node GenericDINode.
 func (gen *generator) irGenericDINode(old *ast.GenericDINode) (*metadata.GenericDINode, error) {
 	md := &metadata.GenericDINode{}
 	for _, oldField := range old.Fields() {
@@ -999,7 +1057,9 @@ func (gen *generator) irGenericDINode(old *ast.GenericDINode) (*metadata.Generic
 
 // ### [ Helper functions ] ####################################################
 
-func (gen *generator) irMDFieldOrInt(old ast.MDFieldOrInt) (metadata.MDFieldOrInt, error) {
+// irMDFieldOrInt returns the IR metadata field or integer corresponding to the
+// given AST metadata field or integer.
+func (gen *generator) irMDFieldOrInt(old ast.MDFieldOrInt) (metadata.FieldOrInt, error) {
 	switch old := old.(type) {
 	case ast.MDField:
 		return gen.irMDField(old)

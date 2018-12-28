@@ -26,6 +26,12 @@ type InlineAsm struct {
 	IntelDialect bool
 }
 
+// NewInlineAsm returns a new inline assembler expression based on the given
+// type, assembly instructions and constraints.
+func NewInlineAsm(typ types.Type, asm, constraint string) *InlineAsm {
+	return &InlineAsm{Typ: typ, Asm: asm, Constraint: constraint}
+}
+
 // String returns the LLVM syntax representation of the inline assembler
 // expression as a type-value pair.
 func (asm *InlineAsm) String() string {

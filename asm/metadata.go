@@ -11,21 +11,24 @@ import (
 
 // irMetadataAttachments returns the IR metadata attachments corresponding to
 // the given AST metadata attachments.
-func (gen *generator) irMetadataAttachments(ns []ast.MetadataAttachment) ([]*metadata.MetadataAttachment, error) {
-	var mds []*metadata.MetadataAttachment
-	for _, n := range ns {
-		md, err := gen.irMetadataAttachment(n)
+func (gen *generator) irMetadataAttachments(olds []ast.MetadataAttachment) ([]*metadata.Attachment, error) {
+	if len(olds) == 0 {
+		return nil, nil
+	}
+	mds := make([]*metadata.Attachment, len(olds))
+	for i, old := range olds {
+		md, err := gen.irMetadataAttachment(old)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-		mds = append(mds, md)
+		mds[i] = md
 	}
 	return mds, nil
 }
 
 // irMetadataAttachment returns the IR metadata attachment corresponding to
 // the given AST metadata attachment.
-func (gen *generator) irMetadataAttachment(old ast.MetadataAttachment) (*metadata.MetadataAttachment, error) {
+func (gen *generator) irMetadataAttachment(old ast.MetadataAttachment) (*metadata.Attachment, error) {
 	// Name.
 	name := metadataName(old.Name())
 	// Node.
@@ -33,24 +36,21 @@ func (gen *generator) irMetadataAttachment(old ast.MetadataAttachment) (*metadat
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	md := &metadata.MetadataAttachment{
+	md := &metadata.Attachment{
 		Name: name,
 		Node: node,
 	}
 	return md, nil
 }
 
+// irMDNode returns the IR metadata node corresponding to the given AST metadata
+// node.
 func (gen *generator) irMDNode(old ast.MDNode) (metadata.MDNode, error) {
 	switch old := old.(type) {
 	case *ast.MDTuple:
 		return gen.irMDTuple(old)
 	case *ast.MetadataID:
-		id := metadataID(*old)
-		node, ok := gen.new.metadataDefs[id]
-		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
-		}
-		return node, nil
+		return gen.metadataDefFromID(*old)
 	case ast.SpecializedMDNode:
 		return gen.irSpecializedMDNode(old)
 	default:
@@ -58,19 +58,26 @@ func (gen *generator) irMDNode(old ast.MDNode) (metadata.MDNode, error) {
 	}
 }
 
-func (gen *generator) irMDTuple(old *ast.MDTuple) (*metadata.MDTuple, error) {
-	tuple := &metadata.MDTuple{}
-	for _, oldField := range old.MDFields().MDFields() {
-		field, err := gen.irMDField(oldField)
-		if err != nil {
-			return nil, errors.WithStack(err)
+// irMDTuple returns the IR metadata tuple corresponding to the given AST
+// metadata tuple.
+func (gen *generator) irMDTuple(old *ast.MDTuple) (*metadata.Tuple, error) {
+	tuple := &metadata.Tuple{}
+	if oldFields := old.MDFields().MDFields(); len(oldFields) > 0 {
+		tuple.Fields = make([]metadata.Field, len(oldFields))
+		for i, oldField := range oldFields {
+			field, err := gen.irMDField(oldField)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			tuple.Fields[i] = field
 		}
-		tuple.Fields = append(tuple.Fields, field)
 	}
 	return tuple, nil
 }
 
-func (gen *generator) irMDField(old ast.MDField) (metadata.MDField, error) {
+// irMDField returns the IR metadata field corresponding to the given AST
+// metadata field.
+func (gen *generator) irMDField(old ast.MDField) (metadata.Field, error) {
 	switch old := old.(type) {
 	case *ast.NullLit:
 		return metadata.Null, nil
@@ -81,15 +88,17 @@ func (gen *generator) irMDField(old ast.MDField) (metadata.MDField, error) {
 	}
 }
 
+// irMetadata returns the IR metadata corresponding to the given AST metadata.
 func (fgen *funcGen) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 	switch old := old.(type) {
 	case *ast.TypeValue:
-		return fgen.astToIRTypeValue(*old)
+		return fgen.irTypeValue(*old)
 	default:
 		return fgen.gen.irMetadata(old)
 	}
 }
 
+// irMetadata returns the IR metadata corresponding to the given AST metadata.
 func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 	switch old := old.(type) {
 	case *ast.TypeValue:
@@ -104,16 +113,12 @@ func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 			panic(fmt.Errorf("support for metadata value %T not yet implemented", oldVal))
 		}
 	case *ast.MDString:
-		return &metadata.MDString{Value: stringLit(old.Val())}, nil
+		s := stringLit(old.Val())
+		return &metadata.String{Value: s}, nil
 	case *ast.MDTuple:
 		return gen.irMDTuple(old)
 	case *ast.MetadataID:
-		id := metadataID(*old)
-		node, ok := gen.new.metadataDefs[id]
-		if !ok {
-			panic(fmt.Errorf("unable to locate metadata ID %q", enc.MetadataID(id)))
-		}
-		return node, nil
+		return gen.metadataDefFromID(*old)
 	case ast.SpecializedMDNode:
 		return gen.irSpecializedMDNode(old)
 	default:
@@ -121,18 +126,28 @@ func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 	}
 }
 
-func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.MetadataNode, error) {
+// irMetadataNode returns the IR metadata node corresponding to the given AST
+// metadata node.
+func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.Node, error) {
 	switch old := old.(type) {
 	case *ast.MetadataID:
-		id := metadataID(*old)
-		node, ok := gen.new.metadataDefs[id]
-		if !ok {
-			return nil, errors.Errorf("unable to locate metadata ID %q", enc.MetadataID(id))
-		}
-		return node, nil
+		return gen.metadataDefFromID(*old)
 	case *ast.DIExpression:
 		return gen.irDIExpression(old)
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}
+}
+
+// ### [ Helper functions ] ####################################################
+
+// metadataDefFromID returns the IR metadata definition associated with the
+// given AST metadata ID.
+func (gen *generator) metadataDefFromID(old ast.MetadataID) (*metadata.Def, error) {
+	id := metadataID(old)
+	node, ok := gen.new.metadataDefs[id]
+	if !ok {
+		return nil, errors.Errorf("unable to locate metadata ID %q", enc.MetadataID(id))
+	}
+	return node, nil
 }

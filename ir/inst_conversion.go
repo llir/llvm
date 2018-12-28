@@ -25,7 +25,7 @@ type InstTrunc struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and
@@ -71,7 +71,7 @@ type InstZExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewZExt returns a new zext instruction based on the given source value and
@@ -117,7 +117,7 @@ type InstSExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewSExt returns a new sext instruction based on the given source value and
@@ -163,7 +163,7 @@ type InstFPTrunc struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value
@@ -209,7 +209,7 @@ type InstFPExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and
@@ -255,7 +255,7 @@ type InstFPToUI struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value
@@ -301,7 +301,7 @@ type InstFPToSI struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value
@@ -347,7 +347,7 @@ type InstUIToFP struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value
@@ -393,7 +393,7 @@ type InstSIToFP struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value
@@ -439,7 +439,7 @@ type InstPtrToInt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
@@ -485,7 +485,7 @@ type InstIntToPtr struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source
@@ -531,7 +531,7 @@ type InstBitCast struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value
@@ -577,7 +577,7 @@ type InstAddrSpaceCast struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given

@@ -12,21 +12,21 @@ import (
 )
 
 // Align is a memory alignment attribute.
-type Align int64
+type Align uint64
 
 // String returns the string representation of the alignment attribute.
 func (align Align) String() string {
 	// Note, alignment is printed as `align = 8` in attribute groups.
-	return fmt.Sprintf("align %d", int64(align))
+	return fmt.Sprintf("align %d", uint64(align))
 }
 
 // AlignStack is a stack alignment attribute.
-type AlignStack int64
+type AlignStack uint64
 
 // String returns the string representation of the stack alignment attribute.
 func (align AlignStack) String() string {
 	// Note, stack alignment is printed as `alignstack = 8` in attribute groups.
-	return fmt.Sprintf("alignstack(%d)", int64(align))
+	return fmt.Sprintf("alignstack(%d)", uint64(align))
 }
 
 // AllocSize is an attribute for functions like malloc.
@@ -159,7 +159,17 @@ func (i GlobalIdent) Ident() string {
 }
 
 // Name returns the name of the global identifier.
+//
+// If unnamed, the global ID is returned. To distinguish numeric names from
+// unnamed IDs, numeric names are quoted.
 func (i GlobalIdent) Name() string {
+	if i.IsUnnamed() {
+		return strconv.FormatInt(i.GlobalID, 10)
+	}
+	if x, err := strconv.ParseInt(i.GlobalName, 10, 64); err == nil {
+		// Print GlobalName with quotes if it is a number; e.g. "42".
+		return fmt.Sprintf(`"%d"`, x)
+	}
 	return i.GlobalName
 }
 
@@ -204,7 +214,17 @@ func (i LocalIdent) Ident() string {
 }
 
 // Name returns the name of the local identifier.
+//
+// If unnamed, the local ID is returned. To distinguish numeric names from
+// unnamed IDs, numeric names are quoted.
 func (i LocalIdent) Name() string {
+	if i.IsUnnamed() {
+		return strconv.FormatInt(i.LocalID, 10)
+	}
+	if x, err := strconv.ParseInt(i.LocalName, 10, 64); err == nil {
+		// Print LocalName with quotes if it is a number; e.g. "42".
+		return fmt.Sprintf(`"%d"`, x)
+	}
 	return i.LocalName
 }
 

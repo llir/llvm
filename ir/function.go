@@ -67,7 +67,7 @@ type Function struct {
 	// (optional) Use list orders.
 	UseListOrders []*UseListOrder
 	// (optional) Metadata.
-	Metadata []*metadata.MetadataAttachment
+	Metadata []*metadata.Attachment
 
 	// mu prevents races on AssignIDs.
 	mu sync.Mutex

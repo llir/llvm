@@ -1,5 +1,6 @@
 GODIR=`echo ${GOPATH} | awk '{split($$0, arr, ":"); print arr[2]}'`
 ENUM_DIR=${GODIR}/src/github.com/llir/llvm/ir/enum
+TYPES_DIR=${GODIR}/src/github.com/llir/llvm/ir/types
 
 all: gen
 
@@ -34,6 +35,7 @@ gen:
 	string2enum -linecomment -type TLSModel ${ENUM_DIR}
 	string2enum -linecomment -type UnnamedAddr ${ENUM_DIR}
 	string2enum -linecomment -type Visibility ${ENUM_DIR}
+	string2enum -linecomment -type FloatKind -pkg enum ${TYPES_DIR}
 
 clean:
 	$(RM) *_string.go

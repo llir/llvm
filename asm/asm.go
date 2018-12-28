@@ -5,19 +5,19 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"os"
 	"time"
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/ir"
-	"github.com/mewkiz/pkg/term"
 	"github.com/pkg/errors"
 )
 
+// TODO: remove debug output before v0.3.0 release.
 var (
 	// dbg is a logger which logs debug messages with "asm:" prefix to standard
 	// error.
-	dbg = log.New(os.Stderr, term.MagentaBold("asm:")+" ", 0)
+	dbg = log.New(ioutil.Discard, "", 0)
+	//dbg = log.New(os.Stderr, term.MagentaBold("asm:")+" ", 0)
 )
 
 // ParseFile parses the given LLVM IR assembly file into an LLVM IR module.
@@ -26,8 +26,7 @@ func ParseFile(path string) (*ir.Module, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	content := string(buf)
-	return ParseString(path, content)
+	return ParseBytes(path, buf)
 }
 
 // Parse parses the given LLVM IR assembly file into an LLVM IR module, reading
@@ -38,8 +37,7 @@ func Parse(path string, r io.Reader) (*ir.Module, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	content := string(buf)
-	return ParseString(path, content)
+	return ParseBytes(path, buf)
 }
 
 // ParseBytes parses the given LLVM IR assembly file into an LLVM IR module,
@@ -57,9 +55,9 @@ func ParseString(path, content string) (*ir.Module, error) {
 	parseStart := time.Now()
 	tree, err := ast.Parse(path, content)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to parse %q into AST", path)
+		return nil, errors.Wrapf(err, "unable to parse %q into an AST", path)
 	}
-	root := ast.ToLlvmNode(tree.Root())
 	dbg.Println("parsing into AST took:", time.Since(parseStart))
+	root := ast.ToLlvmNode(tree.Root())
 	return translate(root.(*ast.Module))
 }

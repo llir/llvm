@@ -26,12 +26,12 @@ var (
 	I64  = &IntType{BitSize: 64}  // i64
 	I128 = &IntType{BitSize: 128} // i128
 	// Floating-point types.
-	Half     = &FloatType{Kind: FloatKindHalf}     // half
-	Float    = &FloatType{Kind: FloatKindFloat}    // float
-	Double   = &FloatType{Kind: FloatKindDouble}   // double
-	X86FP80  = &FloatType{Kind: FloatKindX86FP80}  // x86_fp80
-	FP128    = &FloatType{Kind: FloatKindFP128}    // fp128
-	PPCFP128 = &FloatType{Kind: FloatKindPPCFP128} // ppc_fp128
+	Half      = &FloatType{Kind: FloatKindHalf}      // half
+	Float     = &FloatType{Kind: FloatKindFloat}     // float
+	Double    = &FloatType{Kind: FloatKindDouble}    // double
+	X86_FP80  = &FloatType{Kind: FloatKindX86_FP80}  // x86_fp80
+	FP128     = &FloatType{Kind: FloatKindFP128}     // fp128
+	PPC_FP128 = &FloatType{Kind: FloatKindPPC_FP128} // ppc_fp128
 	// Integer pointer types.
 	I1Ptr   = &PointerType{ElemType: I1}   // i1*
 	I8Ptr   = &PointerType{ElemType: I8}   // i8*
@@ -43,9 +43,75 @@ var (
 
 // Convenience functions.
 
+// IsVoid reports whether the given type is a void type.
+func IsVoid(t Type) bool {
+	_, ok := t.(*VoidType)
+	return ok
+}
+
+// IsFunc reports whether the given type is a function type.
+func IsFunc(t Type) bool {
+	_, ok := t.(*FuncType)
+	return ok
+}
+
+// IsInt reports whether the given type is an integer type.
+func IsInt(t Type) bool {
+	_, ok := t.(*IntType)
+	return ok
+}
+
+// IsFloat reports whether the given type is a floating-point type.
+func IsFloat(t Type) bool {
+	_, ok := t.(*FloatType)
+	return ok
+}
+
+// IsMMX reports whether the given type is an MMX type.
+func IsMMX(t Type) bool {
+	_, ok := t.(*MMXType)
+	return ok
+}
+
 // IsPointer reports whether the given type is a pointer type.
 func IsPointer(t Type) bool {
 	_, ok := t.(*PointerType)
+	return ok
+}
+
+// IsVector reports whether the given type is a vector type.
+func IsVector(t Type) bool {
+	_, ok := t.(*VectorType)
+	return ok
+}
+
+// IsLabel reports whether the given type is a label type.
+func IsLabel(t Type) bool {
+	_, ok := t.(*LabelType)
+	return ok
+}
+
+// IsToken reports whether the given type is a token type.
+func IsToken(t Type) bool {
+	_, ok := t.(*TokenType)
+	return ok
+}
+
+// IsMetadata reports whether the given type is a metadata type.
+func IsMetadata(t Type) bool {
+	_, ok := t.(*MetadataType)
+	return ok
+}
+
+// IsArray reports whether the given type is an array type.
+func IsArray(t Type) bool {
+	_, ok := t.(*ArrayType)
+	return ok
+}
+
+// IsStruct reports whether the given type is a struct type.
+func IsStruct(t Type) bool {
+	_, ok := t.(*StructType)
 	return ok
 }
 
@@ -176,7 +242,7 @@ func (t *FuncType) String() string {
 func (t *FuncType) Def() string {
 	// RetType=Type '(' Params ')'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%v (", t.RetType)
+	fmt.Fprintf(buf, "%s (", t.RetType)
 	for i, param := range t.Params {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -210,11 +276,11 @@ type IntType struct {
 	// Type name; or empty if not present.
 	TypeName string
 	// Integer size in number of bits.
-	BitSize int64
+	BitSize uint64
 }
 
 // NewInt returns a new integer type based on the given integer bit size.
-func NewInt(bitSize int64) *IntType {
+func NewInt(bitSize uint64) *IntType {
 	return &IntType{
 		BitSize: bitSize,
 	}
@@ -310,9 +376,9 @@ const (
 	// 128-bit floating-point type (IEEE 754 quadruple precision).
 	FloatKindFP128 // fp128
 	// 80-bit floating-point type (x86 extended precision).
-	FloatKindX86FP80 // x86_fp80
+	FloatKindX86_FP80 // x86_fp80
 	// 128-bit floating point type (IBM extended double).
-	FloatKindPPCFP128 // ppc_fp128
+	FloatKindPPC_FP128 // ppc_fp128
 )
 
 // --- [ MMX types ] -----------------------------------------------------------
@@ -395,7 +461,7 @@ func (t *PointerType) Def() string {
 	buf := &strings.Builder{}
 	buf.WriteString(t.ElemType.String())
 	if t.AddrSpace != 0 {
-		fmt.Fprintf(buf, " %v", t.AddrSpace)
+		fmt.Fprintf(buf, " %s", t.AddrSpace)
 	}
 	buf.WriteString("*")
 	return buf.String()
@@ -412,12 +478,12 @@ func (t *PointerType) Name() string {
 }
 
 // AddrSpace is an LLVM IR pointer type address space.
-type AddrSpace int64
+type AddrSpace uint64
 
 // String returns the string representation of the pointer type address space.
 func (a AddrSpace) String() string {
 	// 'addrspace' '(' N=UintLit ')'
-	return fmt.Sprintf("addrspace(%d)", int64(a))
+	return fmt.Sprintf("addrspace(%d)", uint64(a))
 }
 
 // --- [ Vector types ] --------------------------------------------------------
@@ -463,7 +529,7 @@ func (t *VectorType) String() string {
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *VectorType) Def() string {
 	// '<' Len=UintLit 'x' Elem=Type '>'
-	return fmt.Sprintf("<%d x %v>", t.Len, t.ElemType)
+	return fmt.Sprintf("<%d x %s>", t.Len, t.ElemType)
 }
 
 // Name returns the type name of the type.
@@ -639,7 +705,7 @@ func (t *ArrayType) String() string {
 // Def returns the LLVM syntax representation of the definition of the type.
 func (t *ArrayType) Def() string {
 	// '[' Len=UintLit 'x' Elem=Type ']'
-	return fmt.Sprintf("[%d x %v]", t.Len, t.ElemType)
+	return fmt.Sprintf("[%d x %s]", t.Len, t.ElemType)
 }
 
 // Name returns the type name of the type.

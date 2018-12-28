@@ -24,10 +24,21 @@ func TestModule(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
-		// LLVM IR compatability.
+		// LLVM IR compatibility.
 		{path: "../../testdata/llvm/test/Bitcode/compatibility.ll"},
+		// Hex floating-point constants.
+		{path: "../../testdata/llvm/test/Assembler/2002-04-07-HexFloatConstants.ll"},
+		{path: "../../testdata/llvm/test/Assembler/half-constprop.ll"},
 		// Constant expressions.
 		{path: "../../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
+		{path: "../../testdata/llvm/test/Assembler/insertextractvalue.ll"},
+		{path: "../../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll"},
+		{path: "../../testdata/llvm/test/Transforms/InstCombine/fma.ll"},
+		{path: "../../testdata/llvm/test/Transforms/InstCombine/vec_demanded_elts.ll"},
+		{path: "../../testdata/llvm/test/Transforms/InstCombine/vector_insertelt_shuffle.ll"},
+		// Coreutils.
+		{path: "../../testdata/coreutils/test/timeout.ll"},
+		{path: "../../testdata/coreutils/test/vdir.ll"},
 	}
 	hasTestdata := osutil.Exists("../../testdata/llvm")
 	for _, g := range golden {

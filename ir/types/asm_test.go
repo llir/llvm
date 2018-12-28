@@ -1,4 +1,4 @@
-package ir_test
+package types_test
 
 import (
 	"flag"
@@ -24,18 +24,10 @@ func TestModule(t *testing.T) {
 	golden := []struct {
 		path string
 	}{
-		// LLVM IR compatibility.
-		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
-		// Coreutils.
-		{path: "../testdata/coreutils/test/cat.ll"},
+		// LLVM IR types.
+		{path: "testdata/types.ll"},
 	}
-	hasTestdata := osutil.Exists("../testdata/llvm")
 	for _, g := range golden {
-		if filepath.HasPrefix(g.path, "../testdata") && !hasTestdata {
-			// Skip test cases from the llir/testdata submodule if not downloaded.
-			// Users may add this submodule using git clone --recursive.
-			continue
-		}
 		log.Printf("=== [ %s ] ===", g.path)
 		m, err := asm.ParseFile(g.path)
 		if err != nil {
