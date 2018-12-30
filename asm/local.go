@@ -104,9 +104,9 @@ func (fgen *funcGen) createLocals(oldBlocks []ast.BasicBlock) error {
 func (fgen *funcGen) newLocals(oldBlocks []ast.BasicBlock) error {
 	// Note: function parameters are already translated in gen.irFuncHeader.
 	f := fgen.f
-	f.Blocks = make([]*ir.BasicBlock, len(oldBlocks))
+	f.Blocks = make([]*ir.Block, len(oldBlocks))
 	for i, oldBlock := range oldBlocks {
-		block := &ir.BasicBlock{}
+		block := &ir.Block{}
 		if n, ok := oldBlock.Name(); ok {
 			block.LocalIdent = labelIdent(n)
 		}

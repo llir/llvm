@@ -170,7 +170,7 @@ func (fgen *funcGen) irBrTerm(new ir.Terminator, old *ast.BrTerm) error {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermBr, got %T", new))
 	}
 	// Target.
-	target, err := fgen.irBasicBlock(old.Target())
+	target, err := fgen.irBlock(old.Target())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -205,13 +205,13 @@ func (fgen *funcGen) irCondBrTerm(new ir.Terminator, old *ast.CondBrTerm) error 
 	}
 	term.Cond = cond
 	// Target true.
-	targetTrue, err := fgen.irBasicBlock(old.TargetTrue())
+	targetTrue, err := fgen.irBlock(old.TargetTrue())
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	term.TargetTrue = targetTrue
 	// Target false.
-	targetFalse, err := fgen.irBasicBlock(old.TargetFalse())
+	targetFalse, err := fgen.irBlock(old.TargetFalse())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -241,7 +241,7 @@ func (fgen *funcGen) irSwitchTerm(new ir.Terminator, old *ast.SwitchTerm) error 
 	}
 	term.X = x
 	// Default target.
-	targetDefault, err := fgen.irBasicBlock(old.Default())
+	targetDefault, err := fgen.irBlock(old.Default())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -283,9 +283,9 @@ func (fgen *funcGen) irIndirectBrTerm(new ir.Terminator, old *ast.IndirectBrTerm
 	term.Addr = addr
 	// Valid targets.
 	if oldValidTargets := old.ValidTargets(); len(oldValidTargets) > 0 {
-		term.ValidTargets = make([]*ir.BasicBlock, len(oldValidTargets))
+		term.ValidTargets = make([]*ir.Block, len(oldValidTargets))
 		for i, oldValidTarget := range oldValidTargets {
-			validTarget, err := fgen.irBasicBlock(oldValidTarget)
+			validTarget, err := fgen.irBlock(oldValidTarget)
 			if err != nil {
 				return errors.WithStack(err)
 			}
@@ -345,13 +345,13 @@ func (fgen *funcGen) irInvokeTerm(new ir.Terminator, old *ast.InvokeTerm) error 
 	}
 	term.Invokee = invokee
 	// Normal control flow return point.
-	normal, err := fgen.irBasicBlock(old.Normal())
+	normal, err := fgen.irBlock(old.Normal())
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	term.Normal = normal
 	// Exception control flow return point.
-	exception, err := fgen.irBasicBlock(old.Exception())
+	exception, err := fgen.irBlock(old.Exception())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -441,9 +441,9 @@ func (fgen *funcGen) irCatchSwitchTerm(new ir.Terminator, old *ast.CatchSwitchTe
 	term.Scope = scope
 	// Exception handlers.
 	if oldHandlers := old.Handlers().Labels(); len(oldHandlers) > 0 {
-		term.Handlers = make([]*ir.BasicBlock, len(oldHandlers))
+		term.Handlers = make([]*ir.Block, len(oldHandlers))
 		for i, oldHandler := range oldHandlers {
-			handler, err := fgen.irBasicBlock(oldHandler)
+			handler, err := fgen.irBlock(oldHandler)
 			if err != nil {
 				return errors.WithStack(err)
 			}
@@ -485,7 +485,7 @@ func (fgen *funcGen) irCatchRetTerm(new ir.Terminator, old *ast.CatchRetTerm) er
 	}
 	term.From = catchpad
 	// Target basic block to transfer control flow to.
-	to, err := fgen.irBasicBlock(old.To())
+	to, err := fgen.irBlock(old.To())
 	if err != nil {
 		return errors.WithStack(err)
 	}

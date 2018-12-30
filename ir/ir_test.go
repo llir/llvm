@@ -147,7 +147,7 @@ var (
 	_ value.Named = (*Global)(nil)
 	_ value.Named = (*Function)(nil)
 	_ value.Named = (*Param)(nil)
-	_ value.Named = (*BasicBlock)(nil)
+	_ value.Named = (*Block)(nil)
 
 	// Instructions.
 	// Binary instructions.

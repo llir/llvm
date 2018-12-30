@@ -330,9 +330,9 @@ func fixBlockAddressConst(c *constant.BlockAddress) error {
 	if !ok {
 		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Function, got %T", c.Func))
 	}
-	bb, ok := c.Block.(*ir.BasicBlock)
+	bb, ok := c.Block.(*ir.Block)
 	if !ok {
-		panic(fmt.Errorf("invalid basic block type in blockaddress constant; expected *ir.BasicBlock, got %T", c.Block))
+		panic(fmt.Errorf("invalid basic block type in blockaddress constant; expected *ir.Block, got %T", c.Block))
 	}
 	block, err := findBlock(f, bb.LocalIdent)
 	if err != nil {

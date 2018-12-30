@@ -238,16 +238,16 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 	}
 }
 
-// irBasicBlock returns the IR basic block corresponding to the given AST label.
-func (fgen *funcGen) irBasicBlock(old ast.Label) (*ir.BasicBlock, error) {
+// irBlock returns the IR basic block corresponding to the given AST label.
+func (fgen *funcGen) irBlock(old ast.Label) (*ir.Block, error) {
 	ident := localIdent(old.Name())
 	v, ok := fgen.locals[ident]
 	if !ok {
 		return nil, errors.Errorf("unable to locate local identifier %q", ident.Ident())
 	}
-	block, ok := v.(*ir.BasicBlock)
+	block, ok := v.(*ir.Block)
 	if !ok {
-		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
+		return nil, errors.Errorf("invalid basic block type; expected *ir.Block, got %T", v)
 	}
 	return block, nil
 }
@@ -282,7 +282,7 @@ func (fgen *funcGen) irCase(n ast.Case) (*ir.Case, error) {
 		return nil, errors.WithStack(err)
 	}
 	// Case target branch.
-	target, err := fgen.irBasicBlock(n.Target())
+	target, err := fgen.irBlock(n.Target())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -433,9 +433,9 @@ func (fgen *funcGen) irIncoming(xType types.Type, oldX ast.Value, oldPred ast.Lo
 	if !ok {
 		return nil, errors.Errorf("unable to locate local identifier %q", predIdent.Ident())
 	}
-	pred, ok := v.(*ir.BasicBlock)
+	pred, ok := v.(*ir.Block)
 	if !ok {
-		return nil, errors.Errorf("invalid basic block type; expected *ir.BasicBlock, got %T", v)
+		return nil, errors.Errorf("invalid basic block type; expected *ir.Block, got %T", v)
 	}
 	return ir.NewIncoming(x, pred), nil
 }
@@ -600,7 +600,7 @@ func irTLSModelFromThreadLocal(old ast.ThreadLocal) enum.TLSModel {
 func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error) {
 	switch n := n.(type) {
 	case *ast.Label:
-		return fgen.irBasicBlock(*n)
+		return fgen.irBlock(*n)
 	case *ast.UnwindToCaller:
 		return ir.UnwindToCaller{}, nil
 	default:
@@ -646,7 +646,7 @@ func text(n ast.LlvmNode) string {
 
 // findBlock returns the basic block with the given local identifier in the
 // function.
-func findBlock(f *ir.Function, blockIdent ir.LocalIdent) (*ir.BasicBlock, error) {
+func findBlock(f *ir.Function, blockIdent ir.LocalIdent) (*ir.Block, error) {
 	for _, block := range f.Blocks {
 		if block.LocalIdent == blockIdent {
 			return block, nil

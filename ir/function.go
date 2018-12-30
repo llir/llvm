@@ -28,7 +28,7 @@ type Function struct {
 	// Function parameters.
 	Params []*Param
 	// Basic blocks.
-	Blocks []*BasicBlock // nil if declaration.
+	Blocks []*Block // nil if declaration.
 
 	// extra.
 
@@ -275,7 +275,7 @@ func headerString(f *Function) string {
 
 // bodyString returns the string representation of the function body.
 func bodyString(body *Function) string {
-	// '{' Blocks=BasicBlock+ UseListOrders=UseListOrder* '}'
+	// '{' Blocks=Block+ UseListOrders=UseListOrder* '}'
 	buf := &strings.Builder{}
 	buf.WriteString("{\n")
 	for i, block := range body.Blocks {

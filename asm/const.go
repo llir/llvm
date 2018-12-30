@@ -245,7 +245,7 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 	// Add dummy basic block to track the name recorded by the AST. Resolve the
 	// proper basic block after translation of function bodies and assignment of
 	// local IDs.
-	block := &ir.BasicBlock{
+	block := &ir.Block{
 		LocalIdent: blockIdent,
 	}
 	c := constant.NewBlockAddress(f, block)

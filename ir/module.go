@@ -262,7 +262,7 @@ type UseListOrderBB struct {
 	// Function.
 	Func *Function
 	// Basic block.
-	Block *BasicBlock
+	Block *Block
 	// Use-list order.
 	Indices []uint64
 }

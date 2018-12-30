@@ -210,12 +210,12 @@ type Incoming struct {
 	// Incoming value.
 	X value.Value
 	// Predecessor basic block of the incoming value.
-	Pred *BasicBlock
+	Pred *Block
 }
 
 // NewIncoming returns a new incoming value based on the given value and
 // predecessor basic block.
-func NewIncoming(x value.Value, pred *BasicBlock) *Incoming {
+func NewIncoming(x value.Value, pred *Block) *Incoming {
 	return &Incoming{X: x, Pred: pred}
 }
 

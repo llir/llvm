@@ -311,7 +311,7 @@ type ReturnAttribute interface {
 //
 // An UnwindTarget has one of the following underlying types.
 //
-//    *ir.BasicBlock
+//    *ir.Block
 //    ir.UnwindToCaller
 type UnwindTarget interface {
 	// isUnwindTarget ensures that only unwind targets can be assigned to the

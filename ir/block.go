@@ -13,9 +13,9 @@ import (
 
 // === [ Basic blocks ] ========================================================
 
-// BasicBlock is an LLVM IR basic block; a sequence of non-branching
-// instructions terminated by a control flow instruction (e.g. br or ret).
-type BasicBlock struct {
+// Block is an LLVM IR basic block; a sequence of non-branching instructions
+// terminated by a control flow instruction (e.g. br or ret).
+type Block struct {
 	// Name of local variable associated with the basic block.
 	LocalIdent
 	// Instructions of the basic block.
@@ -31,25 +31,25 @@ type BasicBlock struct {
 
 // NewBlock returns a new basic block based on the given label name. An empty
 // label name indicates an unnamed basic block.
-func NewBlock(name string) *BasicBlock {
-	block := &BasicBlock{}
+func NewBlock(name string) *Block {
+	block := &Block{}
 	block.SetName(name)
 	return block
 }
 
 // String returns the LLVM syntax representation of the basic block as a
 // type-value pair.
-func (block *BasicBlock) String() string {
+func (block *Block) String() string {
 	return fmt.Sprintf("%s %s", block.Type(), block.Ident())
 }
 
 // Type returns the type of the basic block.
-func (block *BasicBlock) Type() types.Type {
+func (block *Block) Type() types.Type {
 	return types.Label
 }
 
 // Def returns the LLVM syntax representation of the basic block definition.
-func (block *BasicBlock) Def() string {
+func (block *Block) Def() string {
 	// Name=LabelIdentopt Insts=Instruction* Term=Terminator
 	buf := &strings.Builder{}
 	if block.IsUnnamed() {

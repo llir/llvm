@@ -14,7 +14,7 @@ type BlockAddress struct {
 	// Parent function.
 	Func Constant // *ir.Function
 	// Basic block to take address of.
-	Block value.Named // *ir.BasicBlock
+	Block value.Named // *ir.Block
 }
 
 // NewBlockAddress returns a new blockaddress constant based on the given parent

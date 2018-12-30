@@ -36,7 +36,7 @@ type Terminator interface {
 	// Def returns the LLVM syntax representation of the terminator.
 	Def() string
 	// Succs returns the successor basic blocks of the terminator.
-	Succs() []*BasicBlock
+	Succs() []*Block
 }
 
 // --- [ ret ] -----------------------------------------------------------------
@@ -59,7 +59,7 @@ func NewRet(x value.Value) *TermRet {
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (*TermRet) Succs() []*BasicBlock {
+func (*TermRet) Succs() []*Block {
 	// no successors.
 	return nil
 }
@@ -90,27 +90,27 @@ func (term *TermRet) Def() string {
 // TermBr is an unconditional LLVM IR br terminator.
 type TermBr struct {
 	// Target branch.
-	Target *BasicBlock
+	Target *Block
 
 	// extra.
 
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
 // basic block.
-func NewBr(target *BasicBlock) *TermBr {
+func NewBr(target *Block) *TermBr {
 	return &TermBr{Target: target}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermBr) Succs() []*BasicBlock {
+func (term *TermBr) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*BasicBlock{term.Target}
+		term.Successors = []*Block{term.Target}
 	}
 	return term.Successors
 }
@@ -133,29 +133,29 @@ type TermCondBr struct {
 	// Branching condition.
 	Cond value.Value
 	// True condition target branch.
-	TargetTrue *BasicBlock
+	TargetTrue *Block
 	// False condition target branch.
-	TargetFalse *BasicBlock
+	TargetFalse *Block
 
 	// extra.
 
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
 // branching condition and conditional target basic blocks.
-func NewCondBr(cond value.Value, targetTrue, targetFalse *BasicBlock) *TermCondBr {
+func NewCondBr(cond value.Value, targetTrue, targetFalse *Block) *TermCondBr {
 	return &TermCondBr{Cond: cond, TargetTrue: targetTrue, TargetFalse: targetFalse}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermCondBr) Succs() []*BasicBlock {
+func (term *TermCondBr) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*BasicBlock{term.TargetTrue, term.TargetFalse}
+		term.Successors = []*Block{term.TargetTrue, term.TargetFalse}
 	}
 	return term.Successors
 }
@@ -179,29 +179,29 @@ type TermSwitch struct {
 	// Control variable.
 	X value.Value
 	// Default target branch.
-	TargetDefault *BasicBlock
+	TargetDefault *Block
 	// Switch cases.
 	Cases []*Case
 
 	// extra.
 
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
 }
 
 // NewSwitch returns a new switch terminator based on the given control
 // variable, default target basic block and switch cases.
-func NewSwitch(x value.Value, targetDefault *BasicBlock, cases ...*Case) *TermSwitch {
+func NewSwitch(x value.Value, targetDefault *Block, cases ...*Case) *TermSwitch {
 	return &TermSwitch{X: x, TargetDefault: targetDefault, Cases: cases}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermSwitch) Succs() []*BasicBlock {
+func (term *TermSwitch) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		succs := make([]*BasicBlock, 0, 1+len(term.Cases))
+		succs := make([]*Block, 0, 1+len(term.Cases))
 		succs = append(succs, term.TargetDefault)
 		for _, c := range term.Cases {
 			succs = append(succs, c.Target)
@@ -234,12 +234,12 @@ type Case struct {
 	// Case comparand.
 	X constant.Constant // integer constant or integer constant expression
 	// Case target branch.
-	Target *BasicBlock
+	Target *Block
 }
 
 // NewCase returns a new switch case based on the given case comparand and
 // target basic block.
-func NewCase(x constant.Constant, target *BasicBlock) *Case {
+func NewCase(x constant.Constant, target *Block) *Case {
 	return &Case{X: x, Target: target}
 }
 
@@ -256,7 +256,7 @@ type TermIndirectBr struct {
 	// Target address.
 	Addr value.Value // blockaddress
 	// Set of valid target basic blocks.
-	ValidTargets []*BasicBlock
+	ValidTargets []*Block
 
 	// extra.
 
@@ -267,12 +267,12 @@ type TermIndirectBr struct {
 // NewIndirectBr returns a new indirectbr terminator based on the given target
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
-func NewIndirectBr(addr constant.Constant, validTargets ...*BasicBlock) *TermIndirectBr {
+func NewIndirectBr(addr constant.Constant, validTargets ...*Block) *TermIndirectBr {
 	return &TermIndirectBr{Addr: addr, ValidTargets: validTargets}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermIndirectBr) Succs() []*BasicBlock {
+func (term *TermIndirectBr) Succs() []*Block {
 	return term.ValidTargets
 }
 
@@ -311,9 +311,9 @@ type TermInvoke struct {
 	//    TODO: add metadata value?
 	Args []value.Value
 	// Normal control flow return point.
-	Normal *BasicBlock
+	Normal *Block
 	// Exception control flow return point.
-	Exception *BasicBlock
+	Exception *Block
 
 	// extra.
 
@@ -321,7 +321,7 @@ type TermInvoke struct {
 	// invokee (as used when invokee is variadic).
 	Typ types.Type
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Calling convention; zero if not present.
 	CallingConv enum.CallingConv
 	// (optional) Return attributes.
@@ -341,7 +341,7 @@ type TermInvoke struct {
 // execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func NewInvoke(invokee value.Value, args []value.Value, normal, exception *BasicBlock) *TermInvoke {
+func NewInvoke(invokee value.Value, args []value.Value, normal, exception *Block) *TermInvoke {
 	term := &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
 	// Compute type.
 	term.Type()
@@ -379,10 +379,10 @@ func (term *TermInvoke) Type() types.Type {
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermInvoke) Succs() []*BasicBlock {
+func (term *TermInvoke) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*BasicBlock{term.Normal, term.Exception}
+		term.Successors = []*Block{term.Normal, term.Exception}
 	}
 	return term.Successors
 }
@@ -459,7 +459,7 @@ func NewResume(x value.Value) *TermResume {
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermResume) Succs() []*BasicBlock {
+func (term *TermResume) Succs() []*Block {
 	// no successors.
 	return nil
 }
@@ -484,21 +484,21 @@ type TermCatchSwitch struct {
 	// Exception scope.
 	Scope ExceptionScope // TODO: rename to Parent? rename to From?
 	// Exception handlers.
-	Handlers []*BasicBlock
+	Handlers []*Block
 	// Unwind target; basic block or caller function.
 	UnwindTarget UnwindTarget // TODO: rename to To? rename to DefaultTarget?
 
 	// extra.
 
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
 // exception scope, exception handlers and unwind target.
-func NewCatchSwitch(scope ExceptionScope, handlers []*BasicBlock, unwindTarget UnwindTarget) *TermCatchSwitch {
+func NewCatchSwitch(scope ExceptionScope, handlers []*Block, unwindTarget UnwindTarget) *TermCatchSwitch {
 	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
 }
 
@@ -514,10 +514,10 @@ func (term *TermCatchSwitch) Type() types.Type {
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermCatchSwitch) Succs() []*BasicBlock {
+func (term *TermCatchSwitch) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		if unwindTarget, ok := term.UnwindTarget.(*BasicBlock); ok {
+		if unwindTarget, ok := term.UnwindTarget.(*Block); ok {
 			term.Successors = append(term.Handlers, unwindTarget)
 		} else {
 			term.Successors = term.Handlers
@@ -554,27 +554,27 @@ type TermCatchRet struct {
 	// Exit catchpad.
 	From *InstCatchPad
 	// Target basic block to transfer control flow to.
-	To *BasicBlock
+	To *Block
 
 	// extra.
 
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
 }
 
 // NewCatchRet returns a new catchret terminator based on the given exit
 // catchpad and target basic block.
-func NewCatchRet(from *InstCatchPad, to *BasicBlock) *TermCatchRet {
+func NewCatchRet(from *InstCatchPad, to *Block) *TermCatchRet {
 	return &TermCatchRet{From: from, To: to}
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermCatchRet) Succs() []*BasicBlock {
+func (term *TermCatchRet) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*BasicBlock{term.To}
+		term.Successors = []*Block{term.To}
 	}
 	return term.Successors
 }
@@ -603,7 +603,7 @@ type TermCleanupRet struct {
 	// extra.
 
 	// Successor basic blocks of the terminator.
-	Successors []*BasicBlock
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata []*metadata.Attachment
 }
@@ -615,13 +615,13 @@ func NewCleanupRet(from *InstCleanupPad, unwindTarget UnwindTarget) *TermCleanup
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermCleanupRet) Succs() []*BasicBlock {
+func (term *TermCleanupRet) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		if unwindTarget, ok := term.UnwindTarget.(*BasicBlock); ok {
-			term.Successors = []*BasicBlock{unwindTarget}
+		if unwindTarget, ok := term.UnwindTarget.(*Block); ok {
+			term.Successors = []*Block{unwindTarget}
 		} else {
-			term.Successors = []*BasicBlock{}
+			term.Successors = []*Block{}
 		}
 	}
 	return term.Successors
@@ -655,7 +655,7 @@ func NewUnreachable() *TermUnreachable {
 }
 
 // Succs returns the successor basic blocks of the terminator.
-func (term *TermUnreachable) Succs() []*BasicBlock {
+func (term *TermUnreachable) Succs() []*Block {
 	// no successors.
 	return nil
 }

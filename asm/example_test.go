@@ -99,7 +99,7 @@ func Example() {
 	//             },
 	//             Params: nil,
 	//             Blocks: {
-	//                 &ir.BasicBlock{
+	//                 &ir.Block{
 	//                     LocalIdent: ir.LocalIdent{},
 	//                     Insts:      {
 	//                         &ir.InstLoad{

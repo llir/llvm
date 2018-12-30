@@ -152,7 +152,7 @@ func (Dereferenceable) IsReturnAttribute() {}
 
 // isUnwindTarget ensures that only unwind targets can be assigned to the
 // ir.UnwindTarget interface.
-func (*BasicBlock) isUnwindTarget() {}
+func (*Block) isUnwindTarget() {}
 
 // isUnwindTarget ensures that only unwind targets can be assigned to the
 // ir.UnwindTarget interface.

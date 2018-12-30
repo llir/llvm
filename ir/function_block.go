@@ -2,7 +2,7 @@ package ir
 
 // NewBlock appends a new basic block to the function based on the given label
 // name. An empty label name indicates an unnamed basic block.
-func (f *Function) NewBlock(name string) *BasicBlock {
+func (f *Function) NewBlock(name string) *Block {
 	block := NewBlock(name)
 	block.Parent = f
 	f.Blocks = append(f.Blocks, block)

@@ -32,7 +32,7 @@ type Value interface {
 //    *ir.Global            // https://godoc.org/github.com/llir/llvm/ir#Global
 //    *ir.Function          // https://godoc.org/github.com/llir/llvm/ir#Function
 //    *ir.Param             // https://godoc.org/github.com/llir/llvm/ir#Param
-//    *ir.BasicBlock        // https://godoc.org/github.com/llir/llvm/ir#BasicBlock
+//    *ir.Block             // https://godoc.org/github.com/llir/llvm/ir#Block
 //    TODO: add named metadata value?
 //    ir.Instruction        // https://godoc.org/github.com/llir/llvm/ir#Instruction (except store and fence)
 //    *ir.TermInvoke        // https://godoc.org/github.com/llir/llvm/ir#TermInvoke
