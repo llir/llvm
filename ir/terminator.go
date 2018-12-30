@@ -6,7 +6,6 @@ import (
 
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -34,8 +33,6 @@ import (
 //    *ir.TermUnreachable   // https://godoc.org/github.com/llir/llvm/ir#TermUnreachable
 type Terminator interface {
 	LLStringer
-	// MDAttachments returns the metadata attachments of the terminator.
-	MDAttachments() []*metadata.Attachment
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*Block
 }
