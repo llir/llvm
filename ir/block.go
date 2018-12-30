@@ -1,3 +1,6 @@
+// The basic block API of the ir package was heavily inspired by
+// https://github.com/mrbenshef/goory.
+
 package ir
 
 import (

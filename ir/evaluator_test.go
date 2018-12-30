@@ -1,3 +1,6 @@
+// This example program parses testdata/eval.ll, evaluates the return value of
+// the @main function and prints the result to standard output. The result
+// should be 42.
 package ir_test
 
 import (
