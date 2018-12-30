@@ -6,3 +6,5 @@
 * report error in translation of global decl if comdat is used
 * rename Def to LLString (or LLVMString) analogous to fmt.GoStringer
 * rethink sumtypes to allow for user-defined types; e.g. currently ir.Instruction requires `isInstruction`, but there are valid uses cases where users may wish to define their own instructions to put in basic blocks. One such use case seen in the wild is the pseudo-instruction `type Comment { Data string }` which prints itself as `"; data..."`
+* check names of exception handling instruction fields; check Haskell and C++ API.
+* add type as first argument to NewArray, NewStruct and NewVector?
