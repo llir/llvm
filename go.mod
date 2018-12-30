@@ -2,6 +2,7 @@ module github.com/llir/llvm
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/inspirer/textmapper v0.0.0-20181230113252-ce12cf32c1ea // indirect
 	github.com/kr/pretty v0.1.0
 	github.com/llir/ll v0.0.0-20181228235520-85cf95b77ea2
 	github.com/mewkiz/pkg v0.0.0-20181119122551-9729f4f4ff2b
