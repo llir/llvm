@@ -1,5 +1,7 @@
 package ir
 
+import "github.com/llir/llvm/ir/metadata"
+
 // === [ Instructions ] ========================================================
 
 // Instruction is an LLVM IR instruction. All instructions (except store and
@@ -96,6 +98,8 @@ package ir
 //    *ir.InstCleanupPad   // https://godoc.org/github.com/llir/llvm/ir#InstCleanupPad
 type Instruction interface {
 	LLStringer
+	// MDAttachments returns the metadata attachments of the instruction.
+	MDAttachments() []*metadata.Attachment
 	// isInstruction ensures that only instructions can be assigned to the
 	// instruction.Instruction interface.
 	isInstruction()
