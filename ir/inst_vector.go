@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -27,7 +26,7 @@ type InstExtractElement struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewExtractElement returns a new extractelement instruction based on the given
@@ -89,7 +88,7 @@ type InstInsertElement struct {
 	// Type of result produced by the instruction.
 	Typ *types.VectorType
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewInsertElement returns a new insertelement instruction based on the given
@@ -149,7 +148,7 @@ type InstShuffleVector struct {
 	// Type of result produced by the instruction.
 	Typ *types.VectorType
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given

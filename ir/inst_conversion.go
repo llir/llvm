@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -25,7 +24,7 @@ type InstTrunc struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewTrunc returns a new trunc instruction based on the given source value and
@@ -71,7 +70,7 @@ type InstZExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewZExt returns a new zext instruction based on the given source value and
@@ -117,7 +116,7 @@ type InstSExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewSExt returns a new sext instruction based on the given source value and
@@ -163,7 +162,7 @@ type InstFPTrunc struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFPTrunc returns a new fptrunc instruction based on the given source value
@@ -209,7 +208,7 @@ type InstFPExt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and
@@ -255,7 +254,7 @@ type InstFPToUI struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFPToUI returns a new fptoui instruction based on the given source value
@@ -301,7 +300,7 @@ type InstFPToSI struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value
@@ -347,7 +346,7 @@ type InstUIToFP struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewUIToFP returns a new uitofp instruction based on the given source value
@@ -393,7 +392,7 @@ type InstSIToFP struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value
@@ -439,7 +438,7 @@ type InstPtrToInt struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
@@ -485,7 +484,7 @@ type InstIntToPtr struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source
@@ -531,7 +530,7 @@ type InstBitCast struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewBitCast returns a new bitcast instruction based on the given source value
@@ -577,7 +576,7 @@ type InstAddrSpaceCast struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given

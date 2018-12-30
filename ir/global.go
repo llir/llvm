@@ -6,7 +6,6 @@ import (
 
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -52,7 +51,7 @@ type Global struct {
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewGlobal returns a new global variable declaration based on the given global

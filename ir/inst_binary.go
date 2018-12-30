@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/ir/enum"
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -28,7 +27,7 @@ type InstAdd struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewAdd returns a new add instruction based on the given operands.
@@ -87,7 +86,7 @@ type InstFAdd struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
@@ -146,7 +145,7 @@ type InstSub struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewSub returns a new sub instruction based on the given operands.
@@ -205,7 +204,7 @@ type InstFSub struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFSub returns a new fsub instruction based on the given operands.
@@ -264,7 +263,7 @@ type InstMul struct {
 	// (optional) Overflow flags.
 	OverflowFlags []enum.OverflowFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewMul returns a new mul instruction based on the given operands.
@@ -323,7 +322,7 @@ type InstFMul struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFMul returns a new fmul instruction based on the given operands.
@@ -382,7 +381,7 @@ type InstUDiv struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewUDiv returns a new udiv instruction based on the given operands.
@@ -441,7 +440,7 @@ type InstSDiv struct {
 	// (optional) Exact.
 	Exact bool
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
@@ -500,7 +499,7 @@ type InstFDiv struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFDiv returns a new fdiv instruction based on the given operands.
@@ -557,7 +556,7 @@ type InstURem struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewURem returns a new urem instruction based on the given operands.
@@ -609,7 +608,7 @@ type InstSRem struct {
 	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewSRem returns a new srem instruction based on the given operands.
@@ -663,7 +662,7 @@ type InstFRem struct {
 	// (optional) Fast math flags.
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFRem returns a new frem instruction based on the given operands.

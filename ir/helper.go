@@ -7,6 +7,7 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/enum"
+	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -248,6 +249,14 @@ func (i *LocalIdent) SetID(id int64) {
 // IsUnnamed reports whether the local identifier is unnamed.
 func (i LocalIdent) IsUnnamed() bool {
 	return len(i.LocalName) == 0
+}
+
+// Metadata is a list of metadata attachments.
+type Metadata []*metadata.Attachment
+
+// MDAttachments returns the metadata attachments of the value.
+func (mds Metadata) MDAttachments() []*metadata.Attachment {
+	return mds
 }
 
 // OperandBundle is an operand bundle.

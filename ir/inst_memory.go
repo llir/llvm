@@ -6,7 +6,6 @@ import (
 
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -36,7 +35,7 @@ type InstAlloca struct {
 	// (optional) Alignment; zero if not present.
 	Align Align
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewAlloca returns a new alloca instruction based on the given element type.
@@ -115,7 +114,7 @@ type InstLoad struct {
 	// (optional) Alignment; zero if not present.
 	Align Align
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewLoad returns a new load instruction based on the given source address.
@@ -204,7 +203,7 @@ type InstStore struct {
 	// (optional) Alignment; zero if not present.
 	Align Align
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewStore returns a new store instruction based on the given source value and
@@ -261,7 +260,7 @@ type InstFence struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
@@ -314,7 +313,7 @@ type InstCmpXchg struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -393,7 +392,7 @@ type InstAtomicRMW struct {
 	// (optional) Sync scope; empty if not present.
 	SyncScope string
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
@@ -465,7 +464,7 @@ type InstGetElementPtr struct {
 	// (optional) In-bounds.
 	InBounds bool
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given

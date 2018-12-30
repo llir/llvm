@@ -6,7 +6,6 @@ import (
 
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
-	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -48,7 +47,7 @@ type TermRet struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
@@ -96,7 +95,7 @@ type TermBr struct {
 	// Successor basic blocks of the terminator.
 	Successors []*Block
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewBr returns a new unconditional br terminator based on the given target
@@ -141,7 +140,7 @@ type TermCondBr struct {
 	// Successor basic blocks of the terminator.
 	Successors []*Block
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewCondBr returns a new conditional br terminator based on the given
@@ -187,7 +186,7 @@ type TermSwitch struct {
 	// Successor basic blocks of the terminator.
 	Successors []*Block
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewSwitch returns a new switch terminator based on the given control
@@ -260,7 +259,7 @@ type TermIndirectBr struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewIndirectBr returns a new indirectbr terminator based on the given target
@@ -332,7 +331,7 @@ type TermInvoke struct {
 	// (optional) Operand bundles.
 	OperandBundles []*OperandBundle
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewInvoke returns a new invoke terminator based on the given invokee, function
@@ -448,7 +447,7 @@ type TermResume struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewResume returns a new resume terminator based on the given exception
@@ -492,7 +491,7 @@ type TermCatchSwitch struct {
 	// Successor basic blocks of the terminator.
 	Successors []*Block
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given
@@ -560,7 +559,7 @@ type TermCatchRet struct {
 	// Successor basic blocks of the terminator.
 	Successors []*Block
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewCatchRet returns a new catchret terminator based on the given exit
@@ -604,7 +603,7 @@ type TermCleanupRet struct {
 	// Successor basic blocks of the terminator.
 	Successors []*Block
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
@@ -645,7 +644,7 @@ type TermUnreachable struct {
 	// extra.
 
 	// (optional) Metadata.
-	Metadata []*metadata.Attachment
+	Metadata
 }
 
 // NewUnreachable returns a new unreachable terminator.
