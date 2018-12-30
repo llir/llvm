@@ -17,10 +17,9 @@ import (
 
 // === [ Functions ] ===========================================================
 
-// Function is an LLVM IR function. The body of a function definition consists
-// of a set of basic blocks, interconnected by terminator control flow
-// instructions.
-type Function struct {
+// Func is an LLVM IR function. The body of a function definition consists of a
+// set of basic blocks, interconnected by terminator control flow instructions.
+type Func struct {
 	// Function name (without '@' prefix).
 	GlobalIdent
 	// Function signature.
@@ -75,13 +74,13 @@ type Function struct {
 
 // NewFunc returns a new function based on the given function name, return type
 // and function parameters.
-func NewFunc(name string, retType types.Type, params ...*Param) *Function {
+func NewFunc(name string, retType types.Type, params ...*Param) *Func {
 	paramTypes := make([]types.Type, len(params))
 	for i, param := range params {
 		paramTypes[i] = param.Type()
 	}
 	sig := types.NewFunc(retType, paramTypes...)
-	f := &Function{Sig: sig, Params: params}
+	f := &Func{Sig: sig, Params: params}
 	f.SetName(name)
 	// Compute type.
 	f.Type()
@@ -90,12 +89,12 @@ func NewFunc(name string, retType types.Type, params ...*Param) *Function {
 
 // String returns the LLVM syntax representation of the function as a type-value
 // pair.
-func (f *Function) String() string {
+func (f *Func) String() string {
 	return fmt.Sprintf("%s %s", f.Type(), f.Ident())
 }
 
 // Type returns the type of the function.
-func (f *Function) Type() types.Type {
+func (f *Func) Type() types.Type {
 	// Cache type if not present.
 	if f.Typ == nil {
 		f.Typ = types.NewPointer(f.Sig)
@@ -105,7 +104,7 @@ func (f *Function) Type() types.Type {
 
 // Def returns the LLVM syntax representation of the function definition or
 // declaration.
-func (f *Function) Def() string {
+func (f *Func) Def() string {
 	// Function declaration.
 	//
 	//    'declare' Metadata=MetadataAttachment* Header=FuncHeader
@@ -143,7 +142,7 @@ func (f *Function) Def() string {
 }
 
 // AssignIDs assigns IDs to unnamed local variables.
-func (f *Function) AssignIDs() error {
+func (f *Func) AssignIDs() error {
 	if len(f.Blocks) == 0 {
 		return nil
 	}
@@ -206,7 +205,7 @@ func (f *Function) AssignIDs() error {
 // ### [ Helper functions ] ####################################################
 
 // headerString returns the string representation of the function header.
-func headerString(f *Function) string {
+func headerString(f *Func) string {
 	// (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt
 	// CallingConvopt ReturnAttrs=ReturnAttribute* RetType=Type Name=GlobalIdent
 	// '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttribute*
@@ -274,7 +273,7 @@ func headerString(f *Function) string {
 }
 
 // bodyString returns the string representation of the function body.
-func bodyString(body *Function) string {
+func bodyString(body *Func) string {
 	// '{' Blocks=Block+ UseListOrders=UseListOrder* '}'
 	buf := &strings.Builder{}
 	buf.WriteString("{\n")

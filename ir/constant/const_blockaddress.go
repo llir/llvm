@@ -12,7 +12,7 @@ import (
 // BlockAddress is an LLVM IR blockaddress constant.
 type BlockAddress struct {
 	// Parent function.
-	Func Constant // *ir.Function
+	Func Constant // *ir.Func
 	// Basic block to take address of.
 	Block value.Named // *ir.Block
 }

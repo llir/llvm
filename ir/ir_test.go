@@ -43,7 +43,7 @@ func TestModuleString(t *testing.T) {
 var (
 	// Constants.
 	_ constant.Constant = (*Global)(nil)
-	_ constant.Constant = (*Function)(nil)
+	_ constant.Constant = (*Func)(nil)
 	_ constant.Constant = (*Alias)(nil)
 	_ constant.Constant = (*IFunc)(nil)
 )
@@ -145,7 +145,7 @@ var (
 var (
 	// Other values.
 	_ value.Named = (*Global)(nil)
-	_ value.Named = (*Function)(nil)
+	_ value.Named = (*Func)(nil)
 	_ value.Named = (*Param)(nil)
 	_ value.Named = (*Block)(nil)
 

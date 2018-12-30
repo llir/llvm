@@ -246,7 +246,7 @@ func (gen *generator) addGlobalEntitiesToModule() {
 			gen.m.Aliases = append(gen.m.Aliases, def)
 		case *ir.IFunc:
 			gen.m.IFuncs = append(gen.m.IFuncs, def)
-		case *ir.Function:
+		case *ir.Func:
 			gen.m.Funcs = append(gen.m.Funcs, def)
 		default:
 			panic(fmt.Errorf("support for global %T not yet implemented", v))
@@ -326,9 +326,9 @@ func (gen *generator) addMetadataDefsToModule() {
 //
 // pre-condition: translated function body and assigned local IDs of c.Func.
 func fixBlockAddressConst(c *constant.BlockAddress) error {
-	f, ok := c.Func.(*ir.Function)
+	f, ok := c.Func.(*ir.Func)
 	if !ok {
-		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Function, got %T", c.Func))
+		panic(fmt.Errorf("invalid function type in blockaddress constant; expected *ir.Func, got %T", c.Func))
 	}
 	bb, ok := c.Block.(*ir.Block)
 	if !ok {

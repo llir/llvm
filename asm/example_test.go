@@ -48,7 +48,7 @@ func Example() {
 	//         },
 	//     },
 	//     Funcs: {
-	//         &ir.Function{
+	//         &ir.Func{
 	//             GlobalIdent: ir.GlobalIdent{GlobalName:"abs", GlobalID:0},
 	//             Sig:         &types.FuncType{
 	//                 TypeName: "",
@@ -89,7 +89,7 @@ func Example() {
 	//             Metadata:        nil,
 	//             mu:              sync.Mutex{},
 	//         },
-	//         &ir.Function{
+	//         &ir.Func{
 	//             GlobalIdent: ir.GlobalIdent{GlobalName:"rand", GlobalID:0},
 	//             Sig:         &types.FuncType{
 	//                 TypeName: "",
@@ -153,7 +153,7 @@ func Example() {
 	//                         },
 	//                         &ir.InstCall{
 	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:4},
-	//                             Callee:     &ir.Function{(CYCLIC REFERENCE)},
+	//                             Callee:     &ir.Func{(CYCLIC REFERENCE)},
 	//                             Args:       {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
@@ -171,7 +171,7 @@ func Example() {
 	//                     Term: &ir.TermRet{
 	//                         X:  &ir.InstCall{
 	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:4},
-	//                             Callee:     &ir.Function{(CYCLIC REFERENCE)},
+	//                             Callee:     &ir.Func{(CYCLIC REFERENCE)},
 	//                             Args:       {
 	//                                 &ir.InstAdd{(CYCLIC REFERENCE)},
 	//                             },
@@ -187,7 +187,7 @@ func Example() {
 	//                         },
 	//                         Metadata: nil,
 	//                     },
-	//                     Parent: &ir.Function{(CYCLIC REFERENCE)},
+	//                     Parent: &ir.Func{(CYCLIC REFERENCE)},
 	//                 },
 	//             },
 	//             Typ: &types.PointerType{

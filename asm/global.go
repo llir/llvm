@@ -96,7 +96,7 @@ func (gen *generator) newIndirectSymbol(ident ir.GlobalIdent, old *ast.IndirectS
 
 // newFunc returns a new IR function declaration or definition (without body but
 // with type) based on the given AST function header.
-func (gen *generator) newFunc(ident ir.GlobalIdent, hdr ast.FuncHeader) (*ir.Function, error) {
+func (gen *generator) newFunc(ident ir.GlobalIdent, hdr ast.FuncHeader) (*ir.Func, error) {
 	// Function signature.
 	sig, err := gen.irSigFromHeader(hdr)
 	if err != nil {
@@ -107,7 +107,7 @@ func (gen *generator) newFunc(ident ir.GlobalIdent, hdr ast.FuncHeader) (*ir.Fun
 	if n, ok := hdr.AddrSpace(); ok {
 		typ.AddrSpace = irAddrSpace(n)
 	}
-	return &ir.Function{GlobalIdent: ident, Sig: sig, Typ: typ}, nil
+	return &ir.Func{GlobalIdent: ident, Sig: sig, Typ: typ}, nil
 }
 
 // ### [ Helper functions ] ####################################################
@@ -185,17 +185,17 @@ func (gen *generator) translateGlobalEntities() error {
 				panic(fmt.Errorf("support for indirect symbol kind %q not yet implemented", kind))
 			}
 		case *ast.FuncDecl:
-			new, ok := v.(*ir.Function)
+			new, ok := v.(*ir.Func)
 			if !ok {
-				panic(fmt.Errorf("invalid function declaration type; expected *ir.Function, got %T", v))
+				panic(fmt.Errorf("invalid function declaration type; expected *ir.Func, got %T", v))
 			}
 			if err := gen.irFuncDecl(new, old); err != nil {
 				return errors.WithStack(err)
 			}
 		case *ast.FuncDef:
-			new, ok := v.(*ir.Function)
+			new, ok := v.(*ir.Func)
 			if !ok {
-				panic(fmt.Errorf("invalid function definition type; expected *ir.Function, got %T", v))
+				panic(fmt.Errorf("invalid function definition type; expected *ir.Func, got %T", v))
 			}
 			if err := gen.irFuncDef(new, old); err != nil {
 				return errors.WithStack(err)
@@ -377,7 +377,7 @@ func (gen *generator) irIFunc(new *ir.IFunc, old *ast.IndirectSymbolDef) error {
 
 // irFuncDecl translates the AST function declaration into an equivalent IR
 // function declaration.
-func (gen *generator) irFuncDecl(new *ir.Function, old *ast.FuncDecl) error {
+func (gen *generator) irFuncDecl(new *ir.Func, old *ast.FuncDecl) error {
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
@@ -392,7 +392,7 @@ func (gen *generator) irFuncDecl(new *ir.Function, old *ast.FuncDecl) error {
 
 // irFuncDef translates the AST function definition into an equivalent IR
 // function definition.
-func (gen *generator) irFuncDef(new *ir.Function, old *ast.FuncDef) error {
+func (gen *generator) irFuncDef(new *ir.Func, old *ast.FuncDef) error {
 	// Function header.
 	if err := gen.irFuncHeader(new, old.Header()); err != nil {
 		return errors.WithStack(err)
@@ -427,7 +427,7 @@ func (gen *generator) irFuncDef(new *ir.Function, old *ast.FuncDef) error {
 
 // irFuncHeader translates the AST function header into an equivalent IR
 // function.
-func (gen *generator) irFuncHeader(new *ir.Function, old ast.FuncHeader) error {
+func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 	// (optional) Linkage.
 	if n, ok := old.Linkage(); ok {
 		new.Linkage = asmenum.LinkageFromString(n.Text())

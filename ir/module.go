@@ -22,7 +22,7 @@ type Module struct {
 	// Global variable declarations and definitions.
 	Globals []*Global
 	// Function declarations and definitions.
-	Funcs []*Function
+	Funcs []*Func
 
 	// extra.
 
@@ -260,7 +260,7 @@ func (u *UseListOrder) String() string {
 // UseListOrderBB is a basic block specific use-list order directive.
 type UseListOrderBB struct {
 	// Function.
-	Func *Function
+	Func *Func
 	// Basic block.
 	Block *Block
 	// Use-list order.

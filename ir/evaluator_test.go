@@ -37,14 +37,14 @@ func Example_evaluator() {
 // evaluator is a function evaluator.
 type evaluator struct {
 	// Function being evaluated.
-	f *ir.Function
+	f *ir.Func
 	// Function arguments.
 	args []value.Value
 }
 
 // newEvaluator returns a new function evaluator, for evaluating the result of
 // invoking f with args.
-func newEvaluator(f *ir.Function, args ...value.Value) *evaluator {
+func newEvaluator(f *ir.Func, args ...value.Value) *evaluator {
 	return &evaluator{f: f, args: args}
 }
 
@@ -107,7 +107,7 @@ func (e *evaluator) evalInst(inst ir.Instruction) uint32 {
 		return e.evalValue(inst.X) ^ e.evalValue(inst.Y)
 	// Other instructions.
 	case *ir.InstCall:
-		callee, ok := inst.Callee.(*ir.Function)
+		callee, ok := inst.Callee.(*ir.Func)
 		if !ok {
 			panic(fmt.Errorf("support for callee type %T not yet implemented", inst.Callee))
 		}

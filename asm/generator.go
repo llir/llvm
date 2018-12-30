@@ -110,7 +110,7 @@ type newIndex struct {
 	//    *ir.Global
 	//    *ir.Alias
 	//    *ir.IFunc
-	//    *ir.Function
+	//    *ir.Func
 	globals map[ir.GlobalIdent]constant.Constant
 	// attrGroupDefs maps from attribute group ID (without '#' prefix) to
 	// attribute group definition.

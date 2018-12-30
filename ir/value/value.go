@@ -30,7 +30,7 @@ type Value interface {
 // A Named value has one of the following underlying types.
 //
 //    *ir.Global            // https://godoc.org/github.com/llir/llvm/ir#Global
-//    *ir.Function          // https://godoc.org/github.com/llir/llvm/ir#Function
+//    *ir.Func              // https://godoc.org/github.com/llir/llvm/ir#Func
 //    *ir.Param             // https://godoc.org/github.com/llir/llvm/ir#Param
 //    *ir.Block             // https://godoc.org/github.com/llir/llvm/ir#Block
 //    TODO: add named metadata value?

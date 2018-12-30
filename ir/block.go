@@ -26,7 +26,7 @@ type Block struct {
 	// extra.
 
 	// Parent function; field set by ir.Function.NewBlock.
-	Parent *Function
+	Parent *Func
 }
 
 // NewBlock returns a new basic block based on the given label name. An empty

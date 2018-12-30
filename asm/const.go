@@ -236,9 +236,9 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 	if !ok {
 		return nil, errors.Errorf("unable to locate global identifier %q", funcName)
 	}
-	f, ok := v.(*ir.Function)
+	f, ok := v.(*ir.Func)
 	if !ok {
-		return nil, errors.Errorf("invalid function type; expected *ir.Function, got %T", v)
+		return nil, errors.Errorf("invalid function type; expected *ir.Func, got %T", v)
 	}
 	// Basic block.
 	blockIdent := localIdent(old.Block())

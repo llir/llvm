@@ -399,9 +399,9 @@ func (gen *generator) irUseListOrderBB(old *ast.UseListOrderBB) (*ir.UseListOrde
 	if !ok {
 		return nil, errors.Errorf("unable to locate global identifier %q", funcIdent.Ident())
 	}
-	f, ok := v.(*ir.Function)
+	f, ok := v.(*ir.Func)
 	if !ok {
-		return nil, errors.Errorf("invalid function type of %q; expected *ir.Function, got %T", funcIdent.Ident(), v)
+		return nil, errors.Errorf("invalid function type of %q; expected *ir.Func, got %T", funcIdent.Ident(), v)
 	}
 	// Basic block.
 	blockIdent := localIdent(old.Block())

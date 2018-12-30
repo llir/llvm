@@ -32,14 +32,14 @@ type funcGen struct {
 	// Module generator.
 	gen *generator
 	// LLVM IR function being generated.
-	f *ir.Function
+	f *ir.Func
 	// locals maps from local identifier (without '%' prefix) to corresponding IR
 	// value.
 	locals map[ir.LocalIdent]value.Value
 }
 
 // newFuncGen returns a new generator for the given IR function.
-func newFuncGen(gen *generator, f *ir.Function) *funcGen {
+func newFuncGen(gen *generator, f *ir.Func) *funcGen {
 	return &funcGen{
 		gen:    gen,
 		f:      f,

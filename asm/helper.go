@@ -646,7 +646,7 @@ func text(n ast.LlvmNode) string {
 
 // findBlock returns the basic block with the given local identifier in the
 // function.
-func findBlock(f *ir.Function, blockIdent ir.LocalIdent) (*ir.Block, error) {
+func findBlock(f *ir.Func, blockIdent ir.LocalIdent) (*ir.Block, error) {
 	for _, block := range f.Blocks {
 		if block.LocalIdent == blockIdent {
 			return block, nil
