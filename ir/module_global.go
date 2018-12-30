@@ -7,10 +7,10 @@ import (
 
 // --- [ Global variables ] ----------------------------------------------------
 
-// NewGlobalDecl appends a new global variable declaration to the module based
-// on the given global variable name and content type.
-func (m *Module) NewGlobalDecl(name string, contentType types.Type) *Global {
-	g := NewGlobalDecl(name, contentType)
+// NewGlobal appends a new global variable declaration to the module based on
+// the given global variable name and content type.
+func (m *Module) NewGlobal(name string, contentType types.Type) *Global {
+	g := NewGlobal(name, contentType)
 	m.Globals = append(m.Globals, g)
 	return g
 }

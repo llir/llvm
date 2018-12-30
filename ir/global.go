@@ -55,9 +55,9 @@ type Global struct {
 	Metadata []*metadata.Attachment
 }
 
-// NewGlobalDecl returns a new global variable declaration based on the given
-// global variable name and content type.
-func NewGlobalDecl(name string, contentType types.Type) *Global {
+// NewGlobal returns a new global variable declaration based on the given global
+// variable name and content type.
+func NewGlobal(name string, contentType types.Type) *Global {
 	global := &Global{ContentType: contentType}
 	global.SetName(name)
 	// Compute type.
