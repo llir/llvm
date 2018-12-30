@@ -32,8 +32,10 @@ func (align AlignStack) String() string {
 // AllocSize is an attribute for functions like malloc. If the second parameter
 // is omitted, NElemsIndex will be -1.
 type AllocSize struct {
+	// Element size parameter index.
 	ElemSizeIndex int
-	NElemsIndex   int
+	// Number of elements parameter index; -1 if not present.
+	NElemsIndex int
 }
 
 // String returns the string representation of the allocsize attribute.
@@ -44,7 +46,7 @@ func (a AllocSize) String() string {
 	return fmt.Sprintf("allocsize(%d, %d)", a.ElemSizeIndex, a.NElemsIndex)
 }
 
-// Arg is a function argument.
+// Arg is a function argument with optional parameter attributes.
 type Arg struct {
 	// Argument value.
 	value.Value
