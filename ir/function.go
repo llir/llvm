@@ -102,9 +102,9 @@ func (f *Func) Type() types.Type {
 	return f.Typ
 }
 
-// Def returns the LLVM syntax representation of the function definition or
+// LLString returns the LLVM syntax representation of the function definition or
 // declaration.
-func (f *Func) Def() string {
+func (f *Func) LLString() string {
 	// Function declaration.
 	//
 	//    'declare' Metadata=MetadataAttachment* Header=FuncHeader
@@ -232,7 +232,7 @@ func headerString(f *Func) string {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(param.Def())
+		buf.WriteString(param.LLString())
 	}
 	if f.Sig.Variadic {
 		if len(f.Params) > 0 {
@@ -281,7 +281,7 @@ func bodyString(body *Func) string {
 		if i != 0 {
 			buf.WriteString("\n")
 		}
-		fmt.Fprintf(buf, "%s\n", block.Def())
+		fmt.Fprintf(buf, "%s\n", block.LLString())
 	}
 	if len(body.UseListOrders) > 0 {
 		buf.WriteString("\n")

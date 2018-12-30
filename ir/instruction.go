@@ -95,8 +95,7 @@ package ir
 //    *ir.InstCatchPad     // https://godoc.org/github.com/llir/llvm/ir#InstCatchPad
 //    *ir.InstCleanupPad   // https://godoc.org/github.com/llir/llvm/ir#InstCleanupPad
 type Instruction interface {
-	// Def returns the LLVM syntax representation of the instruction.
-	Def() string
+	LLStringer
 	// isInstruction ensures that only instructions can be assigned to the
 	// instruction.Instruction interface.
 	isInstruction()

@@ -62,8 +62,8 @@ func (inst *InstICmp) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstICmp) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstICmp) LLString() string {
 	// 'icmp' Pred=IPred X=TypeValue ',' Y=Value Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -127,8 +127,8 @@ func (inst *InstFCmp) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstFCmp) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstFCmp) LLString() string {
 	// 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value
 	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -184,8 +184,8 @@ func (inst *InstPhi) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstPhi) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstPhi) LLString() string {
 	// 'phi' Typ=Type Incs=(Inc separator ',')+ Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -268,8 +268,8 @@ func (inst *InstSelect) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstSelect) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstSelect) LLString() string {
 	// 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -362,8 +362,8 @@ func (inst *InstCall) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstCall) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstCall) LLString() string {
 	// Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt
 	// ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Callee=Value '(' Args
 	// ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator
@@ -453,8 +453,8 @@ func (inst *InstVAArg) Type() types.Type {
 	return inst.ArgType
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstVAArg) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstVAArg) LLString() string {
 	// 'va_arg' ArgList=TypeValue ',' ArgType=Type Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -503,8 +503,8 @@ func (inst *InstLandingPad) Type() types.Type {
 	return inst.ResultType
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstLandingPad) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstLandingPad) LLString() string {
 	// 'landingpad' ResultType=Type Cleanupopt Clauses=Clause* Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -581,8 +581,8 @@ func (inst *InstCatchPad) Type() types.Type {
 	return types.Token
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstCatchPad) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstCatchPad) LLString() string {
 	// 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator
 	// ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -639,8 +639,8 @@ func (inst *InstCleanupPad) Type() types.Type {
 	return types.Token
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstCleanupPad) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstCleanupPad) LLString() string {
 	// 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg
 	// separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}

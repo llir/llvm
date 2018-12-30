@@ -1,4 +1,3 @@
-// Package ir declares the types used to represent LLVM IR modules.
 package ir
 
 import (
@@ -92,35 +91,35 @@ func (m *Module) String() string {
 		// Alias=LocalIdent '=' 'type' Typ=OpaqueType
 		//
 		// Alias=LocalIdent '=' 'type' Typ=Type
-		fmt.Fprintf(buf, "%s = type %s\n", t, t.Def())
+		fmt.Fprintf(buf, "%s = type %s\n", t, t.LLString())
 	}
 	// Comdat definitions.
 	if len(m.ComdatDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, def := range m.ComdatDefs {
-		fmt.Fprintln(buf, def.Def())
+		fmt.Fprintln(buf, def.LLString())
 	}
 	// Global declarations and definitions.
 	if len(m.Globals) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, g := range m.Globals {
-		fmt.Fprintln(buf, g.Def())
+		fmt.Fprintln(buf, g.LLString())
 	}
 	// Aliases.
 	if len(m.Aliases) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, alias := range m.Aliases {
-		fmt.Fprintln(buf, alias.Def())
+		fmt.Fprintln(buf, alias.LLString())
 	}
 	// IFuncs.
 	if len(m.IFuncs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, ifunc := range m.IFuncs {
-		fmt.Fprintln(buf, ifunc.Def())
+		fmt.Fprintln(buf, ifunc.LLString())
 	}
 	// Function declarations and definitions.
 	if len(m.Funcs) > 0 && buf.Len() > 0 {
@@ -130,28 +129,28 @@ func (m *Module) String() string {
 		if i != 0 {
 			buf.WriteString("\n")
 		}
-		fmt.Fprintln(buf, f.Def())
+		fmt.Fprintln(buf, f.LLString())
 	}
 	// Attribute group definitions.
 	if len(m.AttrGroupDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, a := range m.AttrGroupDefs {
-		fmt.Fprintln(buf, a.Def())
+		fmt.Fprintln(buf, a.LLString())
 	}
 	// Named metadata definitions.
 	if len(m.NamedMetadataDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, md := range m.NamedMetadataDefs {
-		fmt.Fprintln(buf, md.Def())
+		fmt.Fprintln(buf, md.LLString())
 	}
 	// Metadata definitions.
 	if len(m.MetadataDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, md := range m.MetadataDefs {
-		fmt.Fprintln(buf, md.Def())
+		fmt.Fprintln(buf, md.LLString())
 	}
 	// Use-list orders.
 	if len(m.UseListOrders) > 0 && buf.Len() > 0 {
@@ -185,8 +184,8 @@ func (c *ComdatDef) String() string {
 	return fmt.Sprintf("comdat(%s)", enc.Comdat(c.Name))
 }
 
-// Def returns the LLVM syntax representation of the Comdat definition.
-func (c *ComdatDef) Def() string {
+// LLString returns the LLVM syntax representation of the Comdat definition.
+func (c *ComdatDef) LLString() string {
 	// Name=ComdatName '=' 'comdat' Kind=SelectionKind
 	return fmt.Sprintf("%s = comdat %s", enc.Comdat(c.Name), c.Kind)
 }
@@ -206,8 +205,9 @@ func (a *AttrGroupDef) String() string {
 	return enc.AttrGroupID(a.ID)
 }
 
-// Def returns the LLVM syntax representation of the attribute group definition.
-func (a *AttrGroupDef) Def() string {
+// LLString returns the LLVM syntax representation of the attribute group
+// definition.
+func (a *AttrGroupDef) LLString() string {
 	// 'attributes' ID=AttrGroupID '=' '{' Attrs=FuncAttribute* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "attributes %s = { ", enc.AttrGroupID(a.ID))

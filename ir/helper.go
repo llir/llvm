@@ -363,8 +363,8 @@ func (p *Param) Type() types.Type {
 	return p.Typ
 }
 
-// Def returns the LLVM syntax representation of the function parameter.
-func (p *Param) Def() string {
+// LLString returns the LLVM syntax representation of the function parameter.
+func (p *Param) LLString() string {
 	// Typ=Type Attrs=ParamAttribute* Name=LocalIdent?
 	buf := &strings.Builder{}
 	buf.WriteString(p.Typ.String())

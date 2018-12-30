@@ -90,9 +90,9 @@ func (g *Global) Type() types.Type {
 	return g.Typ
 }
 
-// Def returns the LLVM syntax representation of the global variable definition
-// or declaration.
-func (g *Global) Def() string {
+// LLString returns the LLVM syntax representation of the global variable
+// definition or declaration.
+func (g *Global) LLString() string {
 	// Global declaration.
 	//
 	//    Name=GlobalIdent '=' ExternLinkage Preemptionopt Visibilityopt

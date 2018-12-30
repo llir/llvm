@@ -62,8 +62,8 @@ func (inst *InstAlloca) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstAlloca) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstAlloca) LLString() string {
 	// 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)?
 	// (',' Alignment)? (',' AddrSpace)? Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -145,8 +145,8 @@ func (inst *InstLoad) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstLoad) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstLoad) LLString() string {
 	// Load instruction.
 	//
 	//    'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)?
@@ -213,8 +213,8 @@ func NewStore(src, dst value.Value) *InstStore {
 	return &InstStore{Src: src, Dst: dst}
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstStore) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstStore) LLString() string {
 	// Store instruction.
 	//
 	//    'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)?
@@ -269,8 +269,8 @@ func NewFence(ordering enum.AtomicOrdering) *InstFence {
 	return &InstFence{Ordering: ordering}
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstFence) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstFence) LLString() string {
 	// 'fence' SyncScopeopt Ordering=AtomicOrdering Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -343,8 +343,8 @@ func (inst *InstCmpXchg) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstCmpXchg) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstCmpXchg) LLString() string {
 	// 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ','
 	// New=TypeValue SyncScopeopt SuccessOrdering=AtomicOrdering
 	// FailureOrdering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
@@ -424,8 +424,8 @@ func (inst *InstAtomicRMW) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstAtomicRMW) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstAtomicRMW) LLString() string {
 	// 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue
 	// SyncScopeopt Ordering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -507,8 +507,8 @@ func (inst *InstGetElementPtr) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstGetElementPtr) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstGetElementPtr) LLString() string {
 	// 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(','
 	// TypeValue)* Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}

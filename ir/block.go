@@ -48,8 +48,9 @@ func (block *Block) Type() types.Type {
 	return types.Label
 }
 
-// Def returns the LLVM syntax representation of the basic block definition.
-func (block *Block) Def() string {
+// LLString returns the LLVM syntax representation of the basic block
+// definition.
+func (block *Block) LLString() string {
 	// Name=LabelIdentopt Insts=Instruction* Term=Terminator
 	buf := &strings.Builder{}
 	if block.IsUnnamed() {
@@ -58,8 +59,8 @@ func (block *Block) Def() string {
 		fmt.Fprintf(buf, "%s\n", enc.Label(block.LocalName))
 	}
 	for _, inst := range block.Insts {
-		fmt.Fprintf(buf, "\t%s\n", inst.Def())
+		fmt.Fprintf(buf, "\t%s\n", inst.LLString())
 	}
-	fmt.Fprintf(buf, "\t%s", block.Term.Def())
+	fmt.Fprintf(buf, "\t%s", block.Term.LLString())
 	return buf.String()
 }

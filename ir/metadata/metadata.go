@@ -31,8 +31,9 @@ func (md *NamedDef) String() string {
 	return enc.MetadataName(md.Name)
 }
 
-// Def returns the LLVM syntax representation of the named metadata definition.
-func (md *NamedDef) Def() string {
+// LLString returns the LLVM syntax representation of the named metadata
+// definition.
+func (md *NamedDef) LLString() string {
 	// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = !{", md)
@@ -68,8 +69,8 @@ func (md *Def) String() string {
 	return enc.MetadataID(md.ID)
 }
 
-// Def returns the LLVM syntax representation of the metadata definition.
-func (md *Def) Def() string {
+// LLString returns the LLVM syntax representation of the metadata definition.
+func (md *Def) LLString() string {
 	// ID=MetadataID '=' Distinctopt MDNode=MDTuple
 	//
 	// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode

@@ -33,8 +33,7 @@ import (
 //    *ir.TermCleanupRet    // https://godoc.org/github.com/llir/llvm/ir#TermCleanupRet
 //    *ir.TermUnreachable   // https://godoc.org/github.com/llir/llvm/ir#TermUnreachable
 type Terminator interface {
-	// Def returns the LLVM syntax representation of the terminator.
-	Def() string
+	LLStringer
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*Block
 }
@@ -64,8 +63,8 @@ func (*TermRet) Succs() []*Block {
 	return nil
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermRet) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermRet) LLString() string {
 	// Void return instruction.
 	//
 	// 'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
@@ -115,8 +114,8 @@ func (term *TermBr) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermBr) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermBr) LLString() string {
 	// 'br' Target=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "br %s", term.Target)
@@ -160,8 +159,8 @@ func (term *TermCondBr) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermCondBr) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermCondBr) LLString() string {
 	// 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label
 	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -211,8 +210,8 @@ func (term *TermSwitch) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermSwitch) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermSwitch) LLString() string {
 	// 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -276,8 +275,8 @@ func (term *TermIndirectBr) Succs() []*Block {
 	return term.ValidTargets
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermIndirectBr) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermIndirectBr) LLString() string {
 	// 'indirectbr' Addr=TypeValue ',' '[' ValidTargets=(Label separator ',')+
 	// ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -387,8 +386,8 @@ func (term *TermInvoke) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermInvoke) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermInvoke) LLString() string {
 	// 'invoke' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type
 	// Invokee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('['
 	// (OperandBundle separator ',')+ ']')? 'to' Normal=Label 'unwind'
@@ -464,8 +463,8 @@ func (term *TermResume) Succs() []*Block {
 	return nil
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermResume) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermResume) LLString() string {
 	// 'resume' X=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "resume %s", term.X)
@@ -526,8 +525,8 @@ func (term *TermCatchSwitch) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermCatchSwitch) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermCatchSwitch) LLString() string {
 	// 'catchswitch' 'within' Scope=ExceptionScope '[' Handlers=(Label separator
 	// ',')+ ']' 'unwind' UnwindTarget=UnwindTarget Metadata=(','
 	// MetadataAttachment)+?
@@ -579,8 +578,8 @@ func (term *TermCatchRet) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermCatchRet) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermCatchRet) LLString() string {
 	// 'catchret' 'from' From=Value 'to' To=Label Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -627,8 +626,8 @@ func (term *TermCleanupRet) Succs() []*Block {
 	return term.Successors
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermCleanupRet) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermCleanupRet) LLString() string {
 	// 'cleanupret' 'from' From=Value 'unwind' UnwindTarget Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -660,8 +659,8 @@ func (term *TermUnreachable) Succs() []*Block {
 	return nil
 }
 
-// Def returns the LLVM syntax representation of the terminator.
-func (term *TermUnreachable) Def() string {
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermUnreachable) LLString() string {
 	// 'unreachable' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("unreachable")

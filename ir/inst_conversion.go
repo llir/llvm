@@ -45,8 +45,8 @@ func (inst *InstTrunc) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstTrunc) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstTrunc) LLString() string {
 	// 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -91,8 +91,8 @@ func (inst *InstZExt) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstZExt) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstZExt) LLString() string {
 	// 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -137,8 +137,8 @@ func (inst *InstSExt) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstSExt) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstSExt) LLString() string {
 	// 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -183,8 +183,8 @@ func (inst *InstFPTrunc) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstFPTrunc) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstFPTrunc) LLString() string {
 	// 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -229,8 +229,8 @@ func (inst *InstFPExt) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstFPExt) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstFPExt) LLString() string {
 	// 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -275,8 +275,8 @@ func (inst *InstFPToUI) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstFPToUI) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstFPToUI) LLString() string {
 	// 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -321,8 +321,8 @@ func (inst *InstFPToSI) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstFPToSI) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstFPToSI) LLString() string {
 	// 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -367,8 +367,8 @@ func (inst *InstUIToFP) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstUIToFP) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstUIToFP) LLString() string {
 	// 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -413,8 +413,8 @@ func (inst *InstSIToFP) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstSIToFP) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstSIToFP) LLString() string {
 	// 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -459,8 +459,8 @@ func (inst *InstPtrToInt) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstPtrToInt) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstPtrToInt) LLString() string {
 	// 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -505,8 +505,8 @@ func (inst *InstIntToPtr) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstIntToPtr) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstIntToPtr) LLString() string {
 	// 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -551,8 +551,8 @@ func (inst *InstBitCast) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstBitCast) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstBitCast) LLString() string {
 	// 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -597,8 +597,8 @@ func (inst *InstAddrSpaceCast) Type() types.Type {
 	return inst.To
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstAddrSpaceCast) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstAddrSpaceCast) LLString() string {
 	// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}

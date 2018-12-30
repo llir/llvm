@@ -58,8 +58,8 @@ func (inst *InstExtractElement) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstExtractElement) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstExtractElement) LLString() string {
 	// 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -120,8 +120,8 @@ func (inst *InstInsertElement) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstInsertElement) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstInsertElement) LLString() string {
 	// 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue
 	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -184,8 +184,8 @@ func (inst *InstShuffleVector) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstShuffleVector) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstShuffleVector) LLString() string {
 	// 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue
 	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}

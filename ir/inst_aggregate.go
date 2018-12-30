@@ -53,8 +53,8 @@ func (inst *InstExtractValue) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstExtractValue) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstExtractValue) LLString() string {
 	// 'extractvalue' X=TypeValue Indices=(',' UintLit)+ Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -113,8 +113,8 @@ func (inst *InstInsertValue) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstInsertValue) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstInsertValue) LLString() string {
 	// 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+
 	// Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}

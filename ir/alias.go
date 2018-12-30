@@ -62,8 +62,8 @@ func (a *Alias) Type() types.Type {
 	return a.Typ
 }
 
-// Def returns the LLVM syntax representation of the alias definition.
-func (a *Alias) Def() string {
+// LLString returns the LLVM syntax representation of the alias definition.
+func (a *Alias) LLString() string {
 	// Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt
 	// Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias'
 	// ContentType=Type ',' Aliasee=TypeConst

@@ -63,8 +63,8 @@ func (i *IFunc) Type() types.Type {
 	return i.Typ
 }
 
-// Def returns the LLVM syntax representation of the IFunc definition.
-func (i *IFunc) Def() string {
+// LLString returns the LLVM syntax representation of the IFunc definition.
+func (i *IFunc) LLString() string {
 	// GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt
 	// ThreadLocalopt UnnamedAddropt 'ifunc' Type ',' Type Constant
 	buf := &strings.Builder{}

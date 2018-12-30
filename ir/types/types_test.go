@@ -42,7 +42,7 @@ func TestIntTypeEqual(t *testing.T) {
 	for _, g := range golden {
 		got := g.t.Equal(g.u)
 		if g.want != got {
-			t.Errorf("struct equality mismatch between `%s` and `%s`; expected %t, got %t", g.t.Def(), g.u.Def(), g.want, got)
+			t.Errorf("struct equality mismatch between `%s` and `%s`; expected %t, got %t", g.t.LLString(), g.u.LLString(), g.want, got)
 		}
 	}
 }
@@ -306,7 +306,7 @@ func TestEqual(t *testing.T) {
 	for _, g := range golden {
 		got := Equal(g.t, g.u)
 		if g.want != got {
-			t.Errorf("equality mismatch between `%s` and `%s`; expected %t, got %t", g.t.Def(), g.u.Def(), g.want, got)
+			t.Errorf("equality mismatch between `%s` and `%s`; expected %t, got %t", g.t.LLString(), g.u.LLString(), g.want, got)
 		}
 	}
 }
@@ -375,7 +375,7 @@ func TestStructTypeEqual(t *testing.T) {
 	for _, g := range golden {
 		got := g.t.Equal(g.u)
 		if g.want != got {
-			t.Errorf("struct equality mismatch between `%s` and `%s`; expected %t, got %t", g.t.Def(), g.u.Def(), g.want, got)
+			t.Errorf("struct equality mismatch between `%s` and `%s`; expected %t, got %t", g.t.LLString(), g.u.LLString(), g.want, got)
 		}
 	}
 }

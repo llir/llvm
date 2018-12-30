@@ -138,8 +138,9 @@ func Equal(t, u Type) bool {
 //    *types.StructType     // https://godoc.org/github.com/llir/llvm/ir/types#StructType
 type Type interface {
 	fmt.Stringer
-	// Def returns the LLVM syntax representation of the definition of the type.
-	Def() string
+	// LLString returns the LLVM syntax representation of the definition of the
+	// type.
+	LLString() string
 	// Equal reports whether t and u are of equal type.
 	Equal(u Type) bool
 	// Name returns the type name of the type.
@@ -169,11 +170,12 @@ func (t *VoidType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *VoidType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *VoidType) LLString() string {
 	// 'void'
 	return "void"
 }
@@ -235,11 +237,12 @@ func (t *FuncType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *FuncType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *FuncType) LLString() string {
 	// RetType=Type '(' Params ')'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s (", t.RetType)
@@ -299,11 +302,12 @@ func (t *IntType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *IntType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *IntType) LLString() string {
 	// int_type_tok
 	return fmt.Sprintf("i%d", t.BitSize)
 }
@@ -341,11 +345,12 @@ func (t *FloatType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *FloatType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *FloatType) LLString() string {
 	// FloatKind
 	return t.Kind.String()
 }
@@ -402,11 +407,12 @@ func (t *MMXType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *MMXType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *MMXType) LLString() string {
 	// 'x86_mmx'
 	return "x86_mmx"
 }
@@ -452,11 +458,12 @@ func (t *PointerType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *PointerType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *PointerType) LLString() string {
 	// Elem=Type AddrSpaceopt '*'
 	buf := &strings.Builder{}
 	buf.WriteString(t.ElemType.String())
@@ -523,11 +530,12 @@ func (t *VectorType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *VectorType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *VectorType) LLString() string {
 	// '<' Len=UintLit 'x' Elem=Type '>'
 	return fmt.Sprintf("<%d x %s>", t.Len, t.ElemType)
 }
@@ -563,11 +571,12 @@ func (t *LabelType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *LabelType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *LabelType) LLString() string {
 	// 'label'
 	return "label"
 }
@@ -603,11 +612,12 @@ func (t *TokenType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *TokenType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *TokenType) LLString() string {
 	// 'token'
 	return "token"
 }
@@ -643,11 +653,12 @@ func (t *MetadataType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *MetadataType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *MetadataType) LLString() string {
 	// 'metadata'
 	return "metadata"
 }
@@ -699,11 +710,12 @@ func (t *ArrayType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *ArrayType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *ArrayType) LLString() string {
 	// '[' Len=UintLit 'x' Elem=Type ']'
 	return fmt.Sprintf("[%d x %s]", t.Len, t.ElemType)
 }
@@ -772,11 +784,12 @@ func (t *StructType) String() string {
 	if len(t.TypeName) > 0 {
 		return enc.Local(t.TypeName)
 	}
-	return t.Def()
+	return t.LLString()
 }
 
-// Def returns the LLVM syntax representation of the definition of the type.
-func (t *StructType) Def() string {
+// LLString returns the LLVM syntax representation of the definition of the
+// type.
+func (t *StructType) LLString() string {
 	// Opaque struct type.
 	//
 	//    'opaque'

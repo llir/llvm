@@ -54,8 +54,8 @@ func (inst *InstShl) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstShl) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstShl) LLString() string {
 	// 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -113,8 +113,8 @@ func (inst *InstLShr) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstLShr) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstLShr) LLString() string {
 	// 'lshr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -172,8 +172,8 @@ func (inst *InstAShr) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstAShr) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstAShr) LLString() string {
 	// 'ashr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
@@ -229,8 +229,8 @@ func (inst *InstAnd) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstAnd) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstAnd) LLString() string {
 	// 'and' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -281,8 +281,8 @@ func (inst *InstOr) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstOr) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstOr) LLString() string {
 	// 'or' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -333,8 +333,8 @@ func (inst *InstXor) Type() types.Type {
 	return inst.Typ
 }
 
-// Def returns the LLVM syntax representation of the instruction.
-func (inst *InstXor) Def() string {
+// LLString returns the LLVM syntax representation of the instruction.
+func (inst *InstXor) LLString() string {
 	// 'xor' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
