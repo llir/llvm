@@ -130,7 +130,14 @@ func (gen *generator) irDICompileUnit(new metadata.SpecializedNode, old *ast.DIC
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit file field type %T not yet implemented", file))
+			}
 		case *ast.ProducerField:
 			md.Producer = stringLit(oldField.Producer())
 		case *ast.IsOptimizedField:

@@ -78,7 +78,7 @@ type DICompileUnit struct {
 	MetadataID
 
 	Language              enum.DwarfLang     // required.
-	File                  Field              // required.
+	File                  *DIFile            // required.
 	Producer              string             // optional; empty if not present.
 	IsOptimized           bool               // optional; zero value if not present.
 	Flags                 string             // optional; empty if not present.
@@ -485,6 +485,9 @@ func (md *DIFile) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIFile) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
