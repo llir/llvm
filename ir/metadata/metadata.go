@@ -10,6 +10,8 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
+// TODO: remove Null if possible.
+
 // Convenience literals.
 var (
 	// Null metadata literal.
@@ -26,8 +28,8 @@ type NamedDef struct {
 	Nodes []Node
 }
 
-// String returns the string representation of the named metadata definition.
-func (md *NamedDef) String() string {
+// Ident returns the identifier associated with the named metadata definition.
+func (md *NamedDef) Ident() string {
 	return enc.MetadataName(md.Name)
 }
 
@@ -36,12 +38,12 @@ func (md *NamedDef) String() string {
 func (md *NamedDef) LLString() string {
 	// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = !{", md)
+	buf.WriteString("!{")
 	for i, node := range md.Nodes {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(node.String())
+		buf.WriteString(node.Ident())
 	}
 	buf.WriteString("}")
 	return buf.String()
@@ -54,7 +56,7 @@ func (md *NamedDef) LLString() string {
 // Def is a metadata definition.
 type Def struct {
 	// Metadata definition ID (without '!' prefix).
-	ID int64
+	MetadataID
 	// Metadata definition node.
 	Node MDNode // Tuple or SpecializedNode
 
@@ -64,22 +66,18 @@ type Def struct {
 	Distinct bool
 }
 
-// String returns the string representation of the metadata definition.
+// String returns the LLVM syntax representation of the metadata definition.
 func (md *Def) String() string {
-	return enc.MetadataID(md.ID)
+	return md.Ident()
 }
 
 // LLString returns the LLVM syntax representation of the metadata definition.
 func (md *Def) LLString() string {
-	// ID=MetadataID '=' Distinctopt MDNode=MDTuple
-	//
-	// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", enc.MetadataID(md.ID))
 	if md.Distinct {
 		buf.WriteString("distinct ")
 	}
-	buf.WriteString(md.Node.String())
+	buf.WriteString(md.Node.Ident())
 	return buf.String()
 }
 
@@ -89,12 +87,28 @@ func (md *Def) LLString() string {
 
 // Tuple is a metadata node tuple.
 type Tuple struct {
+	// Metadata ID associated with the metadata tuple; -1 if not present.
+	MetadataID
+
 	// Metadata tuple fields.
 	Fields []Field
 }
 
-// String returns the string representation of the metadata node tuple.
+// String returns the LLVM syntax representation of the metadata tuple.
 func (md *Tuple) String() string {
+	return md.Ident()
+}
+
+// Ident returns the identifier associated with the metadata tuple.
+func (md *Tuple) Ident() string {
+	if md.MetadataID != -1 {
+		return md.MetadataID.Ident()
+	}
+	return md.LLString()
+}
+
+// LLString returns the LLVM syntax representation of the metadata tuple.
+func (md *Tuple) LLString() string {
 	// '!' MDFields
 	buf := &strings.Builder{}
 	buf.WriteString("!{")
@@ -140,7 +154,7 @@ type String struct {
 	Value string
 }
 
-// String returns the string representation of the metadata string.
+// String returns the LLVM syntax representation of the metadata string.
 func (md *String) String() string {
 	// '!' Val=StringLit
 	return fmt.Sprintf("!%s", quote(md.Value))
@@ -159,7 +173,7 @@ type Attachment struct {
 // String returns the string representation of the metadata attachment.
 func (m *Attachment) String() string {
 	// Name=MetadataName MDNode
-	return fmt.Sprintf("%s %s", enc.MetadataName(m.Name), m.Node)
+	return fmt.Sprintf("%s %s", enc.MetadataName(m.Name), m.Node.Ident())
 }
 
 // --- [ Integer literals ] -----------------------------------------------------
@@ -167,7 +181,7 @@ func (m *Attachment) String() string {
 // IntLit is an integer literal.
 type IntLit int64
 
-// String returns the string representation of the integer literal.
+// String returns the LLVM syntax representation of the integer literal.
 func (i IntLit) String() string {
 	return strconv.FormatInt(int64(i), 10)
 }
@@ -175,17 +189,41 @@ func (i IntLit) String() string {
 // UintLit is an unsigned integer literal.
 type UintLit uint64
 
-// String returns the string representation of the unsigned integer literal.
+// String returns the LLVM syntax representation of the unsigned integer literal.
 func (i UintLit) String() string {
 	return strconv.FormatUint(uint64(i), 10)
 }
 
 // --- [ Null literal ] --------------------------------------------------------
 
+// TODO: remove NullLit if possible.
+
 // NullLit is a metadata null literal.
 type NullLit struct{}
 
-// String returns the string representation of the metadata null literal.
+// String returns the LLVM syntax representation of the null literal.
 func (i *NullLit) String() string {
 	return "null"
+}
+
+// --- [ Metadata identifiers ] ------------------------------------------------
+
+// ~~~ [ Metadata ID ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// MetadataID is a metadata ID, as used by metadata definitions.
+type MetadataID int64
+
+// Ident returns the identifier associated with the metadata ID.
+func (i MetadataID) Ident() string {
+	return enc.MetadataID(int64(i))
+}
+
+// ID returns the ID of the metadata ID.
+func (i MetadataID) ID() int64 {
+	return int64(i)
+}
+
+// SetID sets the ID of the metadata ID.
+func (i *MetadataID) SetID(id int64) {
+	*i = MetadataID(id)
 }

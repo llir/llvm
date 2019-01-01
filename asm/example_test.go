@@ -222,9 +222,10 @@ func Example() {
 	//     Aliases:           nil,
 	//     IFuncs:            nil,
 	//     AttrGroupDefs:     nil,
-	//     NamedMetadataDefs: nil,
-	//     MetadataDefs:      nil,
-	//     UseListOrders:     nil,
-	//     UseListOrderBBs:   nil,
+	//     NamedMetadataDefs: {
+	//     },
+	//     MetadataDefs:    nil,
+	//     UseListOrders:   nil,
+	//     UseListOrderBBs: nil,
 	// }
 }

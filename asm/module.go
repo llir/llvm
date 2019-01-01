@@ -78,11 +78,10 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			gen.old.attrGroupDefs[id] = entity
 		case *ast.NamedMetadataDef:
 			name := metadataName(entity.Name())
-			if prev, ok := gen.old.namedMetadataDefs[name]; ok {
-				return errors.Errorf("metadata name %q already present; prev `%s`, new `%s`", enc.MetadataName(name), text(prev), text(entity))
-			}
-			gen.old.namedMetadataDefs[name] = entity
-			gen.old.namedMetadataDefOrder = append(gen.old.namedMetadataDefOrder, name)
+			// Multiple named metadata definitions of the same name are allowed.
+			// They are merged into a single named metadata definition with the
+			// nodes of each definition appended.
+			gen.old.namedMetadataDefs[name] = append(gen.old.namedMetadataDefs[name], entity)
 		case *ast.MetadataDef:
 			id := metadataID(entity.ID())
 			if prev, ok := gen.old.metadataDefs[id]; ok {
@@ -172,9 +171,92 @@ func (gen *generator) createNamedMetadataDefs() {
 func (gen *generator) createMetadataDefs() {
 	// 4a4. Index metadata IDs and create scaffolding IR metadata definitions
 	//      (without bodies).
-	for id := range gen.old.metadataDefs {
-		new := &metadata.Def{ID: id}
+	for id, md := range gen.old.metadataDefs {
+		new := newMetadataDef(id, md)
 		gen.new.metadataDefs[id] = new
+	}
+}
+
+// newMetadataDef returns a new IR metadata definition (without body) based on
+// the given AST metadata definition.
+func newMetadataDef(id int64, old *ast.MetadataDef) metadata.Definition {
+	if _, ok := old.Distinct(); ok {
+		new := &metadata.Def{Distinct: true}
+		new.SetID(id)
+		return new
+	}
+	switch oldNode := old.MDNode().(type) {
+	case *ast.MDTuple:
+		new := &metadata.Tuple{}
+		new.SetID(id)
+		return new
+	case ast.SpecializedMDNode:
+		new := newSpecializedMDNode(oldNode)
+		new.SetID(id)
+		return new
+	default:
+		panic(fmt.Errorf("support for metadata node %T not yet implemented", oldNode))
+	}
+}
+
+// newSpecializedMDNode returns a new IR specialized metadata node (without
+// body) based on the given AST specialized metadata node.
+func newSpecializedMDNode(old ast.SpecializedMDNode) metadata.SpecializedNode {
+	switch old := old.(type) {
+	case *ast.DIBasicType:
+		return &metadata.DIBasicType{}
+	case *ast.DICompileUnit:
+		return &metadata.DICompileUnit{}
+	case *ast.DICompositeType:
+		return &metadata.DICompositeType{}
+	case *ast.DIDerivedType:
+		return &metadata.DIDerivedType{}
+	case *ast.DIEnumerator:
+		return &metadata.DIEnumerator{}
+	case *ast.DIExpression:
+		return &metadata.DIExpression{}
+	case *ast.DIFile:
+		return &metadata.DIFile{}
+	case *ast.DIGlobalVariable:
+		return &metadata.DIGlobalVariable{}
+	case *ast.DIGlobalVariableExpression:
+		return &metadata.DIGlobalVariableExpression{}
+	case *ast.DIImportedEntity:
+		return &metadata.DIImportedEntity{}
+	case *ast.DILabel:
+		return &metadata.DILabel{}
+	case *ast.DILexicalBlock:
+		return &metadata.DILexicalBlock{}
+	case *ast.DILexicalBlockFile:
+		return &metadata.DILexicalBlockFile{}
+	case *ast.DILocalVariable:
+		return &metadata.DILocalVariable{}
+	case *ast.DILocation:
+		return &metadata.DILocation{}
+	case *ast.DIMacro:
+		return &metadata.DIMacro{}
+	case *ast.DIMacroFile:
+		return &metadata.DIMacroFile{}
+	case *ast.DIModule:
+		return &metadata.DIModule{}
+	case *ast.DINamespace:
+		return &metadata.DINamespace{}
+	case *ast.DIObjCProperty:
+		return &metadata.DIObjCProperty{}
+	case *ast.DISubprogram:
+		return &metadata.DISubprogram{}
+	case *ast.DISubrange:
+		return &metadata.DISubrange{}
+	case *ast.DISubroutineType:
+		return &metadata.DISubroutineType{}
+	case *ast.DITemplateTypeParameter:
+		return &metadata.DITemplateTypeParameter{}
+	case *ast.DITemplateValueParameter:
+		return &metadata.DITemplateValueParameter{}
+	case *ast.GenericDINode:
+		return &metadata.GenericDINode{}
+	default:
+		panic(fmt.Errorf("support for %T not yet implemented", old))
 	}
 }
 
@@ -259,8 +341,10 @@ func (gen *generator) translateNamedMetadataDefs() error {
 		if !ok {
 			panic(fmt.Errorf("unable to locate metadata name %q", enc.MetadataName(name)))
 		}
-		if err := gen.irNamedMetadataDef(new, old); err != nil {
-			return errors.WithStack(err)
+		for _, oldDef := range old {
+			if err := gen.irNamedMetadataDef(new, oldDef); err != nil {
+				return errors.WithStack(err)
+			}
 		}
 	}
 	return nil
@@ -270,15 +354,12 @@ func (gen *generator) translateNamedMetadataDefs() error {
 // equivalent IR named metadata definition.
 func (gen *generator) irNamedMetadataDef(new *metadata.NamedDef, old *ast.NamedMetadataDef) error {
 	// Nodes.
-	if oldNodes := old.MDNodes(); len(oldNodes) > 0 {
-		new.Nodes = make([]metadata.Node, len(oldNodes))
-		for i, oldNode := range oldNodes {
-			node, err := gen.irMetadataNode(oldNode)
-			if err != nil {
-				return errors.WithStack(err)
-			}
-			new.Nodes[i] = node
+	for _, oldNode := range old.MDNodes() {
+		node, err := gen.irMetadataNode(oldNode)
+		if err != nil {
+			return errors.WithStack(err)
 		}
+		new.Nodes = append(new.Nodes, node)
 	}
 	return nil
 }
@@ -303,23 +384,34 @@ func (gen *generator) translateMetadataDefs() error {
 
 // irMetadataDef translates the given AST metadata definition to an equivalent
 // IR metadata definition.
-func (gen *generator) irMetadataDef(new *metadata.Def, old *ast.MetadataDef) error {
-	// (optional) Distinct.
-	_, new.Distinct = old.Distinct()
+func (gen *generator) irMetadataDef(new metadata.Definition, old *ast.MetadataDef) error {
+	// (optional) Distinct; already handled by newMetadataDef.
 	// Node.
 	switch oldNode := old.MDNode().(type) {
 	case *ast.MDTuple:
-		node, err := gen.irMDTuple(oldNode)
+		if n, ok := new.(*metadata.Def); ok {
+			// Since distinct Def has an ID, the metadata tuple is used as a
+			// literal and thus has no ID.
+			new = &metadata.Tuple{}
+			new.SetID(-1)
+			n.Node = new
+		}
+		_, err := gen.irMDTuple(new, oldNode)
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		new.Node = node
 	case ast.SpecializedMDNode:
-		node, err := gen.irSpecializedMDNode(oldNode)
+		if n, ok := new.(*metadata.Def); ok {
+			// Since distinct Def has an ID, the specialized metadata node is used
+			// as a literal and thus has no ID.
+			new = newSpecializedMDNode(oldNode)
+			new.SetID(-1)
+			n.Node = new
+		}
+		_, err := gen.irSpecializedMDNode(new, oldNode)
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		new.Node = node
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}
