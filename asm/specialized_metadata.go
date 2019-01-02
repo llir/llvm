@@ -918,7 +918,14 @@ func (gen *generator) irDILocation(new metadata.SpecializedNode, old *ast.DILoca
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.InlinedAt = inlinedAt
+			switch inlinedAt := inlinedAt.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DILocation:
+				md.InlinedAt = inlinedAt
+			default:
+				panic(fmt.Errorf("support for metadata DILocation inlinedAt field type %T not yet implemented", inlinedAt))
+			}
 		case *ast.IsImplicitCodeField:
 			md.IsImplicitCode = boolLit(oldField.IsImplicitCode())
 		default:

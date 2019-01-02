@@ -1120,11 +1120,11 @@ type DILocation struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Line           int64 // optional; zero value if not present.
-	Column         int64 // optional; zero value if not present.
-	Scope          Field // required.
-	InlinedAt      Field // optional; nil if not present.
-	IsImplicitCode bool  // optional; zero value if not present.
+	Line           int64       // optional; zero value if not present.
+	Column         int64       // optional; zero value if not present.
+	Scope          Field       // required.
+	InlinedAt      *DILocation // optional; nil if not present.
+	IsImplicitCode bool        // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
