@@ -49,38 +49,6 @@ func (md *NamedDef) LLString() string {
 	return buf.String()
 }
 
-// ~~~ [ Metadata definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// TODO: check if metadata.Def should implement value.Value.
-
-// Def is a metadata definition.
-type Def struct {
-	// Metadata definition ID (without '!' prefix).
-	MetadataID
-	// Metadata definition node.
-	Node MDNode // Tuple or SpecializedNode
-
-	// extra.
-
-	// (optional) Distinct.
-	Distinct bool
-}
-
-// String returns the LLVM syntax representation of the metadata definition.
-func (md *Def) String() string {
-	return md.Ident()
-}
-
-// LLString returns the LLVM syntax representation of the metadata definition.
-func (md *Def) LLString() string {
-	buf := &strings.Builder{}
-	if md.Distinct {
-		buf.WriteString("distinct ")
-	}
-	buf.WriteString(md.Node.Ident())
-	return buf.String()
-}
-
 // === [ Metadata nodes and metadata strings ] =================================
 
 // --- [ Metadata tuple ] ------------------------------------------------------
@@ -89,6 +57,8 @@ func (md *Def) LLString() string {
 type Tuple struct {
 	// Metadata ID associated with the metadata tuple; -1 if not present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	// Metadata tuple fields.
 	Fields []Field
@@ -101,6 +71,10 @@ func (md *Tuple) String() string {
 
 // Ident returns the identifier associated with the metadata tuple.
 func (md *Tuple) Ident() string {
+	// TODO: tuple field ever null?
+	//if md == nil {
+	//	return "null"
+	//}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -111,6 +85,9 @@ func (md *Tuple) Ident() string {
 func (md *Tuple) LLString() string {
 	// '!' MDFields
 	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	buf.WriteString("!{")
 	for i, field := range md.Fields {
 		if i != 0 {
@@ -120,6 +97,11 @@ func (md *Tuple) LLString() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *Tuple) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // --- [ Metadata value ] ------------------------------------------------------

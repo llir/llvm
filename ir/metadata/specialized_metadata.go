@@ -14,6 +14,8 @@ type DIBasicType struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Tag      enum.DwarfTag         // optional; zero value if not present.
 	Name     string                // optional; empty if not present.
@@ -41,6 +43,10 @@ func (md *DIBasicType) Ident() string {
 // node.
 func (md *DIBasicType) LLString() string {
 	// '!DIBasicType' '(' Fields=(DIBasicTypeField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if md.Tag != 0 {
 		field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
@@ -66,7 +72,13 @@ func (md *DIBasicType) LLString() string {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIBasicType(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIBasicType(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIBasicType) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DICompileUnit ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,6 +88,8 @@ type DICompileUnit struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Language              enum.DwarfLang     // required.
 	File                  *DIFile            // required.
@@ -89,7 +103,7 @@ type DICompileUnit struct {
 	RetainedTypes         Field              // optional; nil if not present.
 	Globals               Field              // optional; nil if not present.
 	Imports               Field              // optional; nil if not present.
-	Macros                Field              // optional; nil if not present.
+	Macros                *Tuple             // optional; nil if not present.
 	DwoID                 uint64             // optional; zero value if not present.
 	SplitDebugInlining    bool               // optional; zero value if not present.
 	DebugInfoForProfiling bool               // optional; zero value if not present.
@@ -113,6 +127,10 @@ func (md *DICompileUnit) Ident() string {
 // node.
 func (md *DICompileUnit) LLString() string {
 	// '!DICompileUnit' '(' Fields=(DICompileUnitField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("language: %s", md.Language)
 	fields = append(fields, field)
@@ -178,7 +196,13 @@ func (md *DICompileUnit) LLString() string {
 		field = fmt.Sprintf("nameTableKind: %s", md.NameTableKind)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DICompileUnit(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DICompileUnit(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DICompileUnit) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DICompositeType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,6 +212,8 @@ type DICompositeType struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Tag            enum.DwarfTag  // required.
 	Name           string         // optional; empty if not present.
@@ -224,6 +250,10 @@ func (md *DICompositeType) Ident() string {
 // node.
 func (md *DICompositeType) LLString() string {
 	// '!DICompositeType' '(' Fields=(DICompositeTypeField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
@@ -287,7 +317,13 @@ func (md *DICompositeType) LLString() string {
 		field := fmt.Sprintf("discriminator: %s", md.Discriminator)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DICompositeType(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DICompositeType(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DICompositeType) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIDerivedType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -297,6 +333,8 @@ type DIDerivedType struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Tag               enum.DwarfTag // required.
 	Name              string        // optional; empty if not present.
@@ -329,6 +367,10 @@ func (md *DIDerivedType) Ident() string {
 // node.
 func (md *DIDerivedType) LLString() string {
 	// '!DIDerivedType' '(' Fields=(DIDerivedTypeField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
@@ -374,7 +416,13 @@ func (md *DIDerivedType) LLString() string {
 		field := fmt.Sprintf("dwarfAddressSpace: %d", md.DwarfAddressSpace)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIDerivedType(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIDerivedType(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIDerivedType) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIEnumerator ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -384,6 +432,8 @@ type DIEnumerator struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Name       string // required.
 	Value      int64  // required.
@@ -407,6 +457,10 @@ func (md *DIEnumerator) Ident() string {
 // node.
 func (md *DIEnumerator) LLString() string {
 	// '!DIEnumerator' '(' Fields=(DIEnumeratorField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("name: %s", quote(md.Name))
 	fields = append(fields, field)
@@ -420,7 +474,13 @@ func (md *DIEnumerator) LLString() string {
 		field := fmt.Sprintf("isUnsigned: %t", md.IsUnsigned)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIEnumerator(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIEnumerator(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIEnumerator) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -430,6 +490,8 @@ type DIExpression struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Fields []DIExpressionField
 }
@@ -452,6 +514,9 @@ func (md *DIExpression) Ident() string {
 func (md *DIExpression) LLString() string {
 	// '!DIExpression' '(' Fields=(DIExpressionField separator ',')* ')'
 	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	buf.WriteString("!DIExpression(")
 	for i, field := range md.Fields {
 		if i != 0 {
@@ -463,6 +528,11 @@ func (md *DIExpression) LLString() string {
 	return buf.String()
 }
 
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIExpression) SetDistinct(distinct bool) {
+	md.Distinct = distinct
+}
+
 // ~~~ [ DIFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // DIFile is a specialized metadata node.
@@ -470,6 +540,8 @@ type DIFile struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Filename     string            // required.
 	Directory    string            // required.
@@ -498,6 +570,10 @@ func (md *DIFile) Ident() string {
 // node.
 func (md *DIFile) LLString() string {
 	// '!DIFile' '(' Fields=(DIFileField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("filename: %s", quote(md.Filename))
 	fields = append(fields, field)
@@ -515,7 +591,13 @@ func (md *DIFile) LLString() string {
 		field := fmt.Sprintf("source: %s", quote(md.Source))
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIFile(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIFile(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIFile) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIGlobalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -525,6 +607,8 @@ type DIGlobalVariable struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Name           string  // required.
 	Scope          Field   // optional; nil if not present.
@@ -556,6 +640,10 @@ func (md *DIGlobalVariable) Ident() string {
 // node.
 func (md *DIGlobalVariable) LLString() string {
 	// '!DIGlobalVariable' '(' Fields=(DIGlobalVariableField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("name: %s", quote(md.Name))
 	fields = append(fields, field)
@@ -599,7 +687,13 @@ func (md *DIGlobalVariable) LLString() string {
 		field := fmt.Sprintf("align: %d", md.Align)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIGlobalVariable(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIGlobalVariable(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIGlobalVariable) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIGlobalVariableExpression ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -609,6 +703,8 @@ type DIGlobalVariableExpression struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Var Field // required.
 
@@ -639,6 +735,10 @@ func (md *DIGlobalVariableExpression) Ident() string {
 func (md *DIGlobalVariableExpression) LLString() string {
 	// '!DIGlobalVariableExpression' '(' Fields=(DIGlobalVariableExpressionField
 	// separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("var: %s", md.Var)
 	fields = append(fields, field)
@@ -648,7 +748,13 @@ func (md *DIGlobalVariableExpression) LLString() string {
 		field = fmt.Sprintf("expr: %s", md.Expr)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIGlobalVariableExpression(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIGlobalVariableExpression(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIGlobalVariableExpression) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIImportedEntity ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -658,6 +764,8 @@ type DIImportedEntity struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Tag    enum.DwarfTag // required.
 	Scope  Field         // required.
@@ -684,6 +792,10 @@ func (md *DIImportedEntity) Ident() string {
 // node.
 func (md *DIImportedEntity) LLString() string {
 	// '!DIImportedEntity' '(' Fields=(DIImportedEntityField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
@@ -705,7 +817,13 @@ func (md *DIImportedEntity) LLString() string {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIImportedEntity(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIImportedEntity(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIImportedEntity) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DILabel ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -715,6 +833,8 @@ type DILabel struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Scope Field   // required.
 	Name  string  // required.
@@ -739,6 +859,10 @@ func (md *DILabel) Ident() string {
 // node.
 func (md *DILabel) LLString() string {
 	// '!DILabel' '(' Fields=(DILabelField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -748,7 +872,13 @@ func (md *DILabel) LLString() string {
 	fields = append(fields, field)
 	field = fmt.Sprintf("line: %d", md.Line)
 	fields = append(fields, field)
-	return fmt.Sprintf("!DILabel(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DILabel(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DILabel) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DILexicalBlock ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -758,6 +888,8 @@ type DILexicalBlock struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Scope  Field   // required.
 	File   *DIFile // optional; nil if not present.
@@ -782,6 +914,10 @@ func (md *DILexicalBlock) Ident() string {
 // node.
 func (md *DILexicalBlock) LLString() string {
 	// '!DILexicalBlock' '(' Fields=(DILexicalBlockField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -797,7 +933,13 @@ func (md *DILexicalBlock) LLString() string {
 		field := fmt.Sprintf("column: %d", md.Column)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DILexicalBlock(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DILexicalBlock(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DILexicalBlock) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DILexicalBlockFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -807,6 +949,8 @@ type DILexicalBlockFile struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Scope         Field   // required.
 	File          *DIFile // optional; nil if not present.
@@ -831,6 +975,10 @@ func (md *DILexicalBlockFile) Ident() string {
 func (md *DILexicalBlockFile) LLString() string {
 	// '!DILexicalBlockFile' '(' Fields=(DILexicalBlockFileField separator ',')*
 	// ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -840,7 +988,13 @@ func (md *DILexicalBlockFile) LLString() string {
 	}
 	field = fmt.Sprintf("discriminator: %d", md.Discriminator)
 	fields = append(fields, field)
-	return fmt.Sprintf("!DILexicalBlockFile(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DILexicalBlockFile(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DILexicalBlockFile) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DILocalVariable ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -850,6 +1004,8 @@ type DILocalVariable struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Name  string      // optional; empty if not present.
 	Arg   uint64      // optional; zero value if not present.
@@ -878,6 +1034,10 @@ func (md *DILocalVariable) Ident() string {
 // node.
 func (md *DILocalVariable) LLString() string {
 	// '!DILocalVariable' '(' Fields=(DILocalVariableField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -909,7 +1069,13 @@ func (md *DILocalVariable) LLString() string {
 		field := fmt.Sprintf("align: %d", md.Align)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DILocalVariable(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DILocalVariable(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DILocalVariable) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DILocation ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -919,6 +1085,8 @@ type DILocation struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Line           int64 // optional; zero value if not present.
 	Column         int64 // optional; zero value if not present.
@@ -944,6 +1112,10 @@ func (md *DILocation) Ident() string {
 // node.
 func (md *DILocation) LLString() string {
 	// '!DILocation' '(' Fields=(DILocationField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if md.Line != 0 {
 		field := fmt.Sprintf("line: %d", md.Line)
@@ -963,7 +1135,13 @@ func (md *DILocation) LLString() string {
 		field := fmt.Sprintf("isImplicitCode: %t", md.IsImplicitCode)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DILocation(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DILocation(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DILocation) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIMacro ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -973,6 +1151,8 @@ type DIMacro struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Type  enum.DwarfMacinfo // required.
 	Line  int64             // optional; zero value if not present.
@@ -997,6 +1177,10 @@ func (md *DIMacro) Ident() string {
 // node.
 func (md *DIMacro) LLString() string {
 	// '!DIMacro' '(' Fields=(DIMacroField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("type: %s", md.Type)
 	fields = append(fields, field)
@@ -1010,7 +1194,13 @@ func (md *DIMacro) LLString() string {
 		field := fmt.Sprintf("value: %s", quote(md.Value))
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIMacro(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIMacro(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIMacro) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIMacroFile ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1020,6 +1210,8 @@ type DIMacroFile struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Type  enum.DwarfMacinfo // optional; zero value if not present.
 	Line  int64             // optional; zero value if not present.
@@ -1044,6 +1236,10 @@ func (md *DIMacroFile) Ident() string {
 // node.
 func (md *DIMacroFile) LLString() string {
 	// '!DIMacroFile' '(' Fields=(DIMacroFileField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if md.Type != 0 {
 		field := fmt.Sprintf("type: %s", md.Type)
@@ -1059,7 +1255,13 @@ func (md *DIMacroFile) LLString() string {
 		field := fmt.Sprintf("nodes: %s", md.Nodes)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIMacroFile(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIMacroFile(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIMacroFile) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIModule ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1069,6 +1271,8 @@ type DIModule struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Scope        Field  // required.
 	Name         string // required.
@@ -1094,6 +1298,10 @@ func (md *DIModule) Ident() string {
 // node.
 func (md *DIModule) LLString() string {
 	// '!DIModule' '(' Fields=(DIModuleField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -1111,7 +1319,13 @@ func (md *DIModule) LLString() string {
 		field := fmt.Sprintf("isysroot: %s", quote(md.Isysroot))
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIModule(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIModule(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIModule) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DINamespace ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1121,6 +1335,8 @@ type DINamespace struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Scope         Field  // required.
 	Name          string // optional; empty if not present.
@@ -1144,6 +1360,10 @@ func (md *DINamespace) Ident() string {
 // node.
 func (md *DINamespace) LLString() string {
 	// '!DINamespace' '(' Fields=(DINamespaceField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("scope: %s", md.Scope)
 	fields = append(fields, field)
@@ -1155,7 +1375,13 @@ func (md *DINamespace) LLString() string {
 		field := fmt.Sprintf("exportSymbols: %t", md.ExportSymbols)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DINamespace(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DINamespace(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DINamespace) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DIObjCProperty ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1165,6 +1391,8 @@ type DIObjCProperty struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Name       string  // optional; empty if not present.
 	File       *DIFile // optional; nil if not present.
@@ -1192,6 +1420,10 @@ func (md *DIObjCProperty) Ident() string {
 // node.
 func (md *DIObjCProperty) LLString() string {
 	// '!DIObjCProperty' '(' Fields=(DIObjCPropertyField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -1221,7 +1453,13 @@ func (md *DIObjCProperty) LLString() string {
 		field := fmt.Sprintf("type: %s", md.Type)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DIObjCProperty(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DIObjCProperty(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIObjCProperty) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DISubprogram ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1231,6 +1469,8 @@ type DISubprogram struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Scope          Field                // optional; nil if not present.
 	Name           string               // optional; empty if not present.
@@ -1271,6 +1511,10 @@ func (md *DISubprogram) Ident() string {
 // node.
 func (md *DISubprogram) LLString() string {
 	// '!DISubprogram' '(' Fields=(DISubprogramField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	// Note, to match Clang output, the output order is changed to output name
 	// before scope.
@@ -1356,7 +1600,13 @@ func (md *DISubprogram) LLString() string {
 		field := fmt.Sprintf("thrownTypes: %s", md.ThrownTypes)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DISubprogram(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DISubprogram(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DISubprogram) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DISubrange ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1366,6 +1616,8 @@ type DISubrange struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Count      FieldOrInt // required.
 	LowerBound int64      // optional; zero value if not present.
@@ -1388,6 +1640,10 @@ func (md *DISubrange) Ident() string {
 // node.
 func (md *DISubrange) LLString() string {
 	// '!DISubrange' '(' Fields=(DISubrangeField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("count: %s", md.Count)
 	fields = append(fields, field)
@@ -1395,7 +1651,13 @@ func (md *DISubrange) LLString() string {
 		field := fmt.Sprintf("lowerBound: %d", md.LowerBound)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!DISubrange(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DISubrange(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DISubrange) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DISubroutineType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1405,6 +1667,8 @@ type DISubroutineType struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Flags enum.DIFlag  // optional.
 	CC    enum.DwarfCC // optional; zero value if not present.
@@ -1428,6 +1692,10 @@ func (md *DISubroutineType) Ident() string {
 // node.
 func (md *DISubroutineType) LLString() string {
 	// '!DISubroutineType' '(' Fields=(DISubroutineTypeField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if md.Flags != 0 {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
@@ -1439,7 +1707,13 @@ func (md *DISubroutineType) LLString() string {
 	}
 	field := fmt.Sprintf("types: %s", md.Types)
 	fields = append(fields, field)
-	return fmt.Sprintf("!DISubroutineType(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DISubroutineType(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DISubroutineType) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DITemplateTypeParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1449,6 +1723,8 @@ type DITemplateTypeParameter struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Name string // optional; empty if not present.
 	Type Field  // required.
@@ -1472,6 +1748,10 @@ func (md *DITemplateTypeParameter) Ident() string {
 func (md *DITemplateTypeParameter) LLString() string {
 	// '!DITemplateTypeParameter' '(' Fields=(DITemplateTypeParameterField
 	// separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
@@ -1479,7 +1759,13 @@ func (md *DITemplateTypeParameter) LLString() string {
 	}
 	field := fmt.Sprintf("type: %s", md.Type)
 	fields = append(fields, field)
-	return fmt.Sprintf("!DITemplateTypeParameter(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DITemplateTypeParameter(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DITemplateTypeParameter) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ DITemplateValueParameter ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1489,6 +1775,8 @@ type DITemplateValueParameter struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Tag   enum.DwarfTag // optional; zero value if not present.
 	Name  string        // optional; empty if not present.
@@ -1513,6 +1801,10 @@ func (md *DITemplateValueParameter) Ident() string {
 // node.
 func (md *DITemplateValueParameter) LLString() string {
 	// '!DITemplateValueParameter' '(' Fields=(DITemplateValueParameterField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	if md.Tag != 0 {
 		field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
@@ -1528,7 +1820,13 @@ func (md *DITemplateValueParameter) LLString() string {
 	}
 	field := fmt.Sprintf("value: %s", md.Value)
 	fields = append(fields, field)
-	return fmt.Sprintf("!DITemplateValueParameter(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!DITemplateValueParameter(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DITemplateValueParameter) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }
 
 // ~~~ [ GenericDINode ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1538,6 +1836,8 @@ type GenericDINode struct {
 	// Metadata ID associated with the specialized metadata node; -1 if not
 	// present.
 	MetadataID
+	// (optional) Distinct.
+	Distinct bool
 
 	Tag      enum.DwarfTag // required
 	Header   string        // optional; empty if not present
@@ -1561,6 +1861,10 @@ func (md *GenericDINode) Ident() string {
 // node.
 func (md *GenericDINode) LLString() string {
 	// '!GenericDINode' '(' Fields=(GenericDINodeField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
 	var fields []string
 	field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
 	fields = append(fields, field)
@@ -1582,5 +1886,11 @@ func (md *GenericDINode) LLString() string {
 		field = fmt.Sprintf("operands: %s", buf)
 		fields = append(fields, field)
 	}
-	return fmt.Sprintf("!GenericDINode(%s)", strings.Join(fields, ", "))
+	fmt.Fprintf(buf, "!GenericDINode(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *GenericDINode) SetDistinct(distinct bool) {
+	md.Distinct = distinct
 }

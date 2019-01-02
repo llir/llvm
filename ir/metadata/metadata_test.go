@@ -7,14 +7,14 @@ import (
 
 // Assert that each metadata node implements the metadata.Node interface.
 var (
-	_ Node = (*Def)(nil)
+	_ Node = (Definition)(nil)
 	_ Node = (*DIExpression)(nil)
 )
 
 // Assert that each metadata node implements the metadata.MDNode interface.
 var (
 	_ MDNode = (*Tuple)(nil)
-	_ MDNode = (*Def)(nil)
+	_ MDNode = (Definition)(nil)
 	_ MDNode = (SpecializedNode)(nil)
 )
 
@@ -74,6 +74,6 @@ var (
 	_ Metadata = (value.Value)(nil)
 	_ Metadata = (*String)(nil)
 	_ Metadata = (*Tuple)(nil)
-	_ Metadata = (*Def)(nil)
+	_ Metadata = (Definition)(nil)
 	_ Metadata = (SpecializedNode)(nil)
 )

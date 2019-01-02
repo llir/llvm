@@ -9,7 +9,7 @@ import "fmt"
 //
 // A Node has one of the following underlying types.
 //
-//    *metadata.Def            // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
+//    metadata.Definition      // https://godoc.org/github.com/llir/llvm/ir/metadata#Definition
 //    *metadata.DIExpression   // https://godoc.org/github.com/llir/llvm/ir/metadata#DIExpression
 type Node interface {
 	// Ident returns the identifier associated with the metadata node.
@@ -20,7 +20,6 @@ type Node interface {
 //
 // A Definition has one of the following underlying types.
 //
-//    *metadata.Def     // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
 //    metadata.MDNode   // https://godoc.org/github.com/llir/llvm/ir/metadata#MDNode
 type Definition interface {
 	// String returns the LLVM syntax representation of the metadata.
@@ -34,6 +33,8 @@ type Definition interface {
 	// LLString returns the LLVM syntax representation of the metadata
 	// definition.
 	LLString() string
+	// SetDistinct specifies whether the metadata definition is dinstict.
+	SetDistinct(distinct bool)
 }
 
 // MDNode is a metadata node.
@@ -41,7 +42,7 @@ type Definition interface {
 // A MDNode has one of the following underlying types.
 //
 //    *metadata.Tuple            // https://godoc.org/github.com/llir/llvm/ir/metadata#Tuple
-//    *metadata.Def              // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
+//    metadata.Definition        // https://godoc.org/github.com/llir/llvm/ir/metadata#Definition
 //    metadata.SpecializedNode   // https://godoc.org/github.com/llir/llvm/ir/metadata#SpecializedNode
 type MDNode interface {
 	// Ident returns the identifier associated with the metadata node.
@@ -129,7 +130,7 @@ func (UintLit) IsDIExpressionField() {}
 //    value.Value                // https://godoc.org/github.com/llir/llvm/ir/value#Value
 //    *metadata.String           // https://godoc.org/github.com/llir/llvm/ir/metadata#String
 //    *metadata.Tuple            // https://godoc.org/github.com/llir/llvm/ir/metadata#Tuple
-//    *metadata.Def              // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
+//    metadata.Definition        // https://godoc.org/github.com/llir/llvm/ir/metadata#Definition
 //    metadata.SpecializedNode   // https://godoc.org/github.com/llir/llvm/ir/metadata#SpecializedNode
 type Metadata interface {
 	// String returns the LLVM syntax representation of the metadata.

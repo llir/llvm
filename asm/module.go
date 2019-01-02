@@ -180,11 +180,6 @@ func (gen *generator) createMetadataDefs() {
 // newMetadataDef returns a new IR metadata definition (without body) based on
 // the given AST metadata definition.
 func newMetadataDef(id int64, old *ast.MetadataDef) metadata.Definition {
-	if _, ok := old.Distinct(); ok {
-		new := &metadata.Def{Distinct: true}
-		new.SetID(id)
-		return new
-	}
 	switch oldNode := old.MDNode().(type) {
 	case *ast.MDTuple:
 		new := &metadata.Tuple{}
@@ -385,29 +380,17 @@ func (gen *generator) translateMetadataDefs() error {
 // irMetadataDef translates the given AST metadata definition to an equivalent
 // IR metadata definition.
 func (gen *generator) irMetadataDef(new metadata.Definition, old *ast.MetadataDef) error {
-	// (optional) Distinct; already handled by newMetadataDef.
-	// Node.
+	// (optional) Distinct.
+	if _, ok := old.Distinct(); ok {
+		new.SetDistinct(true)
+	}
 	switch oldNode := old.MDNode().(type) {
 	case *ast.MDTuple:
-		if n, ok := new.(*metadata.Def); ok {
-			// Since distinct Def has an ID, the metadata tuple is used as a
-			// literal and thus has no ID.
-			new = &metadata.Tuple{}
-			new.SetID(-1)
-			n.Node = new
-		}
 		_, err := gen.irMDTuple(new, oldNode)
 		if err != nil {
 			return errors.WithStack(err)
 		}
 	case ast.SpecializedMDNode:
-		if n, ok := new.(*metadata.Def); ok {
-			// Since distinct Def has an ID, the specialized metadata node is used
-			// as a literal and thus has no ID.
-			new = newSpecializedMDNode(oldNode)
-			new.SetID(-1)
-			n.Node = new
-		}
 		_, err := gen.irSpecializedMDNode(new, oldNode)
 		if err != nil {
 			return errors.WithStack(err)
