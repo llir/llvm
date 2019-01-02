@@ -1490,8 +1490,8 @@ type DISubprogram struct {
 	Unit           Field                // optional; nil if not present.
 	TemplateParams *Tuple               // optional; nil if not present.
 	Declaration    Field                // optional; nil if not present.
-	RetainedNodes  Field                // optional; nil if not present.
-	ThrownTypes    Field                // optional; nil if not present.
+	RetainedNodes  *Tuple               // optional; nil if not present.
+	ThrownTypes    *Tuple               // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -1672,7 +1672,7 @@ type DISubroutineType struct {
 
 	Flags enum.DIFlag  // optional.
 	CC    enum.DwarfCC // optional; zero value if not present.
-	Types Field        // required.
+	Types *Tuple       // required.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.

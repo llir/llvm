@@ -1213,13 +1213,27 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.RetainedNodes = retainedNodes
+			switch retainedNodes := retainedNodes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.RetainedNodes = retainedNodes
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram retainedNodes field type %T not yet implemented", retainedNodes))
+			}
 		case *ast.ThrownTypesField:
 			thrownTypes, err := gen.irMDField(oldField.ThrownTypes())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.ThrownTypes = thrownTypes
+			switch thrownTypes := thrownTypes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.ThrownTypes = thrownTypes
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram thrownTypes field type %T not yet implemented", thrownTypes))
+			}
 		default:
 			panic(fmt.Errorf("support for DISubprogram field %T not yet implemented", old))
 		}
@@ -1281,7 +1295,14 @@ func (gen *generator) irDISubroutineType(new metadata.SpecializedNode, old *ast.
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Types = ts
+			switch ts := ts.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Types = ts
+			default:
+				panic(fmt.Errorf("support for metadata DISubroutineType types field type %T not yet implemented", ts))
+			}
 		default:
 			panic(fmt.Errorf("support for DISubroutineType field %T not yet implemented", old))
 		}

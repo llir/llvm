@@ -71,10 +71,9 @@ func (md *Tuple) String() string {
 
 // Ident returns the identifier associated with the metadata tuple.
 func (md *Tuple) Ident() string {
-	// TODO: tuple field ever null?
-	//if md == nil {
-	//	return "null"
-	//}
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
