@@ -727,15 +727,8 @@ type DIGlobalVariableExpression struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Var Field // required.
-
-	// Note, the C++ source code of LLVM states that "expr:" is a required field,
-	// however, Clang is known to output DIGlobalVariableExpression specialized
-	// metadata nodes only containing "var:"; e.g. from `cat.ll`:
-	//
-	//    !0 = !DIGlobalVariableExpression(var: !1)
-
-	Expr Field // required.
+	Var  Field         // required.
+	Expr *DIExpression // required.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.

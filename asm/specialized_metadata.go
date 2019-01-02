@@ -629,7 +629,14 @@ func (gen *generator) irDIGlobalVariableExpression(new metadata.SpecializedNode,
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Expr = expr
+			switch expr := expr.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIExpression:
+				md.Expr = expr
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariableExpression expr field type %T not yet implemented", expr))
+			}
 		default:
 			panic(fmt.Errorf("support for DIGlobalVariableExpression field %T not yet implemented", old))
 		}
