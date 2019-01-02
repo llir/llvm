@@ -36,6 +36,10 @@ func TestParseFile(t *testing.T) {
 		// DIExpression used in named metdata definition.
 		{path: "testdata/diexpression.ll"},
 
+		// Multiple named metadata definitions with the same metadata name should
+		// be merged into one.
+		{path: "testdata/multiple_named_metadata_defs.ll"},
+
 		// frem constant expression.
 		{path: "testdata/expr_frem.ll"},
 

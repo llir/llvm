@@ -76,8 +76,7 @@
 //
 //    d) Add IR attribute group definitions to the IR module in numeric order.
 //
-//    e) Add IR named metadata definitions to the IR module in order of
-//       occurrence in the input.
+//    e) Add IR named metadata definitions to the IR module.
 //
 //    f) Add IR metadata definitions to the IR module in numeric order.
 
@@ -178,8 +177,7 @@ func (gen *generator) addDefsToModule() {
 	gen.addGlobalEntitiesToModule()
 	// 8d. Add IR attribute group definitions to the IR module in numeric order.
 	gen.addAttrGroupDefsToModule()
-	// 8e. Add IR named metadata definitions to the IR module in order of
-	//     occurrence in the input.
+	// 8e. Add IR named metadata definitions to the IR module.
 	gen.addNamedMetadataDefsToModule()
 	// 8f. Add IR metadata definitions to the IR module in numeric order.
 	gen.addMetadataDefsToModule()
@@ -279,19 +277,11 @@ func (gen *generator) addAttrGroupDefsToModule() {
 }
 
 // addNamedMetadataDefsToModule adds IR named metadata definitions to the IR
-// module in order of occurrence in the input.
+// module.
 func (gen *generator) addNamedMetadataDefsToModule() {
-	// 8e. Add IR named metadata definitions to the IR module in order of
-	//     occurrence in the input.
-	if len(gen.old.namedMetadataDefOrder) > 0 {
-		gen.m.NamedMetadataDefs = make([]*metadata.NamedDef, len(gen.old.namedMetadataDefOrder))
-		for i, name := range gen.old.namedMetadataDefOrder {
-			def, ok := gen.new.namedMetadataDefs[name]
-			if !ok {
-				panic(fmt.Errorf("unable to locate metadata name %q", enc.MetadataName(name)))
-			}
-			gen.m.NamedMetadataDefs[i] = def
-		}
+	// 8e. Add IR named metadata definitions to the IR module.
+	for name, def := range gen.new.namedMetadataDefs {
+		gen.m.NamedMetadataDefs[name] = def
 	}
 }
 
@@ -307,7 +297,7 @@ func (gen *generator) addMetadataDefsToModule() {
 	}
 	sort.Slice(metadataIDs, less)
 	if len(metadataIDs) > 0 {
-		gen.m.MetadataDefs = make([]*metadata.Def, len(metadataIDs))
+		gen.m.MetadataDefs = make([]metadata.Definition, len(metadataIDs))
 		for i, id := range metadataIDs {
 			def, ok := gen.new.metadataDefs[id]
 			if !ok {

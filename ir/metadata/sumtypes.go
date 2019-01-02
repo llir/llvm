@@ -9,10 +9,32 @@ import "fmt"
 //
 // A Node has one of the following underlying types.
 //
-//    *metadata.Def            // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
+//    metadata.Definition      // https://godoc.org/github.com/llir/llvm/ir/metadata#Definition
 //    *metadata.DIExpression   // https://godoc.org/github.com/llir/llvm/ir/metadata#DIExpression
 type Node interface {
+	// Ident returns the identifier associated with the metadata node.
+	Ident() string
+}
+
+// Definition is a metadata definition.
+//
+// A Definition has one of the following underlying types.
+//
+//    metadata.MDNode   // https://godoc.org/github.com/llir/llvm/ir/metadata#MDNode
+type Definition interface {
+	// String returns the LLVM syntax representation of the metadata.
 	fmt.Stringer
+	// Ident returns the identifier associated with the metadata definition.
+	Ident() string
+	// ID returns the ID of the metadata definition.
+	ID() int64
+	// SetID sets the ID of the metadata definition.
+	SetID(id int64)
+	// LLString returns the LLVM syntax representation of the metadata
+	// definition.
+	LLString() string
+	// SetDistinct specifies whether the metadata definition is dinstict.
+	SetDistinct(distinct bool)
 }
 
 // MDNode is a metadata node.
@@ -20,10 +42,13 @@ type Node interface {
 // A MDNode has one of the following underlying types.
 //
 //    *metadata.Tuple            // https://godoc.org/github.com/llir/llvm/ir/metadata#Tuple
-//    *metadata.Def              // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
+//    metadata.Definition        // https://godoc.org/github.com/llir/llvm/ir/metadata#Definition
 //    metadata.SpecializedNode   // https://godoc.org/github.com/llir/llvm/ir/metadata#SpecializedNode
 type MDNode interface {
-	fmt.Stringer
+	// Ident returns the identifier associated with the metadata node.
+	Ident() string
+	// LLString returns the LLVM syntax representation of the metadata node.
+	LLString() string
 }
 
 // Field is a metadata field.
@@ -33,6 +58,7 @@ type MDNode interface {
 //    *metadata.NullLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#NullLit
 //    metadata.Metadata   // https://godoc.org/github.com/llir/llvm/ir/metadata#Metadata
 type Field interface {
+	// String returns the LLVM syntax representation of the metadata field.
 	fmt.Stringer
 }
 
@@ -67,7 +93,7 @@ type Field interface {
 //    *metadata.DITemplateValueParameter     // https://godoc.org/github.com/llir/llvm/ir/metadata#DITemplateValueParameter
 //    *metadata.GenericDINode                // https://godoc.org/github.com/llir/llvm/ir/metadata#GenericDINode
 type SpecializedNode interface {
-	fmt.Stringer
+	Definition
 }
 
 // FieldOrInt is a metadata field or integer.
@@ -77,7 +103,7 @@ type SpecializedNode interface {
 //    metadata.Field    // https://godoc.org/github.com/llir/llvm/ir/metadata#Field
 //    metadata.IntLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#IntLit
 type FieldOrInt interface {
-	fmt.Stringer
+	Field
 }
 
 // DIExpressionField is a metadata DIExpression field.
@@ -104,8 +130,9 @@ func (UintLit) IsDIExpressionField() {}
 //    value.Value                // https://godoc.org/github.com/llir/llvm/ir/value#Value
 //    *metadata.String           // https://godoc.org/github.com/llir/llvm/ir/metadata#String
 //    *metadata.Tuple            // https://godoc.org/github.com/llir/llvm/ir/metadata#Tuple
-//    *metadata.Def              // https://godoc.org/github.com/llir/llvm/ir/metadata#Def
+//    metadata.Definition        // https://godoc.org/github.com/llir/llvm/ir/metadata#Definition
 //    metadata.SpecializedNode   // https://godoc.org/github.com/llir/llvm/ir/metadata#SpecializedNode
 type Metadata interface {
+	// String returns the LLVM syntax representation of the metadata.
 	fmt.Stringer
 }

@@ -15,60 +15,60 @@ import (
 
 // irSpecializedMDNode returns the IR specialized metadata node corresponding to
 // the given AST specialized metadata node.
-func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.SpecializedNode, error) {
+func (gen *generator) irSpecializedMDNode(new metadata.Definition, old ast.SpecializedMDNode) (metadata.SpecializedNode, error) {
 	switch old := old.(type) {
 	case *ast.DIBasicType:
-		return gen.irDIBasicType(old)
+		return gen.irDIBasicType(new, old)
 	case *ast.DICompileUnit:
-		return gen.irDICompileUnit(old)
+		return gen.irDICompileUnit(new, old)
 	case *ast.DICompositeType:
-		return gen.irDICompositeType(old)
+		return gen.irDICompositeType(new, old)
 	case *ast.DIDerivedType:
-		return gen.irDIDerivedType(old)
+		return gen.irDIDerivedType(new, old)
 	case *ast.DIEnumerator:
-		return gen.irDIEnumerator(old)
+		return gen.irDIEnumerator(new, old)
 	case *ast.DIExpression:
-		return gen.irDIExpression(old)
+		return gen.irDIExpression(new, old)
 	case *ast.DIFile:
-		return gen.irDIFile(old)
+		return gen.irDIFile(new, old)
 	case *ast.DIGlobalVariable:
-		return gen.irDIGlobalVariable(old)
+		return gen.irDIGlobalVariable(new, old)
 	case *ast.DIGlobalVariableExpression:
-		return gen.irDIGlobalVariableExpression(old)
+		return gen.irDIGlobalVariableExpression(new, old)
 	case *ast.DIImportedEntity:
-		return gen.irDIImportedEntity(old)
+		return gen.irDIImportedEntity(new, old)
 	case *ast.DILabel:
-		return gen.irDILabel(old)
+		return gen.irDILabel(new, old)
 	case *ast.DILexicalBlock:
-		return gen.irDILexicalBlock(old)
+		return gen.irDILexicalBlock(new, old)
 	case *ast.DILexicalBlockFile:
-		return gen.irDILexicalBlockFile(old)
+		return gen.irDILexicalBlockFile(new, old)
 	case *ast.DILocalVariable:
-		return gen.irDILocalVariable(old)
+		return gen.irDILocalVariable(new, old)
 	case *ast.DILocation:
-		return gen.irDILocation(old)
+		return gen.irDILocation(new, old)
 	case *ast.DIMacro:
-		return gen.irDIMacro(old)
+		return gen.irDIMacro(new, old)
 	case *ast.DIMacroFile:
-		return gen.irDIMacroFile(old)
+		return gen.irDIMacroFile(new, old)
 	case *ast.DIModule:
-		return gen.irDIModule(old)
+		return gen.irDIModule(new, old)
 	case *ast.DINamespace:
-		return gen.irDINamespace(old)
+		return gen.irDINamespace(new, old)
 	case *ast.DIObjCProperty:
-		return gen.irDIObjCProperty(old)
+		return gen.irDIObjCProperty(new, old)
 	case *ast.DISubprogram:
-		return gen.irDISubprogram(old)
+		return gen.irDISubprogram(new, old)
 	case *ast.DISubrange:
-		return gen.irDISubrange(old)
+		return gen.irDISubrange(new, old)
 	case *ast.DISubroutineType:
-		return gen.irDISubroutineType(old)
+		return gen.irDISubroutineType(new, old)
 	case *ast.DITemplateTypeParameter:
-		return gen.irDITemplateTypeParameter(old)
+		return gen.irDITemplateTypeParameter(new, old)
 	case *ast.DITemplateValueParameter:
-		return gen.irDITemplateValueParameter(old)
+		return gen.irDITemplateValueParameter(new, old)
 	case *ast.GenericDINode:
-		return gen.irGenericDINode(old)
+		return gen.irGenericDINode(new, old)
 	default:
 		panic(fmt.Errorf("support for %T not yet implemented", old))
 	}
@@ -77,9 +77,16 @@ func (gen *generator) irSpecializedMDNode(old ast.SpecializedMDNode) (metadata.S
 // --- [ DIBasicType ] ---------------------------------------------------------
 
 // irDIBasicType returns the IR specialized metadata node DIBasicType
-// corresponding to the given AST specialized metadata node DIBasicType.
-func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType, error) {
-	md := &metadata.DIBasicType{}
+// corresponding to the given AST specialized metadata node DIBasicType. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIBasicType(new metadata.SpecializedNode, old *ast.DIBasicType) (*metadata.DIBasicType, error) {
+	md, ok := new.(*metadata.DIBasicType)
+	if new == nil {
+		md = &metadata.DIBasicType{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIBasicType, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
@@ -104,9 +111,16 @@ func (gen *generator) irDIBasicType(old *ast.DIBasicType) (*metadata.DIBasicType
 // --- [ DICompileUnit ] -------------------------------------------------------
 
 // irDICompileUnit returns the IR specialized metadata node DICompileUnit
-// corresponding to the given AST specialized metadata node DICompileUnit.
-func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompileUnit, error) {
-	md := &metadata.DICompileUnit{}
+// corresponding to the given AST specialized metadata node DICompileUnit. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDICompileUnit(new metadata.SpecializedNode, old *ast.DICompileUnit) (*metadata.DICompileUnit, error) {
+	md, ok := new.(*metadata.DICompileUnit)
+	if new == nil {
+		md = &metadata.DICompileUnit{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DICompileUnit, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.LanguageField:
@@ -116,7 +130,14 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit file field type %T not yet implemented", file))
+			}
 		case *ast.ProducerField:
 			md.Producer = stringLit(oldField.Producer())
 		case *ast.IsOptimizedField:
@@ -134,31 +155,66 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Enums = enums
+			switch enums := enums.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Enums = enums
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit enums field type %T not yet implemented", enums))
+			}
 		case *ast.RetainedTypesField:
 			retainedTypes, err := gen.irMDField(oldField.RetainedTypes())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.RetainedTypes = retainedTypes
+			switch retainedTypes := retainedTypes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.RetainedTypes = retainedTypes
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit retainedTypes field type %T not yet implemented", retainedTypes))
+			}
 		case *ast.GlobalsField:
 			globals, err := gen.irMDField(oldField.Globals())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Globals = globals
+			switch globals := globals.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Globals = globals
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit globals field type %T not yet implemented", globals))
+			}
 		case *ast.ImportsField:
 			imports, err := gen.irMDField(oldField.Imports())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Imports = imports
+			switch imports := imports.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Imports = imports
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit imports field type %T not yet implemented", imports))
+			}
 		case *ast.MacrosField:
 			macros, err := gen.irMDField(oldField.Macros())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Macros = macros
+			switch macros := macros.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Macros = macros
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit macros field type %T not yet implemented", macros))
+			}
 		case *ast.DwoIdField:
 			md.DwoID = uintLit(oldField.DwoId())
 		case *ast.SplitDebugInliningField:
@@ -177,9 +233,16 @@ func (gen *generator) irDICompileUnit(old *ast.DICompileUnit) (*metadata.DICompi
 // --- [ DICompositeType ] -----------------------------------------------------
 
 // irDICompositeType returns the IR specialized metadata node DICompositeType
-// corresponding to the given AST specialized metadata node DICompositeType.
-func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DICompositeType, error) {
-	md := &metadata.DICompositeType{}
+// corresponding to the given AST specialized metadata node DICompositeType. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.DICompositeType) (*metadata.DICompositeType, error) {
+	md, ok := new.(*metadata.DICompositeType)
+	if new == nil {
+		md = &metadata.DICompositeType{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DICompositeType, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
@@ -197,7 +260,14 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.BaseTypeField:
@@ -219,7 +289,14 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Elements = elements
+			switch elements := elements.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Elements = elements
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType elements field type %T not yet implemented", elements))
+			}
 		case *ast.RuntimeLangField:
 			md.RuntimeLang = irDwarfLang(oldField.RuntimeLang())
 		case *ast.VtableHolderField:
@@ -227,13 +304,27 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.VtableHolder = vtableHolder
+			switch vtableHolder := vtableHolder.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DICompositeType:
+				md.VtableHolder = vtableHolder
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType vtableHolder field type %T not yet implemented", vtableHolder))
+			}
 		case *ast.TemplateParamsField:
 			templateParams, err := gen.irMDField(oldField.TemplateParams())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.TemplateParams = templateParams
+			switch templateParams := templateParams.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.TemplateParams = templateParams
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType templateParams field type %T not yet implemented", templateParams))
+			}
 		case *ast.IdentifierField:
 			md.Identifier = stringLit(oldField.Identifier())
 		case *ast.DiscriminatorField:
@@ -252,9 +343,16 @@ func (gen *generator) irDICompositeType(old *ast.DICompositeType) (*metadata.DIC
 // --- [ DIDerivedType ] -------------------------------------------------------
 
 // irDIDerivedType returns the IR specialized metadata node DIDerivedType
-// corresponding to the given AST specialized metadata node DIDerivedType.
-func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDerivedType, error) {
-	md := &metadata.DIDerivedType{}
+// corresponding to the given AST specialized metadata node DIDerivedType. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIDerivedType(new metadata.SpecializedNode, old *ast.DIDerivedType) (*metadata.DIDerivedType, error) {
+	md, ok := new.(*metadata.DIDerivedType)
+	if new == nil {
+		md = &metadata.DIDerivedType{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIDerivedType, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
@@ -272,7 +370,14 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIDerivedType file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.BaseTypeField:
@@ -308,9 +413,16 @@ func (gen *generator) irDIDerivedType(old *ast.DIDerivedType) (*metadata.DIDeriv
 // --- [ DIEnumerator ] --------------------------------------------------------
 
 // irDIEnumerator returns the IR specialized metadata node DIEnumerator
-// corresponding to the given AST specialized metadata node DIEnumerator.
-func (gen *generator) irDIEnumerator(old *ast.DIEnumerator) (*metadata.DIEnumerator, error) {
-	md := &metadata.DIEnumerator{}
+// corresponding to the given AST specialized metadata node DIEnumerator. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIEnumerator(new metadata.SpecializedNode, old *ast.DIEnumerator) (*metadata.DIEnumerator, error) {
+	md, ok := new.(*metadata.DIEnumerator)
+	if new == nil {
+		md = &metadata.DIEnumerator{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIEnumerator, got %T", new))
+	}
 	isUnsigned := false
 	for _, oldField := range old.Fields() {
 		if oldField, ok := oldField.(*ast.IsUnsignedField); ok {
@@ -345,9 +457,16 @@ func (gen *generator) irDIEnumerator(old *ast.DIEnumerator) (*metadata.DIEnumera
 // --- [ DIExpression ] --------------------------------------------------------
 
 // irDIExpression returns the IR specialized metadata node DIExpression
-// corresponding to the given AST specialized metadata node DIExpression.
-func (gen *generator) irDIExpression(old *ast.DIExpression) (*metadata.DIExpression, error) {
-	md := &metadata.DIExpression{}
+// corresponding to the given AST specialized metadata node DIExpression. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIExpression(new metadata.SpecializedNode, old *ast.DIExpression) (*metadata.DIExpression, error) {
+	md, ok := new.(*metadata.DIExpression)
+	if new == nil {
+		md = &metadata.DIExpression{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIExpression, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		field, err := gen.irDIExpressionField(oldField)
 		if err != nil {
@@ -360,6 +479,8 @@ func (gen *generator) irDIExpression(old *ast.DIExpression) (*metadata.DIExpress
 
 // ~~~ [ DIExpressionField ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// irDIExpressionField returns the IR DIExpression field corresponding to the
+// given AST DIExpression field.
 func (gen *generator) irDIExpressionField(old ast.DIExpressionField) (metadata.DIExpressionField, error) {
 	switch old := old.(type) {
 	case *ast.UintLit:
@@ -374,9 +495,16 @@ func (gen *generator) irDIExpressionField(old ast.DIExpressionField) (metadata.D
 // --- [ DIFile ] --------------------------------------------------------------
 
 // irDIFile returns the IR specialized metadata node DIFile corresponding to the
-// given AST specialized metadata node DIFile.
-func (gen *generator) irDIFile(old *ast.DIFile) (*metadata.DIFile, error) {
-	md := &metadata.DIFile{}
+// given AST specialized metadata node DIFile. A new IR specialized metadata
+// node correspoding to the AST specialized metadata node is created if new is
+// nil, otherwise the body of new is populated.
+func (gen *generator) irDIFile(new metadata.SpecializedNode, old *ast.DIFile) (*metadata.DIFile, error) {
+	md, ok := new.(*metadata.DIFile)
+	if new == nil {
+		md = &metadata.DIFile{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIFile, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.FilenameField:
@@ -399,9 +527,16 @@ func (gen *generator) irDIFile(old *ast.DIFile) (*metadata.DIFile, error) {
 // --- [ DIGlobalVariable ] ----------------------------------------------------
 
 // irDIGlobalVariable returns the IR specialized metadata node DIGlobalVariable
-// corresponding to the given AST specialized metadata node DIGlobalVariable.
-func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.DIGlobalVariable, error) {
-	md := &metadata.DIGlobalVariable{}
+// corresponding to the given AST specialized metadata node DIGlobalVariable. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIGlobalVariable(new metadata.SpecializedNode, old *ast.DIGlobalVariable) (*metadata.DIGlobalVariable, error) {
+	md, ok := new.(*metadata.DIGlobalVariable)
+	if new == nil {
+		md = &metadata.DIGlobalVariable{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIGlobalVariable, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.NameField:
@@ -419,7 +554,14 @@ func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariable file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.TypeField:
@@ -437,7 +579,14 @@ func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.TemplateParams = templateParams
+			switch templateParams := templateParams.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.TemplateParams = templateParams
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariable templateParams field type %T not yet implemented", templateParams))
+			}
 		case *ast.DeclarationField:
 			declaration, err := gen.irMDField(oldField.Declaration())
 			if err != nil {
@@ -457,9 +606,16 @@ func (gen *generator) irDIGlobalVariable(old *ast.DIGlobalVariable) (*metadata.D
 
 // irDIGlobalVariableExpression returns the IR specialized metadata node
 // DIGlobalVariableExpression corresponding to the given AST specialized
-// metadata node DIGlobalVariableExpression.
-func (gen *generator) irDIGlobalVariableExpression(old *ast.DIGlobalVariableExpression) (*metadata.DIGlobalVariableExpression, error) {
-	md := &metadata.DIGlobalVariableExpression{}
+// metadata node DIGlobalVariableExpression. A new IR specialized metadata node
+// correspoding to the AST specialized metadata node is created if new is nil,
+// otherwise the body of new is populated.
+func (gen *generator) irDIGlobalVariableExpression(new metadata.SpecializedNode, old *ast.DIGlobalVariableExpression) (*metadata.DIGlobalVariableExpression, error) {
+	md, ok := new.(*metadata.DIGlobalVariableExpression)
+	if new == nil {
+		md = &metadata.DIGlobalVariableExpression{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIGlobalVariableExpression, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.VarField:
@@ -467,13 +623,27 @@ func (gen *generator) irDIGlobalVariableExpression(old *ast.DIGlobalVariableExpr
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Var = v
+			switch v := v.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIGlobalVariable:
+				md.Var = v
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariableExpression var field type %T not yet implemented", v))
+			}
 		case *ast.ExprField:
 			expr, err := gen.irMDField(oldField.Expr())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Expr = expr
+			switch expr := expr.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIExpression:
+				md.Expr = expr
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariableExpression expr field type %T not yet implemented", expr))
+			}
 		default:
 			panic(fmt.Errorf("support for DIGlobalVariableExpression field %T not yet implemented", old))
 		}
@@ -484,9 +654,16 @@ func (gen *generator) irDIGlobalVariableExpression(old *ast.DIGlobalVariableExpr
 // --- [ DIImportedEntity ] ----------------------------------------------------
 
 // irDIImportedEntity returns the IR specialized metadata node DIImportedEntity
-// corresponding to the given AST specialized metadata node DIImportedEntity.
-func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.DIImportedEntity, error) {
-	md := &metadata.DIImportedEntity{}
+// corresponding to the given AST specialized metadata node DIImportedEntity. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIImportedEntity(new metadata.SpecializedNode, old *ast.DIImportedEntity) (*metadata.DIImportedEntity, error) {
+	md, ok := new.(*metadata.DIImportedEntity)
+	if new == nil {
+		md = &metadata.DIImportedEntity{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIImportedEntity, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
@@ -508,7 +685,14 @@ func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIImportedEntity file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.NameField:
@@ -523,9 +707,16 @@ func (gen *generator) irDIImportedEntity(old *ast.DIImportedEntity) (*metadata.D
 // --- [ DILabel ] -------------------------------------------------------------
 
 // irDILabel returns the IR specialized metadata node DILabel corresponding to
-// the given AST specialized metadata node DILabel.
-func (gen *generator) irDILabel(old *ast.DILabel) (*metadata.DILabel, error) {
-	md := &metadata.DILabel{}
+// the given AST specialized metadata node DILabel. A new IR specialized
+// metadata node correspoding to the AST specialized metadata node is created if
+// new is nil, otherwise the body of new is populated.
+func (gen *generator) irDILabel(new metadata.SpecializedNode, old *ast.DILabel) (*metadata.DILabel, error) {
+	md, ok := new.(*metadata.DILabel)
+	if new == nil {
+		md = &metadata.DILabel{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DILabel, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.ScopeField:
@@ -541,7 +732,14 @@ func (gen *generator) irDILabel(old *ast.DILabel) (*metadata.DILabel, error) {
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILabel file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		default:
@@ -554,9 +752,16 @@ func (gen *generator) irDILabel(old *ast.DILabel) (*metadata.DILabel, error) {
 // --- [ DILexicalBlock ] ------------------------------------------------------
 
 // irDILexicalBlock returns the IR specialized metadata node DILexicalBlock
-// corresponding to the given AST specialized metadata node DILexicalBlock.
-func (gen *generator) irDILexicalBlock(old *ast.DILexicalBlock) (*metadata.DILexicalBlock, error) {
-	md := &metadata.DILexicalBlock{}
+// corresponding to the given AST specialized metadata node DILexicalBlock. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDILexicalBlock(new metadata.SpecializedNode, old *ast.DILexicalBlock) (*metadata.DILexicalBlock, error) {
+	md, ok := new.(*metadata.DILexicalBlock)
+	if new == nil {
+		md = &metadata.DILexicalBlock{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DILexicalBlock, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.ScopeField:
@@ -570,7 +775,14 @@ func (gen *generator) irDILexicalBlock(old *ast.DILexicalBlock) (*metadata.DILex
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILexicalBlock file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.ColumnField:
@@ -586,9 +798,16 @@ func (gen *generator) irDILexicalBlock(old *ast.DILexicalBlock) (*metadata.DILex
 
 // irDILexicalBlockFile returns the IR specialized metadata node
 // DILexicalBlockFile corresponding to the given AST specialized metadata node
-// DILexicalBlockFile.
-func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metadata.DILexicalBlockFile, error) {
-	md := &metadata.DILexicalBlockFile{}
+// DILexicalBlockFile. A new IR specialized metadata node correspoding to the
+// AST specialized metadata node is created if new is nil, otherwise the body of
+// new is populated.
+func (gen *generator) irDILexicalBlockFile(new metadata.SpecializedNode, old *ast.DILexicalBlockFile) (*metadata.DILexicalBlockFile, error) {
+	md, ok := new.(*metadata.DILexicalBlockFile)
+	if new == nil {
+		md = &metadata.DILexicalBlockFile{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DILexicalBlockFile, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.ScopeField:
@@ -602,7 +821,14 @@ func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metada
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILexicalBlockFile file field type %T not yet implemented", file))
+			}
 		case *ast.DiscriminatorIntField:
 			md.Discriminator = uintLit(oldField.Discriminator())
 		default:
@@ -615,9 +841,16 @@ func (gen *generator) irDILexicalBlockFile(old *ast.DILexicalBlockFile) (*metada
 // --- [ DILocalVariable ] -----------------------------------------------------
 
 // irDILocalVariable returns the IR specialized metadata node DILocalVariable
-// corresponding to the given AST specialized metadata node DILocalVariable.
-func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DILocalVariable, error) {
-	md := &metadata.DILocalVariable{}
+// corresponding to the given AST specialized metadata node DILocalVariable. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDILocalVariable(new metadata.SpecializedNode, old *ast.DILocalVariable) (*metadata.DILocalVariable, error) {
+	md, ok := new.(*metadata.DILocalVariable)
+	if new == nil {
+		md = &metadata.DILocalVariable{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DILocalVariable, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.NameField:
@@ -635,7 +868,14 @@ func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DIL
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILocalVariable file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.TypeField:
@@ -658,9 +898,16 @@ func (gen *generator) irDILocalVariable(old *ast.DILocalVariable) (*metadata.DIL
 // --- [ DILocation ] ----------------------------------------------------------
 
 // irDILocation returns the IR specialized metadata node DILocation
-// corresponding to the given AST specialized metadata node DILocation.
-func (gen *generator) irDILocation(old *ast.DILocation) (*metadata.DILocation, error) {
-	md := &metadata.DILocation{}
+// corresponding to the given AST specialized metadata node DILocation. A new IR
+// specialized metadata node correspoding to the AST specialized metadata node
+// is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDILocation(new metadata.SpecializedNode, old *ast.DILocation) (*metadata.DILocation, error) {
+	md, ok := new.(*metadata.DILocation)
+	if new == nil {
+		md = &metadata.DILocation{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DILocation, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.LineField:
@@ -678,7 +925,14 @@ func (gen *generator) irDILocation(old *ast.DILocation) (*metadata.DILocation, e
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.InlinedAt = inlinedAt
+			switch inlinedAt := inlinedAt.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DILocation:
+				md.InlinedAt = inlinedAt
+			default:
+				panic(fmt.Errorf("support for metadata DILocation inlinedAt field type %T not yet implemented", inlinedAt))
+			}
 		case *ast.IsImplicitCodeField:
 			md.IsImplicitCode = boolLit(oldField.IsImplicitCode())
 		default:
@@ -691,9 +945,16 @@ func (gen *generator) irDILocation(old *ast.DILocation) (*metadata.DILocation, e
 // --- [ DIMacro ] -------------------------------------------------------------
 
 // irDIMacro returns the IR specialized metadata node DIMacro corresponding to
-// the given AST specialized metadata node DIMacro.
-func (gen *generator) irDIMacro(old *ast.DIMacro) (*metadata.DIMacro, error) {
-	md := &metadata.DIMacro{}
+// the given AST specialized metadata node DIMacro. A new IR specialized
+// metadata node correspoding to the AST specialized metadata node is created if
+// new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIMacro(new metadata.SpecializedNode, old *ast.DIMacro) (*metadata.DIMacro, error) {
+	md, ok := new.(*metadata.DIMacro)
+	if new == nil {
+		md = &metadata.DIMacro{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIMacro, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TypeMacinfoField:
@@ -714,9 +975,16 @@ func (gen *generator) irDIMacro(old *ast.DIMacro) (*metadata.DIMacro, error) {
 // --- [ DIMacroFile ] ---------------------------------------------------------
 
 // irDIMacroFile returns the IR specialized metadata node DIMacroFile
-// corresponding to the given AST specialized metadata node DIMacroFile.
-func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile, error) {
-	md := &metadata.DIMacroFile{}
+// corresponding to the given AST specialized metadata node DIMacroFile. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIMacroFile(new metadata.SpecializedNode, old *ast.DIMacroFile) (*metadata.DIMacroFile, error) {
+	md, ok := new.(*metadata.DIMacroFile)
+	if new == nil {
+		md = &metadata.DIMacroFile{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIMacroFile, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TypeMacinfoField:
@@ -728,13 +996,27 @@ func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIMacroFile file field type %T not yet implemented", file))
+			}
 		case *ast.NodesField:
 			nodes, err := gen.irMDField(oldField.Nodes())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Nodes = nodes
+			switch nodes := nodes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Nodes = nodes
+			default:
+				panic(fmt.Errorf("support for metadata DIMacroFile nodes field type %T not yet implemented", nodes))
+			}
 		default:
 			panic(fmt.Errorf("support for DIMacroFile field %T not yet implemented", old))
 		}
@@ -745,9 +1027,16 @@ func (gen *generator) irDIMacroFile(old *ast.DIMacroFile) (*metadata.DIMacroFile
 // --- [ DIModule ] ------------------------------------------------------------
 
 // irDIModule returns the IR specialized metadata node DIModule corresponding to
-// the given AST specialized metadata node DIModule.
-func (gen *generator) irDIModule(old *ast.DIModule) (*metadata.DIModule, error) {
-	md := &metadata.DIModule{}
+// the given AST specialized metadata node DIModule. A new IR specialized
+// metadata node correspoding to the AST specialized metadata node is created if
+// new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIModule(new metadata.SpecializedNode, old *ast.DIModule) (*metadata.DIModule, error) {
+	md, ok := new.(*metadata.DIModule)
+	if new == nil {
+		md = &metadata.DIModule{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIModule, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.ScopeField:
@@ -774,9 +1063,16 @@ func (gen *generator) irDIModule(old *ast.DIModule) (*metadata.DIModule, error) 
 // --- [ DINamespace ] ---------------------------------------------------------
 
 // irDINamespace returns the IR specialized metadata node DINamespace
-// corresponding to the given AST specialized metadata node DINamespace.
-func (gen *generator) irDINamespace(old *ast.DINamespace) (*metadata.DINamespace, error) {
-	md := &metadata.DINamespace{}
+// corresponding to the given AST specialized metadata node DINamespace. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDINamespace(new metadata.SpecializedNode, old *ast.DINamespace) (*metadata.DINamespace, error) {
+	md, ok := new.(*metadata.DINamespace)
+	if new == nil {
+		md = &metadata.DINamespace{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DINamespace, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.ScopeField:
@@ -799,9 +1095,16 @@ func (gen *generator) irDINamespace(old *ast.DINamespace) (*metadata.DINamespace
 // --- [ DIObjCProperty ] ------------------------------------------------------
 
 // irDIObjCProperty returns the IR specialized metadata node DIObjCProperty
-// corresponding to the given AST specialized metadata node DIObjCProperty.
-func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObjCProperty, error) {
-	md := &metadata.DIObjCProperty{}
+// corresponding to the given AST specialized metadata node DIObjCProperty. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIObjCProperty(new metadata.SpecializedNode, old *ast.DIObjCProperty) (*metadata.DIObjCProperty, error) {
+	md, ok := new.(*metadata.DIObjCProperty)
+	if new == nil {
+		md = &metadata.DIObjCProperty{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIObjCProperty, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.NameField:
@@ -811,7 +1114,14 @@ func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObj
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIObjCProperty file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.SetterField:
@@ -836,9 +1146,16 @@ func (gen *generator) irDIObjCProperty(old *ast.DIObjCProperty) (*metadata.DIObj
 // --- [ DISubprogram ] --------------------------------------------------------
 
 // irDISubprogram returns the IR specialized metadata node DISubprogram
-// corresponding to the given AST specialized metadata node DISubprogram.
-func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprogram, error) {
-	md := &metadata.DISubprogram{}
+// corresponding to the given AST specialized metadata node DISubprogram. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISubprogram) (*metadata.DISubprogram, error) {
+	md, ok := new.(*metadata.DISubprogram)
+	if new == nil {
+		md = &metadata.DISubprogram{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DISubprogram, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.ScopeField:
@@ -856,7 +1173,14 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.TypeField:
@@ -892,13 +1216,27 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Unit = unit
+			switch unit := unit.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DICompileUnit:
+				md.Unit = unit
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram unit field type %T not yet implemented", unit))
+			}
 		case *ast.TemplateParamsField:
 			templateParams, err := gen.irMDField(oldField.TemplateParams())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.TemplateParams = templateParams
+			switch templateParams := templateParams.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.TemplateParams = templateParams
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram templateParams field type %T not yet implemented", templateParams))
+			}
 		case *ast.DeclarationField:
 			declaration, err := gen.irMDField(oldField.Declaration())
 			if err != nil {
@@ -910,13 +1248,27 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.RetainedNodes = retainedNodes
+			switch retainedNodes := retainedNodes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.RetainedNodes = retainedNodes
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram retainedNodes field type %T not yet implemented", retainedNodes))
+			}
 		case *ast.ThrownTypesField:
 			thrownTypes, err := gen.irMDField(oldField.ThrownTypes())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.ThrownTypes = thrownTypes
+			switch thrownTypes := thrownTypes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.ThrownTypes = thrownTypes
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram thrownTypes field type %T not yet implemented", thrownTypes))
+			}
 		default:
 			panic(fmt.Errorf("support for DISubprogram field %T not yet implemented", old))
 		}
@@ -927,9 +1279,16 @@ func (gen *generator) irDISubprogram(old *ast.DISubprogram) (*metadata.DISubprog
 // --- [ DISubrange ] ----------------------------------------------------------
 
 // irDISubrange returns the IR specialized metadata node DISubrange
-// corresponding to the given AST specialized metadata node DISubrange.
-func (gen *generator) irDISubrange(old *ast.DISubrange) (*metadata.DISubrange, error) {
-	md := &metadata.DISubrange{}
+// corresponding to the given AST specialized metadata node DISubrange. A new IR
+// specialized metadata node correspoding to the AST specialized metadata node
+// is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDISubrange(new metadata.SpecializedNode, old *ast.DISubrange) (*metadata.DISubrange, error) {
+	md, ok := new.(*metadata.DISubrange)
+	if new == nil {
+		md = &metadata.DISubrange{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DISubrange, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.CountField:
@@ -950,9 +1309,16 @@ func (gen *generator) irDISubrange(old *ast.DISubrange) (*metadata.DISubrange, e
 // --- [ DISubroutineType ] ----------------------------------------------------
 
 // irDISubroutineType returns the IR specialized metadata node DISubroutineType
-// corresponding to the given AST specialized metadata node DISubroutineType.
-func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.DISubroutineType, error) {
-	md := &metadata.DISubroutineType{}
+// corresponding to the given AST specialized metadata node DISubroutineType. A
+// new IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDISubroutineType(new metadata.SpecializedNode, old *ast.DISubroutineType) (*metadata.DISubroutineType, error) {
+	md, ok := new.(*metadata.DISubroutineType)
+	if new == nil {
+		md = &metadata.DISubroutineType{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DISubroutineType, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.FlagsField:
@@ -964,7 +1330,14 @@ func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Types = ts
+			switch ts := ts.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Types = ts
+			default:
+				panic(fmt.Errorf("support for metadata DISubroutineType types field type %T not yet implemented", ts))
+			}
 		default:
 			panic(fmt.Errorf("support for DISubroutineType field %T not yet implemented", old))
 		}
@@ -976,9 +1349,16 @@ func (gen *generator) irDISubroutineType(old *ast.DISubroutineType) (*metadata.D
 
 // irDITemplateTypeParameter returns the IR specialized metadata node
 // DITemplateTypeParameter corresponding to the given AST specialized metadata
-// node DITemplateTypeParameter.
-func (gen *generator) irDITemplateTypeParameter(old *ast.DITemplateTypeParameter) (*metadata.DITemplateTypeParameter, error) {
-	md := &metadata.DITemplateTypeParameter{}
+// node DITemplateTypeParameter. A new IR specialized metadata node correspoding
+// to the AST specialized metadata node is created if new is nil, otherwise the
+// body of new is populated.
+func (gen *generator) irDITemplateTypeParameter(new metadata.SpecializedNode, old *ast.DITemplateTypeParameter) (*metadata.DITemplateTypeParameter, error) {
+	md, ok := new.(*metadata.DITemplateTypeParameter)
+	if new == nil {
+		md = &metadata.DITemplateTypeParameter{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DITemplateTypeParameter, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.NameField:
@@ -1000,9 +1380,16 @@ func (gen *generator) irDITemplateTypeParameter(old *ast.DITemplateTypeParameter
 
 // irDITemplateValueParameter returns the IR specialized metadata node
 // DITemplateValueParameter corresponding to the given AST specialized metadata
-// node DITemplateValueParameter.
-func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParameter) (*metadata.DITemplateValueParameter, error) {
-	md := &metadata.DITemplateValueParameter{}
+// node DITemplateValueParameter. A new IR specialized metadata node
+// correspoding to the AST specialized metadata node is created if new is nil,
+// otherwise the body of new is populated.
+func (gen *generator) irDITemplateValueParameter(new metadata.SpecializedNode, old *ast.DITemplateValueParameter) (*metadata.DITemplateValueParameter, error) {
+	md, ok := new.(*metadata.DITemplateValueParameter)
+	if new == nil {
+		md = &metadata.DITemplateValueParameter{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DITemplateValueParameter, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
@@ -1031,9 +1418,16 @@ func (gen *generator) irDITemplateValueParameter(old *ast.DITemplateValueParamet
 // --- [ GenericDINode ] -------------------------------------------------------
 
 // irGenericDINode returns the IR specialized metadata node GenericDINode
-// corresponding to the given AST specialized metadata node GenericDINode.
-func (gen *generator) irGenericDINode(old *ast.GenericDINode) (*metadata.GenericDINode, error) {
-	md := &metadata.GenericDINode{}
+// corresponding to the given AST specialized metadata node GenericDINode. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irGenericDINode(new metadata.SpecializedNode, old *ast.GenericDINode) (*metadata.GenericDINode, error) {
+	md, ok := new.(*metadata.GenericDINode)
+	if new == nil {
+		md = &metadata.GenericDINode{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.GenericDINode, got %T", new))
+	}
 	for _, oldField := range old.Fields() {
 		switch oldField := oldField.(type) {
 		case *ast.TagField:
@@ -1041,7 +1435,7 @@ func (gen *generator) irGenericDINode(old *ast.GenericDINode) (*metadata.Generic
 		case *ast.HeaderField:
 			md.Header = stringLit(oldField.Header())
 		case *ast.OperandsField:
-			for _, field := range oldField.Operands().MDFields() {
+			for _, field := range oldField.Operands() {
 				operand, err := gen.irMDField(field)
 				if err != nil {
 					return nil, errors.WithStack(err)

@@ -48,21 +48,28 @@ func (gen *generator) irMetadataAttachment(old ast.MetadataAttachment) (*metadat
 func (gen *generator) irMDNode(old ast.MDNode) (metadata.MDNode, error) {
 	switch old := old.(type) {
 	case *ast.MDTuple:
-		return gen.irMDTuple(old)
+		return gen.irMDTuple(nil, old)
 	case *ast.MetadataID:
 		return gen.metadataDefFromID(*old)
 	case ast.SpecializedMDNode:
-		return gen.irSpecializedMDNode(old)
+		return gen.irSpecializedMDNode(nil, old)
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}
 }
 
 // irMDTuple returns the IR metadata tuple corresponding to the given AST
-// metadata tuple.
-func (gen *generator) irMDTuple(old *ast.MDTuple) (*metadata.Tuple, error) {
-	tuple := &metadata.Tuple{}
-	if oldFields := old.MDFields().MDFields(); len(oldFields) > 0 {
+// metadata tuple. A new IR metadata tuple correspoding to the AST metadata
+// tuple is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irMDTuple(new metadata.Definition, old *ast.MDTuple) (*metadata.Tuple, error) {
+	tuple, ok := new.(*metadata.Tuple)
+	if new == nil {
+		tuple = &metadata.Tuple{}
+		tuple.SetID(-1) // tuple literal has no ID.
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR metadata tuple for AST metadata tuple; expected *metadata.Tuple, got %T", new))
+	}
+	if oldFields := old.MDFields(); len(oldFields) > 0 {
 		tuple.Fields = make([]metadata.Field, len(oldFields))
 		for i, oldField := range oldFields {
 			field, err := gen.irMDField(oldField)
@@ -116,11 +123,11 @@ func (gen *generator) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 		s := stringLit(old.Val())
 		return &metadata.String{Value: s}, nil
 	case *ast.MDTuple:
-		return gen.irMDTuple(old)
+		return gen.irMDTuple(nil, old)
 	case *ast.MetadataID:
 		return gen.metadataDefFromID(*old)
 	case ast.SpecializedMDNode:
-		return gen.irSpecializedMDNode(old)
+		return gen.irSpecializedMDNode(nil, old)
 	default:
 		panic(fmt.Errorf("support for metadata %T not yet implemented", old))
 	}
@@ -133,7 +140,7 @@ func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.Node, error
 	case *ast.MetadataID:
 		return gen.metadataDefFromID(*old)
 	case *ast.DIExpression:
-		return gen.irDIExpression(old)
+		return gen.irDIExpression(nil, old)
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}
@@ -143,7 +150,7 @@ func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.Node, error
 
 // metadataDefFromID returns the IR metadata definition associated with the
 // given AST metadata ID.
-func (gen *generator) metadataDefFromID(old ast.MetadataID) (*metadata.Def, error) {
+func (gen *generator) metadataDefFromID(old ast.MetadataID) (metadata.Definition, error) {
 	id := metadataID(old)
 	node, ok := gen.new.metadataDefs[id]
 	if !ok {

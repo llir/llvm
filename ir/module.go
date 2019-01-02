@@ -9,6 +9,7 @@ import (
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
+	"github.com/rickypai/natsort"
 )
 
 // === [ Modules ] =============================================================
@@ -42,9 +43,9 @@ type Module struct {
 	// (optional) Attribute group definitions.
 	AttrGroupDefs []*AttrGroupDef
 	// (optional) Named metadata definitions.
-	NamedMetadataDefs []*metadata.NamedDef
+	NamedMetadataDefs map[string]*metadata.NamedDef
 	// (optional) Metadata definitions.
-	MetadataDefs []*metadata.Def
+	MetadataDefs []metadata.Definition
 	// (optional) Use-list order directives.
 	UseListOrders []*UseListOrder
 	// (optional) Basic block specific use-list order directives.
@@ -53,7 +54,9 @@ type Module struct {
 
 // NewModule returns a new LLVM IR module.
 func NewModule() *Module {
-	return &Module{}
+	return &Module{
+		NamedMetadataDefs: make(map[string]*metadata.NamedDef),
+	}
 }
 
 // String returns the string representation of the module in LLVM IR assembly
@@ -138,19 +141,29 @@ func (m *Module) String() string {
 	for _, a := range m.AttrGroupDefs {
 		fmt.Fprintln(buf, a.LLString())
 	}
-	// Named metadata definitions.
+	// Named metadata definitions; output in natural sorting order.
+	var mdNames []string
+	for mdName := range m.NamedMetadataDefs {
+		mdNames = append(mdNames, mdName)
+	}
+	natsort.Strings(mdNames)
 	if len(m.NamedMetadataDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
-	for _, md := range m.NamedMetadataDefs {
-		fmt.Fprintln(buf, md.LLString())
+	for _, mdName := range mdNames {
+		// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
+		md := m.NamedMetadataDefs[mdName]
+		fmt.Fprintf(buf, "%s = %s\n", md.Ident(), md.LLString())
 	}
 	// Metadata definitions.
 	if len(m.MetadataDefs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
 	for _, md := range m.MetadataDefs {
-		fmt.Fprintln(buf, md.LLString())
+		// ID=MetadataID '=' Distinctopt MDNode=MDTuple
+		//
+		// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
+		fmt.Fprintf(buf, "%s = %s\n", md.Ident(), md.LLString())
 	}
 	// Use-list orders.
 	if len(m.UseListOrders) > 0 && buf.Len() > 0 {

@@ -29,13 +29,13 @@ type generator struct {
 // AST to IR representation.
 func newGenerator() *generator {
 	return &generator{
-		m: &ir.Module{},
+		m: ir.NewModule(),
 		old: oldIndex{
 			typeDefs:          make(map[string]*ast.TypeDef),
 			comdatDefs:        make(map[string]*ast.ComdatDef),
 			globals:           make(map[ir.GlobalIdent]ast.LlvmNode),
 			attrGroupDefs:     make(map[int64]*ast.AttrGroupDef),
-			namedMetadataDefs: make(map[string]*ast.NamedMetadataDef),
+			namedMetadataDefs: make(map[string][]*ast.NamedMetadataDef),
 			metadataDefs:      make(map[int64]*ast.MetadataDef),
 		},
 		new: newIndex{
@@ -44,7 +44,7 @@ func newGenerator() *generator {
 			globals:           make(map[ir.GlobalIdent]constant.Constant),
 			attrGroupDefs:     make(map[int64]*ir.AttrGroupDef),
 			namedMetadataDefs: make(map[string]*metadata.NamedDef),
-			metadataDefs:      make(map[int64]*metadata.Def),
+			metadataDefs:      make(map[int64]metadata.Definition),
 		},
 	}
 }
@@ -73,8 +73,8 @@ type oldIndex struct {
 	// attribute group definition.
 	attrGroupDefs map[int64]*ast.AttrGroupDef
 	// namedMetadataDefs maps from metadata name (without '!' prefix) to named
-	// metadata definition.
-	namedMetadataDefs map[string]*ast.NamedMetadataDef
+	// metadata definitions with the same name.
+	namedMetadataDefs map[string][]*ast.NamedMetadataDef
 	// metadataDefs maps from metadata ID (without '!' prefix) to metadata
 	// definition.
 	metadataDefs map[int64]*ast.MetadataDef
@@ -89,9 +89,6 @@ type oldIndex struct {
 	// definitions, indirect symbol definitions, and function declarations and
 	// definitions in their order of occurrence in the input.
 	globalOrder []ir.GlobalIdent
-	// namedMetadataDefOrder records the metadata name of named metadata
-	// definitions in their order of occurrence in the input.
-	namedMetadataDefOrder []string
 }
 
 // newIndex is an index of IR top-level entities.
@@ -120,5 +117,5 @@ type newIndex struct {
 	namedMetadataDefs map[string]*metadata.NamedDef
 	// metadataDefs maps from metadata ID (without '!' prefix) to metadata
 	// definition.
-	metadataDefs map[int64]*metadata.Def
+	metadataDefs map[int64]metadata.Definition
 }
