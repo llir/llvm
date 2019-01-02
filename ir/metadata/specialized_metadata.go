@@ -228,7 +228,7 @@ type DICompositeType struct {
 	Elements       Field          // optional; nil if not present.
 	RuntimeLang    enum.DwarfLang // optional; zero value if not present.
 	VtableHolder   Field          // optional; nil if not present.
-	TemplateParams Field          // optional; nil if not present.
+	TemplateParams *Tuple         // optional; nil if not present.
 	Identifier     string         // optional; empty if not present.
 	Discriminator  Field          // optional; nil if not present.
 }
@@ -618,7 +618,7 @@ type DIGlobalVariable struct {
 	Type           Field   // optional; nil if not present.
 	IsLocal        bool    // optional; zero value if not present.
 	IsDefinition   bool    // optional; zero value if not present.
-	TemplateParams Field   // optional; nil if not present.
+	TemplateParams *Tuple  // optional; nil if not present.
 	Declaration    Field   // optional; nil if not present.
 	Align          uint64  // optional; zero value if not present.
 }
@@ -1488,7 +1488,7 @@ type DISubprogram struct {
 	Flags          enum.DIFlag          // optional.
 	IsOptimized    bool                 // optional; zero value if not present.
 	Unit           Field                // optional; nil if not present.
-	TemplateParams Field                // optional; nil if not present.
+	TemplateParams *Tuple               // optional; nil if not present.
 	Declaration    Field                // optional; nil if not present.
 	RetainedNodes  Field                // optional; nil if not present.
 	ThrownTypes    Field                // optional; nil if not present.

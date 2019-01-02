@@ -303,7 +303,14 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.TemplateParams = templateParams
+			switch templateParams := templateParams.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.TemplateParams = templateParams
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType templateParams field type %T not yet implemented", templateParams))
+			}
 		case *ast.IdentifierField:
 			md.Identifier = stringLit(oldField.Identifier())
 		case *ast.DiscriminatorField:
@@ -558,7 +565,14 @@ func (gen *generator) irDIGlobalVariable(new metadata.SpecializedNode, old *ast.
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.TemplateParams = templateParams
+			switch templateParams := templateParams.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.TemplateParams = templateParams
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariable templateParams field type %T not yet implemented", templateParams))
+			}
 		case *ast.DeclarationField:
 			declaration, err := gen.irMDField(oldField.Declaration())
 			if err != nil {
@@ -1173,7 +1187,14 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.TemplateParams = templateParams
+			switch templateParams := templateParams.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.TemplateParams = templateParams
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram templateParams field type %T not yet implemented", templateParams))
+			}
 		case *ast.DeclarationField:
 			declaration, err := gen.irMDField(oldField.Declaration())
 			if err != nil {
