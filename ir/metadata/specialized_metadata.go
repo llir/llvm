@@ -1537,7 +1537,7 @@ type DISubprogram struct {
 	ThisAdjustment int64                // optional; zero value if not present.
 	Flags          enum.DIFlag          // optional.
 	IsOptimized    bool                 // optional; zero value if not present.
-	Unit           Field                // optional; nil if not present.
+	Unit           *DICompileUnit       // optional; nil if not present.
 	TemplateParams *Tuple               // optional; nil if not present.
 	Declaration    Field                // optional; nil if not present.
 	RetainedNodes  *Tuple               // optional; nil if not present.

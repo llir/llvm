@@ -1209,7 +1209,14 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Unit = unit
+			switch unit := unit.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DICompileUnit:
+				md.Unit = unit
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram unit field type %T not yet implemented", unit))
+			}
 		case *ast.TemplateParamsField:
 			templateParams, err := gen.irMDField(oldField.TemplateParams())
 			if err != nil {
