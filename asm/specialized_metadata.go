@@ -155,25 +155,53 @@ func (gen *generator) irDICompileUnit(new metadata.SpecializedNode, old *ast.DIC
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Enums = enums
+			switch enums := enums.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Enums = enums
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit enums field type %T not yet implemented", enums))
+			}
 		case *ast.RetainedTypesField:
 			retainedTypes, err := gen.irMDField(oldField.RetainedTypes())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.RetainedTypes = retainedTypes
+			switch retainedTypes := retainedTypes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.RetainedTypes = retainedTypes
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit retainedTypes field type %T not yet implemented", retainedTypes))
+			}
 		case *ast.GlobalsField:
 			globals, err := gen.irMDField(oldField.Globals())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Globals = globals
+			switch globals := globals.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Globals = globals
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit globals field type %T not yet implemented", globals))
+			}
 		case *ast.ImportsField:
 			imports, err := gen.irMDField(oldField.Imports())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Imports = imports
+			switch imports := imports.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Imports = imports
+			default:
+				panic(fmt.Errorf("support for metadata DICompileUnit imports field type %T not yet implemented", imports))
+			}
 		case *ast.MacrosField:
 			macros, err := gen.irMDField(oldField.Macros())
 			if err != nil {

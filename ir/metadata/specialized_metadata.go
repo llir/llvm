@@ -99,10 +99,10 @@ type DICompileUnit struct {
 	RuntimeVersion        uint64             // optional; zero value if not present.
 	SplitDebugFilename    string             // optional; empty if not present.
 	EmissionKind          enum.EmissionKind  // optional; zero value if not present.
-	Enums                 Field              // optional; nil if not present.
-	RetainedTypes         Field              // optional; nil if not present.
-	Globals               Field              // optional; nil if not present.
-	Imports               Field              // optional; nil if not present.
+	Enums                 *Tuple             // optional; nil if not present.
+	RetainedTypes         *Tuple             // optional; nil if not present.
+	Globals               *Tuple             // optional; nil if not present.
+	Imports               *Tuple             // optional; nil if not present.
 	Macros                *Tuple             // optional; nil if not present.
 	DwoID                 uint64             // optional; zero value if not present.
 	SplitDebugInlining    bool               // optional; zero value if not present.
