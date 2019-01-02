@@ -1216,7 +1216,7 @@ type DIMacroFile struct {
 	Type  enum.DwarfMacinfo // optional; zero value if not present.
 	Line  int64             // optional; zero value if not present.
 	File  *DIFile           // required.
-	Nodes Field             // optional; nil if not present.
+	Nodes *Tuple            // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.

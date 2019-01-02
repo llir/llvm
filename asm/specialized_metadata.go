@@ -187,7 +187,6 @@ func (gen *generator) irDICompileUnit(new metadata.SpecializedNode, old *ast.DIC
 			default:
 				panic(fmt.Errorf("support for metadata DICompileUnit macros field type %T not yet implemented", macros))
 			}
-
 		case *ast.DwoIdField:
 			md.DwoID = uintLit(oldField.DwoId())
 		case *ast.SplitDebugInliningField:
@@ -933,7 +932,14 @@ func (gen *generator) irDIMacroFile(new metadata.SpecializedNode, old *ast.DIMac
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Nodes = nodes
+			switch nodes := nodes.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Nodes = nodes
+			default:
+				panic(fmt.Errorf("support for metadata DIMacroFile nodes field type %T not yet implemented", nodes))
+			}
 		default:
 			panic(fmt.Errorf("support for DIMacroFile field %T not yet implemented", old))
 		}
