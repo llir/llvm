@@ -225,7 +225,14 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.BaseTypeField:
@@ -307,7 +314,14 @@ func (gen *generator) irDIDerivedType(new metadata.SpecializedNode, old *ast.DID
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIDerivedType file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.BaseTypeField:
@@ -484,7 +498,14 @@ func (gen *generator) irDIGlobalVariable(new metadata.SpecializedNode, old *ast.
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariable file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.TypeField:
@@ -587,7 +608,14 @@ func (gen *generator) irDIImportedEntity(new metadata.SpecializedNode, old *ast.
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIImportedEntity file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.NameField:
@@ -627,7 +655,14 @@ func (gen *generator) irDILabel(new metadata.SpecializedNode, old *ast.DILabel) 
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILabel file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		default:
@@ -663,7 +698,14 @@ func (gen *generator) irDILexicalBlock(new metadata.SpecializedNode, old *ast.DI
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILexicalBlock file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.ColumnField:
@@ -702,7 +744,14 @@ func (gen *generator) irDILexicalBlockFile(new metadata.SpecializedNode, old *as
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILexicalBlockFile file field type %T not yet implemented", file))
+			}
 		case *ast.DiscriminatorIntField:
 			md.Discriminator = uintLit(oldField.Discriminator())
 		default:
@@ -742,7 +791,14 @@ func (gen *generator) irDILocalVariable(new metadata.SpecializedNode, old *ast.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DILocalVariable file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.TypeField:
@@ -856,7 +912,14 @@ func (gen *generator) irDIMacroFile(new metadata.SpecializedNode, old *ast.DIMac
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIMacroFile file field type %T not yet implemented", file))
+			}
 		case *ast.NodesField:
 			nodes, err := gen.irMDField(oldField.Nodes())
 			if err != nil {
@@ -960,7 +1023,14 @@ func (gen *generator) irDIObjCProperty(new metadata.SpecializedNode, old *ast.DI
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DIObjCProperty file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.SetterField:
@@ -1012,7 +1082,14 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.File = file
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DISubprogram file field type %T not yet implemented", file))
+			}
 		case *ast.LineField:
 			md.Line = intLit(oldField.Line())
 		case *ast.TypeField:

@@ -192,7 +192,7 @@ type DICompositeType struct {
 	Tag            enum.DwarfTag  // required.
 	Name           string         // optional; empty if not present.
 	Scope          Field          // optional; nil if not present.
-	File           Field          // optional; nil if not present.
+	File           *DIFile        // optional; nil if not present.
 	Line           int64          // optional; zero value if not present.
 	BaseType       Field          // optional; nil if not present.
 	Size           uint64         // optional; zero value if not present.
@@ -301,7 +301,7 @@ type DIDerivedType struct {
 	Tag               enum.DwarfTag // required.
 	Name              string        // optional; empty if not present.
 	Scope             Field         // optional; nil if not present.
-	File              Field         // optional; nil if not present.
+	File              *DIFile       // optional; nil if not present.
 	Line              int64         // optional; zero value if not present.
 	BaseType          Field         // required.
 	Size              uint64        // optional; zero value if not present.
@@ -526,17 +526,17 @@ type DIGlobalVariable struct {
 	// present.
 	MetadataID
 
-	Name           string // required.
-	Scope          Field  // optional; nil if not present.
-	LinkageName    string // optional; empty if not present.
-	File           Field  // optional; nil if not present.
-	Line           int64  // optional; zero value if not present.
-	Type           Field  // optional; nil if not present.
-	IsLocal        bool   // optional; zero value if not present.
-	IsDefinition   bool   // optional; zero value if not present.
-	TemplateParams Field  // optional; nil if not present.
-	Declaration    Field  // optional; nil if not present.
-	Align          uint64 // optional; zero value if not present.
+	Name           string  // required.
+	Scope          Field   // optional; nil if not present.
+	LinkageName    string  // optional; empty if not present.
+	File           *DIFile // optional; nil if not present.
+	Line           int64   // optional; zero value if not present.
+	Type           Field   // optional; nil if not present.
+	IsLocal        bool    // optional; zero value if not present.
+	IsDefinition   bool    // optional; zero value if not present.
+	TemplateParams Field   // optional; nil if not present.
+	Declaration    Field   // optional; nil if not present.
+	Align          uint64  // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -662,7 +662,7 @@ type DIImportedEntity struct {
 	Tag    enum.DwarfTag // required.
 	Scope  Field         // required.
 	Entity Field         // optional; nil if not present.
-	File   Field         // optional; nil if not present.
+	File   *DIFile       // optional; nil if not present.
 	Line   int64         // optional; zero value if not present.
 	Name   string        // optional; empty if not present.
 }
@@ -716,10 +716,10 @@ type DILabel struct {
 	// present.
 	MetadataID
 
-	Scope Field  // required.
-	Name  string // required.
-	File  Field  // required.
-	Line  int64  // required.
+	Scope Field   // required.
+	Name  string  // required.
+	File  *DIFile // required.
+	Line  int64   // required.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -759,10 +759,10 @@ type DILexicalBlock struct {
 	// present.
 	MetadataID
 
-	Scope  Field // required.
-	File   Field // optional; nil if not present.
-	Line   int64 // optional; zero value if not present.
-	Column int64 // optional; zero value if not present.
+	Scope  Field   // required.
+	File   *DIFile // optional; nil if not present.
+	Line   int64   // optional; zero value if not present.
+	Column int64   // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -808,9 +808,9 @@ type DILexicalBlockFile struct {
 	// present.
 	MetadataID
 
-	Scope         Field  // required.
-	File          Field  // optional; nil if not present.
-	Discriminator uint64 // required.
+	Scope         Field   // required.
+	File          *DIFile // optional; nil if not present.
+	Discriminator uint64  // required.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -854,7 +854,7 @@ type DILocalVariable struct {
 	Name  string      // optional; empty if not present.
 	Arg   uint64      // optional; zero value if not present.
 	Scope Field       // required.
-	File  Field       // optional; nil if not present.
+	File  *DIFile     // optional; nil if not present.
 	Line  int64       // optional; zero value if not present.
 	Type  Field       // optional; nil if not present.
 	Flags enum.DIFlag // optional.
@@ -1023,7 +1023,7 @@ type DIMacroFile struct {
 
 	Type  enum.DwarfMacinfo // optional; zero value if not present.
 	Line  int64             // optional; zero value if not present.
-	File  Field             // required.
+	File  *DIFile           // required.
 	Nodes Field             // optional; nil if not present.
 }
 
@@ -1166,13 +1166,13 @@ type DIObjCProperty struct {
 	// present.
 	MetadataID
 
-	Name       string // optional; empty if not present.
-	File       Field  // optional; nil if not present.
-	Line       int64  // optional; zero value if not present.
-	Setter     string // optional; empty if not present.
-	Getter     string // optional; empty if not present.
-	Attributes uint64 // optional; zero value if not present.
-	Type       Field  // optional; nil if not present.
+	Name       string  // optional; empty if not present.
+	File       *DIFile // optional; nil if not present.
+	Line       int64   // optional; zero value if not present.
+	Setter     string  // optional; empty if not present.
+	Getter     string  // optional; empty if not present.
+	Attributes uint64  // optional; zero value if not present.
+	Type       Field   // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -1235,7 +1235,7 @@ type DISubprogram struct {
 	Scope          Field                // optional; nil if not present.
 	Name           string               // optional; empty if not present.
 	LinkageName    string               // optional; empty if not present.
-	File           Field                // optional; nil if not present.
+	File           *DIFile              // optional; nil if not present.
 	Line           int64                // optional; zero value if not present.
 	Type           Field                // optional; nil if not present.
 	IsLocal        bool                 // optional; zero value if not present.
