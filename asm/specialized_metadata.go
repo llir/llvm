@@ -289,7 +289,14 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Elements = elements
+			switch elements := elements.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Elements = elements
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType elements field type %T not yet implemented", elements))
+			}
 		case *ast.RuntimeLangField:
 			md.RuntimeLang = irDwarfLang(oldField.RuntimeLang())
 		case *ast.VtableHolderField:

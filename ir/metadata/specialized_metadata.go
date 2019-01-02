@@ -225,7 +225,7 @@ type DICompositeType struct {
 	Align          uint64         // optional; zero value if not present.
 	Offset         uint64         // optional; zero value if not present.
 	Flags          enum.DIFlag    // optional.
-	Elements       Field          // optional; nil if not present.
+	Elements       *Tuple         // optional; nil if not present.
 	RuntimeLang    enum.DwarfLang // optional; zero value if not present.
 	VtableHolder   Field          // optional; nil if not present.
 	TemplateParams *Tuple         // optional; nil if not present.
