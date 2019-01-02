@@ -727,8 +727,8 @@ type DIGlobalVariableExpression struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Var  Field         // required.
-	Expr *DIExpression // required.
+	Var  *DIGlobalVariable // required.
+	Expr *DIExpression     // required.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.

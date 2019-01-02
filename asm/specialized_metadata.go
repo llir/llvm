@@ -623,7 +623,14 @@ func (gen *generator) irDIGlobalVariableExpression(new metadata.SpecializedNode,
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Var = v
+			switch v := v.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIGlobalVariable:
+				md.Var = v
+			default:
+				panic(fmt.Errorf("support for metadata DIGlobalVariableExpression var field type %T not yet implemented", v))
+			}
 		case *ast.ExprField:
 			expr, err := gen.irMDField(oldField.Expr())
 			if err != nil {
