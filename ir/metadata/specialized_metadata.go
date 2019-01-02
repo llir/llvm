@@ -33,6 +33,9 @@ func (md *DIBasicType) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIBasicType) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -117,6 +120,9 @@ func (md *DICompileUnit) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DICompileUnit) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -215,22 +221,22 @@ type DICompositeType struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Tag            enum.DwarfTag  // required.
-	Name           string         // optional; empty if not present.
-	Scope          Field          // optional; nil if not present.
-	File           *DIFile        // optional; nil if not present.
-	Line           int64          // optional; zero value if not present.
-	BaseType       Field          // optional; nil if not present.
-	Size           uint64         // optional; zero value if not present.
-	Align          uint64         // optional; zero value if not present.
-	Offset         uint64         // optional; zero value if not present.
-	Flags          enum.DIFlag    // optional.
-	Elements       *Tuple         // optional; nil if not present.
-	RuntimeLang    enum.DwarfLang // optional; zero value if not present.
-	VtableHolder   Field          // optional; nil if not present.
-	TemplateParams *Tuple         // optional; nil if not present.
-	Identifier     string         // optional; empty if not present.
-	Discriminator  Field          // optional; nil if not present.
+	Tag            enum.DwarfTag    // required.
+	Name           string           // optional; empty if not present.
+	Scope          Field            // optional; nil if not present.
+	File           *DIFile          // optional; nil if not present.
+	Line           int64            // optional; zero value if not present.
+	BaseType       Field            // optional; nil if not present.
+	Size           uint64           // optional; zero value if not present.
+	Align          uint64           // optional; zero value if not present.
+	Offset         uint64           // optional; zero value if not present.
+	Flags          enum.DIFlag      // optional.
+	Elements       *Tuple           // optional; nil if not present.
+	RuntimeLang    enum.DwarfLang   // optional; zero value if not present.
+	VtableHolder   *DICompositeType // optional; nil if not present.
+	TemplateParams *Tuple           // optional; nil if not present.
+	Identifier     string           // optional; empty if not present.
+	Discriminator  Field            // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -240,6 +246,9 @@ func (md *DICompositeType) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DICompositeType) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -357,6 +366,9 @@ func (md *DIDerivedType) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIDerivedType) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -447,6 +459,9 @@ func (md *DIEnumerator) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIEnumerator) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -503,6 +518,9 @@ func (md *DIExpression) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIExpression) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -630,6 +648,9 @@ func (md *DIGlobalVariable) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIGlobalVariable) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -724,6 +745,9 @@ func (md *DIGlobalVariableExpression) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIGlobalVariableExpression) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -782,6 +806,9 @@ func (md *DIImportedEntity) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIImportedEntity) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -849,6 +876,9 @@ func (md *DILabel) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DILabel) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -904,6 +934,9 @@ func (md *DILexicalBlock) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DILexicalBlock) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -964,6 +997,9 @@ func (md *DILexicalBlockFile) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DILexicalBlockFile) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1024,6 +1060,9 @@ func (md *DILocalVariable) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DILocalVariable) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1102,6 +1141,9 @@ func (md *DILocation) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DILocation) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1167,6 +1209,9 @@ func (md *DIMacro) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIMacro) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1226,6 +1271,9 @@ func (md *DIMacroFile) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIMacroFile) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1288,6 +1336,9 @@ func (md *DIModule) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIModule) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1350,6 +1401,9 @@ func (md *DINamespace) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DINamespace) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1410,6 +1464,9 @@ func (md *DIObjCProperty) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DIObjCProperty) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1501,6 +1558,9 @@ func (md *DISubprogram) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DISubprogram) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1630,6 +1690,9 @@ func (md *DISubrange) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DISubrange) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1682,6 +1745,9 @@ func (md *DISubroutineType) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DISubroutineType) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1737,6 +1803,9 @@ func (md *DITemplateTypeParameter) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DITemplateTypeParameter) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1791,6 +1860,9 @@ func (md *DITemplateValueParameter) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *DITemplateValueParameter) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}
@@ -1851,6 +1923,9 @@ func (md *GenericDINode) String() string {
 
 // Ident returns the identifier associated with the specialized metadata node.
 func (md *GenericDINode) Ident() string {
+	if md == nil {
+		return "null"
+	}
 	if md.MetadataID != -1 {
 		return md.MetadataID.Ident()
 	}

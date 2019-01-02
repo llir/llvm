@@ -304,7 +304,14 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.VtableHolder = vtableHolder
+			switch vtableHolder := vtableHolder.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DICompositeType:
+				md.VtableHolder = vtableHolder
+			default:
+				panic(fmt.Errorf("support for metadata DICompositeType vtableHolder field type %T not yet implemented", vtableHolder))
+			}
 		case *ast.TemplateParamsField:
 			templateParams, err := gen.irMDField(oldField.TemplateParams())
 			if err != nil {
