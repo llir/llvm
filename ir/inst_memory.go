@@ -496,7 +496,7 @@ func (inst *InstGetElementPtr) Type() types.Type {
 			}
 			inst.ElemType = t.ElemType
 		default:
-			panic(fmt.Errorf("support for souce type %T not yet implemented", typ))
+			panic(fmt.Errorf("invalid source type; expected *types.Pointer or *types.Vector, got %T", typ))
 		}
 	}
 	// Cache type if not present.
