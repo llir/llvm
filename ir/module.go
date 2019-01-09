@@ -9,6 +9,7 @@ import (
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
+	"github.com/pkg/errors"
 	"github.com/rickypai/natsort"
 )
 
@@ -63,6 +64,10 @@ func NewModule() *Module {
 // syntax.
 func (m *Module) String() string {
 	buf := &strings.Builder{}
+	// Assign metadata IDs.
+	if err := m.AssignMetadataIDs(); err != nil {
+		panic(fmt.Errorf("unable to assign metadata IDs of module; %v", err))
+	}
 	// Source filename.
 	if len(m.SourceFilename) > 0 {
 		// 'source_filename' '=' Name=StringLit
@@ -295,4 +300,43 @@ func (u *UseListOrderBB) String() string {
 	}
 	buf.WriteString(" }")
 	return buf.String()
+}
+
+// ### [ Helper functions ] ####################################################
+
+// AssignMetadataIDs assigns metadata IDs to the unnamed metadata definitions of
+// the module.
+func (m *Module) AssignMetadataIDs() error {
+	// Index used IDs.
+	used := make(map[int64]bool)
+	for _, md := range m.MetadataDefs {
+		id := md.ID()
+		if id != -1 {
+			if _, ok := used[id]; ok {
+				return errors.Errorf("metadata ID %s already in use", enc.MetadataID(id))
+			}
+			used[id] = true
+		}
+	}
+	// nextID returns the next unused metdata ID.
+	curID := int64(-1)
+	nextID := func() int64 {
+		for {
+			curID++
+			if !used[curID] {
+				return curID
+			}
+		}
+	}
+	// Assign IDs to unnamed metadata definitions.
+	for _, md := range m.MetadataDefs {
+		id := md.ID()
+		if id != -1 {
+			// Metadata definition already has ID.
+			continue
+		}
+		newID := nextID()
+		md.SetID(newID)
+	}
+	return nil
 }
