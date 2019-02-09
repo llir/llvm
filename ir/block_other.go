@@ -44,7 +44,7 @@ func (block *Block) NewPhi(incs ...*Incoming) *InstPhi {
 // NewSelect appends a new select instruction to the basic block based on the
 // given selection condition and operands.
 func (block *Block) NewSelect(cond, x, y value.Value) *InstSelect {
-	inst := NewSelect(cond, x, x)
+	inst := NewSelect(cond, x, y)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
