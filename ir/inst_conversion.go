@@ -30,6 +30,11 @@ type InstTrunc struct {
 // NewTrunc returns a new trunc instruction based on the given source value and
 // target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
+	fromSize := from.Type().(*types.IntType).BitSize
+	toSize := to.(*types.IntType).BitSize
+	if fromSize < toSize {
+		panic(fmt.Errorf("invalid trunc: from.BitSize < to.BitSize (%v < %v)", fromSize, toSize))
+	}
 	return &InstTrunc{From: from, To: to}
 }
 
