@@ -34,6 +34,7 @@ type InstExtractValue struct {
 func NewExtractValue(x value.Value, indices ...uint64) *InstExtractValue {
 	inst := &InstExtractValue{X: x, Indices: indices}
 	// Compute type.
+	inst.Type()
 	return inst
 }
 
@@ -98,6 +99,7 @@ func NewInsertValue(x, elem value.Value, indices ...uint64) *InstInsertValue {
 	}
 	inst := &InstInsertValue{X: x, Elem: elem, Indices: indices}
 	// Compute type.
+	inst.Type()
 	return inst
 }
 
