@@ -92,6 +92,10 @@ type InstInsertValue struct {
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.
 func NewInsertValue(x, elem value.Value, indices ...uint64) *InstInsertValue {
+	elemType := aggregateElemType(x.Type(), indices)
+	if !elemType.Equal(elem.Type()) {
+		panic(fmt.Errorf("insertvalue elem type mismatch, expected %v, got %v", elemType, elem.Type()))
+	}
 	inst := &InstInsertValue{X: x, Elem: elem, Indices: indices}
 	// Compute type.
 	return inst
