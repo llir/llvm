@@ -444,6 +444,12 @@ type InstPtrToInt struct {
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
 // value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
+	if _, isFromPointer := from.Type().(*types.PointerType); !isFromPointer {
+		panic(fmt.Errorf("invalid ptrtoint operand type; expected *types.PointerType, got \"from\": %T", from.Type()))
+	}
+	if _, isToInt := to.(*types.IntType); !isToInt {
+		panic(fmt.Errorf("invalid ptrtoint operand type; expected *types.IntType, got \"to\": %T", to))
+	}
 	return &InstPtrToInt{From: from, To: to}
 }
 
@@ -490,6 +496,12 @@ type InstIntToPtr struct {
 // NewIntToPtr returns a new inttoptr instruction based on the given source
 // value and target type.
 func NewIntToPtr(from value.Value, to types.Type) *InstIntToPtr {
+	if _, isFromInt := from.Type().(*types.IntType); !isFromInt {
+		panic(fmt.Errorf("invalid inttoptr operand type; expected *types.IntType, got \"from\": %T", from.Type()))
+	}
+	if _, isToPtr := to.(*types.PointerType); !isToPtr {
+		panic(fmt.Errorf("invalid inttoptr operand type; expected *types.PointerType, got \"to\": %T", to))
+	}
 	return &InstIntToPtr{From: from, To: to}
 }
 
@@ -536,6 +548,12 @@ type InstBitCast struct {
 // NewBitCast returns a new bitcast instruction based on the given source value
 // and target type.
 func NewBitCast(from value.Value, to types.Type) *InstBitCast {
+	if _, isFromPtr := from.Type().(*types.PointerType); !isFromPtr {
+		panic(fmt.Errorf("invalid bitcast operand type; expected *types.PointerType, got \"from\": %T", from.Type()))
+	}
+	if _, isToPtr := to.(*types.PointerType); !isToPtr {
+		panic(fmt.Errorf("invalid bitcast operand type; expected *types.PointerType, got \"to\": %T", to))
+	}
 	return &InstBitCast{From: from, To: to}
 }
 
