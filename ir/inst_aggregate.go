@@ -146,6 +146,8 @@ func aggregateElemType(t types.Type, indices []uint64) types.Type {
 		return aggregateElemType(t.ElemType, indices[1:])
 	case *types.StructType:
 		return aggregateElemType(t.Fields[indices[0]], indices[1:])
+	case *types.PointerType:
+		return aggregateElemType(t.ElemType, indices[1:])
 	default:
 		panic(fmt.Errorf("support for aggregate type %T not yet implemented", t))
 	}
