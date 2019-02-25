@@ -1,5 +1,3 @@
-github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/inspirer/textmapper v0.0.0-20181224220124-bad2c4921a6b h1:NUCmRA9SMqaR9ePibBcE7Qakv81krZarfGg1XNVcQOs=
 github.com/inspirer/textmapper v0.0.0-20181224220124-bad2c4921a6b/go.mod h1:SpoIwXu07A3gguovN379QUCTHpUk1lhX2KIjVxpQOas=
 github.com/inspirer/textmapper v0.0.0-20190101225825-ae0b38e27780 h1:pw08V8HYitrJVu78g/A0qeKP4n88/z/4xryA3i6NY58=
@@ -19,13 +17,7 @@ github.com/mewspring/tools v0.0.0-20181204020634-6c6637dc82b6 h1:J/FwQ6PvTeHbDkh
 github.com/mewspring/tools v0.0.0-20181204020634-6c6637dc82b6/go.mod h1:UAdVbSksr+7Bg+z4mga16OaBg3qAcgdaF3x3AeqJHEs=
 github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
-github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rickypai/natsort v0.0.0-20180124032556-f194e6bd5b0c h1:wq5MmT1Whub72MXlR2I5jWTQ3Q5wkNXnVBY21Q3Qzis=
 github.com/rickypai/natsort v0.0.0-20180124032556-f194e6bd5b0c/go.mod h1:ECfieXu+EwvGnmpzRZvaAN0U/Jese1LX/BqX3HF1Kl0=
-github.com/sergi/go-diff v1.0.0 h1:Kpca3qRNrduNnOQeazBd0ysaKrUJiIuISHxogkT9RPQ=
-github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
-github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
-github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 golang.org/x/tools v0.0.0-20190102213336-ca9055ed7d04 h1:8UOlX24EQmpdZCColvpawRF3mZBG+UvrFKJJTKbQEWE=
 golang.org/x/tools v0.0.0-20190102213336-ca9055ed7d04/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
