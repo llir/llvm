@@ -34,6 +34,7 @@ type InstExtractValue struct {
 func NewExtractValue(x value.Value, indices ...uint64) *InstExtractValue {
 	inst := &InstExtractValue{X: x, Indices: indices}
 	// Compute type.
+	inst.Type()
 	return inst
 }
 
@@ -92,8 +93,13 @@ type InstInsertValue struct {
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.
 func NewInsertValue(x, elem value.Value, indices ...uint64) *InstInsertValue {
+	elemType := aggregateElemType(x.Type(), indices)
+	if !elemType.Equal(elem.Type()) {
+		panic(fmt.Errorf("insertvalue elem type mismatch, expected %v, got %v", elemType, elem.Type()))
+	}
 	inst := &InstInsertValue{X: x, Elem: elem, Indices: indices}
 	// Compute type.
+	inst.Type()
 	return inst
 }
 
@@ -142,6 +148,8 @@ func aggregateElemType(t types.Type, indices []uint64) types.Type {
 		return aggregateElemType(t.ElemType, indices[1:])
 	case *types.StructType:
 		return aggregateElemType(t.Fields[indices[0]], indices[1:])
+	case *types.PointerType:
+		return aggregateElemType(t.ElemType, indices[1:])
 	default:
 		panic(fmt.Errorf("support for aggregate type %T not yet implemented", t))
 	}
