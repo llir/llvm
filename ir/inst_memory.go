@@ -209,6 +209,14 @@ type InstStore struct {
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
 func NewStore(src, dst value.Value) *InstStore {
+	// Type-check operands.
+	dstPtrType, ok := dst.Type().(*types.PointerType)
+	if !ok {
+		panic(fmt.Errorf("invalid store dst operand type; expected *types.Pointer, got %T", dst.Type()))
+	}
+	if !src.Type().Equal(dstPtrType.ElemType) {
+		panic(fmt.Errorf("store operands are not compatible: src=%v; dst=%v", src.Type(), dst.Type()))
+	}
 	return &InstStore{Src: src, Dst: dst}
 }
 
