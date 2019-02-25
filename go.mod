@@ -1,7 +1,6 @@
 module github.com/llir/llvm
 
 require (
-	github.com/inspirer/textmapper v0.0.0-20190101225825-ae0b38e27780 // indirect
 	github.com/kr/pretty v0.1.0
 	github.com/llir/ll v0.0.0-20190101214934-d9b443a40870
 	github.com/mewkiz/pkg v0.0.0-20181231041609-5720a0c5985d

@@ -1,7 +1,5 @@
 github.com/inspirer/textmapper v0.0.0-20181224220124-bad2c4921a6b h1:NUCmRA9SMqaR9ePibBcE7Qakv81krZarfGg1XNVcQOs=
 github.com/inspirer/textmapper v0.0.0-20181224220124-bad2c4921a6b/go.mod h1:SpoIwXu07A3gguovN379QUCTHpUk1lhX2KIjVxpQOas=
-github.com/inspirer/textmapper v0.0.0-20190101225825-ae0b38e27780 h1:pw08V8HYitrJVu78g/A0qeKP4n88/z/4xryA3i6NY58=
-github.com/inspirer/textmapper v0.0.0-20190101225825-ae0b38e27780/go.mod h1:SpoIwXu07A3gguovN379QUCTHpUk1lhX2KIjVxpQOas=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
