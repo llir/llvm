@@ -30,25 +30,22 @@ type InstTrunc struct {
 // NewTrunc returns a new trunc instruction based on the given source value and
 // target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
+	// Type-check operands.
 	fromType := from.Type()
-	// Note: intentional alias, so can use it for checking
+	// Note: intentional alias, so we can use it for checking
 	// the integer types within vectors.
 	toType := to
-
 	if fromVectorT, ok := fromType.(*types.VectorType); ok {
 		toVectorT, ok := toType.(*types.VectorType)
 		if !ok {
 			panic(fmt.Errorf("trunc operands are not compatible: from=%v; to=%v", fromVectorT, to))
 		}
-
 		if fromVectorT.Len != toVectorT.Len {
 			panic(fmt.Errorf("trunc vector operand length mismatch: from=%v; to=%v", from.Type(), to))
 		}
-
 		fromType = fromVectorT.ElemType
 		toType = toVectorT.ElemType
 	}
-
 	if fromIntT, ok := fromType.(*types.IntType); ok {
 		toIntT, ok := toType.(*types.IntType)
 		if !ok {
@@ -60,7 +57,6 @@ func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 			panic(fmt.Errorf("invalid trunc operands: from.BitSize < to.BitSize (%v is smaller than %v)", from.Type(), to))
 		}
 	}
-
 	return &InstTrunc{From: from, To: to}
 }
 
