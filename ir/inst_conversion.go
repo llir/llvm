@@ -42,8 +42,7 @@ func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 		}
 
 		if fromVectorT.Len != toVectorT.Len {
-			msg := "trunc vector operand length mismatch: from=%v; to=%v"
-			panic(fmt.Errorf(msg, from.Type(), to))
+			panic(fmt.Errorf("trunc vector operand length mismatch: from=%v; to=%v", from.Type(), to))
 		}
 
 		fromType = fromVectorT.ElemType
@@ -53,14 +52,12 @@ func NewTrunc(from value.Value, to types.Type) *InstTrunc {
 	if fromIntT, ok := fromType.(*types.IntType); ok {
 		toIntT, ok := toType.(*types.IntType)
 		if !ok {
-			msg := "trunc operands are not compatible: from=%v; to=%T"
-			panic(fmt.Errorf(msg, fromIntT, to))
+			panic(fmt.Errorf("trunc operands are not compatible: from=%v; to=%T", fromIntT, to))
 		}
 		fromSize := fromIntT.BitSize
 		toSize := toIntT.BitSize
 		if fromSize < toSize {
-			msg := "invalid trunc operands: from.BitSize < to.BitSize (%v is smaller than %v)"
-			panic(fmt.Errorf(msg, from.Type(), to))
+			panic(fmt.Errorf("invalid trunc operands: from.BitSize < to.BitSize (%v is smaller than %v)", from.Type(), to))
 		}
 	}
 
