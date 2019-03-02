@@ -341,13 +341,19 @@ func (inst *InstCall) String() string {
 func (inst *InstCall) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
-		t, ok := inst.Callee.Type().(*types.PointerType)
-		if !ok {
-			panic(fmt.Errorf("invalid callee type; expected *types.PointerType, got %T", inst.Callee.Type()))
-		}
-		sig, ok := t.ElemType.(*types.FuncType)
-		if !ok {
-			panic(fmt.Errorf("invalid callee type; expected *types.FuncType, got %T", t.ElemType))
+		var sig *types.FuncType
+		switch t := inst.Callee.Type().(type) {
+		case *types.PointerType:
+			elem, ok := t.ElemType.(*types.FuncType)
+			if !ok {
+				panic(fmt.Errorf("invalid callee type; expected *types.FuncType, got %T", t.ElemType))
+			}
+			sig = elem
+		case *types.FuncType:
+			// used by inline asm values.
+			sig = t
+		default:
+			panic(fmt.Errorf("invalid callee type; expected *types.PointerType or *types.FuncType, got %T", inst.Callee.Type()))
 		}
 		if sig.Variadic {
 			inst.Typ = sig
