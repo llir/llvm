@@ -133,11 +133,22 @@ func (m *Module) String() string {
 	if len(m.Funcs) > 0 && buf.Len() > 0 {
 		buf.WriteString("\n")
 	}
+	// map function name to counter
+	funcCheckMap := make(map[string]uint64)
 	for i, f := range m.Funcs {
 		if i != 0 {
 			buf.WriteString("\n")
 		}
+		originName := f.Name()
+		count := funcCheckMap[originName]
+		// at first would be 0
+		if count > 0 {
+			newName := fmt.Sprintf("%s.%d", f.Name(), count)
+			f.SetName(newName)
+		}
+		funcCheckMap[originName]++
 		fmt.Fprintln(buf, f.LLString())
+		f.SetName(originName)
 	}
 	// Attribute group definitions.
 	if len(m.AttrGroupDefs) > 0 && buf.Len() > 0 {

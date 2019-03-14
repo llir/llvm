@@ -30,6 +30,21 @@ func TestModuleString(t *testing.T) {
 			},
 			want: "%foo = type { i32 }",
 		},
+		// duplicate named funcitons
+		{
+			in: func() *Module {
+				mod := NewModule()
+				mod.NewFunc("add", types.I64)
+				mod.NewFunc("add", types.I64)
+				mod.NewFunc("add", types.I64)
+				return mod
+			}(),
+			want: `declare i64 @add()
+
+declare i64 @add.1()
+
+declare i64 @add.2()`,
+		},
 	}
 	for _, g := range golden {
 		got := strings.TrimSpace(g.in.String())
