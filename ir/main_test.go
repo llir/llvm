@@ -18,6 +18,21 @@ func Example_main() {
 	//    }
 	//
 	// Read: https://blog.felixangell.com/an-introduction-to-llvm-in-go for inspiration
+	//
+	// Output:
+	//define i32 @main() {
+	//; <label>:0
+	//       %1 = alloca i32, align 4
+	//       %2 = alloca i32, align 4
+	//       %3 = alloca i32, align 4
+	//       store i32 0, i32* %1, align 4
+	//       store i32 32, i32* %2, align 4
+	//       store i32 16, i32* %3, align 4
+	//       %4 = load i32, i32* %2, align 4
+	//       %5 = load i32, i32* %3, align 4
+	//       %6 = add i32 %4, %5
+	//       ret i32 %6
+	//}
 
 	i32 := types.I32
 
@@ -69,19 +84,4 @@ func Example_main() {
 
 	// Print the LLVM IR assembly of the module.
 	fmt.Println(mod)
-	// Output:
-	//
-	//define i32 @main() {
-	//	; <label>:0
-	//	%1 = alloca i32, align 4
-	//	%2 = alloca i32, align 4
-	//	%3 = alloca i32, align 4
-	//	store i32 0, i32* %1, align 4
-	//	store i32 32, i32* %2, align 4
-	//	store i32 16, i32* %3, align 4
-	//	%4 = load i32, i32* %2, align 4
-	//	%5 = load i32, i32* %3, align 4
-	//	%6 = add i32 %4, %5
-	//	ret i32 %6
-	//}
 }
