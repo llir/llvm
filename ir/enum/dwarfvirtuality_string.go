@@ -4,6 +4,15 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[DwarfVirtualityNone-0]
+	_ = x[DwarfVirtualityVirtual-1]
+	_ = x[DwarfVirtualityPureVirtual-2]
+}
+
 const _DwarfVirtuality_name = "DW_VIRTUALITY_noneDW_VIRTUALITY_virtualDW_VIRTUALITY_pure_virtual"
 
 var _DwarfVirtuality_index = [...]uint8{0, 18, 39, 65}

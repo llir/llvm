@@ -4,6 +4,17 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[SelectionKindAny-0]
+	_ = x[SelectionKindExactMatch-1]
+	_ = x[SelectionKindLargest-2]
+	_ = x[SelectionKindNoDuplicates-3]
+	_ = x[SelectionKindSameSize-4]
+}
+
 const _SelectionKind_name = "anyexactmatchlargestnoduplicatessamesize"
 
 var _SelectionKind_index = [...]uint8{0, 3, 13, 20, 32, 40}

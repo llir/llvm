@@ -4,6 +4,14 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[ChecksumKindMD5-1]
+	_ = x[ChecksumKindSHA1-2]
+}
+
 const _ChecksumKind_name = "CSK_MD5CSK_SHA1"
 
 var _ChecksumKind_index = [...]uint8{0, 7, 15}

@@ -4,6 +4,15 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[EmissionKindNoDebug-0]
+	_ = x[EmissionKindFullDebug-1]
+	_ = x[EmissionKindLineTablesOnly-2]
+}
+
 const _EmissionKind_name = "NoDebugFullDebugLineTablesOnly"
 
 var _EmissionKind_index = [...]uint8{0, 7, 16, 30}

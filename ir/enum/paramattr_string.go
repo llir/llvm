@@ -4,6 +4,28 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[ParamAttrByval-0]
+	_ = x[ParamAttrInAlloca-1]
+	_ = x[ParamAttrInReg-2]
+	_ = x[ParamAttrNest-3]
+	_ = x[ParamAttrNoAlias-4]
+	_ = x[ParamAttrNoCapture-5]
+	_ = x[ParamAttrNonNull-6]
+	_ = x[ParamAttrReadNone-7]
+	_ = x[ParamAttrReadOnly-8]
+	_ = x[ParamAttrReturned-9]
+	_ = x[ParamAttrSignExt-10]
+	_ = x[ParamAttrSRet-11]
+	_ = x[ParamAttrSwiftError-12]
+	_ = x[ParamAttrSwiftSelf-13]
+	_ = x[ParamAttrWriteOnly-14]
+	_ = x[ParamAttrZeroExt-15]
+}
+
 const _ParamAttr_name = "byvalinallocainregnestnoaliasnocapturenonnullreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
 var _ParamAttr_index = [...]uint8{0, 5, 13, 18, 22, 29, 38, 45, 53, 61, 69, 76, 80, 90, 99, 108, 115}

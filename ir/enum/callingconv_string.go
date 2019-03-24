@@ -4,6 +4,55 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[CallingConvNone-0]
+	_ = x[CallingConvC-1]
+	_ = x[CallingConvFast-8]
+	_ = x[CallingConvCold-9]
+	_ = x[CallingConvGHC-10]
+	_ = x[CallingConvHiPE-11]
+	_ = x[CallingConvWebKitJS-12]
+	_ = x[CallingConvAnyReg-13]
+	_ = x[CallingConvPreserveMost-14]
+	_ = x[CallingConvPreserveAll-15]
+	_ = x[CallingConvSwift-16]
+	_ = x[CallingConvCXXFastTLS-17]
+	_ = x[CallingConvX86StdCall-64]
+	_ = x[CallingConvX86FastCall-65]
+	_ = x[CallingConvARM_APCS-66]
+	_ = x[CallingConvARM_AAPCS-67]
+	_ = x[CallingConvARM_AAPCS_VFP-68]
+	_ = x[CallingConvMSP430Intr-69]
+	_ = x[CallingConvX86ThisCall-70]
+	_ = x[CallingConvPTXKernel-71]
+	_ = x[CallingConvPTXDevice-72]
+	_ = x[CallingConvSPIRFunc-75]
+	_ = x[CallingConvSPIRKernel-76]
+	_ = x[CallingConvIntelOCL_BI-77]
+	_ = x[CallingConvX86_64SysV-78]
+	_ = x[CallingConvWin64-79]
+	_ = x[CallingConvX86VectorCall-80]
+	_ = x[CallingConvHHVM-81]
+	_ = x[CallingConvHHVM_C-82]
+	_ = x[CallingConvX86Intr-83]
+	_ = x[CallingConvAVRIntr-84]
+	_ = x[CallingConvAVRSignal-85]
+	_ = x[CallingConvAVRBuiltin-86]
+	_ = x[CallingConvAMDGPU_VS-87]
+	_ = x[CallingConvAMDGPU_GS-88]
+	_ = x[CallingConvAMDGPU_PS-89]
+	_ = x[CallingConvAMDGPU_CS-90]
+	_ = x[CallingConvAMDGPUKernel-91]
+	_ = x[CallingConvX86RegCall-92]
+	_ = x[CallingConvAMDGPU_HS-93]
+	_ = x[CallingConvMSP430Builtin-94]
+	_ = x[CallingConvAMDGPU_LS-95]
+	_ = x[CallingConvAMDGPU_ES-96]
+}
+
 const (
 	_CallingConv_name_0 = "noneccc"
 	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscc"

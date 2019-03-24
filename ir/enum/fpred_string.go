@@ -4,6 +4,28 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[FPredFalse-0]
+	_ = x[FPredOEQ-1]
+	_ = x[FPredOGE-2]
+	_ = x[FPredOGT-3]
+	_ = x[FPredOLE-4]
+	_ = x[FPredOLT-5]
+	_ = x[FPredONE-6]
+	_ = x[FPredORD-7]
+	_ = x[FPredTrue-8]
+	_ = x[FPredUEQ-9]
+	_ = x[FPredUGE-10]
+	_ = x[FPredUGT-11]
+	_ = x[FPredULE-12]
+	_ = x[FPredULT-13]
+	_ = x[FPredUNE-14]
+	_ = x[FPredUNO-15]
+}
+
 const _FPred_name = "falseoeqogeogtoleoltoneordtrueuequgeugtuleultuneuno"
 
 var _FPred_index = [...]uint8{0, 5, 8, 11, 14, 17, 20, 23, 26, 30, 33, 36, 39, 42, 45, 48, 51}
