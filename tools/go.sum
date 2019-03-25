@@ -1,0 +1,9 @@
+github.com/mewkiz/pkg v0.0.0-20190317153131-e8616647c365 h1:WeayHgdK3Mh6RMZKtcJaaRMjGvJeRdn+e+QqO50us84=
+github.com/mewkiz/pkg v0.0.0-20190317153131-e8616647c365/go.mod h1:NefHmmDOyP6U1WiFFk+jFR3YdHoTeueo8nOZ6i1vZbA=
+github.com/mewspring/tools v0.0.0-20181204020634-6c6637dc82b6 h1:J/FwQ6PvTeHbDkhGt+nDlIXXGRdXUCqVdL85tmHflAg=
+github.com/mewspring/tools v0.0.0-20181204020634-6c6637dc82b6/go.mod h1:UAdVbSksr+7Bg+z4mga16OaBg3qAcgdaF3x3AeqJHEs=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
+github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+golang.org/x/image v0.0.0-20190220214146-31aff87c08e9/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
+golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
