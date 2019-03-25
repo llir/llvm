@@ -30,9 +30,12 @@ These steps describe how to install the [llir/llvm](https://github.com/llir/llvm
 ```bash
 # Clone repo and submodules.
 git clone --recursive https://github.com/llir/llvm
+cd llvm
+
+# Re-generate asm/enum package when making changes to ir/enum.
+make -C asm/enum
 
 # Build.
-cd llvm
 go install ./...
 
 # Run tests.
