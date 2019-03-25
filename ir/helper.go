@@ -179,6 +179,7 @@ func (i GlobalIdent) Name() string {
 // SetName sets the name of the global identifier.
 func (i *GlobalIdent) SetName(name string) {
 	i.GlobalName = name
+	i.GlobalID = 0
 }
 
 // ID returns the ID of the global identifier.
@@ -234,6 +235,7 @@ func (i LocalIdent) Name() string {
 // SetName sets the name of the local identifier.
 func (i *LocalIdent) SetName(name string) {
 	i.LocalName = name
+	i.LocalID = 0
 }
 
 // ID returns the ID of the local identifier.
