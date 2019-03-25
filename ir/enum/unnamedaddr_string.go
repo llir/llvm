@@ -4,6 +4,15 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[UnnamedAddrNone-0]
+	_ = x[UnnamedAddrLocalUnnamedAddr-1]
+	_ = x[UnnamedAddrUnnamedAddr-2]
+}
+
 const _UnnamedAddr_name = "nonelocal_unnamed_addrunnamed_addr"
 
 var _UnnamedAddr_index = [...]uint8{0, 4, 22, 34}

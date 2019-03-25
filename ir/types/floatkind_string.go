@@ -4,6 +4,18 @@ package types
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[FloatKindHalf-0]
+	_ = x[FloatKindFloat-1]
+	_ = x[FloatKindDouble-2]
+	_ = x[FloatKindFP128-3]
+	_ = x[FloatKindX86_FP80-4]
+	_ = x[FloatKindPPC_FP128-5]
+}
+
 const _FloatKind_name = "halffloatdoublefp128x86_fp80ppc_fp128"
 
 var _FloatKind_index = [...]uint8{0, 4, 9, 15, 20, 28, 37}

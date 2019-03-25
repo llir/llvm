@@ -4,6 +4,14 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[ClauseTypeCatch-1]
+	_ = x[ClauseTypeFilter-2]
+}
+
 const _ClauseType_name = "catchfilter"
 
 var _ClauseType_index = [...]uint8{0, 5, 11}

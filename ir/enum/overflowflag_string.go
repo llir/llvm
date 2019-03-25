@@ -4,6 +4,14 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[OverflowFlagNSW-0]
+	_ = x[OverflowFlagNUW-1]
+}
+
 const _OverflowFlag_name = "nswnuw"
 
 var _OverflowFlag_index = [...]uint8{0, 3, 6}

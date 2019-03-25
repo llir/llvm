@@ -4,6 +4,15 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[NameTableKindDefault-0]
+	_ = x[NameTableKindGNU-1]
+	_ = x[NameTableKindNone-2]
+}
+
 const _NameTableKind_name = "DefaultGNUNone"
 
 var _NameTableKind_index = [...]uint8{0, 7, 10, 14}

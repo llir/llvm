@@ -4,6 +4,49 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[FuncAttrAlwaysInline-0]
+	_ = x[FuncAttrArgMemOnly-1]
+	_ = x[FuncAttrBuiltin-2]
+	_ = x[FuncAttrCold-3]
+	_ = x[FuncAttrConvergent-4]
+	_ = x[FuncAttrInaccessibleMemOrArgMemOnly-5]
+	_ = x[FuncAttrInaccessibleMemOnly-6]
+	_ = x[FuncAttrInlineHint-7]
+	_ = x[FuncAttrJumpTable-8]
+	_ = x[FuncAttrMinSize-9]
+	_ = x[FuncAttrNaked-10]
+	_ = x[FuncAttrNoBuiltin-11]
+	_ = x[FuncAttrNoDuplicate-12]
+	_ = x[FuncAttrNoImplicitFloat-13]
+	_ = x[FuncAttrNoInline-14]
+	_ = x[FuncAttrNonLazyBind-15]
+	_ = x[FuncAttrNoRecurse-16]
+	_ = x[FuncAttrNoRedZone-17]
+	_ = x[FuncAttrNoReturn-18]
+	_ = x[FuncAttrNoUnwind-19]
+	_ = x[FuncAttrOptNone-20]
+	_ = x[FuncAttrOptSize-21]
+	_ = x[FuncAttrReadNone-22]
+	_ = x[FuncAttrReadOnly-23]
+	_ = x[FuncAttrReturnsTwice-24]
+	_ = x[FuncAttrSafeStack-25]
+	_ = x[FuncAttrSanitizeAddress-26]
+	_ = x[FuncAttrSanitizeHWAddress-27]
+	_ = x[FuncAttrSanitizeMemory-28]
+	_ = x[FuncAttrSanitizeThread-29]
+	_ = x[FuncAttrSpeculatable-30]
+	_ = x[FuncAttrSSP-31]
+	_ = x[FuncAttrSSPReq-32]
+	_ = x[FuncAttrSSPStrong-33]
+	_ = x[FuncAttrStrictFP-34]
+	_ = x[FuncAttrUwtable-35]
+	_ = x[FuncAttrWriteOnly-36]
+}
+
 const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnoduplicatenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnounwindoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_threadspeculatablesspsspreqsspstrongstrictfpuwtablewriteonly"
 
 var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 142, 157, 165, 176, 185, 194, 202, 210, 217, 224, 232, 240, 253, 262, 278, 296, 311, 326, 338, 341, 347, 356, 364, 371, 380}

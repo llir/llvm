@@ -4,6 +4,15 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[DLLStorageClassNone-0]
+	_ = x[DLLStorageClassDLLExport-1]
+	_ = x[DLLStorageClassDLLImport-2]
+}
+
 const _DLLStorageClass_name = "nonedllexportdllimport"
 
 var _DLLStorageClass_index = [...]uint8{0, 4, 13, 22}

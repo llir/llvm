@@ -4,6 +4,16 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[VisibilityNone-0]
+	_ = x[VisibilityDefault-1]
+	_ = x[VisibilityHidden-2]
+	_ = x[VisibilityProtected-3]
+}
+
 const _Visibility_name = "nonedefaulthiddenprotected"
 
 var _Visibility_index = [...]uint8{0, 4, 11, 17, 26}

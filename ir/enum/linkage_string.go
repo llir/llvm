@@ -4,6 +4,24 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[LinkageNone-0]
+	_ = x[LinkageAppending-1]
+	_ = x[LinkageAvailableExternally-2]
+	_ = x[LinkageCommon-3]
+	_ = x[LinkageInternal-4]
+	_ = x[LinkageLinkOnce-5]
+	_ = x[LinkageLinkOnceODR-6]
+	_ = x[LinkagePrivate-7]
+	_ = x[LinkageWeak-8]
+	_ = x[LinkageWeakODR-9]
+	_ = x[LinkageExternal-10]
+	_ = x[LinkageExternWeak-11]
+}
+
 const _Linkage_name = "noneappendingavailable_externallycommoninternallinkoncelinkonce_odrprivateweakweak_odrexternalextern_weak"
 
 var _Linkage_index = [...]uint8{0, 4, 13, 33, 39, 47, 55, 67, 74, 78, 86, 94, 105}

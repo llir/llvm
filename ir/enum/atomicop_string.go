@@ -4,6 +4,23 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[AtomicOpAdd-1]
+	_ = x[AtomicOpAnd-2]
+	_ = x[AtomicOpMax-3]
+	_ = x[AtomicOpMin-4]
+	_ = x[AtomicOpNAnd-5]
+	_ = x[AtomicOpOr-6]
+	_ = x[AtomicOpSub-7]
+	_ = x[AtomicOpUMax-8]
+	_ = x[AtomicOpUMin-9]
+	_ = x[AtomicOpXChg-10]
+	_ = x[AtomicOpXor-11]
+}
+
 const _AtomicOp_name = "addandmaxminnandorsubumaxuminxchgxor"
 
 var _AtomicOp_index = [...]uint8{0, 3, 6, 9, 12, 16, 18, 21, 25, 29, 33, 36}

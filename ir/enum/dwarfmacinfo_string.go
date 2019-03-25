@@ -4,6 +4,17 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[DwarfMacinfoDefine-1]
+	_ = x[DwarfMacinfoUndef-2]
+	_ = x[DwarfMacinfoStartFile-3]
+	_ = x[DwarfMacinfoEndFile-4]
+	_ = x[DwarfMacinfoVendorExt-255]
+}
+
 const (
 	_DwarfMacinfo_name_0 = "DW_MACINFO_defineDW_MACINFO_undefDW_MACINFO_start_fileDW_MACINFO_end_file"
 	_DwarfMacinfo_name_1 = "DW_MACINFO_vendor_ext"

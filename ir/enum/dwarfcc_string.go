@@ -4,6 +4,26 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[DwarfCCNormal-1]
+	_ = x[DwarfCCProgram-2]
+	_ = x[DwarfCCNoCall-3]
+	_ = x[DwarfCCPassByReference-4]
+	_ = x[DwarfCCPassByValue-5]
+	_ = x[DwarfCCGNUBorlandFastcallI386-65]
+	_ = x[DwarfCCBORLANDSafecall-176]
+	_ = x[DwarfCCBORLANDStdcall-177]
+	_ = x[DwarfCCBORLANDPascal-178]
+	_ = x[DwarfCCBORLANDMSFastcall-179]
+	_ = x[DwarfCCBORLANDMSReturn-180]
+	_ = x[DwarfCCBORLANDThiscall-181]
+	_ = x[DwarfCCBORLANDFastcall-182]
+	_ = x[DwarfCCLLVMVectorcall-192]
+}
+
 const (
 	_DwarfCC_name_0 = "DW_CC_normalDW_CC_programDW_CC_nocallDW_CC_pass_by_referenceDW_CC_pass_by_value"
 	_DwarfCC_name_1 = "DW_CC_GNU_borland_fastcall_i386"

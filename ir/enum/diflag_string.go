@@ -4,6 +4,45 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[DIFlagZero-0]
+	_ = x[DIFlagPrivate-1]
+	_ = x[DIFlagProtected-2]
+	_ = x[DIFlagPublic-3]
+	_ = x[DIFlagFwdDecl-4]
+	_ = x[DIFlagAppleBlock-8]
+	_ = x[DIFlagBlockByrefStruct-16]
+	_ = x[DIFlagVirtual-32]
+	_ = x[DIFlagArtificial-64]
+	_ = x[DIFlagExplicit-128]
+	_ = x[DIFlagPrototyped-256]
+	_ = x[DIFlagObjcClassComplete-512]
+	_ = x[DIFlagObjectPointer-1024]
+	_ = x[DIFlagVector-2048]
+	_ = x[DIFlagStaticMember-4096]
+	_ = x[DIFlagLValueReference-8192]
+	_ = x[DIFlagRValueReference-16384]
+	_ = x[DIFlagReserved-32768]
+	_ = x[DIFlagSingleInheritance-65536]
+	_ = x[DIFlagMultipleInheritance-131072]
+	_ = x[DIFlagVirtualInheritance-196608]
+	_ = x[DIFlagIntroducedVirtual-262144]
+	_ = x[DIFlagBitField-524288]
+	_ = x[DIFlagNoReturn-1048576]
+	_ = x[DIFlagMainSubprogram-2097152]
+	_ = x[DIFlagTypePassByValue-4194304]
+	_ = x[DIFlagTypePassByReference-8388608]
+	_ = x[DIFlagFixedEnum-16777216]
+	_ = x[DIFlagThunk-33554432]
+	_ = x[DIFlagTrivial-67108864]
+	_ = x[DIFlagIndirectVirtualBase-36]
+	_ = x[DIFlagAccessibility-3]
+	_ = x[DIFlagPtrToMemberRep-196608]
+}
+
 const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagIndirectVirtualBaseDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagMainSubprogramDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagFixedEnumDIFlagThunkDIFlagTrivial"
 
 var _DIFlag_map = map[DIFlag]string{

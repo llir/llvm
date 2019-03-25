@@ -4,6 +4,15 @@ package enum
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[PreemptionNone-0]
+	_ = x[PreemptionDSOLocal-1]
+	_ = x[PreemptionDSOPreemptable-2]
+}
+
 const _Preemption_name = "nonedso_localdso_preemptable"
 
 var _Preemption_index = [...]uint8{0, 4, 13, 28}
