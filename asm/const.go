@@ -151,10 +151,7 @@ func (gen *generator) irStructConst(t types.Type, old *ast.StructConst) (*consta
 			fields[i] = field
 		}
 	}
-	c := constant.NewStruct(fields...)
-	// Set type name as identified struct types are uniqued by type names.
-	c.Typ.TypeName = typ.TypeName
-	c.Typ.Packed = typ.Packed
+	c := constant.NewStruct(typ, fields...)
 	return c, nil
 }
 
@@ -183,10 +180,7 @@ func (gen *generator) irArrayConst(t types.Type, old *ast.ArrayConst) (*constant
 		}
 		elems[i] = elem
 	}
-	c := constant.NewArray(elems...)
-	if !t.Equal(c.Typ) {
-		return nil, errors.Errorf("array type mismatch; expected %q, got %q", c.Typ, t)
-	}
+	c := constant.NewArray(typ, elems...)
 	return c, nil
 }
 
@@ -206,6 +200,10 @@ func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*
 // irVectorConst translates the AST vector constant into an equivalent IR vector
 // constant.
 func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*constant.Vector, error) {
+	typ, ok := t.(*types.VectorType)
+	if !ok {
+		return nil, errors.Errorf("invalid type of vector constant; expected *types.VectorType, got %T", t)
+	}
 	oldElems := old.Elems()
 	if len(oldElems) == 0 {
 		return nil, errors.New("zero element vector is illegal")
@@ -218,10 +216,7 @@ func (gen *generator) irVectorConst(t types.Type, old *ast.VectorConst) (*consta
 		}
 		elems[i] = elem
 	}
-	c := constant.NewVector(elems...)
-	if !t.Equal(c.Typ) {
-		return nil, errors.Errorf("vector type mismatch; expected %q, got %q", c.Typ, t)
-	}
+	c := constant.NewVector(typ, elems...)
 	return c, nil
 }
 
