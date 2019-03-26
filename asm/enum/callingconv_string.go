@@ -5,6 +5,55 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.CallingConvNone-0]
+	_ = x[enum.CallingConvC-1]
+	_ = x[enum.CallingConvFast-8]
+	_ = x[enum.CallingConvCold-9]
+	_ = x[enum.CallingConvGHC-10]
+	_ = x[enum.CallingConvHiPE-11]
+	_ = x[enum.CallingConvWebKitJS-12]
+	_ = x[enum.CallingConvAnyReg-13]
+	_ = x[enum.CallingConvPreserveMost-14]
+	_ = x[enum.CallingConvPreserveAll-15]
+	_ = x[enum.CallingConvSwift-16]
+	_ = x[enum.CallingConvCXXFastTLS-17]
+	_ = x[enum.CallingConvX86StdCall-64]
+	_ = x[enum.CallingConvX86FastCall-65]
+	_ = x[enum.CallingConvARM_APCS-66]
+	_ = x[enum.CallingConvARM_AAPCS-67]
+	_ = x[enum.CallingConvARM_AAPCS_VFP-68]
+	_ = x[enum.CallingConvMSP430Intr-69]
+	_ = x[enum.CallingConvX86ThisCall-70]
+	_ = x[enum.CallingConvPTXKernel-71]
+	_ = x[enum.CallingConvPTXDevice-72]
+	_ = x[enum.CallingConvSPIRFunc-75]
+	_ = x[enum.CallingConvSPIRKernel-76]
+	_ = x[enum.CallingConvIntelOCL_BI-77]
+	_ = x[enum.CallingConvX86_64SysV-78]
+	_ = x[enum.CallingConvWin64-79]
+	_ = x[enum.CallingConvX86VectorCall-80]
+	_ = x[enum.CallingConvHHVM-81]
+	_ = x[enum.CallingConvHHVM_C-82]
+	_ = x[enum.CallingConvX86Intr-83]
+	_ = x[enum.CallingConvAVRIntr-84]
+	_ = x[enum.CallingConvAVRSignal-85]
+	_ = x[enum.CallingConvAVRBuiltin-86]
+	_ = x[enum.CallingConvAMDGPU_VS-87]
+	_ = x[enum.CallingConvAMDGPU_GS-88]
+	_ = x[enum.CallingConvAMDGPU_PS-89]
+	_ = x[enum.CallingConvAMDGPU_CS-90]
+	_ = x[enum.CallingConvAMDGPUKernel-91]
+	_ = x[enum.CallingConvX86RegCall-92]
+	_ = x[enum.CallingConvAMDGPU_HS-93]
+	_ = x[enum.CallingConvMSP430Builtin-94]
+	_ = x[enum.CallingConvAMDGPU_LS-95]
+	_ = x[enum.CallingConvAMDGPU_ES-96]
+}
+
 const (
 	_CallingConv_name_0 = "noneccc"
 	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscc"

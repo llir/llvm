@@ -5,6 +5,17 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.TLSModelNone-0]
+	_ = x[enum.TLSModelGeneric-1]
+	_ = x[enum.TLSModelInitialExec-2]
+	_ = x[enum.TLSModelLocalDynamic-3]
+	_ = x[enum.TLSModelLocalExec-4]
+}
+
 const _TLSModel_name = "nonegenericinitialexeclocaldynamiclocalexec"
 
 var _TLSModel_index = [...]uint8{0, 4, 11, 22, 34, 43}

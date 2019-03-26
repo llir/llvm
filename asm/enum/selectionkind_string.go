@@ -5,6 +5,17 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.SelectionKindAny-0]
+	_ = x[enum.SelectionKindExactMatch-1]
+	_ = x[enum.SelectionKindLargest-2]
+	_ = x[enum.SelectionKindNoDuplicates-3]
+	_ = x[enum.SelectionKindSameSize-4]
+}
+
 const _SelectionKind_name = "anyexactmatchlargestnoduplicatessamesize"
 
 var _SelectionKind_index = [...]uint8{0, 3, 13, 20, 32, 40}

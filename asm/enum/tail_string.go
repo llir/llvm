@@ -5,6 +5,16 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.TailNone-0]
+	_ = x[enum.TailMustTail-1]
+	_ = x[enum.TailNoTail-2]
+	_ = x[enum.TailTail-3]
+}
+
 const _Tail_name = "nonemusttailnotailtail"
 
 var _Tail_index = [...]uint8{0, 4, 12, 18, 22}

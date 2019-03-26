@@ -5,6 +5,23 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.AtomicOpAdd-1]
+	_ = x[enum.AtomicOpAnd-2]
+	_ = x[enum.AtomicOpMax-3]
+	_ = x[enum.AtomicOpMin-4]
+	_ = x[enum.AtomicOpNAnd-5]
+	_ = x[enum.AtomicOpOr-6]
+	_ = x[enum.AtomicOpSub-7]
+	_ = x[enum.AtomicOpUMax-8]
+	_ = x[enum.AtomicOpUMin-9]
+	_ = x[enum.AtomicOpXChg-10]
+	_ = x[enum.AtomicOpXor-11]
+}
+
 const _AtomicOp_name = "addandmaxminnandorsubumaxuminxchgxor"
 
 var _AtomicOp_index = [...]uint8{0, 3, 6, 9, 12, 16, 18, 21, 25, 29, 33, 36}

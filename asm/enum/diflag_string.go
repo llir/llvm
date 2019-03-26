@@ -5,6 +5,45 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.DIFlagZero-0]
+	_ = x[enum.DIFlagPrivate-1]
+	_ = x[enum.DIFlagProtected-2]
+	_ = x[enum.DIFlagPublic-3]
+	_ = x[enum.DIFlagFwdDecl-4]
+	_ = x[enum.DIFlagAppleBlock-8]
+	_ = x[enum.DIFlagBlockByrefStruct-16]
+	_ = x[enum.DIFlagVirtual-32]
+	_ = x[enum.DIFlagArtificial-64]
+	_ = x[enum.DIFlagExplicit-128]
+	_ = x[enum.DIFlagPrototyped-256]
+	_ = x[enum.DIFlagObjcClassComplete-512]
+	_ = x[enum.DIFlagObjectPointer-1024]
+	_ = x[enum.DIFlagVector-2048]
+	_ = x[enum.DIFlagStaticMember-4096]
+	_ = x[enum.DIFlagLValueReference-8192]
+	_ = x[enum.DIFlagRValueReference-16384]
+	_ = x[enum.DIFlagReserved-32768]
+	_ = x[enum.DIFlagSingleInheritance-65536]
+	_ = x[enum.DIFlagMultipleInheritance-131072]
+	_ = x[enum.DIFlagVirtualInheritance-196608]
+	_ = x[enum.DIFlagIntroducedVirtual-262144]
+	_ = x[enum.DIFlagBitField-524288]
+	_ = x[enum.DIFlagNoReturn-1048576]
+	_ = x[enum.DIFlagMainSubprogram-2097152]
+	_ = x[enum.DIFlagTypePassByValue-4194304]
+	_ = x[enum.DIFlagTypePassByReference-8388608]
+	_ = x[enum.DIFlagFixedEnum-16777216]
+	_ = x[enum.DIFlagThunk-33554432]
+	_ = x[enum.DIFlagTrivial-67108864]
+	_ = x[enum.DIFlagIndirectVirtualBase-36]
+	_ = x[enum.DIFlagAccessibility-3]
+	_ = x[enum.DIFlagPtrToMemberRep-196608]
+}
+
 const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagIndirectVirtualBaseDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagMainSubprogramDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagFixedEnumDIFlagThunkDIFlagTrivial"
 
 var _DIFlag_map = map[enum.DIFlag]string{

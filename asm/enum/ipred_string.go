@@ -5,6 +5,22 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.IPredEQ-0]
+	_ = x[enum.IPredNE-1]
+	_ = x[enum.IPredSGE-2]
+	_ = x[enum.IPredSGT-3]
+	_ = x[enum.IPredSLE-4]
+	_ = x[enum.IPredSLT-5]
+	_ = x[enum.IPredUGE-6]
+	_ = x[enum.IPredUGT-7]
+	_ = x[enum.IPredULE-8]
+	_ = x[enum.IPredULT-9]
+}
+
 const _IPred_name = "eqnesgesgtslesltugeugtuleult"
 
 var _IPred_index = [...]uint8{0, 2, 4, 7, 10, 13, 16, 19, 22, 25, 28}

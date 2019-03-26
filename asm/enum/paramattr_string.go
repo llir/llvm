@@ -5,6 +5,28 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.ParamAttrByval-0]
+	_ = x[enum.ParamAttrInAlloca-1]
+	_ = x[enum.ParamAttrInReg-2]
+	_ = x[enum.ParamAttrNest-3]
+	_ = x[enum.ParamAttrNoAlias-4]
+	_ = x[enum.ParamAttrNoCapture-5]
+	_ = x[enum.ParamAttrNonNull-6]
+	_ = x[enum.ParamAttrReadNone-7]
+	_ = x[enum.ParamAttrReadOnly-8]
+	_ = x[enum.ParamAttrReturned-9]
+	_ = x[enum.ParamAttrSignExt-10]
+	_ = x[enum.ParamAttrSRet-11]
+	_ = x[enum.ParamAttrSwiftError-12]
+	_ = x[enum.ParamAttrSwiftSelf-13]
+	_ = x[enum.ParamAttrWriteOnly-14]
+	_ = x[enum.ParamAttrZeroExt-15]
+}
+
 const _ParamAttr_name = "byvalinallocainregnestnoaliasnocapturenonnullreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
 var _ParamAttr_index = [...]uint8{0, 5, 13, 18, 22, 29, 38, 45, 53, 61, 69, 76, 80, 90, 99, 108, 115}

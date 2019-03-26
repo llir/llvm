@@ -5,6 +5,18 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/types"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[types.FloatKindHalf-0]
+	_ = x[types.FloatKindFloat-1]
+	_ = x[types.FloatKindDouble-2]
+	_ = x[types.FloatKindFP128-3]
+	_ = x[types.FloatKindX86_FP80-4]
+	_ = x[types.FloatKindPPC_FP128-5]
+}
+
 const _FloatKind_name = "halffloatdoublefp128x86_fp80ppc_fp128"
 
 var _FloatKind_index = [...]uint8{0, 4, 9, 15, 20, 28, 37}

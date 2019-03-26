@@ -1,9 +1,8 @@
-github.com/mewkiz/pkg v0.0.0-20190317153131-e8616647c365 h1:WeayHgdK3Mh6RMZKtcJaaRMjGvJeRdn+e+QqO50us84=
-github.com/mewkiz/pkg v0.0.0-20190317153131-e8616647c365/go.mod h1:NefHmmDOyP6U1WiFFk+jFR3YdHoTeueo8nOZ6i1vZbA=
-github.com/mewspring/tools v0.0.0-20181204020634-6c6637dc82b6 h1:J/FwQ6PvTeHbDkhGt+nDlIXXGRdXUCqVdL85tmHflAg=
-github.com/mewspring/tools v0.0.0-20181204020634-6c6637dc82b6/go.mod h1:UAdVbSksr+7Bg+z4mga16OaBg3qAcgdaF3x3AeqJHEs=
-github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
-github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-golang.org/x/image v0.0.0-20190220214146-31aff87c08e9/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
-golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+github.com/mewspring/tools v0.0.0-20190326052302-906fcc68b3d8 h1:DSZ+nV7JOU9CznTYsSq6nZsnWf7pXrjRfGqMyTuwgwI=
+github.com/mewspring/tools v0.0.0-20190326052302-906fcc68b3d8/go.mod h1:UAdVbSksr+7Bg+z4mga16OaBg3qAcgdaF3x3AeqJHEs=
+golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+golang.org/x/tools v0.0.0-20190325223049-1d95b17f1b04 h1:SRYGE+BqJRgY8JH4p2NmwTPeuREKqKYw5IuEmthTHKQ=
+golang.org/x/tools v0.0.0-20190325223049-1d95b17f1b04/go.mod h1:LCzVGOaR6xXOjkQ3onu1FJEFr0SW1gC7cKk1uF8kGRs=

@@ -5,6 +5,17 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.DwarfMacinfoDefine-1]
+	_ = x[enum.DwarfMacinfoUndef-2]
+	_ = x[enum.DwarfMacinfoStartFile-3]
+	_ = x[enum.DwarfMacinfoEndFile-4]
+	_ = x[enum.DwarfMacinfoVendorExt-255]
+}
+
 const (
 	_DwarfMacinfo_name_0 = "DW_MACINFO_defineDW_MACINFO_undefDW_MACINFO_start_fileDW_MACINFO_end_file"
 	_DwarfMacinfo_name_1 = "DW_MACINFO_vendor_ext"

@@ -5,6 +5,26 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.DwarfCCNormal-1]
+	_ = x[enum.DwarfCCProgram-2]
+	_ = x[enum.DwarfCCNoCall-3]
+	_ = x[enum.DwarfCCPassByReference-4]
+	_ = x[enum.DwarfCCPassByValue-5]
+	_ = x[enum.DwarfCCGNUBorlandFastcallI386-65]
+	_ = x[enum.DwarfCCBORLANDSafecall-176]
+	_ = x[enum.DwarfCCBORLANDStdcall-177]
+	_ = x[enum.DwarfCCBORLANDPascal-178]
+	_ = x[enum.DwarfCCBORLANDMSFastcall-179]
+	_ = x[enum.DwarfCCBORLANDMSReturn-180]
+	_ = x[enum.DwarfCCBORLANDThiscall-181]
+	_ = x[enum.DwarfCCBORLANDFastcall-182]
+	_ = x[enum.DwarfCCLLVMVectorcall-192]
+}
+
 const (
 	_DwarfCC_name_0 = "DW_CC_normalDW_CC_programDW_CC_nocallDW_CC_pass_by_referenceDW_CC_pass_by_value"
 	_DwarfCC_name_1 = "DW_CC_GNU_borland_fastcall_i386"

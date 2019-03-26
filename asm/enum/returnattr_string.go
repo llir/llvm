@@ -5,6 +5,17 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.ReturnAttrInReg-0]
+	_ = x[enum.ReturnAttrNoAlias-1]
+	_ = x[enum.ReturnAttrNonNull-2]
+	_ = x[enum.ReturnAttrSignExt-3]
+	_ = x[enum.ReturnAttrZeroExt-4]
+}
+
 const _ReturnAttr_name = "inregnoaliasnonnullsignextzeroext"
 
 var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 33}

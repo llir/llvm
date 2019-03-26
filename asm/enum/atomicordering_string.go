@@ -5,6 +5,19 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.AtomicOrderingNone-0]
+	_ = x[enum.AtomicOrderingAcqRel-1]
+	_ = x[enum.AtomicOrderingAcquire-2]
+	_ = x[enum.AtomicOrderingMonotonic-3]
+	_ = x[enum.AtomicOrderingRelease-4]
+	_ = x[enum.AtomicOrderingSeqCst-5]
+	_ = x[enum.AtomicOrderingUnordered-6]
+}
+
 const _AtomicOrdering_name = "noneacq_relacquiremonotonicreleaseseq_cstunordered"
 
 var _AtomicOrdering_index = [...]uint8{0, 4, 11, 18, 27, 34, 41, 50}

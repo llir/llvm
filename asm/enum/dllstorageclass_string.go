@@ -5,6 +5,15 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.DLLStorageClassNone-0]
+	_ = x[enum.DLLStorageClassDLLExport-1]
+	_ = x[enum.DLLStorageClassDLLImport-2]
+}
+
 const _DLLStorageClass_name = "nonedllexportdllimport"
 
 var _DLLStorageClass_index = [...]uint8{0, 4, 13, 22}

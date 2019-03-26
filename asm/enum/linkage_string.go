@@ -5,6 +5,24 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.LinkageNone-0]
+	_ = x[enum.LinkageAppending-1]
+	_ = x[enum.LinkageAvailableExternally-2]
+	_ = x[enum.LinkageCommon-3]
+	_ = x[enum.LinkageInternal-4]
+	_ = x[enum.LinkageLinkOnce-5]
+	_ = x[enum.LinkageLinkOnceODR-6]
+	_ = x[enum.LinkagePrivate-7]
+	_ = x[enum.LinkageWeak-8]
+	_ = x[enum.LinkageWeakODR-9]
+	_ = x[enum.LinkageExternal-10]
+	_ = x[enum.LinkageExternWeak-11]
+}
+
 const _Linkage_name = "noneappendingavailable_externallycommoninternallinkoncelinkonce_odrprivateweakweak_odrexternalextern_weak"
 
 var _Linkage_index = [...]uint8{0, 4, 13, 33, 39, 47, 55, 67, 74, 78, 86, 94, 105}

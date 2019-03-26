@@ -5,6 +5,15 @@ package enum
 import "fmt"
 import "github.com/llir/llvm/ir/enum"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the string2enum command to generate them again.
+	var x [1]struct{}
+	_ = x[enum.UnnamedAddrNone-0]
+	_ = x[enum.UnnamedAddrLocalUnnamedAddr-1]
+	_ = x[enum.UnnamedAddrUnnamedAddr-2]
+}
+
 const _UnnamedAddr_name = "nonelocal_unnamed_addrunnamed_addr"
 
 var _UnnamedAddr_index = [...]uint8{0, 4, 22, 34}
