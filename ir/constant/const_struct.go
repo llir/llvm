@@ -18,9 +18,12 @@ type Struct struct {
 }
 
 // NewStruct returns a new struct constant based on the given struct type and
-// fields.
-func NewStruct(fields ...Constant) *Struct {
-	c := &Struct{Fields: fields}
+// fields. The struct type is infered from the type of the fields if t is nil.
+func NewStruct(t *types.StructType, fields ...Constant) *Struct {
+	c := &Struct{
+		Fields: fields,
+		Typ:    t,
+	}
 	// Compute type.
 	c.Type()
 	return c

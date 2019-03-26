@@ -19,9 +19,13 @@ type Array struct {
 }
 
 // NewArray returns a new array constant based on the given array type and
-// elements.
-func NewArray(elems ...Constant) *Array {
-	c := &Array{Elems: elems}
+// elements. The array type is infered from the type of the elements if t is
+// nil.
+func NewArray(t *types.ArrayType, elems ...Constant) *Array {
+	c := &Array{
+		Elems: elems,
+		Typ:   t,
+	}
 	// Compute type.
 	c.Type()
 	return c

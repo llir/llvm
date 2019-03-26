@@ -18,9 +18,13 @@ type Vector struct {
 }
 
 // NewVector returns a new vector constant based on the given vector type and
-// elements.
-func NewVector(elems ...Constant) *Vector {
-	c := &Vector{Elems: elems}
+// elements. The vector type is infered from the type of the elements if t is
+// nil.
+func NewVector(t *types.VectorType, elems ...Constant) *Vector {
+	c := &Vector{
+		Elems: elems,
+		Typ:   t,
+	}
 	// Compute type.
 	c.Type()
 	return c
