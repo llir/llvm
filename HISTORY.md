@@ -4,7 +4,7 @@
 
 Primary focus of version 0.3: *grammar covering the entire LLVM IR language*.
 
-The grammar for LLVM IR is now complete and covers the entire LLVM IR language (as of LLVM 7.0).
+The grammar for LLVM IR is now complete and covers the entire LLVM IR language (as of LLVM 8.0).
 
 Lexers and parsers for LLVM IR assembly are automatically generated from an [EBNF grammar](https://github.com/llir/grammar/blob/master/ll.tm) using [Textmapper](https://github.com/inspirer/textmapper).
 
