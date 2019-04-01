@@ -8,6 +8,12 @@ package ir
 //
 // An Instruction has one of the following underlying types.
 //
+// Unary instructions
+//
+// https://llvm.org/docs/LangRef.html#unary-operations
+//
+//    *ir.InstFNeg   // https://godoc.org/github.com/llir/llvm/ir#InstFNeg
+//
 // Binary instructions
 //
 // https://llvm.org/docs/LangRef.html#binary-operations

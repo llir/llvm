@@ -46,6 +46,12 @@ func (*Undef) IsConstant() {}
 // constant.Constant interface.
 func (*BlockAddress) IsConstant() {}
 
+// --- [ Unary expressions ] ---------------------------------------------------
+
+// IsConstant ensures that only constants can be assigned to the
+// constant.Constant interface.
+func (*ExprFNeg) IsConstant() {}
+
 // --- [ Binary expressions ] --------------------------------------------------
 
 // IsConstant ensures that only constants can be assigned to the

@@ -47,6 +47,9 @@ func (AllocSize) IsFuncAttribute() {}
 // === [ ir.Instruction ] ======================================================
 
 // Binary instructions.
+func (*InstFNeg) isInstruction() {}
+
+// Binary instructions.
 func (*InstAdd) isInstruction()  {}
 func (*InstFAdd) isInstruction() {}
 func (*InstSub) isInstruction()  {}

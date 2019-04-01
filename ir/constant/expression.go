@@ -6,6 +6,12 @@ package constant
 //
 // An Expression has one of the following underlying types.
 //
+// Unary expressions
+//
+// https://llvm.org/docs/LangRef.html#constant-expressions
+//
+//    *constant.ExprFNeg   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprFNeg
+//
 // Binary expressions
 //
 // https://llvm.org/docs/LangRef.html#constant-expressions
