@@ -25,6 +25,21 @@ func diFlagsString(flags enum.DIFlag) string {
 	return strings.Join(ss, " | ")
 }
 
+// dispFlagsString returns the string representation of the given subprogram
+// specific flags.
+func dispFlagsString(flags enum.DISPFlag) string {
+	if flags == enum.DISPFlagZero {
+		return flags.String()
+	}
+	var ss []string
+	for mask := enum.DISPFlagFirst; mask <= enum.DISPFlagLast; mask <<= 1 {
+		if flags&mask != 0 {
+			ss = append(ss, mask.String())
+		}
+	}
+	return strings.Join(ss, " | ")
+}
+
 // TODO: fix string representation for all enums which are defined in the
 // grammar as `FooEnum | FooInt`, in the same way as dwarfTagString.
 

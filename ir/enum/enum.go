@@ -176,6 +176,30 @@ const (
 	DIFlagLast  = DIFlagTrivial
 )
 
+//go:generate stringer -type DISPFlag
+
+// DISPFlag is a subprogram specific flag bitfield.
+type DISPFlag uint64
+
+// Subprogram specific flags.
+const (
+	DISPFlagZero        DISPFlag = 0
+	DISPFlagVirtual     DISPFlag = 1 << 0
+	DISPFlagPureVirtual DISPFlag = 1 << 1
+	DISPFlagLocalToUnit DISPFlag = 1 << 2
+	DISPFlagDefinition  DISPFlag = 1 << 3
+	DISPFlagOptimized   DISPFlag = 1 << 4
+
+	// Virtuality and non-virtuality.
+	DISPFlagNonvirtual = DISPFlagZero
+	DISPFlagVirtuality = DISPFlagVirtual | DISPFlagPureVirtual
+
+	// Track first and last subprogram specific flag, used by diSPFlagsString in
+	// ir/metadata/helper.go.
+	DISPFlagFirst = DISPFlagVirtual
+	DISPFlagLast  = DISPFlagOptimized
+)
+
 //go:generate stringer -linecomment -type DLLStorageClass
 
 // DLLStorageClass specifies the DLL storage class of a global identifier.

@@ -14,6 +14,7 @@ gen: ${TOOLS_DIR}/string2enum
 	${TOOLS_DIR}/string2enum -linecomment -type ChecksumKind ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type ClauseType ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type DIFlag ${ENUM_DIR}
+	${TOOLS_DIR}/string2enum -linecomment -type DISPFlag ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type DLLStorageClass ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type DwarfAttEncoding ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type DwarfCC ${ENUM_DIR}

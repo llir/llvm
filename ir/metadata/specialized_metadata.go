@@ -111,6 +111,7 @@ type DICompileUnit struct {
 	SplitDebugInlining    bool               // optional; zero value if not present.
 	DebugInfoForProfiling bool               // optional; zero value if not present.
 	NameTableKind         enum.NameTableKind // optional; zero value if not present.
+	DebugBaseAddress      bool               // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata node.
@@ -200,6 +201,10 @@ func (md *DICompileUnit) LLString() string {
 	}
 	if md.NameTableKind != 0 {
 		field = fmt.Sprintf("nameTableKind: %s", md.NameTableKind)
+		fields = append(fields, field)
+	}
+	if md.DebugBaseAddress {
+		field = fmt.Sprintf("debugBaseAddress: %t", md.DebugBaseAddress)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DICompileUnit(%s)", strings.Join(fields, ", "))
@@ -1536,6 +1541,7 @@ type DISubprogram struct {
 	VirtualIndex   uint64               // optional; zero value if not present.
 	ThisAdjustment int64                // optional; zero value if not present.
 	Flags          enum.DIFlag          // optional.
+	SPFlags        enum.DISPFlag        // optional.
 	IsOptimized    bool                 // optional; zero value if not present.
 	Unit           *DICompileUnit       // optional; nil if not present.
 	TemplateParams *Tuple               // optional; nil if not present.
@@ -1627,6 +1633,10 @@ func (md *DISubprogram) LLString() string {
 	}
 	if md.Flags != 0 {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
+		fields = append(fields, field)
+	}
+	if md.SPFlags != 0 {
+		field := fmt.Sprintf("spFlags: %s", dispFlagsString(md.SPFlags))
 		fields = append(fields, field)
 	}
 	if md.IsOptimized {

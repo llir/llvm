@@ -223,6 +223,8 @@ func (gen *generator) irDICompileUnit(new metadata.SpecializedNode, old *ast.DIC
 			md.DebugInfoForProfiling = boolLit(oldField.DebugInfoForProfiling())
 		case *ast.NameTableKindField:
 			md.NameTableKind = irNameTableKind(oldField.NameTableKind())
+		case *ast.DebugBaseAddressField:
+			md.DebugBaseAddress = boolLit(oldField.DebugBaseAddress())
 		default:
 			panic(fmt.Errorf("support for DICompileUnit field %T not yet implemented", old))
 		}
@@ -1209,6 +1211,8 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 			md.ThisAdjustment = intLit(oldField.ThisAdjustment())
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
+		case *ast.SPFlagsField:
+			md.SPFlags = irDISPFlags(oldField.SPFlags())
 		case *ast.IsOptimizedField:
 			md.IsOptimized = boolLit(oldField.IsOptimized())
 		case *ast.UnitField:
@@ -1485,6 +1489,30 @@ func irDIFlag(old ast.DIFlag) enum.DIFlag {
 		return enum.DIFlag(uintLit(old.UintLit()))
 	default:
 		panic(fmt.Errorf("support for debug info flag %T not yet implemented", old))
+	}
+}
+
+// irDISPFlags returns the IR subprogram specific flags corresponding to the
+// given AST subprogram specific flags.
+func irDISPFlags(old ast.DISPFlags) enum.DISPFlag {
+	var flags enum.DISPFlag
+	for _, oldFlag := range old.Flags() {
+		flag := irDISPFlag(oldFlag)
+		flags |= flag
+	}
+	return flags
+}
+
+// irDISPFlag returns the IR subprogram specific flag corresponding to the given
+// AST subprogram specific flag.
+func irDISPFlag(old ast.DISPFlag) enum.DISPFlag {
+	switch old := old.(type) {
+	case *ast.DISPFlagEnum:
+		return asmenum.DISPFlagFromString(old.Text())
+	case *ast.DISPFlagInt:
+		return enum.DISPFlag(uintLit(old.UintLit()))
+	default:
+		panic(fmt.Errorf("support for subprogram specific flag %T not yet implemented", old))
 	}
 }
 
