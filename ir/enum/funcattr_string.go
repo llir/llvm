@@ -39,17 +39,18 @@ func _() {
 	_ = x[FuncAttrSanitizeMemory-28]
 	_ = x[FuncAttrSanitizeThread-29]
 	_ = x[FuncAttrSpeculatable-30]
-	_ = x[FuncAttrSSP-31]
-	_ = x[FuncAttrSSPReq-32]
-	_ = x[FuncAttrSSPStrong-33]
-	_ = x[FuncAttrStrictFP-34]
-	_ = x[FuncAttrUwtable-35]
-	_ = x[FuncAttrWriteOnly-36]
+	_ = x[FuncAttrSpeculativeLoadHardening-31]
+	_ = x[FuncAttrSSP-32]
+	_ = x[FuncAttrSSPReq-33]
+	_ = x[FuncAttrSSPStrong-34]
+	_ = x[FuncAttrStrictFP-35]
+	_ = x[FuncAttrUwtable-36]
+	_ = x[FuncAttrWriteOnly-37]
 }
 
-const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnoduplicatenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnounwindoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_threadspeculatablesspsspreqsspstrongstrictfpuwtablewriteonly"
+const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnoduplicatenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnounwindoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_threadspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewriteonly"
 
-var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 142, 157, 165, 176, 185, 194, 202, 210, 217, 224, 232, 240, 253, 262, 278, 296, 311, 326, 338, 341, 347, 356, 364, 371, 380}
+var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 142, 157, 165, 176, 185, 194, 202, 210, 217, 224, 232, 240, 253, 262, 278, 296, 311, 326, 338, 364, 367, 373, 382, 390, 397, 406}
 
 func (i FuncAttr) String() string {
 	if i >= FuncAttr(len(_FuncAttr_index)-1) {

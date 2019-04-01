@@ -40,17 +40,18 @@ func _() {
 	_ = x[enum.FuncAttrSanitizeMemory-28]
 	_ = x[enum.FuncAttrSanitizeThread-29]
 	_ = x[enum.FuncAttrSpeculatable-30]
-	_ = x[enum.FuncAttrSSP-31]
-	_ = x[enum.FuncAttrSSPReq-32]
-	_ = x[enum.FuncAttrSSPStrong-33]
-	_ = x[enum.FuncAttrStrictFP-34]
-	_ = x[enum.FuncAttrUwtable-35]
-	_ = x[enum.FuncAttrWriteOnly-36]
+	_ = x[enum.FuncAttrSpeculativeLoadHardening-31]
+	_ = x[enum.FuncAttrSSP-32]
+	_ = x[enum.FuncAttrSSPReq-33]
+	_ = x[enum.FuncAttrSSPStrong-34]
+	_ = x[enum.FuncAttrStrictFP-35]
+	_ = x[enum.FuncAttrUwtable-36]
+	_ = x[enum.FuncAttrWriteOnly-37]
 }
 
-const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnoduplicatenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnounwindoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_threadspeculatablesspsspreqsspstrongstrictfpuwtablewriteonly"
+const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnoduplicatenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnounwindoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_threadspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewriteonly"
 
-var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 142, 157, 165, 176, 185, 194, 202, 210, 217, 224, 232, 240, 253, 262, 278, 296, 311, 326, 338, 341, 347, 356, 364, 371, 380}
+var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 142, 157, 165, 176, 185, 194, 202, 210, 217, 224, 232, 240, 253, 262, 278, 296, 311, 326, 338, 364, 367, 373, 382, 390, 397, 406}
 
 func FuncAttrFromString(s string) enum.FuncAttr {
 	if len(s) == 0 {
