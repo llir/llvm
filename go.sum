@@ -3,8 +3,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/llir/ll v0.0.0-20190401082818-8df92f986ab0 h1:tk9FDXBsOHzU7LpdbwD2f6yOSjI2Nksj/XDk6EbzfyM=
-github.com/llir/ll v0.0.0-20190401082818-8df92f986ab0/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
+github.com/llir/ll v0.0.0-20190401085702-9e8d1b0d1612 h1:5oVz/F+NJfqFMFI34/Had22ICKVnhYDvKDUOPtld3Bo=
+github.com/llir/ll v0.0.0-20190401085702-9e8d1b0d1612/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/mewkiz/pkg v0.0.0-20190317153131-e8616647c365 h1:WeayHgdK3Mh6RMZKtcJaaRMjGvJeRdn+e+QqO50us84=
 github.com/mewkiz/pkg v0.0.0-20190317153131-e8616647c365/go.mod h1:NefHmmDOyP6U1WiFFk+jFR3YdHoTeueo8nOZ6i1vZbA=
 github.com/mewmew/float v0.0.0-20181121163145-c0f786d7da73 h1:bTqCgPsW3TFb9MFtvaOmGFWVhCmN3EmRw02zkchdOHo=

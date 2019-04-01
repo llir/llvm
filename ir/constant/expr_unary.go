@@ -21,8 +21,8 @@ type ExprFNeg struct {
 	Typ types.Type
 }
 
-// NewFNeg returns a new fneg expression based on the given operands.
-func NewFNeg(x, y Constant) *ExprFNeg {
+// NewFNeg returns a new fneg expression based on the given operand.
+func NewFNeg(x Constant) *ExprFNeg {
 	e := &ExprFNeg{X: x}
 	// Compute type.
 	e.Type()

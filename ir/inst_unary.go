@@ -17,7 +17,7 @@ import (
 type InstFNeg struct {
 	// Name of local variable associated with the result.
 	LocalIdent
-	// Operands.
+	// Operand.
 	X value.Value // floating-point scalar or floating-point vector
 
 	// extra.

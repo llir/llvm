@@ -16,6 +16,9 @@ import (
 // constant expression.
 func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (constant.Expression, error) {
 	switch old := old.(type) {
+	// Unary expressions
+	case *ast.FNegExpr:
+		return gen.irFNegExpr(t, old)
 	// Binary expressions
 	case *ast.AddExpr:
 		return gen.irAddExpr(t, old)
@@ -106,6 +109,25 @@ func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (consta
 	default:
 		panic(fmt.Errorf("support for AST constant expression %T not yet implemented", old))
 	}
+}
+
+// --- [ Unary expressions ] ---------------------------------------------------
+
+// ~~~ [ fneg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// irFNegExpr translates the AST fneg constant expression into an equivalent IR
+// constant expression.
+func (gen *generator) irFNegExpr(t types.Type, old *ast.FNegExpr) (*constant.ExprFNeg, error) {
+	// X operand.
+	x, err := gen.irTypeConst(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	expr := constant.NewFNeg(x)
+	if !t.Equal(expr.Typ) {
+		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+	}
+	return expr, nil
 }
 
 // --- [ Binary expressions ] --------------------------------------------------
