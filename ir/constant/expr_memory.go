@@ -58,7 +58,7 @@ func (e *ExprGetElementPtr) Type() types.Type {
 			}
 			e.ElemType = t.ElemType
 		default:
-			panic(fmt.Errorf("support for souce type %T not yet implemented", typ))
+			panic(fmt.Errorf("support for source type %T not yet implemented", typ))
 		}
 	}
 	// Cache type if not present.
