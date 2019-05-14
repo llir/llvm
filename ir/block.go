@@ -61,6 +61,9 @@ func (block *Block) LLString() string {
 	for _, inst := range block.Insts {
 		fmt.Fprintf(buf, "\t%s\n", inst.LLString())
 	}
+	if block.Term == nil {
+		panic(fmt.Sprintf("block do not have terminator\ncurrent instructions:\n%s<=== insert terminator at here by calling `func (*Block) NewRet(value.Value)`", buf.String()))
+	}
 	fmt.Fprintf(buf, "\t%s", block.Term.LLString())
 	return buf.String()
 }
