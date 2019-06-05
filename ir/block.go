@@ -25,7 +25,7 @@ type Block struct {
 
 	// extra.
 
-	// Parent function; field set by ir.Function.NewBlock.
+	// Parent function; field set by ir.Func.NewBlock.
 	Parent *Func
 }
 
