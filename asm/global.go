@@ -107,7 +107,7 @@ func (gen *generator) newFunc(ident ir.GlobalIdent, hdr ast.FuncHeader) (*ir.Fun
 	if n, ok := hdr.AddrSpace(); ok {
 		typ.AddrSpace = irAddrSpace(n)
 	}
-	return &ir.Func{GlobalIdent: ident, Sig: sig, Typ: typ}, nil
+	return &ir.Func{GlobalIdent: ident, Sig: sig, Typ: typ, Parent: gen.m}, nil
 }
 
 // ### [ Helper functions ] ####################################################
