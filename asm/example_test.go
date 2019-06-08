@@ -87,6 +87,7 @@ func Example() {
 	//             Personality:     nil,
 	//             UseListOrders:   nil,
 	//             Metadata:        nil,
+	//             Parent:          &ir.Module{(CYCLIC REFERENCE)},
 	//             mu:              sync.Mutex{},
 	//         },
 	//         &ir.Func{
@@ -211,6 +212,7 @@ func Example() {
 	//             Personality:     nil,
 	//             UseListOrders:   nil,
 	//             Metadata:        nil,
+	//             Parent:          &ir.Module{(CYCLIC REFERENCE)},
 	//             mu:              sync.Mutex{},
 	//         },
 	//     },

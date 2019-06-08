@@ -67,6 +67,9 @@ type Func struct {
 	// (optional) Metadata.
 	Metadata
 
+	// Parent module; field set by ir.Module.NewFunc.
+	Parent *Module
+
 	// mu prevents races on AssignIDs.
 	mu sync.Mutex
 }
