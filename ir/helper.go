@@ -366,7 +366,15 @@ func NewParam(name string, typ types.Type) *Param {
 // String returns the LLVM syntax representation of the function parameter as a
 // type-value pair.
 func (p *Param) String() string {
-	return fmt.Sprintf("%s %s", p.Type(), p.Ident())
+	buf := &strings.Builder{}
+	buf.WriteString(p.Type().String())
+	for _, attr := range p.Attrs {
+		buf.WriteRune(' ')
+		buf.WriteString(attr.String())
+	}
+	buf.WriteRune(' ')
+	buf.WriteString(p.Ident())
+	return buf.String()
 }
 
 // Type returns the type of the function parameter.
