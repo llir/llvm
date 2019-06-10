@@ -122,8 +122,15 @@ func (md *Value) Type() types.Type {
 	return types.Metadata
 }
 
+type AttrValue interface {
+	IgnoreAttr()
+}
+
 // Ident returns the identifier associated with the metadata value.
 func (md *Value) Ident() string {
+	if p, ok := md.Value.(AttrValue); ok {
+		p.IgnoreAttr() // ignore attributes at this place
+	}
 	return md.Value.String()
 }
 

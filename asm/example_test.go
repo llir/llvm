@@ -63,6 +63,7 @@ func Example() {
 	//                     LocalIdent: ir.LocalIdent{LocalName:"x", LocalID:0},
 	//                     Typ:        &types.IntType{TypeName:"", BitSize:0x20},
 	//                     Attrs:      nil,
+	//                     ignoreAttr: false,
 	//                 },
 	//             },
 	//             Blocks: nil,

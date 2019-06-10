@@ -353,6 +353,9 @@ type Param struct {
 
 	// (optional) Parameter attributes.
 	Attrs []ParamAttribute
+
+	// for implement ignore attr behavior
+	ignoreAttr bool
 }
 
 // NewParam returns a new function parameter based on the given name and type.
@@ -368,15 +371,21 @@ func NewParam(name string, typ types.Type) *Param {
 func (p *Param) String() string {
 	buf := &strings.Builder{}
 	buf.WriteString(p.Type().String())
-	if _, isMetadataType := p.Type().(*types.MetadataType); !isMetadataType {
+	if p.Type().Equal(types.Metadata) || !p.ignoreAttr {
 		for _, attr := range p.Attrs {
 			buf.WriteRune(' ')
 			buf.WriteString(attr.String())
 		}
+	} else {
+		p.ignoreAttr = false // immediately set back after use
 	}
 	buf.WriteRune(' ')
 	buf.WriteString(p.Ident())
 	return buf.String()
+}
+
+func (p *Param) IgnoreAttr() {
+	p.ignoreAttr = true
 }
 
 // Type returns the type of the function parameter.
