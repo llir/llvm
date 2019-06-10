@@ -368,9 +368,11 @@ func NewParam(name string, typ types.Type) *Param {
 func (p *Param) String() string {
 	buf := &strings.Builder{}
 	buf.WriteString(p.Type().String())
-	for _, attr := range p.Attrs {
-		buf.WriteRune(' ')
-		buf.WriteString(attr.String())
+	if _, isMetadataType := p.Type().(*types.MetadataType); !isMetadataType {
+		for _, attr := range p.Attrs {
+			buf.WriteRune(' ')
+			buf.WriteString(attr.String())
+		}
 	}
 	buf.WriteRune(' ')
 	buf.WriteString(p.Ident())
