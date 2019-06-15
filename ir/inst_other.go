@@ -392,11 +392,28 @@ func (inst *InstCall) LLString() string {
 		}
 	}
 	fmt.Fprintf(buf, " %s %s(", typ, inst.Callee.Ident())
-	for i, arg := range inst.Args {
-		if i != 0 {
-			buf.WriteString(", ")
+	f, ok := inst.Callee.(*Func)
+	if ok {
+		for i, param := range f.Params {
+			arg := inst.Args[i]
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(arg.Type().String())
+			for _, attr := range param.Attrs {
+				buf.WriteRune(' ')
+				buf.WriteString(attr.String())
+			}
+			buf.WriteRune(' ')
+			buf.WriteString(arg.Ident())
 		}
-		buf.WriteString(arg.String())
+	} else {
+		for i, arg := range inst.Args {
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(arg.String())
+		}
 	}
 	buf.WriteString(")")
 	for _, attr := range inst.FuncAttrs {
