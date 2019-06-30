@@ -5,31 +5,43 @@
 //    https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
 package natsort
 
-// Natural implements sort.Interface to sort strings in natural order. This
-// means that e.g. "abc2" < "abc12".
+import (
+	"sort"
+)
+
+// Strings sorts the given slice of strings in natural order.
+func Strings(a []string) {
+	sort.Sort(Order(a))
+}
+
+// Order implements sort.Interface to sort strings in natural order. This means
+// that e.g. "abc2" < "abc12".
 //
 // Non-digit sequences and numbers are compared separately. The former are
 // compared bytewise, while the latter are compared numerically (except that
 // the number of leading zeros is used as a tie-breaker, so e.g. "2" < "02")
 //
 // Limitation: only ASCII digits (0-9) are considered.
-type Natural []string
+type Order []string
 
-func (n Natural) Len() int           { return len(n) }
-func (n Natural) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
-func (n Natural) Less(i, j int) bool { return NaturalLess(n[i], n[j]) }
+func (n Order) Len() int           { return len(n) }
+func (n Order) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
+func (n Order) Less(i, j int) bool { return Less(n[i], n[j]) }
 
-func isdigit(b byte) bool { return '0' <= b && b <= '9' }
+// isdigit reports whether the given byte is a decimal digit.
+func isdigit(b byte) bool {
+	return '0' <= b && b <= '9'
+}
 
-// NaturalLess compares two strings using natural ordering. This means that e.g.
-// "abc2" < "abc12".
+// Less compares two strings using natural ordering. This means that e.g. "abc2"
+// < "abc12".
 //
 // Non-digit sequences and numbers are compared separately. The former are
 // compared bytewise, while the latter are compared numerically (except that
 // the number of leading zeros is used as a tie-breaker, so e.g. "2" < "02")
 //
 // Limitation: only ASCII digits (0-9) are considered.
-func NaturalLess(str1, str2 string) bool {
+func Less(str1, str2 string) bool {
 	idx1, idx2 := 0, 0
 	for idx1 < len(str1) && idx2 < len(str2) {
 		c1, c2 := str1[idx1], str2[idx2]

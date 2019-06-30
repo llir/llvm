@@ -1,17 +1,14 @@
 package natsort
 
 import (
-	"flag"
 	"math/rand"
 	"reflect"
 	"sort"
 	"strconv"
 	"testing"
-
-	"github.com/xlab/handysort"
 )
 
-func TestStringSort(t *testing.T) {
+func TestStrings(t *testing.T) {
 	a := []string{
 		"ab", "abc1",
 		"abc01", "abc2",
@@ -22,13 +19,13 @@ func TestStringSort(t *testing.T) {
 		"abc01", "ab",
 		"abc10", "abc2",
 	}
-	sort.Sort(Natural(b))
+	Strings(b)
 	if !reflect.DeepEqual(a, b) {
 		t.Errorf("Error: sort failed, expected: %#q, got: %#q", a, b)
 	}
 }
 
-func TestNaturalLess(t *testing.T) {
+func TestLess(t *testing.T) {
 	testset := []struct {
 		s1, s2 string
 		less   bool
@@ -63,40 +60,14 @@ func TestNaturalLess(t *testing.T) {
 		{"9a", "083a", true},
 	}
 	for _, v := range testset {
-		if res := NaturalLess(v.s1, v.s2); res != v.less {
+		if res := Less(v.s1, v.s2); res != v.less {
 			t.Errorf("Compared %#q to %#q: expected %v, got %v",
 				v.s1, v.s2, v.less, res)
 		}
-		if res := handysort.StringLess(v.s1, v.s2); res != v.less {
-			t.Logf("handysort: Compared %#q to %#q: expected %v, got %v",
-				v.s1, v.s2, v.less, res)
-		}
 	}
 }
 
-var testEquivalence = flag.Bool("equivalence", false, "Test equivalence with handysort")
-
-func TestEquivalenceToXlabStringLess(t *testing.T) {
-	if !*testEquivalence {
-		t.Skip("Skipping exhaustive test without -equivalence")
-	}
-
-	set := testSet(300)
-	for _, list := range set[:1] {
-		list = list[:100]
-		for _, lhs := range list {
-			for _, rhs := range list {
-				nl := NaturalLess(lhs, rhs)
-				sl := handysort.StringLess(lhs, rhs)
-				if nl != sl {
-					t.Errorf("difference to handysort: %v vs %v for %#q < %#q", nl, sl, lhs, rhs)
-				}
-			}
-		}
-	}
-}
-
-func BenchmarkStdStringSort(b *testing.B) {
+func BenchmarkStdStrings(b *testing.B) {
 	set := testSet(300)
 	arr := make([]string, len(set[0]))
 	b.ResetTimer()
@@ -111,7 +82,7 @@ func BenchmarkStdStringSort(b *testing.B) {
 	}
 }
 
-func BenchmarkNaturalStringSort(b *testing.B) {
+func BenchmarkStrings(b *testing.B) {
 	set := testSet(300)
 	arr := make([]string, len(set[0]))
 	b.ResetTimer()
@@ -121,27 +92,12 @@ func BenchmarkNaturalStringSort(b *testing.B) {
 			copy(arr, list)
 			b.StartTimer()
 
-			sort.Sort(Natural(arr))
+			Strings(arr)
 		}
 	}
 }
 
-func BenchmarkHandyStringSort(b *testing.B) {
-	set := testSet(300)
-	arr := make([]string, len(set[0]))
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		for _, list := range set {
-			b.StopTimer()
-			copy(arr, list)
-			b.StartTimer()
-
-			sort.Sort(handysort.Strings(arr))
-		}
-	}
-}
-
-func BenchmarkStdStringLess(b *testing.B) {
+func BenchmarkStdLess(b *testing.B) {
 	set := testSet(300)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -152,24 +108,13 @@ func BenchmarkStdStringLess(b *testing.B) {
 	}
 }
 
-func BenchmarkNaturalLess(b *testing.B) {
+func BenchmarkLess(b *testing.B) {
 	set := testSet(300)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for j := range set[0] {
 			k := (j + 1) % len(set[0])
-			_ = NaturalLess(set[0][j], set[0][k])
-		}
-	}
-}
-
-func BenchmarkHandyStringLess(b *testing.B) {
-	set := testSet(300)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		for j := range set[0] {
-			k := (j + 1) % len(set[0])
-			_ = handysort.StringLess(set[0][j], set[0][k])
+			_ = Less(set[0][j], set[0][k])
 		}
 	}
 }
