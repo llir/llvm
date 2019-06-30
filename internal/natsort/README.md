@@ -1,5 +1,10 @@
-## sortorder [![GoDoc](https://godoc.org/vbom.ml/util/sortorder?status.svg)](https://godoc.org/vbom.ml/util/sortorder)
+# natsort
 
-    import "vbom.ml/util/sortorder"
+This is a fork of the `sortorder` package of [github.com/fvbommel/util](https://github.com/fvbommel/util).
 
-Sort orders and comparison functions.
+## License
+
+* [MIT](./LICENSE)
+    - the original implementation of `sortorder` was released by [Frits van Bommel](https://github.com/fvbommel) under an MIT license.
+* [Public domain](../../UNLICENSE)
+    - any changes made in this fork are released into the public domain.

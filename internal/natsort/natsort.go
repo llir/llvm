@@ -1,4 +1,9 @@
-package sortorder
+// Package natsort implements natural sort. In "Natural Sort Order" integers
+// embedded in strings are compared by value.
+//
+// References:
+//    https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
+package natsort
 
 // Natural implements sort.Interface to sort strings in natural order. This
 // means that e.g. "abc2" < "abc12".

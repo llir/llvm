@@ -1,4 +1,4 @@
-package sortorder
+package natsort
 
 import (
 	"flag"
