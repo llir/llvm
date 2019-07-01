@@ -13,8 +13,6 @@ github.com/mewspring/tools v0.0.0-20190326052302-906fcc68b3d8 h1:DSZ+nV7JOU9CznT
 github.com/mewspring/tools v0.0.0-20190326052302-906fcc68b3d8/go.mod h1:UAdVbSksr+7Bg+z4mga16OaBg3qAcgdaF3x3AeqJHEs=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/rickypai/natsort v0.0.0-20180124032556-f194e6bd5b0c h1:wq5MmT1Whub72MXlR2I5jWTQ3Q5wkNXnVBY21Q3Qzis=
-github.com/rickypai/natsort v0.0.0-20180124032556-f194e6bd5b0c/go.mod h1:ECfieXu+EwvGnmpzRZvaAN0U/Jese1LX/BqX3HF1Kl0=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/image v0.0.0-20190220214146-31aff87c08e9/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
