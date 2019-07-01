@@ -9,19 +9,46 @@ import (
 )
 
 func TestStrings(t *testing.T) {
-	a := []string{
-		"ab", "abc1",
-		"abc01", "abc2",
-		"abc5", "abc10",
+	golden := []struct {
+		in   []string
+		want []string
+	}{
+		{
+			in: []string{"abc5", "abc1", "abc01", "ab", "abc10", "abc2"},
+			want: []string{
+				"ab",
+				"abc1",
+				"abc01",
+				"abc2",
+				"abc5",
+				"abc10",
+			},
+		},
+		{
+			in: []string{"foo20", "foo.bar", "foo2", "foo.10", "foo.1", "foo.20", "foo.11", "foo1", "foobar", "foo21", "foo10", "foo11", "foo.21", "foo.2"},
+			want: []string{
+				"foo.1",
+				"foo.2",
+				"foo.10",
+				"foo.11",
+				"foo.20",
+				"foo.21",
+				"foo.bar",
+				"foo1",
+				"foo2",
+				"foo10",
+				"foo11",
+				"foo20",
+				"foo21",
+				"foobar",
+			},
+		},
 	}
-	b := []string{
-		"abc5", "abc1",
-		"abc01", "ab",
-		"abc10", "abc2",
-	}
-	Strings(b)
-	if !reflect.DeepEqual(a, b) {
-		t.Errorf("Error: sort failed, expected: %#q, got: %#q", a, b)
+	for _, g := range golden {
+		Strings(g.in)
+		if !reflect.DeepEqual(g.want, g.in) {
+			t.Errorf("Error: sort failed, expected: %#q, got: %#q", g.want, g.in)
+		}
 	}
 }
 
@@ -58,6 +85,9 @@ func TestLess(t *testing.T) {
 		//
 		{"083a", "9a", false},
 		{"9a", "083a", true},
+		//
+		{"foo.bar", "foo123", true},
+		{"foo123", "foo.bar", false},
 	}
 	for _, v := range testset {
 		if res := Less(v.s1, v.s2); res != v.less {

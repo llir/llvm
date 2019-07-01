@@ -47,17 +47,7 @@ func Less(str1, str2 string) bool {
 		c1, c2 := str1[idx1], str2[idx2]
 		dig1, dig2 := isdigit(c1), isdigit(c2)
 		switch {
-		case dig1 != dig2: // Digits before other characters.
-			return dig1 // True if LHS is a digit, false if the RHS is one.
-		case !dig1: // && !dig2, because dig1 == dig2
-			// UTF-8 compares bytewise-lexicographically, no need to decode
-			// codepoints.
-			if c1 != c2 {
-				return c1 < c2
-			}
-			idx1++
-			idx2++
-		default: // Digits
+		case dig1 && dig2: // Digits
 			// Eat zeros.
 			for ; idx1 < len(str1) && str1[idx1] == '0'; idx1++ {
 			}
@@ -84,6 +74,14 @@ func Less(str1, str2 string) bool {
 			if nonZero1 != nonZero2 {
 				return nonZero1 < nonZero2
 			}
+		default: // non-digit characters
+			// UTF-8 compares bytewise-lexicographically, no need to decode
+			// codepoints.
+			if c1 != c2 {
+				return c1 < c2
+			}
+			idx1++
+			idx2++
 		}
 		// They're identical so far, so continue comparing.
 	}
