@@ -195,21 +195,21 @@ type ioWriteWrapping struct {
 
 func (i *ioWriteWrapping) Fprintln(w io.Writer, a ...interface{}) {
 	if i.err != nil {
-		n, err := fmt.Fprintln(w, a)
+		n, err := fmt.Fprintln(w, a...)
 		i.size += n
 		i.err = err
 	}
 }
 func (i *ioWriteWrapping) Fprint(w io.Writer, a ...interface{}) {
 	if i.err != nil {
-		n, err := fmt.Fprint(w, a)
+		n, err := fmt.Fprint(w, a...)
 		i.size += n
 		i.err = err
 	}
 }
 func (i *ioWriteWrapping) Fprintf(w io.Writer, format string, a ...interface{}) {
 	if i.err != nil {
-		n, err := fmt.Fprintf(w, format, a)
+		n, err := fmt.Fprintf(w, format, a...)
 		i.size += n
 		i.err = err
 	}
@@ -239,7 +239,7 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		writeWrapping.Fprintf(output, "target triple = %s\n", quote(m.TargetTriple))
 	}
 	// Module-level inline assembly.
-	if len(m.ModuleAsms) > 0 {
+	if len(m.ModuleAsms) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, asm := range m.ModuleAsms {
@@ -247,7 +247,7 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		writeWrapping.Fprintf(output, "module asm %s\n", quote(asm))
 	}
 	// Type definitions.
-	if len(m.TypeDefs) > 0 {
+	if len(m.TypeDefs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, t := range m.TypeDefs {
@@ -257,35 +257,35 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		writeWrapping.Fprintf(output, "%s = type %s\n", t, t.LLString())
 	}
 	// Comdat definitions.
-	if len(m.ComdatDefs) > 0 {
+	if len(m.ComdatDefs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, def := range m.ComdatDefs {
 		writeWrapping.Fprintln(output, def.LLString())
 	}
 	// Global declarations and definitions.
-	if len(m.Globals) > 0 {
+	if len(m.Globals) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, g := range m.Globals {
 		writeWrapping.Fprintln(output, g.LLString())
 	}
 	// Aliases.
-	if len(m.Aliases) > 0 {
+	if len(m.Aliases) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, alias := range m.Aliases {
 		writeWrapping.Fprintln(output, alias.LLString())
 	}
 	// IFuncs.
-	if len(m.IFuncs) > 0 {
+	if len(m.IFuncs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, ifunc := range m.IFuncs {
 		writeWrapping.Fprintln(output, ifunc.LLString())
 	}
 	// Function declarations and definitions.
-	if len(m.Funcs) > 0 {
+	if len(m.Funcs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for i, f := range m.Funcs {
@@ -295,7 +295,7 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		writeWrapping.Fprintln(output, f.LLString())
 	}
 	// Attribute group definitions.
-	if len(m.AttrGroupDefs) > 0 {
+	if len(m.AttrGroupDefs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, a := range m.AttrGroupDefs {
@@ -307,7 +307,7 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		mdNames = append(mdNames, mdName)
 	}
 	natsort.Strings(mdNames)
-	if len(m.NamedMetadataDefs) > 0 {
+	if len(m.NamedMetadataDefs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, mdName := range mdNames {
@@ -316,7 +316,7 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		writeWrapping.Fprintf(output, "%s = %s\n", md.Ident(), md.LLString())
 	}
 	// Metadata definitions.
-	if len(m.MetadataDefs) > 0 {
+	if len(m.MetadataDefs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, md := range m.MetadataDefs {
@@ -326,14 +326,14 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		writeWrapping.Fprintf(output, "%s = %s\n", md.Ident(), md.LLString())
 	}
 	// Use-list orders.
-	if len(m.UseListOrders) > 0 {
+	if len(m.UseListOrders) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, u := range m.UseListOrders {
 		writeWrapping.Fprintln(output, u)
 	}
 	// Basic block specific use-list orders.
-	if len(m.UseListOrderBBs) > 0 {
+	if len(m.UseListOrderBBs) > 0 && writeWrapping.size > 0 {
 		writeWrapping.Fprint(output, "\n")
 	}
 	for _, u := range m.UseListOrderBBs {
