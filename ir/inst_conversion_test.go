@@ -39,7 +39,7 @@ func TestTypeCheckTrunc(t *testing.T) {
 			func() {
 				defer func() { panicErr = recover().(error) }()
 				trunc := NewTrunc(zeroVal, c.toTyp)
-				trunc.String()
+				_ = trunc.String()
 				panic(errOK)
 			}()
 			got := panicErr.Error()
