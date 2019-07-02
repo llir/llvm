@@ -16,11 +16,11 @@ install:
   - go get -t ./...
 
 before_script:
-  - go get -u golang.org/x/tools/cmd/cover
-  - go get -u golang.org/x/tools/cmd/goimports
-  - go get -u golang.org/x/lint/golint
-  - go get -u github.com/mattn/goveralls
-  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go get golang.org/x/tools/cmd/cover
+  - go get golang.org/x/tools/cmd/goimports
+  - go get golang.org/x/lint/golint
+  - go get github.com/mattn/goveralls
+  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
   - wget https://raw.githubusercontent.com/mewmew/ci/master/ci_checks.sh
   - chmod +x ci_checks.sh
 

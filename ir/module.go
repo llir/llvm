@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/internal/natsort"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
-	"github.com/rickypai/natsort"
 )
 
 // === [ Modules ] =============================================================

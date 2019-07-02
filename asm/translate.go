@@ -89,12 +89,12 @@ import (
 
 	"github.com/llir/ll/ast"
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/internal/natsort"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/pkg/errors"
-	"github.com/rickypai/natsort"
 )
 
 // translate translates the given AST module into an equivalent IR module.
