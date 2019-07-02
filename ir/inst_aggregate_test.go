@@ -13,11 +13,11 @@ func TestTypeCheckInstExtractValue(t *testing.T) {
 
 	// Should succeed.
 	var v value.Value = constant.NewUndef(structType)
-	v.String()
+	_ = v.String()
 	v = NewInsertValue(v, constant.NewInt(types.I32, 1), 0)
-	v.String()
+	_ = v.String()
 	v = NewInsertValue(v, constant.NewInt(types.I64, 1), 1)
-	v.String()
+	_ = v.String()
 
 	var panicErr error
 	func() {
