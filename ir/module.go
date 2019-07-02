@@ -65,160 +65,16 @@ func NewModule() *Module {
 // syntax.
 func (m *Module) String() string {
 	buf := &strings.Builder{}
-	// Assign metadata IDs.
-	if err := m.AssignMetadataIDs(); err != nil {
-		panic(fmt.Errorf("unable to assign metadata IDs of module; %v", err))
-	}
-	// Source filename.
-	if len(m.SourceFilename) > 0 {
-		// 'source_filename' '=' Name=StringLit
-		fmt.Fprintf(buf, "source_filename = %s\n", quote(m.SourceFilename))
-	}
-	// Data layout.
-	if len(m.DataLayout) > 0 {
-		// 'target' 'datalayout' '=' DataLayout=StringLit
-		fmt.Fprintf(buf, "target datalayout = %s\n", quote(m.DataLayout))
-	}
-	// Target triple.
-	if len(m.TargetTriple) > 0 {
-		// 'target' 'triple' '=' TargetTriple=StringLit
-		fmt.Fprintf(buf, "target triple = %s\n", quote(m.TargetTriple))
-	}
-	// Module-level inline assembly.
-	if len(m.ModuleAsms) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, asm := range m.ModuleAsms {
-		// 'module' 'asm' Asm=StringLit
-		fmt.Fprintf(buf, "module asm %s\n", quote(asm))
-	}
-	// Type definitions.
-	if len(m.TypeDefs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, t := range m.TypeDefs {
-		// Alias=LocalIdent '=' 'type' Typ=OpaqueType
-		//
-		// Alias=LocalIdent '=' 'type' Typ=Type
-		fmt.Fprintf(buf, "%s = type %s\n", t, t.LLString())
-	}
-	// Comdat definitions.
-	if len(m.ComdatDefs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, def := range m.ComdatDefs {
-		fmt.Fprintln(buf, def.LLString())
-	}
-	// Global declarations and definitions.
-	if len(m.Globals) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, g := range m.Globals {
-		fmt.Fprintln(buf, g.LLString())
-	}
-	// Aliases.
-	if len(m.Aliases) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, alias := range m.Aliases {
-		fmt.Fprintln(buf, alias.LLString())
-	}
-	// IFuncs.
-	if len(m.IFuncs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, ifunc := range m.IFuncs {
-		fmt.Fprintln(buf, ifunc.LLString())
-	}
-	// Function declarations and definitions.
-	if len(m.Funcs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for i, f := range m.Funcs {
-		if i != 0 {
-			buf.WriteString("\n")
-		}
-		fmt.Fprintln(buf, f.LLString())
-	}
-	// Attribute group definitions.
-	if len(m.AttrGroupDefs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, a := range m.AttrGroupDefs {
-		fmt.Fprintln(buf, a.LLString())
-	}
-	// Named metadata definitions; output in natural sorting order.
-	var mdNames []string
-	for mdName := range m.NamedMetadataDefs {
-		mdNames = append(mdNames, mdName)
-	}
-	natsort.Strings(mdNames)
-	if len(m.NamedMetadataDefs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, mdName := range mdNames {
-		// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
-		md := m.NamedMetadataDefs[mdName]
-		fmt.Fprintf(buf, "%s = %s\n", md.Ident(), md.LLString())
-	}
-	// Metadata definitions.
-	if len(m.MetadataDefs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, md := range m.MetadataDefs {
-		// ID=MetadataID '=' Distinctopt MDNode=MDTuple
-		//
-		// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
-		fmt.Fprintf(buf, "%s = %s\n", md.Ident(), md.LLString())
-	}
-	// Use-list orders.
-	if len(m.UseListOrders) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, u := range m.UseListOrders {
-		fmt.Fprintln(buf, u)
-	}
-	// Basic block specific use-list orders.
-	if len(m.UseListOrderBBs) > 0 && buf.Len() > 0 {
-		buf.WriteString("\n")
-	}
-	for _, u := range m.UseListOrderBBs {
-		fmt.Fprintln(buf, u)
+	if _, err := m.WriteTo(buf); err != nil {
+		panic(fmt.Errorf("unable to write to string buffer; %v", err))
 	}
 	return buf.String()
 }
 
-type ioWriteWrapping struct {
-	size int
-	err  error
-}
-
-func (i *ioWriteWrapping) Fprintln(w io.Writer, a ...interface{}) {
-	if i.err != nil {
-		n, err := fmt.Fprintln(w, a...)
-		i.size += n
-		i.err = err
-	}
-}
-func (i *ioWriteWrapping) Fprint(w io.Writer, a ...interface{}) {
-	if i.err != nil {
-		n, err := fmt.Fprint(w, a...)
-		i.size += n
-		i.err = err
-	}
-}
-func (i *ioWriteWrapping) Fprintf(w io.Writer, format string, a ...interface{}) {
-	if i.err != nil {
-		n, err := fmt.Fprintf(w, format, a...)
-		i.size += n
-		i.err = err
-	}
-}
-
 // WriteTo write the string representation of the module in LLVM IR assembly
-// syntax to output.
-func (m *Module) WriteTo(output io.Writer) (size int, err error) {
-	writeWrapping := &ioWriteWrapping{size: 0, err: nil}
+// syntax to w.
+func (m *Module) WriteTo(w io.Writer) (n int64, err error) {
+	fw := &fmtWriter{w: w}
 	// Assign metadata IDs.
 	if err := m.AssignMetadataIDs(); err != nil {
 		panic(fmt.Errorf("unable to assign metadata IDs of module; %v", err))
@@ -226,80 +82,80 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 	// Source filename.
 	if len(m.SourceFilename) > 0 {
 		// 'source_filename' '=' Name=StringLit
-		writeWrapping.Fprintf(output, "source_filename = %s\n", quote(m.SourceFilename))
+		fw.Fprintf("source_filename = %s\n", quote(m.SourceFilename))
 	}
 	// Data layout.
 	if len(m.DataLayout) > 0 {
 		// 'target' 'datalayout' '=' DataLayout=StringLit
-		writeWrapping.Fprintf(output, "target datalayout = %s\n", quote(m.DataLayout))
+		fw.Fprintf("target datalayout = %s\n", quote(m.DataLayout))
 	}
 	// Target triple.
 	if len(m.TargetTriple) > 0 {
 		// 'target' 'triple' '=' TargetTriple=StringLit
-		writeWrapping.Fprintf(output, "target triple = %s\n", quote(m.TargetTriple))
+		fw.Fprintf("target triple = %s\n", quote(m.TargetTriple))
 	}
 	// Module-level inline assembly.
-	if len(m.ModuleAsms) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.ModuleAsms) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, asm := range m.ModuleAsms {
 		// 'module' 'asm' Asm=StringLit
-		writeWrapping.Fprintf(output, "module asm %s\n", quote(asm))
+		fw.Fprintf("module asm %s\n", quote(asm))
 	}
 	// Type definitions.
-	if len(m.TypeDefs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.TypeDefs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, t := range m.TypeDefs {
 		// Alias=LocalIdent '=' 'type' Typ=OpaqueType
 		//
 		// Alias=LocalIdent '=' 'type' Typ=Type
-		writeWrapping.Fprintf(output, "%s = type %s\n", t, t.LLString())
+		fw.Fprintf("%s = type %s\n", t, t.LLString())
 	}
 	// Comdat definitions.
-	if len(m.ComdatDefs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.ComdatDefs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, def := range m.ComdatDefs {
-		writeWrapping.Fprintln(output, def.LLString())
+		fw.Fprintln(def.LLString())
 	}
 	// Global declarations and definitions.
-	if len(m.Globals) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.Globals) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, g := range m.Globals {
-		writeWrapping.Fprintln(output, g.LLString())
+		fw.Fprintln(g.LLString())
 	}
 	// Aliases.
-	if len(m.Aliases) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.Aliases) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, alias := range m.Aliases {
-		writeWrapping.Fprintln(output, alias.LLString())
+		fw.Fprintln(alias.LLString())
 	}
 	// IFuncs.
-	if len(m.IFuncs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.IFuncs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, ifunc := range m.IFuncs {
-		writeWrapping.Fprintln(output, ifunc.LLString())
+		fw.Fprintln(ifunc.LLString())
 	}
 	// Function declarations and definitions.
-	if len(m.Funcs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.Funcs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for i, f := range m.Funcs {
 		if i != 0 {
-			writeWrapping.Fprint(output, "\n")
+			fw.Fprint("\n")
 		}
-		writeWrapping.Fprintln(output, f.LLString())
+		fw.Fprintln(f.LLString())
 	}
 	// Attribute group definitions.
-	if len(m.AttrGroupDefs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.AttrGroupDefs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, a := range m.AttrGroupDefs {
-		writeWrapping.Fprintln(output, a.LLString())
+		fw.Fprintln(a.LLString())
 	}
 	// Named metadata definitions; output in natural sorting order.
 	var mdNames []string
@@ -307,39 +163,39 @@ func (m *Module) WriteTo(output io.Writer) (size int, err error) {
 		mdNames = append(mdNames, mdName)
 	}
 	natsort.Strings(mdNames)
-	if len(m.NamedMetadataDefs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.NamedMetadataDefs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, mdName := range mdNames {
 		// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 		md := m.NamedMetadataDefs[mdName]
-		writeWrapping.Fprintf(output, "%s = %s\n", md.Ident(), md.LLString())
+		fw.Fprintf("%s = %s\n", md.Ident(), md.LLString())
 	}
 	// Metadata definitions.
-	if len(m.MetadataDefs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.MetadataDefs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, md := range m.MetadataDefs {
 		// ID=MetadataID '=' Distinctopt MDNode=MDTuple
 		//
 		// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
-		writeWrapping.Fprintf(output, "%s = %s\n", md.Ident(), md.LLString())
+		fw.Fprintf("%s = %s\n", md.Ident(), md.LLString())
 	}
 	// Use-list orders.
-	if len(m.UseListOrders) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.UseListOrders) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, u := range m.UseListOrders {
-		writeWrapping.Fprintln(output, u)
+		fw.Fprintln(u)
 	}
 	// Basic block specific use-list orders.
-	if len(m.UseListOrderBBs) > 0 && writeWrapping.size > 0 {
-		writeWrapping.Fprint(output, "\n")
+	if len(m.UseListOrderBBs) > 0 && fw.size > 0 {
+		fw.Fprint("\n")
 	}
 	for _, u := range m.UseListOrderBBs {
-		writeWrapping.Fprintln(output, u)
+		fw.Fprintln(u)
 	}
-	return writeWrapping.size, writeWrapping.err
+	return fw.size, fw.err
 }
 
 // ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
