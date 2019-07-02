@@ -2,6 +2,7 @@ package ir
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/llir/llvm/internal/enc"
@@ -185,6 +186,160 @@ func (m *Module) String() string {
 		fmt.Fprintln(buf, u)
 	}
 	return buf.String()
+}
+
+type ioWriteWrapping struct {
+	size int
+	err  error
+}
+
+func (i *ioWriteWrapping) Fprintln(w io.Writer, a ...interface{}) {
+	if i.err != nil {
+		n, err := fmt.Fprintln(w, a)
+		i.size += n
+		i.err = err
+	}
+}
+func (i *ioWriteWrapping) Fprint(w io.Writer, a ...interface{}) {
+	if i.err != nil {
+		n, err := fmt.Fprint(w, a)
+		i.size += n
+		i.err = err
+	}
+}
+func (i *ioWriteWrapping) Fprintf(w io.Writer, format string, a ...interface{}) {
+	if i.err != nil {
+		n, err := fmt.Fprintf(w, format, a)
+		i.size += n
+		i.err = err
+	}
+}
+
+// WriteTo write the string representation of the module in LLVM IR assembly
+// syntax to output.
+func (m *Module) WriteTo(output io.Writer) (size int, err error) {
+	writeWrapping := &ioWriteWrapping{size: 0, err: nil}
+	// Assign metadata IDs.
+	if err := m.AssignMetadataIDs(); err != nil {
+		panic(fmt.Errorf("unable to assign metadata IDs of module; %v", err))
+	}
+	// Source filename.
+	if len(m.SourceFilename) > 0 {
+		// 'source_filename' '=' Name=StringLit
+		writeWrapping.Fprintf(output, "source_filename = %s\n", quote(m.SourceFilename))
+	}
+	// Data layout.
+	if len(m.DataLayout) > 0 {
+		// 'target' 'datalayout' '=' DataLayout=StringLit
+		writeWrapping.Fprintf(output, "target datalayout = %s\n", quote(m.DataLayout))
+	}
+	// Target triple.
+	if len(m.TargetTriple) > 0 {
+		// 'target' 'triple' '=' TargetTriple=StringLit
+		writeWrapping.Fprintf(output, "target triple = %s\n", quote(m.TargetTriple))
+	}
+	// Module-level inline assembly.
+	if len(m.ModuleAsms) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, asm := range m.ModuleAsms {
+		// 'module' 'asm' Asm=StringLit
+		writeWrapping.Fprintf(output, "module asm %s\n", quote(asm))
+	}
+	// Type definitions.
+	if len(m.TypeDefs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, t := range m.TypeDefs {
+		// Alias=LocalIdent '=' 'type' Typ=OpaqueType
+		//
+		// Alias=LocalIdent '=' 'type' Typ=Type
+		writeWrapping.Fprintf(output, "%s = type %s\n", t, t.LLString())
+	}
+	// Comdat definitions.
+	if len(m.ComdatDefs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, def := range m.ComdatDefs {
+		writeWrapping.Fprintln(output, def.LLString())
+	}
+	// Global declarations and definitions.
+	if len(m.Globals) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, g := range m.Globals {
+		writeWrapping.Fprintln(output, g.LLString())
+	}
+	// Aliases.
+	if len(m.Aliases) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, alias := range m.Aliases {
+		writeWrapping.Fprintln(output, alias.LLString())
+	}
+	// IFuncs.
+	if len(m.IFuncs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, ifunc := range m.IFuncs {
+		writeWrapping.Fprintln(output, ifunc.LLString())
+	}
+	// Function declarations and definitions.
+	if len(m.Funcs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for i, f := range m.Funcs {
+		if i != 0 {
+			writeWrapping.Fprint(output, "\n")
+		}
+		writeWrapping.Fprintln(output, f.LLString())
+	}
+	// Attribute group definitions.
+	if len(m.AttrGroupDefs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, a := range m.AttrGroupDefs {
+		writeWrapping.Fprintln(output, a.LLString())
+	}
+	// Named metadata definitions; output in natural sorting order.
+	var mdNames []string
+	for mdName := range m.NamedMetadataDefs {
+		mdNames = append(mdNames, mdName)
+	}
+	natsort.Strings(mdNames)
+	if len(m.NamedMetadataDefs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, mdName := range mdNames {
+		// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
+		md := m.NamedMetadataDefs[mdName]
+		writeWrapping.Fprintf(output, "%s = %s\n", md.Ident(), md.LLString())
+	}
+	// Metadata definitions.
+	if len(m.MetadataDefs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, md := range m.MetadataDefs {
+		// ID=MetadataID '=' Distinctopt MDNode=MDTuple
+		//
+		// ID=MetadataID '=' Distinctopt MDNode=SpecializedMDNode
+		writeWrapping.Fprintf(output, "%s = %s\n", md.Ident(), md.LLString())
+	}
+	// Use-list orders.
+	if len(m.UseListOrders) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, u := range m.UseListOrders {
+		writeWrapping.Fprintln(output, u)
+	}
+	// Basic block specific use-list orders.
+	if len(m.UseListOrderBBs) > 0 {
+		writeWrapping.Fprint(output, "\n")
+	}
+	for _, u := range m.UseListOrderBBs {
+		writeWrapping.Fprintln(output, u)
+	}
+	return writeWrapping.size, writeWrapping.err
 }
 
 // ~~~ [ Comdat Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
