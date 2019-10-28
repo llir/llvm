@@ -37,6 +37,9 @@ func TestParseFile(t *testing.T) {
 		// frem constant expression.
 		{path: "testdata/expr_frem.ll"},
 
+		// parameter attributes.
+		{path: "testdata/param_attrs.ll"},
+
 		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 

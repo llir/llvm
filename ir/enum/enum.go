@@ -813,8 +813,7 @@ type ParamAttr uint8
 
 // Parameter attributes.
 const (
-	ParamAttrByval      ParamAttr = iota // byval
-	ParamAttrInAlloca                    // inalloca
+	ParamAttrInAlloca   ParamAttr = iota // inalloca
 	ParamAttrInReg                       // inreg
 	ParamAttrNest                        // nest
 	ParamAttrNoAlias                     // noalias

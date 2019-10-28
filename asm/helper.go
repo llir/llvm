@@ -221,7 +221,10 @@ func (fgen *funcGen) irArg(old ast.Arg) (value.Value, error) {
 		if oldAttrs := old.Attrs(); len(oldAttrs) > 0 {
 			attrs := make([]ir.ParamAttribute, len(oldAttrs))
 			for i, oldAttr := range old.Attrs() {
-				attr := irParamAttribute(oldAttr)
+				attr, err := fgen.gen.irParamAttribute(oldAttr)
+				if err != nil {
+					return nil, errors.WithStack(err)
+				}
 				attrs[i] = attr
 			}
 			return &ir.Arg{Attrs: attrs, Value: x}, nil
@@ -529,26 +532,35 @@ func irOverflowFlags(olds []ast.OverflowFlag) []enum.OverflowFlag {
 
 // irParamAttribute returns the IR parameter attribute corresponding to the given
 // AST parameter attribute.
-func irParamAttribute(old ast.ParamAttribute) ir.ParamAttribute {
+func (gen *generator) irParamAttribute(old ast.ParamAttribute) (ir.ParamAttribute, error) {
 	switch old := old.(type) {
 	case *ast.AttrString:
-		return ir.AttrString(unquote(old.Text()))
+		return ir.AttrString(unquote(old.Text())), nil
 	case *ast.AttrPair:
 		return ir.AttrPair{
 			Key:   unquote(old.Key().Text()),
 			Value: unquote(old.Val().Text()),
-		}
+		}, nil
 	case *ast.Align:
-		return ir.Align(uintLit(old.N()))
+		return ir.Align(uintLit(old.N())), nil
+	case *ast.Byval:
+		if t, ok := old.Typ(); ok {
+			typ, err := gen.irType(t)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			return ir.Byval{Typ: typ}, nil
+		}
+		return ir.Byval{}, nil
 	case *ast.Dereferenceable:
-		return ir.Dereferenceable{N: uintLit(old.N())}
+		return ir.Dereferenceable{N: uintLit(old.N())}, nil
 	case *ast.DereferenceableOrNull:
 		return ir.Dereferenceable{
 			N:           uintLit(old.N()),
 			DerefOrNull: true,
-		}
+		}, nil
 	case *ast.ParamAttr:
-		return asmenum.ParamAttrFromString(old.Text())
+		return asmenum.ParamAttrFromString(old.Text()), nil
 	default:
 		panic(fmt.Errorf("support for parameter attribute %T not yet implemented", old))
 	}

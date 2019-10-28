@@ -131,6 +131,10 @@ func (Align) IsParamAttribute() {}
 
 // IsParamAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
+func (Byval) IsParamAttribute() {}
+
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
 func (Dereferenceable) IsParamAttribute() {}
 
 // === [ ir.ReturnAttribute ] ==================================================

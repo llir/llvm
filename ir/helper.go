@@ -96,6 +96,23 @@ func (a AttrString) String() string {
 	return quote(string(a))
 }
 
+// Byval is a byval parameter attribute.
+type Byval struct {
+	// (optional) Parameter type.
+	Typ types.Type
+}
+
+// String returns the string representation of the byval parameter attribute.
+func (b Byval) String() string {
+	// 'byval'
+	//
+	// 'byval' '(' Typ=Type ')'
+	if b.Typ != nil {
+		return fmt.Sprintf("byval(%s)", b.Typ)
+	}
+	return "byval"
+}
+
 // Dereferenceable is a dereferenceable memory attribute.
 type Dereferenceable struct {
 	// Number of bytes known to be dereferenceable.

@@ -480,7 +480,10 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 			if oldParamAttrs := oldParam.Attrs(); len(oldParamAttrs) > 0 {
 				param.Attrs = make([]ir.ParamAttribute, len(oldParamAttrs))
 				for j, oldParamAttr := range oldParamAttrs {
-					paramAttr := irParamAttribute(oldParamAttr)
+					paramAttr, err := gen.irParamAttribute(oldParamAttr)
+					if err != nil {
+						return errors.WithStack(err)
+					}
 					param.Attrs[j] = paramAttr
 				}
 			}
