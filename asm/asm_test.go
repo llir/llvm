@@ -1,7 +1,6 @@
 package asm
 
 import (
-	"flag"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -12,12 +11,7 @@ import (
 )
 
 // words specifies whether to colour words in diff output.
-var words bool
-
-func init() {
-	flag.BoolVar(&words, "words", false, "colour words in diff output")
-	flag.Parse()
-}
+const words = false
 
 func TestParseFile(t *testing.T) {
 	golden := []struct {
