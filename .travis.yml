@@ -18,7 +18,7 @@ install:
 before_script:
   - go get golang.org/x/tools/cmd/cover
   - go get golang.org/x/tools/cmd/goimports
-  - go get golang.org/x/lint/golint
+  - go get -u github.com/mgechev/revive
   - go get github.com/mattn/goveralls
   # TODO: re-enable when https://github.com/golangci/golangci-lint/issues/595 is resolved.
   #- go get github.com/golangci/golangci-lint/cmd/golangci-lint
