@@ -221,6 +221,15 @@ type LocalIdent struct {
 	LocalID   int64
 }
 
+// NewLocalIdent returns a new local identifier based on the given string. An
+// unnamed local ID is used if ident is an integer, and a local name otherwise.
+func NewLocalIdent(ident string) LocalIdent {
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
+		return LocalIdent{LocalID: id}
+	}
+	return LocalIdent{LocalName: ident}
+}
+
 // Ident returns the identifier associated with the local identifier.
 func (i LocalIdent) Ident() string {
 	if i.IsUnnamed() {
