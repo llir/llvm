@@ -70,8 +70,11 @@ func labelIdent(old ast.LabelIdent) ir.LocalIdent {
 		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", ident, suffix))
 	}
 	ident = ident[:len(ident)-len(suffix)]
-	// Note, label identifiers are always named if present (i.e. `42:` has the
-	// label name 42, not the ID 42).
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
+		return ir.LocalIdent{LocalID: id}
+	}
+	// Unquote after trying to parse as ID, since %"42" is recognized as named
+	// and not unnamed.
 	ident = unquote(ident)
 	return ir.LocalIdent{LocalName: ident}
 }
