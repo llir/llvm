@@ -5,14 +5,12 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/llir/ll v0.0.0-20191028085432-be396df8b3bd h1:OUK2Zbvq53Q2VIdIURjxTRx3V2vUy7dQmjuXDed5I6Y=
-github.com/llir/ll v0.0.0-20191028085432-be396df8b3bd/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
+github.com/llir/ll v0.0.0-20191031225918-451d1dfc3152 h1:qhtLZ8HOSxU4J18HswSwmvaZTlG20IQGIJ0hNNVB4lM=
+github.com/llir/ll v0.0.0-20191031225918-451d1dfc3152/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/mewkiz/pkg v0.0.0-20190919212034-518ade7978e2 h1:EyTNMdePWaoWsRSGQnXiSoQu0r6RS1eA557AwJhlzHU=
 github.com/mewkiz/pkg v0.0.0-20190919212034-518ade7978e2/go.mod h1:3E2FUC/qYUfM8+r9zAwpeHJzqRVVMIYnpzD/clwWxyA=
 github.com/mewmew/float v0.0.0-20181121163145-c0f786d7da73 h1:bTqCgPsW3TFb9MFtvaOmGFWVhCmN3EmRw02zkchdOHo=
 github.com/mewmew/float v0.0.0-20181121163145-c0f786d7da73/go.mod h1:obQBs6O+vjhgOZLkGdALxItKw4xrI49lSBEnAMO6lWI=
-github.com/mewspring/tools v0.0.0-20190827124718-5b67c43cbbda h1:VbwvMnHpDWKFrEcNFrZgHvqDd2fHC6VuAKOJRFDFAPg=
-github.com/mewspring/tools v0.0.0-20190827124718-5b67c43cbbda/go.mod h1:UAdVbSksr+7Bg+z4mga16OaBg3qAcgdaF3x3AeqJHEs=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
