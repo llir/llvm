@@ -10,20 +10,22 @@ func _() {
 	var x [1]struct{}
 	_ = x[AtomicOpAdd-1]
 	_ = x[AtomicOpAnd-2]
-	_ = x[AtomicOpMax-3]
-	_ = x[AtomicOpMin-4]
-	_ = x[AtomicOpNAnd-5]
-	_ = x[AtomicOpOr-6]
-	_ = x[AtomicOpSub-7]
-	_ = x[AtomicOpUMax-8]
-	_ = x[AtomicOpUMin-9]
-	_ = x[AtomicOpXChg-10]
-	_ = x[AtomicOpXor-11]
+	_ = x[AtomicOpFAdd-3]
+	_ = x[AtomicOpFSub-4]
+	_ = x[AtomicOpMax-5]
+	_ = x[AtomicOpMin-6]
+	_ = x[AtomicOpNAnd-7]
+	_ = x[AtomicOpOr-8]
+	_ = x[AtomicOpSub-9]
+	_ = x[AtomicOpUMax-10]
+	_ = x[AtomicOpUMin-11]
+	_ = x[AtomicOpXChg-12]
+	_ = x[AtomicOpXor-13]
 }
 
-const _AtomicOp_name = "addandmaxminnandorsubumaxuminxchgxor"
+const _AtomicOp_name = "addandfaddfsubmaxminnandorsubumaxuminxchgxor"
 
-var _AtomicOp_index = [...]uint8{0, 3, 6, 9, 12, 16, 18, 21, 25, 29, 33, 36}
+var _AtomicOp_index = [...]uint8{0, 3, 6, 10, 14, 17, 20, 24, 26, 29, 33, 37, 41, 44}
 
 func (i AtomicOp) String() string {
 	i -= 1

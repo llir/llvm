@@ -10,6 +10,8 @@ type AtomicOp uint8
 const (
 	AtomicOpAdd  AtomicOp = iota + 1 // add
 	AtomicOpAnd                      // and
+	AtomicOpFAdd                     // fadd
+	AtomicOpFSub                     // fsub
 	AtomicOpMax                      // max
 	AtomicOpMin                      // min
 	AtomicOpNAnd                     // nand
