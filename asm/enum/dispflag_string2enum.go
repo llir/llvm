@@ -18,6 +18,10 @@ func _() {
 	_ = x[enum.DISPFlagLocalToUnit-4]
 	_ = x[enum.DISPFlagDefinition-8]
 	_ = x[enum.DISPFlagOptimized-16]
+	_ = x[enum.DISPFlagPure-32]
+	_ = x[enum.DISPFlagElemental-64]
+	_ = x[enum.DISPFlagRecursive-128]
+	_ = x[enum.DISPFlagMainSubprogram-256]
 }
 
 const (
@@ -25,6 +29,10 @@ const (
 	_DISPFlag_name_1 = "DISPFlagLocalToUnit"
 	_DISPFlag_name_2 = "DISPFlagDefinition"
 	_DISPFlag_name_3 = "DISPFlagOptimized"
+	_DISPFlag_name_4 = "DISPFlagPure"
+	_DISPFlag_name_5 = "DISPFlagElemental"
+	_DISPFlag_name_6 = "DISPFlagRecursive"
+	_DISPFlag_name_7 = "DISPFlagMainSubprogram"
 )
 
 var (
@@ -49,6 +57,18 @@ func DISPFlagFromString(s string) enum.DISPFlag {
 	}
 	if s == _DISPFlag_name_3 {
 		return enum.DISPFlag(16)
+	}
+	if s == _DISPFlag_name_4 {
+		return enum.DISPFlag(32)
+	}
+	if s == _DISPFlag_name_5 {
+		return enum.DISPFlag(64)
+	}
+	if s == _DISPFlag_name_6 {
+		return enum.DISPFlag(128)
+	}
+	if s == _DISPFlag_name_7 {
+		return enum.DISPFlag(256)
 	}
 	panic(fmt.Errorf("unable to locate DISPFlag enum corresponding to %q", s))
 }

@@ -187,13 +187,19 @@ const (
 type DISPFlag uint64
 
 // Subprogram specific flags.
+//
+// From include/llvm/IR/DebugInfoFlags.def (LLVM 9.0)
 const (
-	DISPFlagZero        DISPFlag = 0
-	DISPFlagVirtual     DISPFlag = 1 << 0
-	DISPFlagPureVirtual DISPFlag = 1 << 1
-	DISPFlagLocalToUnit DISPFlag = 1 << 2
-	DISPFlagDefinition  DISPFlag = 1 << 3
-	DISPFlagOptimized   DISPFlag = 1 << 4
+	DISPFlagZero           DISPFlag = 0
+	DISPFlagVirtual        DISPFlag = 1
+	DISPFlagPureVirtual    DISPFlag = 2
+	DISPFlagLocalToUnit    DISPFlag = 1 << 2
+	DISPFlagDefinition     DISPFlag = 1 << 3
+	DISPFlagOptimized      DISPFlag = 1 << 4
+	DISPFlagPure           DISPFlag = 1 << 5
+	DISPFlagElemental      DISPFlag = 1 << 6
+	DISPFlagRecursive      DISPFlag = 1 << 7
+	DISPFlagMainSubprogram DISPFlag = 1 << 8
 
 	// Virtuality and non-virtuality.
 	DISPFlagNonvirtual = DISPFlagZero
@@ -202,7 +208,7 @@ const (
 	// Track first and last subprogram specific flag, used by diSPFlagsString in
 	// ir/metadata/helper.go.
 	DISPFlagFirst = DISPFlagVirtual
-	DISPFlagLast  = DISPFlagOptimized
+	DISPFlagLast  = DISPFlagMainSubprogram
 )
 
 //go:generate stringer -linecomment -type DLLStorageClass

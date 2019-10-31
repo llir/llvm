@@ -14,6 +14,10 @@ func _() {
 	_ = x[DISPFlagLocalToUnit-4]
 	_ = x[DISPFlagDefinition-8]
 	_ = x[DISPFlagOptimized-16]
+	_ = x[DISPFlagPure-32]
+	_ = x[DISPFlagElemental-64]
+	_ = x[DISPFlagRecursive-128]
+	_ = x[DISPFlagMainSubprogram-256]
 }
 
 const (
@@ -21,6 +25,10 @@ const (
 	_DISPFlag_name_1 = "DISPFlagLocalToUnit"
 	_DISPFlag_name_2 = "DISPFlagDefinition"
 	_DISPFlag_name_3 = "DISPFlagOptimized"
+	_DISPFlag_name_4 = "DISPFlagPure"
+	_DISPFlag_name_5 = "DISPFlagElemental"
+	_DISPFlag_name_6 = "DISPFlagRecursive"
+	_DISPFlag_name_7 = "DISPFlagMainSubprogram"
 )
 
 var (
@@ -37,6 +45,14 @@ func (i DISPFlag) String() string {
 		return _DISPFlag_name_2
 	case i == 16:
 		return _DISPFlag_name_3
+	case i == 32:
+		return _DISPFlag_name_4
+	case i == 64:
+		return _DISPFlag_name_5
+	case i == 128:
+		return _DISPFlag_name_6
+	case i == 256:
+		return _DISPFlag_name_7
 	default:
 		return "DISPFlag(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
