@@ -150,6 +150,8 @@ func (gen *generator) irTypeDef(t types.Type, old ast.LlvmNode) (types.Type, err
 		return gen.irPointerType(t, old)
 	case *ast.VectorType:
 		return gen.irVectorType(t, old)
+	case *ast.ScalableVectorType:
+		return gen.irScalableVectorType(t, old)
 	case *ast.LabelType:
 		return gen.irLabelType(t, old)
 	case *ast.TokenType:
@@ -324,6 +326,30 @@ func (gen *generator) irVectorType(t types.Type, old *ast.VectorType) (types.Typ
 	} else if !ok {
 		panic(fmt.Errorf("invalid IR type for AST vector type; expected *types.VectorType, got %T", t))
 	}
+	// Scalable (not present).
+	// Vector length.
+	typ.Len = uintLit(old.Len())
+	// Element type.
+	elem, err := gen.irType(old.Elem())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	typ.ElemType = elem
+	return typ, nil
+}
+
+// irScalableVectorType translates the AST scalable vector type into an
+// equivalent IR type. A new IR type correspoding to the AST type is created if
+// t is nil, otherwise the body of t is populated.
+func (gen *generator) irScalableVectorType(t types.Type, old *ast.ScalableVectorType) (types.Type, error) {
+	typ, ok := t.(*types.VectorType)
+	if t == nil {
+		typ = &types.VectorType{}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR type for AST vector type; expected *types.VectorType, got %T", t))
+	}
+	// Scalable.
+	typ.Scalable = true
 	// Vector length.
 	typ.Len = uintLit(old.Len())
 	// Element type.

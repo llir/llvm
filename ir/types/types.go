@@ -499,6 +499,8 @@ func (a AddrSpace) String() string {
 type VectorType struct {
 	// Type name; or empty if not present.
 	TypeName string
+	// Scalable vector type.
+	Scalable bool
 	// Vector length.
 	Len uint64
 	// Element type.
@@ -517,6 +519,9 @@ func NewVector(len uint64, elemType Type) *VectorType {
 // Equal reports whether t and u are of equal type.
 func (t *VectorType) Equal(u Type) bool {
 	if u, ok := u.(*VectorType); ok {
+		if t.Scalable != u.Scalable {
+			return false
+		}
 		if t.Len != u.Len {
 			return false
 		}
@@ -536,6 +541,10 @@ func (t *VectorType) String() string {
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
 func (t *VectorType) LLString() string {
+	if t.Scalable {
+		// '<' 'vscale' 'x' Len=UintLit 'x' Elem=Type '>'
+		return fmt.Sprintf("<vscale x %d x %s>", t.Len, t.ElemType)
+	}
 	// '<' Len=UintLit 'x' Elem=Type '>'
 	return fmt.Sprintf("<%d x %s>", t.Len, t.ElemType)
 }
