@@ -35,6 +35,9 @@ func (fgen *funcGen) newInst(old ast.Instruction) (ir.Instruction, error) {
 // based on the given AST value instruction.
 func (fgen *funcGen) newValueInst(ident ir.LocalIdent, old ast.ValueInstruction) (ir.Instruction, error) {
 	switch old := old.(type) {
+	// Unary instructions
+	case *ast.FNegInst:
+		return fgen.newFNegInst(ident, old)
 	// Binary instructions
 	case *ast.AddInst:
 		return fgen.newAddInst(ident, old)
@@ -187,6 +190,9 @@ func (fgen *funcGen) irInst(new ir.Instruction, old ast.Instruction) error {
 // instruction.
 func (fgen *funcGen) irValueInst(new ir.Instruction, old ast.ValueInstruction) error {
 	switch old := old.(type) {
+	// Unary instructions
+	case *ast.FNegInst:
+		return fgen.irFNegInst(new, old)
 	// Binary instructions
 	case *ast.AddInst:
 		return fgen.irAddInst(new, old)
