@@ -133,7 +133,7 @@ type DIFlag uint64
 
 // Debug info flags.
 //
-// From include/llvm-c/DebugInfo.h (LLVM 9.0)
+// From include/llvm/IR/DebugInfoFlags.def (LLVM 9.0)
 const (
 	DIFlagZero                DIFlag = 0
 	DIFlagPrivate             DIFlag = 1
@@ -159,14 +159,15 @@ const (
 	DIFlagIntroducedVirtual   DIFlag = 1 << 18
 	DIFlagBitField            DIFlag = 1 << 19
 	DIFlagNoReturn            DIFlag = 1 << 20
+	DIFlagArgumentNotModified DIFlag = 1 << 21
 	DIFlagTypePassByValue     DIFlag = 1 << 22
 	DIFlagTypePassByReference DIFlag = 1 << 23
 	DIFlagEnumClass           DIFlag = 1 << 24
-	DIFlagFixedEnum                  = DIFlagEnumClass // Deprecated
 	DIFlagThunk               DIFlag = 1 << 25
 	DIFlagNonTrivial          DIFlag = 1 << 26
 	DIFlagBigEndian           DIFlag = 1 << 27
 	DIFlagLittleEndian        DIFlag = 1 << 28
+	DIFlagAllCallsDescribed   DIFlag = 1 << 29
 
 	DIFlagIndirectVirtualBase = DIFlagFwdDecl | DIFlagVirtual
 	// Mask for accessibility.
@@ -177,7 +178,7 @@ const (
 	// Track first and last debug info flag, used by diFlagsString in
 	// ir/metadata/helper.go.
 	DIFlagFirst = DIFlagFwdDecl
-	DIFlagLast  = DIFlagLittleEndian
+	DIFlagLast  = DIFlagAllCallsDescribed
 )
 
 //go:generate stringer -type DISPFlag

@@ -32,6 +32,7 @@ func _() {
 	_ = x[DIFlagIntroducedVirtual-262144]
 	_ = x[DIFlagBitField-524288]
 	_ = x[DIFlagNoReturn-1048576]
+	_ = x[DIFlagArgumentNotModified-2097152]
 	_ = x[DIFlagTypePassByValue-4194304]
 	_ = x[DIFlagTypePassByReference-8388608]
 	_ = x[DIFlagEnumClass-16777216]
@@ -39,9 +40,10 @@ func _() {
 	_ = x[DIFlagNonTrivial-67108864]
 	_ = x[DIFlagBigEndian-134217728]
 	_ = x[DIFlagLittleEndian-268435456]
+	_ = x[DIFlagAllCallsDescribed-536870912]
 }
 
-const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagEnumClassDIFlagThunkDIFlagNonTrivialDIFlagBigEndianDIFlagLittleEndian"
+const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagArgumentNotModifiedDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagEnumClassDIFlagThunkDIFlagNonTrivialDIFlagBigEndianDIFlagLittleEndianDIFlagAllCallsDescribed"
 
 var _DIFlag_map = map[DIFlag]string{
 	0:         _DIFlag_name[0:10],
@@ -68,13 +70,15 @@ var _DIFlag_map = map[DIFlag]string{
 	262144:    _DIFlag_name[360:383],
 	524288:    _DIFlag_name[383:397],
 	1048576:   _DIFlag_name[397:411],
-	4194304:   _DIFlag_name[411:432],
-	8388608:   _DIFlag_name[432:457],
-	16777216:  _DIFlag_name[457:472],
-	33554432:  _DIFlag_name[472:483],
-	67108864:  _DIFlag_name[483:499],
-	134217728: _DIFlag_name[499:514],
-	268435456: _DIFlag_name[514:532],
+	2097152:   _DIFlag_name[411:436],
+	4194304:   _DIFlag_name[436:457],
+	8388608:   _DIFlag_name[457:482],
+	16777216:  _DIFlag_name[482:497],
+	33554432:  _DIFlag_name[497:508],
+	67108864:  _DIFlag_name[508:524],
+	134217728: _DIFlag_name[524:539],
+	268435456: _DIFlag_name[539:557],
+	536870912: _DIFlag_name[557:580],
 }
 
 func (i DIFlag) String() string {
