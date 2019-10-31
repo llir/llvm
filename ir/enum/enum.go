@@ -133,7 +133,7 @@ type DIFlag uint64
 
 // Debug info flags.
 //
-// From include/llvm-c/DebugInfo.h
+// From include/llvm-c/DebugInfo.h (LLVM 9.0)
 const (
 	DIFlagZero                DIFlag = 0
 	DIFlagPrivate             DIFlag = 1
@@ -159,23 +159,25 @@ const (
 	DIFlagIntroducedVirtual   DIFlag = 1 << 18
 	DIFlagBitField            DIFlag = 1 << 19
 	DIFlagNoReturn            DIFlag = 1 << 20
-	DIFlagMainSubprogram      DIFlag = 1 << 21
 	DIFlagTypePassByValue     DIFlag = 1 << 22
 	DIFlagTypePassByReference DIFlag = 1 << 23
-	DIFlagFixedEnum           DIFlag = 1 << 24
+	DIFlagEnumClass           DIFlag = 1 << 24
+	DIFlagFixedEnum                  = DIFlagEnumClass // Deprecated
 	DIFlagThunk               DIFlag = 1 << 25
-	DIFlagTrivial             DIFlag = 1 << 26
-	DIFlagIndirectVirtualBase DIFlag = DIFlagFwdDecl | DIFlagVirtual
+	DIFlagNonTrivial          DIFlag = 1 << 26
+	DIFlagBigEndian           DIFlag = 1 << 27
+	DIFlagLittleEndian        DIFlag = 1 << 28
 
+	DIFlagIndirectVirtualBase = DIFlagFwdDecl | DIFlagVirtual
 	// Mask for accessibility.
-	DIFlagAccessibility DIFlag = DIFlagPrivate | DIFlagProtected | DIFlagPublic
+	DIFlagAccessibility = DIFlagPrivate | DIFlagProtected | DIFlagPublic
 	// Mask for inheritance.
-	DIFlagPtrToMemberRep DIFlag = DIFlagSingleInheritance | DIFlagMultipleInheritance | DIFlagVirtualInheritance
+	DIFlagPtrToMemberRep = DIFlagSingleInheritance | DIFlagMultipleInheritance | DIFlagVirtualInheritance
 
 	// Track first and last debug info flag, used by diFlagsString in
 	// ir/metadata/helper.go.
 	DIFlagFirst = DIFlagFwdDecl
-	DIFlagLast  = DIFlagTrivial
+	DIFlagLast  = DIFlagLittleEndian
 )
 
 //go:generate stringer -type DISPFlag

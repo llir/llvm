@@ -32,51 +32,49 @@ func _() {
 	_ = x[DIFlagIntroducedVirtual-262144]
 	_ = x[DIFlagBitField-524288]
 	_ = x[DIFlagNoReturn-1048576]
-	_ = x[DIFlagMainSubprogram-2097152]
 	_ = x[DIFlagTypePassByValue-4194304]
 	_ = x[DIFlagTypePassByReference-8388608]
-	_ = x[DIFlagFixedEnum-16777216]
+	_ = x[DIFlagEnumClass-16777216]
 	_ = x[DIFlagThunk-33554432]
-	_ = x[DIFlagTrivial-67108864]
-	_ = x[DIFlagIndirectVirtualBase-36]
-	_ = x[DIFlagAccessibility-3]
-	_ = x[DIFlagPtrToMemberRep-196608]
+	_ = x[DIFlagNonTrivial-67108864]
+	_ = x[DIFlagBigEndian-134217728]
+	_ = x[DIFlagLittleEndian-268435456]
 }
 
-const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagIndirectVirtualBaseDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagMainSubprogramDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagFixedEnumDIFlagThunkDIFlagTrivial"
+const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagEnumClassDIFlagThunkDIFlagNonTrivialDIFlagBigEndianDIFlagLittleEndian"
 
 var _DIFlag_map = map[DIFlag]string{
-	0:        _DIFlag_name[0:10],
-	1:        _DIFlag_name[10:23],
-	2:        _DIFlag_name[23:38],
-	3:        _DIFlag_name[38:50],
-	4:        _DIFlag_name[50:63],
-	8:        _DIFlag_name[63:79],
-	16:       _DIFlag_name[79:101],
-	32:       _DIFlag_name[101:114],
-	36:       _DIFlag_name[114:139],
-	64:       _DIFlag_name[139:155],
-	128:      _DIFlag_name[155:169],
-	256:      _DIFlag_name[169:185],
-	512:      _DIFlag_name[185:208],
-	1024:     _DIFlag_name[208:227],
-	2048:     _DIFlag_name[227:239],
-	4096:     _DIFlag_name[239:257],
-	8192:     _DIFlag_name[257:278],
-	16384:    _DIFlag_name[278:299],
-	32768:    _DIFlag_name[299:313],
-	65536:    _DIFlag_name[313:336],
-	131072:   _DIFlag_name[336:361],
-	196608:   _DIFlag_name[361:385],
-	262144:   _DIFlag_name[385:408],
-	524288:   _DIFlag_name[408:422],
-	1048576:  _DIFlag_name[422:436],
-	2097152:  _DIFlag_name[436:456],
-	4194304:  _DIFlag_name[456:477],
-	8388608:  _DIFlag_name[477:502],
-	16777216: _DIFlag_name[502:517],
-	33554432: _DIFlag_name[517:528],
-	67108864: _DIFlag_name[528:541],
+	0:         _DIFlag_name[0:10],
+	1:         _DIFlag_name[10:23],
+	2:         _DIFlag_name[23:38],
+	3:         _DIFlag_name[38:50],
+	4:         _DIFlag_name[50:63],
+	8:         _DIFlag_name[63:79],
+	16:        _DIFlag_name[79:101],
+	32:        _DIFlag_name[101:114],
+	64:        _DIFlag_name[114:130],
+	128:       _DIFlag_name[130:144],
+	256:       _DIFlag_name[144:160],
+	512:       _DIFlag_name[160:183],
+	1024:      _DIFlag_name[183:202],
+	2048:      _DIFlag_name[202:214],
+	4096:      _DIFlag_name[214:232],
+	8192:      _DIFlag_name[232:253],
+	16384:     _DIFlag_name[253:274],
+	32768:     _DIFlag_name[274:288],
+	65536:     _DIFlag_name[288:311],
+	131072:    _DIFlag_name[311:336],
+	196608:    _DIFlag_name[336:360],
+	262144:    _DIFlag_name[360:383],
+	524288:    _DIFlag_name[383:397],
+	1048576:   _DIFlag_name[397:411],
+	4194304:   _DIFlag_name[411:432],
+	8388608:   _DIFlag_name[432:457],
+	16777216:  _DIFlag_name[457:472],
+	33554432:  _DIFlag_name[472:483],
+	67108864:  _DIFlag_name[483:499],
+	134217728: _DIFlag_name[499:514],
+	268435456: _DIFlag_name[514:532],
 }
 
 func (i DIFlag) String() string {
