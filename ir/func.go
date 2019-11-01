@@ -52,6 +52,8 @@ type Func struct {
 	FuncAttrs []FuncAttribute
 	// (optional) Section name; empty if not present.
 	Section string
+	// (optional) Partition name; empty if not present.
+	Partition string
 	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef
 	// (optional) Garbage collection; empty if not present.
@@ -211,7 +213,8 @@ func headerString(f *Func) string {
 	// (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt
 	// CallingConvopt ReturnAttrs=ReturnAttribute* RetType=Type Name=GlobalIdent
 	// '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttribute*
-	// Sectionopt Comdatopt GCopt Prefixopt Prologueopt Personalityopt
+	// Sectionopt Partitionopt Comdatopt GCopt Prefixopt Prologueopt
+	// Personalityopt
 	buf := &strings.Builder{}
 	if f.Preemption != enum.PreemptionNone {
 		fmt.Fprintf(buf, " %s", f.Preemption)
@@ -251,6 +254,9 @@ func headerString(f *Func) string {
 	}
 	if len(f.Section) > 0 {
 		fmt.Fprintf(buf, " section %s", quote(f.Section))
+	}
+	if len(f.Partition) > 0 {
+		fmt.Fprintf(buf, " partition %s", quote(f.Partition))
 	}
 	if f.Comdat != nil {
 		if f.Comdat.Name == f.Name() {

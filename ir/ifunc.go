@@ -32,6 +32,8 @@ type IFunc struct {
 	TLSModel enum.TLSModel
 	// (optional) Unnamed address; zero value if not present.
 	UnnamedAddr enum.UnnamedAddr
+	// (optional) Partition name; empty if not present.
+	Partition string
 }
 
 // NewIFunc returns a new indirect function based on the given IFunc name and
@@ -66,7 +68,8 @@ func (i *IFunc) Type() types.Type {
 // LLString returns the LLVM syntax representation of the IFunc definition.
 func (i *IFunc) LLString() string {
 	// GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt
-	// ThreadLocalopt UnnamedAddropt 'ifunc' Type ',' Type Constant
+	// ThreadLocalopt UnnamedAddropt 'ifunc' Type ',' Type Constant Partitions=(','
+	// Partition)*
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", i.Ident())
 	if i.Linkage != enum.LinkageNone {
@@ -89,5 +92,8 @@ func (i *IFunc) LLString() string {
 	}
 	buf.WriteString(" ifunc")
 	fmt.Fprintf(buf, " %s, %s", i.Typ.ElemType, i.Resolver)
+	if len(i.Partition) > 0 {
+		fmt.Fprintf(buf, ", partition %s", quote(i.Partition))
+	}
 	return buf.String()
 }

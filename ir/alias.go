@@ -32,6 +32,8 @@ type Alias struct {
 	TLSModel enum.TLSModel
 	// (optional) Unnamed address; zero value if not present.
 	UnnamedAddr enum.UnnamedAddr
+	// (optional) Partition name; empty if not present.
+	Partition string
 }
 
 // NewAlias returns a new alias based on the given alias name and aliasee.
@@ -66,7 +68,7 @@ func (a *Alias) Type() types.Type {
 func (a *Alias) LLString() string {
 	// Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt
 	// Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt 'alias'
-	// ContentType=Type ',' Aliasee=TypeConst
+	// ContentType=Type ',' Aliasee=TypeConst Partitions=(',' Partition)*
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", a.Ident())
 	if a.Linkage != enum.LinkageNone {
@@ -93,6 +95,9 @@ func (a *Alias) LLString() string {
 		buf.WriteString(expr.Ident())
 	} else {
 		buf.WriteString(a.Aliasee.String())
+	}
+	if len(a.Partition) > 0 {
+		fmt.Fprintf(buf, ", partition %s", quote(a.Partition))
 	}
 	return buf.String()
 }

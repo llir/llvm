@@ -1,6 +1,6 @@
 //+build tools
 
-package enum
+package tools
 
 import (
 	_ "github.com/mewspring/tools/cmd/string2enum"

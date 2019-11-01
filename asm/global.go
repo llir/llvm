@@ -254,6 +254,10 @@ func (gen *generator) irGlobal(new *ir.Global, old *ast.GlobalDecl) error {
 	if n, ok := old.Section(); ok {
 		new.Section = stringLit(n.Name())
 	}
+	// (optional) Partition name.
+	if n, ok := old.Partition(); ok {
+		new.Partition = stringLit(n.Name())
+	}
 	// (optional) Comdat.
 	if n, ok := old.Comdat(); ok {
 		// When comdat name is omitted, the global name is used as an implicit
@@ -328,6 +332,10 @@ func (gen *generator) irAlias(new *ir.Alias, old *ast.IndirectSymbolDef) error {
 		return errors.WithStack(err)
 	}
 	new.Aliasee = aliasee
+	// (optional) Partition name.
+	for _, partition := range old.Partitions() {
+		new.Partition = stringLit(partition.Name())
+	}
 	return nil
 }
 
@@ -370,6 +378,10 @@ func (gen *generator) irIFunc(new *ir.IFunc, old *ast.IndirectSymbolDef) error {
 		return errors.WithStack(err)
 	}
 	new.Resolver = resolver
+	// (optional) Partition name.
+	for _, partition := range old.Partitions() {
+		new.Partition = stringLit(partition.Name())
+	}
 	return nil
 }
 
@@ -507,6 +519,10 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 	// (optional) Section name.
 	if n, ok := old.Section(); ok {
 		new.Section = stringLit(n.Name())
+	}
+	// (optional) Partition name.
+	if n, ok := old.Partition(); ok {
+		new.Partition = stringLit(n.Name())
 	}
 	// (optional) Comdat.
 	if n, ok := old.Comdat(); ok {

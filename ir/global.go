@@ -44,6 +44,8 @@ type Global struct {
 	ExternallyInitialized bool
 	// (optional) Section name; empty if not present.
 	Section string
+	// (optional) Partition name; empty if not present.
+	Partition string
 	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef
 	// (optional) Alignment; zero if not present.
@@ -97,15 +99,15 @@ func (g *Global) LLString() string {
 	//    Name=GlobalIdent '=' ExternLinkage Preemptionopt Visibilityopt
 	//    DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt
 	//    ExternallyInitializedopt Immutable ContentType=Type (',' Section)? (','
-	//    Comdat)? (',' Alignment)? Metadata=(',' MetadataAttachment)+?
-	//    FuncAttrs=(',' FuncAttribute)+?
+	//    Partition)? (',' Comdat)? (',' Alignment)? Metadata=(','
+	//    MetadataAttachment)+? FuncAttrs=(',' FuncAttribute)+?
 	//
 	// Global definition.
 	//
 	//    Name=GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt
 	//    DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt
 	//    ExternallyInitializedopt Immutable ContentType=Type Init=Constant (','
-	//    Section)? (',' Comdat)? (',' Alignment)? Metadata=(','
+	//    Section)? (',' Partition)? (',' Comdat)? (',' Alignment)? Metadata=(','
 	//    MetadataAttachment)+? FuncAttrs=(',' FuncAttribute)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", g.Ident())
@@ -147,6 +149,9 @@ func (g *Global) LLString() string {
 	}
 	if g.Section != "" {
 		fmt.Fprintf(buf, ", section %s", quote(g.Section))
+	}
+	if g.Partition != "" {
+		fmt.Fprintf(buf, ", partition %s", quote(g.Partition))
 	}
 	if g.Comdat != nil {
 		if g.Comdat.Name == g.Name() {
