@@ -249,6 +249,9 @@ func headerString(f *Func) string {
 	if f.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", f.UnnamedAddr)
 	}
+	if f.Typ.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", f.Typ.AddrSpace)
+	}
 	for _, attr := range f.FuncAttrs {
 		fmt.Fprintf(buf, " %s", attr)
 	}

@@ -402,6 +402,10 @@ func (term *TermInvoke) LLString() string {
 	for _, attr := range term.ReturnAttrs {
 		fmt.Fprintf(buf, " %s", attr)
 	}
+	// (optional) Address space.
+	if term.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", term.AddrSpace)
+	}
 	// Use function signature instead of return type for variadic functions.
 	typ := term.Type()
 	if t, ok := term.Typ.(*types.FuncType); ok {

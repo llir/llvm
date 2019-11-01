@@ -390,6 +390,10 @@ func (inst *InstCall) LLString() string {
 	for _, attr := range inst.ReturnAttrs {
 		fmt.Fprintf(buf, " %s", attr)
 	}
+	// (optional) Address space.
+	if inst.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", inst.AddrSpace)
+	}
 	// Use function signature instead of return type for variadic functions.
 	typ := inst.Type()
 	if t, ok := inst.Typ.(*types.FuncType); ok {
