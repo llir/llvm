@@ -239,6 +239,8 @@ type InstSelect struct {
 
 	// Type of result produced by the instruction.
 	Typ types.Type
+	// (optional) Fast math flags.
+	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
 	Metadata
 }
@@ -269,11 +271,15 @@ func (inst *InstSelect) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstSelect) LLString() string {
-	// 'select' Cond=TypeValue ',' X=TypeValue ',' Y=TypeValue Metadata=(','
-	// MetadataAttachment)+?
+	// 'select' FastMathFlags=FastMathFlag* Cond=TypeValue ',' X=TypeValue ','
+	// Y=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "select %s, %s, %s", inst.Cond, inst.X, inst.Y)
+	buf.WriteString("select")
+	for _, flag := range inst.FastMathFlags {
+		fmt.Fprintf(buf, " %s", flag)
+	}
+	fmt.Fprintf(buf, " %s, %s, %s", inst.Cond, inst.X, inst.Y)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}

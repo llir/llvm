@@ -232,6 +232,8 @@ func (fgen *funcGen) irSelectInst(new ir.Instruction, old *ast.SelectInst) error
 		return errors.WithStack(err)
 	}
 	inst.Y = y
+	// (optional) Fast math flags.
+	inst.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
