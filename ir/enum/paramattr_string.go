@@ -8,26 +8,27 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[ParamAttrInAlloca-0]
-	_ = x[ParamAttrInReg-1]
-	_ = x[ParamAttrNest-2]
-	_ = x[ParamAttrNoAlias-3]
-	_ = x[ParamAttrNoCapture-4]
-	_ = x[ParamAttrNonNull-5]
-	_ = x[ParamAttrReadNone-6]
-	_ = x[ParamAttrReadOnly-7]
-	_ = x[ParamAttrReturned-8]
-	_ = x[ParamAttrSignExt-9]
-	_ = x[ParamAttrSRet-10]
-	_ = x[ParamAttrSwiftError-11]
-	_ = x[ParamAttrSwiftSelf-12]
-	_ = x[ParamAttrWriteOnly-13]
-	_ = x[ParamAttrZeroExt-14]
+	_ = x[ParamAttrImmArg-0]
+	_ = x[ParamAttrInAlloca-1]
+	_ = x[ParamAttrInReg-2]
+	_ = x[ParamAttrNest-3]
+	_ = x[ParamAttrNoAlias-4]
+	_ = x[ParamAttrNoCapture-5]
+	_ = x[ParamAttrNonNull-6]
+	_ = x[ParamAttrReadNone-7]
+	_ = x[ParamAttrReadOnly-8]
+	_ = x[ParamAttrReturned-9]
+	_ = x[ParamAttrSignExt-10]
+	_ = x[ParamAttrSRet-11]
+	_ = x[ParamAttrSwiftError-12]
+	_ = x[ParamAttrSwiftSelf-13]
+	_ = x[ParamAttrWriteOnly-14]
+	_ = x[ParamAttrZeroExt-15]
 }
 
-const _ParamAttr_name = "inallocainregnestnoaliasnocapturenonnullreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenonnullreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 8, 13, 17, 24, 33, 40, 48, 56, 64, 71, 75, 85, 94, 103, 110}
+var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 46, 54, 62, 70, 77, 81, 91, 100, 109, 116}
 
 func (i ParamAttr) String() string {
 	if i >= ParamAttr(len(_ParamAttr_index)-1) {

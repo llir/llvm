@@ -724,12 +724,14 @@ const (
 	FuncAttrNaked                                       // naked
 	FuncAttrNoBuiltin                                   // nobuiltin
 	FuncAttrNoDuplicate                                 // noduplicate
+	FuncAttrNoFree                                      // nofree
 	FuncAttrNoImplicitFloat                             // noimplicitfloat
 	FuncAttrNoInline                                    // noinline
 	FuncAttrNonLazyBind                                 // nonlazybind
 	FuncAttrNoRecurse                                   // norecurse
 	FuncAttrNoRedZone                                   // noredzone
 	FuncAttrNoReturn                                    // noreturn
+	FuncAttrNoSync                                      // nosync
 	FuncAttrNoUnwind                                    // nounwind
 	FuncAttrOptNone                                     // optnone
 	FuncAttrOptSize                                     // optsize
@@ -740,6 +742,7 @@ const (
 	FuncAttrSanitizeAddress                             // sanitize_address
 	FuncAttrSanitizeHWAddress                           // sanitize_hwaddress
 	FuncAttrSanitizeMemory                              // sanitize_memory
+	FuncAttrSanitizeMemTag                              // sanitize_memtag
 	FuncAttrSanitizeThread                              // sanitize_thread
 	FuncAttrSpeculatable                                // speculatable
 	FuncAttrSpeculativeLoadHardening                    // speculative_load_hardening
@@ -748,6 +751,7 @@ const (
 	FuncAttrSSPStrong                                   // sspstrong
 	FuncAttrStrictFP                                    // strictfp
 	FuncAttrUwtable                                     // uwtable
+	FuncAttrWillReturn                                  // willreturn
 	FuncAttrWriteOnly                                   // writeonly
 )
 
@@ -824,7 +828,8 @@ type ParamAttr uint8
 
 // Parameter attributes.
 const (
-	ParamAttrInAlloca   ParamAttr = iota // inalloca
+	ParamAttrImmArg     ParamAttr = iota // immarg
+	ParamAttrInAlloca                    // inalloca
 	ParamAttrInReg                       // inreg
 	ParamAttrNest                        // nest
 	ParamAttrNoAlias                     // noalias
