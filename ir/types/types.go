@@ -20,6 +20,12 @@ var (
 	Metadata = &MetadataType{} // metadata
 	// Integer types.
 	I1   = &IntType{BitSize: 1}   // i1
+	I2   = &IntType{BitSize: 2}   // i2
+	I3   = &IntType{BitSize: 3}   // i3
+	I4   = &IntType{BitSize: 4}   // i4
+	I5   = &IntType{BitSize: 5}   // i5
+	I6   = &IntType{BitSize: 6}   // i6
+	I7   = &IntType{BitSize: 7}   // i7
 	I8   = &IntType{BitSize: 8}   // i8
 	I16  = &IntType{BitSize: 16}  // i16
 	I32  = &IntType{BitSize: 32}  // i32
