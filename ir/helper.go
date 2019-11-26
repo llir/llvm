@@ -417,30 +417,9 @@ func (p *Param) LLString() string {
 
 // ### [ Helper functions ] ####################################################
 
-// isUnnamed reports whether the given identifier is unnamed.
-func isUnnamed(name string) bool {
-	return len(name) == 0
-}
-
-// isLocalID reports whether the given identifier is a local ID (e.g. "%42").
-func isLocalID(name string) bool {
-	for _, r := range name {
-		if !strings.ContainsRune("0123456789", r) {
-			return false
-		}
-	}
-	return len(name) > 0
-}
-
 // quote returns s as a double-quoted string literal.
 func quote(s string) string {
 	return enc.Quote([]byte(s))
-}
-
-// unquote interprets s as a double-quoted string literal, returning the string
-// value that s quotes.
-func unquote(s string) string {
-	return string(enc.Unquote(s))
 }
 
 // callingConvString returns the string representation of the given calling
