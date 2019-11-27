@@ -536,6 +536,7 @@ const (
 	DwarfOpGNUConstIndex     DwarfOp = 0xFC // DW_OP_GNU_const_index
 	// Only used in LLVM metadata.
 	DwarfOpLLVMFragment DwarfOp = 0x1000 // DW_OP_LLVM_fragment
+	DwarfOpLLVMConvert  DwarfOp = 0x1001 // DW_OP_LLVM_convert
 )
 
 //go:generate stringer -linecomment -type DwarfTag

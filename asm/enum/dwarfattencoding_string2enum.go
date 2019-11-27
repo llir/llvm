@@ -2,11 +2,8 @@
 
 package enum
 
-import (
-	"fmt"
-
-	"github.com/llir/llvm/ir/enum"
-)
+import "fmt"
+import "github.com/llir/llvm/ir/enum"
 
 func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
