@@ -98,7 +98,7 @@ func (gen *generator) irDIBasicType(new metadata.SpecializedNode, old *ast.DIBas
 		case *ast.AlignField:
 			md.Align = uintLit(oldField.Align())
 		case *ast.EncodingField:
-			md.Encoding = irDwarfAttEncoding(oldField.Encoding())
+			md.Encoding = irDwarfAttEncodingOrUint(oldField.Encoding())
 		case *ast.FlagsField:
 			md.Flags = irDIFlags(oldField.Flags())
 		default:
@@ -1522,6 +1522,17 @@ func irDwarfAttEncoding(old ast.DwarfAttEncoding) enum.DwarfAttEncoding {
 	switch old := old.(type) {
 	case *ast.DwarfAttEncodingEnum:
 		return asmenum.DwarfAttEncodingFromString(old.Text())
+	default:
+		panic(fmt.Errorf("support for Dwarf attribute encoding %T not yet implemented", old))
+	}
+}
+
+// irDwarfAttEncodingOrUint returns the IR Dwarf attribute encoding
+// corresponding to the given AST Dwarf attribute encoding.
+func irDwarfAttEncodingOrUint(old ast.DwarfAttEncodingOrUint) enum.DwarfAttEncoding {
+	switch old := old.(type) {
+	case ast.DwarfAttEncoding:
+		return irDwarfAttEncoding(old)
 	case *ast.DwarfAttEncodingInt:
 		return enum.DwarfAttEncoding(uintLit(old.UintLit()))
 	default:
