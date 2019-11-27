@@ -19,18 +19,21 @@ var (
 	Token    = &TokenType{}    // token
 	Metadata = &MetadataType{} // metadata
 	// Integer types.
-	I1   = &IntType{BitSize: 1}   // i1
-	I2   = &IntType{BitSize: 2}   // i2
-	I3   = &IntType{BitSize: 3}   // i3
-	I4   = &IntType{BitSize: 4}   // i4
-	I5   = &IntType{BitSize: 5}   // i5
-	I6   = &IntType{BitSize: 6}   // i6
-	I7   = &IntType{BitSize: 7}   // i7
-	I8   = &IntType{BitSize: 8}   // i8
-	I16  = &IntType{BitSize: 16}  // i16
-	I32  = &IntType{BitSize: 32}  // i32
-	I64  = &IntType{BitSize: 64}  // i64
-	I128 = &IntType{BitSize: 128} // i128
+	I1    = &IntType{BitSize: 1}    // i1
+	I2    = &IntType{BitSize: 2}    // i2
+	I3    = &IntType{BitSize: 3}    // i3
+	I4    = &IntType{BitSize: 4}    // i4
+	I5    = &IntType{BitSize: 5}    // i5
+	I6    = &IntType{BitSize: 6}    // i6
+	I7    = &IntType{BitSize: 7}    // i7
+	I8    = &IntType{BitSize: 8}    // i8
+	I16   = &IntType{BitSize: 16}   // i16
+	I32   = &IntType{BitSize: 32}   // i32
+	I64   = &IntType{BitSize: 64}   // i64
+	I128  = &IntType{BitSize: 128}  // i128
+	I256  = &IntType{BitSize: 256}  // i256
+	I512  = &IntType{BitSize: 512}  // i512
+	I1024 = &IntType{BitSize: 1024} // i1024
 	// Floating-point types.
 	Half      = &FloatType{Kind: FloatKindHalf}      // half
 	Float     = &FloatType{Kind: FloatKindFloat}     // float
