@@ -1,6 +1,6 @@
-# How to update LLVM
+# How to update `llir/llvm` to support newer versions of LLVM
 
-This document aims to describe the approach taken to update `llir/llvm` to support new versions of the official LLVM release, as in, how to update from LLVM 8.0 to LLVM 9.0.
+This document aims to describe the approach taken to update `llir/llvm` to support newer versions of the official LLVM release, as in, how to update from LLVM 8.0 to LLVM 9.0.
 
 For now, we collect links to issues, PR and comments which describe the actions taken, and given example commits for adding new enums, updating the grammar, translating the AST to IR, updating the test cases, etc.
 
