@@ -532,11 +532,13 @@ const (
 	DwarfOpReinterpret     DwarfOp = 0xA9 // DW_OP_reinterpret
 	// Vendor extensions.
 	DwarfOpGNUPushTLSAddress DwarfOp = 0xE0 // DW_OP_GNU_push_tls_address
+	DwarfOpGNUEntryValue     DwarfOp = 0xF3 // DW_OP_GNU_entry_value
 	DwarfOpGNUAddrIndex      DwarfOp = 0xFB // DW_OP_GNU_addr_index
 	DwarfOpGNUConstIndex     DwarfOp = 0xFC // DW_OP_GNU_const_index
 	// Only used in LLVM metadata.
-	DwarfOpLLVMFragment DwarfOp = 0x1000 // DW_OP_LLVM_fragment
-	DwarfOpLLVMConvert  DwarfOp = 0x1001 // DW_OP_LLVM_convert
+	DwarfOpLLVMFragment  DwarfOp = 0x1000 // DW_OP_LLVM_fragment
+	DwarfOpLLVMConvert   DwarfOp = 0x1001 // DW_OP_LLVM_convert
+	DwarfOpLLVMTagOffset DwarfOp = 0x1002 // DW_OP_LLVM_tag_offset
 )
 
 //go:generate stringer -linecomment -type DwarfTag
