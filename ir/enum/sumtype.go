@@ -4,6 +4,10 @@ package enum
 
 // IsDIExpressionField ensures that only DIExpression fields can be assigned to
 // the metadata.DIExpressionField interface.
+func (DwarfAttEncoding) IsDIExpressionField() {}
+
+// IsDIExpressionField ensures that only DIExpression fields can be assigned to
+// the metadata.DIExpressionField interface.
 func (DwarfOp) IsDIExpressionField() {}
 
 // === [ ir.FuncAttribute ] ====================================================

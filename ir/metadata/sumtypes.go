@@ -110,8 +110,9 @@ type FieldOrInt interface {
 //
 // A DIExpressionField has one of the following underlying types.
 //
-//    metadata.UintLit   // https://godoc.org/github.com/llir/llvm/ir/metadata#UintLit
-//    enum.DwarfOp       // https://godoc.org/github.com/llir/llvm/ir/enum#DwarfOp
+//    metadata.UintLit        // https://godoc.org/github.com/llir/llvm/ir/metadata#UintLit
+//    enum.DwarfAttEncoding   // https://godoc.org/github.com/llir/llvm/ir/enum#DwarfAttEncoding
+//    enum.DwarfOp            // https://godoc.org/github.com/llir/llvm/ir/enum#DwarfOp
 type DIExpressionField interface {
 	fmt.Stringer
 	// IsDIExpressionField ensures that only DIExpression fields can be assigned

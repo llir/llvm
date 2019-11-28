@@ -487,6 +487,8 @@ func (gen *generator) irDIExpressionField(old ast.DIExpressionField) (metadata.D
 	switch old := old.(type) {
 	case *ast.UintLit:
 		return metadata.UintLit(uintLit(*old)), nil
+	case *ast.DwarfAttEncodingEnum:
+		return asmenum.DwarfAttEncodingFromString(old.Text()), nil
 	case *ast.DwarfOp:
 		return asmenum.DwarfOpFromString(old.Text()), nil
 	default:
