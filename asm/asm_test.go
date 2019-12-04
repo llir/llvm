@@ -40,6 +40,9 @@ func TestParseFile(t *testing.T) {
 		// parameter attributes.
 		{path: "testdata/param_attrs.ll"},
 
+		// function alignment.
+		{path: "testdata/func_align.ll"},
+
 		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 

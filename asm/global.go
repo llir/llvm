@@ -511,7 +511,7 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 	if oldFuncAttrs := old.FuncAttrs(); len(oldFuncAttrs) > 0 {
 		new.FuncAttrs = make([]ir.FuncAttribute, len(oldFuncAttrs))
 		for i, oldFuncAttr := range oldFuncAttrs {
-			funcAttr := gen.irFuncAttribute(oldFuncAttr)
+			funcAttr := gen.irFuncAttributeAndAlign(oldFuncAttr)
 			new.FuncAttrs[i] = funcAttr
 		}
 	}

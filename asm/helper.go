@@ -413,6 +413,19 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 	}
 }
 
+// irFuncAttributeAndAlign returns the IR function attribute corresponding to
+// the given AST function attribute.
+func (gen *generator) irFuncAttributeAndAlign(old ast.FuncAttributeAndAlign) ir.FuncAttribute {
+	switch old := old.(type) {
+	case *ast.Align:
+		return ir.Align(uintLit(old.N()))
+	case ast.FuncAttribute:
+		return gen.irFuncAttribute(old)
+	default:
+		panic(fmt.Errorf("support for function attribute %T not yet implemented", old))
+	}
+}
+
 // irImmutable returns the immutable boolean (constant or global) corresponding
 // to the given AST immutable.
 func irImmutable(old ast.Immutable) bool {
@@ -582,8 +595,9 @@ func irReturnAttribute(old ast.ReturnAttribute) ir.ReturnAttribute {
 	//		Key:   unquote(old.Key().Text()),
 	//		Value: unquote(old.Val().Text()),
 	//	}
-	case *ast.Align:
-		return ir.Align(uintLit(old.N()))
+	// TODO: re-enable
+	//case *ast.Align:
+	//	return ir.Align(uintLit(old.N()))
 	case *ast.Dereferenceable:
 		return ir.Dereferenceable{N: uintLit(old.N())}
 	case *ast.DereferenceableOrNull:
