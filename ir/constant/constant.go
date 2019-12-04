@@ -27,10 +27,10 @@ var (
 //
 // https://llvm.org/docs/LangRef.html#simple-constants
 //
-//    *constant.Int     // https://godoc.org/github.com/llir/llvm/ir/constant#Int
-//    *constant.Float   // https://godoc.org/github.com/llir/llvm/ir/constant#Float
-//    *constant.Null    // https://godoc.org/github.com/llir/llvm/ir/constant#Null
-//    *constant.None    // https://godoc.org/github.com/llir/llvm/ir/constant#None
+//    *constant.Int         // https://godoc.org/github.com/llir/llvm/ir/constant#Int
+//    *constant.Float       // https://godoc.org/github.com/llir/llvm/ir/constant#Float
+//    *constant.Null        // https://godoc.org/github.com/llir/llvm/ir/constant#Null
+//    *constant.NoneToken   // https://godoc.org/github.com/llir/llvm/ir/constant#NoneToken
 //
 // Complex constants
 //
