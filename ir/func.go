@@ -56,6 +56,8 @@ type Func struct {
 	Partition string
 	// (optional) Comdat; nil if not present.
 	Comdat *ComdatDef
+	// (optional) Alignment; zero if not present.
+	Align Align
 	// (optional) Garbage collection; empty if not present.
 	GC string
 	// (optional) Prefix; nil if not present.
@@ -267,6 +269,9 @@ func headerString(f *Func) string {
 		} else {
 			fmt.Fprintf(buf, " %s", f.Comdat)
 		}
+	}
+	if f.Align != 0 {
+		fmt.Fprintf(buf, " %s", f.Align)
 	}
 	if len(f.GC) > 0 {
 		fmt.Fprintf(buf, " gc %s", quote(f.GC))

@@ -43,6 +43,9 @@ func TestParseFile(t *testing.T) {
 		// function alignment.
 		{path: "testdata/func_align.ll"},
 
+		// global alignment.
+		{path: "testdata/global_align.ll"},
+
 		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 

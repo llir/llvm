@@ -250,31 +250,31 @@ func (gen *generator) irGlobal(new *ir.Global, old *ast.GlobalDecl) error {
 		}
 		new.Init = init
 	}
-	// (optional) Section name.
-	if n, ok := old.Section(); ok {
-		new.Section = stringLit(n.Name())
-	}
-	// (optional) Partition name.
-	if n, ok := old.Partition(); ok {
-		new.Partition = stringLit(n.Name())
-	}
-	// (optional) Comdat.
-	if n, ok := old.Comdat(); ok {
-		// When comdat name is omitted, the global name is used as an implicit
-		// comdat name.
-		name := new.Name()
-		if n, ok := n.Name(); ok {
-			name = comdatName(n)
+	for _, globalField := range old.GlobalFields() {
+		switch globalField := globalField.(type) {
+		// (optional) Section name.
+		case *ast.Section:
+			new.Section = stringLit(globalField.Name())
+		// (optional) Partition name.
+		case *ast.Partition:
+			new.Partition = stringLit(globalField.Name())
+		// (optional) Comdat.
+		case *ast.Comdat:
+			// When comdat name is omitted, the global name is used as an implicit
+			// comdat name.
+			name := new.Name()
+			if n, ok := globalField.Name(); ok {
+				name = comdatName(n)
+			}
+			def, ok := gen.new.comdatDefs[name]
+			if !ok {
+				return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), new.Ident())
+			}
+			new.Comdat = def
+		// (optional) Alignment.
+		case *ast.Align:
+			new.Align = irAlign(*globalField)
 		}
-		def, ok := gen.new.comdatDefs[name]
-		if !ok {
-			return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), new.Ident())
-		}
-		new.Comdat = def
-	}
-	// (optional) Alignment.
-	if n, ok := old.Align(); ok {
-		new.Align = irAlign(n)
 	}
 	// (optional) Metadata.
 	md, err := gen.irMetadataAttachments(old.Metadata())
@@ -507,64 +507,59 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 		new.UnnamedAddr = asmenum.UnnamedAddrFromString(n.Text())
 	}
 	// (optional) Address space: handled in newGlobalEntity.
-	// (optional) Function attributes.
-	if oldFuncAttrs := old.FuncAttrs(); len(oldFuncAttrs) > 0 {
-		new.FuncAttrs = make([]ir.FuncAttribute, len(oldFuncAttrs))
-		for i, oldFuncAttr := range oldFuncAttrs {
-			funcAttr := gen.irFuncAttributeAndAlign(oldFuncAttr)
-			new.FuncAttrs[i] = funcAttr
+	for _, funcHdrField := range old.FuncHdrFields() {
+		switch funcHdrField := funcHdrField.(type) {
+		// (optional) Function attributes.
+		case ast.FuncAttribute:
+			funcAttr := gen.irFuncAttribute(funcHdrField)
+			new.FuncAttrs = append(new.FuncAttrs, funcAttr)
+		// (optional) Alignment.
+		case *ast.Align:
+			new.Align = irAlign(*funcHdrField)
+		// (optional) Section name.
+		case *ast.Section:
+			new.Section = stringLit(funcHdrField.Name())
+		// (optional) Partition name.
+		case *ast.Partition:
+			new.Partition = stringLit(funcHdrField.Name())
+		// (optional) Comdat.
+		case *ast.Comdat:
+			// When comdat name is omitted, the function name is used as an implicit
+			// comdat name.
+			name := new.Name()
+			if n, ok := funcHdrField.Name(); ok {
+				name = comdatName(n)
+			}
+			def, ok := gen.new.comdatDefs[name]
+			if !ok {
+				return errors.Errorf("unable to locate comdat identifier %q used in function header of %q", enc.Comdat(name), new.Ident())
+			}
+			new.Comdat = def
+		// (optional) Garbage collection.
+		case *ast.GCNode:
+			new.GC = stringLit(funcHdrField.Name())
+		// (optional) Prefix.
+		case *ast.Prefix:
+			prefix, err := gen.irTypeConst(funcHdrField.TypeConst())
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			new.Prefix = prefix
+		// (optional) Prologue.
+		case *ast.Prologue:
+			prologue, err := gen.irTypeConst(funcHdrField.TypeConst())
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			new.Prologue = prologue
+		// (optional) Prefix.
+		case *ast.Personality:
+			personality, err := gen.irTypeConst(funcHdrField.TypeConst())
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			new.Personality = personality
 		}
-	}
-
-	// (optional) Section name.
-	if n, ok := old.Section(); ok {
-		new.Section = stringLit(n.Name())
-	}
-	// (optional) Partition name.
-	if n, ok := old.Partition(); ok {
-		new.Partition = stringLit(n.Name())
-	}
-	// (optional) Comdat.
-	if n, ok := old.Comdat(); ok {
-		// When comdat name is omitted, the function name is used as an implicit
-		// comdat name.
-		name := new.Name()
-		if n, ok := n.Name(); ok {
-			name = comdatName(n)
-		}
-		def, ok := gen.new.comdatDefs[name]
-		if !ok {
-			return errors.Errorf("unable to locate comdat identifier %q used in function header of %q", enc.Comdat(name), new.Ident())
-		}
-		new.Comdat = def
-	}
-	// (optional) Garbage collection.
-	if n, ok := old.GCNode(); ok {
-		new.GC = stringLit(n.Name())
-	}
-	// (optional) Prefix.
-	if n, ok := old.Prefix(); ok {
-		prefix, err := gen.irTypeConst(n.TypeConst())
-		if err != nil {
-			return errors.WithStack(err)
-		}
-		new.Prefix = prefix
-	}
-	// (optional) Prologue.
-	if n, ok := old.Prologue(); ok {
-		prologue, err := gen.irTypeConst(n.TypeConst())
-		if err != nil {
-			return errors.WithStack(err)
-		}
-		new.Prologue = prologue
-	}
-	// (optional) Personality.
-	if n, ok := old.Personality(); ok {
-		personality, err := gen.irTypeConst(n.TypeConst())
-		if err != nil {
-			return errors.WithStack(err)
-		}
-		new.Personality = personality
 	}
 	return nil
 }
