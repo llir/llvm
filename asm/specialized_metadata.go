@@ -362,6 +362,8 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 			switch vtableHolder := vtableHolder.(type) {
 			case *metadata.NullLit:
 				// nothing to do.
+			case *metadata.DIBasicType:
+				md.VtableHolder = vtableHolder
 			case *metadata.DICompositeType:
 				md.VtableHolder = vtableHolder
 			default:

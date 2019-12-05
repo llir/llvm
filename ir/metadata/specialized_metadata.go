@@ -297,22 +297,23 @@ type DICompositeType struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Tag            enum.DwarfTag    // required.
-	Name           string           // optional; empty if not present.
-	Scope          Field            // optional; nil if not present.
-	File           *DIFile          // optional; nil if not present.
-	Line           int64            // optional; zero value if not present.
-	BaseType       Field            // optional; nil if not present.
-	Size           uint64           // optional; zero value if not present.
-	Align          uint64           // optional; zero value if not present.
-	Offset         uint64           // optional; zero value if not present.
-	Flags          enum.DIFlag      // optional.
-	Elements       *Tuple           // optional; nil if not present.
-	RuntimeLang    enum.DwarfLang   // optional; zero value if not present.
-	VtableHolder   *DICompositeType // optional; nil if not present.
-	TemplateParams *Tuple           // optional; nil if not present.
-	Identifier     string           // optional; empty if not present.
-	Discriminator  Field            // optional; nil if not present.
+	Tag         enum.DwarfTag  // required.
+	Name        string         // optional; empty if not present.
+	Scope       Field          // optional; nil if not present.
+	File        *DIFile        // optional; nil if not present.
+	Line        int64          // optional; zero value if not present.
+	BaseType    Field          // optional; nil if not present.
+	Size        uint64         // optional; zero value if not present.
+	Align       uint64         // optional; zero value if not present.
+	Offset      uint64         // optional; zero value if not present.
+	Flags       enum.DIFlag    // optional.
+	Elements    *Tuple         // optional; nil if not present.
+	RuntimeLang enum.DwarfLang // optional; zero value if not present.
+	// *DIBasicType or *DICompositeType
+	VtableHolder   Field  // optional; nil if not present.
+	TemplateParams *Tuple // optional; nil if not present.
+	Identifier     string // optional; empty if not present.
+	Discriminator  Field  // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
