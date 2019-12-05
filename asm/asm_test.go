@@ -372,6 +372,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/x86mmx.ll"},
 
 		// LLVM test/Bitcode.
+		{path: "../testdata/llvm/test/Bitcode/callbr.ll"},
 		{path: "../testdata/llvm/test/Bitcode/disubrange.ll"},
 
 		// LLVM test/DebugInfo/Generic.

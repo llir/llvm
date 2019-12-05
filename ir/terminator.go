@@ -26,6 +26,7 @@ import (
 //    *ir.TermSwitch        // https://godoc.org/github.com/llir/llvm/ir#TermSwitch
 //    *ir.TermIndirectBr    // https://godoc.org/github.com/llir/llvm/ir#TermIndirectBr
 //    *ir.TermInvoke        // https://godoc.org/github.com/llir/llvm/ir#TermInvoke
+//    *ir.TermCallBr        // https://godoc.org/github.com/llir/llvm/ir#TermCallBr
 //    *ir.TermResume        // https://godoc.org/github.com/llir/llvm/ir#TermResume
 //    *ir.TermCatchSwitch   // https://godoc.org/github.com/llir/llvm/ir#TermCatchSwitch
 //    *ir.TermCatchRet      // https://godoc.org/github.com/llir/llvm/ir#TermCatchRet
@@ -435,6 +436,162 @@ func (term *TermInvoke) LLString() string {
 		buf.WriteString(" ]")
 	}
 	fmt.Fprintf(buf, "\n\t\tto %s unwind %s", term.Normal, term.Exception)
+	for _, md := range term.Metadata {
+		fmt.Fprintf(buf, ", %s", md)
+	}
+	return buf.String()
+}
+
+// --- [ callbr ] --------------------------------------------------------------
+
+// TermCallBr is an LLVM IR callbr terminator.
+type TermCallBr struct {
+	// Name of local variable associated with the result.
+	LocalIdent
+	// Callee function.
+	// TODO: specify the set of underlying types of Callee.
+	Callee value.Value
+	// Function arguments.
+	//
+	// Arg has one of the following underlying types:
+	//    value.Value
+	//    TODO: add metadata value?
+	Args []value.Value
+	// Normal control flow return point.
+	Normal *Block
+	// Other control flow return points.
+	Others []*Block
+
+	// extra.
+
+	// Type of result produced by the terminator, or function signature of the
+	// callee (as used when callee is variadic).
+	Typ types.Type
+	// Successor basic blocks of the terminator.
+	Successors []*Block
+	// (optional) Calling convention; zero if not present.
+	CallingConv enum.CallingConv
+	// (optional) Return attributes.
+	ReturnAttrs []ReturnAttribute
+	// (optional) Address space; zero if not present.
+	AddrSpace types.AddrSpace
+	// (optional) Function attributes.
+	FuncAttrs []FuncAttribute
+	// (optional) Operand bundles.
+	OperandBundles []*OperandBundle
+	// (optional) Metadata.
+	Metadata
+}
+
+// NewCallBr returns a new callbr terminator based on the given callee, function
+// arguments and control flow return points for normal and exceptional
+// execution.
+//
+// TODO: specify the set of underlying types of callee.
+func NewCallBr(callee value.Value, args []value.Value, normal *Block, others ...*Block) *TermCallBr {
+	term := &TermCallBr{Callee: callee, Args: args, Normal: normal, Others: others}
+	// Compute type.
+	term.Type()
+	return term
+}
+
+// String returns the LLVM syntax representation of the terminator as a type-
+// value pair.
+func (term *TermCallBr) String() string {
+	return fmt.Sprintf("%s %s", term.Type(), term.Ident())
+}
+
+// Type returns the type of the terminator.
+func (term *TermCallBr) Type() types.Type {
+	// Cache type if not present.
+	if term.Typ == nil {
+		t, ok := term.Callee.Type().(*types.PointerType)
+		if !ok {
+			panic(fmt.Errorf("invalid callee type; expected *types.PointerType, got %T", term.Callee.Type()))
+		}
+		sig, ok := t.ElemType.(*types.FuncType)
+		if !ok {
+			panic(fmt.Errorf("invalid callee type; expected *types.FuncType, got %T", t.ElemType))
+		}
+		if sig.Variadic {
+			term.Typ = sig
+		} else {
+			term.Typ = sig.RetType
+		}
+	}
+	if t, ok := term.Typ.(*types.FuncType); ok {
+		return t.RetType
+	}
+	return term.Typ
+}
+
+// Succs returns the successor basic blocks of the terminator.
+func (term *TermCallBr) Succs() []*Block {
+	// Cache successors if not present.
+	if term.Successors == nil {
+		term.Successors = []*Block{term.Normal}
+		term.Successors = append(term.Successors, term.Others...)
+	}
+	return term.Successors
+}
+
+// LLString returns the LLVM syntax representation of the terminator.
+func (term *TermCallBr) LLString() string {
+	// 'callbr' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type
+	// Callee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('['
+	// (OperandBundle separator ',')+ ']')? 'to' Normal=Label '[' Other=(Label
+	// separator ',')* ']' Metadata=(',' MetadataAttachment)+?
+	buf := &strings.Builder{}
+	if !term.Type().Equal(types.Void) {
+		fmt.Fprintf(buf, "%s = ", term.Ident())
+	}
+	buf.WriteString("callbr")
+	if term.CallingConv != enum.CallingConvNone {
+		fmt.Fprintf(buf, " %s", callingConvString(term.CallingConv))
+	}
+	for _, attr := range term.ReturnAttrs {
+		fmt.Fprintf(buf, " %s", attr)
+	}
+	// (optional) Address space.
+	if term.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", term.AddrSpace)
+	}
+	// Use function signature instead of return type for variadic functions.
+	typ := term.Type()
+	if t, ok := term.Typ.(*types.FuncType); ok {
+		if t.Variadic {
+			typ = t
+		}
+	}
+	fmt.Fprintf(buf, " %s %s(", typ, term.Callee.Ident())
+	for i, arg := range term.Args {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(arg.String())
+	}
+	buf.WriteString(")")
+	for _, attr := range term.FuncAttrs {
+		fmt.Fprintf(buf, " %s", attr)
+	}
+	if len(term.OperandBundles) > 0 {
+		buf.WriteString(" [ ")
+		for i, operandBundle := range term.OperandBundles {
+			if i != 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(operandBundle.String())
+		}
+		buf.WriteString(" ]")
+	}
+	fmt.Fprintf(buf, "\n\t\tto %s [", term.Normal)
+	for i, other := range term.Others {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(other.String())
+	}
+	buf.WriteString("]")
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}

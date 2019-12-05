@@ -53,6 +53,8 @@ func (fgen *funcGen) newValueTerm(ident ir.LocalIdent, old ast.ValueTerminator) 
 	switch old := old.(type) {
 	case *ast.InvokeTerm:
 		return fgen.newInvokeTerm(ident, old)
+	case *ast.CallBrTerm:
+		return fgen.newCallBrTerm(ident, old)
 	case *ast.CatchSwitchTerm:
 		// Result type is always token.
 		return &ir.TermCatchSwitch{LocalIdent: ident}, nil
@@ -69,6 +71,16 @@ func (fgen *funcGen) newInvokeTerm(ident ir.LocalIdent, old *ast.InvokeTerm) (*i
 		return nil, errors.WithStack(err)
 	}
 	return &ir.TermInvoke{LocalIdent: ident, Typ: typ}, nil
+}
+
+// newCallBrTerm returns a new IR callbr terminator (without body but with type)
+// based on the given AST callbr terminator.
+func (fgen *funcGen) newCallBrTerm(ident ir.LocalIdent, old *ast.CallBrTerm) (*ir.TermCallBr, error) {
+	typ, err := fgen.gen.irType(old.Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ir.TermCallBr{LocalIdent: ident, Typ: typ}, nil
 }
 
 // === [ Translate AST to IR ] =================================================
@@ -123,6 +135,8 @@ func (fgen *funcGen) irValueTerm(new ir.Terminator, old ast.ValueTerminator) err
 	switch old := old.(type) {
 	case *ast.InvokeTerm:
 		return fgen.irInvokeTerm(new, old)
+	case *ast.CallBrTerm:
+		return fgen.irCallBrTerm(new, old)
 	case *ast.CatchSwitchTerm:
 		return fgen.irCatchSwitchTerm(new, old)
 	default:
@@ -356,6 +370,107 @@ func (fgen *funcGen) irInvokeTerm(new ir.Terminator, old *ast.InvokeTerm) error 
 		return errors.WithStack(err)
 	}
 	term.Exception = exception
+	// (optional) Calling convention.
+	if n, ok := old.CallingConv(); ok {
+		term.CallingConv = irCallingConv(n)
+	}
+	// (optional) Return attributes.
+	if oldReturnAttrs := old.ReturnAttrs(); len(oldReturnAttrs) > 0 {
+		term.ReturnAttrs = make([]ir.ReturnAttribute, len(oldReturnAttrs))
+		for i, oldRetAttr := range oldReturnAttrs {
+			retAttr := irReturnAttribute(oldRetAttr)
+			term.ReturnAttrs[i] = retAttr
+		}
+	}
+	// (optional) Address space.
+	if n, ok := old.AddrSpace(); ok {
+		term.AddrSpace = irAddrSpace(n)
+	}
+	// (optional) Function attributes.
+	if oldFuncAttrs := old.FuncAttrs(); len(oldFuncAttrs) > 0 {
+		term.FuncAttrs = make([]ir.FuncAttribute, len(oldFuncAttrs))
+		for i, oldFuncAttr := range oldFuncAttrs {
+			funcAttr := fgen.gen.irFuncAttribute(oldFuncAttr)
+			term.FuncAttrs[i] = funcAttr
+		}
+	}
+	// (optional) Operand bundles.
+	if oldOperandBundles := old.OperandBundles(); len(oldOperandBundles) > 0 {
+		term.OperandBundles = make([]*ir.OperandBundle, len(oldOperandBundles))
+		for i, oldOperandBundle := range oldOperandBundles {
+			operandBundle, err := fgen.irOperandBundle(oldOperandBundle)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			term.OperandBundles[i] = operandBundle
+		}
+	}
+	// (optional) Metadata.
+	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	term.Metadata = md
+	return nil
+}
+
+// --- [ callbr ] --------------------------------------------------------------
+
+// irCallBrTerm translates the AST callbr terminator into an equivalent IR
+// terminator.
+func (fgen *funcGen) irCallBrTerm(new ir.Terminator, old *ast.CallBrTerm) error {
+	term, ok := new.(*ir.TermCallBr)
+	if !ok {
+		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCallBr, got %T", new))
+	}
+	// Function arguments.
+	if oldArgs := old.Args().Args(); len(oldArgs) > 0 {
+		term.Args = make([]value.Value, len(oldArgs))
+		for i, oldArg := range oldArgs {
+			arg, err := fgen.irArg(oldArg)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			term.Args[i] = arg
+		}
+	}
+	// Callee.
+	typ, err := fgen.gen.irType(old.Typ())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	sig, ok := typ.(*types.FuncType)
+	if !ok {
+		// Preliminary function signature. Only used by fgen.irValue for inline
+		// assembly callees and constrant expressions.
+		var paramTypes []types.Type
+		if len(term.Args) > 0 {
+			paramTypes = make([]types.Type, len(term.Args))
+			for i, arg := range term.Args {
+				paramTypes[i] = arg.Type()
+			}
+		}
+		sig = types.NewFunc(typ, paramTypes...)
+	}
+	callee, err := fgen.irValue(sig, old.Callee())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	term.Callee = callee
+	// Normal control flow return point.
+	normal, err := fgen.irBlock(old.Normal())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	term.Normal = normal
+	// Exception control flow return point.
+	for _, oldOther := range old.Others() {
+		other, err := fgen.irBlock(oldOther)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		term.Others = append(term.Others, other)
+	}
 	// (optional) Calling convention.
 	if n, ok := old.CallingConv(); ok {
 		term.CallingConv = irCallingConv(n)
