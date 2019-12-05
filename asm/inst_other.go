@@ -274,14 +274,16 @@ func (fgen *funcGen) irCallInst(new ir.Instruction, old *ast.CallInst) error {
 		// assembly callees and constrant expressions.
 		var paramTypes []types.Type
 		if len(inst.Args) > 0 {
-			paramTypes := make([]types.Type, len(inst.Args))
+			paramTypes = make([]types.Type, len(inst.Args))
 			for i, arg := range inst.Args {
 				paramTypes[i] = arg.Type()
 			}
 		}
 		sig = types.NewFunc(typ, paramTypes...)
 	}
-	callee, err := fgen.irValue(sig, old.Callee())
+	// The callee type is always pointer to function type.
+	ptrToSig := types.NewPointer(sig)
+	callee, err := fgen.irValue(ptrToSig, old.Callee())
 	if err != nil {
 		return errors.WithStack(err)
 	}

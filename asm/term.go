@@ -353,7 +353,9 @@ func (fgen *funcGen) irInvokeTerm(new ir.Terminator, old *ast.InvokeTerm) error 
 		}
 		sig = types.NewFunc(typ, paramTypes...)
 	}
-	invokee, err := fgen.irValue(sig, old.Invokee())
+	// The invokee type is always pointer to function type.
+	ptrToSig := types.NewPointer(sig)
+	invokee, err := fgen.irValue(ptrToSig, old.Invokee())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -452,7 +454,9 @@ func (fgen *funcGen) irCallBrTerm(new ir.Terminator, old *ast.CallBrTerm) error 
 		}
 		sig = types.NewFunc(typ, paramTypes...)
 	}
-	callee, err := fgen.irValue(sig, old.Callee())
+	// The callee type is always pointer to function type.
+	ptrToSig := types.NewPointer(sig)
+	callee, err := fgen.irValue(ptrToSig, old.Callee())
 	if err != nil {
 		return errors.WithStack(err)
 	}
