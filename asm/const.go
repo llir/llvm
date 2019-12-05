@@ -113,13 +113,8 @@ func (gen *generator) irFloatConst(t types.Type, old *ast.FloatConst) (*constant
 // irNullConst translates the AST null pointer constant into an equivalent IR
 // null pointer constant.
 func (gen *generator) irNullConst(t types.Type, old *ast.NullConst) (*constant.Null, error) {
-	var typ *types.PointerType
-	switch t := t.(type) {
-	case *types.PointerType:
-		typ = t
-	case *types.FuncType:
-		typ = types.NewPointer(t)
-	default:
+	typ, ok := t.(*types.PointerType)
+	if !ok {
 		return nil, errors.Errorf("invalid type of null pointer constant; expected *types.PointerType, got %T", t)
 	}
 	return constant.NewNull(typ), nil
