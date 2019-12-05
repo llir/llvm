@@ -15,11 +15,12 @@ func _() {
 	_ = x[enum.EmissionKindNoDebug-0]
 	_ = x[enum.EmissionKindFullDebug-1]
 	_ = x[enum.EmissionKindLineTablesOnly-2]
+	_ = x[enum.EmissionKindDebugDirectivesOnly-3]
 }
 
-const _EmissionKind_name = "NoDebugFullDebugLineTablesOnly"
+const _EmissionKind_name = "NoDebugFullDebugLineTablesOnlyDebugDirectivesOnly"
 
-var _EmissionKind_index = [...]uint8{0, 7, 16, 30}
+var _EmissionKind_index = [...]uint8{0, 7, 16, 30, 49}
 
 // EmissionKindFromString returns the EmissionKind enum corresponding to s.
 func EmissionKindFromString(s string) enum.EmissionKind {

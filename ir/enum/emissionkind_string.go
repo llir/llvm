@@ -11,11 +11,12 @@ func _() {
 	_ = x[EmissionKindNoDebug-0]
 	_ = x[EmissionKindFullDebug-1]
 	_ = x[EmissionKindLineTablesOnly-2]
+	_ = x[EmissionKindDebugDirectivesOnly-3]
 }
 
-const _EmissionKind_name = "NoDebugFullDebugLineTablesOnly"
+const _EmissionKind_name = "NoDebugFullDebugLineTablesOnlyDebugDirectivesOnly"
 
-var _EmissionKind_index = [...]uint8{0, 7, 16, 30}
+var _EmissionKind_index = [...]uint8{0, 7, 16, 30, 49}
 
 func (i EmissionKind) String() string {
 	if i < 0 || i >= EmissionKind(len(_EmissionKind_index)-1) {

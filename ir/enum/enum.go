@@ -658,11 +658,14 @@ const (
 // EmissionKind specifies the debug emission kind.
 type EmissionKind int64
 
+// ref: include/llvm/IR/DebugInfoMetadata.h (LLVM 9.0).
+
 // Debug emission kinds.
 const (
-	EmissionKindNoDebug        EmissionKind = 0 // NoDebug
-	EmissionKindFullDebug      EmissionKind = 1 // FullDebug
-	EmissionKindLineTablesOnly EmissionKind = 2 // LineTablesOnly
+	EmissionKindNoDebug             EmissionKind = 0 // NoDebug
+	EmissionKindFullDebug           EmissionKind = 1 // FullDebug
+	EmissionKindLineTablesOnly      EmissionKind = 2 // LineTablesOnly
+	EmissionKindDebugDirectivesOnly EmissionKind = 3 // DebugDirectivesOnly
 )
 
 //go:generate stringer -linecomment -type FastMathFlag
@@ -726,6 +729,7 @@ const (
 	FuncAttrMinSize                                     // minsize
 	FuncAttrNaked                                       // naked
 	FuncAttrNoBuiltin                                   // nobuiltin
+	FuncAttrNoCFCheck                                   // nocf_check
 	FuncAttrNoDuplicate                                 // noduplicate
 	FuncAttrNoFree                                      // nofree
 	FuncAttrNoImplicitFloat                             // noimplicitfloat
@@ -736,6 +740,7 @@ const (
 	FuncAttrNoReturn                                    // noreturn
 	FuncAttrNoSync                                      // nosync
 	FuncAttrNoUnwind                                    // nounwind
+	FuncAttrOptForFuzzing                               // optforfuzzing
 	FuncAttrOptNone                                     // optnone
 	FuncAttrOptSize                                     // optsize
 	FuncAttrReadNone                                    // readnone
@@ -747,6 +752,7 @@ const (
 	FuncAttrSanitizeMemory                              // sanitize_memory
 	FuncAttrSanitizeMemTag                              // sanitize_memtag
 	FuncAttrSanitizeThread                              // sanitize_thread
+	FuncAttrShadowCallStack                             // shadowcallstack
 	FuncAttrSpeculatable                                // speculatable
 	FuncAttrSpeculativeLoadHardening                    // speculative_load_hardening
 	FuncAttrSSP                                         // ssp
