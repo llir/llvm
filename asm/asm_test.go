@@ -49,6 +49,9 @@ func TestParseFile(t *testing.T) {
 		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 
+		// Specialized metadata.
+		{path: "../testdata/llvm/test/DebugInfo/Generic/DICommonBlock.ll"},
+
 		// Basic block with same name as specialized metadata field (issue #49).
 		{path: "../testdata/llvm/test/Analysis/ScalarEvolution/2008-02-15-UMax.ll"},
 

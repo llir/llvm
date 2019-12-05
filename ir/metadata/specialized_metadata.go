@@ -84,6 +84,76 @@ func (md *DIBasicType) SetDistinct(distinct bool) {
 	md.Distinct = distinct
 }
 
+// ~~~ [ DICommonBlock ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// DICommonBlock is a specialized metadata node.
+type DICommonBlock struct {
+	// Metadata ID associated with the specialized metadata node; -1 if not
+	// present.
+	MetadataID
+	// (optional) Distinct.
+	Distinct bool
+
+	Scope       Field   // required.
+	Declaration Field   // optional; nil if not present.
+	Name        string  // optional; empty if not present.
+	File        *DIFile // required.
+	Line        int64   // optional; zero value if not present.
+}
+
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
+func (md *DICommonBlock) String() string {
+	return md.Ident()
+}
+
+// Ident returns the identifier associated with the specialized metadata node.
+func (md *DICommonBlock) Ident() string {
+	if md == nil {
+		return "null"
+	}
+	if md.MetadataID != -1 {
+		return md.MetadataID.Ident()
+	}
+	return md.LLString()
+}
+
+// LLString returns the LLVM syntax representation of the specialized metadata
+// node.
+func (md *DICommonBlock) LLString() string {
+	// '!DICommonBlock' '(' Fields=(DICommonBlockField separator ',')* ')'
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
+	var fields []string
+	field := fmt.Sprintf("scope: %s", md.Scope)
+	fields = append(fields, field)
+	if md.Declaration != nil {
+		field := fmt.Sprintf("declaration: %s", md.Declaration)
+		fields = append(fields, field)
+	}
+	if len(md.Name) > 0 {
+		field := fmt.Sprintf("name: %s", quote(md.Name))
+		fields = append(fields, field)
+	}
+	if md.File != nil {
+		field := fmt.Sprintf("file: %s", md.File)
+		fields = append(fields, field)
+	}
+	if md.Line != 0 {
+		field := fmt.Sprintf("line: %d", md.Line)
+		fields = append(fields, field)
+	}
+	fmt.Fprintf(buf, "!DICommonBlock(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DICommonBlock) SetDistinct(distinct bool) {
+	md.Distinct = distinct
+}
+
 // ~~~ [ DICompileUnit ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // DICompileUnit is a specialized metadata node.
@@ -114,7 +184,8 @@ type DICompileUnit struct {
 	DebugBaseAddress      bool               // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DICompileUnit) String() string {
 	return md.Ident()
 }
@@ -244,7 +315,8 @@ type DICompositeType struct {
 	Discriminator  Field            // optional; nil if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DICompositeType) String() string {
 	return md.Ident()
 }
@@ -364,7 +436,8 @@ type DIDerivedType struct {
 	DwarfAddressSpace uint64        // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIDerivedType) String() string {
 	return md.Ident()
 }
@@ -457,7 +530,8 @@ type DIEnumerator struct {
 	IsUnsigned bool   // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIEnumerator) String() string {
 	return md.Ident()
 }
@@ -516,7 +590,8 @@ type DIExpression struct {
 	Fields []DIExpressionField
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIExpression) String() string {
 	return md.Ident()
 }
@@ -573,7 +648,8 @@ type DIFile struct {
 	Source       string            // optional; empty if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIFile) String() string {
 	return md.Ident()
 }
@@ -646,7 +722,8 @@ type DIGlobalVariable struct {
 	Align          uint64  // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIGlobalVariable) String() string {
 	return md.Ident()
 }
@@ -736,7 +813,8 @@ type DIGlobalVariableExpression struct {
 	Expr *DIExpression     // required.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIGlobalVariableExpression) String() string {
 	return md.Ident()
 }
@@ -797,7 +875,8 @@ type DIImportedEntity struct {
 	Name   string        // optional; empty if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIImportedEntity) String() string {
 	return md.Ident()
 }
@@ -867,7 +946,8 @@ type DILabel struct {
 	Line  int64   // required.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DILabel) String() string {
 	return md.Ident()
 }
@@ -925,7 +1005,8 @@ type DILexicalBlock struct {
 	Column int64   // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DILexicalBlock) String() string {
 	return md.Ident()
 }
@@ -988,7 +1069,8 @@ type DILexicalBlockFile struct {
 	Discriminator uint64  // required.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DILexicalBlockFile) String() string {
 	return md.Ident()
 }
@@ -1041,9 +1123,9 @@ type DILocalVariable struct {
 	// (optional) Distinct.
 	Distinct bool
 
+	Scope Field       // required.
 	Name  string      // optional; empty if not present.
 	Arg   uint64      // optional; zero value if not present.
-	Scope Field       // required.
 	File  *DIFile     // optional; nil if not present.
 	Line  int64       // optional; zero value if not present.
 	Type  Field       // optional; nil if not present.
@@ -1051,7 +1133,8 @@ type DILocalVariable struct {
 	Align uint64      // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DILocalVariable) String() string {
 	return md.Ident()
 }
@@ -1076,6 +1159,8 @@ func (md *DILocalVariable) LLString() string {
 		buf.WriteString("distinct ")
 	}
 	var fields []string
+	// Note, to match Clang output, the output order is changed to output name
+	// before scope.
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
 		fields = append(fields, field)
@@ -1132,7 +1217,8 @@ type DILocation struct {
 	IsImplicitCode bool        // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DILocation) String() string {
 	return md.Ident()
 }
@@ -1200,7 +1286,8 @@ type DIMacro struct {
 	Value string            // optional; empty if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIMacro) String() string {
 	return md.Ident()
 }
@@ -1262,7 +1349,8 @@ type DIMacroFile struct {
 	Nodes *Tuple            // optional; nil if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIMacroFile) String() string {
 	return md.Ident()
 }
@@ -1327,7 +1415,8 @@ type DIModule struct {
 	Isysroot     string // optional; empty if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIModule) String() string {
 	return md.Ident()
 }
@@ -1392,7 +1481,8 @@ type DINamespace struct {
 	ExportSymbols bool   // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DINamespace) String() string {
 	return md.Ident()
 }
@@ -1455,7 +1545,8 @@ type DIObjCProperty struct {
 	Type       Field   // optional; nil if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DIObjCProperty) String() string {
 	return md.Ident()
 }
@@ -1550,7 +1641,8 @@ type DISubprogram struct {
 	ThrownTypes    *Tuple               // optional; nil if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DISubprogram) String() string {
 	return md.Ident()
 }
@@ -1686,7 +1778,8 @@ type DISubrange struct {
 	LowerBound int64      // optional; zero value if not present.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DISubrange) String() string {
 	return md.Ident()
 }
@@ -1741,7 +1834,8 @@ type DISubroutineType struct {
 	Types *Tuple       // required.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DISubroutineType) String() string {
 	return md.Ident()
 }
@@ -1799,7 +1893,8 @@ type DITemplateTypeParameter struct {
 	Type Field  // required.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DITemplateTypeParameter) String() string {
 	return md.Ident()
 }
@@ -1856,7 +1951,8 @@ type DITemplateValueParameter struct {
 	Value Field         // required.
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *DITemplateValueParameter) String() string {
 	return md.Ident()
 }
@@ -1919,7 +2015,8 @@ type GenericDINode struct {
 	Operands []Field       // optional
 }
 
-// String returns the LLVM syntax representation of the specialized metadata node.
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
 func (md *GenericDINode) String() string {
 	return md.Ident()
 }

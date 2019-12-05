@@ -19,6 +19,8 @@ func (gen *generator) irSpecializedMDNode(new metadata.Definition, old ast.Speci
 	switch old := old.(type) {
 	case *ast.DIBasicType:
 		return gen.irDIBasicType(new, old)
+	case *ast.DICommonBlock:
+		return gen.irDICommonBlock(new, old)
 	case *ast.DICompileUnit:
 		return gen.irDICompileUnit(new, old)
 	case *ast.DICompositeType:
@@ -103,6 +105,57 @@ func (gen *generator) irDIBasicType(new metadata.SpecializedNode, old *ast.DIBas
 			md.Flags = irDIFlags(oldField.Flags())
 		default:
 			panic(fmt.Errorf("support for DIBasicType field %T not yet implemented", old))
+		}
+	}
+	return md, nil
+}
+
+// --- [ DICommonBlock ] -------------------------------------------------------
+
+// irDICommonBlock returns the IR specialized metadata node DICommonBlock
+// corresponding to the given AST specialized metadata node DICommonBlock. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDICommonBlock(new metadata.SpecializedNode, old *ast.DICommonBlock) (*metadata.DICommonBlock, error) {
+	md, ok := new.(*metadata.DICommonBlock)
+	if new == nil {
+		md = &metadata.DICommonBlock{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DICommonBlock, got %T", new))
+	}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.ScopeField:
+			scope, err := gen.irMDField(oldField.Scope())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Scope = scope
+		case *ast.DeclarationField:
+			declaration, err := gen.irMDField(oldField.Declaration())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Declaration = declaration
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			switch file := file.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.DIFile:
+				md.File = file
+			default:
+				panic(fmt.Errorf("support for metadata DICommonBlock file field type %T not yet implemented", file))
+			}
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
+		default:
+			panic(fmt.Errorf("support for DICommonBlock field %T not yet implemented", old))
 		}
 	}
 	return md, nil

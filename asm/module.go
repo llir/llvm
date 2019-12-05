@@ -200,6 +200,8 @@ func newSpecializedMDNode(old ast.SpecializedMDNode) metadata.SpecializedNode {
 	switch old := old.(type) {
 	case *ast.DIBasicType:
 		return &metadata.DIBasicType{}
+	case *ast.DICommonBlock:
+		return &metadata.DICommonBlock{}
 	case *ast.DICompileUnit:
 		return &metadata.DICompileUnit{}
 	case *ast.DICompositeType:
