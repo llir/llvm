@@ -30,7 +30,7 @@ type ExprGetElementPtr struct {
 	InBounds bool
 }
 
-// TODO: re-work NewGetElementPtr to take elemType as argument, as this is
+// TODO: refine NewGetElementPtr to take elemType as argument, as this is
 // really the type used to compute the result type of gep.
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
@@ -134,14 +134,26 @@ func (index *Index) String() string {
 func gepExprType(elemType, src types.Type, indices []Constant) types.Type {
 	var idxs []gep.Index
 	for _, index := range indices {
-		idx := getIntValue(index)
+		idx := getIndex(index)
+		// Check if index is of vector type.
+		if indexType, ok := index.Type().(*types.VectorType); ok {
+			idx.VectorLen = indexType.Len
+		}
 		idxs = append(idxs, idx)
 	}
 	return gep.ResultType(elemType, src, idxs)
 }
 
-// getIntValue returns the concrete integer value of the given index.
-func getIntValue(index Constant) gep.Index {
+// NOTE: keep getIndex in sync with getIndex in:
+//
+//    * ast/inst_memory.go
+//    * ir/inst_memory.go
+//    * ir/constant/expr_memory.go
+//
+// The reference point and source of truth is in ir/constant/expr_memory.go.
+
+// getIndex returns the gep index corresponding to the given constant index.
+func getIndex(index Constant) gep.Index {
 	// unpack inrange indices.
 	if idx, ok := index.(*Index); ok {
 		index = idx.Constant
@@ -166,7 +178,7 @@ func getIntValue(index Constant) gep.Index {
 		// Sanity check. All vector elements must be integers, and must have the
 		// same value.
 		var val int64
-		if len(index.Elems) < 1 {
+		if len(index.Elems) == 0 {
 			return gep.Index{HasVal: false}
 		}
 		for i, elem := range index.Elems {
@@ -178,7 +190,10 @@ func getIntValue(index Constant) gep.Index {
 				} else if x != val {
 					// since all elements were not identical, we must conclude that
 					// the index vector does not have a concrete value.
-					return gep.Index{HasVal: false}
+					return gep.Index{
+						HasVal:    false,
+						VectorLen: uint64(len(index.Elems)),
+					}
 				}
 			default:
 				// TODO: remove debug output.
@@ -192,6 +207,8 @@ func getIntValue(index Constant) gep.Index {
 			VectorLen: uint64(len(index.Elems)),
 		}
 	case *ExprPtrToInt:
+		return gep.Index{HasVal: false}
+	case *Undef:
 		return gep.Index{HasVal: false}
 	default:
 		// TODO: add support for more constant expressions.

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/llir/llvm/internal/gep"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
@@ -475,6 +476,9 @@ type InstGetElementPtr struct {
 	Metadata
 }
 
+// TODO: refine NewGetElementPtr to take elemType as argument, as this is
+// really the type used to compute the result type of gep.
+
 // NewGetElementPtr returns a new getelementptr instruction based on the given
 // source address and element indices.
 func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
@@ -492,6 +496,8 @@ func (inst *InstGetElementPtr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstGetElementPtr) Type() types.Type {
+	// TODO: remove e.ElemType computation once NewGetElementPtr takes elemType
+	// as argument.
 	// Cache element type if not present.
 	if inst.ElemType == nil {
 		switch typ := inst.Src.Type().(type) {
@@ -509,7 +515,7 @@ func (inst *InstGetElementPtr) Type() types.Type {
 	}
 	// Cache type if not present.
 	if inst.Typ == nil {
-		inst.Typ = gepType(inst.ElemType, inst.Indices)
+		inst.Typ = gepInstType(inst.ElemType, inst.Src.Type(), inst.Indices)
 	}
 	return inst.Typ
 }
@@ -536,70 +542,97 @@ func (inst *InstGetElementPtr) LLString() string {
 
 // ### [ Helper functions ] ####################################################
 
-// gepType returns the pointer type or vector of pointers type to the element at
-// the position in the type specified by the given indices, as calculated by the
-// getelementptr instruction.
-func gepType(elemType types.Type, indices []value.Value) types.Type {
-	e := elemType
-	for i, index := range indices {
-		if i == 0 {
-			// Ignore checking the 0th index as it simply follows the pointer of
-			// src.
-			//
-			// ref: http://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
-			continue
-		}
-		switch t := e.(type) {
-		case *types.PointerType:
-			// ref: http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep
-			panic(fmt.Errorf("unable to index into element of pointer type `%s`; for more information, see http://llvm.org/docs/GetElementPtr.html#what-is-dereferenced-by-gep", elemType))
-		case *types.VectorType:
-			e = t.ElemType
-		case *types.ArrayType:
-			e = t.ElemType
-		case *types.StructType:
-			switch index := index.(type) {
-			case *constant.Int:
-				e = t.Fields[index.X.Int64()]
-			case *constant.Vector:
-				// TODO: Validate how index vectors in gep are supposed to work.
-				idx, ok := index.Elems[0].(*constant.Int)
-				if !ok {
-					panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", index.Elems[0]))
-				}
-				i := idx.X.Int64()
-				// Sanity check. All vector elements must be integers, and must have
-				// the same value.
-				for _, elem := range index.Elems {
-					idx, ok := elem.(*constant.Int)
-					if !ok {
-						panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, got %T", elem))
-					}
-					j := idx.X.Int64()
-					if i != j {
-						panic(fmt.Errorf("struct index mismatch; vector elements %d and %d differ", i, j))
-					}
-				}
-				e = t.Fields[i]
-			case *constant.ZeroInitializer:
-				e = t.Fields[0]
-			default:
-				panic(fmt.Errorf("invalid index type for structure element; expected *constant.Int, *constant.Vector or *constant.ZeroInitializer, got %T", index))
+// gepInstType computes the result type of a getelementptr instruction.
+//
+//    getelementptr ElemType, Src, Indices
+func gepInstType(elemType, src types.Type, indices []value.Value) types.Type {
+	var idxs []gep.Index
+	for _, index := range indices {
+		var idx gep.Index
+		if index, ok := index.(constant.Constant); ok {
+			idx = getIndex(index)
+		} else {
+			idx = gep.Index{HasVal: false}
+			// Check if index is of vector type.
+			if indexType, ok := index.Type().(*types.VectorType); ok {
+				idx.VectorLen = indexType.Len
 			}
-		default:
-			panic(fmt.Errorf("support for indexing element type %T not yet implemented", e))
 		}
+		idxs = append(idxs, idx)
 	}
-	// TODO: Validate how index vectors in gep are supposed to work.
-	//
-	// Example from dir.ll:
-	//    %113 = getelementptr inbounds %struct.fileinfo, %struct.fileinfo* %96, <2 x i64> %110, !dbg !4736
-	//    %116 = bitcast i8** %115 to <2 x %struct.fileinfo*>*, !dbg !4738
-	//    store <2 x %struct.fileinfo*> %113, <2 x %struct.fileinfo*>* %116, align 8, !dbg !4738, !tbaa !1793
-	if len(indices) > 0 {
-		if t, ok := indices[0].Type().(*types.VectorType); ok {
-			return types.NewVector(t.Len, types.NewPointer(e))
+	return gep.ResultType(elemType, src, idxs)
+}
+
+// NOTE: keep getIndex in sync with getIndex in:
+//
+//    * ast/inst_memory.go
+//    * ir/inst_memory.go
+//    * ir/constant/expr_memory.go
+//
+// The reference point and source of truth is in ir/constant/expr_memory.go.
+
+// getIndex returns the gep index corresponding to the given constant index.
+func getIndex(index constant.Constant) gep.Index {
+	// unpack inrange indices.
+	if idx, ok := index.(*constant.Index); ok {
+		index = idx.Constant
+	}
+	// TODO: use index.Simplify() to simplify the constant expression to a
+	// concrete integer constant.
+	switch index := index.(type) {
+	case *constant.Int:
+		val := index.X.Int64()
+		return gep.NewIndex(val)
+	case *constant.ZeroInitializer:
+		return gep.NewIndex(0)
+	case *constant.Vector:
+		// ref: https://llvm.org/docs/LangRef.html#getelementptr-instruction
+		//
+		// > The getelementptr returns a vector of pointers, instead of a single
+		// > address, when one or more of its arguments is a vector. In such
+		// > cases, all vector arguments should have the same number of elements,
+		// > and every scalar argument will be effectively broadcast into a vector
+		// > during address calculation.
+
+		// Sanity check. All vector elements must be integers, and must have the
+		// same value.
+		var val int64
+		if len(index.Elems) == 0 {
+			return gep.Index{HasVal: false}
 		}
+		for i, elem := range index.Elems {
+			switch elem := elem.(type) {
+			case *constant.Int:
+				x := elem.X.Int64()
+				if i == 0 {
+					val = x
+				} else if x != val {
+					// since all elements were not identical, we must conclude that
+					// the index vector does not have a concrete value.
+					return gep.Index{
+						HasVal:    false,
+						VectorLen: uint64(len(index.Elems)),
+					}
+				}
+			default:
+				// TODO: remove debug output.
+				panic(fmt.Errorf("support for gep index vector element type %T not yet implemented", elem))
+				return gep.Index{HasVal: false}
+			}
+		}
+		return gep.Index{
+			HasVal:    true,
+			Val:       val,
+			VectorLen: uint64(len(index.Elems)),
+		}
+	case *constant.ExprPtrToInt:
+		return gep.Index{HasVal: false}
+	case *constant.Undef:
+		return gep.Index{HasVal: false}
+	default:
+		// TODO: add support for more constant expressions.
+		// TODO: remove debug output.
+		panic(fmt.Errorf("support for gep index type %T not yet implemented", index))
+		return gep.Index{HasVal: false}
 	}
-	return types.NewPointer(e)
 }

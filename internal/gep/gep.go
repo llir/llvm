@@ -16,11 +16,13 @@ import (
 type Index struct {
 	// HasVal specifies whether Val has a valid value. If index is a constant
 	// integer or a constant integer vector of which all elements have the same
-	// value, then HasVal is set.
+	// value, then HasVal is set. Note, this is a requirement to index into
+	// structure types.
 	HasVal bool
 	// Index integer value. Val is only valid if HasVal is set.
 	Val int64
-	// Length of index vector; or 0 if index is scalar.
+	// Length of index vector; or 0 if index is scalar. VectorLen may be non-zero
+	// even if HasVal is false.
 	VectorLen uint64
 }
 
@@ -69,6 +71,19 @@ func ResultType(elemType, src types.Type, indices []Index) types.Type {
 	// > calculations.
 	e := elemType
 	for i, index := range indices {
+		// ref: https://llvm.org/docs/LangRef.html#getelementptr-instruction
+		//
+		// > The getelementptr returns a vector of pointers, instead of a single
+		// > address, when one or more of its arguments is a vector. In such
+		// > cases, all vector arguments should have the same number of elements,
+		// > and every scalar argument will be effectively broadcast into a vector
+		// > during address calculation.
+		if index.VectorLen != 0 && resultVectorLength != 0 && index.VectorLen != resultVectorLength {
+			panic(fmt.Errorf("vector length mismatch of index vector (%d) and result type vector (%d)", index.VectorLen, resultVectorLength))
+		}
+		if resultVectorLength == 0 && index.VectorLen != 0 {
+			resultVectorLength = index.VectorLen
+		}
 		// ref: https://llvm.org/docs/GetElementPtr.html#why-is-the-extra-0-index-required
 		//
 		// > Since the second argument to the GEP instruction must always be a
@@ -98,16 +113,6 @@ func ResultType(elemType, src types.Type, indices []Index) types.Type {
 			// > must all be the same i32 integer constant).
 			if !index.HasVal {
 				panic(fmt.Errorf("unable to index into struct type `%v` using gep with non-constant index", e))
-			}
-			// ref: https://llvm.org/docs/LangRef.html#getelementptr-instruction
-			//
-			// > The getelementptr returns a vector of pointers, instead of a
-			// > single address, when one or more of its arguments is a vector. In
-			// > such cases, all vector arguments should have the same number of
-			// > elements, and every scalar argument will be effectively broadcast
-			// > into a vector during address calculation.
-			if index.VectorLen != 0 && resultVectorLength != 0 && index.VectorLen != resultVectorLength {
-				panic(fmt.Errorf("vector length mismatch of index vector (%d) and result type vector (%d)", index.VectorLen, resultVectorLength))
 			}
 			e = elm.Fields[index.Val]
 		default:

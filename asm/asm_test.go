@@ -288,12 +288,10 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/fast-math-flags.ll"},
 		{path: "../testdata/llvm/test/Assembler/flags.ll"},
 		{path: "../testdata/llvm/test/Assembler/generic-debug-node.ll"},
-		//{path: "../testdata/llvm/test/Assembler/getelementptr_invalid_ptr.ll"}, // TODO: investigate why we are able to parse `return i32* %gep`, should not be possible as there is no `return` token in the grammar.
-		//{path: "../testdata/llvm/test/Assembler/getelementptr_vec_ce.ll"}, // TODO: fix computation of gep type. We currently do not update the return type to vector if the first gep index is a scalar, but the second (or later) indices is a vector. As such, we currently compute the type `i32*` where `<4 x i32*>` should have been computed.
-		//{path: "../testdata/llvm/test/Assembler/getelementptr_vec_ce2.ll"}, // TODO: fix computation of gep type. We currently do not update the return type to vector if the first gep index is a scalar, but the second (or later) indices is a vector. As such, we currently compute the type `i32*` where `<4 x i32*>` should have been computed.
-		//{path: "../testdata/llvm/test/Assembler/getelementptr_vec_idx1.ll"}, // TODO: fix gep type computation.
-		//{path: "../testdata/llvm/test/Assembler/getelementptr_vec_idx2.ll"}, // TODO: fix gep type computation.
-		//{path: "../testdata/llvm/test/Assembler/getelementptr_vec_idx3.ll"}, // TODO: fix gep type computation.
+
+		// getelementptr with index vector
+		{path: "../testdata/llvm/test/Assembler/getelementptr_vec_ce.ll"},
+
 		{path: "../testdata/llvm/test/Assembler/global-addrspace-forwardref.ll"},
 		{path: "../testdata/llvm/test/Assembler/globalvariable-attributes.ll"},
 		{path: "../testdata/llvm/test/Assembler/half-constprop.ll"},
