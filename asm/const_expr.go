@@ -125,7 +125,7 @@ func (gen *generator) irFNegExpr(t types.Type, old *ast.FNegExpr) (*constant.Exp
 	}
 	expr := constant.NewFNeg(x)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -151,7 +151,7 @@ func (gen *generator) irAddExpr(t types.Type, old *ast.AddExpr) (*constant.ExprA
 	// (optional) Overflow flags.
 	expr.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -173,7 +173,7 @@ func (gen *generator) irFAddExpr(t types.Type, old *ast.FAddExpr) (*constant.Exp
 	}
 	expr := constant.NewFAdd(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -197,7 +197,7 @@ func (gen *generator) irSubExpr(t types.Type, old *ast.SubExpr) (*constant.ExprS
 	// (optional) Overflow flags.
 	expr.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -219,7 +219,7 @@ func (gen *generator) irFSubExpr(t types.Type, old *ast.FSubExpr) (*constant.Exp
 	}
 	expr := constant.NewFSub(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -243,7 +243,7 @@ func (gen *generator) irMulExpr(t types.Type, old *ast.MulExpr) (*constant.ExprM
 	// (optional) Overflow flags.
 	expr.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -265,7 +265,7 @@ func (gen *generator) irFMulExpr(t types.Type, old *ast.FMulExpr) (*constant.Exp
 	}
 	expr := constant.NewFMul(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -289,7 +289,7 @@ func (gen *generator) irUDivExpr(t types.Type, old *ast.UDivExpr) (*constant.Exp
 	// (optional) Exact.
 	_, expr.Exact = old.Exact()
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -313,7 +313,7 @@ func (gen *generator) irSDivExpr(t types.Type, old *ast.SDivExpr) (*constant.Exp
 	// (optional) Exact.
 	_, expr.Exact = old.Exact()
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -335,7 +335,7 @@ func (gen *generator) irFDivExpr(t types.Type, old *ast.FDivExpr) (*constant.Exp
 	}
 	expr := constant.NewFDiv(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -357,7 +357,7 @@ func (gen *generator) irURemExpr(t types.Type, old *ast.URemExpr) (*constant.Exp
 	}
 	expr := constant.NewURem(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -379,7 +379,7 @@ func (gen *generator) irSRemExpr(t types.Type, old *ast.SRemExpr) (*constant.Exp
 	}
 	expr := constant.NewSRem(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -401,7 +401,7 @@ func (gen *generator) irFRemExpr(t types.Type, old *ast.FRemExpr) (*constant.Exp
 	}
 	expr := constant.NewFRem(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -427,7 +427,7 @@ func (gen *generator) irShlExpr(t types.Type, old *ast.ShlExpr) (*constant.ExprS
 	// (optional) Overflow flags.
 	expr.OverflowFlags = irOverflowFlags(old.OverflowFlags())
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -451,7 +451,7 @@ func (gen *generator) irLShrExpr(t types.Type, old *ast.LShrExpr) (*constant.Exp
 	// (optional) Exact.
 	_, expr.Exact = old.Exact()
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -475,7 +475,7 @@ func (gen *generator) irAShrExpr(t types.Type, old *ast.AShrExpr) (*constant.Exp
 	// (optional) Exact.
 	_, expr.Exact = old.Exact()
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -497,7 +497,7 @@ func (gen *generator) irAndExpr(t types.Type, old *ast.AndExpr) (*constant.ExprA
 	}
 	expr := constant.NewAnd(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -519,7 +519,7 @@ func (gen *generator) irOrExpr(t types.Type, old *ast.OrExpr) (*constant.ExprOr,
 	}
 	expr := constant.NewOr(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -541,7 +541,7 @@ func (gen *generator) irXorExpr(t types.Type, old *ast.XorExpr) (*constant.ExprX
 	}
 	expr := constant.NewXor(x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -565,7 +565,7 @@ func (gen *generator) irExtractElementExpr(t types.Type, old *ast.ExtractElement
 	}
 	expr := constant.NewExtractElement(x, index)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -592,7 +592,7 @@ func (gen *generator) irInsertElementExpr(t types.Type, old *ast.InsertElementEx
 	}
 	expr := constant.NewInsertElement(x, elem, index)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -619,7 +619,7 @@ func (gen *generator) irShuffleVectorExpr(t types.Type, old *ast.ShuffleVectorEx
 	}
 	expr := constant.NewShuffleVector(x, y, mask)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -640,7 +640,7 @@ func (gen *generator) irExtractValueExpr(t types.Type, old *ast.ExtractValueExpr
 	indices := uintSlice(old.Indices())
 	expr := constant.NewExtractValue(x, indices...)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -664,7 +664,7 @@ func (gen *generator) irInsertValueExpr(t types.Type, old *ast.InsertValueExpr) 
 	indices := uintSlice(old.Indices())
 	expr := constant.NewInsertValue(x, elem, indices...)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -705,7 +705,7 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 		return nil, errors.Errorf("constant expression element type mismatch; expected %q, got %q", expr.ElemType, elemType)
 	}
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch of `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -1033,7 +1033,7 @@ func (gen *generator) irICmpExpr(t types.Type, old *ast.ICmpExpr) (*constant.Exp
 	}
 	expr := constant.NewICmp(pred, x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -1057,7 +1057,7 @@ func (gen *generator) irFCmpExpr(t types.Type, old *ast.FCmpExpr) (*constant.Exp
 	}
 	expr := constant.NewFCmp(pred, x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
@@ -1084,7 +1084,7 @@ func (gen *generator) irSelectExpr(t types.Type, old *ast.SelectExpr) (*constant
 	}
 	expr := constant.NewSelect(cond, x, y)
 	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch; expected %q, got %q", expr.Typ, t)
+		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
 	return expr, nil
 }
