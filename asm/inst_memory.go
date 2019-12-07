@@ -408,6 +408,11 @@ func getIndex(index ast.Constant) gep.Index {
 			panic(fmt.Errorf("unable to parse integer %q; %v", index.Text(), err))
 		}
 		return gep.NewIndex(val)
+	case *ast.BoolConst:
+		if boolLit(index.BoolLit()) {
+			return gep.NewIndex(1)
+		}
+		return gep.NewIndex(0)
 	case *ast.ZeroInitializerConst:
 		return gep.NewIndex(0)
 	case *ast.VectorConst:
