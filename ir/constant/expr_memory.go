@@ -158,8 +158,11 @@ func getIndex(index Constant) gep.Index {
 	if idx, ok := index.(*Index); ok {
 		index = idx.Constant
 	}
-	// TODO: use index.Simplify() to simplify the constant expression to a
-	// concrete integer constant.
+	// Use index.Simplify() to simplify the constant expression to a concrete
+	// integer constant or vector of integers constant.
+	if idx, ok := index.(Expression); ok {
+		index = idx.Simplify()
+	}
 	switch index := index.(type) {
 	case *Int:
 		val := index.X.Int64()
@@ -174,13 +177,12 @@ func getIndex(index Constant) gep.Index {
 		// > cases, all vector arguments should have the same number of elements,
 		// > and every scalar argument will be effectively broadcast into a vector
 		// > during address calculation.
-
-		// Sanity check. All vector elements must be integers, and must have the
-		// same value.
-		var val int64
 		if len(index.Elems) == 0 {
 			return gep.Index{HasVal: false}
 		}
+		// Sanity check. All vector elements must be integers, and must have the
+		// same value.
+		var val int64
 		for i, elem := range index.Elems {
 			switch elem := elem.(type) {
 			case *Int:
@@ -206,9 +208,10 @@ func getIndex(index Constant) gep.Index {
 			Val:       val,
 			VectorLen: uint64(len(index.Elems)),
 		}
-	case *ExprPtrToInt:
-		return gep.Index{HasVal: false}
 	case *Undef:
+		return gep.Index{HasVal: false}
+	case Expression:
+		// should already have been simplified to a form we can handle.
 		return gep.Index{HasVal: false}
 	default:
 		// TODO: add support for more constant expressions.

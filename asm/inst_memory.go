@@ -423,14 +423,13 @@ func getIndex(index ast.Constant) gep.Index {
 		// > cases, all vector arguments should have the same number of elements,
 		// > and every scalar argument will be effectively broadcast into a vector
 		// > during address calculation.
-
-		// Sanity check. All vector elements must be integers, and must have the
-		// same value.
-		var val int64
 		elems := index.Elems()
 		if len(elems) == 0 {
 			return gep.Index{HasVal: false}
 		}
+		// Sanity check. All vector elements must be integers, and must have the
+		// same value.
+		var val int64
 		for i, elem := range elems {
 			switch elem := elem.Val().(type) {
 			case *ast.IntConst:

@@ -425,7 +425,8 @@ func (e *ExprPtrToInt) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprPtrToInt) Simplify() Constant {
-	panic("not yet implemented")
+	// cannot simplify further
+	return e
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
