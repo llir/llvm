@@ -161,7 +161,6 @@ func (e *ExprSExt) Simplify() Constant {
 	default:
 		panic(fmt.Errorf("support for sext constant expression from type %T not yet implemented", e.From))
 	}
-	panic("not yet implemented")
 }
 
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
