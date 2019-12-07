@@ -95,6 +95,9 @@ func TestParseFile(t *testing.T) {
 		// Basic block labels.
 		{path: "../testdata/llvm/test/Assembler/block-labels.ll"},
 
+		// callbr with void callee should not use up local ID in ir.Func.AssignIDs.
+		{path: "../testdata/llvm/test/Transforms/LoopUnswitch/callbr.ll"},
+
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/basic-aa-argmemonly.ll"},

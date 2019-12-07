@@ -312,7 +312,7 @@ func bodyString(body *Func) string {
 // instruction or invoke terminator with void-return type).
 func isVoidValue(n value.Named) bool {
 	switch n.(type) {
-	case *InstCall, *TermInvoke:
+	case *InstCall, *TermInvoke, *TermCallBr:
 		return n.Type().Equal(types.Void)
 	}
 	return false
