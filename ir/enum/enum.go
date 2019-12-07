@@ -169,11 +169,11 @@ const (
 	DIFlagLittleEndian        DIFlag = 1 << 28
 	DIFlagAllCallsDescribed   DIFlag = 1 << 29
 
-	DIFlagIndirectVirtualBase = DIFlagFwdDecl | DIFlagVirtual
+	DIFlagIndirectVirtualBase DIFlag = DIFlagFwdDecl | DIFlagVirtual
 	// Mask for accessibility.
-	DIFlagAccessibility = DIFlagPrivate | DIFlagProtected | DIFlagPublic
+	DIFlagAccessibility DIFlag = DIFlagPrivate | DIFlagProtected | DIFlagPublic
 	// Mask for inheritance.
-	DIFlagPtrToMemberRep = DIFlagSingleInheritance | DIFlagMultipleInheritance | DIFlagVirtualInheritance
+	DIFlagPtrToMemberRep DIFlag = DIFlagSingleInheritance | DIFlagMultipleInheritance | DIFlagVirtualInheritance
 
 	// Track first and last debug info flag, used by diFlagsString in
 	// ir/metadata/helper.go.
@@ -202,8 +202,8 @@ const (
 	DISPFlagMainSubprogram DISPFlag = 1 << 8
 
 	// Virtuality and non-virtuality.
-	DISPFlagNonvirtual = DISPFlagZero
-	DISPFlagVirtuality = DISPFlagVirtual | DISPFlagPureVirtual
+	DISPFlagNonvirtual DISPFlag = DISPFlagZero
+	DISPFlagVirtuality DISPFlag = DISPFlagVirtual | DISPFlagPureVirtual
 
 	// Track first and last subprogram specific flag, used by diSPFlagsString in
 	// ir/metadata/helper.go.

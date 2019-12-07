@@ -22,21 +22,22 @@ func _() {
 	_ = x[enum.DISPFlagElemental-64]
 	_ = x[enum.DISPFlagRecursive-128]
 	_ = x[enum.DISPFlagMainSubprogram-256]
+	_ = x[enum.DISPFlagNonvirtual-0]
+	_ = x[enum.DISPFlagVirtuality-3]
 }
 
 const (
-	_DISPFlag_name_0 = "DISPFlagZeroDISPFlagVirtualDISPFlagPureVirtual"
-	_DISPFlag_name_1 = "DISPFlagLocalToUnit"
-	_DISPFlag_name_2 = "DISPFlagDefinition"
-	_DISPFlag_name_3 = "DISPFlagOptimized"
-	_DISPFlag_name_4 = "DISPFlagPure"
-	_DISPFlag_name_5 = "DISPFlagElemental"
-	_DISPFlag_name_6 = "DISPFlagRecursive"
-	_DISPFlag_name_7 = "DISPFlagMainSubprogram"
+	_DISPFlag_name_0 = "DISPFlagZeroDISPFlagVirtualDISPFlagPureVirtualDISPFlagVirtualityDISPFlagLocalToUnit"
+	_DISPFlag_name_1 = "DISPFlagDefinition"
+	_DISPFlag_name_2 = "DISPFlagOptimized"
+	_DISPFlag_name_3 = "DISPFlagPure"
+	_DISPFlag_name_4 = "DISPFlagElemental"
+	_DISPFlag_name_5 = "DISPFlagRecursive"
+	_DISPFlag_name_6 = "DISPFlagMainSubprogram"
 )
 
 var (
-	_DISPFlag_index_0 = [...]uint8{0, 12, 27, 46}
+	_DISPFlag_index_0 = [...]uint8{0, 12, 27, 46, 64, 83}
 )
 
 // DISPFlagFromString returns the DISPFlag enum corresponding to s.
@@ -50,24 +51,21 @@ func DISPFlagFromString(s string) enum.DISPFlag {
 		}
 	}
 	if s == _DISPFlag_name_1 {
-		return enum.DISPFlag(4)
-	}
-	if s == _DISPFlag_name_2 {
 		return enum.DISPFlag(8)
 	}
-	if s == _DISPFlag_name_3 {
+	if s == _DISPFlag_name_2 {
 		return enum.DISPFlag(16)
 	}
-	if s == _DISPFlag_name_4 {
+	if s == _DISPFlag_name_3 {
 		return enum.DISPFlag(32)
 	}
-	if s == _DISPFlag_name_5 {
+	if s == _DISPFlag_name_4 {
 		return enum.DISPFlag(64)
 	}
-	if s == _DISPFlag_name_6 {
+	if s == _DISPFlag_name_5 {
 		return enum.DISPFlag(128)
 	}
-	if s == _DISPFlag_name_7 {
+	if s == _DISPFlag_name_6 {
 		return enum.DISPFlag(256)
 	}
 	panic(fmt.Errorf("unable to locate DISPFlag enum corresponding to %q", s))

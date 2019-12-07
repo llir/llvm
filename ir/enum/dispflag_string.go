@@ -18,41 +18,40 @@ func _() {
 	_ = x[DISPFlagElemental-64]
 	_ = x[DISPFlagRecursive-128]
 	_ = x[DISPFlagMainSubprogram-256]
+	_ = x[DISPFlagNonvirtual-0]
+	_ = x[DISPFlagVirtuality-3]
 }
 
 const (
-	_DISPFlag_name_0 = "DISPFlagZeroDISPFlagVirtualDISPFlagPureVirtual"
-	_DISPFlag_name_1 = "DISPFlagLocalToUnit"
-	_DISPFlag_name_2 = "DISPFlagDefinition"
-	_DISPFlag_name_3 = "DISPFlagOptimized"
-	_DISPFlag_name_4 = "DISPFlagPure"
-	_DISPFlag_name_5 = "DISPFlagElemental"
-	_DISPFlag_name_6 = "DISPFlagRecursive"
-	_DISPFlag_name_7 = "DISPFlagMainSubprogram"
+	_DISPFlag_name_0 = "DISPFlagZeroDISPFlagVirtualDISPFlagPureVirtualDISPFlagVirtualityDISPFlagLocalToUnit"
+	_DISPFlag_name_1 = "DISPFlagDefinition"
+	_DISPFlag_name_2 = "DISPFlagOptimized"
+	_DISPFlag_name_3 = "DISPFlagPure"
+	_DISPFlag_name_4 = "DISPFlagElemental"
+	_DISPFlag_name_5 = "DISPFlagRecursive"
+	_DISPFlag_name_6 = "DISPFlagMainSubprogram"
 )
 
 var (
-	_DISPFlag_index_0 = [...]uint8{0, 12, 27, 46}
+	_DISPFlag_index_0 = [...]uint8{0, 12, 27, 46, 64, 83}
 )
 
 func (i DISPFlag) String() string {
 	switch {
-	case 0 <= i && i <= 2:
+	case 0 <= i && i <= 4:
 		return _DISPFlag_name_0[_DISPFlag_index_0[i]:_DISPFlag_index_0[i+1]]
-	case i == 4:
-		return _DISPFlag_name_1
 	case i == 8:
-		return _DISPFlag_name_2
+		return _DISPFlag_name_1
 	case i == 16:
-		return _DISPFlag_name_3
+		return _DISPFlag_name_2
 	case i == 32:
-		return _DISPFlag_name_4
+		return _DISPFlag_name_3
 	case i == 64:
-		return _DISPFlag_name_5
+		return _DISPFlag_name_4
 	case i == 128:
-		return _DISPFlag_name_6
+		return _DISPFlag_name_5
 	case i == 256:
-		return _DISPFlag_name_7
+		return _DISPFlag_name_6
 	default:
 		return "DISPFlag(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
