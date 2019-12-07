@@ -166,7 +166,20 @@ func boolLit(old ast.BoolLit) bool {
 // unsigned integer literal.
 func uintLit(old ast.UintLit) uint64 {
 	text := old.Text()
-	x, err := strconv.ParseUint(text, 10, 64)
+	var x uint64
+	var err error
+	switch {
+	case strings.HasPrefix(text, "u0x"):
+		text = text[len("u0x"):]
+		x, err = strconv.ParseUint(text, 16, 64)
+	case strings.HasPrefix(text, "s0x"):
+		text = text[len("s0x"):]
+		// TODO: figure out how to handle negative values.
+		// The problem at here was we should return an int64 but since signature parse as uint64
+		x, err = strconv.ParseUint(text, 16, 64)
+	default:
+		x, err = strconv.ParseUint(text, 10, 64)
+	}
 	if err != nil {
 		panic(fmt.Errorf("unable to parse unsigned integer literal %q; %v", text, err))
 	}
