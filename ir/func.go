@@ -2,7 +2,6 @@ package ir
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -158,9 +157,9 @@ func (f *Func) AssignIDs() error {
 	setName := func(n local) error {
 		if n.IsUnnamed() {
 			if n.ID() != 0 && id != n.ID() {
-				want := strconv.FormatInt(id, 10)
-				got := strconv.FormatInt(n.ID(), 10)
-				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", f.Ident(), enc.Local(want), enc.Local(got))
+				want := id
+				got := n.ID()
+				return errors.Errorf("invalid local ID in function %q, expected %s, got %s", f.Ident(), enc.LocalID(want), enc.LocalID(got))
 			}
 			n.SetID(id)
 			id++

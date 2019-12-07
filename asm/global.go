@@ -268,7 +268,7 @@ func (gen *generator) irGlobal(new *ir.Global, old *ast.GlobalDecl) error {
 			}
 			def, ok := gen.new.comdatDefs[name]
 			if !ok {
-				return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.Comdat(name), new.Ident())
+				return errors.Errorf("unable to locate comdat identifier %q used in global declaration of %q", enc.ComdatName(name), new.Ident())
 			}
 			new.Comdat = def
 		// (optional) Alignment.
@@ -532,7 +532,7 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 			}
 			def, ok := gen.new.comdatDefs[name]
 			if !ok {
-				return errors.Errorf("unable to locate comdat identifier %q used in function header of %q", enc.Comdat(name), new.Ident())
+				return errors.Errorf("unable to locate comdat identifier %q used in function header of %q", enc.ComdatName(name), new.Ident())
 			}
 			new.Comdat = def
 		// (optional) Garbage collection.

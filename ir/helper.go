@@ -168,15 +168,9 @@ type GlobalIdent struct {
 // Ident returns the identifier associated with the global identifier.
 func (i GlobalIdent) Ident() string {
 	if i.IsUnnamed() {
-		id := strconv.FormatInt(i.GlobalID, 10)
-		return enc.Global(id)
+		return enc.GlobalID(i.GlobalID)
 	}
-	name := i.GlobalName
-	if x, err := strconv.ParseInt(name, 10, 64); err == nil {
-		// Print GlobalName with quotes if it is a number; e.g. @"42".
-		return fmt.Sprintf(`@"%d"`, x)
-	}
-	return enc.Global(name)
+	return enc.GlobalName(i.GlobalName)
 }
 
 // Name returns the name of the global identifier.
@@ -233,15 +227,9 @@ func NewLocalIdent(ident string) LocalIdent {
 // Ident returns the identifier associated with the local identifier.
 func (i LocalIdent) Ident() string {
 	if i.IsUnnamed() {
-		id := strconv.FormatInt(i.LocalID, 10)
-		return enc.Local(id)
+		return enc.LocalID(i.LocalID)
 	}
-	name := i.LocalName
-	if x, err := strconv.ParseInt(name, 10, 64); err == nil {
-		// Print LocalName with quotes if it is a number; e.g. %"42".
-		return fmt.Sprintf(`%%"%d"`, x)
-	}
-	return enc.Local(name)
+	return enc.LocalName(i.LocalName)
 }
 
 // Name returns the name of the local identifier.

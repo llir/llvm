@@ -197,7 +197,7 @@ func (gen *generator) addTypeDefsToModule() {
 		for i, name := range typeNames {
 			def, ok := gen.new.typeDefs[name]
 			if !ok {
-				panic(fmt.Errorf("unable to locate type identifier %q", enc.Local(name)))
+				panic(fmt.Errorf("unable to locate type identifier %q", enc.TypeName(name)))
 			}
 			gen.m.TypeDefs[i] = def
 		}
@@ -218,7 +218,7 @@ func (gen *generator) addComdatDefsToModule() {
 		for i, name := range comdatNames {
 			def, ok := gen.new.comdatDefs[name]
 			if !ok {
-				panic(fmt.Errorf("unable to locate comdat name %q", enc.Comdat(name)))
+				panic(fmt.Errorf("unable to locate comdat name %q", enc.ComdatName(name)))
 			}
 			gen.m.ComdatDefs[i] = def
 		}

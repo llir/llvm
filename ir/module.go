@@ -210,13 +210,13 @@ type ComdatDef struct {
 
 // String returns the string representation of the Comdat definition.
 func (c *ComdatDef) String() string {
-	return fmt.Sprintf("comdat(%s)", enc.Comdat(c.Name))
+	return fmt.Sprintf("comdat(%s)", enc.ComdatName(c.Name))
 }
 
 // LLString returns the LLVM syntax representation of the Comdat definition.
 func (c *ComdatDef) LLString() string {
 	// Name=ComdatName '=' 'comdat' Kind=SelectionKind
-	return fmt.Sprintf("%s = comdat %s", enc.Comdat(c.Name), c.Kind)
+	return fmt.Sprintf("%s = comdat %s", enc.ComdatName(c.Name), c.Kind)
 }
 
 // ~~~ [ Attribute Group Definition ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

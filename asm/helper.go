@@ -30,7 +30,9 @@ func globalIdent(old ast.GlobalIdent) ir.GlobalIdent {
 		panic(fmt.Errorf("invalid global identifier %q; missing '%s' prefix", ident, prefix))
 	}
 	ident = ident[len(prefix):]
-	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
+	// positive integer -> ID
+	// everything else (including negative integer) -> Name
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil && id >= 0 {
 		return ir.GlobalIdent{GlobalID: id}
 	}
 	// Unquote after trying to parse as ID, since @"42" is recognized as named
@@ -50,7 +52,9 @@ func localIdent(old ast.LocalIdent) ir.LocalIdent {
 		panic(fmt.Errorf("invalid local identifier %q; missing '%s' prefix", ident, prefix))
 	}
 	ident = ident[len(prefix):]
-	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
+	// positive integer -> ID
+	// everything else (including negative integer) -> Name
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil && id >= 0 {
 		return ir.LocalIdent{LocalID: id}
 	}
 	// Unquote after trying to parse as ID, since %"42" is recognized as named
@@ -70,7 +74,9 @@ func labelIdent(old ast.LabelIdent) ir.LocalIdent {
 		panic(fmt.Errorf("invalid label identifier %q; missing '%s' suffix", ident, suffix))
 	}
 	ident = ident[:len(ident)-len(suffix)]
-	if id, err := strconv.ParseInt(ident, 10, 64); err == nil {
+	// positive integer -> ID
+	// everything else (including negative integer) -> Name
+	if id, err := strconv.ParseInt(ident, 10, 64); err == nil && id >= 0 {
 		return ir.LocalIdent{LocalID: id}
 	}
 	// Unquote after trying to parse as ID, since %"42" is recognized as named

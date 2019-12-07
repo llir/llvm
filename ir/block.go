@@ -55,8 +55,11 @@ func (block *Block) LLString() string {
 	buf := &strings.Builder{}
 	if block.IsUnnamed() {
 		fmt.Fprintf(buf, "; <label>:%d\n", block.LocalID)
+		// TODO: explicitly print basic block label to conform with Clang 9.0, and
+		// because it's the sane thing to do.
+		//fmt.Fprintf(buf, "%s\n", enc.LabelID(block.LocalID))
 	} else {
-		fmt.Fprintf(buf, "%s\n", enc.Label(block.LocalName))
+		fmt.Fprintf(buf, "%s\n", enc.LabelName(block.LocalName))
 	}
 	for _, inst := range block.Insts {
 		fmt.Fprintf(buf, "\t%s\n", inst.LLString())

@@ -101,7 +101,7 @@ func newType(typeName string, old ast.LlvmNode, index map[string]*ast.TypeDef, t
 		if track[typeName] {
 			names := make([]string, 0, len(track))
 			for name := range track {
-				names = append(names, enc.Local(name))
+				names = append(names, enc.TypeName(name))
 			}
 			sort.Strings(names)
 			return nil, errors.Errorf("invalid named type; self-referential with type name(s) %s", strings.Join(names, ", "))
@@ -514,7 +514,7 @@ func (gen *generator) irNamedType(t types.Type, old *ast.NamedType) (types.Type,
 	name := getTypeName(ident)
 	typ, ok := gen.new.typeDefs[name]
 	if !ok {
-		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.Local(name))
+		return nil, errors.Errorf("unable to locate type definition of named type %q", enc.TypeName(name))
 	}
 	return typ, nil
 }

@@ -32,14 +32,14 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			name := getTypeName(ident)
 			if prev, ok := gen.old.typeDefs[name]; ok {
 				if _, ok := prev.Typ().(*ast.OpaqueType); !ok {
-					return errors.Errorf("type identifier %q already present; prev `%s`, new `%s`", enc.Local(name), text(prev), text(entity))
+					return errors.Errorf("type identifier %q already present; prev `%s`, new `%s`", enc.TypeName(name), text(prev), text(entity))
 				}
 			}
 			gen.old.typeDefs[name] = entity
 		case *ast.ComdatDef:
 			name := comdatName(entity.Name())
 			if prev, ok := gen.old.comdatDefs[name]; ok {
-				return errors.Errorf("comdat name %q already present; prev `%s`, new `%s`", enc.Comdat(name), text(prev), text(entity))
+				return errors.Errorf("comdat name %q already present; prev `%s`, new `%s`", enc.ComdatName(name), text(prev), text(entity))
 			}
 			gen.old.comdatDefs[name] = entity
 		case *ast.GlobalDecl:
