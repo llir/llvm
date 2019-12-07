@@ -2,6 +2,7 @@ package constant
 
 import (
 	"fmt"
+	"math/big"
 
 	"github.com/llir/llvm/ir/types"
 )
@@ -131,6 +132,35 @@ func (e *ExprSExt) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSExt) Simplify() Constant {
+	from := e.From
+	if fromExpr, ok := from.(Expression); ok {
+		from = fromExpr.Simplify()
+	}
+	switch expr := from.(type) {
+	case *Int:
+		fromType := expr.Typ
+		toType := e.To.(*types.IntType)
+		fromX := expr.X
+		// Copy e.X big.Int.
+		toX := new(big.Int).Set(fromX)
+		// Create simplified return constant.
+		c := &Int{
+			Typ: toType,
+			X:   toX,
+		}
+		// Check if from is signed.
+		fromBits := int(fromType.BitSize)
+		toBits := int(toType.BitSize)
+		if fromX.Bit(fromBits-1) == 1 {
+			// Sign extend.
+			for i := fromBits; i < toBits; i++ {
+				toX.SetBit(c.X, i, 1)
+			}
+		}
+		return c
+	default:
+		panic(fmt.Errorf("support for sext constant expression from type %T not yet implemented", e.From))
+	}
 	panic("not yet implemented")
 }
 
