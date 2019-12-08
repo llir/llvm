@@ -169,9 +169,11 @@ func uintLit(old ast.UintLit) uint64 {
 	var x uint64
 	var err error
 	switch {
+	// unsigned hexadecimal integer literal
 	case strings.HasPrefix(text, "u0x"):
 		text = text[len("u0x"):]
 		x, err = strconv.ParseUint(text, 16, 64)
+	// signed hexadecimal integer literal
 	case strings.HasPrefix(text, "s0x"):
 		panic(fmt.Errorf("invalid use of signed hexadecimal integer literal %q; grammar for ast.UintLit denotes unsigned integer literal", text))
 	default:
@@ -197,7 +199,39 @@ func uintSlice(olds []ast.UintLit) []uint64 {
 // intLit returns the integer value corresponding to the given integer literal.
 func intLit(old ast.IntLit) int64 {
 	text := old.Text()
-	x, err := strconv.ParseInt(text, 10, 64)
+	var x int64
+	var err error
+	switch {
+	// unsigned hexadecimal integer literal
+	case strings.HasPrefix(text, "u0x"):
+		text = text[len("u0x"):]
+		x, err = strconv.ParseInt(text, 16, 64)
+	// signed hexadecimal integer literal
+	case strings.HasPrefix(text, "s0x"):
+		// Note: the grammar uses ast.IntLit only for two purposes:
+		//
+		// 1) integer constants
+		// 2) signed integers of specialized metadata fields
+		//
+		// Integer constants are not parsed here, they are parsed by irIntConst
+		// using constant.NewIntFromString.
+		//
+		// In particular, we need to know the underlying type (bit size) associated
+		// with the integer literal to be able to parse signed values, as they are
+		// represented in two-complement hexadecimal notation.
+		//
+		// Type information is available when parsing integer constant values, as
+		// values are denoted by type-value pairs, so constant.NewIntFromString
+		// has all required information.
+		//
+		// However, when parsing signed values used for specialized metadata fields,
+		// this information is not available. As such, rather than potentially loosing
+		// information, we choose to panic and report the ambiguous use of "s0x"
+		// notation in specialized metadata fields, where `-42` would suffice.
+		panic(fmt.Errorf(`ambiguous use of signed hexadecimal integer literal %q, no type information available; consider using signed integer literal representation instead (e.g. "-42")`, text))
+	default:
+		x, err = strconv.ParseInt(text, 10, 64)
+	}
 	if err != nil {
 		panic(fmt.Errorf("unable to parse integer literal %q; %v", text, err))
 	}
