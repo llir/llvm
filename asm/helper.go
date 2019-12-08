@@ -173,10 +173,7 @@ func uintLit(old ast.UintLit) uint64 {
 		text = text[len("u0x"):]
 		x, err = strconv.ParseUint(text, 16, 64)
 	case strings.HasPrefix(text, "s0x"):
-		text = text[len("s0x"):]
-		// TODO: figure out how to handle negative values.
-		// The problem at here was we should return an int64 but since signature parse as uint64
-		x, err = strconv.ParseUint(text, 16, 64)
+		panic(fmt.Errorf("invalid use of signed hexadecimal integer literal %q; grammar for ast.UintLit denotes unsigned integer literal", text))
 	default:
 		x, err = strconv.ParseUint(text, 10, 64)
 	}
