@@ -218,7 +218,7 @@ func intLit(old ast.IntLit) int64 {
 		//
 		// In particular, we need to know the underlying type (bit size) associated
 		// with the integer literal to be able to parse signed values, as they are
-		// represented in two-complement hexadecimal notation.
+		// represented in two's complement hexadecimal notation.
 		//
 		// Type information is available when parsing integer constant values, as
 		// values are denoted by type-value pairs, so constant.NewIntFromString

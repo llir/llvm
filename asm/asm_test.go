@@ -18,6 +18,7 @@ func TestParseFile(t *testing.T) {
 		path string
 	}{
 		{path: "testdata/hexfloat.ll"},
+		{path: "testdata/hexint.ll"},
 		{path: "testdata/inst_aggregate.ll"},
 		{path: "testdata/inst_binary.ll"},
 		{path: "testdata/inst_bitwise.ll"},

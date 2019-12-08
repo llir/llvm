@@ -2,7 +2,6 @@ package constant
 
 import (
 	"fmt"
-	"log"
 	"math/big"
 	"strings"
 
@@ -61,6 +60,7 @@ func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 	}
 	// Hexadecimal integer literal.
 	switch {
+	// unsigned hexadecimal integer literal
 	case strings.HasPrefix(s, "u0x"):
 		s = s[len("u0x"):]
 		const base = 16
@@ -69,15 +69,27 @@ func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 			return nil, errors.Errorf("unable to parse integer constant %q", s)
 		}
 		return &Int{Typ: typ, X: x}, nil
+	// signed hexadecimal integer literal
 	case strings.HasPrefix(s, "s0x"):
-		// TODO: figure out how to handle negative values. Use typ.BitSize.
-		// e.g. what value should s0x0012312 represent?
-		log.Printf("support for signed hexadecimal integers (%q) not yet implemented", s)
+		// Parse signed hexadecimal integer literal in two's complement notation.
+		// First parse as unsigned hex, then check if sign bit is set.
 		s = s[len("s0x"):]
 		const base = 16
 		x, _ := (&big.Int{}).SetString(s, base)
 		if x == nil {
 			return nil, errors.Errorf("unable to parse integer constant %q", s)
+		}
+		// Check if signed.
+		if x.Bit(int(typ.BitSize)-1) == 1 {
+			// Compute actual negative value from two's complement.
+			//
+			// If x is 0xFFFF with type i16, then the actual negative value is
+			// `x - 0x10000`, in other words `x - 2^n`.
+			n := int64(typ.BitSize)
+			// n^2
+			maxPlus1 := new(big.Int).Exp(big.NewInt(2), big.NewInt(n), nil)
+			x = new(big.Int).Sub(x, maxPlus1)
+
 		}
 		return &Int{Typ: typ, X: x}, nil
 	}
