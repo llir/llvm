@@ -71,7 +71,7 @@ type Func struct {
 	Metadata
 
 	// Parent module; field set by ir.Module.NewFunc.
-	Parent *Module
+	Parent *Module `json:"-"`
 
 	// mu prevents races on AssignIDs.
 	mu sync.Mutex
