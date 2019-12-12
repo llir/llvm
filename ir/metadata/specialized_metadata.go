@@ -1700,7 +1700,26 @@ func (md *DISubprogram) LLString() string {
 		field := fmt.Sprintf("isLocal: %t", md.IsLocal)
 		fields = append(fields, field)
 	}
-	if md.IsDefinition {
+	// Note: IsDefinition should be optional. However, Clang 9.0 produces
+	// !DISubprogram specialized metadata nodes which looks as follows.
+	//
+	//    !80 = !DISubprogram(name: "abs", scope: !81, file: !81, line: 840, type: !82, flags: DIFlagPrototyped, spFlags: 0)
+	//
+	// Since `spFlags` is optional and has the zero value, we should be able to
+	// remove it.
+	//
+	//    !80 = !DISubprogram(name: "abs", scope: !81, file: !81, line: 840, type: !82, flags: DIFlagPrototyped)
+	//
+	// However, doing so results in an error when run through `lli`, namely
+	// `missing 'distinct', required for !DISubprogram that is a Definition`.
+	//
+	// Rather than including a "dummy" zero value for the spFlags enum, we
+	// specify intent more clearly by stating whether the subprogram is a
+	// definition or not.
+	//
+	// For this reason, we output isDefinition if it has a non-zero value or if
+	// !DISubProgram is not distinct.
+	if md.IsDefinition || !md.Distinct {
 		field := fmt.Sprintf("isDefinition: %t", md.IsDefinition)
 		fields = append(fields, field)
 	}
