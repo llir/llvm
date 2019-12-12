@@ -63,7 +63,9 @@ func (e *ExprShl) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprShl) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,7 +122,9 @@ func (e *ExprLShr) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprLShr) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,7 +181,9 @@ func (e *ExprAShr) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAShr) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -225,7 +231,9 @@ func (e *ExprAnd) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAnd) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -273,7 +281,9 @@ func (e *ExprOr) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprOr) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -321,5 +331,7 @@ func (e *ExprXor) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprXor) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }

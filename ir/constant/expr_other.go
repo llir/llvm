@@ -64,7 +64,9 @@ func (e *ExprICmp) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprICmp) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,7 +124,9 @@ func (e *ExprFCmp) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFCmp) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -173,5 +177,7 @@ func (e *ExprSelect) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSelect) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }

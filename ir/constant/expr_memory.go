@@ -94,7 +94,9 @@ func (e *ExprGetElementPtr) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprGetElementPtr) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ___ [ gep indices ] _________________________________________________________

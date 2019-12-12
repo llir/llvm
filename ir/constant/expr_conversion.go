@@ -48,7 +48,9 @@ func (e *ExprTrunc) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprTrunc) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,7 +92,9 @@ func (e *ExprZExt) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprZExt) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,6 +136,10 @@ func (e *ExprSExt) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSExt) Simplify() Constant {
+	// TODO: validate if we use the right approach here for sign extension. Since
+	// big.Int already contains an explicit sign for the arbitrary precision
+	// integer, perhaps we should not change the underlying value but instead
+	// just return a new LLVM IR integer constant of the To LLVM IR type.
 	from := e.From
 	if fromExpr, ok := from.(Expression); ok {
 		from = fromExpr.Simplify()
@@ -202,7 +210,9 @@ func (e *ExprFPTrunc) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPTrunc) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -244,7 +254,9 @@ func (e *ExprFPExt) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPExt) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -286,7 +298,9 @@ func (e *ExprFPToUI) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPToUI) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -328,7 +342,9 @@ func (e *ExprFPToSI) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprFPToSI) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -370,7 +386,9 @@ func (e *ExprUIToFP) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprUIToFP) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -412,7 +430,9 @@ func (e *ExprSIToFP) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprSIToFP) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -497,7 +517,9 @@ func (e *ExprIntToPtr) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprIntToPtr) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -539,7 +561,9 @@ func (e *ExprBitCast) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprBitCast) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -581,5 +605,7 @@ func (e *ExprAddrSpaceCast) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprAddrSpaceCast) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }

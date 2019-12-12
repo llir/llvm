@@ -63,7 +63,9 @@ func (e *ExprExtractValue) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprExtractValue) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -123,7 +125,9 @@ func (e *ExprInsertValue) Ident() string {
 // Simplify returns an equivalent (and potentially simplified) constant to the
 // constant expression.
 func (e *ExprInsertValue) Simplify() Constant {
-	panic("not yet implemented")
+	//panic("not yet implemented")
+	// TODO: implement
+	return e
 }
 
 // ### [ Helper functions ] ####################################################
