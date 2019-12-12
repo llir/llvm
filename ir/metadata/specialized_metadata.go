@@ -1728,10 +1728,22 @@ func (md *DISubprogram) LLString() string {
 		field := fmt.Sprintf("flags: %s", diFlagsString(md.Flags))
 		fields = append(fields, field)
 	}
-	if md.SPFlags != 0 {
-		field := fmt.Sprintf("spFlags: %s", dispFlagsString(md.SPFlags))
-		fields = append(fields, field)
-	}
+	// Note: SPFlags should be optional. However, Clang 9.0 produces
+	// !DISubprogram specialized metadata nodes which looks as follows.
+	//
+	//    !80 = !DISubprogram(name: "abs", scope: !81, file: !81, line: 840, type: !82, flags: DIFlagPrototyped, spFlags: 0)
+	//
+	// Since `spFlags` is optional and has the zero value, we should be able to
+	// remove it.
+	//
+	//    !80 = !DISubprogram(name: "abs", scope: !81, file: !81, line: 840, type: !82, flags: DIFlagPrototyped)
+	//
+	// However, doing so results in an error when run through `lli`, namely
+	// `missing 'distinct', required for !DISubprogram that is a Definition`.
+	//
+	// For this reason, we always output spFlags even if its optional.
+	field := fmt.Sprintf("spFlags: %s", dispFlagsString(md.SPFlags))
+	fields = append(fields, field)
 	if md.IsOptimized {
 		field := fmt.Sprintf("isOptimized: %t", md.IsOptimized)
 		fields = append(fields, field)
