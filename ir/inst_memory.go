@@ -549,9 +549,10 @@ func gepInstType(elemType, src types.Type, indices []value.Value) types.Type {
 	var idxs []gep.Index
 	for _, index := range indices {
 		var idx gep.Index
-		if index, ok := index.(constant.Constant); ok {
+		switch index := index.(type) {
+		case constant.Constant:
 			idx = getIndex(index)
-		} else {
+		default:
 			idx = gep.Index{HasVal: false}
 			// Check if index is of vector type.
 			if indexType, ok := index.Type().(*types.VectorType); ok {
