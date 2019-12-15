@@ -67,6 +67,7 @@ type Field interface {
 // A SpecializedNode has one of the following underlying types.
 //
 //    *metadata.DIBasicType                  // https://godoc.org/github.com/llir/llvm/ir/metadata#DIBasicType
+//    *metadata.DICommonBlock                // https://godoc.org/github.com/llir/llvm/ir/metadata#DICommonBlock
 //    *metadata.DICompileUnit                // https://godoc.org/github.com/llir/llvm/ir/metadata#DICompileUnit
 //    *metadata.DICompositeType              // https://godoc.org/github.com/llir/llvm/ir/metadata#DICompositeType
 //    *metadata.DIDerivedType                // https://godoc.org/github.com/llir/llvm/ir/metadata#DIDerivedType

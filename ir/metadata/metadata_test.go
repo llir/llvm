@@ -28,6 +28,7 @@ var (
 // metadata.SpecializedNode interface.
 var (
 	_ SpecializedNode = (*DIBasicType)(nil)
+	_ SpecializedNode = (*DICommonBlock)(nil)
 	_ SpecializedNode = (*DICompileUnit)(nil)
 	_ SpecializedNode = (*DICompositeType)(nil)
 	_ SpecializedNode = (*DIDerivedType)(nil)
@@ -66,6 +67,7 @@ var (
 // metadata.DIExpressionField interface.
 var (
 	_ DIExpressionField = UintLit(0)
+	_ DIExpressionField = enum.DwarfAttEncoding(0)
 	_ DIExpressionField = enum.DwarfOp(0)
 )
 
