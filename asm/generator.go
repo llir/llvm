@@ -34,7 +34,7 @@ func newGenerator() *generator {
 			typeDefs:          make(map[string]*ast.TypeDef),
 			comdatDefs:        make(map[string]*ast.ComdatDef),
 			globals:           make(map[ir.GlobalIdent]ast.LlvmNode),
-			attrGroupDefs:     make(map[int64]*ast.AttrGroupDef),
+			attrGroupDefs:     make(map[int64][]*ast.AttrGroupDef),
 			namedMetadataDefs: make(map[string][]*ast.NamedMetadataDef),
 			metadataDefs:      make(map[int64]*ast.MetadataDef),
 		},
@@ -70,8 +70,10 @@ type oldIndex struct {
 	//    *ast.FuncDef
 	globals map[ir.GlobalIdent]ast.LlvmNode
 	// attrGroupDefs maps from attribute group ID (without '#' prefix) to
-	// attribute group definition.
-	attrGroupDefs map[int64]*ast.AttrGroupDef
+	// attribute group definitions. Each ID maps to one or more attribute group
+	// definitions which will be merged into a single attribute group definition
+	// during translation.
+	attrGroupDefs map[int64][]*ast.AttrGroupDef
 	// namedMetadataDefs maps from metadata name (without '!' prefix) to named
 	// metadata definitions with the same name.
 	namedMetadataDefs map[string][]*ast.NamedMetadataDef

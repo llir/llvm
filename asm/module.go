@@ -72,10 +72,9 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.AttrGroupDef:
 			id := attrGroupID(entity.ID())
-			if prev, ok := gen.old.attrGroupDefs[id]; ok {
-				return errors.Errorf("attribute group ID %q already present; prev `%s`, new `%s`", enc.AttrGroupID(id), text(prev), text(entity))
-			}
-			gen.old.attrGroupDefs[id] = entity
+			// Append attribute group definition, and merge at later stage if ID
+			// maps to more than one attribute group definition.
+			gen.old.attrGroupDefs[id] = append(gen.old.attrGroupDefs[id], entity)
 		case *ast.NamedMetadataDef:
 			name := metadataName(entity.Name())
 			// Multiple named metadata definitions of the same name are allowed.
@@ -315,14 +314,23 @@ func (gen *generator) translateAttrGroupDefs() {
 	}
 }
 
-// irAttrGroupDef translates the AST attribute group definition to an equivalent
-// IR attribute group definition.
-func (gen *generator) irAttrGroupDef(new *ir.AttrGroupDef, old *ast.AttrGroupDef) {
-	if oldFuncAttrs := old.FuncAttrs(); len(oldFuncAttrs) > 0 {
-		new.FuncAttrs = make([]ir.FuncAttribute, len(oldFuncAttrs))
-		for i, oldFuncAttr := range oldFuncAttrs {
+// irAttrGroupDef translates the AST attribute group definitions (one or more)
+// to an equivalent IR attribute group definition. Mulriple definitions of the
+// same ID are merged into a single attribute group definition.
+func (gen *generator) irAttrGroupDef(new *ir.AttrGroupDef, oldDefs []*ast.AttrGroupDef) {
+	// present is used to prevent duplicate attributes when merging multiple
+	// attribute group definitions.
+	present := make(map[string]bool)
+	for _, oldDef := range oldDefs {
+		for _, oldFuncAttr := range oldDef.FuncAttrs() {
+			lit := oldFuncAttr.LlvmNode().Text()
+			if present[lit] {
+				// skip duplicate attribute.
+				continue
+			}
 			funcAttr := gen.irFuncAttribute(oldFuncAttr)
-			new.FuncAttrs[i] = funcAttr
+			new.FuncAttrs = append(new.FuncAttrs, funcAttr)
+			present[lit] = true
 		}
 	}
 }
