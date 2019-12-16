@@ -332,7 +332,9 @@ func (inst *InstCmpXchg) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
+// Type returns the type of the instruction. The result type is a struct type
+// with two fields, the first field has the type of the old value and the second
+// field has boolean type.
 func (inst *InstCmpXchg) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {

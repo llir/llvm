@@ -45,7 +45,8 @@ func (inst *InstICmp) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
+// Type returns the type of the instruction. The result type is either boolean
+// type or vector of booleans type.
 func (inst *InstICmp) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
@@ -110,7 +111,8 @@ func (inst *InstFCmp) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
+// Type returns the type of the instruction. The result type is either boolean
+// type or vector of booleans type.
 func (inst *InstFCmp) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
@@ -174,7 +176,8 @@ func (inst *InstPhi) String() string {
 	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
 }
 
-// Type returns the type of the instruction.
+// Type returns the type of the instruction. The result type is the type of the
+// incoming value.
 func (inst *InstPhi) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
@@ -305,8 +308,7 @@ type InstCall struct {
 
 	// extra.
 
-	// Type of result produced by the instruction, or function signature of the
-	// callee (as used when callee is variadic).
+	// Type of result produced by the instruction.
 	Typ types.Type
 	// (optional) Tail; zero if not present.
 	Tail enum.Tail
@@ -347,22 +349,8 @@ func (inst *InstCall) String() string {
 func (inst *InstCall) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
-		t, ok := inst.Callee.Type().(*types.PointerType)
-		if !ok {
-			panic(fmt.Errorf("invalid callee type; expected *types.PointerType, got %T", inst.Callee.Type()))
-		}
-		sig, ok := t.ElemType.(*types.FuncType)
-		if !ok {
-			panic(fmt.Errorf("invalid callee type; expected *types.FuncType, got %T", t.ElemType))
-		}
-		if sig.Variadic {
-			inst.Typ = sig
-		} else {
-			inst.Typ = sig.RetType
-		}
-	}
-	if t, ok := inst.Typ.(*types.FuncType); ok {
-		return t.RetType
+		sig := inst.Sig()
+		inst.Typ = sig.RetType
 	}
 	return inst.Typ
 }
@@ -395,13 +383,11 @@ func (inst *InstCall) LLString() string {
 		fmt.Fprintf(buf, " %s", inst.AddrSpace)
 	}
 	// Use function signature instead of return type for variadic functions.
-	typ := inst.Type()
-	if t, ok := inst.Typ.(*types.FuncType); ok {
-		if t.Variadic {
-			typ = t
-		}
+	calleeType := inst.Type()
+	if sig := inst.Sig(); sig.Variadic {
+		calleeType = sig
 	}
-	fmt.Fprintf(buf, " %s %s(", typ, inst.Callee.Ident())
+	fmt.Fprintf(buf, " %s %s(", calleeType, inst.Callee.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -426,6 +412,19 @@ func (inst *InstCall) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Sig returns the function signature of the callee.
+func (inst *InstCall) Sig() *types.FuncType {
+	t, ok := inst.Callee.Type().(*types.PointerType)
+	if !ok {
+		panic(fmt.Errorf("invalid callee type; expected *types.PointerType, got %T", inst.Callee.Type()))
+	}
+	sig, ok := t.ElemType.(*types.FuncType)
+	if !ok {
+		panic(fmt.Errorf("invalid callee type; expected *types.FuncType, got %T", t.ElemType))
+	}
+	return sig
 }
 
 // ~~~ [ va_arg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -80,6 +80,12 @@ func (fgen *funcGen) newCallInst(ident ir.LocalIdent, old *ast.CallInst) (*ir.In
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	// Resolve return type of variadic functions; e.g.
+	//
+	//    call void (...) @foo()
+	if funcType, ok := typ.(*types.FuncType); ok {
+		typ = funcType.RetType
+	}
 	return &ir.InstCall{LocalIdent: ident, Typ: typ}, nil
 }
 

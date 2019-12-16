@@ -70,6 +70,10 @@ func (fgen *funcGen) newInvokeTerm(ident ir.LocalIdent, old *ast.InvokeTerm) (*i
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	// Resolve return type of variadic functions.
+	if funcType, ok := typ.(*types.FuncType); ok {
+		typ = funcType.RetType
+	}
 	return &ir.TermInvoke{LocalIdent: ident, Typ: typ}, nil
 }
 
@@ -79,6 +83,10 @@ func (fgen *funcGen) newCallBrTerm(ident ir.LocalIdent, old *ast.CallBrTerm) (*i
 	typ, err := fgen.gen.irType(old.Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)
+	}
+	// Resolve return type of variadic functions.
+	if funcType, ok := typ.(*types.FuncType); ok {
+		typ = funcType.RetType
 	}
 	return &ir.TermCallBr{LocalIdent: ident, Typ: typ}, nil
 }
