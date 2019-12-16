@@ -35,8 +35,8 @@ type ExprGetElementPtr struct {
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // source address and element indices.
-func NewGetElementPtr(src Constant, indices ...Constant) *ExprGetElementPtr {
-	e := &ExprGetElementPtr{Src: src, Indices: indices}
+func NewGetElementPtr(elemType types.Type, src Constant, indices ...Constant) *ExprGetElementPtr {
+	e := &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 	// Compute type.
 	e.Type()
 	return e
@@ -50,23 +50,6 @@ func (e *ExprGetElementPtr) String() string {
 
 // Type returns the type of the constant expression.
 func (e *ExprGetElementPtr) Type() types.Type {
-	// TODO: remove e.ElemType computation once NewGetElementPtr takes elemType
-	// as argument.
-	// Cache element type if not present.
-	if e.ElemType == nil {
-		switch typ := e.Src.Type().(type) {
-		case *types.PointerType:
-			e.ElemType = typ.ElemType
-		case *types.VectorType:
-			t, ok := typ.ElemType.(*types.PointerType)
-			if !ok {
-				panic(fmt.Errorf("invalid vector element type; expected *types.Pointer, got %T", typ.ElemType))
-			}
-			e.ElemType = t.ElemType
-		default:
-			panic(fmt.Errorf("support for source type %T not yet implemented", typ))
-		}
-	}
 	// Cache type if not present.
 	if e.Typ == nil {
 		e.Typ = gepExprType(e.ElemType, e.Src.Type(), e.Indices)

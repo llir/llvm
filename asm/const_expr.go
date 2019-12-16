@@ -698,7 +698,7 @@ func (gen *generator) irGetElementPtrExpr(t types.Type, old *ast.GetElementPtrEx
 			indices[i] = index
 		}
 	}
-	expr := constant.NewGetElementPtr(src, indices...)
+	expr := constant.NewGetElementPtr(elemType, src, indices...)
 	// (optional) In-bounds.
 	_, expr.InBounds = old.InBounds()
 	if !elemType.Equal(expr.ElemType) {

@@ -476,13 +476,10 @@ type InstGetElementPtr struct {
 	Metadata
 }
 
-// TODO: refine NewGetElementPtr to take elemType as argument, as this is
-// really the type used to compute the result type of gep.
-
 // NewGetElementPtr returns a new getelementptr instruction based on the given
-// source address and element indices.
-func NewGetElementPtr(src value.Value, indices ...value.Value) *InstGetElementPtr {
-	inst := &InstGetElementPtr{Src: src, Indices: indices}
+// element type, source address and element indices.
+func NewGetElementPtr(elemType types.Type, src value.Value, indices ...value.Value) *InstGetElementPtr {
+	inst := &InstGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 	// Compute type.
 	inst.Type()
 	return inst
@@ -496,23 +493,6 @@ func (inst *InstGetElementPtr) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstGetElementPtr) Type() types.Type {
-	// TODO: remove e.ElemType computation once NewGetElementPtr takes elemType
-	// as argument.
-	// Cache element type if not present.
-	if inst.ElemType == nil {
-		switch typ := inst.Src.Type().(type) {
-		case *types.PointerType:
-			inst.ElemType = typ.ElemType
-		case *types.VectorType:
-			t, ok := typ.ElemType.(*types.PointerType)
-			if !ok {
-				panic(fmt.Errorf("invalid vector element type; expected *types.Pointer, got %T", typ.ElemType))
-			}
-			inst.ElemType = t.ElemType
-		default:
-			panic(fmt.Errorf("invalid source type; expected *types.Pointer or *types.Vector, got %T", typ))
-		}
-	}
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = gepInstType(inst.ElemType, inst.Src.Type(), inst.Indices)
