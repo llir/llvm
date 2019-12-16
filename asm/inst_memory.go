@@ -35,7 +35,7 @@ func (fgen *funcGen) newLoadInst(ident ir.LocalIdent, old *ast.LoadInst) (*ir.In
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ir.InstLoad{LocalIdent: ident, Typ: elemType}, nil
+	return &ir.InstLoad{LocalIdent: ident, ElemType: elemType}, nil
 }
 
 // newCmpXchgInst returns a new IR cmpxchg instruction (without body but with

@@ -34,7 +34,7 @@ type ExprGetElementPtr struct {
 // really the type used to compute the result type of gep.
 
 // NewGetElementPtr returns a new getelementptr expression based on the given
-// source address and element indices.
+// element type, source address and element indices.
 func NewGetElementPtr(elemType types.Type, src Constant, indices ...Constant) *ExprGetElementPtr {
 	e := &ExprGetElementPtr{ElemType: elemType, Src: src, Indices: indices}
 	// Compute type.

@@ -97,13 +97,13 @@ func (inst *InstAlloca) LLString() string {
 type InstLoad struct {
 	// Name of local variable associated with the result.
 	LocalIdent
+	// Element type of src.
+	ElemType types.Type
 	// Source address.
 	Src value.Value
 
 	// extra.
 
-	// Type of result produced by the instruction.
-	Typ types.Type
 	// (optional) Atomic.
 	Atomic bool
 	// (optional) Volatile.
@@ -118,11 +118,10 @@ type InstLoad struct {
 	Metadata
 }
 
-// NewLoad returns a new load instruction based on the given source address.
-func NewLoad(src value.Value) *InstLoad {
-	inst := &InstLoad{Src: src}
-	// Compute type.
-	inst.Type()
+// NewLoad returns a new load instruction based on the given element type and
+// source address.
+func NewLoad(elemType types.Type, src value.Value) *InstLoad {
+	inst := &InstLoad{ElemType: elemType, Src: src}
 	return inst
 }
 
@@ -134,15 +133,7 @@ func (inst *InstLoad) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstLoad) Type() types.Type {
-	// Cache type if not present.
-	if inst.Typ == nil {
-		t, ok := inst.Src.Type().(*types.PointerType)
-		if !ok {
-			panic(fmt.Errorf("invalid source type; expected *types.PointerType, got %T", inst.Src.Type()))
-		}
-		inst.Typ = t.ElemType
-	}
-	return inst.Typ
+	return inst.ElemType
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
@@ -166,7 +157,7 @@ func (inst *InstLoad) LLString() string {
 	if inst.Volatile {
 		buf.WriteString(" volatile")
 	}
-	fmt.Fprintf(buf, " %s, %s", inst.Typ, inst.Src)
+	fmt.Fprintf(buf, " %s, %s", inst.ElemType, inst.Src)
 	if len(inst.SyncScope) > 0 {
 		fmt.Fprintf(buf, " syncscope(%s)", quote(inst.SyncScope))
 	}

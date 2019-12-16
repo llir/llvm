@@ -52,7 +52,7 @@ func Example() {
 	entry := rand.NewBlock("")
 
 	// Create instructions and append them to the entry basic block.
-	tmp1 := entry.NewLoad(seed)
+	tmp1 := entry.NewLoad(types.I32, seed)
 	tmp2 := entry.NewMul(tmp1, a)
 	tmp3 := entry.NewAdd(tmp2, c)
 	entry.NewStore(tmp3, seed)

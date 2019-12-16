@@ -108,8 +108,8 @@ func Example() {
 	//                     Insts:      {
 	//                         &ir.InstLoad{
 	//                             LocalIdent: ir.LocalIdent{LocalName:"", LocalID:1},
+	//                             ElemType:   &types.IntType{TypeName:"", BitSize:0x20},
 	//                             Src:        &ir.Global{(CYCLIC REFERENCE)},
-	//                             Typ:        &types.IntType{TypeName:"", BitSize:0x20},
 	//                             Atomic:     false,
 	//                             Volatile:   false,
 	//                             SyncScope:  "",

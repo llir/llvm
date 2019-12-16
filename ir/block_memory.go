@@ -21,9 +21,9 @@ func (block *Block) NewAlloca(elemType types.Type) *InstAlloca {
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewLoad appends a new load instruction to the basic block based on the given
-// source address.
-func (block *Block) NewLoad(src value.Value) *InstLoad {
-	inst := NewLoad(src)
+// element type and source address.
+func (block *Block) NewLoad(elemType types.Type, src value.Value) *InstLoad {
+	inst := NewLoad(elemType, src)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

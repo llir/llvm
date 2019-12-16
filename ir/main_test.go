@@ -46,10 +46,10 @@ func Example_main() {
 	entry.NewStore(constant.NewInt(i32, 16), b)
 
 	// %1 = load i32, i32* %a
-	tmpA := entry.NewLoad(a)
+	tmpA := entry.NewLoad(types.I32, a)
 
 	// %2 = load i32, i32* %b
-	tmpB := entry.NewLoad(b)
+	tmpB := entry.NewLoad(types.I32, b)
 
 	// %3 = add nsw i32 %1, %2
 	tmpC := entry.NewAdd(tmpA, tmpB)
