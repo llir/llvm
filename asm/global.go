@@ -6,6 +6,7 @@ import (
 	"github.com/llir/ll/ast"
 	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/internal/enc"
+	"github.com/llir/llvm/internal/gep"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
@@ -82,6 +83,50 @@ func (gen *generator) newIndirectSymbol(ident ir.GlobalIdent, old *ast.IndirectS
 		return nil, errors.WithStack(err)
 	}
 	typ := types.NewPointer(contentType)
+	// Infer address space of pointer type from indirect symbol as no explicit
+	// type/value pair is given for the indirect symbol when aliasee is a
+	// constant expression.
+	var symbolType types.Type
+	switch oldSymbol := old.IndirectSymbol().(type) {
+	case *ast.AddrSpaceCastExpr:
+		to, err := gen.irType(oldSymbol.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		symbolType = to
+	case *ast.BitCastExpr:
+		to, err := gen.irType(oldSymbol.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		symbolType = to
+	case *ast.GetElementPtrExpr:
+		symType, err := gen.gepExprType(oldSymbol)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		symbolType = symType
+	case *ast.IntToPtrExpr:
+		to, err := gen.irType(oldSymbol.To())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		symbolType = to
+	case *ast.TypeConst:
+		symType, err := gen.irType(oldSymbol.Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		symbolType = symType
+	default:
+		panic(fmt.Errorf("support for indirect symbol type %T not yet implemented", oldSymbol))
+	}
+	switch symbolType := symbolType.(type) {
+	case *types.PointerType:
+		typ.AddrSpace = symbolType.AddrSpace
+	default:
+		panic(fmt.Errorf("support for indirect symbol type %T not yet implemented", symbolType))
+	}
 	// Indirect symbol kind.
 	kind := old.IndirectSymbolKind().Text()
 	switch kind {
@@ -562,4 +607,32 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 		}
 	}
 	return nil
+}
+
+// ### [ Helper functions ] ####################################################
+
+// gepExprType computes the result type of a getelementptr constant expression.
+//
+//    getelementptr ElemType, Src, Indices
+//
+// Notably, gepExprType returns the type of the gep expression without resolving
+// the underlying src value. As such gepExprType may be invoked before
+// completing global identifier resolution. This is needed to correctly resolve
+// the optional address space of indirect symbols (i.e. aliases and ifuncs).
+func (gen *generator) gepExprType(old *ast.GetElementPtrExpr) (types.Type, error) {
+	elemType, err := gen.irType(old.ElemType())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	src, err := gen.irType(old.Src().Typ())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	var idxs []gep.Index
+	for _, index := range old.Indices() {
+		indexVal := index.Index().Val()
+		idx := getIndex(indexVal)
+		idxs = append(idxs, idx)
+	}
+	return gep.ResultType(elemType, src, idxs), nil
 }
