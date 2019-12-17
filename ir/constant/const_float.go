@@ -10,6 +10,7 @@ import (
 
 	"github.com/llir/llvm/ir/types"
 	"github.com/mewmew/float"
+	"github.com/mewmew/float/binary128"
 	"github.com/mewmew/float/binary16"
 	"github.com/mewmew/float/float80x86"
 	"github.com/pkg/errors"
@@ -76,7 +77,27 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		case strings.HasPrefix(s, "0xL"):
-			//s = s[len("0xL"):]
+			// From https://llvm.org/docs/LangRef.html#simple-constants
+			// > The IEEE 128-bit format is represented by 0xL followed by 32 hexadecimal digits.
+			hex := s[len("0xL"):] // first remove the prefix
+			maxLenOfHex := 32
+			if len(hex) < maxLenOfHex {
+				// add zero for the case like: `0xL01` which missing leading 0
+				hex = strings.Repeat("0", maxLenOfHex-len(hex)) + hex
+			}
+			signAndExponentAnd48Fraction := hex[:maxLenOfHex/2]
+			restFraction := hex[maxLenOfHex/2:]
+			a, err := strconv.ParseUint(signAndExponentAnd48Fraction, 16, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			b, err := strconv.ParseUint(restFraction, 16, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			f := binary128.NewFromBits(a, b)
+			x, nan := f.Big()
+			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		case strings.HasPrefix(s, "0xM"):
 			//s = s[len("0xM"):]
 		case strings.HasPrefix(s, "0xH"):
