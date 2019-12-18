@@ -78,20 +78,22 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		case strings.HasPrefix(s, "0xL"):
 			// From https://llvm.org/docs/LangRef.html#simple-constants
-			// > The IEEE 128-bit format is represented by 0xL followed by 32 hexadecimal digits.
+			//
+			// > The IEEE 128-bit format is represented by 0xL followed by 32
+			// > hexadecimal digits.
 			hex := s[len("0xL"):] // first remove the prefix
-			maxLenOfHex := 32
-			if len(hex) < maxLenOfHex {
-				// add zero for the case like: `0xL01` which missing leading 0
-				hex = strings.Repeat("0", maxLenOfHex-len(hex)) + hex
+			const maxHexLen = 32
+			if len(hex) < maxHexLen {
+				// add zeros for the case like: `0xL01` which is missing leading 0s
+				hex = strings.Repeat("0", maxHexLen-len(hex)) + hex
 			}
-			signAndExponentAnd48Fraction := hex[:maxLenOfHex/2]
-			restFraction := hex[maxLenOfHex/2:]
-			a, err := strconv.ParseUint(signAndExponentAnd48Fraction, 16, 64)
+			part1 := hex[:maxHexLen/2]
+			part2 := hex[maxHexLen/2:]
+			a, err := strconv.ParseUint(part1, 16, 64)
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			b, err := strconv.ParseUint(restFraction, 16, 64)
+			b, err := strconv.ParseUint(part2, 16, 64)
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
