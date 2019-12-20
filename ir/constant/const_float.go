@@ -12,6 +12,7 @@ import (
 	"github.com/mewmew/float"
 	"github.com/mewmew/float/binary128"
 	"github.com/mewmew/float/binary16"
+	"github.com/mewmew/float/float128ppc"
 	"github.com/mewmew/float/float80x86"
 	"github.com/pkg/errors"
 )
@@ -101,7 +102,24 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		case strings.HasPrefix(s, "0xM"):
-			//s = s[len("0xM"):]
+			// From https://llvm.org/docs/LangRef.html#simple-constants
+			//
+			// > The 128-bit format used by PowerPC (two adjacent doubles) is represented by 0xM followed by 32 hexadecimal digits.
+			hex := s[len("0xM"):] // first remove the prefix
+			const maxHexLen = 32
+			part1 := hex[:maxHexLen/2]
+			part2 := hex[maxHexLen/2:]
+			a, err := strconv.ParseUint(part1, 16, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			b, err := strconv.ParseUint(part2, 16, 64)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			f := float128ppc.NewFromBits(a, b)
+			x, nan := f.Big()
+			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		case strings.HasPrefix(s, "0xH"):
 			hex := s[len("0xH"):]
 			bits, err := strconv.ParseUint(hex, 16, 16)
