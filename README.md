@@ -187,4 +187,4 @@ func genCallgraph(m *ir.Module) string {
 
 ## License
 
-The `llir/llvm` project is dual-licensed to the [public domain](UNLICENSE) and under a [0-clause BSD license](LICENSE). You may choose either license to govern your use of `llir/llvm`.
+The `llir/llvm` project is dual-licensed to the [public domain](UNLICENSE) and under a [zero-clause BSD license](LICENSE). You may choose either license to govern your use of `llir/llvm`.
