@@ -276,7 +276,7 @@ func (mds Metadata) MDAttachments() []*metadata.Attachment {
 	return mds
 }
 
-// OperandBundle is an operand bundle.
+// OperandBundle is a tagged set of SSA values associated with a call-site.
 type OperandBundle struct {
 	Tag    string
 	Inputs []value.Value
