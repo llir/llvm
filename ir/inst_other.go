@@ -212,7 +212,7 @@ type Incoming struct {
 	// Incoming value.
 	X value.Value
 	// Predecessor basic block of the incoming value.
-	Pred *Block
+	Pred value.Value // *ir.Block
 }
 
 // NewIncoming returns a new incoming value based on the given value and
