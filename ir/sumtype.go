@@ -171,13 +171,7 @@ func (UnwindToCaller) isUnwindTarget() {}
 
 // === [ ir.UnwindTarget ] =====================================================
 
-// isUnwindTarget ensures that only unwind targets can be assigned to the
-// ir.UnwindTarget interface.
-//func (*Block) isUnwindTarget() {}
-
-// isUnwindTarget ensures that only unwind targets can be assigned to the
-// ir.UnwindTarget interface.
-//func (UnwindToCaller) isUnwindTarget() {}
+// ir.UnwindTarget = *ir.Block | ir.UnwindToCaller
 
 // TODO: figure out how to handle UnwindToCaller.Type.
 
