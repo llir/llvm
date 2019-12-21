@@ -89,7 +89,7 @@ func (term *TermRet) LLString() string {
 // TermBr is an unconditional LLVM IR br terminator.
 type TermBr struct {
 	// Target branch.
-	Target *Block
+	Target value.Value // *ir.Block
 
 	// extra.
 
@@ -109,7 +109,7 @@ func NewBr(target *Block) *TermBr {
 func (term *TermBr) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.Target}
+		term.Successors = []*Block{term.Target.(*Block)}
 	}
 	return term.Successors
 }
@@ -132,9 +132,9 @@ type TermCondBr struct {
 	// Branching condition.
 	Cond value.Value
 	// True condition target branch.
-	TargetTrue *Block
+	TargetTrue value.Value // *ir.Block
 	// False condition target branch.
-	TargetFalse *Block
+	TargetFalse value.Value // *ir.Block
 
 	// extra.
 
@@ -154,7 +154,7 @@ func NewCondBr(cond value.Value, targetTrue, targetFalse *Block) *TermCondBr {
 func (term *TermCondBr) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.TargetTrue, term.TargetFalse}
+		term.Successors = []*Block{term.TargetTrue.(*Block), term.TargetFalse.(*Block)}
 	}
 	return term.Successors
 }
@@ -178,7 +178,7 @@ type TermSwitch struct {
 	// Control variable.
 	X value.Value
 	// Default target branch.
-	TargetDefault *Block
+	TargetDefault value.Value // *ir.Block
 	// Switch cases.
 	Cases []*Case
 
@@ -201,9 +201,9 @@ func (term *TermSwitch) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
 		succs := make([]*Block, 0, 1+len(term.Cases))
-		succs = append(succs, term.TargetDefault)
+		succs = append(succs, term.TargetDefault.(*Block))
 		for _, c := range term.Cases {
-			succs = append(succs, c.Target)
+			succs = append(succs, c.Target.(*Block))
 		}
 		term.Successors = succs
 	}
@@ -231,9 +231,9 @@ func (term *TermSwitch) LLString() string {
 // Case is a switch case.
 type Case struct {
 	// Case comparand.
-	X constant.Constant // integer constant or integer constant expression
+	X value.Value // constant.Constant (integer constant or integer constant expression)
 	// Case target branch.
-	Target *Block
+	Target value.Value // *ir.Block
 }
 
 // NewCase returns a new switch case based on the given case comparand and
@@ -255,10 +255,12 @@ type TermIndirectBr struct {
 	// Target address.
 	Addr value.Value // blockaddress
 	// Set of valid target basic blocks.
-	ValidTargets []*Block
+	ValidTargets []value.Value // slice of *ir.Block
 
 	// extra.
 
+	// Successor basic blocks of the terminator.
+	Successors []*Block
 	// (optional) Metadata.
 	Metadata
 }
@@ -267,12 +269,24 @@ type TermIndirectBr struct {
 // address (derived from a blockaddress constant) and set of valid target basic
 // blocks.
 func NewIndirectBr(addr constant.Constant, validTargets ...*Block) *TermIndirectBr {
-	return &TermIndirectBr{Addr: addr, ValidTargets: validTargets}
+	// convert validTargets slice to []value.Value.
+	var targets []value.Value
+	for _, target := range validTargets {
+		targets = append(targets, target)
+	}
+	return &TermIndirectBr{Addr: addr, ValidTargets: targets}
 }
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermIndirectBr) Succs() []*Block {
-	return term.ValidTargets
+	// Cache successors if not present.
+	if term.Successors == nil {
+		// convert ValidTargets slice to []*ir.Block.
+		for _, target := range term.ValidTargets {
+			term.Successors = append(term.Successors, target.(*Block))
+		}
+	}
+	return term.Successors
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
@@ -310,9 +324,9 @@ type TermInvoke struct {
 	//    TODO: add metadata value?
 	Args []value.Value
 	// Normal control flow return point.
-	Normal *Block
+	Normal value.Value // *ir.Block
 	// Exception control flow return point.
-	Exception *Block
+	Exception value.Value // *ir.Block
 
 	// extra.
 
@@ -366,7 +380,7 @@ func (term *TermInvoke) Type() types.Type {
 func (term *TermInvoke) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.Normal, term.Exception}
+		term.Successors = []*Block{term.Normal.(*Block), term.Exception.(*Block)}
 	}
 	return term.Successors
 }
@@ -454,9 +468,9 @@ type TermCallBr struct {
 	//    TODO: add metadata value?
 	Args []value.Value
 	// Normal control flow return point.
-	Normal *Block
+	Normal value.Value // *ir.Block
 	// Other control flow return points.
-	Others []*Block
+	Others []value.Value // slice of *ir.Block
 
 	// extra.
 
@@ -484,7 +498,12 @@ type TermCallBr struct {
 //
 // TODO: specify the set of underlying types of callee.
 func NewCallBr(callee value.Value, args []value.Value, normal *Block, others ...*Block) *TermCallBr {
-	term := &TermCallBr{Callee: callee, Args: args, Normal: normal, Others: others}
+	// convert others slice to []value.Value.
+	var os []value.Value
+	for _, other := range others {
+		os = append(os, other)
+	}
+	term := &TermCallBr{Callee: callee, Args: args, Normal: normal, Others: os}
 	// Compute type.
 	term.Type()
 	return term
@@ -510,8 +529,11 @@ func (term *TermCallBr) Type() types.Type {
 func (term *TermCallBr) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.Normal}
-		term.Successors = append(term.Successors, term.Others...)
+		term.Successors = []*Block{term.Normal.(*Block)}
+		// convert others slice to []*ir.Block.
+		for _, other := range term.Others {
+			term.Successors = append(term.Successors, other.(*Block))
+		}
 	}
 	return term.Successors
 }
@@ -633,11 +655,13 @@ type TermCatchSwitch struct {
 	// Name of local variable associated with the result.
 	LocalIdent
 	// Exception scope.
-	Scope ExceptionScope // TODO: rename to Parent? rename to From?
+	// TODO: rename to Parent? rename to From?
+	Scope value.Value // ir.ExceptionScope
 	// Exception handlers.
-	Handlers []*Block
+	Handlers []value.Value // []*ir.Block
 	// Unwind target; basic block or caller function.
-	UnwindTarget UnwindTarget // TODO: rename to To? rename to DefaultTarget?
+	// TODO: rename to To? rename to DefaultTarget?
+	UnwindTarget value.Value // ir.UnwindTarget
 
 	// extra.
 
@@ -650,7 +674,12 @@ type TermCatchSwitch struct {
 // NewCatchSwitch returns a new catchswitch terminator based on the given
 // exception scope, exception handlers and unwind target.
 func NewCatchSwitch(scope ExceptionScope, handlers []*Block, unwindTarget UnwindTarget) *TermCatchSwitch {
-	return &TermCatchSwitch{Scope: scope, Handlers: handlers, UnwindTarget: unwindTarget}
+	// convert handlers slice to []value.Value.
+	var hs []value.Value
+	for _, handler := range handlers {
+		hs = append(hs, handler)
+	}
+	return &TermCatchSwitch{Scope: scope, Handlers: hs, UnwindTarget: unwindTarget}
 }
 
 // String returns the LLVM syntax representation of the terminator as a type-
@@ -668,10 +697,12 @@ func (term *TermCatchSwitch) Type() types.Type {
 func (term *TermCatchSwitch) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
+		// convert Handlers slice to []*ir.Block.
+		for _, handler := range term.Handlers {
+			term.Successors = append(term.Successors, handler.(*Block))
+		}
 		if unwindTarget, ok := term.UnwindTarget.(*Block); ok {
-			term.Successors = append(term.Handlers, unwindTarget)
-		} else {
-			term.Successors = term.Handlers
+			term.Successors = append(term.Successors, unwindTarget)
 		}
 	}
 	return term.Successors
@@ -703,9 +734,9 @@ func (term *TermCatchSwitch) LLString() string {
 // TermCatchRet is an LLVM IR catchret terminator.
 type TermCatchRet struct {
 	// Exit catchpad.
-	From *InstCatchPad
+	From value.Value // *ir.InstCatchPad
 	// Target basic block to transfer control flow to.
-	To *Block
+	To value.Value // *ir.Block
 
 	// extra.
 
@@ -725,7 +756,7 @@ func NewCatchRet(from *InstCatchPad, to *Block) *TermCatchRet {
 func (term *TermCatchRet) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.To}
+		term.Successors = []*Block{term.To.(*Block)}
 	}
 	return term.Successors
 }
@@ -747,9 +778,9 @@ func (term *TermCatchRet) LLString() string {
 // TermCleanupRet is an LLVM IR cleanupret terminator.
 type TermCleanupRet struct {
 	// Exit cleanuppad.
-	From *InstCleanupPad
+	From value.Value // *ir.InstCleanupPad
 	// Unwind target; basic block or caller function.
-	UnwindTarget UnwindTarget
+	UnwindTarget value.Value // ir.UnwindTarget
 
 	// extra.
 

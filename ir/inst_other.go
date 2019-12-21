@@ -618,7 +618,7 @@ type InstCleanupPad struct {
 	LocalIdent
 	// Exception scope.
 	// TODO: rename to Parent? rename to From?
-	Scope value.Value // ExceptionScope
+	Scope value.Value // ir.ExceptionScope
 	// Exception arguments.
 	//
 	// Arg has one of the following underlying types:
