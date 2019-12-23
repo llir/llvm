@@ -305,7 +305,7 @@ func (fgen *funcGen) irIndirectBrTerm(new ir.Terminator, old *ast.IndirectBrTerm
 	term.Addr = addr
 	// Valid targets.
 	if oldValidTargets := old.ValidTargets(); len(oldValidTargets) > 0 {
-		term.ValidTargets = make([]*ir.Block, len(oldValidTargets))
+		term.ValidTargets = make([]value.Value, len(oldValidTargets))
 		for i, oldValidTarget := range oldValidTargets {
 			validTarget, err := fgen.irBlock(oldValidTarget)
 			if err != nil {
@@ -568,7 +568,7 @@ func (fgen *funcGen) irCatchSwitchTerm(new ir.Terminator, old *ast.CatchSwitchTe
 	term.Scope = scope
 	// Exception handlers.
 	if oldHandlers := old.Handlers().Labels(); len(oldHandlers) > 0 {
-		term.Handlers = make([]*ir.Block, len(oldHandlers))
+		term.Handlers = make([]value.Value, len(oldHandlers))
 		for i, oldHandler := range oldHandlers {
 			handler, err := fgen.irBlock(oldHandler)
 			if err != nil {

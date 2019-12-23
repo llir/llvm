@@ -212,7 +212,7 @@ type Incoming struct {
 	// Incoming value.
 	X value.Value
 	// Predecessor basic block of the incoming value.
-	Pred *Block
+	Pred value.Value // *ir.Block
 }
 
 // NewIncoming returns a new incoming value based on the given value and
@@ -558,7 +558,8 @@ type InstCatchPad struct {
 	// Name of local variable associated with the result.
 	LocalIdent
 	// Exception scope.
-	Scope *TermCatchSwitch // TODO: rename to From? rename to Within?
+	// TODO: rename to From? rename to Within?
+	Scope value.Value // *ir.TermCatchSwitch
 	// Exception arguments.
 	//
 	// Arg has one of the following underlying types:
@@ -616,7 +617,8 @@ type InstCleanupPad struct {
 	// Name of local variable associated with the result.
 	LocalIdent
 	// Exception scope.
-	Scope ExceptionScope // TODO: rename to Parent? rename to From?
+	// TODO: rename to Parent? rename to From?
+	Scope value.Value // ir.ExceptionScope
 	// Exception arguments.
 	//
 	// Arg has one of the following underlying types:

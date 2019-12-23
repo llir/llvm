@@ -138,7 +138,6 @@ func (d Dereferenceable) String() string {
 // ExceptionScope is an exception scope.
 type ExceptionScope interface {
 	value.Value
-	//isExceptionScope()
 }
 
 // FuncAttribute is a function attribute.
@@ -335,6 +334,8 @@ type ReturnAttribute interface {
 	IsReturnAttribute()
 }
 
+// TODO: figure out definition of UnwindTarget.
+
 // UnwindTarget is an unwind target.
 //
 // An UnwindTarget has one of the following underlying types.
@@ -342,9 +343,7 @@ type ReturnAttribute interface {
 //    *ir.Block
 //    ir.UnwindToCaller
 type UnwindTarget interface {
-	// isUnwindTarget ensures that only unwind targets can be assigned to the
-	// ir.UnwindTarget interface.
-	isUnwindTarget()
+	value.Value
 }
 
 // UnwindToCaller specifies the caller as an unwind target.
