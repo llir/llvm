@@ -117,7 +117,7 @@ func (fgen *funcGen) irAllocaInst(new ir.Instruction, old *ast.AllocaInst) error
 	}
 	// (optional) Address space; stored in i.Typ.
 	if n, ok := old.AddrSpace(); ok {
-		inst.Typ.AddrSpace = irAddrSpace(n)
+		inst.AddrSpace = irAddrSpace(n)
 	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())

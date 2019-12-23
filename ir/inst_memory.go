@@ -35,6 +35,8 @@ type InstAlloca struct {
 	SwiftError bool
 	// (optional) Alignment; zero if not present.
 	Align Align
+	// (optional) Address space; zero if not present.
+	AddrSpace types.AddrSpace
 	// (optional) Metadata.
 	Metadata
 }
@@ -58,6 +60,7 @@ func (inst *InstAlloca) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
 		inst.Typ = types.NewPointer(inst.ElemType)
+		inst.Typ.AddrSpace = inst.AddrSpace
 	}
 	return inst.Typ
 }
@@ -82,8 +85,8 @@ func (inst *InstAlloca) LLString() string {
 	if inst.Align != 0 {
 		fmt.Fprintf(buf, ", %s", inst.Align)
 	}
-	if inst.Typ.AddrSpace != 0 {
-		fmt.Fprintf(buf, ", %s", inst.Typ.AddrSpace)
+	if inst.AddrSpace != 0 {
+		fmt.Fprintf(buf, ", %s", inst.AddrSpace)
 	}
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
