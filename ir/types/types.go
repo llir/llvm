@@ -391,7 +391,7 @@ const (
 	FloatKindFP128 // fp128
 	// 80-bit floating-point type (x86 extended precision).
 	FloatKindX86_FP80 // x86_fp80
-	// 128-bit floating point type (IBM extended double).
+	// 128-bit floating-point type (PowerPC two adjacent doubles).
 	FloatKindPPC_FP128 // ppc_fp128
 )
 
