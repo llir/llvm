@@ -2,19 +2,19 @@ package constant
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"math/big"
 	"strconv"
 	"strings"
 
+	"github.com/llir/llvm/ir/types"
 	"github.com/mewmew/float"
 	"github.com/mewmew/float/binary128"
 	"github.com/mewmew/float/binary16"
 	"github.com/mewmew/float/float128ppc"
 	"github.com/mewmew/float/float80x86"
 	"github.com/pkg/errors"
-
-	"github.com/llir/llvm/ir/types"
 )
 
 // --- [ Floating-point constants ] --------------------------------------------
@@ -59,13 +59,19 @@ func NewFloat(typ *types.FloatType, x float64) *Float {
 //         0xM[0-9A-Fa-f]{32} // HexPPC128
 //         0xH[0-9A-Fa-f]{4}  // HexHalf
 func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
-	// TODO: implement NewFloatFromString. return 0 for now.
+	// Hexadecimal floating-point literal.
 	if strings.HasPrefix(s, "0x") {
 		switch {
+		// x86_fp80 (x86 extended precision)
 		case strings.HasPrefix(s, "0xK"):
+			// From https://llvm.org/docs/LangRef.html#simple-constants
+			//
+			// > The 80-bit format used by x86 is represented as 0xK followed by 20
+			// > hexadecimal digits.
 			hex := strings.TrimPrefix(s, "0xK")
-			part1 := hex[:4]
-			part2 := hex[4:]
+			const hexLen = 8
+			part1 := hex[:hexLen/2]
+			part2 := hex[hexLen/2:]
 			se, err := strconv.ParseUint(part1, 16, 16)
 			if err != nil {
 				return nil, errors.WithStack(err)
@@ -77,6 +83,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			f := float80x86.NewFromBits(uint16(se), m)
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
+		// fp128 (IEEE 754 quadruple precision)
 		case strings.HasPrefix(s, "0xL"):
 			// From https://llvm.org/docs/LangRef.html#simple-constants
 			//
@@ -85,7 +92,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			hex := strings.TrimPrefix(s, "0xL")
 			const maxHexLen = 32
 			if len(hex) < maxHexLen {
-				// add zeros for the case like: `0xL01` which is missing leading 0s
+				// pad with leading zeroes (e.g. for case like `0xL01`)
 				hex = strings.Repeat("0", maxHexLen-len(hex)) + hex
 			}
 			part1 := hex[:maxHexLen/2]
@@ -101,10 +108,12 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			f := binary128.NewFromBits(a, b)
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
+		// ppc_fp128 (PowerPC double-double arithmetic)
 		case strings.HasPrefix(s, "0xM"):
 			// From https://llvm.org/docs/LangRef.html#simple-constants
 			//
-			// > The 128-bit format used by PowerPC (two adjacent doubles) is represented by 0xM followed by 32 hexadecimal digits.
+			// > The 128-bit format used by PowerPC (two adjacent doubles) is
+			// > represented by 0xM followed by 32 hexadecimal digits.
 			hex := strings.TrimPrefix(s, "0xM")
 			const maxHexLen = 32
 			part1 := hex[:maxHexLen/2]
@@ -120,7 +129,12 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			f := float128ppc.NewFromBits(a, b)
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
+		// half (IEEE 754 half precision)
 		case strings.HasPrefix(s, "0xH"):
+			// From https://llvm.org/docs/LangRef.html#simple-constants
+			//
+			// > The IEEE 16-bit format (half precision) is represented by 0xH
+			// > followed by 4 hexadecimal digits.
 			hex := strings.TrimPrefix(s, "0xH")
 			bits, err := strconv.ParseUint(hex, 16, 16)
 			if err != nil {
@@ -129,7 +143,13 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			f := binary16.NewFromBits(uint16(bits))
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
+		// Hexadecimal floating-point literal.
 		default:
+			// From https://llvm.org/docs/LangRef.html#simple-constants
+			//
+			// > When using the hexadecimal form, constants of types half, float,
+			// > and double are represented using the 16-digit form shown above
+			// > (which matches the IEEE754 representation for double).
 			hex := strings.TrimPrefix(s, "0x")
 			bits, err := strconv.ParseUint(hex, 16, 64)
 			if err != nil {
@@ -159,12 +179,13 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
 				//
 				// The exact bit representation of the float is laid out with the
-				// corresponding bitwise representation of a double:  the sign bit is
-				// copied over, the exponent is encoded in the larger width, and the 23
-				// bits of significand fills in the top 23 bits of significand in the
-				// double.  A double has 52 bits of significand, so this means that the
-				// last 29 bits of significand will always be ignored.  As an
-				// error-detection measure, the IR parser requires them to be zero.
+				// corresponding bitwise representation of a double: the sign bit is
+				// copied over, the exponent is encoded in the larger width, and the
+				// 23 bits of significand fills in the top 23 bits of significand in
+				// the double. A double has 52 bits of significand, so this means
+				// that the last 29 bits of significand will always be ignored. As
+				// an error-detection measure, the IR parser requires them to be
+				// zero.
 				f32 := math.Float64frombits(bits)
 				if math.IsNaN(f32) {
 					f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
@@ -179,26 +200,27 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				x.SetPrec(precision)
 				return &Float{Typ: typ, X: x}, nil
 			case types.FloatKindDouble:
-				f32 := math.Float64frombits(bits)
-				if math.IsNaN(f32) {
+				f64 := math.Float64frombits(bits)
+				if math.IsNaN(f64) {
 					f := &Float{Typ: typ, X: &big.Float{}, NaN: true}
 					// Store sign of NaN.
-					if math.Signbit(f32) {
+					if math.Signbit(f64) {
 						f.X.SetFloat64(-1)
 					}
 					return f, nil
 				}
-				x := big.NewFloat(f32)
+				x := big.NewFloat(f64)
 				return &Float{Typ: typ, X: x}, nil
 			default:
 				panic(fmt.Errorf("support for hexadecimal floating-point literal %q of kind %v not yet implemented", s, typ.Kind))
 			}
 		}
 	}
+	const base = 10
 	switch typ.Kind {
 	case types.FloatKindHalf:
 		const precision = 11
-		x, _, err := big.ParseFloat(s, 10, precision, big.ToNearestEven)
+		x, _, err := big.ParseFloat(s, base, precision, big.ToNearestEven)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -209,7 +231,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 		return c, nil
 	case types.FloatKindFloat:
 		const precision = 24
-		x, _, err := big.ParseFloat(s, 10, precision, big.ToNearestEven)
+		x, _, err := big.ParseFloat(s, base, precision, big.ToNearestEven)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -220,7 +242,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 		return c, nil
 	case types.FloatKindDouble:
 		const precision = 53
-		x, _, err := big.ParseFloat(s, 10, precision, big.ToNearestEven)
+		x, _, err := big.ParseFloat(s, base, precision, big.ToNearestEven)
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -248,83 +270,63 @@ func (c *Float) Type() types.Type {
 // Ident returns the identifier associated with the constant.
 func (c *Float) Ident() string {
 	// FloatLit
-	// TODO: add support for hexadecimal format.
-	// TODO: add support for NaN, +-Inf.
-
+	//
+	// Print hexadecimal representation of floating-point literal if NaN, Inf,
+	// inexact or extended precision (x86_fp80, fp128 or ppc_fp128).
 	switch c.Typ.Kind {
+	// half (IEEE 754 half precision)
 	case types.FloatKindHalf:
-		if c.NaN || c.X.IsInf() || !float.IsExact16(c.X) {
-			var bits uint16
-			if c.NaN {
-				if c.X.Signbit() {
-					bits = binary16.NegNaN.Bits()
-				} else {
-					bits = binary16.NaN.Bits()
-				}
-			} else {
-				f, acc := binary16.NewFromBig(c.X)
-				// TODO: check acc.
-				_ = acc
-				bits = f.Bits()
+		const hexPrefix = 'H'
+		if c.NaN {
+			bits := binary16.NaN.Bits()
+			if c.X != nil && c.X.Signbit() {
+				bits = binary16.NegNaN.Bits()
 			}
-			return fmt.Sprintf("0xH%04X", bits)
+			return fmt.Sprintf("0x%c%04X", hexPrefix, bits)
 		}
+		if c.X.IsInf() || !float.IsExact16(c.X) {
+			f, acc := binary16.NewFromBig(c.X)
+			if acc != big.Exact {
+				log.Printf("unable to represent floating-point constant %v of type %v exactly; please submit a bug report to llir/llvm with this error message", c.X, c.Typ)
+			}
+			bits := f.Bits()
+			return fmt.Sprintf("0x%c%04X", hexPrefix, bits)
+		}
+		// c is representable without loss as floating-point literal, this case is
+		// handled for half, float and double below the switch statement.
+	// float (IEEE 754 single precision)
 	case types.FloatKindFloat:
 		// ref: https://groups.google.com/d/msg/llvm-dev/IlqV3TbSk6M/27dAggZOMb0J
 		//
 		// The exact bit representation of the float is laid out with the
-		// corresponding bitwise representation of a double:  the sign bit is
+		// corresponding bitwise representation of a double: the sign bit is
 		// copied over, the exponent is encoded in the larger width, and the 23
 		// bits of significand fills in the top 23 bits of significand in the
-		// double.  A double has 52 bits of significand, so this means that the
-		// last 29 bits of significand will always be ignored.  As an
-		// error-detection measure, the IR parser requires them to be zero.
-		if c.NaN || c.X.IsInf() || !float.IsExact32(c.X) {
-			// Single precision.
-			//
-			//     1 bit:  sign
-			//     8 bits: exponent
-			//    23 bits: mantissa
-			//
-			//    bias: 127
-			var bits32 uint32
-			if c.NaN {
-				// TODO: handle sign bit.
-				bits32 = 0xFFFFFFFF
-			} else {
-				f, _ := c.X.Float32()
-				bits32 = math.Float32bits(f)
+		// double. A double has 52 bits of significand, so this means that the
+		// last 29 bits of significand will always be ignored. As an error
+		// detection measure, the IR parser requires them to be zero.
+		if c.NaN {
+			f := math.NaN()
+			if c.X != nil && c.X.Signbit() {
+				f = math.Copysign(f, -1)
 			}
-			// 0b10000000000000000000000000000000
-			sign := uint64(bits32 & 0x80000000 >> 31)
-			// 0b01111111100000000000000000000000
-			const bias32 = 127
-			exp32 := (bits32 & 0x7F800000 >> 23)
-			// 0b00000000011111111111111111111111
-			mant := uint64(bits32 & 0x7FFFFF)
-			// Double precision.
-			//
-			//     1 bit:  sign
-			//    11 bits: exponent
-			//    52 bits: mantissa
-			//
-			//    bias: 1023
-			var bits64 uint64
-			bits64 |= sign << 63
-			const bias64 = 1023
-			var exp64 uint64
-			if exp32 == 0xFF {
-				// Keep every bit set in the exponent if such was the case for
-				// float32.
-				exp64 = 0x7FF
-			} else {
-				exp := uint64(exp32 - bias32)
-				exp64 = exp + bias64
-			}
-			bits64 |= exp64 << 52
-			bits64 |= mant << (52 - 23)
-			return fmt.Sprintf("0x%016X", bits64)
+			bits := math.Float64bits(f)
+			// zero out last 29 bits.
+			bits &^= 0x1FFFFFFF
+			return fmt.Sprintf("0x%X", bits)
 		}
+		if c.X.IsInf() || !float.IsExact32(c.X) {
+			f, _ := c.X.Float64()
+			bits := math.Float64bits(f)
+			// Note, to match Clang output we do not zero-pad the hexadecimal
+			// output.
+			// zero out last 29 bits.
+			bits &^= 0x1FFFFFFF
+			return fmt.Sprintf("0x%X", bits)
+		}
+		// c is representable without loss as floating-point literal, this case is
+		// handled for half, float and double below the switch statement.
+	// double (IEEE 754 double precision)
 	case types.FloatKindDouble:
 		if c.NaN {
 			f := math.NaN()
@@ -340,19 +342,63 @@ func (c *Float) Ident() string {
 			// Note, to match Clang output we do not zero-pad the hexadecimal
 			// output.
 			return fmt.Sprintf("0x%X", bits)
-			//return fmt.Sprintf("0x%016X", bits)
 		}
+		// c is representable without loss as floating-point literal, this case is
+		// handled for half, float and double below the switch statement.
+	// x86_fp80 (x86 extended precision)
 	case types.FloatKindX86_FP80:
-		// TODO: handle NaN.
+		// always represent x86_fp80 in hexadecimal floating-point notation.
+		const hexPrefix = 'K'
+		if c.NaN {
+			se, m := float80x86.NaN.Bits()
+			if c.X != nil && c.X.Signbit() {
+				se, m = float80x86.NegNaN.Bits()
+			}
+			return fmt.Sprintf("0x%c%04X%016X", hexPrefix, se, m)
+		}
 		f, acc := float80x86.NewFromBig(c.X)
-		// TODO: check acc.
-		_ = acc
+		if acc != big.Exact {
+			log.Printf("unable to represent floating-point constant %v of type %v exactly; please submit a bug report to llir/llvm with this error message", c.X, c.Typ)
+		}
 		se, m := f.Bits()
-		return fmt.Sprintf("0xK%04X%016X", se, m)
-		//case types.FloatKindFP128:
-		//case types.FloatKindPPCFP128:
+		return fmt.Sprintf("0x%c%04X%016X", hexPrefix, se, m)
+	// fp128 (IEEE 754 quadruple precision)
+	case types.FloatKindFP128:
+		// always represent fp128 in hexadecimal floating-point notation.
+		const hexPrefix = 'L'
+		if c.NaN {
+			a, b := binary128.NaN.Bits()
+			if c.X != nil && c.X.Signbit() {
+				a, b = binary128.NegNaN.Bits()
+			}
+			return fmt.Sprintf("0x%c%016X%016X", hexPrefix, a, b)
+		}
+		f, acc := binary128.NewFromBig(c.X)
+		if acc != big.Exact {
+			log.Printf("unable to represent floating-point constant %v of type %v exactly; please submit a bug report to llir/llvm with this error message", c.X, c.Typ)
+		}
+		a, b := f.Bits()
+		return fmt.Sprintf("0x%c%016X%016X", hexPrefix, a, b)
+	// ppc_fp128 (PowerPC double-double arithmetic)
+	case types.FloatKindPPC_FP128:
+		// always represent ppc_fp128 in hexadecimal floating-point notation.
+		const hexPrefix = 'M'
+		if c.NaN {
+			a, b := float128ppc.NaN.Bits()
+			if c.X != nil && c.X.Signbit() {
+				a, b = float128ppc.NegNaN.Bits()
+			}
+			return fmt.Sprintf("0x%c%016X%016X", hexPrefix, a, b)
+		}
+		f, acc := float128ppc.NewFromBig(c.X)
+		if acc != big.Exact {
+			log.Printf("unable to represent floating-point constant %v of type %v exactly; please submit a bug report to llir/llvm with this error message", c.X, c.Typ)
+		}
+		a, b := f.Bits()
+		return fmt.Sprintf("0x%c%016X%016X", hexPrefix, a, b)
+	default:
+		panic(fmt.Errorf("support for floating-point kind %v not yet implemented", c.Typ.Kind))
 	}
-
 	// Insert decimal point if not present.
 	//    3e4 -> 3.0e4
 	//    42  -> 42.0
