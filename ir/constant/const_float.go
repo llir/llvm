@@ -2,19 +2,19 @@ package constant
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"math/big"
 	"strconv"
 	"strings"
 
-	"github.com/llir/llvm/ir/types"
 	"github.com/mewmew/float"
 	"github.com/mewmew/float/binary128"
 	"github.com/mewmew/float/binary16"
 	"github.com/mewmew/float/float128ppc"
 	"github.com/mewmew/float/float80x86"
 	"github.com/pkg/errors"
+
+	"github.com/llir/llvm/ir/types"
 )
 
 // --- [ Floating-point constants ] --------------------------------------------
@@ -82,7 +82,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			//
 			// > The IEEE 128-bit format is represented by 0xL followed by 32
 			// > hexadecimal digits.
-			hex := strings.TrimPrefix(s, "0xL") // first remove the prefix
+			hex := strings.TrimPrefix(s, "0xL")
 			const maxHexLen = 32
 			if len(hex) < maxHexLen {
 				// add zeros for the case like: `0xL01` which is missing leading 0s
@@ -105,7 +105,7 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			// From https://llvm.org/docs/LangRef.html#simple-constants
 			//
 			// > The 128-bit format used by PowerPC (two adjacent doubles) is represented by 0xM followed by 32 hexadecimal digits.
-			hex := strings.TrimPrefix(s, "0xM") // first remove the prefix
+			hex := strings.TrimPrefix(s, "0xM")
 			const maxHexLen = 32
 			part1 := hex[:maxHexLen/2]
 			part2 := hex[maxHexLen/2:]
@@ -194,9 +194,6 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 				panic(fmt.Errorf("support for hexadecimal floating-point literal %q of kind %v not yet implemented", s, typ.Kind))
 			}
 		}
-		log.Printf("constant.NewFloatFromString(%q): not yet implemented", s)
-		return NewFloat(typ, 0), nil
-		//panic(fmt.Errorf("support for hexadecimal floating-point constant %q not yet implemented", s))
 	}
 	switch typ.Kind {
 	case types.FloatKindHalf:
