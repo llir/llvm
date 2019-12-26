@@ -39,7 +39,7 @@ func TestNewFloatFromStringForPPCFP128(t *testing.T) {
 }
 
 func TestNewFloatFromStringForFP128(t *testing.T) {
-	golden := []struct{
+	golden := []struct {
 		in   string
 		want string
 	}{

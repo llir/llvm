@@ -6,13 +6,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/llir/llvm/asm"
-	"github.com/mewkiz/pkg/diffutil"
-	"github.com/mewkiz/pkg/osutil"
+	"github.com/llir/llvm/internal/osutil"
 )
-
-// words specifies whether to colour words in diff output.
-const words = false
 
 func TestModule(t *testing.T) {
 	golden := []struct {
@@ -47,11 +44,8 @@ func TestModule(t *testing.T) {
 		}
 		want := string(buf)
 		got := m.String()
-		if want != got {
-			if err := diffutil.Diff(want, got, words, filepath.Base(path)); err != nil {
-				panic(err)
-			}
-			t.Errorf("module mismatch %q; expected `%s`, got `%s`", path, want, got)
+		if diff := cmp.Diff(want, got); diff != "" {
+			t.Errorf("module %q mismatch (-want +got):\n%s", path, diff)
 			continue
 		}
 	}
