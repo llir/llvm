@@ -6,7 +6,7 @@ require (
 	github.com/kr/pretty v0.1.0
 	github.com/llir/ll v0.0.0-20191205054844-50f4b743547b
 	github.com/mewkiz/pkg v0.0.0-20190919212034-518ade7978e2
-	github.com/mewmew/float v0.0.0-20191225162553-5029c962ba80
+	github.com/mewmew/float v0.0.0-20191226110450-b3779093c068
 	github.com/pkg/errors v0.8.1
 	golang.org/x/tools v0.0.0-20191028143239-8715e36070db
 )
