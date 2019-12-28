@@ -1,6 +1,6 @@
 # Release history
 
-## Version 0.3 (to be released)
+## Version 0.3 (2019-12-29)
 
 Primary focus of version 0.3: *grammar covering the entire LLVM IR language*.
 
@@ -8,7 +8,7 @@ The grammar for LLVM IR is now complete and covers the entire LLVM IR language (
 
 Lexers and parsers for LLVM IR assembly are automatically generated from an [EBNF grammar](https://github.com/llir/grammar/blob/master/ll.tm) using [Textmapper](https://github.com/inspirer/textmapper).
 
-The Textmapper generated source code has been split into a [dedicated repository](https://github.com/llir/ll).
+The Textmapper generated source code has been split into a [dedicated repository](https://github.com/llir/ll) to better handle repository size.
 
 ## Version 0.2 (2017-06-24)
 
