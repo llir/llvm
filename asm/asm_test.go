@@ -106,9 +106,9 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Feature/OperandBundles/merge-func.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/pr26510.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/special-state.ll"},
-		//{path: "../testdata/llvm/test/Feature/alias2.ll"}, // TODO: fix grammar. syntax error at line 12. The issue is that the aliasee (a bitcast expression in this case is missing a type (in this case, the type should be i16*). `@a1 = alias i16, bitcast (i32* @v1 to i16*)`
-		//{path: "../testdata/llvm/test/Feature/aliases.ll"}, // TODO: fix grammar. syntax error at line 29. The issue is that the aliasee (a bitcast expression in this case is missing a type (in this case, the type should be i64*). `@A = alias i64, bitcast (i32* @bar to i64*)`
-		//{path: "../testdata/llvm/test/Feature/alignment.ll"}, // TODO: fix grammar. syntax error at line 7. The issue is that there is a parsing ambiguity between GlobalAttr and FuncAttr, both of which may be empty and both of which may contain Align.
+		{path: "../testdata/llvm/test/Feature/alias2.ll"},
+		{path: "../testdata/llvm/test/Feature/aliases.ll"},
+		{path: "../testdata/llvm/test/Feature/alignment.ll"},
 		{path: "../testdata/llvm/test/Feature/attributes.ll"},
 		{path: "../testdata/llvm/test/Feature/basictest.ll"},
 		{path: "../testdata/llvm/test/Feature/callingconventions.ll"},
@@ -117,7 +117,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Feature/cfgstructures.ll"},
 		{path: "../testdata/llvm/test/Feature/cold.ll"},
 		{path: "../testdata/llvm/test/Feature/comdat.ll"},
-		//{path: "../testdata/llvm/test/Feature/constexpr.ll"}, // TODO: re-enable when signed hex integer literals are supported.
+		{path: "../testdata/llvm/test/Feature/constexpr.ll"},
 		{path: "../testdata/llvm/test/Feature/constpointer.ll"},
 		{path: "../testdata/llvm/test/Feature/const_pv.ll"},
 		{path: "../testdata/llvm/test/Feature/elf-linker-options.ll"},
@@ -185,7 +185,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/2002-05-02-InvalidForwardRef.ll"},
 		{path: "../testdata/llvm/test/Assembler/2002-07-14-OpaqueType.ll"},
 		{path: "../testdata/llvm/test/Assembler/2002-07-25-QuoteInString.ll"},
-		//{path: "../testdata/llvm/test/Assembler/2002-07-25-ReturnPtrFunction.ll"}, // TODO: figure out how function return type should be printed in call instructions.
+		{path: "../testdata/llvm/test/Assembler/2002-07-25-ReturnPtrFunction.ll"},
 		{path: "../testdata/llvm/test/Assembler/2002-07-31-SlashInString.ll"},
 		{path: "../testdata/llvm/test/Assembler/2002-08-15-CastAmbiguity.ll"},
 		{path: "../testdata/llvm/test/Assembler/2002-08-15-ConstantExprProblem.ll"},
@@ -200,7 +200,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/2003-04-25-UnresolvedGlobalReference.ll"},
 		{path: "../testdata/llvm/test/Assembler/2003-05-03-BytecodeReaderProblem.ll"},
 		{path: "../testdata/llvm/test/Assembler/2003-05-12-MinIntProblem.ll"},
-		//{path: "../testdata/llvm/test/Assembler/2003-05-15-AssemblerProblem.ll"}, // TODO: fix type checking; constant expression type mismatch; expected "void (...)*", got "void (...)"
+		{path: "../testdata/llvm/test/Assembler/2003-05-15-AssemblerProblem.ll"},
 		{path: "../testdata/llvm/test/Assembler/2003-05-15-SwitchBug.ll"},
 		{path: "../testdata/llvm/test/Assembler/2003-05-21-ConstantShiftExpr.ll"},
 		{path: "../testdata/llvm/test/Assembler/2003-05-21-EmptyStructTest.ll"},
@@ -222,7 +222,6 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/2005-12-21-ZeroInitVector.ll"},
 		{path: "../testdata/llvm/test/Assembler/2006-12-09-Cast-To-Bool.ll"},
 		{path: "../testdata/llvm/test/Assembler/2007-01-05-Cmp-ConstExpr.ll"},
-		//{path: "../testdata/llvm/test/Assembler/2007-03-18-InvalidNumberedVar.ll"}, // TODO: fix type checking during translation of local variables.
 		{path: "../testdata/llvm/test/Assembler/2007-03-19-NegValue.ll"},
 		{path: "../testdata/llvm/test/Assembler/2007-04-20-AlignedLoad.ll"},
 		{path: "../testdata/llvm/test/Assembler/2007-04-20-AlignedStore.ll"},
@@ -231,7 +230,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/2007-07-19-ParamAttrAmbiguity.ll"},
 		{path: "../testdata/llvm/test/Assembler/2007-09-10-AliasFwdRef.ll"},
 		{path: "../testdata/llvm/test/Assembler/2007-09-29-GC.ll"},
-		//{path: "../testdata/llvm/test/Assembler/2007-12-11-AddressSpaces.ll"}, // TODO: fix translation of pointer with address space to pointer with address space; e.g. i32 addrspace(33)* addrspace(44)*
+		{path: "../testdata/llvm/test/Assembler/2007-12-11-AddressSpaces.ll"},
 		{path: "../testdata/llvm/test/Assembler/2008-01-11-VarargAttrs.ll"},
 		{path: "../testdata/llvm/test/Assembler/2008-07-10-APInt.ll"},
 		{path: "../testdata/llvm/test/Assembler/2008-09-02-FunctionNotes.ll"},
@@ -243,7 +242,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/2009-03-24-ZextConstantExpr.ll"},
 		{path: "../testdata/llvm/test/Assembler/2009-07-24-ZeroArgGEP.ll"},
 		{path: "../testdata/llvm/test/Assembler/2010-02-05-FunctionLocalMetadataBecomesNull.ll"},
-		//{path: "../testdata/llvm/test/Assembler/addrspacecast-alias.ll"}, // TODO: fix handling of multiple address spaces; constant expression type mismatch; expected "i8 addrspace(2)* addrspace(3)*", got "i8 addrspace(2)**
+		{path: "../testdata/llvm/test/Assembler/addrspacecast-alias.ll"},
 		{path: "../testdata/llvm/test/Assembler/aggregate-return-single-value.ll"},
 		{path: "../testdata/llvm/test/Assembler/alias-use-list-order.ll"},
 		{path: "../testdata/llvm/test/Assembler/align-inst.ll"},
@@ -308,7 +307,6 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/inalloca.ll"},
 		{path: "../testdata/llvm/test/Assembler/incorrect-tdep-attrs-parsing.ll"},
 		{path: "../testdata/llvm/test/Assembler/insertextractvalue.ll"},
-		//{path: "../testdata/llvm/test/Assembler/insertvalue-invalid-type-1.ll"}, // TODO: check result type of insertvalue during translation.
 		{path: "../testdata/llvm/test/Assembler/large-comdat.ll"},
 		{path: "../testdata/llvm/test/Assembler/local-unnamed-addr.ll"},
 		{path: "../testdata/llvm/test/Assembler/max-inttype.ll"},
@@ -322,7 +320,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/no-mdstring-upgrades.ll"},
 		{path: "../testdata/llvm/test/Assembler/numbered-values.ll"},
 		{path: "../testdata/llvm/test/Assembler/select.ll"},
-		//{path: "../testdata/llvm/test/Assembler/short-hexpair.ll"}, // TODO: add support for fp128 hex literals.
+		{path: "../testdata/llvm/test/Assembler/short-hexpair.ll"},
 		{path: "../testdata/llvm/test/Assembler/source-filename-backslash.ll"},
 		{path: "../testdata/llvm/test/Assembler/source-filename.ll"},
 		//{path: "../testdata/llvm/test/Assembler/thinlto-summary.ll"}, // TODO: add support for ThinLTO module summaries.
@@ -369,7 +367,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/DebugInfo/strip-DIGlobalVariable.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/strip-loop-metadata.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/strip-module-flags.ll"},
-		//{path: "../testdata/llvm/test/DebugInfo/unrolled-loop-remainder.ll"}, // TODO: figure out how to handle duplicate (but distinct) AttrGroupDef
+		{path: "../testdata/llvm/test/DebugInfo/unrolled-loop-remainder.ll"},
 
 		// LLVM test/DebugInfo/X86.
 		{path: "../testdata/llvm/test/DebugInfo/X86/clang-module.ll"},
@@ -377,7 +375,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/DebugInfo/X86/DIModuleContext.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/DIModule.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/dw_op_minus.ll"},
-		//{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names-empty.ll"}, // TODO: fix grammar. syntax error at line 20. Issue with gnuPubnames in metadata. Should the metadata contain gnuPubnames, or is this now NameTableKind or something else?
+		{path: "../testdata/llvm/test/DebugInfo/X86/gnu-public-names-empty.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/objc-property-void.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/safestack-byval.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/sdag-combine.ll"},
