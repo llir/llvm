@@ -59,8 +59,7 @@ func (inst *InstExtractElement) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractElement) LLString() string {
-	// 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(','
-	// MetadataAttachment)+?
+	// 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "extractelement %s, %s", inst.X, inst.Index)

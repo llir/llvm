@@ -212,11 +212,7 @@ func (f *Func) AssignIDs() error {
 
 // headerString returns the string representation of the function header.
 func headerString(f *Func) string {
-	// (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt
-	// CallingConvopt ReturnAttrs=ReturnAttribute* RetType=Type Name=GlobalIdent
-	// '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttribute*
-	// Sectionopt Partitionopt Comdatopt GCopt Prefixopt Prologueopt
-	// Personalityopt
+	// (Linkage | ExternLinkage)? Preemptionopt Visibilityopt DLLStorageClassopt CallingConvopt ReturnAttrs=ReturnAttribute* RetType=Type Name=GlobalIdent '(' Params ')' UnnamedAddropt AddrSpaceopt FuncAttrs=FuncAttribute* Sectionopt Partitionopt Comdatopt Alignopt GCopt Prefixopt Prologueopt Personalityopt
 	buf := &strings.Builder{}
 	if f.Preemption != enum.PreemptionNone {
 		fmt.Fprintf(buf, " %s", f.Preemption)

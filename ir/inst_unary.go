@@ -55,8 +55,7 @@ func (inst *InstFNeg) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstFNeg) LLString() string {
-	// 'fneg' FastMathFlags=FastMathFlag* X=TypeValue Metadata=(','
-	// MetadataAttachment)+?
+	// 'fneg' FastMathFlags=FastMathFlag* X=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("fneg")

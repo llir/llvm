@@ -67,8 +67,7 @@ func (inst *InstAlloca) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstAlloca) LLString() string {
-	// 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)?
-	// (',' Alignment)? (',' AddrSpace)? Metadata=(',' MetadataAttachment)+?
+	// 'alloca' InAllocaopt SwiftErroropt ElemType=Type NElems=(',' TypeValue)? (',' Align)? (',' AddrSpace)? Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("alloca")
@@ -143,14 +142,11 @@ func (inst *InstLoad) Type() types.Type {
 func (inst *InstLoad) LLString() string {
 	// Load instruction.
 	//
-	//    'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Alignment)?
-	//    Metadata=(',' MetadataAttachment)+?
+	//    'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Align)? Metadata=(',' MetadataAttachment)+?
 	//
 	// Atomic load instruction.
 	//
-	//    'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt
-	//    Ordering=AtomicOrdering (',' Alignment)? Metadata=(','
-	//    MetadataAttachment)+?
+	//    'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt Ordering=AtomicOrdering (',' Align)? Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("load")
@@ -219,14 +215,11 @@ func NewStore(src, dst value.Value) *InstStore {
 func (inst *InstStore) LLString() string {
 	// Store instruction.
 	//
-	//    'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Alignment)?
-	//    Metadata=(',' MetadataAttachment)+?
+	//    'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Align)? Metadata=(',' MetadataAttachment)+?
 	//
 	// Atomic store instruction.
 	//
-	//    'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt
-	//    Ordering=AtomicOrdering (',' Alignment)? Metadata=(','
-	//    MetadataAttachment)+?
+	//    'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt Ordering=AtomicOrdering (',' Align)? Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("store")
 	if inst.Atomic {
@@ -273,8 +266,7 @@ func NewFence(ordering enum.AtomicOrdering) *InstFence {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstFence) LLString() string {
-	// 'fence' SyncScopeopt Ordering=AtomicOrdering Metadata=(','
-	// MetadataAttachment)+?
+	// 'fence' SyncScopeopt Ordering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("fence")
 	if len(inst.SyncScope) > 0 {
@@ -349,9 +341,7 @@ func (inst *InstCmpXchg) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstCmpXchg) LLString() string {
-	// 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ','
-	// New=TypeValue SyncScopeopt SuccessOrdering=AtomicOrdering
-	// FailureOrdering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
+	// 'cmpxchg' Weakopt Volatileopt Ptr=TypeValue ',' Cmp=TypeValue ',' New=TypeValue SyncScopeopt SuccessOrdering=AtomicOrdering FailureOrdering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("cmpxchg")
@@ -430,8 +420,7 @@ func (inst *InstAtomicRMW) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstAtomicRMW) LLString() string {
-	// 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue
-	// SyncScopeopt Ordering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
+	// 'atomicrmw' Volatileopt Op=AtomicOp Dst=TypeValue ',' X=TypeValue SyncScopeopt Ordering=AtomicOrdering Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("atomicrmw")
@@ -498,8 +487,7 @@ func (inst *InstGetElementPtr) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstGetElementPtr) LLString() string {
-	// 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(','
-	// TypeValue)* Metadata=(',' MetadataAttachment)+?
+	// 'getelementptr' InBoundsopt ElemType=Type ',' Src=TypeValue Indices=(',' TypeValue)* Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("getelementptr")

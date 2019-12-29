@@ -55,8 +55,7 @@ func (inst *InstExtractValue) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstExtractValue) LLString() string {
-	// 'extractvalue' X=TypeValue Indices=(',' UintLit)+ Metadata=(','
-	// MetadataAttachment)+?
+	// 'extractvalue' X=TypeValue Indices=(',' UintLit)+ Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "extractvalue %s", inst.X)
@@ -120,8 +119,7 @@ func (inst *InstInsertValue) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstInsertValue) LLString() string {
-	// 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+
-	// Metadata=(',' MetadataAttachment)+?
+	// 'insertvalue' X=TypeValue ',' Elem=TypeValue Indices=(',' UintLit)+ Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "insertvalue %s, %s", inst.X, inst.Elem)

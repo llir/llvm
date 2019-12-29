@@ -834,8 +834,7 @@ func (md *DIGlobalVariableExpression) Ident() string {
 // LLString returns the LLVM syntax representation of the specialized metadata
 // node.
 func (md *DIGlobalVariableExpression) LLString() string {
-	// '!DIGlobalVariableExpression' '(' Fields=(DIGlobalVariableExpressionField
-	// separator ',')* ')'
+	// '!DIGlobalVariableExpression' '(' Fields=(DIGlobalVariableExpressionField separator ',')* ')'
 	buf := &strings.Builder{}
 	if md.Distinct {
 		buf.WriteString("distinct ")
@@ -1090,8 +1089,7 @@ func (md *DILexicalBlockFile) Ident() string {
 // LLString returns the LLVM syntax representation of the specialized metadata
 // node.
 func (md *DILexicalBlockFile) LLString() string {
-	// '!DILexicalBlockFile' '(' Fields=(DILexicalBlockFileField separator ',')*
-	// ')'
+	// '!DILexicalBlockFile' '(' Fields=(DILexicalBlockFileField separator ',')* ')'
 	buf := &strings.Builder{}
 	if md.Distinct {
 		buf.WriteString("distinct ")
@@ -1933,8 +1931,7 @@ func (md *DITemplateTypeParameter) Ident() string {
 // LLString returns the LLVM syntax representation of the specialized metadata
 // node.
 func (md *DITemplateTypeParameter) LLString() string {
-	// '!DITemplateTypeParameter' '(' Fields=(DITemplateTypeParameterField
-	// separator ',')* ')'
+	// '!DITemplateTypeParameter' '(' Fields=(DITemplateTypeParameterField separator ',')* ')'
 	buf := &strings.Builder{}
 	if md.Distinct {
 		buf.WriteString("distinct ")

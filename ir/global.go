@@ -99,19 +99,11 @@ func (g *Global) Type() types.Type {
 func (g *Global) LLString() string {
 	// Global declaration.
 	//
-	//    Name=GlobalIdent '=' ExternLinkage Preemptionopt Visibilityopt
-	//    DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt
-	//    ExternallyInitializedopt Immutable ContentType=Type (',' Section)? (','
-	//    Partition)? (',' Comdat)? (',' Alignment)? Metadata=(','
-	//    MetadataAttachment)+? FuncAttrs=(',' FuncAttribute)+?
+	//    Name=GlobalIdent '=' Linkage=ExternLinkage Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type (',' Section)? (',' Partition)? (',' Comdat)? (',' Align)? Metadata=(',' MetadataAttachment)+? FuncAttrs=FuncAttribute+?
 	//
 	// Global definition.
 	//
-	//    Name=GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt
-	//    DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt
-	//    ExternallyInitializedopt Immutable ContentType=Type Init=Constant (','
-	//    Section)? (',' Partition)? (',' Comdat)? (',' Alignment)? Metadata=(','
-	//    MetadataAttachment)+? FuncAttrs=(',' FuncAttribute)+?
+	//    Name=GlobalIdent '=' Linkage=Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant (',' Section)? (',' Partition)? (',' Comdat)? (',' Align)? Metadata=(',' MetadataAttachment)+? FuncAttrs=FuncAttribute+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", g.Ident())
 	if g.Linkage != enum.LinkageNone {

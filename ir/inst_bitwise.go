@@ -55,8 +55,7 @@ func (inst *InstShl) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstShl) LLString() string {
-	// 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(','
-	// MetadataAttachment)+?
+	// 'shl' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("shl")
@@ -114,8 +113,7 @@ func (inst *InstLShr) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstLShr) LLString() string {
-	// 'lshr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
-	// MetadataAttachment)+?
+	// 'lshr' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("lshr")
@@ -173,8 +171,7 @@ func (inst *InstAShr) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstAShr) LLString() string {
-	// 'ashr' Exactopt X=TypeValue ',' Y=Value Metadata=(','
-	// MetadataAttachment)+?
+	// 'ashr' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("ashr")

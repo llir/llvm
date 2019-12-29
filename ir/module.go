@@ -107,9 +107,9 @@ func (m *Module) WriteTo(w io.Writer) (n int64, err error) {
 		fw.Fprint("\n")
 	}
 	for _, t := range m.TypeDefs {
-		// Alias=LocalIdent '=' 'type' Typ=OpaqueType
+		// Name=LocalIdent '=' 'type' Typ=OpaqueType
 		//
-		// Alias=LocalIdent '=' 'type' Typ=Type
+		// Name=LocalIdent '=' 'type' Typ=Type
 		fw.Fprintf("%s = type %s\n", t, t.LLString())
 	}
 	// Comdat definitions.
@@ -237,7 +237,7 @@ func (a *AttrGroupDef) String() string {
 // LLString returns the LLVM syntax representation of the attribute group
 // definition.
 func (a *AttrGroupDef) LLString() string {
-	// 'attributes' ID=AttrGroupID '=' '{' Attrs=FuncAttribute* '}'
+	// 'attributes' ID=AttrGroupID '=' '{' FuncAttrs=FuncAttribute* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "attributes %s = { ", enc.AttrGroupID(a.ID))
 	for i, attr := range a.FuncAttrs {

@@ -625,8 +625,7 @@ func (inst *InstAddrSpaceCast) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstAddrSpaceCast) LLString() string {
-	// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(','
-	// MetadataAttachment)+?
+	// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "addrspacecast %s to %s", inst.From, inst.To)

@@ -64,8 +64,7 @@ func (inst *InstICmp) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstICmp) LLString() string {
-	// 'icmp' Pred=IPred X=TypeValue ',' Y=Value Metadata=(','
-	// MetadataAttachment)+?
+	// 'icmp' Pred=IPred X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "icmp %s %s, %s", inst.Pred, inst.X, inst.Y.Ident())
@@ -130,8 +129,7 @@ func (inst *InstFCmp) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstFCmp) LLString() string {
-	// 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value
-	// Metadata=(',' MetadataAttachment)+?
+	// 'fcmp' FastMathFlags=FastMathFlag* Pred=FPred X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("fcmp")
@@ -188,8 +186,7 @@ func (inst *InstPhi) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstPhi) LLString() string {
-	// 'phi' Typ=Type Incs=(Inc separator ',')+ Metadata=(','
-	// MetadataAttachment)+?
+	// 'phi' Typ=Type Incs=(Inc separator ',')+ Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "phi %s ", inst.Typ)
@@ -276,8 +273,7 @@ func (inst *InstSelect) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstSelect) LLString() string {
-	// 'select' FastMathFlags=FastMathFlag* Cond=TypeValue ',' X=TypeValue ','
-	// Y=TypeValue Metadata=(',' MetadataAttachment)+?
+	// 'select' FastMathFlags=FastMathFlag* Cond=TypeValue ',' ValueTrue=TypeValue ',' ValueFalse=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("select")
@@ -359,10 +355,7 @@ func (inst *InstCall) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstCall) LLString() string {
-	// Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt
-	// ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Callee=Value '(' Args
-	// ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator
-	// ',')+ ']')? Metadata=(',' MetadataAttachment)+?
+	// Tailopt 'call' FastMathFlags=FastMathFlag* CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator ',')+ ']')? Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	if !inst.Type().Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -465,8 +458,7 @@ func (inst *InstVAArg) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstVAArg) LLString() string {
-	// 'va_arg' ArgList=TypeValue ',' ArgType=Type Metadata=(','
-	// MetadataAttachment)+?
+	// 'va_arg' ArgList=TypeValue ',' ArgType=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "va_arg %s, %s", inst.ArgList, inst.ArgType)
@@ -515,8 +507,7 @@ func (inst *InstLandingPad) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstLandingPad) LLString() string {
-	// 'landingpad' ResultType=Type Cleanupopt Clauses=Clause* Metadata=(','
-	// MetadataAttachment)+?
+	// 'landingpad' ResultType=Type Cleanupopt Clauses=Clause* Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "landingpad %s", inst.ResultType)
@@ -593,8 +584,7 @@ func (inst *InstCatchPad) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstCatchPad) LLString() string {
-	// 'catchpad' 'within' Scope=LocalIdent '[' Args=(ExceptionArg separator
-	// ',')* ']' Metadata=(',' MetadataAttachment)+?
+	// 'catchpad' 'within' CatchSwitch=LocalIdent '[' Args=(ExceptionArg separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "catchpad within %s [", inst.CatchSwitch.Ident())
@@ -651,8 +641,7 @@ func (inst *InstCleanupPad) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the instruction.
 func (inst *InstCleanupPad) LLString() string {
-	// 'cleanuppad' 'within' Scope=ExceptionScope '[' Args=(ExceptionArg
-	// separator ',')* ']' Metadata=(',' MetadataAttachment)+?
+	// 'cleanuppad' 'within' ParentPad=ExceptionPad '[' Args=(ExceptionArg separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "cleanuppad within %s [", inst.ParentPad.Ident())

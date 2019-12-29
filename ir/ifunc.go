@@ -67,9 +67,7 @@ func (i *IFunc) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the IFunc definition.
 func (i *IFunc) LLString() string {
-	// GlobalIdent '=' Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt
-	// ThreadLocalopt UnnamedAddropt 'ifunc' Type ',' Type Constant Partitions=(','
-	// Partition)*
+	// Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt IndirectSymbolKind ContentType=Type ',' IndirectSymbol Partitions=(',' Partition)*
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", i.Ident())
 	if i.Linkage != enum.LinkageNone {
