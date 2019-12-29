@@ -1,9 +1,5 @@
 package ir
 
-import (
-	"github.com/llir/llvm/ir/types"
-)
-
 // === [ constant.Constant ] ===================================================
 
 // IsConstant ensures that only constants can be assigned to the
@@ -158,20 +154,3 @@ func (Align) IsReturnAttribute() {}
 // IsReturnAttribute ensures that only return attributes can be assigned to
 // the ir.ReturnAttribute interface.
 func (Dereferenceable) IsReturnAttribute() {}
-
-// === [ ir.UnwindTarget ] =====================================================
-
-// ir.UnwindTarget = *ir.Block | ir.UnwindToCaller
-
-// TODO: figure out how to handle UnwindToCaller.Type.
-
-// Type returns the type of the value.
-func (UnwindToCaller) Type() types.Type {
-	// Type is a dummy method for UnwindToCaller to implement value.Value.
-	panic("UnwindToCaller does not have a type")
-}
-
-// Ident returns the identifier associated with the value.
-func (u UnwindToCaller) Ident() string {
-	return u.String()
-}

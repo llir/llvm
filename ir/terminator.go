@@ -324,9 +324,9 @@ type TermInvoke struct {
 	//    TODO: add metadata value?
 	Args []value.Value
 	// Normal control flow return point.
-	Normal value.Value // *ir.Block
+	NormalRetTarget value.Value // *ir.Block
 	// Exception control flow return point.
-	Exception value.Value // *ir.Block
+	ExceptionRetTarget value.Value // *ir.Block
 
 	// extra.
 
@@ -348,13 +348,13 @@ type TermInvoke struct {
 	Metadata
 }
 
-// NewInvoke returns a new invoke terminator based on the given invokee, function
-// arguments and control flow return points for normal and exceptional
+// NewInvoke returns a new invoke terminator based on the given invokee,
+// function arguments and control flow return points for normal and exceptional
 // execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func NewInvoke(invokee value.Value, args []value.Value, normal, exception *Block) *TermInvoke {
-	term := &TermInvoke{Invokee: invokee, Args: args, Normal: normal, Exception: exception}
+func NewInvoke(invokee value.Value, args []value.Value, normalRetTarget, exceptionRetTarget *Block) *TermInvoke {
+	term := &TermInvoke{Invokee: invokee, Args: args, NormalRetTarget: normalRetTarget, ExceptionRetTarget: exceptionRetTarget}
 	// Compute type.
 	term.Type()
 	return term
@@ -380,7 +380,7 @@ func (term *TermInvoke) Type() types.Type {
 func (term *TermInvoke) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.Normal.(*Block), term.Exception.(*Block)}
+		term.Successors = []*Block{term.NormalRetTarget.(*Block), term.ExceptionRetTarget.(*Block)}
 	}
 	return term.Successors
 }
@@ -432,7 +432,7 @@ func (term *TermInvoke) LLString() string {
 		}
 		buf.WriteString(" ]")
 	}
-	fmt.Fprintf(buf, "\n\t\tto %s unwind %s", term.Normal, term.Exception)
+	fmt.Fprintf(buf, "\n\t\tto %s unwind %s", term.NormalRetTarget, term.ExceptionRetTarget)
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}
@@ -468,9 +468,9 @@ type TermCallBr struct {
 	//    TODO: add metadata value?
 	Args []value.Value
 	// Normal control flow return point.
-	Normal value.Value // *ir.Block
+	NormalRetTarget value.Value // *ir.Block
 	// Other control flow return points.
-	Others []value.Value // slice of *ir.Block
+	OtherRetTargets []value.Value // slice of *ir.Block
 
 	// extra.
 
@@ -497,13 +497,13 @@ type TermCallBr struct {
 // execution.
 //
 // TODO: specify the set of underlying types of callee.
-func NewCallBr(callee value.Value, args []value.Value, normal *Block, others ...*Block) *TermCallBr {
-	// convert others slice to []value.Value.
-	var os []value.Value
-	for _, other := range others {
-		os = append(os, other)
+func NewCallBr(callee value.Value, args []value.Value, normalRetTarget *Block, otherRetTargets ...*Block) *TermCallBr {
+	// Convert otherRetTargets slice to []value.Value.
+	var otherRets []value.Value
+	for _, otherRetTarget := range otherRetTargets {
+		otherRets = append(otherRets, otherRetTarget)
 	}
-	term := &TermCallBr{Callee: callee, Args: args, Normal: normal, Others: os}
+	term := &TermCallBr{Callee: callee, Args: args, NormalRetTarget: normalRetTarget, OtherRetTargets: otherRets}
 	// Compute type.
 	term.Type()
 	return term
@@ -529,10 +529,10 @@ func (term *TermCallBr) Type() types.Type {
 func (term *TermCallBr) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.Normal.(*Block)}
-		// convert others slice to []*ir.Block.
-		for _, other := range term.Others {
-			term.Successors = append(term.Successors, other.(*Block))
+		term.Successors = []*Block{term.NormalRetTarget.(*Block)}
+		// Convert OtherRetTargets slice to []*ir.Block.
+		for _, otherRetTarget := range term.OtherRetTargets {
+			term.Successors = append(term.Successors, otherRetTarget.(*Block))
 		}
 	}
 	return term.Successors
@@ -585,12 +585,12 @@ func (term *TermCallBr) LLString() string {
 		}
 		buf.WriteString(" ]")
 	}
-	fmt.Fprintf(buf, "\n\t\tto %s [", term.Normal)
-	for i, other := range term.Others {
+	fmt.Fprintf(buf, "\n\t\tto %s [", term.NormalRetTarget)
+	for i, otherRetTarget := range term.OtherRetTargets {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
-		buf.WriteString(other.String())
+		buf.WriteString(otherRetTarget.String())
 	}
 	buf.WriteString("]")
 	for _, md := range term.Metadata {
@@ -654,14 +654,13 @@ func (term *TermResume) LLString() string {
 type TermCatchSwitch struct {
 	// Name of local variable associated with the result.
 	LocalIdent
-	// Exception scope.
-	// TODO: rename to Parent? rename to From?
-	Scope value.Value // ir.ExceptionScope
+	// Parent exception pad.
+	ParentPad value.Value // ir.ExceptionPad
 	// Exception handlers.
 	Handlers []value.Value // []*ir.Block
-	// Unwind target; basic block or caller function.
-	// TODO: rename to To? rename to DefaultTarget?
-	UnwindTarget value.Value // ir.UnwindTarget
+	// Optional default target basic block to transfer control flow to; or nil to
+	// unwind to caller function.
+	DefaultUnwindTarget value.Value // *ir.Block or nil
 
 	// extra.
 
@@ -671,15 +670,25 @@ type TermCatchSwitch struct {
 	Metadata
 }
 
-// NewCatchSwitch returns a new catchswitch terminator based on the given
-// exception scope, exception handlers and unwind target.
-func NewCatchSwitch(scope ExceptionScope, handlers []*Block, unwindTarget UnwindTarget) *TermCatchSwitch {
+// NewCatchSwitch returns a new catchswitch terminator based on the given parent
+// exception pad, exception handlers and optional default unwind target. If
+// defaultUnwindTarget is nil, catchswitch unwinds to caller function.
+func NewCatchSwitch(parentPad ExceptionPad, handlers []*Block, defaultUnwindTarget *Block) *TermCatchSwitch {
 	// convert handlers slice to []value.Value.
 	var hs []value.Value
 	for _, handler := range handlers {
 		hs = append(hs, handler)
 	}
-	return &TermCatchSwitch{Scope: scope, Handlers: hs, UnwindTarget: unwindTarget}
+	term := &TermCatchSwitch{ParentPad: parentPad, Handlers: hs}
+	if defaultUnwindTarget != nil {
+		// Note: since DefaultUnwindTarget is an interface we have to be careful
+		// with typed nil values (e.g. `(*ir.Block)(nil)`). This is to ensure that
+		// DefaultUnwindTarget is nil and not `{Type: ir.Block, Value: nil}`.
+		//
+		// ref: https://golang.org/doc/faq#nil_error
+		term.DefaultUnwindTarget = defaultUnwindTarget
+	}
+	return term
 }
 
 // String returns the LLVM syntax representation of the terminator as a type-
@@ -701,8 +710,8 @@ func (term *TermCatchSwitch) Succs() []*Block {
 		for _, handler := range term.Handlers {
 			term.Successors = append(term.Successors, handler.(*Block))
 		}
-		if unwindTarget, ok := term.UnwindTarget.(*Block); ok {
-			term.Successors = append(term.Successors, unwindTarget)
+		if defaultUnwindTarget, ok := term.DefaultUnwindTarget.(*Block); ok {
+			term.Successors = append(term.Successors, defaultUnwindTarget)
 		}
 	}
 	return term.Successors
@@ -715,14 +724,19 @@ func (term *TermCatchSwitch) LLString() string {
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", term.Ident())
-	fmt.Fprintf(buf, "catchswitch within %s [", term.Scope.Ident())
+	fmt.Fprintf(buf, "catchswitch within %s [", term.ParentPad.Ident())
 	for i, handler := range term.Handlers {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
 		buf.WriteString(handler.String())
 	}
-	fmt.Fprintf(buf, "] unwind %s", term.UnwindTarget)
+	buf.WriteString("] unwind ")
+	if term.DefaultUnwindTarget != nil {
+		buf.WriteString(term.DefaultUnwindTarget.String())
+	} else {
+		buf.WriteString("to caller")
+	}
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}
@@ -731,12 +745,13 @@ func (term *TermCatchSwitch) LLString() string {
 
 // --- [ catchret ] ------------------------------------------------------------
 
-// TermCatchRet is an LLVM IR catchret terminator.
+// TermCatchRet is an LLVM IR catchret terminator, which catches an in-flight
+// exception from CatchPad and returns control flow to normal at Target.
 type TermCatchRet struct {
 	// Exit catchpad.
-	From value.Value // *ir.InstCatchPad
+	CatchPad value.Value // *ir.InstCatchPad
 	// Target basic block to transfer control flow to.
-	To value.Value // *ir.Block
+	Target value.Value // *ir.Block
 
 	// extra.
 
@@ -748,15 +763,15 @@ type TermCatchRet struct {
 
 // NewCatchRet returns a new catchret terminator based on the given exit
 // catchpad and target basic block.
-func NewCatchRet(from *InstCatchPad, to *Block) *TermCatchRet {
-	return &TermCatchRet{From: from, To: to}
+func NewCatchRet(catchPad *InstCatchPad, target *Block) *TermCatchRet {
+	return &TermCatchRet{CatchPad: catchPad, Target: target}
 }
 
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermCatchRet) Succs() []*Block {
 	// Cache successors if not present.
 	if term.Successors == nil {
-		term.Successors = []*Block{term.To.(*Block)}
+		term.Successors = []*Block{term.Target.(*Block)}
 	}
 	return term.Successors
 }
@@ -766,7 +781,7 @@ func (term *TermCatchRet) LLString() string {
 	// 'catchret' 'from' From=Value 'to' To=Label Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "catchret from %s to %s", term.From.Ident(), term.To)
+	fmt.Fprintf(buf, "catchret from %s to %s", term.CatchPad.Ident(), term.Target)
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}
@@ -775,12 +790,15 @@ func (term *TermCatchRet) LLString() string {
 
 // --- [ cleanupret ] ----------------------------------------------------------
 
-// TermCleanupRet is an LLVM IR cleanupret terminator.
+// TermCleanupRet is an LLVM IR cleanupret terminator, which indicates that the
+// personality function of a cleanuppad has finished and transfers control flow
+// to an optional target basic block or unwinds to the caller function.
 type TermCleanupRet struct {
 	// Exit cleanuppad.
-	From value.Value // *ir.InstCleanupPad
-	// Unwind target; basic block or caller function.
-	UnwindTarget value.Value // ir.UnwindTarget
+	CleanupPad value.Value // *ir.InstCleanupPad
+	// Optional target basic block to transfer control flow to; or nil to unwind
+	// to caller function.
+	UnwindTarget value.Value // *ir.Block or nil
 
 	// extra.
 
@@ -791,9 +809,19 @@ type TermCleanupRet struct {
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
-// cleanuppad and unwind target.
-func NewCleanupRet(from *InstCleanupPad, unwindTarget UnwindTarget) *TermCleanupRet {
-	return &TermCleanupRet{From: from, UnwindTarget: unwindTarget}
+// cleanuppad and optional unwind target. If unwindTarget is nil, cleanupret
+// unwinds to caller function.
+func NewCleanupRet(cleanupPad *InstCleanupPad, unwindTarget *Block) *TermCleanupRet {
+	term := &TermCleanupRet{CleanupPad: cleanupPad}
+	if unwindTarget != nil {
+		// Note: since UnwindTarget is an interface we have to be careful
+		// with typed nil values (e.g. `(*ir.Block)(nil)`). This is to ensure that
+		// UnwindTarget is nil and not `{Type: ir.Block, Value: nil}`.
+		//
+		// ref: https://golang.org/doc/faq#nil_error
+		term.UnwindTarget = unwindTarget
+	}
+	return term
 }
 
 // Succs returns the successor basic blocks of the terminator.
@@ -814,7 +842,12 @@ func (term *TermCleanupRet) LLString() string {
 	// 'cleanupret' 'from' From=Value 'unwind' UnwindTarget Metadata=(','
 	// MetadataAttachment)+?
 	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "cleanupret from %s unwind %s", term.From.Ident(), term.UnwindTarget)
+	fmt.Fprintf(buf, "cleanupret from %s unwind ", term.CleanupPad.Ident())
+	if term.UnwindTarget != nil {
+		buf.WriteString(term.UnwindTarget.String())
+	} else {
+		buf.WriteString("to caller")
+	}
 	for _, md := range term.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}

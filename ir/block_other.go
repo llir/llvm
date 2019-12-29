@@ -42,9 +42,9 @@ func (block *Block) NewPhi(incs ...*Incoming) *InstPhi {
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewSelect appends a new select instruction to the basic block based on the
-// given selection condition and operands.
-func (block *Block) NewSelect(cond, x, y value.Value) *InstSelect {
-	inst := NewSelect(cond, x, y)
+// given selection condition and true and false condition values.
+func (block *Block) NewSelect(cond, valueTrue, valueFalse value.Value) *InstSelect {
+	inst := NewSelect(cond, valueTrue, valueFalse)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -84,9 +84,9 @@ func (block *Block) NewLandingPad(resultType types.Type, clauses ...*Clause) *In
 // ~~~ [ catchpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCatchPad appends a new catchpad instruction to the basic block based on
-// the given exception scope and exception arguments.
-func (block *Block) NewCatchPad(scope *TermCatchSwitch, args ...value.Value) *InstCatchPad {
-	inst := NewCatchPad(scope, args...)
+// the given parent catchswitch terminator and exception arguments.
+func (block *Block) NewCatchPad(catchSwitch *TermCatchSwitch, args ...value.Value) *InstCatchPad {
+	inst := NewCatchPad(catchSwitch, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }
@@ -94,9 +94,9 @@ func (block *Block) NewCatchPad(scope *TermCatchSwitch, args ...value.Value) *In
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCleanupPad appends a new cleanuppad instruction to the basic block based
-// on the given exception scope and exception arguments.
-func (block *Block) NewCleanupPad(scope ExceptionScope, args ...value.Value) *InstCleanupPad {
-	inst := NewCleanupPad(scope, args...)
+// on the given parent exception pad and exception arguments.
+func (block *Block) NewCleanupPad(parentPad ExceptionPad, args ...value.Value) *InstCleanupPad {
+	inst := NewCleanupPad(parentPad, args...)
 	block.Insts = append(block.Insts, inst)
 	return inst
 }

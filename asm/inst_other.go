@@ -64,7 +64,7 @@ func (fgen *funcGen) newPhiInst(ident ir.LocalIdent, old *ast.PhiInst) (*ir.Inst
 // newSelectInst returns a new IR select instruction (without body but with
 // type) based on the given AST select instruction.
 func (fgen *funcGen) newSelectInst(ident ir.LocalIdent, old *ast.SelectInst) (*ir.InstSelect, error) {
-	typ, err := fgen.gen.irType(old.X().Typ())
+	typ, err := fgen.gen.irType(old.ValueTrue().Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -226,18 +226,18 @@ func (fgen *funcGen) irSelectInst(new ir.Instruction, old *ast.SelectInst) error
 		return errors.WithStack(err)
 	}
 	inst.Cond = cond
-	// X operand.
-	x, err := fgen.irTypeValue(old.X())
+	// True condition value.
+	valueTrue, err := fgen.irTypeValue(old.ValueTrue())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	inst.X = x
-	// Y operand.
-	y, err := fgen.irTypeValue(old.Y())
+	inst.ValueTrue = valueTrue
+	// False condition value.
+	valueFalse, err := fgen.irTypeValue(old.ValueFalse())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	inst.Y = y
+	inst.ValueFalse = valueFalse
 	// (optional) Fast math flags.
 	inst.FastMathFlags = irFastMathFlags(old.FastMathFlags())
 	// (optional) Metadata.
@@ -421,16 +421,16 @@ func (fgen *funcGen) irCatchPadInst(new ir.Instruction, old *ast.CatchPadInst) e
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCatchPad, got %T", new))
 	}
 	// Exception scope.
-	ident := localIdent(old.Scope())
+	ident := localIdent(old.CatchSwitch())
 	v, ok := fgen.locals[ident]
 	if !ok {
 		return errors.Errorf("unable to locate local identifier %q", ident.Ident())
 	}
-	scope, ok := v.(*ir.TermCatchSwitch)
+	catchSwitch, ok := v.(*ir.TermCatchSwitch)
 	if !ok {
-		return errors.Errorf("invalid scope type; expected *ir.TermCatchSwitch, got %T", v)
+		return errors.Errorf("invalid parent catchswitch type; expected *ir.TermCatchSwitch, got %T", v)
 	}
-	inst.Scope = scope
+	inst.CatchSwitch = catchSwitch
 	// Exception arguments.
 	if oldArgs := old.Args(); len(oldArgs) > 0 {
 		inst.Args = make([]value.Value, len(oldArgs))
@@ -461,11 +461,11 @@ func (fgen *funcGen) irCleanupPadInst(new ir.Instruction, old *ast.CleanupPadIns
 		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstCleanupPad, got %T", new))
 	}
 	// Exception scope.
-	scope, err := fgen.irExceptionScope(old.Scope())
+	parentPad, err := fgen.irExceptionPad(old.ParentPad())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	inst.Scope = scope
+	inst.ParentPad = parentPad
 	// Exception arguments.
 	if oldArgs := old.Args(); len(oldArgs) > 0 {
 		inst.Args = make([]value.Value, len(oldArgs))

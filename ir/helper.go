@@ -133,10 +133,16 @@ func (d Dereferenceable) String() string {
 	return fmt.Sprintf("dereferenceable(%d)", d.N)
 }
 
-// TODO: figure out definition of ExceptionScope.
+// TODO: check if *ir.InstLandingPad is a valid ExceptionPad.
 
-// ExceptionScope is an exception scope.
-type ExceptionScope interface {
+// ExceptionPad is an exception pad or the none token.
+//
+// An ExceptionPad has one of the following underlying types.
+//
+//    *ir.InstCatchPad
+//    *ir.InstCleanupPad
+//    *constant.NoneToken
+type ExceptionPad interface {
 	value.Value
 }
 
@@ -332,26 +338,6 @@ type ReturnAttribute interface {
 	// IsReturnAttribute ensures that only return attributes can be assigned to
 	// the ir.ReturnAttribute interface.
 	IsReturnAttribute()
-}
-
-// TODO: figure out definition of UnwindTarget.
-
-// UnwindTarget is an unwind target.
-//
-// An UnwindTarget has one of the following underlying types.
-//
-//    *ir.Block
-//    ir.UnwindToCaller
-type UnwindTarget interface {
-	value.Value
-}
-
-// UnwindToCaller specifies the caller as an unwind target.
-type UnwindToCaller struct{}
-
-// String returns the string representation of the unwind target.
-func (UnwindToCaller) String() string {
-	return "to caller"
 }
 
 // ___ [ Function parameter ] __________________________________________________

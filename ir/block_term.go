@@ -67,8 +67,21 @@ func (block *Block) NewIndirectBr(addr constant.Constant, validTargets ...*Block
 // for normal and exceptional execution.
 //
 // TODO: specify the set of underlying types of invokee.
-func (block *Block) NewInvoke(invokee value.Value, args []value.Value, normal, exception *Block) *TermInvoke {
-	term := NewInvoke(invokee, args, normal, exception)
+func (block *Block) NewInvoke(invokee value.Value, args []value.Value, normalRetTarget, exceptionRetTarget *Block) *TermInvoke {
+	term := NewInvoke(invokee, args, normalRetTarget, exceptionRetTarget)
+	block.Term = term
+	return term
+}
+
+// ~~~ [ callbr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// NewCallBr sets the terminator of the basic block to a new callbr terminator
+// based on the given callee, function arguments and control flow return points
+// for normal and exceptional execution.
+//
+// TODO: specify the set of underlying types of callee.
+func (block *Block) NewCallBr(callee value.Value, args []value.Value, normalRetTarget *Block, otherRetTargets ...*Block) *TermCallBr {
+	term := NewCallBr(callee, args, normalRetTarget, otherRetTargets...)
 	block.Term = term
 	return term
 }
@@ -86,10 +99,11 @@ func (block *Block) NewResume(x value.Value) *TermResume {
 // ~~~ [ catchswitch ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCatchSwitch sets the terminator of the basic block to a new catchswitch
-// terminator based on the given exception scope, exception handlers and unwind
-// target.
-func (block *Block) NewCatchSwitch(scope ExceptionScope, handlers []*Block, unwindTarget UnwindTarget) *TermCatchSwitch {
-	term := NewCatchSwitch(scope, handlers, unwindTarget)
+// terminator based on the given parent exception pad, exception handlers and
+// optional default unwind target. If defaultUnwindTarget is nil, catchswitch
+// unwinds to caller function.
+func (block *Block) NewCatchSwitch(parentPad ExceptionPad, handlers []*Block, defaultUnwindTarget *Block) *TermCatchSwitch {
+	term := NewCatchSwitch(parentPad, handlers, defaultUnwindTarget)
 	block.Term = term
 	return term
 }
@@ -98,8 +112,8 @@ func (block *Block) NewCatchSwitch(scope ExceptionScope, handlers []*Block, unwi
 
 // NewCatchRet sets the terminator of the basic block to a new catchret
 // terminator based on the given exit catchpad and target basic block.
-func (block *Block) NewCatchRet(from *InstCatchPad, to *Block) *TermCatchRet {
-	term := NewCatchRet(from, to)
+func (block *Block) NewCatchRet(catchPad *InstCatchPad, target *Block) *TermCatchRet {
+	term := NewCatchRet(catchPad, target)
 	block.Term = term
 	return term
 }
@@ -107,9 +121,10 @@ func (block *Block) NewCatchRet(from *InstCatchPad, to *Block) *TermCatchRet {
 // ~~~ [ cleanupret ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // NewCleanupRet sets the terminator of the basic block to a new cleanupret
-// terminator based on the given exit cleanuppad and unwind target.
-func (block *Block) NewCleanupRet(from *InstCleanupPad, to UnwindTarget) *TermCleanupRet {
-	term := NewCleanupRet(from, to)
+// terminator based on the given exit cleanuppad and optional unwind target. If
+// unwindTarget is nil, cleanupret unwinds to caller function.
+func (block *Block) NewCleanupRet(cleanupPad *InstCleanupPad, unwindTarget *Block) *TermCleanupRet {
+	term := NewCleanupRet(cleanupPad, unwindTarget)
 	block.Term = term
 	return term
 }

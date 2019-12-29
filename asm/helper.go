@@ -376,9 +376,9 @@ func (fgen *funcGen) irExceptionArg(old ast.ExceptionArg) (value.Value, error) {
 	}
 }
 
-// irExceptionScope returns the IR exception scope corresponding to the given
-// AST exception scope.
-func (fgen *funcGen) irExceptionScope(old ast.ExceptionScope) (ir.ExceptionScope, error) {
+// irExceptionPad returns the IR exception pad corresponding to the given AST
+// exception pad.
+func (fgen *funcGen) irExceptionPad(old ast.ExceptionPad) (ir.ExceptionPad, error) {
 	switch old := old.(type) {
 	case *ast.NoneConst:
 		return constant.None, nil
@@ -390,7 +390,7 @@ func (fgen *funcGen) irExceptionScope(old ast.ExceptionScope) (ir.ExceptionScope
 		}
 		return v, nil
 	default:
-		panic(fmt.Errorf("spport for exception scope %T not yet implemented", old))
+		panic(fmt.Errorf("spport for exception pad %T not yet implemented", old))
 	}
 }
 
@@ -663,12 +663,13 @@ func irTLSModelFromThreadLocal(old ast.ThreadLocal) enum.TLSModel {
 
 // irUnwindTarget returns the IR unwind target corresponding to the given AST
 // unwind target.
-func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (ir.UnwindTarget, error) {
+func (fgen *funcGen) irUnwindTarget(n ast.UnwindTarget) (*ir.Block, error) {
 	switch n := n.(type) {
 	case *ast.Label:
 		return fgen.irBlock(*n)
 	case *ast.UnwindToCaller:
-		return ir.UnwindToCaller{}, nil
+		// A nil unwind target basic block indicates "unwind to caller".
+		return nil, nil
 	default:
 		panic(fmt.Errorf("support for unwind target %T not yet implemented", n))
 	}

@@ -5,8 +5,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/llir/ll v0.0.0-20191220193154-e59c7d31259a h1:8dIgT/uBSaEUd8QZZFs06mfOYLFVrqzgnTYdqVbSBDk=
-github.com/llir/ll v0.0.0-20191220193154-e59c7d31259a/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
+github.com/llir/ll v0.0.0-20191229032745-05be70ade156 h1:tQ3EaDUy4rHvIyvuI2Yf1X2xPMVi4orBwX3H1NSWp74=
+github.com/llir/ll v0.0.0-20191229032745-05be70ade156/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/mewmew/float v0.0.0-20191226120903-16bbe2fdd85e h1:KCD7E/8LKwDsC5ymlEWJ3xCiSPaCywrS/psToBMOBH4=
 github.com/mewmew/float v0.0.0-20191226120903-16bbe2fdd85e/go.mod h1:O+xb+8ycBNHzJicFVs7GRWtruD4tVZI0huVnw5TM01E=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=

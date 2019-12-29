@@ -235,8 +235,10 @@ type InstSelect struct {
 	LocalIdent
 	// Selection condition.
 	Cond value.Value // boolean or boolean vector
-	// Operands.
-	X, Y value.Value
+	// True condition value.
+	ValueTrue value.Value
+	// False condition value.
+	ValueFalse value.Value
 
 	// extra.
 
@@ -249,9 +251,9 @@ type InstSelect struct {
 }
 
 // NewSelect returns a new select instruction based on the given selection
-// condition and operands.
-func NewSelect(cond, x, y value.Value) *InstSelect {
-	inst := &InstSelect{Cond: cond, X: x, Y: y}
+// condition and true and false condition values.
+func NewSelect(cond, valueTrue, valueFalse value.Value) *InstSelect {
+	inst := &InstSelect{Cond: cond, ValueTrue: valueTrue, ValueFalse: valueFalse}
 	// Compute type.
 	inst.Type()
 	return inst
@@ -267,7 +269,7 @@ func (inst *InstSelect) String() string {
 func (inst *InstSelect) Type() types.Type {
 	// Cache type if not present.
 	if inst.Typ == nil {
-		inst.Typ = inst.X.Type()
+		inst.Typ = inst.ValueTrue.Type()
 	}
 	return inst.Typ
 }
@@ -282,7 +284,7 @@ func (inst *InstSelect) LLString() string {
 	for _, flag := range inst.FastMathFlags {
 		fmt.Fprintf(buf, " %s", flag)
 	}
-	fmt.Fprintf(buf, " %s, %s, %s", inst.Cond, inst.X, inst.Y)
+	fmt.Fprintf(buf, " %s, %s, %s", inst.Cond, inst.ValueTrue, inst.ValueFalse)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}
@@ -557,9 +559,8 @@ func (clause *Clause) String() string {
 type InstCatchPad struct {
 	// Name of local variable associated with the result.
 	LocalIdent
-	// Exception scope.
-	// TODO: rename to From? rename to Within?
-	Scope value.Value // *ir.TermCatchSwitch
+	// Parent catchswitch terminator.
+	CatchSwitch value.Value // *ir.TermCatchSwitch
 	// Exception arguments.
 	//
 	// Arg has one of the following underlying types:
@@ -573,10 +574,10 @@ type InstCatchPad struct {
 	Metadata
 }
 
-// NewCatchPad returns a new catchpad instruction based on the given exception
-// scope and exception arguments.
-func NewCatchPad(scope *TermCatchSwitch, args ...value.Value) *InstCatchPad {
-	return &InstCatchPad{Scope: scope, Args: args}
+// NewCatchPad returns a new catchpad instruction based on the given parent
+// catchswitch terminator and exception arguments.
+func NewCatchPad(catchSwitch *TermCatchSwitch, args ...value.Value) *InstCatchPad {
+	return &InstCatchPad{CatchSwitch: catchSwitch, Args: args}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -596,7 +597,7 @@ func (inst *InstCatchPad) LLString() string {
 	// ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "catchpad within %s [", inst.Scope.Ident())
+	fmt.Fprintf(buf, "catchpad within %s [", inst.CatchSwitch.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")
@@ -616,9 +617,8 @@ func (inst *InstCatchPad) LLString() string {
 type InstCleanupPad struct {
 	// Name of local variable associated with the result.
 	LocalIdent
-	// Exception scope.
-	// TODO: rename to Parent? rename to From?
-	Scope value.Value // ir.ExceptionScope
+	// Parent exception pad.
+	ParentPad value.Value // ir.ExceptionPad
 	// Exception arguments.
 	//
 	// Arg has one of the following underlying types:
@@ -633,9 +633,9 @@ type InstCleanupPad struct {
 }
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given
-// exception scope and exception arguments.
-func NewCleanupPad(scope ExceptionScope, args ...value.Value) *InstCleanupPad {
-	return &InstCleanupPad{Scope: scope, Args: args}
+// parent exception pad and exception arguments.
+func NewCleanupPad(parentPad ExceptionPad, args ...value.Value) *InstCleanupPad {
+	return &InstCleanupPad{ParentPad: parentPad, Args: args}
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -655,7 +655,7 @@ func (inst *InstCleanupPad) LLString() string {
 	// separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "cleanuppad within %s [", inst.Scope.Ident())
+	fmt.Fprintf(buf, "cleanuppad within %s [", inst.ParentPad.Ident())
 	for i, arg := range inst.Args {
 		if i != 0 {
 			buf.WriteString(", ")

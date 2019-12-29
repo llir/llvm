@@ -369,17 +369,17 @@ func (fgen *funcGen) irInvokeTerm(new ir.Terminator, old *ast.InvokeTerm) error 
 	}
 	term.Invokee = invokee
 	// Normal control flow return point.
-	normal, err := fgen.irBlock(old.Normal())
+	normalRetTarget, err := fgen.irBlock(old.NormalRetTarget())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.Normal = normal
+	term.NormalRetTarget = normalRetTarget
 	// Exception control flow return point.
-	exception, err := fgen.irBlock(old.Exception())
+	exceptionRetTarget, err := fgen.irBlock(old.ExceptionRetTarget())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.Exception = exception
+	term.ExceptionRetTarget = exceptionRetTarget
 	// (optional) Calling convention.
 	if n, ok := old.CallingConv(); ok {
 		term.CallingConv = irCallingConv(n)
@@ -470,18 +470,18 @@ func (fgen *funcGen) irCallBrTerm(new ir.Terminator, old *ast.CallBrTerm) error 
 	}
 	term.Callee = callee
 	// Normal control flow return point.
-	normal, err := fgen.irBlock(old.Normal())
+	normalRetTarget, err := fgen.irBlock(old.NormalRetTarget())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.Normal = normal
+	term.NormalRetTarget = normalRetTarget
 	// Exception control flow return point.
-	for _, oldOther := range old.Others() {
-		other, err := fgen.irBlock(oldOther)
+	for _, oldOtherRetTarget := range old.OtherRetTargets() {
+		otherRetTarget, err := fgen.irBlock(oldOtherRetTarget)
 		if err != nil {
 			return errors.WithStack(err)
 		}
-		term.Others = append(term.Others, other)
+		term.OtherRetTargets = append(term.OtherRetTargets, otherRetTarget)
 	}
 	// (optional) Calling convention.
 	if n, ok := old.CallingConv(); ok {
@@ -560,12 +560,12 @@ func (fgen *funcGen) irCatchSwitchTerm(new ir.Terminator, old *ast.CatchSwitchTe
 	if !ok {
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchSwitch, got %T", new))
 	}
-	// Exception scope.
-	scope, err := fgen.irExceptionScope(old.Scope())
+	// Parent exception pad.
+	parentPad, err := fgen.irExceptionPad(old.ParentPad())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.Scope = scope
+	term.ParentPad = parentPad
 	// Exception handlers.
 	if oldHandlers := old.Handlers().Labels(); len(oldHandlers) > 0 {
 		term.Handlers = make([]value.Value, len(oldHandlers))
@@ -577,12 +577,19 @@ func (fgen *funcGen) irCatchSwitchTerm(new ir.Terminator, old *ast.CatchSwitchTe
 			term.Handlers[i] = handler
 		}
 	}
-	// Unwind target.
-	unwindTarget, err := fgen.irUnwindTarget(old.UnwindTarget())
+	// Optional default unwind target basic block; if nil unwind to caller.
+	defaultUnwindTarget, err := fgen.irUnwindTarget(old.DefaultUnwindTarget())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.UnwindTarget = unwindTarget
+	if defaultUnwindTarget != nil {
+		// Note: since DefaultUnwindTarget is an interface we have to be careful
+		// with typed nil values (e.g. `(*ir.Block)(nil)`). This is to ensure that
+		// DefaultUnwindTarget is nil and not `{Type: ir.Block, Value: nil}`.
+		//
+		// ref: https://golang.org/doc/faq#nil_error
+		term.DefaultUnwindTarget = defaultUnwindTarget
+	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
@@ -602,7 +609,7 @@ func (fgen *funcGen) irCatchRetTerm(new ir.Terminator, old *ast.CatchRetTerm) er
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCatchRet, got %T", new))
 	}
 	// Exit catchpad.
-	v, err := fgen.irValue(types.Token, old.From())
+	v, err := fgen.irValue(types.Token, old.CatchPad())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -610,13 +617,13 @@ func (fgen *funcGen) irCatchRetTerm(new ir.Terminator, old *ast.CatchRetTerm) er
 	if !ok {
 		return errors.Errorf("invalid catchpad type; expected *ir.InstCatchPad, got %T", v)
 	}
-	term.From = catchpad
+	term.CatchPad = catchpad
 	// Target basic block to transfer control flow to.
-	to, err := fgen.irBlock(old.To())
+	target, err := fgen.irBlock(old.Target())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.To = to
+	term.Target = target
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
@@ -636,7 +643,7 @@ func (fgen *funcGen) irCleanupRetTerm(new ir.Terminator, old *ast.CleanupRetTerm
 		panic(fmt.Errorf("invalid IR terminator for AST terminator; expected *ir.TermCleanupRet, got %T", new))
 	}
 	// Exit cleanuppad.
-	v, err := fgen.irValue(types.Token, old.From())
+	v, err := fgen.irValue(types.Token, old.CleanupPad())
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -644,13 +651,20 @@ func (fgen *funcGen) irCleanupRetTerm(new ir.Terminator, old *ast.CleanupRetTerm
 	if !ok {
 		return errors.Errorf("invalid cleanuppad type; expected *ir.InstCleanupPad, got %T", v)
 	}
-	term.From = cleanuppad
-	// Unwind target.
+	term.CleanupPad = cleanuppad
+	// Optional unwind target basic block; if nil unwind to caller.
 	unwindTarget, err := fgen.irUnwindTarget(old.UnwindTarget())
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	term.UnwindTarget = unwindTarget
+	if unwindTarget != nil {
+		// Note: since UnwindTarget is an interface we have to be careful
+		// with typed nil values (e.g. `(*ir.Block)(nil)`). This is to ensure that
+		// UnwindTarget is nil and not `{Type: ir.Block, Value: nil}`.
+		//
+		// ref: https://golang.org/doc/faq#nil_error
+		term.UnwindTarget = unwindTarget
+	}
 	// (optional) Metadata.
 	md, err := fgen.gen.irMetadataAttachments(old.Metadata())
 	if err != nil {
