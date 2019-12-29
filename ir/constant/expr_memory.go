@@ -30,9 +30,6 @@ type ExprGetElementPtr struct {
 	InBounds bool
 }
 
-// TODO: refine NewGetElementPtr to take elemType as argument, as this is
-// really the type used to compute the result type of gep.
-
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // element type, source address and element indices.
 func NewGetElementPtr(elemType types.Type, src Constant, indices ...Constant) *ExprGetElementPtr {

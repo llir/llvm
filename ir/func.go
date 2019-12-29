@@ -186,8 +186,6 @@ func (f *Func) AssignIDs() error {
 				continue
 			}
 			// Skip void instructions.
-			// TODO: Check if any other value instructions than call may have void
-			// type.
 			if isVoidValue(n) {
 				continue
 			}

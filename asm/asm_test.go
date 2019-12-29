@@ -57,7 +57,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
 
 		// float infinity and not-a-number.
-		//{path: "../testdata/llvm/test/Assembler/2002-04-07-InfConstant.ll"}, // TODO: fix handling of float infinity hex representation.
+		{path: "../testdata/llvm/test/Assembler/2002-04-07-InfConstant.ll"},
 		{path: "../testdata/llvm/test/Analysis/BasicAA/pr18573.ll"},
 
 		// Distinguish named from unnamed locals (issue #39).

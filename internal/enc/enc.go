@@ -172,9 +172,6 @@ func MetadataName(name string) string {
 	return "!" + string(Escape([]byte(name), valid))
 }
 
-// TODO: remove MetadataID if MetadataIdent is introduced, analogous to
-// ir.LocalIdent.
-
 // MetadataID encodes a metadata ID to its LLVM IR assembly representation.
 //
 // Examples:
@@ -270,7 +267,7 @@ func Escape(s []byte, valid func(b byte) bool) string {
 	// Check if a replacement is required.
 	extra := 0
 	for i := 0; i < len(s); i++ {
-		if !valid(s[i]) { // TODO: Check if there is a strings.IndexFunc.
+		if !valid(s[i]) {
 			// Two extra bytes are required for each invalid byte; e.g.
 			//    "#" -> `\23`
 			//    "世" -> `\E4\B8\96`

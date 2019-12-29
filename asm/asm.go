@@ -12,7 +12,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TODO: remove debug output before v0.3.0 release.
 var (
 	// dbg is a logger which logs debug messages with "asm:" prefix to standard
 	// error.
