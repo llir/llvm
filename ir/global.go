@@ -40,6 +40,8 @@ type Global struct {
 	TLSModel enum.TLSModel
 	// (optional) Unnamed address; zero value if not present.
 	UnnamedAddr enum.UnnamedAddr
+	// (optional) Address space; zero if not present.
+	AddrSpace types.AddrSpace
 	// (optional) Externally initialized; false if not present.
 	ExternallyInitialized bool
 	// (optional) Section name; empty if not present.
@@ -87,6 +89,7 @@ func (g *Global) Type() types.Type {
 	// Cache type if not present.
 	if g.Typ == nil {
 		g.Typ = types.NewPointer(g.ContentType)
+		g.Typ.AddrSpace = g.AddrSpace
 	}
 	return g.Typ
 }
@@ -129,8 +132,8 @@ func (g *Global) LLString() string {
 	if g.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", g.UnnamedAddr)
 	}
-	if g.Typ.AddrSpace != 0 {
-		fmt.Fprintf(buf, " %s", g.Typ.AddrSpace)
+	if g.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", g.AddrSpace)
 	}
 	if g.ExternallyInitialized {
 		buf.WriteString(" externally_initialized")

@@ -68,10 +68,12 @@ func (gen *generator) newGlobal(ident ir.GlobalIdent, oldContentType ast.Type, o
 	}
 	typ := types.NewPointer(contentType)
 	// (optional) Address space.
+	var addrSpace types.AddrSpace
 	if oldAddrSpace.IsValid() {
-		typ.AddrSpace = irAddrSpace(oldAddrSpace)
+		addrSpace = irAddrSpace(oldAddrSpace)
+		typ.AddrSpace = addrSpace
 	}
-	return &ir.Global{GlobalIdent: ident, ContentType: contentType, Typ: typ}, nil
+	return &ir.Global{GlobalIdent: ident, ContentType: contentType, Typ: typ, AddrSpace: addrSpace}, nil
 }
 
 // newIndirectSymbol returns a new IR indirect symbol definition (without body
@@ -149,10 +151,12 @@ func (gen *generator) newFunc(ident ir.GlobalIdent, hdr ast.FuncHeader) (*ir.Fun
 	}
 	typ := types.NewPointer(sig)
 	// (optional) Address space.
+	var addrSpace types.AddrSpace
 	if n, ok := hdr.AddrSpace(); ok {
-		typ.AddrSpace = irAddrSpace(n)
+		addrSpace = irAddrSpace(n)
+		typ.AddrSpace = addrSpace
 	}
-	return &ir.Func{GlobalIdent: ident, Sig: sig, Typ: typ, Parent: gen.m}, nil
+	return &ir.Func{GlobalIdent: ident, Sig: sig, Typ: typ, AddrSpace: addrSpace, Parent: gen.m}, nil
 }
 
 // ### [ Helper functions ] ####################################################

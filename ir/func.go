@@ -47,6 +47,8 @@ type Func struct {
 	ReturnAttrs []ReturnAttribute
 	// (optional) Unnamed address.
 	UnnamedAddr enum.UnnamedAddr
+	// (optional) Address space; zero if not present.
+	AddrSpace types.AddrSpace
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Section name; empty if not present.
@@ -103,6 +105,7 @@ func (f *Func) Type() types.Type {
 	// Cache type if not present.
 	if f.Typ == nil {
 		f.Typ = types.NewPointer(f.Sig)
+		f.Typ.AddrSpace = f.AddrSpace
 	}
 	return f.Typ
 }
@@ -250,8 +253,8 @@ func headerString(f *Func) string {
 	if f.UnnamedAddr != enum.UnnamedAddrNone {
 		fmt.Fprintf(buf, " %s", f.UnnamedAddr)
 	}
-	if f.Typ.AddrSpace != 0 {
-		fmt.Fprintf(buf, " %s", f.Typ.AddrSpace)
+	if f.AddrSpace != 0 {
+		fmt.Fprintf(buf, " %s", f.AddrSpace)
 	}
 	for _, attr := range f.FuncAttrs {
 		fmt.Fprintf(buf, " %s", attr)
