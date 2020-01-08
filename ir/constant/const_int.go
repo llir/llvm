@@ -132,7 +132,7 @@ func (c *Int) Ident() string {
 
 	// Minimum difference between entropy of decimal and hexadecimal notation to
 	// output x in hexadecimal notation.
-	const minEntropyDiff = 0.3
+	const minEntropyDiff = 0.2
 	// Maximum allowed entropy of hexadecimal notation to output x in hexadecimal
 	// notation.
 	//
@@ -145,12 +145,14 @@ func (c *Int) Ident() string {
 	// improve readability. Thus we add an upper bound on the hexadecimal entropy,
 	// and if the entropy is above this bound, output in decimal notation
 	// instead.
-	maxHexEntropy := calcMaxHexEntropy(len(c.X.Text(16)))
+	hexLength := len(c.X.Text(16))
+	maxHexEntropy := calcMaxHexEntropy(hexLength)
 	threshold := big.NewInt(0x1000) // 4096
-	// Check entropy if x is >= 0x1000.
+	// Check entropy if x >= 0x1000.
 	if c.X.Cmp(threshold) >= 0 {
 		hexentropy := hexEntropy(c.X)
-		if hexentropy <= maxHexEntropy && decimalEntropy(c.X) >= hexentropy+minEntropyDiff {
+		decentropy := decimalEntropy(c.X)
+		if hexentropy <= maxHexEntropy + 0.01 && decentropy >= hexentropy+minEntropyDiff {
 			return "u0x" + strings.ToUpper(c.X.Text(16))
 		}
 	}
@@ -169,45 +171,27 @@ func (c *Int) Ident() string {
 //    maxHexEntropy = 0.43   length == 7 (3/7)
 //    maxHexEntropy = 0.38   length == 8 (3/8)
 //    maxHexEntropy = 0.34   length == 9 (3/9)
-//    maxHexEntropy = 0.4    length == 10 (4/10)
+//    maxHexEntropy = 0.4    length == 10 (3/10)
 //    maxHexEntropy = 0.37   length == 11 (4/11)
 //    maxHexEntropy = 0.34   length == 12 (4/12)
-//    maxHexEntropy = 0.39   length == 13 (5/13)
-//    maxHexEntropy = 0.36   length == 14 (5/14)
-//    maxHexEntropy = 0.34   length == 15 (5/15)
-//    maxHexEntropy = 0.38   length >= 16 (6/16)
+//    maxHexEntropy = 0.39   length == 13 (4/13)
+//    maxHexEntropy = 0.36   length == 14 (4/14)
+//    maxHexEntropy = 0.34   length == 15 (4/15)
+//    maxHexEntropy = 0.38   length >= 16 (4/16)
 func calcMaxHexEntropy(length int) float64 {
-	if length < 4 {
-		return 0
+	if length > 16 {
+		length = 16
 	}
-	switch length {
-	case 4:
-		return 2.0 / 4.0
-	case 5:
-		return 2.0 / 5.0
-	case 6:
-		return 2.0 / 6.0
-	case 7:
-		return 3.0 / 7.0
-	case 8:
-		return 3.0 / 8.0
-	case 9:
-		return 3.0 / 9.0
-	case 10:
-		return 4.0 / 10.0
-	case 11:
-		return 4.0 / 11.0
-	case 12:
-		return 4.0 / 12.0
-	case 13:
-		return 5.0 / 13.0
-	case 14:
-		return 5.0 / 14.0
-	case 15:
-		return 5.0 / 15.0
-	// length >= 16
+	switch {
+	case length < 4:
+		return 0
+	case 4 <= length && length <= 6:
+		return 2.0 / float64(length)
+	case 7 <= length && length <= 10:
+		return 3.0 / float64(length)
+	// length >= 11
 	default:
-		return 6.0 / 16.0
+		return 4.0 / float64(length)
 	}
 }
 
