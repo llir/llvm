@@ -171,13 +171,13 @@ func (c *Int) Ident() string {
 //    maxHexEntropy = 0.43   length == 7 (3/7)
 //    maxHexEntropy = 0.38   length == 8 (3/8)
 //    maxHexEntropy = 0.34   length == 9 (3/9)
-//    maxHexEntropy = 0.4    length == 10 (3/10)
+//    maxHexEntropy = 0.3    length == 10 (3/10)
 //    maxHexEntropy = 0.37   length == 11 (4/11)
 //    maxHexEntropy = 0.34   length == 12 (4/12)
-//    maxHexEntropy = 0.39   length == 13 (4/13)
-//    maxHexEntropy = 0.36   length == 14 (4/14)
-//    maxHexEntropy = 0.34   length == 15 (4/15)
-//    maxHexEntropy = 0.38   length >= 16 (4/16)
+//    maxHexEntropy = 0.31   length == 13 (4/13)
+//    maxHexEntropy = 0.29   length == 14 (4/14)
+//    maxHexEntropy = 0.27   length == 15 (4/15)
+//    maxHexEntropy = 0.25   length >= 16 (4/16)
 func calcMaxHexEntropy(length int) float64 {
 	if length > 16 {
 		length = 16
