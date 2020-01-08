@@ -145,7 +145,7 @@ func (c *Int) Ident() string {
 // hexEntropy returns the entropy of x when encoded in hexadecimal notation. The
 // entropy is in range (0.0, 1.0] and is determined by the number of unique hex
 // digits required to represent x in hexadecimal notation divided by the total
-// number of hex digits, ignoring prefix.
+// number of hex digits ignoring prefix (capped by base 16).
 //
 // For instance, the hexadecimal value 0x80000000 (2147483648 in decimal)
 // requires two unique hex digits to be represented in hexadecimal notation,
@@ -169,7 +169,7 @@ func hexEntropy(x *big.Int) float64 {
 // decimalEntropy returns the entropy of x when encoded in decimal notation. The
 // entropy is in range (0.0, 1.0] and is determined by the number of unique
 // decimal digits required to represent x in decimal notation divided by the
-// total number of digits.
+// total number of digits (capped by base 10).
 //
 // For instance, the decimal value 2147483648 (0x80000000 in hex) requires seven
 // unique decimal digits to be represented in decimal notation; namely '1', '2',
@@ -198,7 +198,7 @@ func decimalEntropy(x *big.Int) float64 {
 // intEntropy returns the entropy of x when encoded in base notation. Base must
 // be between 2 and 62, inclusive. The entropy is in range (0.0, 1.0] and is
 // determined by the number of unique digits required to represent x in base
-// notation divided by the total number of digits.
+// notation divided by the total number of digits (capped by base).
 func intEntropy(x *big.Int, base int) float64 {
 	if base < 2 || base > 62 {
 		panic(fmt.Errorf("invalid base; expected 2 <= base <= 62, got %d", base))
@@ -217,13 +217,17 @@ func intEntropy(x *big.Int, base int) float64 {
 		digits[d] = true
 	}
 	// Count unique digits.
-	entropy := 0
+	uniqueDigits := 0
 	for i := 0; i < base; i++ {
 		if digits[i] {
-			entropy++
+			uniqueDigits++
 		}
 	}
-	return float64(entropy) / float64(len(s))
+	length := len(s)
+	if length > base {
+		length = base
+	}
+	return float64(uniqueDigits) / float64(length)
 }
 
 // digitValue returns the integer value of the given digit byte. As defined by
