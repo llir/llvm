@@ -11,11 +11,14 @@ func TestIntIdent(t *testing.T) {
 		in   string
 		want string
 	}{
-		// integers < 1000 are always represented in decimal notation.
+		// integers < 0x1000 are always represented in decimal notation.
 		{in: "100", want: "100"},
 		{in: "256", want: "256"},
-		// integers >= 1000 are represented in hexadecimal notation if lower
+		{in: "1000", want: "1000"},
+		{in: "4095", want: "4095"},
+		// integers >= 0x1000 are represented in hexadecimal notation if lower
 		// entropy than decimal notation.
+		{in: "4096", want: "u0x1000"},
 		{in: "2147483648", want: "u0x80000000"},
 		{in: "9218868437227405312", want: "u0x7FF0000000000000"},
 		{in: "1000000000000000000", want: "1000000000000000000"}, // hex would be u0xDE0B6B3A7640000

@@ -127,13 +127,13 @@ func (c *Int) Ident() string {
 			panic(fmt.Errorf("invalid integer value of boolean type; expected 0 or 1, got %d", x))
 		}
 	}
-	// Output x in hexadecimal notation if x is positive, greater than or equal to
-	// 1000 and require less unique digits to be represented in hexadeciaml
-	// notation than decimal notation.
-	threashold := big.NewInt(1000)
-	if c.X.Cmp(threashold) >= 0 {
-		// Check entropy if x is >= 1000.
-		if decimalEntropy(c.X) > hexEntropy(c.X) {
+	// Output x in hexadecimal notation if x is positive, greater than or equal
+	// to 0x1000 and has a significantly lower entropy than decimal notation.
+	const minEntropyDiff = 0.3
+	threshold := big.NewInt(0x1000) // 4096
+	// Check entropy if x is >= 0x1000.
+	if c.X.Cmp(threshold) >= 0 {
+		if decimalEntropy(c.X) >= hexEntropy(c.X)+minEntropyDiff {
 			return "u0x" + strings.ToUpper(c.X.Text(16))
 		}
 	}
@@ -142,8 +142,10 @@ func (c *Int) Ident() string {
 
 // ### [ Helper functions ] ####################################################
 
-// hexEntropy returns the number of unique hex digits required to represent x in
-// hexadecimal notation.
+// hexEntropy returns the entropy of x when encoded in hexadecimal notation. The
+// entropy is in range (0.0, 1.0] and is determined by the number of unique hex
+// digits required to represent x in hexadecimal notation divided by the total
+// number of hex digits, ignoring prefix.
 //
 // For instance, the hexadecimal value 0x80000000 (2147483648 in decimal)
 // requires two unique hex digits to be represented in hexadecimal notation,
@@ -152,13 +154,22 @@ func (c *Int) Ident() string {
 // Hex digits of 0x80000000:
 //    0 0 0 0 0 0 0
 //    8
-func hexEntropy(x *big.Int) int {
+//
+// The total number of hex digits in 0x80000000 is 8. Thus, the entropy of
+// 0x80000000 in hexadecimal notation is
+//
+//    unique_digits/total_digits
+//    = 2/8
+//    = 0.25
+func hexEntropy(x *big.Int) float64 {
 	const base = 16
 	return intEntropy(x, base)
 }
 
-// decimalEntropy returns the number of unique decimal digits required to represent
-// x in decimal notation.
+// decimalEntropy returns the entropy of x when encoded in decimal notation. The
+// entropy is in range (0.0, 1.0] and is determined by the number of unique
+// decimal digits required to represent x in decimal notation divided by the
+// total number of digits.
 //
 // For instance, the decimal value 2147483648 (0x80000000 in hex) requires seven
 // unique decimal digits to be represented in decimal notation; namely '1', '2',
@@ -172,14 +183,23 @@ func hexEntropy(x *big.Int) int {
 //    6
 //    7
 //    8 8
-func decimalEntropy(x *big.Int) int {
+//
+// The total number of decimal digits in 2147483648 is 10. Thus, the entropy of
+// 2147483648 in decimal notation is
+//
+//    unique_digits/total_digits
+//    = 7/10
+//    = 0.7
+func decimalEntropy(x *big.Int) float64 {
 	const base = 10
 	return intEntropy(x, base)
 }
 
-// intEntropy returns the number of unique digits required to represent x in the
-// given base notation. Base must be between 2 and 62, inclusive.
-func intEntropy(x *big.Int, base int) int {
+// intEntropy returns the entropy of x when encoded in base notation. Base must
+// be between 2 and 62, inclusive. The entropy is in range (0.0, 1.0] and is
+// determined by the number of unique digits required to represent x in base
+// notation divided by the total number of digits.
+func intEntropy(x *big.Int, base int) float64 {
 	if base < 2 || base > 62 {
 		panic(fmt.Errorf("invalid base; expected 2 <= base <= 62, got %d", base))
 	}
@@ -203,7 +223,7 @@ func intEntropy(x *big.Int, base int) int {
 			entropy++
 		}
 	}
-	return entropy
+	return float64(entropy) / float64(len(s))
 }
 
 // digitValue returns the integer value of the given digit byte. As defined by
