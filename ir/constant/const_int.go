@@ -129,11 +129,28 @@ func (c *Int) Ident() string {
 	}
 	// Output x in hexadecimal notation if x is positive, greater than or equal
 	// to 0x1000 and has a significantly lower entropy than decimal notation.
+
+	// Minimum difference between entropy of decimal and hexadecimal notation to
+	// output x in hexadecimal notation.
 	const minEntropyDiff = 0.3
+	// Maximum allowed entropy of hexadecimal notation to output x in hexadecimal
+	// notation.
+	//
+	// This is useful as some hex values, while lower entropy than their decimal
+	// counter-part do not improve readability.
+	//
+	// For instance, the decimal entropy of 7240739780546808700 is 9/10 = 0.9 and
+	// the hexadecimal entropy of 0x647C4677A2884B7C is 8/16 = 0.5. As such the
+	// entropy difference is 0.9-0.5 = 0.4, but the hexadecimal notation does not
+	// improve readability. Thus we add an upper bound on the hexadecimal entropy,
+	// and if the entropy is above this bound, output in decimal notation
+	// instead.
+	maxHexEntropy := calcMaxHexEntropy(len(c.X.Text(16)))
 	threshold := big.NewInt(0x1000) // 4096
 	// Check entropy if x is >= 0x1000.
 	if c.X.Cmp(threshold) >= 0 {
-		if decimalEntropy(c.X) >= hexEntropy(c.X)+minEntropyDiff {
+		hexentropy := hexEntropy(c.X)
+		if hexentropy <= maxHexEntropy && decimalEntropy(c.X) >= hexentropy+minEntropyDiff {
 			return "u0x" + strings.ToUpper(c.X.Text(16))
 		}
 	}
@@ -141,6 +158,58 @@ func (c *Int) Ident() string {
 }
 
 // ### [ Helper functions ] ####################################################
+
+// calcMaxHexEntropy returns the maximum allowed hexadecimal entropy based on
+// the length of x in hexadecimal notation.
+//
+//    maxHexEntropy = 0.0    length < 4
+//    maxHexEntropy = 0.5    length == 4 (2/4)
+//    maxHexEntropy = 0.4    length == 5 (2/5)
+//    maxHexEntropy = 0.34   length == 6 (2/6)
+//    maxHexEntropy = 0.43   length == 7 (3/7)
+//    maxHexEntropy = 0.38   length == 8 (3/8)
+//    maxHexEntropy = 0.34   length == 9 (3/9)
+//    maxHexEntropy = 0.4    length == 10 (4/10)
+//    maxHexEntropy = 0.37   length == 11 (4/11)
+//    maxHexEntropy = 0.34   length == 12 (4/12)
+//    maxHexEntropy = 0.39   length == 13 (5/13)
+//    maxHexEntropy = 0.36   length == 14 (5/14)
+//    maxHexEntropy = 0.34   length == 15 (5/15)
+//    maxHexEntropy = 0.38   length >= 16 (6/16)
+func calcMaxHexEntropy(length int) float64 {
+	if length < 4 {
+		return 0
+	}
+	switch length {
+	case 4:
+		return 2.0 / 4.0
+	case 5:
+		return 2.0 / 5.0
+	case 6:
+		return 2.0 / 6.0
+	case 7:
+		return 3.0 / 7.0
+	case 8:
+		return 3.0 / 8.0
+	case 9:
+		return 3.0 / 9.0
+	case 10:
+		return 4.0 / 10.0
+	case 11:
+		return 4.0 / 11.0
+	case 12:
+		return 4.0 / 12.0
+	case 13:
+		return 5.0 / 13.0
+	case 14:
+		return 5.0 / 14.0
+	case 15:
+		return 5.0 / 15.0
+	// length >= 16
+	default:
+		return 6.0 / 16.0
+	}
+}
 
 // hexEntropy returns the entropy of x when encoded in hexadecimal notation. The
 // entropy is in range (0.0, 1.0] and is determined by the number of unique hex
