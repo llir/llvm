@@ -152,7 +152,7 @@ func (c *Int) Ident() string {
 	if c.X.Cmp(threshold) >= 0 {
 		hexentropy := hexEntropy(c.X)
 		decentropy := decimalEntropy(c.X)
-		if hexentropy <= maxHexEntropy + 0.01 && decentropy >= hexentropy+minEntropyDiff {
+		if hexentropy <= maxHexEntropy+0.01 && decentropy >= hexentropy+minEntropyDiff {
 			return "u0x" + strings.ToUpper(c.X.Text(16))
 		}
 	}
