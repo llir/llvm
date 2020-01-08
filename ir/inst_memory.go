@@ -584,7 +584,7 @@ func getIndex(index constant.Constant) gep.Index {
 			default:
 				// TODO: remove debug output.
 				panic(fmt.Errorf("support for gep index vector element type %T not yet implemented", elem))
-				return gep.Index{HasVal: false}
+				//return gep.Index{HasVal: false}
 			}
 		}
 		return gep.Index{
@@ -601,6 +601,6 @@ func getIndex(index constant.Constant) gep.Index {
 		// TODO: add support for more constant expressions.
 		// TODO: remove debug output.
 		panic(fmt.Errorf("support for gep index type %T not yet implemented", index))
-		return gep.Index{HasVal: false}
+		//return gep.Index{HasVal: false}
 	}
 }
