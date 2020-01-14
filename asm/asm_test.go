@@ -341,6 +341,9 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Bitcode/callbr.ll"},
 		{path: "../testdata/llvm/test/Bitcode/disubrange.ll"},
 
+		// LLVM test/CodeGen.
+		{path: "../testdata/llvm/test/CodeGen/X86/extractps.ll"},
+
 		// LLVM test/DebugInfo/Generic.
 		{path: "../testdata/llvm/test/DebugInfo/Generic/constant-pointers.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/Generic/debug-info-enum.ll"},

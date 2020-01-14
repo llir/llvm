@@ -15,6 +15,7 @@ import (
 
 // indexTopLevelEntities indexes the AST top-level entities of the given module.
 func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
+	id := int64(0)
 	// 1. Index AST top-level entities.
 	for _, entity := range old.TopLevelEntities() {
 		switch entity := entity.(type) {
@@ -43,28 +44,28 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			}
 			gen.old.comdatDefs[name] = entity
 		case *ast.GlobalDecl:
-			ident := globalIdent(entity.Name())
+			ident := giveUnnamedIdentID(globalIdent(entity.Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.IndirectSymbolDef:
-			ident := globalIdent(entity.Name())
+			ident := giveUnnamedIdentID(globalIdent(entity.Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.FuncDecl:
-			ident := globalIdent(entity.Header().Name())
+			ident := giveUnnamedIdentID(globalIdent(entity.Header().Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.FuncDef:
-			ident := globalIdent(entity.Header().Name())
+			ident := giveUnnamedIdentID(globalIdent(entity.Header().Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
@@ -96,6 +97,15 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 		}
 	}
 	return nil
+}
+
+// giveUnnamedIdentID give unnamed variable ID to ensure no conflict with others unnamed variables
+func giveUnnamedIdentID(ident ir.GlobalIdent, id *int64) ir.GlobalIdent {
+	if ident.IsUnnamed() {
+		ident.SetID(*id)
+		*id++
+	}
+	return ident
 }
 
 // === [ Create and index IR ] =================================================
