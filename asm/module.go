@@ -99,9 +99,10 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 	return nil
 }
 
-// giveUnnamedIdentID give unnamed variable ID to ensure no conflict with others unnamed variables
+// giveUnnamedIdentID assigns an unused ID to the global identifier if unnamed.
 func giveUnnamedIdentID(ident ir.GlobalIdent, id *int64) ir.GlobalIdent {
 	if ident.IsUnnamed() {
+		// Assign next unused ID to unnamed global identifier.
 		ident.SetID(*id)
 		*id++
 	}
