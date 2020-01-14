@@ -44,28 +44,28 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 			}
 			gen.old.comdatDefs[name] = entity
 		case *ast.GlobalDecl:
-			ident := gen.giveUnnamedIdentID(globalIdent(entity.Name()), &id)
+			ident := giveUnnamedIdentID(globalIdent(entity.Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.IndirectSymbolDef:
-			ident := gen.giveUnnamedIdentID(globalIdent(entity.Name()), &id)
+			ident := giveUnnamedIdentID(globalIdent(entity.Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.FuncDecl:
-			ident := gen.giveUnnamedIdentID(globalIdent(entity.Header().Name()), &id)
+			ident := giveUnnamedIdentID(globalIdent(entity.Header().Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
 			gen.old.globals[ident] = entity
 			gen.old.globalOrder = append(gen.old.globalOrder, ident)
 		case *ast.FuncDef:
-			ident := gen.giveUnnamedIdentID(globalIdent(entity.Header().Name()), &id)
+			ident := giveUnnamedIdentID(globalIdent(entity.Header().Name()), &id)
 			if prev, ok := gen.old.globals[ident]; ok {
 				return errors.Errorf("global identifier %q already present; prev `%s`, new `%s`", ident.Ident(), text(prev), text(entity))
 			}
@@ -100,13 +100,12 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 }
 
 // giveUnnamedIdentID give unnamed variable ID to ensure no conflict with others unnamed variables
-func (gen *generator) giveUnnamedIdentID(ident ir.GlobalIdent, id *int64) ir.GlobalIdent {
-	newIdent := ident
-	if newIdent.IsUnnamed() {
-		newIdent.SetID(*id)
-		*id = *id + 1
+func giveUnnamedIdentID(ident ir.GlobalIdent, id *int64) ir.GlobalIdent {
+	if ident.IsUnnamed() {
+		ident.SetID(*id)
+		*id++
 	}
-	return newIdent
+	return ident
 }
 
 // === [ Create and index IR ] =================================================
