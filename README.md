@@ -15,7 +15,6 @@ go get -u github.com/llir/llvm/...
 
 ## Users
 
-* [blessedvirginmary](https://github.com/NateGraff/blessedvirginmary): LLVM IR to Bash transpiler by [@NateGraff](https://github.com/NateGraff).
 * [decomp](https://github.com/decomp/decomp): LLVM IR to Go decompiler by [@decomp](https://github.com/decomp).
 * [geode](https://github.com/geode-lang/geode): Geode to LLVM IR compiler by [@nickwanninger](https://github.com/nickwanninger).
 * [leaven](https://github.com/andybalholm/leaven): LLVM IR to Go decompiler by [@andybalholm](https://github.com/andybalholm).
