@@ -185,8 +185,8 @@ func (f *Func) AssignIDs() error {
 			if !ok {
 				continue
 			}
-			// Skip void instructions.
-			if isVoidValue(n) {
+			// Skip void instructions (call with void return).
+			if types.Equal(n.Type(), types.Void) {
 				continue
 			}
 			// Assign local IDs to unnamed local variables.
@@ -198,7 +198,8 @@ func (f *Func) AssignIDs() error {
 		if !ok {
 			continue
 		}
-		if isVoidValue(n) {
+		// Skip void terminators (invoke, callbr with void return).
+		if types.Equal(n.Type(), types.Void) {
 			continue
 		}
 		if err := setName(n); err != nil {
@@ -303,16 +304,6 @@ func bodyString(body *Func) string {
 	}
 	buf.WriteString("}")
 	return buf.String()
-}
-
-// isVoidValue reports whether the given named value is a non-value (i.e. a call
-// instruction or invoke terminator with void-return type).
-func isVoidValue(n value.Named) bool {
-	switch n.(type) {
-	case *InstCall, *TermInvoke, *TermCallBr:
-		return n.Type().Equal(types.Void)
-	}
-	return false
 }
 
 // local is a local variable.
