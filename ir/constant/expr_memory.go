@@ -116,7 +116,7 @@ func (index *Index) String() string {
 func gepExprType(elemType, src types.Type, indices []Constant) types.Type {
 	var idxs []gep.Index
 	for _, index := range indices {
-		idx := getIndex(index)
+		idx := GetIndex(index)
 		// Check if index is of vector type.
 		if indexType, ok := index.Type().(*types.VectorType); ok {
 			idx.VectorLen = indexType.Len
@@ -126,16 +126,15 @@ func gepExprType(elemType, src types.Type, indices []Constant) types.Type {
 	return gep.ResultType(elemType, src, idxs)
 }
 
-// NOTE: keep getIndex in sync with getIndex in:
+// NOTE: keep GetIndex in sync with GetIndex in:
 //
 //    * ast/inst_memory.go
-//    * ir/inst_memory.go
 //    * ir/constant/expr_memory.go
 //
 // The reference point and source of truth is in ir/constant/expr_memory.go.
 
-// getIndex returns the gep index corresponding to the given constant index.
-func getIndex(index Constant) gep.Index {
+// GetIndex returns the gep index corresponding to the given constant index.
+func GetIndex(index Constant) gep.Index {
 	// unpack inrange indices.
 	if idx, ok := index.(*Index); ok {
 		index = idx.Constant

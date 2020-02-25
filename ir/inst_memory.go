@@ -515,7 +515,7 @@ func gepInstType(elemType, src types.Type, indices []value.Value) types.Type {
 		var idx gep.Index
 		switch index := index.(type) {
 		case constant.Constant:
-			idx = getIndex(index)
+			idx = constant.GetIndex(index)
 		default:
 			idx = gep.Index{HasVal: false}
 			// Check if index is of vector type.
@@ -526,81 +526,4 @@ func gepInstType(elemType, src types.Type, indices []value.Value) types.Type {
 		idxs = append(idxs, idx)
 	}
 	return gep.ResultType(elemType, src, idxs)
-}
-
-// NOTE: keep getIndex in sync with getIndex in:
-//
-//    * ast/inst_memory.go
-//    * ir/inst_memory.go
-//    * ir/constant/expr_memory.go
-//
-// The reference point and source of truth is in ir/constant/expr_memory.go.
-
-// getIndex returns the gep index corresponding to the given constant index.
-func getIndex(index constant.Constant) gep.Index {
-	// unpack inrange indices.
-	if idx, ok := index.(*constant.Index); ok {
-		index = idx.Constant
-	}
-	// Use index.Simplify() to simplify the constant expression to a concrete
-	// integer constant or vector of integers constant.
-	if idx, ok := index.(constant.Expression); ok {
-		index = idx.Simplify()
-	}
-	switch index := index.(type) {
-	case *constant.Int:
-		val := index.X.Int64()
-		return gep.NewIndex(val)
-	case *constant.ZeroInitializer:
-		return gep.NewIndex(0)
-	case *constant.Vector:
-		// ref: https://llvm.org/docs/LangRef.html#getelementptr-instruction
-		//
-		// > The getelementptr returns a vector of pointers, instead of a single
-		// > address, when one or more of its arguments is a vector. In such
-		// > cases, all vector arguments should have the same number of elements,
-		// > and every scalar argument will be effectively broadcast into a vector
-		// > during address calculation.
-		if len(index.Elems) == 0 {
-			return gep.Index{HasVal: false}
-		}
-		// Sanity check. All vector elements must be integers, and must have the
-		// same value.
-		var val int64
-		for i, elem := range index.Elems {
-			switch elem := elem.(type) {
-			case *constant.Int:
-				x := elem.X.Int64()
-				if i == 0 {
-					val = x
-				} else if x != val {
-					// since all elements were not identical, we must conclude that
-					// the index vector does not have a concrete value.
-					return gep.Index{
-						HasVal:    false,
-						VectorLen: uint64(len(index.Elems)),
-					}
-				}
-			default:
-				// TODO: remove debug output.
-				panic(fmt.Errorf("support for gep index vector element type %T not yet implemented", elem))
-				//return gep.Index{HasVal: false}
-			}
-		}
-		return gep.Index{
-			HasVal:    true,
-			Val:       val,
-			VectorLen: uint64(len(index.Elems)),
-		}
-	case *constant.Undef:
-		return gep.Index{HasVal: false}
-	case constant.Expression:
-		// should already have been simplified to a form we can handle.
-		return gep.Index{HasVal: false}
-	default:
-		// TODO: add support for more constant expressions.
-		// TODO: remove debug output.
-		panic(fmt.Errorf("support for gep index type %T not yet implemented", index))
-		//return gep.Index{HasVal: false}
-	}
 }

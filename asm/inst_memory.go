@@ -394,7 +394,6 @@ func (gen *generator) gepInstType(elemType, src types.Type, indices []ast.TypeVa
 // NOTE: keep getIndex in sync with getIndex in:
 //
 //    * ast/inst_memory.go
-//    * ir/inst_memory.go
 //    * ir/constant/expr_memory.go
 //
 // The reference point and source of truth is in ir/constant/expr_memory.go.
