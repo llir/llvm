@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/llir/llvm.svg?branch=master)](https://travis-ci.org/llir/llvm)
 [![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=master)](https://coveralls.io/github/llir/llvm?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/llir/llvm)](https://goreportcard.com/report/github.com/llir/llvm)
-[![GoDoc](https://godoc.org/github.com/llir/llvm?status.svg)](https://godoc.org/github.com/llir/llvm)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/llir/llvm)
 
 Library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html) in pure Go.
 
