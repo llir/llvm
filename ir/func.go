@@ -112,14 +112,18 @@ func (f *Func) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the function definition or
 // declaration.
+//
+// Function declaration.
+//
+//    'declare' Metadata=MetadataAttachment* Header=FuncHeader
+//
+// Function definition.
+//
+//    'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
 func (f *Func) LLString() string {
-	// Function declaration.
-	//
-	//    'declare' Metadata=MetadataAttachment* Header=FuncHeader
-	//
-	// Function definition.
-	//
-	//    'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
+	if err := f.AssignIDs(); err != nil {
+		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
+	}
 	buf := &strings.Builder{}
 	if len(f.Blocks) == 0 {
 		// Function declaration.
@@ -132,28 +136,23 @@ func (f *Func) LLString() string {
 		}
 		buf.WriteString(headerString(f))
 		return buf.String()
+	} else {
+		// Function definition.
+		buf.WriteString("define")
+		if f.Linkage != enum.LinkageNone {
+			fmt.Fprintf(buf, " %s", f.Linkage)
+		}
+		buf.WriteString(headerString(f))
+		for _, md := range f.Metadata {
+			fmt.Fprintf(buf, " %s", md)
+		}
+		fmt.Fprintf(buf, " %s", bodyString(f))
+		return buf.String()
 	}
-	// Function definition.
-	if err := f.AssignIDs(); err != nil {
-		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
-	}
-	buf.WriteString("define")
-	if f.Linkage != enum.LinkageNone {
-		fmt.Fprintf(buf, " %s", f.Linkage)
-	}
-	buf.WriteString(headerString(f))
-	for _, md := range f.Metadata {
-		fmt.Fprintf(buf, " %s", md)
-	}
-	fmt.Fprintf(buf, " %s", bodyString(f))
-	return buf.String()
 }
 
 // AssignIDs assigns IDs to unnamed local variables.
 func (f *Func) AssignIDs() error {
-	if len(f.Blocks) == 0 {
-		return nil
-	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	id := int64(0)

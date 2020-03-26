@@ -382,9 +382,7 @@ func (p *Param) LLString() string {
 	for _, attr := range p.Attrs {
 		fmt.Fprintf(buf, " %s", attr)
 	}
-	if !p.IsUnnamed() {
-		fmt.Fprintf(buf, " %s", p.Ident())
-	}
+	fmt.Fprintf(buf, " %s", p.Ident())
 	return buf.String()
 }
 
