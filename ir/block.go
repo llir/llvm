@@ -50,8 +50,9 @@ func (block *Block) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the basic block
 // definition.
+//
+// Name=LabelIdentopt Insts=Instruction* Term=Terminator
 func (block *Block) LLString() string {
-	// Name=LabelIdentopt Insts=Instruction* Term=Terminator
 	buf := &strings.Builder{}
 	if block.IsUnnamed() {
 		fmt.Fprintf(buf, "; <label>:%d\n", block.LocalID)

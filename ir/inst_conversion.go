@@ -72,8 +72,9 @@ func (inst *InstTrunc) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstTrunc) LLString() string {
-	// 'trunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "trunc %s to %s", inst.From, inst.To)
@@ -118,8 +119,9 @@ func (inst *InstZExt) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstZExt) LLString() string {
-	// 'zext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "zext %s to %s", inst.From, inst.To)
@@ -164,8 +166,9 @@ func (inst *InstSExt) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstSExt) LLString() string {
-	// 'sext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "sext %s to %s", inst.From, inst.To)
@@ -210,8 +213,9 @@ func (inst *InstFPTrunc) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstFPTrunc) LLString() string {
-	// 'fptrunc' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "fptrunc %s to %s", inst.From, inst.To)
@@ -256,8 +260,9 @@ func (inst *InstFPExt) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstFPExt) LLString() string {
-	// 'fpext' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "fpext %s to %s", inst.From, inst.To)
@@ -302,8 +307,9 @@ func (inst *InstFPToUI) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstFPToUI) LLString() string {
-	// 'fptoui' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "fptoui %s to %s", inst.From, inst.To)
@@ -348,8 +354,9 @@ func (inst *InstFPToSI) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstFPToSI) LLString() string {
-	// 'fptosi' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "fptosi %s to %s", inst.From, inst.To)
@@ -394,8 +401,9 @@ func (inst *InstUIToFP) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstUIToFP) LLString() string {
-	// 'uitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "uitofp %s to %s", inst.From, inst.To)
@@ -440,8 +448,9 @@ func (inst *InstSIToFP) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstSIToFP) LLString() string {
-	// 'sitofp' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "sitofp %s to %s", inst.From, inst.To)
@@ -486,8 +495,9 @@ func (inst *InstPtrToInt) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstPtrToInt) LLString() string {
-	// 'ptrtoint' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "ptrtoint %s to %s", inst.From, inst.To)
@@ -532,8 +542,9 @@ func (inst *InstIntToPtr) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstIntToPtr) LLString() string {
-	// 'inttoptr' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "inttoptr %s to %s", inst.From, inst.To)
@@ -578,8 +589,9 @@ func (inst *InstBitCast) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstBitCast) LLString() string {
-	// 'bitcast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "bitcast %s to %s", inst.From, inst.To)
@@ -624,8 +636,9 @@ func (inst *InstAddrSpaceCast) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
+//
+// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 func (inst *InstAddrSpaceCast) LLString() string {
-	// 'addrspacecast' From=TypeValue 'to' To=Type Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "addrspacecast %s to %s", inst.From, inst.To)

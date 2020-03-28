@@ -64,14 +64,15 @@ func (*TermRet) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// Void return instruction.
+//
+//    'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
+//
+// Value return instruction.
+//
+//    'ret' XTyp=ConcreteType X=Value Metadata=(',' MetadataAttachment)+?
 func (term *TermRet) LLString() string {
-	// Void return instruction.
-	//
-	//    'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
-	//
-	// Value return instruction.
-	//
-	//    'ret' XTyp=ConcreteType X=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	if term.X == nil {
 		buf.WriteString("ret void")
@@ -115,8 +116,9 @@ func (term *TermBr) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'br' Target=Label Metadata=(',' MetadataAttachment)+?
 func (term *TermBr) LLString() string {
-	// 'br' Target=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "br %s", term.Target)
 	for _, md := range term.Metadata {
@@ -160,8 +162,9 @@ func (term *TermCondBr) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label Metadata=(',' MetadataAttachment)+?
 func (term *TermCondBr) LLString() string {
-	// 'br' CondTyp=IntType Cond=Value ',' TargetTrue=Label ',' TargetFalse=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "br %s, %s, %s", term.Cond, term.TargetTrue, term.TargetFalse)
 	for _, md := range term.Metadata {
@@ -210,8 +213,9 @@ func (term *TermSwitch) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' Metadata=(',' MetadataAttachment)+?
 func (term *TermSwitch) LLString() string {
-	// 'switch' X=TypeValue ',' Default=Label '[' Cases=Case* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "switch %s, %s [\n", term.X, term.TargetDefault)
 	for _, c := range term.Cases {
@@ -288,8 +292,9 @@ func (term *TermIndirectBr) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'indirectbr' Addr=TypeValue ',' '[' ValidTargets=(Label separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 func (term *TermIndirectBr) LLString() string {
-	// 'indirectbr' Addr=TypeValue ',' '[' ValidTargets=(Label separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "indirectbr %s, [", term.Addr)
 	for i, target := range term.ValidTargets {
@@ -383,8 +388,9 @@ func (term *TermInvoke) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'invoke' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Invokee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator ',')+ ']')? 'to' NormalRetTarget=Label 'unwind' ExceptionRetTarget=Label Metadata=(',' MetadataAttachment)+?
 func (term *TermInvoke) LLString() string {
-	// 'invoke' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Invokee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator ',')+ ']')? 'to' NormalRetTarget=Label 'unwind' ExceptionRetTarget=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	if !term.Type().Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", term.Ident())
@@ -533,8 +539,9 @@ func (term *TermCallBr) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'callbr' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator ',')+ ']')? 'to' NormalRetTarget=Label '[' OtherRetTargets=(Label separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 func (term *TermCallBr) LLString() string {
-	// 'callbr' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator ',')+ ']')? 'to' NormalRetTarget=Label '[' OtherRetTargets=(Label separator ',')* ']' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	if !term.Type().Equal(types.Void) {
 		fmt.Fprintf(buf, "%s = ", term.Ident())
@@ -629,8 +636,9 @@ func (term *TermResume) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'resume' X=TypeValue Metadata=(',' MetadataAttachment)+?
 func (term *TermResume) LLString() string {
-	// 'resume' X=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "resume %s", term.X)
 	for _, md := range term.Metadata {
@@ -709,8 +717,9 @@ func (term *TermCatchSwitch) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'catchswitch' 'within' ParentPad=ExceptionPad '[' Handlers=Handlers ']' 'unwind' DefaultUnwindTarget=UnwindTarget Metadata=(',' MetadataAttachment)+?
 func (term *TermCatchSwitch) LLString() string {
-	// 'catchswitch' 'within' ParentPad=ExceptionPad '[' Handlers=Handlers ']' 'unwind' DefaultUnwindTarget=UnwindTarget Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", term.Ident())
 	fmt.Fprintf(buf, "catchswitch within %s [", term.ParentPad.Ident())
@@ -766,8 +775,9 @@ func (term *TermCatchRet) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'catchret' 'from' CatchPad=Value 'to' Target=Label Metadata=(',' MetadataAttachment)+?
 func (term *TermCatchRet) LLString() string {
-	// 'catchret' 'from' CatchPad=Value 'to' Target=Label Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "catchret from %s to %s", term.CatchPad.Ident(), term.Target)
 	for _, md := range term.Metadata {
@@ -826,8 +836,9 @@ func (term *TermCleanupRet) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'cleanupret' 'from' CleanupPad=Value 'unwind' UnwindTarget Metadata=(',' MetadataAttachment)+?
 func (term *TermCleanupRet) LLString() string {
-	// 'cleanupret' 'from' CleanupPad=Value 'unwind' UnwindTarget Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "cleanupret from %s unwind ", term.CleanupPad.Ident())
 	if term.UnwindTarget != nil {
@@ -863,8 +874,9 @@ func (term *TermUnreachable) Succs() []*Block {
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
+//
+// 'unreachable' Metadata=(',' MetadataAttachment)+?
 func (term *TermUnreachable) LLString() string {
-	// 'unreachable' Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	buf.WriteString("unreachable")
 	for _, md := range term.Metadata {
