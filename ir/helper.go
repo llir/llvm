@@ -366,8 +366,9 @@ func (p *Param) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the function parameter.
+//
+// Typ=Type Attrs=ParamAttribute* Name=LocalIdent?
 func (p *Param) LLString() string {
-	// Typ=Type Attrs=ParamAttribute* Name=LocalIdent?
 	buf := &strings.Builder{}
 	buf.WriteString(p.Typ.String())
 	for _, attr := range p.Attrs {

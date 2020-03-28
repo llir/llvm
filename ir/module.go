@@ -214,8 +214,9 @@ func (c *ComdatDef) String() string {
 }
 
 // LLString returns the LLVM syntax representation of the Comdat definition.
+//
+// Name=ComdatName '=' 'comdat' Kind=SelectionKind
 func (c *ComdatDef) LLString() string {
-	// Name=ComdatName '=' 'comdat' Kind=SelectionKind
 	return fmt.Sprintf("%s = comdat %s", enc.ComdatName(c.Name), c.Kind)
 }
 
@@ -236,8 +237,9 @@ func (a *AttrGroupDef) String() string {
 
 // LLString returns the LLVM syntax representation of the attribute group
 // definition.
+//
+// 'attributes' ID=AttrGroupID '=' '{' FuncAttrs=FuncAttribute* '}'
 func (a *AttrGroupDef) LLString() string {
-	// 'attributes' ID=AttrGroupID '=' '{' FuncAttrs=FuncAttribute* '}'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "attributes %s = { ", enc.AttrGroupID(a.ID))
 	for i, attr := range a.FuncAttrs {
