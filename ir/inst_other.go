@@ -157,7 +157,8 @@ type InstPhi struct {
 	// extra.
 
 	// Type of result produced by the instruction.
-	Typ types.Type // type of incoming value
+	Typ           types.Type // type of incoming value
+	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
 	Metadata
 }
@@ -192,7 +193,13 @@ func (inst *InstPhi) Type() types.Type {
 func (inst *InstPhi) LLString() string {
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "phi %s ", inst.Typ)
+	fmt.Fprintf(buf, "phi ")
+	for _, fmf := range inst.FastMathFlags {
+		buf.WriteString(fmf.String())
+		buf.WriteString(" ")
+	}
+	buf.WriteString(inst.Typ.String())
+	buf.WriteString(" ")
 	for i, inc := range inst.Incs {
 		if i != 0 {
 			buf.WriteString(", ")
