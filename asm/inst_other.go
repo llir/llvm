@@ -6,7 +6,6 @@ import (
 	"github.com/llir/ll/ast"
 	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/ir"
-	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
@@ -55,16 +54,11 @@ func (fgen *funcGen) newFCmpInst(ident ir.LocalIdent, old *ast.FCmpInst) (*ir.In
 // newPhiInst returns a new IR phi instruction (without body but with type)
 // based on the given AST phi instruction.
 func (fgen *funcGen) newPhiInst(ident ir.LocalIdent, old *ast.PhiInst) (*ir.InstPhi, error) {
-	astFmfs := old.FastMathFlags()
 	typ, err := fgen.gen.irType(old.Typ())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	fmfs := make([]enum.FastMathFlag, 0, len(astFmfs))
-	for _, fmf := range astFmfs {
-		fmfs = append(fmfs, asmenum.FastMathFlagFromString(fmf.Node.Text()))
-	}
-	return &ir.InstPhi{LocalIdent: ident, Typ: typ, FastMathFlags: fmfs}, nil
+	return &ir.InstPhi{LocalIdent: ident, Typ: typ, FastMathFlags: irFastMathFlags(old.FastMathFlags())}, nil
 }
 
 // newSelectInst returns a new IR select instruction (without body but with
