@@ -58,7 +58,7 @@ func (fgen *funcGen) newPhiInst(ident ir.LocalIdent, old *ast.PhiInst) (*ir.Inst
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &ir.InstPhi{LocalIdent: ident, Typ: typ}, nil
+	return &ir.InstPhi{LocalIdent: ident, Typ: typ, FastMathFlags: irFastMathFlags(old.FastMathFlags())}, nil
 }
 
 // newSelectInst returns a new IR select instruction (without body but with
