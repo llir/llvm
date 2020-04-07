@@ -193,7 +193,7 @@ func (inst *InstPhi) Type() types.Type {
 func (inst *InstPhi) LLString() string {
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "phi ")
+	buf.WriteString("phi ")
 	for _, fmf := range inst.FastMathFlags {
 		buf.WriteString(fmf.String())
 		buf.WriteString(" ")
