@@ -1110,8 +1110,8 @@ func (gen *generator) irDIModule(new metadata.SpecializedNode, old *ast.DIModule
 			md.ConfigMacros = stringLit(oldField.ConfigMacros())
 		case *ast.IncludePathField:
 			md.IncludePath = stringLit(oldField.IncludePath())
-		case *ast.IsysrootField:
-			md.Isysroot = stringLit(oldField.Isysroot())
+		case *ast.SysrootField:
+			md.Sysroot = stringLit(oldField.Sysroot())
 		default:
 			panic(fmt.Errorf("support for DIModule field %T not yet implemented", old))
 		}

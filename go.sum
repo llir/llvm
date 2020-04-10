@@ -9,6 +9,8 @@ github.com/llir/ll v0.0.0-20191229032745-05be70ade156 h1:tQ3EaDUy4rHvIyvuI2Yf1X2
 github.com/llir/ll v0.0.0-20191229032745-05be70ade156/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/llir/ll v0.0.0-20200407120059-f42e46f6afef h1:KrExuElmSZGZzTBa0ek+h33ectFv5gQLrNu2KAbJQmw=
 github.com/llir/ll v0.0.0-20200407120059-f42e46f6afef/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
+github.com/llir/ll v0.0.0-20200410135743-26a2120d00af h1:REN5MVxGjO0ztKmH9N1LXNFkP/kSewZIbLxZ45QPGeg=
+github.com/llir/ll v0.0.0-20200410135743-26a2120d00af/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/mewmew/float v0.0.0-20191226120903-16bbe2fdd85e h1:KCD7E/8LKwDsC5ymlEWJ3xCiSPaCywrS/psToBMOBH4=
 github.com/mewmew/float v0.0.0-20191226120903-16bbe2fdd85e/go.mod h1:O+xb+8ycBNHzJicFVs7GRWtruD4tVZI0huVnw5TM01E=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
