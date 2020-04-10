@@ -1429,7 +1429,7 @@ type DIModule struct {
 	Name         string // required.
 	ConfigMacros string // optional; empty if not present.
 	IncludePath  string // optional; empty if not present.
-	Isysroot     string // optional; empty if not present.
+	Sysroot      string // optional; empty if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1471,8 +1471,8 @@ func (md *DIModule) LLString() string {
 		field := fmt.Sprintf("includePath: %s", quote(md.IncludePath))
 		fields = append(fields, field)
 	}
-	if len(md.Isysroot) > 0 {
-		field := fmt.Sprintf("isysroot: %s", quote(md.Isysroot))
+	if len(md.Sysroot) > 0 {
+		field := fmt.Sprintf("sysroot: %s", quote(md.Sysroot))
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DIModule(%s)", strings.Join(fields, ", "))
