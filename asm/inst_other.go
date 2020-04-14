@@ -71,6 +71,16 @@ func (fgen *funcGen) newSelectInst(ident ir.LocalIdent, old *ast.SelectInst) (*i
 	return &ir.InstSelect{LocalIdent: ident, Typ: typ}, nil
 }
 
+// newSelectInst returns a new IR select instruction (without body but with
+// type) based on the given AST select instruction.
+func (fgen *funcGen) newFreezeInst(ident ir.LocalIdent, old *ast.FreezeInst) (*ir.InstFreeze, error) {
+	x, err := fgen.irTypeValue(old.X())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return &ir.InstFreeze{LocalIdent: ident, X: x}, nil
+}
+
 // newCallInst returns a new IR call instruction (without body but with type)
 // based on the given AST call instruction.
 func (fgen *funcGen) newCallInst(ident ir.LocalIdent, old *ast.CallInst) (*ir.InstCall, error) {
@@ -246,6 +256,23 @@ func (fgen *funcGen) irSelectInst(new ir.Instruction, old *ast.SelectInst) error
 		return errors.WithStack(err)
 	}
 	inst.Metadata = md
+	return nil
+}
+
+// --- [ freeze ] ----------------------------------------------------------
+
+// irFreezeInst translates the given AST freeze instruction into an
+// equivalent IR instruction.
+func (fgen *funcGen) irFreezeInst(new ir.Instruction, old *ast.FreezeInst) error {
+	inst, ok := new.(*ir.InstFreeze)
+	if !ok {
+		panic(fmt.Errorf("invalid IR instruction for AST instruction; expected *ir.InstFreeze, got %T", new))
+	}
+	x, err := fgen.irTypeValue(old.X())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	inst.X = x
 	return nil
 }
 
