@@ -1,7 +1,7 @@
 @s = constant [4 x i8] c"foo\00"
 
 define void @f() {
-; <label>:0
+0:
 	%ptr = alloca i32
 	%1 = load i32, i32* %ptr
 	store i32 42, i32* %ptr

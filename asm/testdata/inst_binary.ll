@@ -1,5 +1,5 @@
 define void @f() {
-; <label>:0
+0:
 	%1 = add i32 1, 2
 	%2 = fadd double 3.0, 4.0
 	%3 = sub i32 5, 6

@@ -1,5 +1,5 @@
 define void @f() {
-; <label>:0
+0:
 	%1 = trunc i32 321 to i8
 	%2 = zext i8 123 to i32
 	%3 = sext i8 -123 to i32

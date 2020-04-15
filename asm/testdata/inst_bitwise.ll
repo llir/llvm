@@ -1,5 +1,5 @@
 define void @f() {
-; <label>:0
+0:
 	%1 = shl i32 1, 2
 	%2 = lshr i32 3, 4
 	%3 = ashr i32 5, 6

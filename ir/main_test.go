@@ -63,7 +63,7 @@ func Example_main() {
 	// Output:
 	//
 	// define i32 @main() {
-	// ; <label>:0
+	// 0:
 	// 	%a = alloca i32
 	// 	%b = alloca i32
 	// 	store i32 32, i32* %a

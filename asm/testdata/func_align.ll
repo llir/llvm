@@ -2,7 +2,7 @@ $g = comdat any
 $h = comdat any
 
 define void @f() align 2 {
-; <label>:0
+0:
 	ret void
 }
 

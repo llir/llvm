@@ -90,13 +90,6 @@ func TestParseFile(t *testing.T) {
 		// parameter attribute.
 		{path: "../testdata/llvm/test/Transforms/InstSimplify/compare.ll"},
 
-		// Calling conventions.
-		{path: "../testdata/llvm/test/Bitcode/calling-conventions.3.2.ll"},
-		{path: "../testdata/llvm/test/CodeGen/X86/tailccfp.ll"},
-
-		// Parameter attributes (nofree).
-		{path: "../testdata/llvm/test/Transforms/Attributor/nonnull.ll"},
-
 		// Basic block labels.
 		{path: "../testdata/llvm/test/Assembler/block-labels.ll"},
 
@@ -106,6 +99,9 @@ func TestParseFile(t *testing.T) {
 		// Calling conventions.
 		{path: "../testdata/llvm/test/Bitcode/calling-conventions.3.2.ll"},
 		{path: "../testdata/llvm/test/CodeGen/X86/tailccfp.ll"},
+
+		// Parameter attributes (nofree).
+		{path: "../testdata/llvm/test/Transforms/Attributor/nonnull.ll"},
 
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},

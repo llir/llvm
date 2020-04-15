@@ -1,15 +1,15 @@
 define i32 @g() {
-; <label>:0
+0:
 	ret i32 42
 }
 
 define void @h(i32 %x) {
-; <label>:0
+0:
 	ret void
 }
 
 define void @f() {
-; <label>:0
+0:
 	%1 = icmp eq i32 1, 2
 	br i1 %1, label %foo, label %baz
 
