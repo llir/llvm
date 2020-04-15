@@ -55,10 +55,10 @@ func (block *Block) Type() types.Type {
 func (block *Block) LLString() string {
 	buf := &strings.Builder{}
 	if block.IsUnnamed() {
-		fmt.Fprintf(buf, "; <label>:%d\n", block.LocalID)
-		// TODO: explicitly print basic block label to conform with Clang 9.0, and
+		//fmt.Fprintf(buf, "; <label>:%d\n", block.LocalID)
+		// Explicitly print basic block label to conform with Clang 9.0, and
 		// because it's the sane thing to do.
-		//fmt.Fprintf(buf, "%s\n", enc.LabelID(block.LocalID))
+		fmt.Fprintf(buf, "%s\n", enc.LabelID(block.LocalID))
 	} else {
 		fmt.Fprintf(buf, "%s\n", enc.LabelName(block.LocalName))
 	}
