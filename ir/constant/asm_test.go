@@ -24,12 +24,15 @@ func TestModule(t *testing.T) {
 		{path: "../../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
 		{path: "../../testdata/llvm/test/Assembler/insertextractvalue.ll"},
 		{path: "../../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll"},
-		{path: "../../testdata/llvm/test/Transforms/InstCombine/fma.ll"},
+		//{path: "../../testdata/llvm/test/Transforms/InstCombine/fma.ll"}, // TODO: enable once https://github.com/llir/llvm/issues/133 is resolved.
 		{path: "../../testdata/llvm/test/Transforms/InstCombine/vec_demanded_elts.ll"},
 		{path: "../../testdata/llvm/test/Transforms/InstCombine/vector_insertelt_shuffle.ll"},
 		// Coreutils.
-		{path: "../../testdata/coreutils/test/timeout.ll"},
-		{path: "../../testdata/coreutils/test/vdir.ll"},
+		// TODO: update these tests. disabled until we update these to Clang 10.0.
+		/*
+			{path: "../../testdata/coreutils/test/timeout.ll"},
+			{path: "../../testdata/coreutils/test/vdir.ll"},
+		*/
 	}
 	hasTestdata := osutil.Exists("../../testdata/llvm")
 	for _, g := range golden {
