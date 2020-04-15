@@ -71,8 +71,8 @@ func (fgen *funcGen) newSelectInst(ident ir.LocalIdent, old *ast.SelectInst) (*i
 	return &ir.InstSelect{LocalIdent: ident, Typ: typ}, nil
 }
 
-// newSelectInst returns a new IR select instruction (without body but with
-// type) based on the given AST select instruction.
+// newFreezeInst returns a new IR freeze instruction (without body but with
+// type) based on the given AST freeze instruction.
 func (fgen *funcGen) newFreezeInst(ident ir.LocalIdent, old *ast.FreezeInst) (*ir.InstFreeze, error) {
 	x, err := fgen.irTypeValue(old.X())
 	if err != nil {

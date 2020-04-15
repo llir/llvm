@@ -675,13 +675,13 @@ func (inst *InstCleanupPad) LLString() string {
 	return buf.String()
 }
 
-// ~~~ [ freeze ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~ [ freeze ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFreeze is an LLVM IR freeze instruction.
 type InstFreeze struct {
 	// Name of local variable associated with the result.
 	LocalIdent
-
+	// Operand.
 	X value.Value
 
 	// extra.
@@ -691,9 +691,12 @@ type InstFreeze struct {
 }
 
 // NewInstFreeze returns a new freeze instruction based on the given
-// typed-value
+// operand.
 func NewInstFreeze(x value.Value) *InstFreeze {
-	return &InstFreeze{X: x}
+	inst := &InstFreeze{X: x}
+	// Compute type.
+	inst.Type()
+	return inst
 }
 
 // String returns the LLVM syntax representation of the instruction as a
@@ -704,7 +707,11 @@ func (inst *InstFreeze) String() string {
 
 // Type returns the type of the instruction.
 func (inst *InstFreeze) Type() types.Type {
-	return types.Token
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
