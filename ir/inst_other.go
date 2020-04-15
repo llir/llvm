@@ -299,6 +299,59 @@ func (inst *InstSelect) LLString() string {
 	return buf.String()
 }
 
+// ~~~ [ freeze ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// InstFreeze is an LLVM IR freeze instruction.
+type InstFreeze struct {
+	// Name of local variable associated with the result.
+	LocalIdent
+	// Operand.
+	X value.Value
+	// extra.
+
+	// Type of result produced by the instruction.
+	Typ types.Type
+	// (optional) Metadata.
+	Metadata
+}
+
+// NewInstFreeze returns a new freeze instruction based on the given
+// operand.
+func NewInstFreeze(x value.Value) *InstFreeze {
+	inst := &InstFreeze{X: x}
+	// Compute type.
+	inst.Type()
+	return inst
+}
+
+// String returns the LLVM syntax representation of the instruction as a
+// type-value pair.
+func (inst *InstFreeze) String() string {
+	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
+}
+
+// Type returns the type of the instruction.
+func (inst *InstFreeze) Type() types.Type {
+	// Cache type if not present.
+	if inst.Typ == nil {
+		inst.Typ = inst.X.Type()
+	}
+	return inst.Typ
+}
+
+// LLString returns the LLVM syntax representation of the instruction.
+//
+// 'freeze' Type Value
+func (inst *InstFreeze) LLString() string {
+	buf := &strings.Builder{}
+	fmt.Fprintf(buf, "%s = ", inst.Ident())
+	fmt.Fprintf(buf, "freeze %s", inst.X)
+	for _, md := range inst.Metadata {
+		fmt.Fprintf(buf, ", %s", md)
+	}
+	return buf.String()
+}
+
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCall is an LLVM IR call instruction.
@@ -669,58 +722,6 @@ func (inst *InstCleanupPad) LLString() string {
 		buf.WriteString(arg.String())
 	}
 	buf.WriteString("]")
-	for _, md := range inst.Metadata {
-		fmt.Fprintf(buf, ", %s", md)
-	}
-	return buf.String()
-}
-
-// ~~~ [ freeze ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// InstFreeze is an LLVM IR freeze instruction.
-type InstFreeze struct {
-	// Name of local variable associated with the result.
-	LocalIdent
-	// Operand.
-	X value.Value
-
-	// extra.
-
-	// (optional) Metadata.
-	Metadata
-}
-
-// NewInstFreeze returns a new freeze instruction based on the given
-// operand.
-func NewInstFreeze(x value.Value) *InstFreeze {
-	inst := &InstFreeze{X: x}
-	// Compute type.
-	inst.Type()
-	return inst
-}
-
-// String returns the LLVM syntax representation of the instruction as a
-// type-value pair.
-func (inst *InstFreeze) String() string {
-	return fmt.Sprintf("%s %s", inst.Type(), inst.Ident())
-}
-
-// Type returns the type of the instruction.
-func (inst *InstFreeze) Type() types.Type {
-	// Cache type if not present.
-	if inst.Typ == nil {
-		inst.Typ = inst.X.Type()
-	}
-	return inst.Typ
-}
-
-// LLString returns the LLVM syntax representation of the instruction.
-//
-// 'freeze' Type Value
-func (inst *InstFreeze) LLString() string {
-	buf := &strings.Builder{}
-	fmt.Fprintf(buf, "%s = ", inst.Ident())
-	fmt.Fprintf(buf, "freeze %s", inst.X)
 	for _, md := range inst.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
 	}
