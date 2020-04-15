@@ -96,6 +96,10 @@ func TestParseFile(t *testing.T) {
 		// callbr with void callee should not use up local ID in ir.Func.AssignIDs.
 		{path: "../testdata/llvm/test/Transforms/LoopUnswitch/callbr.ll"},
 
+		// Calling conventions.
+		{path: "../testdata/llvm/test/Bitcode/calling-conventions.3.2.ll"},
+		{path: "../testdata/llvm/test/CodeGen/X86/tailccfp.ll"},
+
 		// LLVM test/Features.
 		{path: "../testdata/llvm/test/Feature/OperandBundles/adce.ll"},
 		{path: "../testdata/llvm/test/Feature/OperandBundles/basic-aa-argmemonly.ll"},
