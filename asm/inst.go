@@ -135,6 +135,8 @@ func (fgen *funcGen) newValueInst(ident ir.LocalIdent, old ast.ValueInstruction)
 		return fgen.newPhiInst(ident, old)
 	case *ast.SelectInst:
 		return fgen.newSelectInst(ident, old)
+	case *ast.FreezeInst:
+		return fgen.newFreezeInst(ident, old)
 	case *ast.CallInst:
 		return fgen.newCallInst(ident, old)
 	case *ast.VAArgInst:
@@ -290,6 +292,8 @@ func (fgen *funcGen) irValueInst(new ir.Instruction, old ast.ValueInstruction) e
 		return fgen.irPhiInst(new, old)
 	case *ast.SelectInst:
 		return fgen.irSelectInst(new, old)
+	case *ast.FreezeInst:
+		return fgen.irFreezeInst(new, old)
 	case *ast.CallInst:
 		return fgen.irCallInst(new, old)
 	case *ast.VAArgInst:

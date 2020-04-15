@@ -95,6 +95,7 @@ package ir
 //    *ir.InstFCmp         // https://godoc.org/github.com/llir/llvm/ir#InstFCmp
 //    *ir.InstPhi          // https://godoc.org/github.com/llir/llvm/ir#InstPhi
 //    *ir.InstSelect       // https://godoc.org/github.com/llir/llvm/ir#InstSelect
+//    *ir.InstFreeze       // https://godoc.org/github.com/llir/llvm/ir#InstFreeze
 //    *ir.InstCall         // https://godoc.org/github.com/llir/llvm/ir#InstCall
 //    *ir.InstVAArg        // https://godoc.org/github.com/llir/llvm/ir#InstVAArg
 //    *ir.InstLandingPad   // https://godoc.org/github.com/llir/llvm/ir#InstLandingPad

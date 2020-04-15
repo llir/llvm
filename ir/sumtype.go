@@ -109,6 +109,7 @@ func (*InstICmp) isInstruction()       {}
 func (*InstFCmp) isInstruction()       {}
 func (*InstPhi) isInstruction()        {}
 func (*InstSelect) isInstruction()     {}
+func (*InstFreeze) isInstruction()     {}
 func (*InstCall) isInstruction()       {}
 func (*InstVAArg) isInstruction()      {}
 func (*InstLandingPad) isInstruction() {}
