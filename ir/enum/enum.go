@@ -843,6 +843,7 @@ const (
 	ParamAttrNest                        // nest
 	ParamAttrNoAlias                     // noalias
 	ParamAttrNoCapture                   // nocapture
+	ParamAttrNoFree                      // nofree
 	ParamAttrNonNull                     // nonnull
 	ParamAttrReadNone                    // readnone
 	ParamAttrReadOnly                    // readonly
