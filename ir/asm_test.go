@@ -18,7 +18,7 @@ func TestModule(t *testing.T) {
 		// LLVM IR compatibility.
 		{path: "../testdata/llvm/test/Bitcode/compatibility.ll"},
 		// Coreutils.
-		//{path: "../testdata/coreutils/test/cat.ll"}, // TODO: update these tests. disabled until we update these to Clang 10.0.
+		{path: "../testdata/coreutils/test/cat.ll"},
 	}
 	hasTestdata := osutil.Exists("../testdata/llvm")
 	for _, g := range golden {
