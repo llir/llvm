@@ -20,6 +20,7 @@ func _() {
 	_ = x[CallingConvPreserveAll-15]
 	_ = x[CallingConvSwift-16]
 	_ = x[CallingConvCXXFastTLS-17]
+	_ = x[CallingConvTail-18]
 	_ = x[CallingConvX86StdCall-64]
 	_ = x[CallingConvX86FastCall-65]
 	_ = x[CallingConvARM_APCS-66]
@@ -52,33 +53,34 @@ func _() {
 	_ = x[CallingConvAMDGPU_LS-95]
 	_ = x[CallingConvAMDGPU_ES-96]
 	_ = x[CallingConvAArch64VectorCall-97]
+	_ = x[CallingConvAArch64SVEVectorCall-98]
 }
 
 const (
 	_CallingConv_name_0 = "noneccc"
-	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscc"
+	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscctailcc"
 	_CallingConv_name_2 = "x86_stdcallccx86_fastcallccarm_apcsccarm_aapcsccarm_aapcs_vfpccmsp430_intrccx86_thiscallccptx_kernelptx_device"
-	_CallingConv_name_3 = "spir_funcspir_kernelintel_ocl_biccx86_64_sysvccwin64ccx86_vectorcallcchhvmcchhvm_cccx86_intrccavr_intrccavr_signalcccc 86amdgpu_vsamdgpu_gsamdgpu_psamdgpu_csamdgpu_kernelx86_regcallccamdgpu_hscc 94amdgpu_lsamdgpu_esaarch64_vector_pcs"
+	_CallingConv_name_3 = "spir_funcspir_kernelintel_ocl_biccx86_64_sysvccwin64ccx86_vectorcallcchhvmcchhvm_cccx86_intrccavr_intrccavr_signalcccc 86amdgpu_vsamdgpu_gsamdgpu_psamdgpu_csamdgpu_kernelx86_regcallccamdgpu_hscc 94amdgpu_lsamdgpu_esaarch64_vector_pcsaarch64_sve_vector_pcs"
 )
 
 var (
 	_CallingConv_index_0 = [...]uint8{0, 4, 7}
-	_CallingConv_index_1 = [...]uint8{0, 6, 12, 17, 22, 33, 41, 56, 70, 77, 91}
+	_CallingConv_index_1 = [...]uint8{0, 6, 12, 17, 22, 33, 41, 56, 70, 77, 91, 97}
 	_CallingConv_index_2 = [...]uint8{0, 13, 27, 37, 48, 63, 76, 90, 100, 110}
-	_CallingConv_index_3 = [...]uint8{0, 9, 20, 34, 47, 54, 70, 76, 84, 94, 104, 116, 121, 130, 139, 148, 157, 170, 183, 192, 197, 206, 215, 233}
+	_CallingConv_index_3 = [...]uint8{0, 9, 20, 34, 47, 54, 70, 76, 84, 94, 104, 116, 121, 130, 139, 148, 157, 170, 183, 192, 197, 206, 215, 233, 255}
 )
 
 func (i CallingConv) String() string {
 	switch {
 	case i <= 1:
 		return _CallingConv_name_0[_CallingConv_index_0[i]:_CallingConv_index_0[i+1]]
-	case 8 <= i && i <= 17:
+	case 8 <= i && i <= 18:
 		i -= 8
 		return _CallingConv_name_1[_CallingConv_index_1[i]:_CallingConv_index_1[i+1]]
 	case 64 <= i && i <= 72:
 		i -= 64
 		return _CallingConv_name_2[_CallingConv_index_2[i]:_CallingConv_index_2[i+1]]
-	case 75 <= i && i <= 97:
+	case 75 <= i && i <= 98:
 		i -= 75
 		return _CallingConv_name_3[_CallingConv_index_3[i]:_CallingConv_index_3[i+1]]
 	default:
