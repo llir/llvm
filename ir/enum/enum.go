@@ -64,6 +64,7 @@ const (
 	CallingConvSwift        CallingConv = 16 // swiftcc
 	CallingConvCXXFastTLS   CallingConv = 17 // cxx_fast_tlscc
 	CallingConvTail         CallingConv = 18 // tailcc
+	CallingConvCFGuardCheck CallingConv = 19 // cfguard_checkcc
 
 	// Start of target-specific calling conventions.
 	CallingConvFirstTarget = CallingConvX86StdCall
