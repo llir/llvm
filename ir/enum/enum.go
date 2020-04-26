@@ -3,6 +3,8 @@ package enum
 
 //go:generate stringer -linecomment -type AtomicOp
 
+//revive:disable:var-naming
+
 // AtomicOp is an AtomicRMW binary operation.
 type AtomicOp uint8
 

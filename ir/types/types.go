@@ -8,6 +8,7 @@ import (
 	"github.com/llir/llvm/internal/enc"
 )
 
+//revive:disable:var-naming
 // === [ Types ] ===============================================================
 
 // Convenience types.

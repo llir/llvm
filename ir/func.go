@@ -125,6 +125,7 @@ func (f *Func) LLString() string {
 		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
 	}
 	buf := &strings.Builder{}
+	//revive:disable:indent-error-flow
 	if len(f.Blocks) == 0 {
 		// Function declaration.
 		buf.WriteString("declare")
@@ -149,6 +150,7 @@ func (f *Func) LLString() string {
 		fmt.Fprintf(buf, " %s", bodyString(f))
 		return buf.String()
 	}
+	//revive:enable:indent-error-flow
 }
 
 // AssignIDs assigns IDs to unnamed local variables.
