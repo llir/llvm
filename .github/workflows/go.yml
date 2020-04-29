@@ -41,9 +41,8 @@ jobs:
     - name: Get dependencies
       run: |
         go get -t ./...
-    - name: Calc coverage
+    - name: Calculate coverage
       run: |
-        export PATH=$PATH:$(go env GOPATH)/bin
         go test -v -covermode=count -coverprofile=coverage.out
     - name: Convert coverage to lcov
       uses: jandelgado/gcov2lcov-action@v1.0.0
