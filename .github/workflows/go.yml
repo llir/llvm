@@ -27,3 +27,31 @@ jobs:
       run: go test ./...
     - name: Go Race Test
       run: go test -race ./...
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      if: success()
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Get dependencies
+      run: |
+        go get -t ./...
+    - name: Calc coverage
+      run: |
+        export PATH=$PATH:$(go env GOPATH)/bin
+        go test -v -covermode=count -coverprofile=coverage.out
+    - name: Convert coverage to lcov
+      uses: jandelgado/gcov2lcov-action@v1.0.0
+      with:
+          infile: coverage.out
+          outfile: coverage.lcov
+    - name: Coveralls
+      uses: coverallsapp/github-action@v1.0.1
+      with:
+          github-token: "YZKB1SLTzPJMOdXp5U3xwEsh4++Xe8EeVK8SZVEQkn/y4xCbzmbdo6BJ4B/eGBG6bK4DLzFD3sb6uaUB2bHlVUXnR8YHbetjps6PUwLYtX9UdcBjB7UN5tdQs1d8k2qg7vPNtKVEY4kJHFURijc4Kk+zlNbq1oGJcEfm6gz+zGg="
+          path-to-lcov: coverage.lcov
