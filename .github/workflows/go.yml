@@ -5,6 +5,19 @@ on:
   - pull_request
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Run linters
+      run: |
+        echo "### revive"
+        test -z "$(revive -config .revive.toml ./... | tee /dev/stderr)"
+        echo "### golint"
+        test -z "$(golint ./... | tee /dev/stderr)"
+        exit 0
   test:
     name: Test
     runs-on: ${{ matrix.os }}
