@@ -43,7 +43,7 @@ jobs:
         go get -t ./...
     - name: Calculate coverage
       run: |
-        go test -v -covermode=count -coverprofile=coverage.out
+        go test -v -covermode=count -coverprofile=coverage.out ./...
     - name: Convert coverage to lcov
       uses: jandelgado/gcov2lcov-action@v1.0.0
       with:
