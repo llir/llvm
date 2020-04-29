@@ -16,9 +16,9 @@ jobs:
         GO111MODULE=off go get golang.org/x/lint/golint
         GO111MODULE=off go get github.com/mgechev/revive
         echo "### revive"
-        test -z "$(revive -config .revive.toml ./... | tee /dev/stderr)"
+        $(go env GOPATH)/bin/revive -config .revive.toml ./...
         echo "### golint"
-        test -z "$(golint ./... | tee /dev/stderr)"
+        $(go env GOPATH)/bin/golint ./...
         exit 0
   test:
     name: Test
