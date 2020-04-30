@@ -1,0 +1,64 @@
+name: Go
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Run linters
+      run: |
+        GO111MODULE=off go get golang.org/x/lint/golint
+        GO111MODULE=off go get github.com/mgechev/revive
+        echo "### revive"
+        $(go env GOPATH)/bin/revive -config .revive.toml ./...
+        echo "### golint"
+        $(go env GOPATH)/bin/golint ./...
+        exit 0
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        go-version: [1.12, 1.13, 1.14]
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+    - name: Get dependencies
+      run: |
+        go get -t ./...
+    - name: Go Test
+      run: go test ./...
+    - name: Go Race Test
+      run: go test -race ./...
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      if: success()
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Calculate coverage
+      run: |
+        go test -v -covermode=count -coverprofile=coverage.out ./...
+    - name: Coveralls
+      env:
+        COVERALLS_TOKEN: "YZKB1SLTzPJMOdXp5U3xwEsh4++Xe8EeVK8SZVEQkn/y4xCbzmbdo6BJ4B/eGBG6bK4DLzFD3sb6uaUB2bHlVUXnR8YHbetjps6PUwLYtX9UdcBjB7UN5tdQs1d8k2qg7vPNtKVEY4kJHFURijc4Kk+zlNbq1oGJcEfm6gz+zGg="
+      run: |
+        GO111MODULE=off go get github.com/mattn/goveralls
+        $(go env GOPATH)/bin/goveralls -coverprofile=coverage.out -service=github
