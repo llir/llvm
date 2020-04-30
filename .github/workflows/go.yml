@@ -20,6 +20,23 @@ jobs:
         echo "### golint"
         $(go env GOPATH)/bin/golint ./...
         exit 0
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        go-version: [1.12, 1.13, 1.14]
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+    - name: Go Install
+      run: go install ./...
   test:
     name: Test
     runs-on: ${{ matrix.os }}
