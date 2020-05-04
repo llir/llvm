@@ -1,5 +1,11 @@
 # Release history
 
+## Version 0.3.1 (2020-05-04)
+
+Update `llir/llvm` to include new language concepts of LLVM 10.0 (thanks [@dannypsnl](https://github.com/dannypsnl)).
+
+[Full list of changes since v0.3.0](https://github.com/llir/llvm/compare/v0.3.0...v0.3.1).
+
 ## Version 0.3 (2019-12-29)
 
 Primary focus of version 0.3: *grammar covering the entire LLVM IR language*.
