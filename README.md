@@ -13,6 +13,13 @@ Library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html) in pur
 go get -u github.com/llir/llvm/...
 ```
 
+## Versions
+
+Map between `llir/llvm` tagged releases and LLVM release versions.
+
+* [llir/llvm v0.3.1](https://github.com/llir/llvm/tree/v0.3.1): LLVM 10.0
+* [llir/llvm v0.3.0](https://github.com/llir/llvm/tree/v0.3.0): LLVM 9.0
+
 ## Users
 
 * [decomp](https://github.com/decomp/decomp): LLVM IR to Go decompiler by [@decomp](https://github.com/decomp).
