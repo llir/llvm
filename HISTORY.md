@@ -1,5 +1,11 @@
 # Release history
 
+## Version 0.3.2 (2020-06-09)
+
+Re-add `ir.NewLocalIdent` which was unintentionally removed in v0.3.1.
+
+[Full list of changes since v0.3.1](https://github.com/llir/llvm/compare/v0.3.1...v0.3.2).
+
 ## Version 0.3.1 (2020-05-04)
 
 Update `llir/llvm` to include new language concepts of LLVM 10.0 (thanks [@dannypsnl](https://github.com/dannypsnl)).
