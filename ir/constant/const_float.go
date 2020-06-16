@@ -333,10 +333,17 @@ func (c *Float) Ident() string {
 		if c.NaN {
 			f := math.NaN()
 			if c.X != nil && c.X.Signbit() {
-				f = math.Copysign(f, -1)
+				bits := math.Float64bits(f)
+				return fmt.Sprintf("0x%X", bits)
+			} else {
+				// sign NaN
+				// s 11111 1xxxxxxxxxx = quiet     (qNaN)
+				// s 11111 0xxxxxxxxxx = signaling (sNaN) **
+				//         ^ quiet bit
+				f = math.Float64frombits(0x7FF8000000000000)
+				bits := math.Float64bits(f)
+				return fmt.Sprintf("0x%X", bits)
 			}
-			bits := math.Float64bits(f)
-			return fmt.Sprintf("0x%X", bits)
 		}
 		if c.X.IsInf() || !float.IsExact64(c.X) {
 			f, _ := c.X.Float64()
