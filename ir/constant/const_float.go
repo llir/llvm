@@ -336,6 +336,8 @@ func (c *Float) Ident() string {
 				bits := math.Float64bits(f)
 				return fmt.Sprintf("0x%X", bits)
 			} else {
+				// Handle sign bit information of NaN explicitly. See https://github.com/llir/llvm/issues/133
+				//
 				// sign NaN
 				// s 11111 1xxxxxxxxxx = quiet     (qNaN)
 				// s 11111 0xxxxxxxxxx = signaling (sNaN) **
