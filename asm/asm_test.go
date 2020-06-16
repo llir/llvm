@@ -77,7 +77,7 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll"},
 
 		// fsub constant expressions.
-		//{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll"}, // TODO: enable once https://github.com/llir/llvm/issues/133 is resolved.
+		{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll"},
 
 		// Constant expressions.
 		{path: "../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},

@@ -210,6 +210,8 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 					return f, nil
 				}
 				x := big.NewFloat(f64)
+				const precision = 53
+				x.SetPrec(precision)
 				return &Float{Typ: typ, X: x}, nil
 			default:
 				panic(fmt.Errorf("support for hexadecimal floating-point literal %q of kind %v not yet implemented", s, typ.Kind))
@@ -331,10 +333,19 @@ func (c *Float) Ident() string {
 		if c.NaN {
 			f := math.NaN()
 			if c.X != nil && c.X.Signbit() {
-				f = math.Copysign(f, -1)
+				bits := math.Float64bits(f)
+				return fmt.Sprintf("0x%X", bits)
+			} else {
+				// Handle sign bit information of NaN explicitly. See https://github.com/llir/llvm/issues/133
+				//
+				// sign NaN
+				// s 11111 1xxxxxxxxxx = quiet     (qNaN)
+				// s 11111 0xxxxxxxxxx = signaling (sNaN) **
+				//         ^ quiet bit
+				f = math.Float64frombits(0x7FF8000000000000)
+				bits := math.Float64bits(f)
+				return fmt.Sprintf("0x%X", bits)
 			}
-			bits := math.Float64bits(f)
-			return fmt.Sprintf("0x%X", bits)
 		}
 		if c.X.IsInf() || !float.IsExact64(c.X) {
 			f, _ := c.X.Float64()
