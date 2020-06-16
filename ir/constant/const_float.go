@@ -331,21 +331,29 @@ func (c *Float) Ident() string {
 	// double (IEEE 754 double precision)
 	case types.FloatKindDouble:
 		if c.NaN {
-			f := math.NaN()
+			// To use the same cannonical representation as LLVM IR for NaN values, we
+			// explicitly a qNaN value (quiet NaN) with the leading bit in the mantissa
+			// set, rather than the trailing bit as used for the cannonical
+			// representation in Go (see math.NaN).
+			//
+			// For further background, see https://github.com/llir/llvm/issues/133
+			//
+			//      exponent    mantissa
+			//    s 11111111111 1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx = quiet     (qNaN)
+			//    s 11111111111 0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx = signaling (sNaN) **
+			//                  ^ quiet bit
+			//
+			// Where ** denote that at least one of the 'x' bits has to be set, since the
+			// mantissa must be non-zero to denote NaN.
+			//
+			// quiet NaN:
+			//    0x7FF8000000000000 = 0b0_11111111111_100000000000000000000000000000000000000000000000000
+			f := math.Float64frombits(0x7FF8000000000000) // quiet NaN
 			if c.X != nil && c.X.Signbit() {
-				bits := math.Float64bits(f)
-				return fmt.Sprintf("0x%X", bits)
-			} else {
-				// Handle sign bit information of NaN explicitly. See https://github.com/llir/llvm/issues/133
-				//
-				// sign NaN
-				// s 11111 1xxxxxxxxxx = quiet     (qNaN)
-				// s 11111 0xxxxxxxxxx = signaling (sNaN) **
-				//         ^ quiet bit
-				f = math.Float64frombits(0x7FF8000000000000)
-				bits := math.Float64bits(f)
-				return fmt.Sprintf("0x%X", bits)
+				f = math.Copysign(f, -1)
 			}
+			bits := math.Float64bits(f)
+			return fmt.Sprintf("0x%X", bits)
 		}
 		if c.X.IsInf() || !float.IsExact64(c.X) {
 			f, _ := c.X.Float64()
