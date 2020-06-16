@@ -210,6 +210,8 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 					return f, nil
 				}
 				x := big.NewFloat(f64)
+				const precision = 53
+				x.SetPrec(precision)
 				return &Float{Typ: typ, X: x}, nil
 			default:
 				panic(fmt.Errorf("support for hexadecimal floating-point literal %q of kind %v not yet implemented", s, typ.Kind))
