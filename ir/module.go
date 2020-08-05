@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/internal/natsort"
@@ -52,6 +53,9 @@ type Module struct {
 	UseListOrders []*UseListOrder
 	// (optional) Basic block specific use-list order directives.
 	UseListOrderBBs []*UseListOrderBB
+
+	// mu prevents races on AssignGlobalIDs and AssignMetadataIDs.
+	mu sync.Mutex
 }
 
 // NewModule returns a new LLVM IR module.
@@ -75,6 +79,10 @@ func (m *Module) String() string {
 // syntax to w.
 func (m *Module) WriteTo(w io.Writer) (n int64, err error) {
 	fw := &fmtWriter{w: w}
+	// Assign global IDs.
+	if err := m.AssignGlobalIDs(); err != nil {
+		panic(fmt.Errorf("unable to assign globals IDs of module; %v", err))
+	}
 	// Assign metadata IDs.
 	if err := m.AssignMetadataIDs(); err != nil {
 		panic(fmt.Errorf("unable to assign metadata IDs of module; %v", err))
@@ -317,9 +325,55 @@ func (u *UseListOrderBB) String() string {
 
 // ### [ Helper functions ] ####################################################
 
+// AssignGlobalIDs assigns IDs to unnamed global variables.
+func (m *Module) AssignGlobalIDs() error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	id := int64(0)
+	setName := func(n namedVar) error {
+		if n.IsUnnamed() {
+			if n.ID() != 0 && id != n.ID() {
+				want := id
+				got := n.ID()
+				return errors.Errorf("invalid global ID, expected %s, got %s", enc.GlobalID(want), enc.GlobalID(got))
+			}
+			n.SetID(id)
+			id++
+		}
+		return nil
+	}
+	// Assign global IDs to unnamed global variables.
+	for _, n := range m.Globals {
+		if err := setName(n); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	// Assign global IDs to unnamed aliases.
+	for _, n := range m.Aliases {
+		if err := setName(n); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	// Assign global IDs to unnamed IFuncs.
+	for _, n := range m.IFuncs {
+		if err := setName(n); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	// Assign global IDs to unnamed functions.
+	for _, n := range m.Funcs {
+		if err := setName(n); err != nil {
+			return errors.WithStack(err)
+		}
+	}
+	return nil
+}
+
 // AssignMetadataIDs assigns metadata IDs to the unnamed metadata definitions of
 // the module.
 func (m *Module) AssignMetadataIDs() error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	// Index used IDs.
 	used := make(map[int64]bool)
 	for _, md := range m.MetadataDefs {

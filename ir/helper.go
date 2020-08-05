@@ -469,3 +469,14 @@ func (fw *fmtWriter) Fprintln(a ...interface{}) (n int, err error) {
 	fw.err = err
 	return n, err
 }
+
+// namedVar is a named variable.
+type namedVar interface {
+	value.Named
+	// ID returns the ID of the local identifier.
+	ID() int64
+	// SetID sets the ID of the local identifier.
+	SetID(id int64)
+	// IsUnnamed reports whether the local identifier is unnamed.
+	IsUnnamed() bool
+}

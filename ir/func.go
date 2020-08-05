@@ -9,7 +9,6 @@ import (
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
 	"github.com/llir/llvm/ir/types"
-	"github.com/llir/llvm/ir/value"
 	"github.com/pkg/errors"
 )
 
@@ -156,7 +155,7 @@ func (f *Func) AssignIDs() error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	id := int64(0)
-	setName := func(n local) error {
+	setName := func(n namedVar) error {
 		if n.IsUnnamed() {
 			if n.ID() != 0 && id != n.ID() {
 				want := id
@@ -180,7 +179,7 @@ func (f *Func) AssignIDs() error {
 			return errors.WithStack(err)
 		}
 		for _, inst := range block.Insts {
-			n, ok := inst.(local)
+			n, ok := inst.(namedVar)
 			if !ok {
 				continue
 			}
@@ -193,7 +192,7 @@ func (f *Func) AssignIDs() error {
 				return errors.WithStack(err)
 			}
 		}
-		n, ok := block.Term.(local)
+		n, ok := block.Term.(namedVar)
 		if !ok {
 			continue
 		}
@@ -303,15 +302,4 @@ func bodyString(body *Func) string {
 	}
 	buf.WriteString("}")
 	return buf.String()
-}
-
-// local is a local variable.
-type local interface {
-	value.Named
-	// ID returns the ID of the local identifier.
-	ID() int64
-	// SetID sets the ID of the local identifier.
-	SetID(id int64)
-	// IsUnnamed reports whether the local identifier is unnamed.
-	IsUnnamed() bool
 }
