@@ -1,4 +1,4 @@
-package asm_test
+package llvm
 
 import (
 	"log"
