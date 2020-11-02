@@ -10,6 +10,7 @@ Library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html) in pur
 ## Introduction
 
 * [Introductory blog post "LLVM IR and Go"](https://blog.gopheracademy.com/advent-2018/llvm-ir-and-go/)
+* [Our Document](https://llir.github.io/document/)
 
 ## Installation
 
