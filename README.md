@@ -7,6 +7,10 @@
 
 Library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html) in pure Go.
 
+## Introduction
+
+* [Introductory blog post "LLVM IR and Go"](https://blog.gopheracademy.com/advent-2018/llvm-ir-and-go/)
+
 ## Installation
 
 ```bash
