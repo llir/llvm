@@ -1,6 +1,7 @@
 package natsort
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"sort"
@@ -198,7 +199,7 @@ func (g *generator) NextString() (str string) {
 		if i == numpos {
 			str += num
 		} else {
-			str += string('a' + g.src.Intn(16))
+			str += fmt.Sprint('a' + g.src.Intn(16))
 		}
 	}
 	return str
