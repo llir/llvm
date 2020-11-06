@@ -1,5 +1,3 @@
-name: Full Test
-
 on:
   - pull_request
 
