@@ -1,0 +1,21 @@
+name: Lint
+
+on:
+  - push
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Run linters
+      run: |
+        GO111MODULE=off go get golang.org/x/lint/golint
+        GO111MODULE=off go get github.com/mgechev/revive
+        echo "### revive"
+        $(go env GOPATH)/bin/revive -config .revive.toml ./...
+        echo "### golint"
+        $(go env GOPATH)/bin/golint ./...
+        exit 0
