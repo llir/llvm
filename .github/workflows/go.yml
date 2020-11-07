@@ -1,37 +1,26 @@
-name: Go
-
 on:
-  - push
-  - pull_request
+  schedule:
+    - cron: "0 9 * * *"
+  push:
+    branches:
+    - '*'
+  pull_request:
+    branches:
+    - '*'
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Run linters
-      run: |
-        GO111MODULE=off go get golang.org/x/lint/golint
-        GO111MODULE=off go get github.com/mgechev/revive
-        echo "### revive"
-        $(go env GOPATH)/bin/revive -config .revive.toml ./...
-        echo "### golint"
-        $(go env GOPATH)/bin/golint ./...
-        exit 0
   build:
     name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        go-version: [1.12, 1.13, 1.14]
+        go-version: [1.15]
     steps:
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
       with:
-        go-version: 1.13
+        go-version: ^1.13
       id: go
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
@@ -43,39 +32,16 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        go-version: [1.12, 1.13, 1.14]
+        go-version: [1.15]
     steps:
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
       with:
-        go-version: 1.13
+        go-version: ^1.13
       id: go
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
     - name: Get dependencies
       run: git submodule update --init
     - name: Go Test
-      run: go test ./...
-    - name: Go Race Test
-      run: go test -race ./...
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    steps:
-    - name: Install Go
-      if: success()
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Calculate coverage
-      run: |
-        git submodule update --init
-        go test -v -covermode=count -coverprofile=coverage.out ./...
-    - name: Coveralls
-      env:
-        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        GO111MODULE=off go get github.com/mattn/goveralls
-        $(go env GOPATH)/bin/goveralls -coverprofile=coverage.out -service=github
+      run: go test -short ./...
