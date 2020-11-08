@@ -1119,7 +1119,8 @@ func (gen *generator) irDIModule(new metadata.SpecializedNode, old *ast.DIModule
 			}
 			md.File = file
 		case *ast.LineField:
-			*md.Line = intLit(oldField.Line())
+			i := intLit(oldField.Line())
+			md.Line = &i
 		default:
 			panic(fmt.Errorf("support for DIModule field %T not yet implemented", old))
 		}
