@@ -1431,7 +1431,7 @@ type DIModule struct {
 	IncludePath  string // optional; empty if not present.
 	APINotes     string // optional; empty if not present.
 	File         Field  // optional; empty if not present.
-	Line         *int64 // optional; empty if not present.
+	Line         int64  // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1481,7 +1481,7 @@ func (md *DIModule) LLString() string {
 		field := fmt.Sprintf("file: %s", md.File)
 		fields = append(fields, field)
 	}
-	if md.Line != nil {
+	if md.Line != 0 {
 		field := fmt.Sprintf("line: %d", md.Line)
 		fields = append(fields, field)
 	}
