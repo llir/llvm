@@ -1110,8 +1110,16 @@ func (gen *generator) irDIModule(new metadata.SpecializedNode, old *ast.DIModule
 			md.ConfigMacros = stringLit(oldField.ConfigMacros())
 		case *ast.IncludePathField:
 			md.IncludePath = stringLit(oldField.IncludePath())
-		case *ast.SysrootField:
-			md.Sysroot = stringLit(oldField.Sysroot())
+		case *ast.APINotesField:
+			md.APINotes = stringLit(oldField.APINotes())
+		case *ast.FileField:
+			file, err := gen.irMDField(oldField.File())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.File = file
+		case *ast.LineField:
+			md.Line = intLit(oldField.Line())
 		default:
 			panic(fmt.Errorf("support for DIModule field %T not yet implemented", old))
 		}
