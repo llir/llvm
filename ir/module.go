@@ -31,7 +31,7 @@ type Module struct {
 
 	// (optional) Source filename; or empty if not present.
 	SourceFilename string
-	// (optional) Data layout; or empty if not present.
+	// Data layout; required
 	DataLayout string
 	// (optional) Target triple; or empty if not present.
 	TargetTriple string
@@ -93,10 +93,8 @@ func (m *Module) WriteTo(w io.Writer) (n int64, err error) {
 		fw.Fprintf("source_filename = %s\n", quote(m.SourceFilename))
 	}
 	// Data layout.
-	if len(m.DataLayout) > 0 {
-		// 'target' 'datalayout' '=' DataLayout=StringLit
-		fw.Fprintf("target datalayout = %s\n", quote(m.DataLayout))
-	}
+	// 'target' 'datalayout' '=' DataLayout=StringLit
+	fw.Fprintf("target datalayout = %s\n", quote(m.DataLayout))
 	// Target triple.
 	if len(m.TargetTriple) > 0 {
 		// 'target' 'triple' '=' TargetTriple=StringLit
