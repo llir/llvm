@@ -1824,8 +1824,10 @@ type DISubrange struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Count      FieldOrInt // required.
-	LowerBound int64      // optional; zero value if not present.
+	Count      FieldOrInt // optional
+	LowerBound FieldOrInt // optional
+	UpperBound FieldOrInt // optional
+	Stride     FieldOrInt // optional
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1855,10 +1857,20 @@ func (md *DISubrange) LLString() string {
 		buf.WriteString("distinct ")
 	}
 	var fields []string
-	field := fmt.Sprintf("count: %s", md.Count)
-	fields = append(fields, field)
-	if md.LowerBound != 0 {
-		field := fmt.Sprintf("lowerBound: %d", md.LowerBound)
+	if md.Count != nil {
+		field := fmt.Sprintf("count: %s", md.Count)
+		fields = append(fields, field)
+	}
+	if md.LowerBound != nil {
+		field := fmt.Sprintf("lowerBound: %s", md.LowerBound)
+		fields = append(fields, field)
+	}
+	if md.UpperBound != nil {
+		field := fmt.Sprintf("upperBound: %s", md.UpperBound)
+		fields = append(fields, field)
+	}
+	if md.Stride != nil {
+		field := fmt.Sprintf("stride: %s", md.Stride)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DISubrange(%s)", strings.Join(fields, ", "))
