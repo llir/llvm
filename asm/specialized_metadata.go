@@ -1359,15 +1359,28 @@ func (gen *generator) irDISubrange(new metadata.SpecializedNode, old *ast.DISubr
 		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DISubrange, got %T", new))
 	}
 	for _, oldField := range old.Fields() {
+		var err error
 		switch oldField := oldField.(type) {
 		case *ast.CountField:
-			count, err := gen.irMDFieldOrInt(oldField.Count())
+			md.Count, err = gen.irMDFieldOrInt(oldField.Count())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			md.Count = count
 		case *ast.LowerBoundField:
-			md.LowerBound = intLit(oldField.LowerBound())
+			md.LowerBound, err = gen.irMDFieldOrInt(oldField.LowerBound())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+		case *ast.UpperBoundField:
+			md.UpperBound, err = gen.irMDFieldOrInt(oldField.UpperBound())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+		case *ast.StrideField:
+			md.Stride, err = gen.irMDFieldOrInt(oldField.Stride())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
 		default:
 			panic(fmt.Errorf("support for DISubrange field %T not yet implemented", old))
 		}
