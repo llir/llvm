@@ -1359,28 +1359,31 @@ func (gen *generator) irDISubrange(new metadata.SpecializedNode, old *ast.DISubr
 		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DISubrange, got %T", new))
 	}
 	for _, oldField := range old.Fields() {
-		var err error
 		switch oldField := oldField.(type) {
 		case *ast.CountField:
-			md.Count, err = gen.irMDFieldOrInt(oldField.Count())
+			count, err := gen.irMDFieldOrInt(oldField.Count())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
+			md.Count = count
 		case *ast.LowerBoundField:
-			md.LowerBound, err = gen.irMDFieldOrInt(oldField.LowerBound())
+			lowerBound, err := gen.irMDFieldOrInt(oldField.LowerBound())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
+			md.LowerBound = lowerBound
 		case *ast.UpperBoundField:
-			md.UpperBound, err = gen.irMDFieldOrInt(oldField.UpperBound())
+			upperBound, err := gen.irMDFieldOrInt(oldField.UpperBound())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
+			md.UpperBound = upperBound
 		case *ast.StrideField:
-			md.Stride, err = gen.irMDFieldOrInt(oldField.Stride())
+			stride, err := gen.irMDFieldOrInt(oldField.Stride())
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
+			md.Stride = stride
 		default:
 			panic(fmt.Errorf("support for DISubrange field %T not yet implemented", old))
 		}
