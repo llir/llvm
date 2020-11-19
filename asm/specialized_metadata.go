@@ -1367,7 +1367,23 @@ func (gen *generator) irDISubrange(new metadata.SpecializedNode, old *ast.DISubr
 			}
 			md.Count = count
 		case *ast.LowerBoundField:
-			md.LowerBound = intLit(oldField.LowerBound())
+			lowerBound, err := gen.irMDFieldOrInt(oldField.LowerBound())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.LowerBound = lowerBound
+		case *ast.UpperBoundField:
+			upperBound, err := gen.irMDFieldOrInt(oldField.UpperBound())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.UpperBound = upperBound
+		case *ast.StrideField:
+			stride, err := gen.irMDFieldOrInt(oldField.Stride())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Stride = stride
 		default:
 			panic(fmt.Errorf("support for DISubrange field %T not yet implemented", old))
 		}

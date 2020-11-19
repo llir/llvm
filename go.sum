@@ -12,6 +12,8 @@ github.com/llir/ll v0.0.0-20200425014433-60cd8feecf92 h1:46SWNHwNB1dvOK+9gO3TENa
 github.com/llir/ll v0.0.0-20200425014433-60cd8feecf92/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/llir/ll v0.0.0-20201108035927-e6454a4aa8b6 h1:QDN0XtGiUcDkBWt7Ud+8bEEyYDZY4Y8G0ooi5dITAdE=
 github.com/llir/ll v0.0.0-20201108035927-e6454a4aa8b6/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
+github.com/llir/ll v0.0.0-20201118045546-5642baa1cc45 h1:Ld1+2bws3xGSahfZjg05AlUQa77wJ/4AfQ6OlYNfvnI=
+github.com/llir/ll v0.0.0-20201118045546-5642baa1cc45/go.mod h1:8W5HJz80PitAyPZUpOcljQxTu6LD5YKW1URTo+OjVoc=
 github.com/mewmew/float v0.0.0-20191226120903-16bbe2fdd85e h1:KCD7E/8LKwDsC5ymlEWJ3xCiSPaCywrS/psToBMOBH4=
 github.com/mewmew/float v0.0.0-20191226120903-16bbe2fdd85e/go.mod h1:O+xb+8ycBNHzJicFVs7GRWtruD4tVZI0huVnw5TM01E=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
