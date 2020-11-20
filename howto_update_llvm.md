@@ -15,6 +15,7 @@ To ensure `llir/llvm` is following the LLVM specification, we rely on the test c
 | MDField            | Field              |
 | MDSignedOrMDField  | FieldOrInt         |
 | MDSignedField      | int64              |
+| APSIntField        | uint64             |
 | LineField          | int64              |
 | MDBoolField        | bool               |
 | MDStringField      | string             |
