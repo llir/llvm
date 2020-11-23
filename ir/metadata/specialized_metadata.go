@@ -317,6 +317,7 @@ type DICompositeType struct {
 	TemplateParams *Tuple // optional; nil if not present.
 	Identifier     string // optional; empty if not present.
 	Discriminator  Field  // optional; nil if not present.
+	DataLocation   Field  // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -406,6 +407,10 @@ func (md *DICompositeType) LLString() string {
 	}
 	if md.Discriminator != nil {
 		field := fmt.Sprintf("discriminator: %s", md.Discriminator)
+		fields = append(fields, field)
+	}
+	if md.DataLocation != nil {
+		field := fmt.Sprintf("dataLocation: %s", md.DataLocation)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DICompositeType(%s)", strings.Join(fields, ", "))
