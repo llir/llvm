@@ -390,6 +390,12 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 				return nil, errors.WithStack(err)
 			}
 			md.Discriminator = discriminator
+		case *ast.DataLocationField:
+			dataLocation, err := gen.irMDField(oldField.DataLocation())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.DataLocation = dataLocation
 		default:
 			panic(fmt.Errorf("support for DICompositeType field %T not yet implemented", old))
 		}
