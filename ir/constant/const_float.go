@@ -10,6 +10,7 @@ import (
 
 	"github.com/llir/llvm/ir/types"
 	"github.com/mewmew/float"
+	"github.com/mewmew/float/bfloat"
 	"github.com/mewmew/float/binary128"
 	"github.com/mewmew/float/binary16"
 	"github.com/mewmew/float/float128ppc"
@@ -144,6 +145,19 @@ func NewFloatFromString(typ *types.FloatType, s string) (*Float, error) {
 			x, nan := f.Big()
 			return &Float{Typ: typ, X: x, NaN: nan}, nil
 		// Hexadecimal floating-point literal.
+		case strings.HasPrefix(s, "0xR"):
+			// From https://llvm.org/docs/LangRef.html#simple-constants
+			//
+			// > The bfloat 16-bit format is represented by 0xR followed by 4 hexadecimal digits.
+			hex := strings.TrimPrefix(s, "0xR")
+			bits, err := strconv.ParseUint(hex, 16, 16)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			f := bfloat.NewFromBits(uint16(bits))
+			x, nan := f.Big()
+			return &Float{Typ: typ, X: x, NaN: nan}, nil
+			// HexBFloatConstant
 		default:
 			// From https://llvm.org/docs/LangRef.html#simple-constants
 			//
