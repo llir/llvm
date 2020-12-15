@@ -276,8 +276,12 @@ func (gen *generator) irDICompileUnit(new metadata.SpecializedNode, old *ast.DIC
 			md.DebugInfoForProfiling = boolLit(oldField.DebugInfoForProfiling())
 		case *ast.NameTableKindField:
 			md.NameTableKind = irNameTableKind(oldField.NameTableKind())
-		case *ast.DebugBaseAddressField:
-			md.DebugBaseAddress = boolLit(oldField.DebugBaseAddress())
+		case *ast.RangesBaseAddressField:
+			md.RangesBaseAddress = boolLit(oldField.RangesBaseAddress())
+		case *ast.SysrootField:
+			md.Sysroot = stringLit(oldField.Sysroot())
+		case *ast.SDKField:
+			md.SDK = stringLit(oldField.SDK())
 		default:
 			panic(fmt.Errorf("support for DICompileUnit field %T not yet implemented", old))
 		}
