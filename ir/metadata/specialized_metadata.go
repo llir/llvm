@@ -183,7 +183,9 @@ type DICompileUnit struct {
 	SplitDebugInlining    bool               // optional; zero value if not present.
 	DebugInfoForProfiling bool               // optional; zero value if not present.
 	NameTableKind         enum.NameTableKind // optional; zero value if not present.
-	DebugBaseAddress      bool               // optional; zero value if not present.
+	RangesBaseAddress     bool               // optional; zero value if not present.
+	Sysroot               string             // optional; zero value if not present.
+	SDK                   string             // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -277,8 +279,16 @@ func (md *DICompileUnit) LLString() string {
 		field = fmt.Sprintf("nameTableKind: %s", md.NameTableKind)
 		fields = append(fields, field)
 	}
-	if md.DebugBaseAddress {
-		field = fmt.Sprintf("debugBaseAddress: %t", md.DebugBaseAddress)
+	if md.RangesBaseAddress {
+		field = fmt.Sprintf("rangesBaseAddress: %t", md.RangesBaseAddress)
+		fields = append(fields, field)
+	}
+	if len(md.Sysroot) > 0 {
+		field = fmt.Sprintf("sysroot: %s", md.Sysroot)
+		fields = append(fields, field)
+	}
+	if len(md.SDK) > 0 {
+		field = fmt.Sprintf("sdk: %s", md.SDK)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DICompileUnit(%s)", strings.Join(fields, ", "))
