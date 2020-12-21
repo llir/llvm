@@ -30,6 +30,7 @@ Map between `llir/llvm` tagged releases and LLVM release versions.
 * [decomp](https://github.com/decomp/decomp): LLVM IR to Go decompiler by [@decomp](https://github.com/decomp).
 * [geode](https://github.com/geode-lang/geode): Geode to LLVM IR compiler by [@nickwanninger](https://github.com/nickwanninger).
 * [leaven](https://github.com/andybalholm/leaven): LLVM IR to Go decompiler by [@andybalholm](https://github.com/andybalholm).
+* [slate](https://github.com/nektro/slate): Slate to LLVM IR compiler by [@nektro](https://github.com/nektro).
 * [tre](https://github.com/zegl/tre): Go to LLVM IR compiler by [@zegl](https://github.com/zegl).
 * [uc](https://github.com/mewmew/uc): µC to LLVM IR compiler by [@sangisos](https://github.com/sangisos) and [@mewmew](https://github.com/mewmew).
 
