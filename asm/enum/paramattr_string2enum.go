@@ -20,20 +20,22 @@ func _() {
 	_ = x[enum.ParamAttrNoCapture-5]
 	_ = x[enum.ParamAttrNoFree-6]
 	_ = x[enum.ParamAttrNonNull-7]
-	_ = x[enum.ParamAttrReadNone-8]
-	_ = x[enum.ParamAttrReadOnly-9]
-	_ = x[enum.ParamAttrReturned-10]
-	_ = x[enum.ParamAttrSignExt-11]
-	_ = x[enum.ParamAttrSRet-12]
-	_ = x[enum.ParamAttrSwiftError-13]
-	_ = x[enum.ParamAttrSwiftSelf-14]
-	_ = x[enum.ParamAttrWriteOnly-15]
-	_ = x[enum.ParamAttrZeroExt-16]
+	_ = x[enum.ParamAttrNoMerge-8]
+	_ = x[enum.ParamAttrNullPointerIsValid-9]
+	_ = x[enum.ParamAttrReadNone-10]
+	_ = x[enum.ParamAttrReadOnly-11]
+	_ = x[enum.ParamAttrReturned-12]
+	_ = x[enum.ParamAttrSignExt-13]
+	_ = x[enum.ParamAttrSRet-14]
+	_ = x[enum.ParamAttrSwiftError-15]
+	_ = x[enum.ParamAttrSwiftSelf-16]
+	_ = x[enum.ParamAttrWriteOnly-17]
+	_ = x[enum.ParamAttrZeroExt-18]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenonnullreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenonnullnomergenull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 60, 68, 76, 83, 87, 97, 106, 115, 122}
+var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 80, 88, 96, 104, 111, 115, 125, 134, 143, 150}
 
 // ParamAttrFromString returns the ParamAttr enum corresponding to s.
 func ParamAttrFromString(s string) enum.ParamAttr {

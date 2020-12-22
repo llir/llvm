@@ -16,20 +16,22 @@ func _() {
 	_ = x[ParamAttrNoCapture-5]
 	_ = x[ParamAttrNoFree-6]
 	_ = x[ParamAttrNonNull-7]
-	_ = x[ParamAttrReadNone-8]
-	_ = x[ParamAttrReadOnly-9]
-	_ = x[ParamAttrReturned-10]
-	_ = x[ParamAttrSignExt-11]
-	_ = x[ParamAttrSRet-12]
-	_ = x[ParamAttrSwiftError-13]
-	_ = x[ParamAttrSwiftSelf-14]
-	_ = x[ParamAttrWriteOnly-15]
-	_ = x[ParamAttrZeroExt-16]
+	_ = x[ParamAttrNoMerge-8]
+	_ = x[ParamAttrNullPointerIsValid-9]
+	_ = x[ParamAttrReadNone-10]
+	_ = x[ParamAttrReadOnly-11]
+	_ = x[ParamAttrReturned-12]
+	_ = x[ParamAttrSignExt-13]
+	_ = x[ParamAttrSRet-14]
+	_ = x[ParamAttrSwiftError-15]
+	_ = x[ParamAttrSwiftSelf-16]
+	_ = x[ParamAttrWriteOnly-17]
+	_ = x[ParamAttrZeroExt-18]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenonnullreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenonnullnomergenull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 60, 68, 76, 83, 87, 97, 106, 115, 122}
+var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 80, 88, 96, 104, 111, 115, 125, 134, 143, 150}
 
 func (i ParamAttr) String() string {
 	if i >= ParamAttr(len(_ParamAttr_index)-1) {

@@ -15,13 +15,15 @@ func _() {
 	_ = x[enum.ReturnAttrInReg-0]
 	_ = x[enum.ReturnAttrNoAlias-1]
 	_ = x[enum.ReturnAttrNonNull-2]
-	_ = x[enum.ReturnAttrSignExt-3]
-	_ = x[enum.ReturnAttrZeroExt-4]
+	_ = x[enum.ReturnAttrNoMerge-3]
+	_ = x[enum.ReturnAttrNullPointerIsValid-4]
+	_ = x[enum.ReturnAttrSignExt-5]
+	_ = x[enum.ReturnAttrZeroExt-6]
 }
 
-const _ReturnAttr_name = "inregnoaliasnonnullsignextzeroext"
+const _ReturnAttr_name = "inregnoaliasnonnullnomergenull_pointer_is_validsignextzeroext"
 
-var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 33}
+var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 47, 54, 61}
 
 // ReturnAttrFromString returns the ReturnAttr enum corresponding to s.
 func ReturnAttrFromString(s string) enum.ReturnAttr {

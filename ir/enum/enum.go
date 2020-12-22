@@ -741,8 +741,10 @@ const (
 	FuncAttrNoRecurse                                   // norecurse
 	FuncAttrNoRedZone                                   // noredzone
 	FuncAttrNoReturn                                    // noreturn
+	FuncAttrNoMerge                                     // nomerge
 	FuncAttrNoSync                                      // nosync
 	FuncAttrNoUnwind                                    // nounwind
+	FuncAttrNullPointerIsValid                          // null_pointer_is_valid
 	FuncAttrOptForFuzzing                               // optforfuzzing
 	FuncAttrOptNone                                     // optnone
 	FuncAttrOptSize                                     // optsize
@@ -840,23 +842,25 @@ type ParamAttr uint8
 
 // Parameter attributes.
 const (
-	ParamAttrImmArg     ParamAttr = iota // immarg
-	ParamAttrInAlloca                    // inalloca
-	ParamAttrInReg                       // inreg
-	ParamAttrNest                        // nest
-	ParamAttrNoAlias                     // noalias
-	ParamAttrNoCapture                   // nocapture
-	ParamAttrNoFree                      // nofree
-	ParamAttrNonNull                     // nonnull
-	ParamAttrReadNone                    // readnone
-	ParamAttrReadOnly                    // readonly
-	ParamAttrReturned                    // returned
-	ParamAttrSignExt                     // signext
-	ParamAttrSRet                        // sret
-	ParamAttrSwiftError                  // swifterror
-	ParamAttrSwiftSelf                   // swiftself
-	ParamAttrWriteOnly                   // writeonly
-	ParamAttrZeroExt                     // zeroext
+	ParamAttrImmArg             ParamAttr = iota // immarg
+	ParamAttrInAlloca                            // inalloca
+	ParamAttrInReg                               // inreg
+	ParamAttrNest                                // nest
+	ParamAttrNoAlias                             // noalias
+	ParamAttrNoCapture                           // nocapture
+	ParamAttrNoFree                              // nofree
+	ParamAttrNonNull                             // nonnull
+	ParamAttrNoMerge                             // nomerge
+	ParamAttrNullPointerIsValid                  // null_pointer_is_valid
+	ParamAttrReadNone                            // readnone
+	ParamAttrReadOnly                            // readonly
+	ParamAttrReturned                            // returned
+	ParamAttrSignExt                             // signext
+	ParamAttrSRet                                // sret
+	ParamAttrSwiftError                          // swifterror
+	ParamAttrSwiftSelf                           // swiftself
+	ParamAttrWriteOnly                           // writeonly
+	ParamAttrZeroExt                             // zeroext
 )
 
 //go:generate stringer -linecomment -type Preemption
@@ -878,11 +882,13 @@ type ReturnAttr uint8
 
 // Return argument attributes.
 const (
-	ReturnAttrInReg   ReturnAttr = iota // inreg
-	ReturnAttrNoAlias                   // noalias
-	ReturnAttrNonNull                   // nonnull
-	ReturnAttrSignExt                   // signext
-	ReturnAttrZeroExt                   // zeroext
+	ReturnAttrInReg              ReturnAttr = iota // inreg
+	ReturnAttrNoAlias                              // noalias
+	ReturnAttrNonNull                              // nonnull
+	ReturnAttrNoMerge                              // nomerge
+	ReturnAttrNullPointerIsValid                   // null_pointer_is_valid
+	ReturnAttrSignExt                              // signext
+	ReturnAttrZeroExt                              // zeroext
 )
 
 //go:generate stringer -linecomment -type SelectionKind
