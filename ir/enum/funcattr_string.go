@@ -13,8 +13,8 @@ func _() {
 	_ = x[FuncAttrBuiltin-2]
 	_ = x[FuncAttrCold-3]
 	_ = x[FuncAttrConvergent-4]
-	_ = x[FuncAttrInaccessibleMemOrArgMemOnly-5]
-	_ = x[FuncAttrInaccessibleMemOnly-6]
+	_ = x[FuncAttrInaccessibleMemOnly-5]
+	_ = x[FuncAttrInaccessibleMemOrArgMemOnly-6]
 	_ = x[FuncAttrInlineHint-7]
 	_ = x[FuncAttrJumpTable-8]
 	_ = x[FuncAttrMinSize-9]
@@ -25,11 +25,11 @@ func _() {
 	_ = x[FuncAttrNoFree-14]
 	_ = x[FuncAttrNoImplicitFloat-15]
 	_ = x[FuncAttrNoInline-16]
-	_ = x[FuncAttrNonLazyBind-17]
-	_ = x[FuncAttrNoRecurse-18]
-	_ = x[FuncAttrNoRedZone-19]
-	_ = x[FuncAttrNoReturn-20]
-	_ = x[FuncAttrNoMerge-21]
+	_ = x[FuncAttrNoMerge-17]
+	_ = x[FuncAttrNonLazyBind-18]
+	_ = x[FuncAttrNoRecurse-19]
+	_ = x[FuncAttrNoRedZone-20]
+	_ = x[FuncAttrNoReturn-21]
 	_ = x[FuncAttrNoSync-22]
 	_ = x[FuncAttrNoUnwind-23]
 	_ = x[FuncAttrNullPointerIsValid-24]
@@ -57,9 +57,9 @@ func _() {
 	_ = x[FuncAttrWriteOnly-46]
 }
 
-const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnocf_checknoduplicatenofreenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnomergenosyncnounwindnull_pointer_is_validoptforfuzzingoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_memtagsanitize_threadshadowcallstackspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewillreturnwriteonly"
+const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblememonlyinaccessiblemem_or_argmemonlyinlinehintjumptableminsizenakednobuiltinnocf_checknoduplicatenofreenoimplicitfloatnoinlinenomergenonlazybindnorecursenoredzonenoreturnnosyncnounwindnull_pointer_is_validoptforfuzzingoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_memtagsanitize_threadshadowcallstackspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewillreturnwriteonly"
 
-var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 141, 152, 158, 173, 181, 192, 201, 210, 218, 225, 231, 239, 260, 273, 280, 287, 295, 303, 316, 325, 341, 359, 374, 389, 404, 419, 431, 457, 460, 466, 475, 483, 490, 500, 509}
+var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 62, 91, 101, 110, 117, 122, 131, 141, 152, 158, 173, 181, 188, 199, 208, 217, 225, 231, 239, 260, 273, 280, 287, 295, 303, 316, 325, 341, 359, 374, 389, 404, 419, 431, 457, 460, 466, 475, 483, 490, 500, 509}
 
 func (i FuncAttr) String() string {
 	if i >= FuncAttr(len(_FuncAttr_index)-1) {

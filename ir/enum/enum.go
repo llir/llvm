@@ -725,8 +725,8 @@ const (
 	FuncAttrBuiltin                                     // builtin
 	FuncAttrCold                                        // cold
 	FuncAttrConvergent                                  // convergent
-	FuncAttrInaccessibleMemOrArgMemOnly                 // inaccessiblemem_or_argmemonly
 	FuncAttrInaccessibleMemOnly                         // inaccessiblememonly
+	FuncAttrInaccessibleMemOrArgMemOnly                 // inaccessiblemem_or_argmemonly
 	FuncAttrInlineHint                                  // inlinehint
 	FuncAttrJumpTable                                   // jumptable
 	FuncAttrMinSize                                     // minsize
@@ -737,11 +737,11 @@ const (
 	FuncAttrNoFree                                      // nofree
 	FuncAttrNoImplicitFloat                             // noimplicitfloat
 	FuncAttrNoInline                                    // noinline
+	FuncAttrNoMerge                                     // nomerge
 	FuncAttrNonLazyBind                                 // nonlazybind
 	FuncAttrNoRecurse                                   // norecurse
 	FuncAttrNoRedZone                                   // noredzone
 	FuncAttrNoReturn                                    // noreturn
-	FuncAttrNoMerge                                     // nomerge
 	FuncAttrNoSync                                      // nosync
 	FuncAttrNoUnwind                                    // nounwind
 	FuncAttrNullPointerIsValid                          // null_pointer_is_valid
@@ -849,8 +849,8 @@ const (
 	ParamAttrNoAlias                             // noalias
 	ParamAttrNoCapture                           // nocapture
 	ParamAttrNoFree                              // nofree
-	ParamAttrNonNull                             // nonnull
 	ParamAttrNoMerge                             // nomerge
+	ParamAttrNonNull                             // nonnull
 	ParamAttrNullPointerIsValid                  // null_pointer_is_valid
 	ParamAttrReadNone                            // readnone
 	ParamAttrReadOnly                            // readonly
@@ -884,8 +884,8 @@ type ReturnAttr uint8
 const (
 	ReturnAttrInReg              ReturnAttr = iota // inreg
 	ReturnAttrNoAlias                              // noalias
-	ReturnAttrNonNull                              // nonnull
 	ReturnAttrNoMerge                              // nomerge
+	ReturnAttrNonNull                              // nonnull
 	ReturnAttrNullPointerIsValid                   // null_pointer_is_valid
 	ReturnAttrSignExt                              // signext
 	ReturnAttrZeroExt                              // zeroext

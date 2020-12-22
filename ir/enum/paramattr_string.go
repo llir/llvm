@@ -15,8 +15,8 @@ func _() {
 	_ = x[ParamAttrNoAlias-4]
 	_ = x[ParamAttrNoCapture-5]
 	_ = x[ParamAttrNoFree-6]
-	_ = x[ParamAttrNonNull-7]
-	_ = x[ParamAttrNoMerge-8]
+	_ = x[ParamAttrNoMerge-7]
+	_ = x[ParamAttrNonNull-8]
 	_ = x[ParamAttrNullPointerIsValid-9]
 	_ = x[ParamAttrReadNone-10]
 	_ = x[ParamAttrReadOnly-11]
@@ -29,7 +29,7 @@ func _() {
 	_ = x[ParamAttrZeroExt-18]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenonnullnomergenull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
 var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 80, 88, 96, 104, 111, 115, 125, 134, 143, 150}
 

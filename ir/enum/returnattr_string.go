@@ -10,14 +10,14 @@ func _() {
 	var x [1]struct{}
 	_ = x[ReturnAttrInReg-0]
 	_ = x[ReturnAttrNoAlias-1]
-	_ = x[ReturnAttrNonNull-2]
-	_ = x[ReturnAttrNoMerge-3]
+	_ = x[ReturnAttrNoMerge-2]
+	_ = x[ReturnAttrNonNull-3]
 	_ = x[ReturnAttrNullPointerIsValid-4]
 	_ = x[ReturnAttrSignExt-5]
 	_ = x[ReturnAttrZeroExt-6]
 }
 
-const _ReturnAttr_name = "inregnoaliasnonnullnomergenull_pointer_is_validsignextzeroext"
+const _ReturnAttr_name = "inregnoaliasnomergenonnullnull_pointer_is_validsignextzeroext"
 
 var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 47, 54, 61}
 
