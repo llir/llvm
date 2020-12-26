@@ -73,7 +73,7 @@ var (
 
 func (i CallingConv) String() string {
 	switch {
-	case i <= 1:
+	case 0 <= i && i <= 1:
 		return _CallingConv_name_0[_CallingConv_index_0[i]:_CallingConv_index_0[i+1]]
 	case 8 <= i && i <= 19:
 		i -= 8
