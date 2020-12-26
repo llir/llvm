@@ -17,8 +17,8 @@ func _() {
 	_ = x[enum.FuncAttrBuiltin-2]
 	_ = x[enum.FuncAttrCold-3]
 	_ = x[enum.FuncAttrConvergent-4]
-	_ = x[enum.FuncAttrInaccessibleMemOrArgMemOnly-5]
-	_ = x[enum.FuncAttrInaccessibleMemOnly-6]
+	_ = x[enum.FuncAttrInaccessibleMemOnly-5]
+	_ = x[enum.FuncAttrInaccessibleMemOrArgMemOnly-6]
 	_ = x[enum.FuncAttrInlineHint-7]
 	_ = x[enum.FuncAttrJumpTable-8]
 	_ = x[enum.FuncAttrMinSize-9]
@@ -29,11 +29,11 @@ func _() {
 	_ = x[enum.FuncAttrNoFree-14]
 	_ = x[enum.FuncAttrNoImplicitFloat-15]
 	_ = x[enum.FuncAttrNoInline-16]
-	_ = x[enum.FuncAttrNonLazyBind-17]
-	_ = x[enum.FuncAttrNoRecurse-18]
-	_ = x[enum.FuncAttrNoRedZone-19]
-	_ = x[enum.FuncAttrNoReturn-20]
-	_ = x[enum.FuncAttrNoMerge-21]
+	_ = x[enum.FuncAttrNoMerge-17]
+	_ = x[enum.FuncAttrNonLazyBind-18]
+	_ = x[enum.FuncAttrNoRecurse-19]
+	_ = x[enum.FuncAttrNoRedZone-20]
+	_ = x[enum.FuncAttrNoReturn-21]
 	_ = x[enum.FuncAttrNoSync-22]
 	_ = x[enum.FuncAttrNoUnwind-23]
 	_ = x[enum.FuncAttrNullPointerIsValid-24]
@@ -61,9 +61,9 @@ func _() {
 	_ = x[enum.FuncAttrWriteOnly-46]
 }
 
-const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblemem_or_argmemonlyinaccessiblememonlyinlinehintjumptableminsizenakednobuiltinnocf_checknoduplicatenofreenoimplicitfloatnoinlinenonlazybindnorecursenoredzonenoreturnnomergenosyncnounwindnull_pointer_is_validoptforfuzzingoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_memtagsanitize_threadshadowcallstackspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewillreturnwriteonly"
+const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblememonlyinaccessiblemem_or_argmemonlyinlinehintjumptableminsizenakednobuiltinnocf_checknoduplicatenofreenoimplicitfloatnoinlinenomergenonlazybindnorecursenoredzonenoreturnnosyncnounwindnull_pointer_is_validoptforfuzzingoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_memtagsanitize_threadshadowcallstackspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewillreturnwriteonly"
 
-var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 72, 91, 101, 110, 117, 122, 131, 141, 152, 158, 173, 181, 192, 201, 210, 218, 225, 231, 239, 260, 273, 280, 287, 295, 303, 316, 325, 341, 359, 374, 389, 404, 419, 431, 457, 460, 466, 475, 483, 490, 500, 509}
+var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 62, 91, 101, 110, 117, 122, 131, 141, 152, 158, 173, 181, 188, 199, 208, 217, 225, 231, 239, 260, 273, 280, 287, 295, 303, 316, 325, 341, 359, 374, 389, 404, 419, 431, 457, 460, 466, 475, 483, 490, 500, 509}
 
 // FuncAttrFromString returns the FuncAttr enum corresponding to s.
 func FuncAttrFromString(s string) enum.FuncAttr {

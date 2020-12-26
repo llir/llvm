@@ -14,14 +14,14 @@ func _() {
 	var x [1]struct{}
 	_ = x[enum.ReturnAttrInReg-0]
 	_ = x[enum.ReturnAttrNoAlias-1]
-	_ = x[enum.ReturnAttrNonNull-2]
-	_ = x[enum.ReturnAttrNoMerge-3]
+	_ = x[enum.ReturnAttrNoMerge-2]
+	_ = x[enum.ReturnAttrNonNull-3]
 	_ = x[enum.ReturnAttrNullPointerIsValid-4]
 	_ = x[enum.ReturnAttrSignExt-5]
 	_ = x[enum.ReturnAttrZeroExt-6]
 }
 
-const _ReturnAttr_name = "inregnoaliasnonnullnomergenull_pointer_is_validsignextzeroext"
+const _ReturnAttr_name = "inregnoaliasnomergenonnullnull_pointer_is_validsignextzeroext"
 
 var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 47, 54, 61}
 

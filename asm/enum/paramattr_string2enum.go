@@ -19,8 +19,8 @@ func _() {
 	_ = x[enum.ParamAttrNoAlias-4]
 	_ = x[enum.ParamAttrNoCapture-5]
 	_ = x[enum.ParamAttrNoFree-6]
-	_ = x[enum.ParamAttrNonNull-7]
-	_ = x[enum.ParamAttrNoMerge-8]
+	_ = x[enum.ParamAttrNoMerge-7]
+	_ = x[enum.ParamAttrNonNull-8]
 	_ = x[enum.ParamAttrNullPointerIsValid-9]
 	_ = x[enum.ParamAttrReadNone-10]
 	_ = x[enum.ParamAttrReadOnly-11]
@@ -33,7 +33,7 @@ func _() {
 	_ = x[enum.ParamAttrZeroExt-18]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenonnullnomergenull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
 
 var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 80, 88, 96, 104, 111, 115, 125, 134, 143, 150}
 
