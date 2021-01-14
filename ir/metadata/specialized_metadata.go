@@ -1968,8 +1968,9 @@ type DITemplateTypeParameter struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Name string // optional; empty if not present.
-	Type Field  // required.
+	Name      string // optional; empty if not present.
+	Type      Field  // required.
+	Defaulted *bool  // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -2024,10 +2025,11 @@ type DITemplateValueParameter struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Tag   enum.DwarfTag // optional; zero value if not present.
-	Name  string        // optional; empty if not present.
-	Type  Field         // optional; nil if not present.
-	Value Field         // required.
+	Tag       enum.DwarfTag // optional; zero value if not present.
+	Name      string        // optional; empty if not present.
+	Type      Field         // optional; nil if not present.
+	Value     Field         // required.
+	Defaulted *bool         // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata

@@ -1464,6 +1464,9 @@ func (gen *generator) irDITemplateTypeParameter(new metadata.SpecializedNode, ol
 				return nil, errors.WithStack(err)
 			}
 			md.Type = typ
+		case *ast.DefaultedField:
+			d := boolLit(oldField.Name())
+			md.Defaulted = &d
 		default:
 			panic(fmt.Errorf("support for DITemplateTypeParameter field %T not yet implemented", old))
 		}
@@ -1491,6 +1494,9 @@ func (gen *generator) irDITemplateValueParameter(new metadata.SpecializedNode, o
 			md.Tag = irDwarfTag(oldField.Tag())
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
+		case *ast.DefaultedField:
+			d := boolLit(oldField.Name())
+			md.Defaulted = &d
 		case *ast.TypeField:
 			typ, err := gen.irMDField(oldField.Typ())
 			if err != nil {
