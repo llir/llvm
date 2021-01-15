@@ -1970,7 +1970,7 @@ type DITemplateTypeParameter struct {
 
 	Name      string // optional; empty if not present.
 	Type      Field  // required.
-	Defaulted *bool  // optional; nil if not present.
+	Defaulted *bool  // optional; nil if not present. TODO: might only need `bool`
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -2033,7 +2033,7 @@ type DITemplateValueParameter struct {
 	Name      string        // optional; empty if not present.
 	Type      Field         // optional; nil if not present.
 	Value     Field         // required.
-	Defaulted *bool         // optional; nil if not present.
+	Defaulted *bool         // optional; nil if not present. TODO: might only need `bool`
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
