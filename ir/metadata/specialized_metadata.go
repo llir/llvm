@@ -2005,6 +2005,10 @@ func (md *DITemplateTypeParameter) LLString() string {
 		fields = append(fields, field)
 	}
 	field := fmt.Sprintf("type: %s", md.Type)
+	if md.Defaulted != nil {
+		field := fmt.Sprintf("defaulted: %v", md.Defaulted)
+		fields = append(fields, field)
+	}
 	fields = append(fields, field)
 	fmt.Fprintf(buf, "!DITemplateTypeParameter(%s)", strings.Join(fields, ", "))
 	return buf.String()
@@ -2072,6 +2076,10 @@ func (md *DITemplateValueParameter) LLString() string {
 		fields = append(fields, field)
 	}
 	field := fmt.Sprintf("value: %s", md.Value)
+	if md.Defaulted != nil {
+		field := fmt.Sprintf("defaulted: %v", md.Defaulted)
+		fields = append(fields, field)
+	}
 	fields = append(fields, field)
 	fmt.Fprintf(buf, "!DITemplateValueParameter(%s)", strings.Join(fields, ", "))
 	return buf.String()
