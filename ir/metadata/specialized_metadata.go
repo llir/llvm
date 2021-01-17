@@ -1968,8 +1968,9 @@ type DITemplateTypeParameter struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Name string // optional; empty if not present.
-	Type Field  // required.
+	Name      string // optional; empty if not present.
+	Type      Field  // required.
+	Defaulted bool   // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -2004,6 +2005,10 @@ func (md *DITemplateTypeParameter) LLString() string {
 		fields = append(fields, field)
 	}
 	field := fmt.Sprintf("type: %s", md.Type)
+	if md.Defaulted {
+		field := fmt.Sprintf("defaulted: %v", md.Defaulted)
+		fields = append(fields, field)
+	}
 	fields = append(fields, field)
 	fmt.Fprintf(buf, "!DITemplateTypeParameter(%s)", strings.Join(fields, ", "))
 	return buf.String()
@@ -2024,10 +2029,11 @@ type DITemplateValueParameter struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Tag   enum.DwarfTag // optional; zero value if not present.
-	Name  string        // optional; empty if not present.
-	Type  Field         // optional; nil if not present.
-	Value Field         // required.
+	Tag       enum.DwarfTag // optional; zero value if not present.
+	Name      string        // optional; empty if not present.
+	Type      Field         // optional; nil if not present.
+	Value     Field         // required.
+	Defaulted bool          // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -2070,6 +2076,10 @@ func (md *DITemplateValueParameter) LLString() string {
 		fields = append(fields, field)
 	}
 	field := fmt.Sprintf("value: %s", md.Value)
+	if md.Defaulted {
+		field := fmt.Sprintf("defaulted: %v", md.Defaulted)
+		fields = append(fields, field)
+	}
 	fields = append(fields, field)
 	fmt.Fprintf(buf, "!DITemplateValueParameter(%s)", strings.Join(fields, ", "))
 	return buf.String()
