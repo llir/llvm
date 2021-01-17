@@ -1970,7 +1970,7 @@ type DITemplateTypeParameter struct {
 
 	Name      string // optional; empty if not present.
 	Type      Field  // required.
-	Defaulted *bool  // optional; nil if not present. TODO: might only need `bool`
+	Defaulted bool   // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -2005,7 +2005,7 @@ func (md *DITemplateTypeParameter) LLString() string {
 		fields = append(fields, field)
 	}
 	field := fmt.Sprintf("type: %s", md.Type)
-	if md.Defaulted != nil {
+	if md.Defaulted {
 		field := fmt.Sprintf("defaulted: %v", md.Defaulted)
 		fields = append(fields, field)
 	}
@@ -2033,7 +2033,7 @@ type DITemplateValueParameter struct {
 	Name      string        // optional; empty if not present.
 	Type      Field         // optional; nil if not present.
 	Value     Field         // required.
-	Defaulted *bool         // optional; nil if not present. TODO: might only need `bool`
+	Defaulted bool          // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -2076,7 +2076,7 @@ func (md *DITemplateValueParameter) LLString() string {
 		fields = append(fields, field)
 	}
 	field := fmt.Sprintf("value: %s", md.Value)
-	if md.Defaulted != nil {
+	if md.Defaulted {
 		field := fmt.Sprintf("defaulted: %v", md.Defaulted)
 		fields = append(fields, field)
 	}
