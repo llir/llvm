@@ -133,6 +133,16 @@ func (d Dereferenceable) String() string {
 	return fmt.Sprintf("dereferenceable(%d)", d.N)
 }
 
+// Preallocated is a func/param attribute.
+type Preallocated struct {
+	Typ types.Type
+}
+
+// String returns a string representation of the Preallocated attribute.
+func (p Preallocated) String() string {
+	return fmt.Sprintf("preallocated (%a)", p.Typ)
+}
+
 // TODO: check if *ir.InstLandingPad is a valid ExceptionPad.
 
 // ExceptionPad is an exception pad or the none token.
