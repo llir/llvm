@@ -460,11 +460,11 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 	case *ast.FuncAttr:
 		return asmenum.FuncAttrFromString(old.Text())
 	case *ast.Preallocated:
-		ty, err := gen.irType(old.Typ())
+		typ, err := gen.irType(old.Typ())
 		if err != nil {
 			panic(err.Error())
 		}
-		return ir.Preallocated{Typ: ty}
+		return ir.Preallocated{Typ: typ}
 	default:
 		panic(fmt.Errorf("support for function attribute %T not yet implemented", old))
 	}
@@ -622,11 +622,11 @@ func (gen *generator) irParamAttribute(old ast.ParamAttribute) (ir.ParamAttribut
 	case *ast.ParamAttr:
 		return asmenum.ParamAttrFromString(old.Text()), nil
 	case *ast.Preallocated:
-		ty, err := gen.irType(old.Typ())
+		typ, err := gen.irType(old.Typ())
 		if err != nil {
 			return nil, err
 		}
-		return ir.Preallocated{Typ: ty}, nil
+		return ir.Preallocated{Typ: typ}, nil
 	default:
 		panic(fmt.Errorf("support for parameter attribute %T not yet implemented", old))
 	}
