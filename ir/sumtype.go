@@ -44,6 +44,10 @@ func (AlignStack) IsFuncAttribute() {}
 // ir.FuncAttribute interface.
 func (AllocSize) IsFuncAttribute() {}
 
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
+func (Preallocated) IsFuncAttribute() {}
+
 // === [ ir.Instruction ] ======================================================
 
 // Binary instructions.
@@ -137,6 +141,10 @@ func (Byval) IsParamAttribute() {}
 // IsParamAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
 func (Dereferenceable) IsParamAttribute() {}
+
+// IsParamAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
+func (Preallocated) IsParamAttribute() {}
 
 // === [ ir.ReturnAttribute ] ==================================================
 
