@@ -140,7 +140,7 @@ type Preallocated struct {
 
 // String returns a string representation of the Preallocated attribute.
 func (p Preallocated) String() string {
-	return fmt.Sprintf("preallocated (%a)", p.Typ)
+	return fmt.Sprintf("preallocated (%v)", p.Typ)
 }
 
 // TODO: check if *ir.InstLandingPad is a valid ExceptionPad.
