@@ -6,8 +6,6 @@ import (
 	"strings"
 
 	"github.com/llir/ll/ast"
-	"github.com/pkg/errors"
-
 	asmenum "github.com/llir/llvm/asm/enum"
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir"
@@ -16,6 +14,7 @@ import (
 	"github.com/llir/llvm/ir/metadata"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
+	"github.com/pkg/errors"
 )
 
 // === [ Identifiers ] =========================================================
