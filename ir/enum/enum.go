@@ -743,6 +743,7 @@ const (
 	FuncAttrNoRedZone                                   // noredzone
 	FuncAttrNoReturn                                    // noreturn
 	FuncAttrNoSync                                      // nosync
+	FuncAttrNoUndef                                     // noundef
 	FuncAttrNoUnwind                                    // nounwind
 	FuncAttrNullPointerIsValid                          // null_pointer_is_valid
 	FuncAttrOptForFuzzing                               // optforfuzzing
