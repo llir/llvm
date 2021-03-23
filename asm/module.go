@@ -19,12 +19,6 @@ func (gen *generator) indexTopLevelEntities(old *ast.Module) error {
 	// 1. Index AST top-level entities.
 	for _, entity := range old.TopLevelEntities() {
 		switch entity := entity.(type) {
-		case *ast.SourceFilename:
-			gen.m.SourceFilename = unquote(entity.Name().Text())
-		case *ast.TargetDataLayout:
-			gen.m.DataLayout = unquote(entity.DataLayout().Text())
-		case *ast.TargetTriple:
-			gen.m.TargetTriple = unquote(entity.TargetTriple().Text())
 		case *ast.ModuleAsm:
 			asm := unquote(entity.Asm().Text())
 			gen.m.ModuleAsms = append(gen.m.ModuleAsms, asm)
@@ -268,6 +262,26 @@ func newSpecializedMDNode(old ast.SpecializedMDNode) metadata.SpecializedNode {
 }
 
 // === [ Translate AST to IR ] =================================================
+
+// --- [ Target definitions ] --------------------------------------------------
+
+// translateTargetDefs translates the AST target definitions of the given module
+// to IR.
+func (gen *generator) translateTargetDefs(old *ast.Module) error {
+	for _, targetDef := range old.TargetDefs() {
+		switch targetDef := targetDef.(type) {
+		case *ast.SourceFilename:
+			gen.m.SourceFilename = unquote(targetDef.Name().Text())
+		case *ast.TargetDataLayout:
+			gen.m.DataLayout = unquote(targetDef.DataLayout().Text())
+		case *ast.TargetTriple:
+			gen.m.TargetTriple = unquote(targetDef.TargetTriple().Text())
+		}
+	}
+	return nil
+}
+
+// --- [ Top-level-entities ] --------------------------------------------------
 
 // translateTopLevelEntities translates the AST top-level declarations and
 // definitions of the given module to IR.
