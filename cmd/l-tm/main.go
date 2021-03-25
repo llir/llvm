@@ -16,6 +16,7 @@ func main() {
 	var (
 		cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 		memprofile = flag.String("memprofile", "", "write mem profile to file")
+		verbose = flag.Bool("v", false, "verbose output")
 	)
 	flag.Parse()
 
@@ -42,6 +43,9 @@ func main() {
 		}
 		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
 		_ = m
+		if *verbose {
+			fmt.Println(m)
+		}
 		//pretty.Println(m)
 	}
 
