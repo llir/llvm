@@ -17,12 +17,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        go-version: [1.13, 1.14, 1.15]
+        go-version: [1.15]
     steps:
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.13
+        go-version: ${ matrix.go-version }
       id: go
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
