@@ -18,6 +18,9 @@ type Array struct {
 	Elems []Constant
 }
 
+func (c *Array) IsValue() {
+}
+
 // NewArray returns a new array constant based on the given array type and
 // elements. The array type is infered from the type of the elements if t is
 // nil.
@@ -70,6 +73,9 @@ type CharArray struct {
 	Typ *types.ArrayType
 	// Character array contents.
 	X []byte
+}
+
+func (c *CharArray) IsValue() {
 }
 
 // NewCharArray returns a new character array constant based on the given

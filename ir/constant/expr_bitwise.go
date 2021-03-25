@@ -25,6 +25,9 @@ type ExprShl struct {
 	OverflowFlags []enum.OverflowFlag
 }
 
+func (e *ExprShl) IsValue() {
+}
+
 // NewShl returns a new shl expression based on the given operands.
 func NewShl(x, y Constant) *ExprShl {
 	e := &ExprShl{X: x, Y: y}
@@ -82,6 +85,9 @@ type ExprLShr struct {
 	// (optional) The result is a poison value if any of the bits shifted out are
 	// non-zero.
 	Exact bool
+}
+
+func (e *ExprLShr) IsValue() {
 }
 
 // NewLShr returns a new lshr expression based on the given operands.
@@ -143,6 +149,9 @@ type ExprAShr struct {
 	Exact bool
 }
 
+func (e *ExprAShr) IsValue() {
+}
+
 // NewAShr returns a new ashr expression based on the given operands.
 func NewAShr(x, y Constant) *ExprAShr {
 	e := &ExprAShr{X: x, Y: y}
@@ -199,6 +208,9 @@ type ExprAnd struct {
 	Typ types.Type
 }
 
+func (e *ExprAnd) IsValue() {
+}
+
 // NewAnd returns a new and expression based on the given operands.
 func NewAnd(x, y Constant) *ExprAnd {
 	e := &ExprAnd{X: x, Y: y}
@@ -249,6 +261,9 @@ type ExprOr struct {
 	Typ types.Type
 }
 
+func (e *ExprOr) IsValue() {
+}
+
 // NewOr returns a new or expression based on the given operands.
 func NewOr(x, y Constant) *ExprOr {
 	e := &ExprOr{X: x, Y: y}
@@ -297,6 +312,9 @@ type ExprXor struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+}
+
+func (e *ExprXor) IsValue() {
 }
 
 // NewXor returns a new xor expression based on the given operands.

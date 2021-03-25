@@ -17,6 +17,9 @@ type BlockAddress struct {
 	Block value.Named // *ir.Block
 }
 
+func (c *BlockAddress) IsValue() {
+}
+
 // NewBlockAddress returns a new blockaddress constant based on the given parent
 // function and basic block.
 func NewBlockAddress(f Constant, block value.Named) *BlockAddress {

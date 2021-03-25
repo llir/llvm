@@ -17,6 +17,9 @@ type Struct struct {
 	Fields []Constant
 }
 
+func (c *Struct) IsValue() {
+}
+
 // NewStruct returns a new struct constant based on the given struct type and
 // fields. The struct type is infered from the type of the fields if t is nil.
 func NewStruct(t *types.StructType, fields ...Constant) *Struct {

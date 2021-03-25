@@ -24,6 +24,9 @@ type ExprICmp struct {
 	Typ types.Type
 }
 
+func (e *ExprICmp) IsValue() {
+}
+
 // NewICmp returns a new icmp expression based on the given integer comparison
 // predicate and integer scalar or vector operands.
 func NewICmp(pred enum.IPred, x, y Constant) *ExprICmp {
@@ -84,6 +87,9 @@ type ExprFCmp struct {
 	Typ types.Type
 }
 
+func (e *ExprFCmp) IsValue() {
+}
+
 // NewFCmp returns a new fcmp expression based on the given floating-point
 // comparison predicate and floating-point scalar or vector operands.
 func NewFCmp(pred enum.FPred, x, y Constant) *ExprFCmp {
@@ -142,6 +148,9 @@ type ExprSelect struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+}
+
+func (e *ExprSelect) IsValue() {
 }
 
 // NewSelect returns a new select expression based on the given selection

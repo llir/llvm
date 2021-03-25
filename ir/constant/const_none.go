@@ -12,6 +12,9 @@ import (
 type NoneToken struct {
 }
 
+func (c *NoneToken) IsValue() {
+}
+
 // String returns the LLVM syntax representation of the constant as a type-value
 // pair.
 func (c *NoneToken) String() string {

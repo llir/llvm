@@ -113,6 +113,9 @@ type Value struct {
 	Value Metadata
 }
 
+func (md *Value) IsValue() {
+}
+
 // String returns the LLVM syntax representation of the metadata value as a
 // type-value pair.
 func (md *Value) String() string {

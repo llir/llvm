@@ -78,6 +78,8 @@ func NewGlobalDef(name string, init constant.Constant) *Global {
 	return global
 }
 
+func (g *Global) IsValue() {}
+
 // String returns the LLVM syntax representation of the global variable as a
 // type-value pair.
 func (g *Global) String() string {

@@ -26,6 +26,9 @@ type InlineAsm struct {
 	IntelDialect bool
 }
 
+func (asm *InlineAsm) IsValue() {
+}
+
 // NewInlineAsm returns a new inline assembler expression based on the given
 // type, assembly instructions and constraints.
 func NewInlineAsm(typ types.Type, asm, constraint string) *InlineAsm {

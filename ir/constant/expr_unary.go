@@ -21,6 +21,9 @@ type ExprFNeg struct {
 	Typ types.Type
 }
 
+func (e *ExprFNeg) IsValue() {
+}
+
 // NewFNeg returns a new fneg expression based on the given operand.
 func NewFNeg(x Constant) *ExprFNeg {
 	e := &ExprFNeg{X: x}

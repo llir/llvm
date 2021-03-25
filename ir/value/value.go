@@ -23,6 +23,7 @@ type Value interface {
 	Type() types.Type
 	// Ident returns the identifier associated with the value.
 	Ident() string
+	IsValue()
 }
 
 // Named is a named LLVM IR value.

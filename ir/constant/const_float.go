@@ -30,6 +30,9 @@ type Float struct {
 	NaN bool
 }
 
+func (c *Float) IsValue() {
+}
+
 // NewFloat returns a new floating-point constant based on the given
 // floating-point type and double precision floating-point value.
 func NewFloat(typ *types.FloatType, x float64) *Float {

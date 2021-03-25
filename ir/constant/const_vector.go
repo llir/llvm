@@ -36,6 +36,9 @@ func (c *Vector) String() string {
 	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
+func (c *Vector) IsValue() {
+}
+
 // Type returns the type of the constant.
 func (c *Vector) Type() types.Type {
 	// Cache type if not present.

@@ -19,6 +19,9 @@ type ExprTrunc struct {
 	To types.Type
 }
 
+func (e *ExprTrunc) IsValue() {
+}
+
 // NewTrunc returns a new trunc expression based on the given source value and
 // target type.
 func NewTrunc(from Constant, to types.Type) *ExprTrunc {
@@ -63,6 +66,9 @@ type ExprZExt struct {
 	To types.Type
 }
 
+func (e *ExprZExt) IsValue() {
+}
+
 // NewZExt returns a new zext expression based on the given source value and
 // target type.
 func NewZExt(from Constant, to types.Type) *ExprZExt {
@@ -105,6 +111,9 @@ type ExprSExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+}
+
+func (e *ExprSExt) IsValue() {
 }
 
 // NewSExt returns a new sext expression based on the given source value and
@@ -181,6 +190,9 @@ type ExprFPTrunc struct {
 	To types.Type
 }
 
+func (e *ExprFPTrunc) IsValue() {
+}
+
 // NewFPTrunc returns a new fptrunc expression based on the given source value
 // and target type.
 func NewFPTrunc(from Constant, to types.Type) *ExprFPTrunc {
@@ -223,6 +235,9 @@ type ExprFPExt struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+}
+
+func (e *ExprFPExt) IsValue() {
 }
 
 // NewFPExt returns a new fpext expression based on the given source value and
@@ -269,6 +284,9 @@ type ExprFPToUI struct {
 	To types.Type
 }
 
+func (e *ExprFPToUI) IsValue() {
+}
+
 // NewFPToUI returns a new fptoui expression based on the given source value and
 // target type.
 func NewFPToUI(from Constant, to types.Type) *ExprFPToUI {
@@ -311,6 +329,9 @@ type ExprFPToSI struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+}
+
+func (e *ExprFPToSI) IsValue() {
 }
 
 // NewFPToSI returns a new fptosi expression based on the given source value and
@@ -357,6 +378,9 @@ type ExprUIToFP struct {
 	To types.Type
 }
 
+func (e *ExprUIToFP) IsValue() {
+}
+
 // NewUIToFP returns a new uitofp expression based on the given source value and
 // target type.
 func NewUIToFP(from Constant, to types.Type) *ExprUIToFP {
@@ -399,6 +423,9 @@ type ExprSIToFP struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+}
+
+func (e *ExprSIToFP) IsValue() {
 }
 
 // NewSIToFP returns a new sitofp expression based on the given source value and
@@ -445,6 +472,9 @@ type ExprPtrToInt struct {
 	To types.Type
 }
 
+func (e *ExprPtrToInt) IsValue() {
+}
+
 // NewPtrToInt returns a new ptrtoint expression based on the given source value
 // and target type.
 func NewPtrToInt(from Constant, to types.Type) *ExprPtrToInt {
@@ -486,6 +516,9 @@ type ExprIntToPtr struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+}
+
+func (e *ExprIntToPtr) IsValue() {
 }
 
 // NewIntToPtr returns a new inttoptr expression based on the given source value
@@ -532,6 +565,9 @@ type ExprBitCast struct {
 	To types.Type
 }
 
+func (e *ExprBitCast) IsValue() {
+}
+
 // NewBitCast returns a new bitcast expression based on the given source value
 // and target type.
 func NewBitCast(from Constant, to types.Type) *ExprBitCast {
@@ -574,6 +610,9 @@ type ExprAddrSpaceCast struct {
 	From Constant
 	// Type after conversion.
 	To types.Type
+}
+
+func (e *ExprAddrSpaceCast) IsValue() {
 }
 
 // NewAddrSpaceCast returns a new addrspacecast expression based on the given

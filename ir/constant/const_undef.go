@@ -25,6 +25,9 @@ func (c *Undef) String() string {
 	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
+func (c *Undef) IsValue() {
+}
+
 // Type returns the type of the constant.
 func (c *Undef) Type() types.Type {
 	return c.Typ

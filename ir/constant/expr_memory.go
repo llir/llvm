@@ -30,6 +30,9 @@ type ExprGetElementPtr struct {
 	InBounds bool
 }
 
+func (e *ExprGetElementPtr) IsValue() {
+}
+
 // NewGetElementPtr returns a new getelementptr expression based on the given
 // element type, source address and element indices.
 func NewGetElementPtr(elemType types.Type, src Constant, indices ...Constant) *ExprGetElementPtr {

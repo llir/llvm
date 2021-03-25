@@ -24,6 +24,8 @@ type ExprExtractValue struct {
 	Typ types.Type
 }
 
+func (e *ExprExtractValue) IsValue() {}
+
 // NewExtractValue returns a new extractvalue expression based on the given
 // aggregate value and indicies.
 func NewExtractValue(x Constant, indices ...uint64) *ExprExtractValue {
@@ -84,6 +86,8 @@ type ExprInsertValue struct {
 	// Type of result produced by the constant expression.
 	Typ types.Type
 }
+
+func (e *ExprInsertValue) IsValue() {}
 
 // NewInsertValue returns a new insertvalue expression based on the given
 // aggregate value, element and indicies.

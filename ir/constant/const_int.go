@@ -19,6 +19,9 @@ type Int struct {
 	X *big.Int
 }
 
+func (c *Int) IsValue() {
+}
+
 // NewInt returns a new integer constant based on the given integer type and
 // 64-bit interger value.
 func NewInt(typ *types.IntType, x int64) *Int {

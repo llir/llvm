@@ -178,6 +178,18 @@ type FuncAttribute interface {
 type GlobalIdent struct {
 	GlobalName string
 	GlobalID   int64
+	Typ        types.Type
+}
+
+func (i GlobalIdent) String() string {
+	return fmt.Sprintf("%s %s", i.Type(), i.Ident())
+}
+
+func (i GlobalIdent) Type() types.Type {
+	return i.Typ
+}
+
+func (i GlobalIdent) IsValue() {
 }
 
 // Ident returns the identifier associated with the global identifier.
@@ -228,7 +240,18 @@ func (i GlobalIdent) IsUnnamed() bool {
 type LocalIdent struct {
 	LocalName string
 	LocalID   int64
+	Typ       types.Type
 }
+
+func (i LocalIdent) String() string {
+	return i.Ident()
+}
+
+func (i LocalIdent) Type() types.Type {
+	return i.Typ
+}
+
+func (i LocalIdent) IsValue() {}
 
 // NewLocalIdent returns a new local identifier based on the given string. An
 // unnamed local ID is used if ident is an integer, and a local name otherwise.

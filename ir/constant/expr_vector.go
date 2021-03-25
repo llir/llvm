@@ -23,6 +23,9 @@ type ExprExtractElement struct {
 	Typ types.Type
 }
 
+func (e *ExprExtractElement) IsValue() {
+}
+
 // NewExtractElement returns a new extractelement expression based on the given
 // vector and element index.
 func NewExtractElement(x, index Constant) *ExprExtractElement {
@@ -82,6 +85,9 @@ type ExprInsertElement struct {
 	Typ types.Type
 }
 
+func (e *ExprInsertElement) IsValue() {
+}
+
 // NewInsertElement returns a new insertelement expression based on the given
 // vector, element and element index.
 func NewInsertElement(x, elem, index Constant) *ExprInsertElement {
@@ -137,6 +143,9 @@ type ExprShuffleVector struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+}
+
+func (e *ExprShuffleVector) IsValue() {
 }
 
 // NewShuffleVector returns a new shufflevector expression based on the given

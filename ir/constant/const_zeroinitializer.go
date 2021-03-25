@@ -26,6 +26,9 @@ func (c *ZeroInitializer) String() string {
 	return fmt.Sprintf("%s %s", c.Type(), c.Ident())
 }
 
+func (c *ZeroInitializer) IsValue() {
+}
+
 // Type returns the type of the constant.
 func (c *ZeroInitializer) Type() types.Type {
 	return c.Typ

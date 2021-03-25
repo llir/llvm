@@ -14,6 +14,9 @@ type Null struct {
 	Typ *types.PointerType
 }
 
+func (c *Null) IsValue() {
+}
+
 // NewNull returns a new null pointer constant based on the given pointer type.
 func NewNull(typ *types.PointerType) *Null {
 	return &Null{Typ: typ}

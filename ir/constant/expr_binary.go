@@ -25,6 +25,9 @@ type ExprAdd struct {
 	OverflowFlags []enum.OverflowFlag
 }
 
+func (e *ExprAdd) IsValue() {
+}
+
 // NewAdd returns a new add expression based on the given operands.
 func NewAdd(x, y Constant) *ExprAdd {
 	e := &ExprAdd{X: x, Y: y}
@@ -81,6 +84,9 @@ type ExprFAdd struct {
 	Typ types.Type
 }
 
+func (e *ExprFAdd) IsValue() {
+}
+
 // NewFAdd returns a new fadd expression based on the given operands.
 func NewFAdd(x, y Constant) *ExprFAdd {
 	e := &ExprFAdd{X: x, Y: y}
@@ -131,6 +137,9 @@ type ExprSub struct {
 	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
+}
+
+func (e *ExprSub) IsValue() {
 }
 
 // NewSub returns a new sub expression based on the given operands.
@@ -189,6 +198,9 @@ type ExprFSub struct {
 	Typ types.Type
 }
 
+func (e *ExprFSub) IsValue() {
+}
+
 // NewFSub returns a new fsub expression based on the given operands.
 func NewFSub(x, y Constant) *ExprFSub {
 	e := &ExprFSub{X: x, Y: y}
@@ -239,6 +251,9 @@ type ExprMul struct {
 	Typ types.Type
 	// (optional) Integer overflow flags.
 	OverflowFlags []enum.OverflowFlag
+}
+
+func (e *ExprMul) IsValue() {
 }
 
 // NewMul returns a new mul expression based on the given operands.
@@ -297,6 +312,9 @@ type ExprFMul struct {
 	Typ types.Type
 }
 
+func (e *ExprFMul) IsValue() {
+}
+
 // NewFMul returns a new fmul expression based on the given operands.
 func NewFMul(x, y Constant) *ExprFMul {
 	e := &ExprFMul{X: x, Y: y}
@@ -347,6 +365,9 @@ type ExprUDiv struct {
 	Typ types.Type
 	// (optional) The result is a poison value if X is not a multiple of Y.
 	Exact bool
+}
+
+func (e *ExprUDiv) IsValue() {
 }
 
 // NewUDiv returns a new udiv expression based on the given operands.
@@ -407,6 +428,9 @@ type ExprSDiv struct {
 	Exact bool
 }
 
+func (e *ExprSDiv) IsValue() {
+}
+
 // NewSDiv returns a new sdiv expression based on the given operands.
 func NewSDiv(x, y Constant) *ExprSDiv {
 	e := &ExprSDiv{X: x, Y: y}
@@ -463,6 +487,9 @@ type ExprFDiv struct {
 	Typ types.Type
 }
 
+func (e *ExprFDiv) IsValue() {
+}
+
 // NewFDiv returns a new fdiv expression based on the given operands.
 func NewFDiv(x, y Constant) *ExprFDiv {
 	e := &ExprFDiv{X: x, Y: y}
@@ -511,6 +538,9 @@ type ExprURem struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+}
+
+func (e *ExprURem) IsValue() {
 }
 
 // NewURem returns a new urem expression based on the given operands.
@@ -563,6 +593,9 @@ type ExprSRem struct {
 	Typ types.Type
 }
 
+func (e *ExprSRem) IsValue() {
+}
+
 // NewSRem returns a new srem expression based on the given operands.
 func NewSRem(x, y Constant) *ExprSRem {
 	e := &ExprSRem{X: x, Y: y}
@@ -611,6 +644,9 @@ type ExprFRem struct {
 
 	// Type of result produced by the constant expression.
 	Typ types.Type
+}
+
+func (e *ExprFRem) IsValue() {
 }
 
 // NewFRem returns a new frem expression based on the given operands.
