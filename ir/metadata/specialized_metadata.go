@@ -284,11 +284,11 @@ func (md *DICompileUnit) LLString() string {
 		fields = append(fields, field)
 	}
 	if len(md.Sysroot) > 0 {
-		field = fmt.Sprintf("sysroot: %s", md.Sysroot)
+		field = fmt.Sprintf("sysroot: %s", quote(md.Sysroot))
 		fields = append(fields, field)
 	}
 	if len(md.SDK) > 0 {
-		field = fmt.Sprintf("sdk: %s", md.SDK)
+		field = fmt.Sprintf("sdk: %s", quote(md.SDK))
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DICompileUnit(%s)", strings.Join(fields, ", "))
