@@ -15,13 +15,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  test:
+    name: Test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        go-version: [1.13, 1.14, 1.15]
+        go-version: [1.13, 1.14, 1.15, 1.16]
     steps:
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
