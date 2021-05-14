@@ -743,7 +743,6 @@ const (
 	FuncAttrNoRedZone                                   // noredzone
 	FuncAttrNoReturn                                    // noreturn
 	FuncAttrNoSync                                      // nosync
-	FuncAttrNoUndef                                     // noundef
 	FuncAttrNoUnwind                                    // nounwind
 	FuncAttrNullPointerIsValid                          // null_pointer_is_valid
 	FuncAttrOptForFuzzing                               // optforfuzzing
@@ -852,6 +851,7 @@ const (
 	ParamAttrNoFree                              // nofree
 	ParamAttrNoMerge                             // nomerge
 	ParamAttrNonNull                             // nonnull
+	ParamAttrNoUndef                             // noundef
 	ParamAttrNullPointerIsValid                  // null_pointer_is_valid
 	ParamAttrReadNone                            // readnone
 	ParamAttrReadOnly                            // readonly
@@ -887,6 +887,7 @@ const (
 	ReturnAttrNoAlias                              // noalias
 	ReturnAttrNoMerge                              // nomerge
 	ReturnAttrNonNull                              // nonnull
+	ReturnAttrNoUndef                              // noundef
 	ReturnAttrNullPointerIsValid                   // null_pointer_is_valid
 	ReturnAttrSignExt                              // signext
 	ReturnAttrZeroExt                              // zeroext
