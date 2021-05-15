@@ -9,6 +9,8 @@ on:
     - '*'
     paths:
     - '**.go'
+  # allow you to run this workflow manually from tab
+  workflow_dispatch:
 
 jobs:
   test:

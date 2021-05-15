@@ -12,14 +12,15 @@ func _() {
 	_ = x[ReturnAttrNoAlias-1]
 	_ = x[ReturnAttrNoMerge-2]
 	_ = x[ReturnAttrNonNull-3]
-	_ = x[ReturnAttrNullPointerIsValid-4]
-	_ = x[ReturnAttrSignExt-5]
-	_ = x[ReturnAttrZeroExt-6]
+	_ = x[ReturnAttrNoUndef-4]
+	_ = x[ReturnAttrNullPointerIsValid-5]
+	_ = x[ReturnAttrSignExt-6]
+	_ = x[ReturnAttrZeroExt-7]
 }
 
-const _ReturnAttr_name = "inregnoaliasnomergenonnullnull_pointer_is_validsignextzeroext"
+const _ReturnAttr_name = "inregnoaliasnomergenonnullnoundefnull_pointer_is_validsignextzeroext"
 
-var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 47, 54, 61}
+var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 33, 54, 61, 68}
 
 func (i ReturnAttr) String() string {
 	if i >= ReturnAttr(len(_ReturnAttr_index)-1) {
