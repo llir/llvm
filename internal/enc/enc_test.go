@@ -444,6 +444,10 @@ func TestUnquote(t *testing.T) {
 		{s: `"foo \\ bar"`, want: []byte(`foo \ bar`)},
 		// i=12 (arbitrary data, invalid UTF-8)
 		{s: `"foo\81\82bar"`, want: []byte{'f', 'o', 'o', 0x81, 0x82, 'b', 'a', 'r'}},
+		// i=13
+		{s: `"\8E\\"`, want: []byte{0x8E, '\\'}}, // see issue llir/llvm#184
+		// i=14
+		{s: `"\\"`, want: []byte{'\\'}},
 	}
 	for i, g := range golden {
 		got := Unquote(g.s)
