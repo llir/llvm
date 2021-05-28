@@ -306,11 +306,11 @@ func Unescape(s string) []byte {
 	buf := []byte(s)
 	for i := 0; i < len(s); i++ {
 		b := s[i]
-		if b == '\\' && i+2 < len(s) {
-			if s[i+1] == '\\' {
+		if b == '\\' {
+			if len(s) > i+1 && s[i+1] == '\\' {
 				b = '\\'
 				i++
-			} else {
+			} else if len(s) > i+2 {
 				x1, ok := unhex(s[i+1])
 				if ok {
 					x2, ok := unhex(s[i+2])

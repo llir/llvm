@@ -190,7 +190,7 @@ func (gen *generator) irCharArrayConst(t types.Type, old *ast.CharArrayConst) (*
 	data := enc.Unquote(old.Val().Text())
 	c := constant.NewCharArray(data)
 	if !t.Equal(c.Typ) {
-		return nil, errors.Errorf("character array type mismatch; expected %q, got %q", c.Typ, t)
+		return nil, errors.Errorf("character array type mismatch; expected %q, got %q (unquoted_data=`%s`, orig_data=`%s`)", c.Typ, t, data, old.Val().Text())
 	}
 	return c, nil
 }
