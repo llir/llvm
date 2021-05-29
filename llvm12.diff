@@ -96,26 +96,6 @@ index c9f21ee..2a3fb8f 100644
      return true;
    // Now walk through the parenthesized entry, until the number of open
    // parentheses goes back down to 0 (the first '(' was parsed above).
-@@ -1636,45 +1691,59 @@ bool LLParser::ParseOptionalParamAttrs(AttrBuilder &B) {
-     default:  // End of attributes.
-       return HaveError;
-+    case lltok::kw_sret: {
-+      Type *Ty;
-+      if (parseRequiredTypeAttr(Ty, lltok::kw_sret))
-+        return true;
-+      B.addStructRetAttr(Ty);
-+      continue;
-+    }
-+    case lltok::kw_byref: {
-+      Type *Ty;
-+      if (parseByRef(Ty))
-+        return true;
-+      B.addByRefAttr(Ty);
-+      continue;
-+    }
-     case lltok::kw_inalloca:        B.addAttribute(Attribute::InAlloca); break;
-     case lltok::kw_inreg:           B.addAttribute(Attribute::InReg); break;
-     case lltok::kw_nest:            B.addAttribute(Attribute::Nest); break;
 @@ -2059,6 +2136,7 @@ bool LLParser::ParseOptionalCallingConv(unsigned &CC) {
    case lltok::kw_hhvm_ccc:       CC = CallingConv::HHVM_C; break;
    case lltok::kw_cxx_fast_tlscc: CC = CallingConv::CXX_FAST_TLS; break;
@@ -124,35 +104,6 @@ index c9f21ee..2a3fb8f 100644
    case lltok::kw_amdgpu_ls:      CC = CallingConv::AMDGPU_LS; break;
    case lltok::kw_amdgpu_hs:      CC = CallingConv::AMDGPU_HS; break;
    case lltok::kw_amdgpu_es:      CC = CallingConv::AMDGPU_ES; break;
-@@ -2545,45 +2628,41 @@ bool LLParser::ParseParameterList(SmallVectorImpl<ParamInfo> &ArgList,
--/// ParseByValWithOptionalType
--///   ::= byval
--///   ::= byval(<ty>)
--bool LLParser::ParseByValWithOptionalType(Type *&Result) {
-+/// parseRequiredTypeAttr
-+///   ::= attrname(<ty>)
-+bool LLParser::parseRequiredTypeAttr(Type *&Result, lltok::Kind AttrName) {
-   Result = nullptr;
--  if (!EatIfPresent(lltok::kw_byval))
-+  if (!EatIfPresent(AttrName))
-     return true;
-   if (!EatIfPresent(lltok::lparen))
--    return false;
--  if (ParseType(Result))
-+    return error(Lex.getLoc(), "expected '('");
-+  if (parseType(Result))
-     return true;
-   if (!EatIfPresent(lltok::rparen))
--    return Error(Lex.getLoc(), "expected ')'");
-+    return error(Lex.getLoc(), "expected ')'");
-   return false;
- }
-
-+/// parseByRef
-+///   ::= byref(<type>)
-+bool LLParser::parseByRef(Type *&Result) {
-+  return parseRequiredTypeAttr(Result, lltok::kw_byref);
- }
 @@ -3193,6 +3280,7 @@ bool LLParser::ParseValID(ValID &ID, PerFunctionState *PFS) {
      break;
    case lltok::kw_null: ID.Kind = ValID::t_Null; break;
