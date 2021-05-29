@@ -96,45 +96,6 @@ index c9f21ee..2a3fb8f 100644
      return true;
    // Now walk through the parenthesized entry, until the number of open
    // parentheses goes back down to 0 (the first '(' was parsed above).
-@@ -1294,6 +1340,7 @@ bool LLParser::ParseFnAttributeValuePairs(AttrBuilder &B,
-     case lltok::kw_argmemonly: B.addAttribute(Attribute::ArgMemOnly); break;
-     case lltok::kw_builtin: B.addAttribute(Attribute::Builtin); break;
-     case lltok::kw_cold: B.addAttribute(Attribute::Cold); break;
-+    case lltok::kw_hot: B.addAttribute(Attribute::Hot); break;
-     case lltok::kw_convergent: B.addAttribute(Attribute::Convergent); break;
-     case lltok::kw_inaccessiblememonly:
-       B.addAttribute(Attribute::InaccessibleMemOnly); break;
-@@ -1302,8 +1349,14 @@ bool LLParser::ParseFnAttributeValuePairs(AttrBuilder &B,
-     case lltok::kw_inlinehint: B.addAttribute(Attribute::InlineHint); break;
-     case lltok::kw_jumptable: B.addAttribute(Attribute::JumpTable); break;
-     case lltok::kw_minsize: B.addAttribute(Attribute::MinSize); break;
-+    case lltok::kw_mustprogress:
-+      B.addAttribute(Attribute::MustProgress);
-+      break;
-     case lltok::kw_naked: B.addAttribute(Attribute::Naked); break;
-     case lltok::kw_nobuiltin: B.addAttribute(Attribute::NoBuiltin); break;
-+    case lltok::kw_nocallback:
-+      B.addAttribute(Attribute::NoCallback);
-+      break;
-     case lltok::kw_noduplicate: B.addAttribute(Attribute::NoDuplicate); break;
-     case lltok::kw_nofree: B.addAttribute(Attribute::NoFree); break;
-     case lltok::kw_noimplicitfloat:
-@@ -1315,6 +1368,7 @@ bool LLParser::ParseFnAttributeValuePairs(AttrBuilder &B,
-     case lltok::kw_noreturn: B.addAttribute(Attribute::NoReturn); break;
-     case lltok::kw_nosync: B.addAttribute(Attribute::NoSync); break;
-     case lltok::kw_nocf_check: B.addAttribute(Attribute::NoCfCheck); break;
-+    case lltok::kw_noprofile: B.addAttribute(Attribute::NoProfile); break;
-     case lltok::kw_norecurse: B.addAttribute(Attribute::NoRecurse); break;
-     case lltok::kw_nounwind: B.addAttribute(Attribute::NoUnwind); break;
-     case lltok::kw_null_pointer_is_valid:
-@@ -1382,13 +1435,14 @@ bool LLParser::ParseFnAttributeValuePairs(AttrBuilder &B,
-     case lltok::kw_swifterror:
-     case lltok::kw_swiftself:
-     case lltok::kw_immarg:
-+    case lltok::kw_byref:
-       break;
-     }
-   }
 @@ -1636,45 +1691,59 @@ bool LLParser::ParseOptionalParamAttrs(AttrBuilder &B) {
      default:  // End of attributes.
        return HaveError;
