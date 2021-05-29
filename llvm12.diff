@@ -116,33 +116,6 @@ index c9f21ee..2a3fb8f 100644
      case lltok::kw_inalloca:        B.addAttribute(Attribute::InAlloca); break;
      case lltok::kw_inreg:           B.addAttribute(Attribute::InReg); break;
      case lltok::kw_nest:            B.addAttribute(Attribute::Nest); break;
-@@ -1795,7 +1867,9 @@ bool LLParser::ParseOptionalReturnAttrs(AttrBuilder &B) {
-     case lltok::kw_swifterror:
-     case lltok::kw_swiftself:
-     case lltok::kw_immarg:
--      HaveError |= Error(Lex.getLoc(), "invalid use of parameter-only attribute");
-+    case lltok::kw_byref:
-+      HaveError |=
-+          error(Lex.getLoc(), "invalid use of parameter-only attribute");
-       break;
- 
-     case lltok::kw_alignstack:
-@@ -1806,6 +1880,7 @@ bool LLParser::ParseOptionalReturnAttrs(AttrBuilder &B) {
-     case lltok::kw_inlinehint:
-     case lltok::kw_jumptable:
-     case lltok::kw_minsize:
-+    case lltok::kw_mustprogress:
-     case lltok::kw_naked:
-     case lltok::kw_nobuiltin:
-     case lltok::kw_noduplicate:
-@@ -1813,6 +1888,7 @@ bool LLParser::ParseOptionalReturnAttrs(AttrBuilder &B) {
-     case lltok::kw_noinline:
-     case lltok::kw_nonlazybind:
-     case lltok::kw_nomerge:
-+    case lltok::kw_noprofile:
-     case lltok::kw_noredzone:
-     case lltok::kw_noreturn:
-     case lltok::kw_nocf_check:
 @@ -2059,6 +2136,7 @@ bool LLParser::ParseOptionalCallingConv(unsigned &CC) {
    case lltok::kw_hhvm_ccc:       CC = CallingConv::HHVM_C; break;
    case lltok::kw_cxx_fast_tlscc: CC = CallingConv::CXX_FAST_TLS; break;
