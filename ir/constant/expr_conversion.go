@@ -2,7 +2,6 @@ package constant
 
 import (
 	"fmt"
-	"math/big"
 
 	"github.com/llir/llvm/ir/types"
 )
@@ -45,14 +44,6 @@ func (e *ExprTrunc) Ident() string {
 	return fmt.Sprintf("trunc (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprTrunc) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprZExt is an LLVM IR zext expression.
@@ -87,14 +78,6 @@ func (e *ExprZExt) Type() types.Type {
 func (e *ExprZExt) Ident() string {
 	// 'zext' '(' From=TypeConst 'to' To=Type ')'
 	return fmt.Sprintf("zext (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprZExt) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,44 +116,6 @@ func (e *ExprSExt) Ident() string {
 	return fmt.Sprintf("sext (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprSExt) Simplify() Constant {
-	// TODO: validate if we use the right approach here for sign extension. Since
-	// big.Int already contains an explicit sign for the arbitrary precision
-	// integer, perhaps we should not change the underlying value but instead
-	// just return a new LLVM IR integer constant of the To LLVM IR type.
-	from := e.From
-	if fromExpr, ok := from.(Expression); ok {
-		from = fromExpr.Simplify()
-	}
-	switch expr := from.(type) {
-	case *Int:
-		fromType := expr.Typ
-		toType := e.To.(*types.IntType)
-		fromX := expr.X
-		// Copy e.X big.Int.
-		toX := new(big.Int).Set(fromX)
-		// Create simplified return constant.
-		c := &Int{
-			Typ: toType,
-			X:   toX,
-		}
-		// Check if from is signed.
-		fromBits := int(fromType.BitSize)
-		toBits := int(toType.BitSize)
-		if fromX.Bit(fromBits-1) == 1 {
-			// Sign extend.
-			for i := fromBits; i < toBits; i++ {
-				toX.SetBit(c.X, i, 1)
-			}
-		}
-		return c
-	default:
-		panic(fmt.Errorf("support for sext constant expression from type %T not yet implemented", e.From))
-	}
-}
-
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFPTrunc is an LLVM IR fptrunc expression.
@@ -205,14 +150,6 @@ func (e *ExprFPTrunc) Type() types.Type {
 func (e *ExprFPTrunc) Ident() string {
 	// 'fptrunc' '(' From=TypeConst 'to' To=Type ')'
 	return fmt.Sprintf("fptrunc (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFPTrunc) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,14 +188,6 @@ func (e *ExprFPExt) Ident() string {
 	return fmt.Sprintf("fpext (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFPExt) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFPToUI is an LLVM IR fptoui expression.
@@ -293,14 +222,6 @@ func (e *ExprFPToUI) Type() types.Type {
 func (e *ExprFPToUI) Ident() string {
 	// 'fptoui' '(' From=TypeConst 'to' To=Type ')'
 	return fmt.Sprintf("fptoui (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFPToUI) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -339,14 +260,6 @@ func (e *ExprFPToSI) Ident() string {
 	return fmt.Sprintf("fptosi (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFPToSI) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprUIToFP is an LLVM IR uitofp expression.
@@ -381,14 +294,6 @@ func (e *ExprUIToFP) Type() types.Type {
 func (e *ExprUIToFP) Ident() string {
 	// 'uitofp' '(' From=TypeConst 'to' To=Type ')'
 	return fmt.Sprintf("uitofp (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprUIToFP) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -427,14 +332,6 @@ func (e *ExprSIToFP) Ident() string {
 	return fmt.Sprintf("sitofp (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprSIToFP) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprPtrToInt is an LLVM IR ptrtoint expression.
@@ -469,13 +366,6 @@ func (e *ExprPtrToInt) Type() types.Type {
 func (e *ExprPtrToInt) Ident() string {
 	// 'ptrtoint' '(' From=TypeConst 'to' To=Type ')'
 	return fmt.Sprintf("ptrtoint (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprPtrToInt) Simplify() Constant {
-	// cannot simplify further
-	return e
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -514,14 +404,6 @@ func (e *ExprIntToPtr) Ident() string {
 	return fmt.Sprintf("inttoptr (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprIntToPtr) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprBitCast is an LLVM IR bitcast expression.
@@ -558,14 +440,6 @@ func (e *ExprBitCast) Ident() string {
 	return fmt.Sprintf("bitcast (%s to %s)", e.From, e.To)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprBitCast) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprAddrSpaceCast is an LLVM IR addrspacecast expression.
@@ -600,12 +474,4 @@ func (e *ExprAddrSpaceCast) Type() types.Type {
 func (e *ExprAddrSpaceCast) Ident() string {
 	// 'addrspacecast' '(' From=TypeConst 'to' To=Type ')'
 	return fmt.Sprintf("addrspacecast (%s to %s)", e.From, e.To)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprAddrSpaceCast) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }

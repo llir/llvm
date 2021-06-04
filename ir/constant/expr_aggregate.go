@@ -60,14 +60,6 @@ func (e *ExprExtractValue) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprExtractValue) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprInsertValue is an LLVM IR insertvalue expression.
@@ -120,14 +112,6 @@ func (e *ExprInsertValue) Ident() string {
 	}
 	buf.WriteString(")")
 	return buf.String()
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprInsertValue) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ### [ Helper functions ] ####################################################

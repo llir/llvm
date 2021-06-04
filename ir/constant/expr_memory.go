@@ -71,14 +71,6 @@ func (e *ExprGetElementPtr) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprGetElementPtr) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ___ [ gep indices ] _________________________________________________________
 
 // Index is an index of a getelementptr constant expression.
@@ -140,11 +132,14 @@ func getIndex(index Constant) gep.Index {
 	if idx, ok := index.(*Index); ok {
 		index = idx.Constant
 	}
+	// TODO: figure out how to simplify expressions for GEP instructions without
+	// creating import cycle on irutil.
+
 	// Use index.Simplify() to simplify the constant expression to a concrete
 	// integer constant or vector of integers constant.
-	if idx, ok := index.(Expression); ok {
-		index = idx.Simplify()
-	}
+	//if idx, ok := index.(Expression); ok {
+	//	index = idx.Simplify()
+	//}
 	switch index := index.(type) {
 	case *Int:
 		val := index.X.Int64()

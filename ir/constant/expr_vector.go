@@ -57,14 +57,6 @@ func (e *ExprExtractElement) Ident() string {
 	return fmt.Sprintf("extractelement (%s, %s)", e.X, e.Index)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprExtractElement) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprInsertElement is an LLVM IR insertelement expression.
@@ -114,14 +106,6 @@ func (e *ExprInsertElement) Type() types.Type {
 func (e *ExprInsertElement) Ident() string {
 	// 'insertelement' '(' X=TypeConst ',' Elem=TypeConst ',' Index=TypeConst ')'
 	return fmt.Sprintf("insertelement (%s, %s, %s)", e.X, e.Elem, e.Index)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprInsertElement) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,12 +159,4 @@ func (e *ExprShuffleVector) Type() types.Type {
 func (e *ExprShuffleVector) Ident() string {
 	// 'shufflevector' '(' X=TypeConst ',' Y=TypeConst ',' Mask=TypeConst ')'
 	return fmt.Sprintf("shufflevector (%s, %s, %s)", e.X, e.Y, e.Mask)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprShuffleVector) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }

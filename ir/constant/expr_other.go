@@ -61,14 +61,6 @@ func (e *ExprICmp) Ident() string {
 	return fmt.Sprintf("icmp %s (%s, %s)", e.Pred, e.X, e.Y)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprICmp) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFCmp is an LLVM IR fcmp expression.
@@ -121,14 +113,6 @@ func (e *ExprFCmp) Ident() string {
 	return fmt.Sprintf("fcmp %s (%s, %s)", e.Pred, e.X, e.Y)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFCmp) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ select ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprSelect is an LLVM IR select expression.
@@ -172,12 +156,4 @@ func (e *ExprSelect) Type() types.Type {
 func (e *ExprSelect) Ident() string {
 	// 'select' '(' Cond=TypeConst ',' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("select (%s, %s, %s)", e.Cond, e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprSelect) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }

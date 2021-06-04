@@ -49,11 +49,3 @@ func (e *ExprFNeg) Ident() string {
 	// 'fneg' '(' X=TypeConst ')'
 	return fmt.Sprintf("fneg (%s)", e.X)
 }
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFNeg) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
