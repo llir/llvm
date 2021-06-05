@@ -549,11 +549,14 @@ func getIndex(index constant.Constant) gep.Index {
 	if idx, ok := index.(*constant.Index); ok {
 		index = idx.Constant
 	}
+	// TODO: figure out how to simplify expressions for GEP instructions without
+	// creating import cycle on irutil.
+
 	// Use index.Simplify() to simplify the constant expression to a concrete
 	// integer constant or vector of integers constant.
-	if idx, ok := index.(constant.Expression); ok {
-		index = idx.Simplify()
-	}
+	//if idx, ok := index.(constant.Expression); ok {
+	//	index = idx.Simplify()
+	//}
 	switch index := index.(type) {
 	case *constant.Int:
 		val := index.X.Int64()

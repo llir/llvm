@@ -88,7 +88,7 @@ package constant
 //    *constant.ExprSelect   // https://godoc.org/github.com/llir/llvm/ir/constant#ExprSelect
 type Expression interface {
 	Constant
-	// Simplify returns an equivalent (and potentially simplified) constant to
-	// the constant expression.
-	Simplify() Constant
+	// IsExpression ensures that only constants expressions can be assigned to
+	// the constant.Expression interface.
+	IsExpression()
 }

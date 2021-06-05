@@ -225,3 +225,185 @@ func (*ExprFCmp) IsConstant() {}
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*ExprSelect) IsConstant() {}
+
+// === [ constant.Expression ] =================================================
+
+// --- [ Unary expressions ] ---------------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFNeg) IsExpression() {}
+
+// --- [ Binary expressions ] --------------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprAdd) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFAdd) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprSub) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFSub) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprMul) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFMul) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprUDiv) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprSDiv) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFDiv) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprURem) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprSRem) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFRem) IsExpression() {}
+
+// --- [ Bitwise expressions ] -------------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprShl) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprLShr) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprAShr) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprAnd) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprOr) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprXor) IsExpression() {}
+
+// --- [ Vector expressions ] --------------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprExtractElement) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprInsertElement) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprShuffleVector) IsExpression() {}
+
+// --- [ Aggregate expressions ] -----------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprExtractValue) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprInsertValue) IsExpression() {}
+
+// --- [ Memory expressions ] --------------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprGetElementPtr) IsExpression() {}
+
+// --- [ Conversion expressions ] ----------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprTrunc) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprZExt) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprSExt) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFPTrunc) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFPExt) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFPToUI) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFPToSI) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprUIToFP) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprSIToFP) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprPtrToInt) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprIntToPtr) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprBitCast) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprAddrSpaceCast) IsExpression() {}
+
+// --- [ Other expressions ] ---------------------------------------------------
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprICmp) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprFCmp) IsExpression() {}
+
+// IsExpression ensures that only constants expressions can be assigned to the
+// constant.Expression interface.
+func (*ExprSelect) IsExpression() {}

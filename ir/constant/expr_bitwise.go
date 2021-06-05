@@ -60,14 +60,6 @@ func (e *ExprShl) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprShl) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprLShr is an LLVM IR lshr expression.
@@ -117,14 +109,6 @@ func (e *ExprLShr) Ident() string {
 	}
 	fmt.Fprintf(buf, " (%s, %s)", e.X, e.Y)
 	return buf.String()
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprLShr) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -178,14 +162,6 @@ func (e *ExprAShr) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprAShr) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprAnd is an LLVM IR and expression.
@@ -226,14 +202,6 @@ func (e *ExprAnd) Type() types.Type {
 func (e *ExprAnd) Ident() string {
 	// 'and' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("and (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprAnd) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -278,14 +246,6 @@ func (e *ExprOr) Ident() string {
 	return fmt.Sprintf("or (%s, %s)", e.X, e.Y)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprOr) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprXor is an LLVM IR xor expression.
@@ -326,12 +286,4 @@ func (e *ExprXor) Type() types.Type {
 func (e *ExprXor) Ident() string {
 	// 'xor' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("xor (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprXor) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }

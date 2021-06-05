@@ -60,14 +60,6 @@ func (e *ExprAdd) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprAdd) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFAdd is an LLVM IR fadd expression.
@@ -108,14 +100,6 @@ func (e *ExprFAdd) Type() types.Type {
 func (e *ExprFAdd) Ident() string {
 	// 'fadd' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("fadd (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFAdd) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -168,14 +152,6 @@ func (e *ExprSub) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprSub) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFSub is an LLVM IR fsub expression.
@@ -216,14 +192,6 @@ func (e *ExprFSub) Type() types.Type {
 func (e *ExprFSub) Ident() string {
 	// 'fsub' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("fsub (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFSub) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -276,14 +244,6 @@ func (e *ExprMul) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprMul) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFMul is an LLVM IR fmul expression.
@@ -324,14 +284,6 @@ func (e *ExprFMul) Type() types.Type {
 func (e *ExprFMul) Ident() string {
 	// 'fmul' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("fmul (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFMul) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -384,14 +336,6 @@ func (e *ExprUDiv) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprUDiv) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprSDiv is an LLVM IR sdiv expression.
@@ -442,14 +386,6 @@ func (e *ExprSDiv) Ident() string {
 	return buf.String()
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprSDiv) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFDiv is an LLVM IR fdiv expression.
@@ -490,14 +426,6 @@ func (e *ExprFDiv) Type() types.Type {
 func (e *ExprFDiv) Ident() string {
 	// 'fdiv' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("fdiv (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFDiv) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
 
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -542,14 +470,6 @@ func (e *ExprURem) Ident() string {
 	return fmt.Sprintf("urem (%s, %s)", e.X, e.Y)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprURem) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprSRem is an LLVM IR srem expression.
@@ -592,14 +512,6 @@ func (e *ExprSRem) Ident() string {
 	return fmt.Sprintf("srem (%s, %s)", e.X, e.Y)
 }
 
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprSRem) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
-}
-
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ExprFRem is an LLVM IR frem expression.
@@ -640,12 +552,4 @@ func (e *ExprFRem) Type() types.Type {
 func (e *ExprFRem) Ident() string {
 	// 'frem' '(' X=TypeConst ',' Y=TypeConst ')'
 	return fmt.Sprintf("frem (%s, %s)", e.X, e.Y)
-}
-
-// Simplify returns an equivalent (and potentially simplified) constant to the
-// constant expression.
-func (e *ExprFRem) Simplify() Constant {
-	//panic("not yet implemented")
-	// TODO: implement
-	return e
 }
