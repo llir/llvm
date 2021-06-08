@@ -256,22 +256,6 @@ index c9f21ee..2a3fb8f 100644
        Result = CT;
        return false;
      }                                            \                                      \
-@@ -4938,19 +5131,20 @@ bool LLParser::ParseDIModule(MDNode *&Result, bool IsDistinct) {
-   OPTIONAL(includePath, MDStringField, );                                      \
-   OPTIONAL(apinotes, MDStringField, );                                         \
-   OPTIONAL(file, MDField, );                                                   \
--  OPTIONAL(line, LineField, );
-+  OPTIONAL(line, LineField, );                                                 \
-+  OPTIONAL(isDecl, MDBoolField, );
-   PARSE_MD_FIELDS();
- #undef VISIT_MD_FIELDS
- 
-   Result = GET_OR_DISTINCT(DIModule, (Context, file.Val, scope.Val, name.Val,
-                                       configMacros.Val, includePath.Val,
--                                      apinotes.Val, line.Val));
-+                                      apinotes.Val, line.Val, isDecl.Val));
-   return false;
- }
 @@ -5303,66 +5502,81 @@ bool LLParser::ConvertValIDToValue(Type *Ty, ValID &ID, Value *&V,
        else if (Ty->isFloatTy())
          ID.APFloatVal.convert(APFloat::IEEEsingle(), APFloat::rmNearestTiesToEven,
