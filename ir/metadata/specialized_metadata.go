@@ -1447,6 +1447,7 @@ type DIModule struct {
 	APINotes     string // optional; empty if not present.
 	File         Field  // optional; empty if not present.
 	Line         int64  // optional; zero value if not present.
+	IsDecl       bool   // optional; zero value if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1498,6 +1499,10 @@ func (md *DIModule) LLString() string {
 	}
 	if md.Line != 0 {
 		field := fmt.Sprintf("line: %d", md.Line)
+		fields = append(fields, field)
+	}
+	if md.IsDecl {
+		field := fmt.Sprintf("isDecl: %v", md.IsDecl)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DIModule(%s)", strings.Join(fields, ", "))
