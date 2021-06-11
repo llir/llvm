@@ -34,6 +34,7 @@ Map between `llir/llvm` tagged releases and LLVM release versions.
 * [slate](https://github.com/nektro/slate): Slate to LLVM IR compiler by [@nektro](https://github.com/nektro).
 * [tre](https://github.com/zegl/tre): Go to LLVM IR compiler by [@zegl](https://github.com/zegl).
 * [uc](https://github.com/mewmew/uc): µC to LLVM IR compiler by [@sangisos](https://github.com/sangisos) and [@mewmew](https://github.com/mewmew).
+* [B++](https://github.com/Nv7-Github/Bpp): B++ to LLVM IR compiler by [@Nv7-Github](https://github.com/Nv7-Github).
 
 ## Usage
 
