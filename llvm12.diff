@@ -103,37 +103,6 @@ index c9f21ee..2a3fb8f 100644
 +                            encoding.Val));
 +  return false;
 +}
-@@ -4661,17 +4841,28 @@ bool LLParser::ParseDICompositeType(MDNode *&Result, bool IsDistinct) {
-   OPTIONAL(templateParams, MDField, );                                         \
-   OPTIONAL(identifier, MDStringField, );                                       \
-   OPTIONAL(discriminator, MDField, );                                          \
--  OPTIONAL(dataLocation, MDField, );
-+  OPTIONAL(dataLocation, MDField, );                                           \
-+  OPTIONAL(associated, MDField, );                                             \
-+  OPTIONAL(allocated, MDField, );                                              \
-+  OPTIONAL(rank, MDSignedOrMDField, );
-   PARSE_MD_FIELDS();
- #undef VISIT_MD_FIELDS
- 
-+  Metadata *Rank = nullptr;
-+  if (rank.isMDSignedField())
-+    Rank = ConstantAsMetadata::get(ConstantInt::getSigned(
-+        Type::getInt64Ty(Context), rank.getMDSignedValue()));
-+  else if (rank.isMDField())
-+    Rank = rank.getMDFieldValue();
-+
-   // If this has an identifier try to build an ODR type.
-   if (identifier.Val)
-     if (auto *CT = DICompositeType::buildODRType(
-             Context, *identifier.Val, tag.Val, name.Val, file.Val, line.Val,
-             scope.Val, baseType.Val, size.Val, align.Val, offset.Val, flags.Val,
-             elements.Val, runtimeLang.Val, vtableHolder.Val, templateParams.Val,
--            discriminator.Val, dataLocation.Val)) {
-+            discriminator.Val, dataLocation.Val, associated.Val, allocated.Val,
-+            Rank)) {
-       Result = CT;
-       return false;
-     }                                            \                                      \
 @@ -5303,66 +5502,81 @@ bool LLParser::ConvertValIDToValue(Type *Ty, ValID &ID, Value *&V,
        else if (Ty->isFloatTy())
          ID.APFloatVal.convert(APFloat::IEEEsingle(), APFloat::rmNearestTiesToEven,
