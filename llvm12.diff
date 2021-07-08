@@ -1,68 +1,7 @@
-diff --git a/llvm-project-llvmorg-11.0.0/llvm/lib/AsmParser/LLLexer.cpp b/llvm-project-llvmorg-12.0.0/llvm/lib/AsmParser/LLLexer.cpp
-index 777ce3a..427de74 100644
---- a/llvm-project-llvmorg-11.0.0/llvm/lib/AsmParser/LLLexer.cpp
-+++ b/llvm-project-llvmorg-12.0.0/llvm/lib/AsmParser/LLLexer.cpp
-@@ -834,6 +841,7 @@ lltok::Kind LLLexer::LexIdentifier() {
-   TYPEKEYWORD("label",     Type::getLabelTy(Context));
-   TYPEKEYWORD("metadata",  Type::getMetadataTy(Context));
-   TYPEKEYWORD("x86_mmx",   Type::getX86_MMXTy(Context));
-+  TYPEKEYWORD("x86_amx",   Type::getX86_AMXTy(Context));
-   TYPEKEYWORD("token",     Type::getTokenTy(Context));
- 
- #undef TYPEKEYWORD
 diff --git a/llvm-project-llvmorg-11.0.0/llvm/lib/AsmParser/LLParser.cpp b/llvm-project-llvmorg-12.0.0/llvm/lib/AsmParser/LLParser.cpp
 index c9f21ee..2a3fb8f 100644
 --- a/llvm-project-llvmorg-11.0.0/llvm/lib/AsmParser/LLParser.cpp
 +++ b/llvm-project-llvmorg-12.0.0/llvm/lib/AsmParser/LLParser.cpp
-@@ -786,18 +826,25 @@ bool LLParser::ParseStandaloneMetadata() {
- // Skips a single module summary entry.
--bool LLParser::SkipModuleSummaryEntry() {
-+bool LLParser::skipModuleSummaryEntry() {
-   // Each module summary entry consists of a tag for the entry
--  // type, followed by a colon, then the fields surrounded by nested sets of
--  // parentheses. The "tag:" looks like a Label. Once parsing support is
--  // in place we will look for the tokens corresponding to the expected tags.
-+  // type, followed by a colon, then the fields which may be surrounded by
-+  // nested sets of parentheses. The "tag:" looks like a Label. Once parsing
-+  // support is in place we will look for the tokens corresponding to the
-+  // expected tags.
-   if (Lex.getKind() != lltok::kw_gv && Lex.getKind() != lltok::kw_module &&
--      Lex.getKind() != lltok::kw_typeid)
--    return TokError(
--        "Expected 'gv', 'module', or 'typeid' at the start of summary entry");
-+      Lex.getKind() != lltok::kw_typeid && Lex.getKind() != lltok::kw_flags &&
-+      Lex.getKind() != lltok::kw_blockcount)
-+    return tokError(
-+        "Expected 'gv', 'module', 'typeid', 'flags' or 'blockcount' at the "
-+        "start of summary entry");
-+  if (Lex.getKind() == lltok::kw_flags)
-+    return parseSummaryIndexFlags();
-+  if (Lex.getKind() == lltok::kw_blockcount)
-+    return parseBlockCount();
-   Lex.Lex();
--  if (ParseToken(lltok::colon, "expected ':' at start of summary entry") ||
--      ParseToken(lltok::lparen, "expected '(' at start of summary entry"))
-+  if (parseToken(lltok::colon, "expected ':' at start of summary entry") ||
-+      parseToken(lltok::lparen, "expected '(' at start of summary entry"))
-     return true;
-   // Now walk through the parenthesized entry, until the number of open
-   // parentheses goes back down to 0 (the first '(' was parsed above).
-@@ -2059,6 +2136,7 @@ bool LLParser::ParseOptionalCallingConv(unsigned &CC) {
-   case lltok::kw_hhvm_ccc:       CC = CallingConv::HHVM_C; break;
-   case lltok::kw_cxx_fast_tlscc: CC = CallingConv::CXX_FAST_TLS; break;
-   case lltok::kw_amdgpu_vs:      CC = CallingConv::AMDGPU_VS; break;
-+  case lltok::kw_amdgpu_gfx:     CC = CallingConv::AMDGPU_Gfx; break;
-   case lltok::kw_amdgpu_ls:      CC = CallingConv::AMDGPU_LS; break;
-   case lltok::kw_amdgpu_hs:      CC = CallingConv::AMDGPU_HS; break;
-   case lltok::kw_amdgpu_es:      CC = CallingConv::AMDGPU_ES; break;
-@@ -3193,6 +3280,7 @@ bool LLParser::ParseValID(ValID &ID, PerFunctionState *PFS) {
-     break;
-   case lltok::kw_null: ID.Kind = ValID::t_Null; break;
-   case lltok::kw_undef: ID.Kind = ValID::t_Undef; break;
-+  case lltok::kw_poison: ID.Kind = ValID::t_Poison; break;
-   case lltok::kw_zeroinitializer: ID.Kind = ValID::t_Zero; break;
-   case lltok::kw_none: ID.Kind = ValID::t_None; break;
- 
 @@ -3392,6 +3483,39 @@ bool LLParser::ParseValID(ValID &ID, PerFunctionState *PFS) {
      return false;
    }
@@ -144,7 +83,6 @@ index c9f21ee..2a3fb8f 100644
    return false;
  }
  
--/// ParseDIDerivedType:
 +/// parseDIStringType:
 +///   ::= !DIStringType(name: "character(4)", size: 32, align: 32)
 +bool LLParser::parseDIStringType(MDNode *&Result, bool IsDistinct) {
@@ -165,17 +103,6 @@ index c9f21ee..2a3fb8f 100644
 +                            encoding.Val));
 +  return false;
 +}
-+
-+/// parseDIDerivedType:
- ///   ::= !DIDerivedType(tag: DW_TAG_pointer_type, name: "int", file: !0,
- ///                      line: 7, scope: !1, baseType: !2, size: 32,
- ///                      align: 32, offset: 0, flags: 0, extraData: !3,
- ///                      dwarfAddressSpace: 3)
--bool LLParser::ParseDIDerivedType(MDNode *&Result, bool IsDistinct) {
-+bool LLParser::parseDIDerivedType(MDNode *&Result, bool IsDistinct) {
- #define VISIT_MD_FIELDS(OPTIONAL, REQUIRED)                                    \
-   REQUIRED(tag, DwarfTagField, );                                              \
-   OPTIONAL(name, MDStringField, );                                             \
 @@ -4661,17 +4841,28 @@ bool LLParser::ParseDICompositeType(MDNode *&Result, bool IsDistinct) {
    OPTIONAL(templateParams, MDField, );                                         \
    OPTIONAL(identifier, MDStringField, );                                       \
