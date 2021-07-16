@@ -323,11 +323,14 @@ type DICompositeType struct {
 	Elements    *Tuple         // optional; nil if not present.
 	RuntimeLang enum.DwarfLang // optional; zero value if not present.
 	// *DIBasicType or *DICompositeType
-	VtableHolder   Field  // optional; nil if not present.
-	TemplateParams *Tuple // optional; nil if not present.
-	Identifier     string // optional; empty if not present.
-	Discriminator  Field  // optional; nil if not present.
-	DataLocation   Field  // optional; nil if not present.
+	VtableHolder   Field      // optional; nil if not present.
+	TemplateParams *Tuple     // optional; nil if not present.
+	Identifier     string     // optional; empty if not present.
+	Discriminator  Field      // optional; nil if not present.
+	DataLocation   Field      // optional; nil if not present.
+	Associated     Field      // optional; nil if not present.
+	Allocated      Field      // optional; nil if not present.
+	Rank           FieldOrInt // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -421,6 +424,18 @@ func (md *DICompositeType) LLString() string {
 	}
 	if md.DataLocation != nil {
 		field := fmt.Sprintf("dataLocation: %s", md.DataLocation)
+		fields = append(fields, field)
+	}
+	if md.Associated != nil {
+		field := fmt.Sprintf("associated: %s", md.Associated)
+		fields = append(fields, field)
+	}
+	if md.Allocated != nil {
+		field := fmt.Sprintf("allocated: %s", md.Allocated)
+		fields = append(fields, field)
+	}
+	if md.Rank != nil {
+		field := fmt.Sprintf("rank: %s", md.Rank)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DICompositeType(%s)", strings.Join(fields, ", "))
