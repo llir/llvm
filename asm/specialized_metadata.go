@@ -400,6 +400,24 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 				return nil, errors.WithStack(err)
 			}
 			md.DataLocation = dataLocation
+		case *ast.AssociatedField:
+			associated, err := gen.irMDField(oldField.Associated())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Associated = associated
+		case *ast.AllocatedField:
+			allocated, err := gen.irMDField(oldField.Allocated())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Allocated = allocated
+		case *ast.RankField:
+			rank, err := gen.irMDFieldOrInt(oldField.Rank())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Rank = rank
 		default:
 			panic(fmt.Errorf("support for DICompositeType field %T not yet implemented", old))
 		}
