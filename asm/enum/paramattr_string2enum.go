@@ -27,16 +27,15 @@ func _() {
 	_ = x[enum.ParamAttrReadOnly-12]
 	_ = x[enum.ParamAttrReturned-13]
 	_ = x[enum.ParamAttrSignExt-14]
-	_ = x[enum.ParamAttrSRet-15]
-	_ = x[enum.ParamAttrSwiftError-16]
-	_ = x[enum.ParamAttrSwiftSelf-17]
-	_ = x[enum.ParamAttrWriteOnly-18]
-	_ = x[enum.ParamAttrZeroExt-19]
+	_ = x[enum.ParamAttrSwiftError-15]
+	_ = x[enum.ParamAttrSwiftSelf-16]
+	_ = x[enum.ParamAttrWriteOnly-17]
+	_ = x[enum.ParamAttrZeroExt-18]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnoundefnull_pointer_is_validreadnonereadonlyreturnedsignextsretswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnoundefnull_pointer_is_validreadnonereadonlyreturnedsignextswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 66, 87, 95, 103, 111, 118, 122, 132, 141, 150, 157}
+var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 66, 87, 95, 103, 111, 118, 128, 137, 146, 153}
 
 // ParamAttrFromString returns the ParamAttr enum corresponding to s.
 func ParamAttrFromString(s string) enum.ParamAttr {

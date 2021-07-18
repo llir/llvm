@@ -397,6 +397,17 @@ func (p *Param) LLString() string {
 	return buf.String()
 }
 
+// SRet is an sret parameter attribute.
+type SRet struct {
+	Typ types.Type
+}
+
+// String returns the string representation of the sret parameter attribute.
+func (s SRet) String() string {
+	// 'sret' '(' Typ=Type ')'
+	return fmt.Sprintf("sret(%s)", s.Typ)
+}
+
 // ### [ Helper functions ] ####################################################
 
 // quote returns s as a double-quoted string literal.

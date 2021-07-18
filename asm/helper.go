@@ -626,6 +626,12 @@ func (gen *generator) irParamAttribute(old ast.ParamAttribute) (ir.ParamAttribut
 			return nil, err
 		}
 		return ir.Preallocated{Typ: typ}, nil
+	case *ast.StructRetAttr:
+		typ, err := gen.irType(old.Typ())
+		if err != nil {
+			return nil, err
+		}
+		return ir.SRet{Typ: typ}, nil
 	default:
 		panic(fmt.Errorf("support for parameter attribute %T not yet implemented", old))
 	}
