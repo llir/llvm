@@ -857,7 +857,6 @@ const (
 	ParamAttrReadOnly                            // readonly
 	ParamAttrReturned                            // returned
 	ParamAttrSignExt                             // signext
-	ParamAttrSRet                                // sret
 	ParamAttrSwiftError                          // swifterror
 	ParamAttrSwiftSelf                           // swiftself
 	ParamAttrWriteOnly                           // writeonly
