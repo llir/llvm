@@ -38,6 +38,8 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Const
 		return constant.NewZeroInitializer(t), nil
 	case *ast.UndefConst:
 		return constant.NewUndef(t), nil
+	case *ast.PoisonConst:
+		return constant.NewPoison(t), nil
 	case *ast.BlockAddressConst:
 		return gen.irBlockAddressConst(t, old)
 	case *ast.GlobalIdent:

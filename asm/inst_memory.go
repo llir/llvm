@@ -462,6 +462,8 @@ func getIndex(index ast.Constant) gep.Index {
 		return gep.Index{HasVal: false}
 	case *ast.UndefConst:
 		return gep.Index{HasVal: false}
+	case *ast.PoisonConst:
+		return gep.Index{HasVal: false}
 	default:
 		// TODO: add support for more constant expressions.
 		// TODO: remove debug output.

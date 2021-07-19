@@ -604,6 +604,8 @@ func getIndex(index constant.Constant) gep.Index {
 		}
 	case *constant.Undef:
 		return gep.Index{HasVal: false}
+	case *constant.Poison:
+		return gep.Index{HasVal: false}
 	case constant.Expression:
 		// should already have been simplified to a form we can handle.
 		return gep.Index{HasVal: false}

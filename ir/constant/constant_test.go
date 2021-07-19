@@ -16,6 +16,7 @@ var (
 	_ Constant = (*Vector)(nil)
 	_ Constant = (*ZeroInitializer)(nil)
 	_ Constant = (*Undef)(nil)
+	_ Constant = (*Poison)(nil)
 	_ Constant = (*BlockAddress)(nil)
 )
 
