@@ -58,6 +58,12 @@ var (
 //
 //    *constant.Undef   // https://godoc.org/github.com/llir/llvm/ir/constant#Undef
 //
+// Poison values
+//
+// https://llvm.org/docs/LangRef.html#poison-values
+//
+//    *constant.Poison   // https://godoc.org/github.com/llir/llvm/ir/constant#Poison
+//
 // Addresses of basic blocks
 //
 // https://llvm.org/docs/LangRef.html#addresses-of-basic-blocks

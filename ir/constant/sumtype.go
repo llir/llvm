@@ -44,6 +44,10 @@ func (*Undef) IsConstant() {}
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
+func (*Poison) IsConstant() {}
+
+// IsConstant ensures that only constants can be assigned to the
+// constant.Constant interface.
 func (*BlockAddress) IsConstant() {}
 
 // --- [ Unary expressions ] ---------------------------------------------------
