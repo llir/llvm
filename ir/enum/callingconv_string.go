@@ -55,6 +55,7 @@ func _() {
 	_ = x[CallingConvAMDGPU_ES-96]
 	_ = x[CallingConvAArch64VectorCall-97]
 	_ = x[CallingConvAArch64SVEVectorCall-98]
+	_ = x[CallingConvAMDGPUGfx-100]
 }
 
 const (
@@ -62,6 +63,7 @@ const (
 	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscctailcccfguard_checkcc"
 	_CallingConv_name_2 = "x86_stdcallccx86_fastcallccarm_apcsccarm_aapcsccarm_aapcs_vfpccmsp430_intrccx86_thiscallccptx_kernelptx_device"
 	_CallingConv_name_3 = "spir_funcspir_kernelintel_ocl_biccx86_64_sysvccwin64ccx86_vectorcallcchhvmcchhvm_cccx86_intrccavr_intrccavr_signalcccc 86amdgpu_vsamdgpu_gsamdgpu_psamdgpu_csamdgpu_kernelx86_regcallccamdgpu_hscc 94amdgpu_lsamdgpu_esaarch64_vector_pcsaarch64_sve_vector_pcs"
+	_CallingConv_name_4 = "amdgpu_gfx"
 )
 
 var (
@@ -84,6 +86,8 @@ func (i CallingConv) String() string {
 	case 75 <= i && i <= 98:
 		i -= 75
 		return _CallingConv_name_3[_CallingConv_index_3[i]:_CallingConv_index_3[i+1]]
+	case i == 100:
+		return _CallingConv_name_4
 	default:
 		return "CallingConv(" + strconv.FormatInt(int64(i), 10) + ")"
 	}

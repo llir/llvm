@@ -59,6 +59,7 @@ func _() {
 	_ = x[enum.CallingConvAMDGPU_ES-96]
 	_ = x[enum.CallingConvAArch64VectorCall-97]
 	_ = x[enum.CallingConvAArch64SVEVectorCall-98]
+	_ = x[enum.CallingConvAMDGPUGfx-100]
 }
 
 const (
@@ -66,6 +67,7 @@ const (
 	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscctailcccfguard_checkcc"
 	_CallingConv_name_2 = "x86_stdcallccx86_fastcallccarm_apcsccarm_aapcsccarm_aapcs_vfpccmsp430_intrccx86_thiscallccptx_kernelptx_device"
 	_CallingConv_name_3 = "spir_funcspir_kernelintel_ocl_biccx86_64_sysvccwin64ccx86_vectorcallcchhvmcchhvm_cccx86_intrccavr_intrccavr_signalcccc 86amdgpu_vsamdgpu_gsamdgpu_psamdgpu_csamdgpu_kernelx86_regcallccamdgpu_hscc 94amdgpu_lsamdgpu_esaarch64_vector_pcsaarch64_sve_vector_pcs"
+	_CallingConv_name_4 = "amdgpu_gfx"
 )
 
 var (
@@ -99,6 +101,9 @@ func CallingConvFromString(s string) enum.CallingConv {
 		if s == _CallingConv_name_3[_CallingConv_index_3[i]:_CallingConv_index_3[i+1]] {
 			return enum.CallingConv(i + 75)
 		}
+	}
+	if s == _CallingConv_name_4 {
+		return enum.CallingConv(100)
 	}
 	panic(fmt.Errorf("unable to locate CallingConv enum corresponding to %q", s))
 }
