@@ -79,30 +79,31 @@ const (
 	CallingConvPTXKernel     CallingConv = 71 // ptx_kernel
 	CallingConvPTXDevice     CallingConv = 72 // ptx_device
 
-	CallingConvSPIRFunc             CallingConv = 75 // spir_func
-	CallingConvSPIRKernel           CallingConv = 76 // spir_kernel
-	CallingConvIntelOCL_BI          CallingConv = 77 // intel_ocl_bicc
-	CallingConvX86_64SysV           CallingConv = 78 // x86_64_sysvcc
-	CallingConvWin64                CallingConv = 79 // win64cc
-	CallingConvX86VectorCall        CallingConv = 80 // x86_vectorcallcc
-	CallingConvHHVM                 CallingConv = 81 // hhvmcc
-	CallingConvHHVM_C               CallingConv = 82 // hhvm_ccc
-	CallingConvX86Intr              CallingConv = 83 // x86_intrcc
-	CallingConvAVRIntr              CallingConv = 84 // avr_intrcc
-	CallingConvAVRSignal            CallingConv = 85 // avr_signalcc
-	CallingConvAVRBuiltin           CallingConv = 86 // cc 86
-	CallingConvAMDGPU_VS            CallingConv = 87 // amdgpu_vs
-	CallingConvAMDGPU_GS            CallingConv = 88 // amdgpu_gs
-	CallingConvAMDGPU_PS            CallingConv = 89 // amdgpu_ps
-	CallingConvAMDGPU_CS            CallingConv = 90 // amdgpu_cs
-	CallingConvAMDGPUKernel         CallingConv = 91 // amdgpu_kernel
-	CallingConvX86RegCall           CallingConv = 92 // x86_regcallcc
-	CallingConvAMDGPU_HS            CallingConv = 93 // amdgpu_hs
-	CallingConvMSP430Builtin        CallingConv = 94 // cc 94
-	CallingConvAMDGPU_LS            CallingConv = 95 // amdgpu_ls
-	CallingConvAMDGPU_ES            CallingConv = 96 // amdgpu_es
-	CallingConvAArch64VectorCall    CallingConv = 97 // aarch64_vector_pcs
-	CallingConvAArch64SVEVectorCall CallingConv = 98 // aarch64_sve_vector_pcs
+	CallingConvSPIRFunc             CallingConv = 75  // spir_func
+	CallingConvSPIRKernel           CallingConv = 76  // spir_kernel
+	CallingConvIntelOCL_BI          CallingConv = 77  // intel_ocl_bicc
+	CallingConvX86_64SysV           CallingConv = 78  // x86_64_sysvcc
+	CallingConvWin64                CallingConv = 79  // win64cc
+	CallingConvX86VectorCall        CallingConv = 80  // x86_vectorcallcc
+	CallingConvHHVM                 CallingConv = 81  // hhvmcc
+	CallingConvHHVM_C               CallingConv = 82  // hhvm_ccc
+	CallingConvX86Intr              CallingConv = 83  // x86_intrcc
+	CallingConvAVRIntr              CallingConv = 84  // avr_intrcc
+	CallingConvAVRSignal            CallingConv = 85  // avr_signalcc
+	CallingConvAVRBuiltin           CallingConv = 86  // cc 86
+	CallingConvAMDGPU_VS            CallingConv = 87  // amdgpu_vs
+	CallingConvAMDGPU_GS            CallingConv = 88  // amdgpu_gs
+	CallingConvAMDGPU_PS            CallingConv = 89  // amdgpu_ps
+	CallingConvAMDGPU_CS            CallingConv = 90  // amdgpu_cs
+	CallingConvAMDGPUKernel         CallingConv = 91  // amdgpu_kernel
+	CallingConvX86RegCall           CallingConv = 92  // x86_regcallcc
+	CallingConvAMDGPU_HS            CallingConv = 93  // amdgpu_hs
+	CallingConvMSP430Builtin        CallingConv = 94  // cc 94
+	CallingConvAMDGPU_LS            CallingConv = 95  // amdgpu_ls
+	CallingConvAMDGPU_ES            CallingConv = 96  // amdgpu_es
+	CallingConvAArch64VectorCall    CallingConv = 97  // aarch64_vector_pcs
+	CallingConvAArch64SVEVectorCall CallingConv = 98  // aarch64_sve_vector_pcs
+	CallingConvAMDGPUGfx            CallingConv = 100 // amdgpu_gfx
 )
 
 //go:generate stringer -linecomment -type ChecksumKind
