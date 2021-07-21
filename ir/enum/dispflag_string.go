@@ -18,6 +18,8 @@ func _() {
 	_ = x[DISPFlagElemental-64]
 	_ = x[DISPFlagRecursive-128]
 	_ = x[DISPFlagMainSubprogram-256]
+	_ = x[DISPFlagDeleted-512]
+	_ = x[DISPFlagObjCDirect-2048]
 	_ = x[DISPFlagNonvirtual-0]
 	_ = x[DISPFlagVirtuality-3]
 }
@@ -30,6 +32,8 @@ const (
 	_DISPFlag_name_4 = "DISPFlagElemental"
 	_DISPFlag_name_5 = "DISPFlagRecursive"
 	_DISPFlag_name_6 = "DISPFlagMainSubprogram"
+	_DISPFlag_name_7 = "DISPFlagDeleted"
+	_DISPFlag_name_8 = "DISPFlagObjCDirect"
 )
 
 var (
@@ -52,6 +56,10 @@ func (i DISPFlag) String() string {
 		return _DISPFlag_name_5
 	case i == 256:
 		return _DISPFlag_name_6
+	case i == 512:
+		return _DISPFlag_name_7
+	case i == 2048:
+		return _DISPFlag_name_8
 	default:
 		return "DISPFlag(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
