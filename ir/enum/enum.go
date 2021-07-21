@@ -191,7 +191,7 @@ type DISPFlag uint64
 
 // Subprogram specific flags.
 //
-// From include/llvm/IR/DebugInfoFlags.def (LLVM 9.0)
+// From include/llvm/IR/DebugInfoFlags.def (LLVM 10.0)
 const (
 	DISPFlagZero           DISPFlag = 0
 	DISPFlagVirtual        DISPFlag = 1
@@ -203,6 +203,9 @@ const (
 	DISPFlagElemental      DISPFlag = 1 << 6
 	DISPFlagRecursive      DISPFlag = 1 << 7
 	DISPFlagMainSubprogram DISPFlag = 1 << 8
+	// LLVM 10.x flags
+	DISPFlagDeleted    DISPFlag = 1 << 9
+	DISPFlagObjCDirect DISPFlag = 1 << 11
 
 	// Virtuality and non-virtuality.
 	DISPFlagNonvirtual DISPFlag = DISPFlagZero
