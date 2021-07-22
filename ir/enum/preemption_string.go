@@ -10,12 +10,13 @@ func _() {
 	var x [1]struct{}
 	_ = x[PreemptionNone-0]
 	_ = x[PreemptionDSOLocal-1]
-	_ = x[PreemptionDSOPreemptable-2]
+	_ = x[PreemptionDSOLocalEquivalent-2]
+	_ = x[PreemptionDSOPreemptable-3]
 }
 
-const _Preemption_name = "nonedso_localdso_preemptable"
+const _Preemption_name = "nonedso_localdso_local_equivalentdso_preemptable"
 
-var _Preemption_index = [...]uint8{0, 4, 13, 28}
+var _Preemption_index = [...]uint8{0, 4, 13, 33, 48}
 
 func (i Preemption) String() string {
 	if i >= Preemption(len(_Preemption_index)-1) {

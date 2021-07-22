@@ -14,12 +14,13 @@ func _() {
 	var x [1]struct{}
 	_ = x[enum.PreemptionNone-0]
 	_ = x[enum.PreemptionDSOLocal-1]
-	_ = x[enum.PreemptionDSOPreemptable-2]
+	_ = x[enum.PreemptionDSOLocalEquivalent-2]
+	_ = x[enum.PreemptionDSOPreemptable-3]
 }
 
-const _Preemption_name = "nonedso_localdso_preemptable"
+const _Preemption_name = "nonedso_localdso_local_equivalentdso_preemptable"
 
-var _Preemption_index = [...]uint8{0, 4, 13, 28}
+var _Preemption_index = [...]uint8{0, 4, 13, 33, 48}
 
 // PreemptionFromString returns the Preemption enum corresponding to s.
 func PreemptionFromString(s string) enum.Preemption {

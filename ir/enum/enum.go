@@ -874,9 +874,10 @@ type Preemption uint8
 
 // Preemption kinds.
 const (
-	PreemptionNone           Preemption = iota // none
-	PreemptionDSOLocal                         // dso_local
-	PreemptionDSOPreemptable                   // dso_preemptable
+	PreemptionNone               Preemption = iota // none
+	PreemptionDSOLocal                             // dso_local
+	PreemptionDSOLocalEquivalent                   // dso_local_equivalent
+	PreemptionDSOPreemptable                       // dso_preemptable
 )
 
 //go:generate stringer -linecomment -type ReturnAttr
