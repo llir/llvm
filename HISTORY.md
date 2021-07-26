@@ -1,5 +1,11 @@
 # Release history
 
+## Version 0.3.4 (2021-07-26)
+
+Update `llir/llvm` to include new language concepts of LLVM 12.0 (thanks [@dannypsnl](https://github.com/dannypsnl)).
+
+[Full list of changes since v0.3.3](https://github.com/llir/llvm/compare/v0.3.3...v0.3.4).
+
 ## Version 0.3.3 (2021-03-25)
 
 Update `llir/llvm` to include new language concepts of LLVM 11.0 (thanks [@dannypsnl](https://github.com/dannypsnl)).
