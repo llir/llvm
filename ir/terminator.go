@@ -518,6 +518,10 @@ type TermCallBr struct {
 	Metadata
 }
 
+func (term *TermCallBr) Operands() []value.Value {
+	return append(append(append([]value.Value{term.Callee}, term.Args...), term.NormalRetTarget), term.OtherRetTargets...)
+}
+
 // NewCallBr returns a new callbr terminator based on the given callee, function
 // arguments and control flow return points for normal and exceptional
 // execution.

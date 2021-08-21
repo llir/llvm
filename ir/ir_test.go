@@ -117,6 +117,7 @@ var (
 	_ Terminator = (*TermRet)(nil)
 	_ Terminator = (*TermBr)(nil)
 	_ Terminator = (*TermCondBr)(nil)
+	_ Terminator = (*TermCallBr)(nil)
 	_ Terminator = (*TermSwitch)(nil)
 	_ Terminator = (*TermIndirectBr)(nil)
 	_ Terminator = (*TermInvoke)(nil)
