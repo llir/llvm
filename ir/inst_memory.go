@@ -41,6 +41,10 @@ type InstAlloca struct {
 	Metadata
 }
 
+func (inst *InstAlloca) Operands() []value.Value {
+	return []value.Value{inst.NElems}
+}
+
 // NewAlloca returns a new alloca instruction based on the given element type.
 func NewAlloca(elemType types.Type) *InstAlloca {
 	inst := &InstAlloca{ElemType: elemType}
@@ -121,6 +125,10 @@ type InstLoad struct {
 	Metadata
 }
 
+func (inst *InstLoad) Operands() []value.Value {
+	return []value.Value{inst.Src}
+}
+
 // NewLoad returns a new load instruction based on the given element type and
 // source address.
 func NewLoad(elemType types.Type, src value.Value) *InstLoad {
@@ -199,6 +207,10 @@ type InstStore struct {
 	Metadata
 }
 
+func (inst *InstStore) Operands() []value.Value {
+	return []value.Value{inst.Src, inst.Dst}
+}
+
 // NewStore returns a new store instruction based on the given source value and
 // destination address.
 func NewStore(src, dst value.Value) *InstStore {
@@ -262,6 +274,10 @@ type InstFence struct {
 	Metadata
 }
 
+func (inst *InstFence) Operands() []value.Value {
+	return []value.Value{}
+}
+
 // NewFence returns a new fence instruction based on the given atomic ordering.
 func NewFence(ordering enum.AtomicOrdering) *InstFence {
 	return &InstFence{Ordering: ordering}
@@ -313,6 +329,10 @@ type InstCmpXchg struct {
 	SyncScope string
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstCmpXchg) Operands() []value.Value {
+	return []value.Value{inst.Ptr, inst.Cmp, inst.New}
 }
 
 // NewCmpXchg returns a new cmpxchg instruction based on the given address,
@@ -395,6 +415,10 @@ type InstAtomicRMW struct {
 	Metadata
 }
 
+func (inst *InstAtomicRMW) Operands() []value.Value {
+	return []value.Value{inst.Dst, inst.X}
+}
+
 // NewAtomicRMW returns a new atomicrmw instruction based on the given atomic
 // operation, destination address, operand and atomic ordering.
 func NewAtomicRMW(op enum.AtomicOp, dst, x value.Value, ordering enum.AtomicOrdering) *InstAtomicRMW {
@@ -465,6 +489,10 @@ type InstGetElementPtr struct {
 	InBounds bool
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstGetElementPtr) Operands() []value.Value {
+	return append([]value.Value{inst.Src}, inst.Indices...)
 }
 
 // NewGetElementPtr returns a new getelementptr instruction based on the given

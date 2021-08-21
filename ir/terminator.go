@@ -36,6 +36,8 @@ type Terminator interface {
 	LLStringer
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*Block
+	// Operands returns a mutable list of operands of the terminator.
+	Operands() []value.Value
 }
 
 // --- [ ret ] -----------------------------------------------------------------
@@ -49,6 +51,10 @@ type TermRet struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermRet) Operands() []value.Value {
+	return []value.Value{term.X}
 }
 
 // NewRet returns a new ret terminator based on the given return value. A nil
@@ -100,6 +106,10 @@ type TermBr struct {
 	Metadata
 }
 
+func (term *TermBr) Operands() []value.Value {
+	return []value.Value{term.Target}
+}
+
 // NewBr returns a new unconditional br terminator based on the given target
 // basic block.
 func NewBr(target *Block) *TermBr {
@@ -146,6 +156,10 @@ type TermCondBr struct {
 	Metadata
 }
 
+func (term *TermCondBr) Operands() []value.Value {
+	return []value.Value{term.Cond, term.TargetTrue, term.TargetFalse}
+}
+
 // NewCondBr returns a new conditional br terminator based on the given
 // branching condition and conditional target basic blocks.
 func NewCondBr(cond value.Value, targetTrue, targetFalse *Block) *TermCondBr {
@@ -190,6 +204,10 @@ type TermSwitch struct {
 	Successors []*Block
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermSwitch) Operands() []value.Value {
+	panic("implement me")
 }
 
 // NewSwitch returns a new switch terminator based on the given control
@@ -265,6 +283,10 @@ type TermIndirectBr struct {
 	Successors []*Block
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermIndirectBr) Operands() []value.Value {
+	return append([]value.Value{term.Addr}, term.ValidTargets...)
 }
 
 // NewIndirectBr returns a new indirectbr terminator based on the given target
@@ -348,6 +370,10 @@ type TermInvoke struct {
 	OperandBundles []*OperandBundle
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermInvoke) Operands() []value.Value {
+	return append(append([]value.Value{term.Invokee}, term.Args...), term.NormalRetTarget, term.ExceptionRetTarget)
 }
 
 // NewInvoke returns a new invoke terminator based on the given invokee,
@@ -623,6 +649,10 @@ type TermResume struct {
 	Metadata
 }
 
+func (term *TermResume) Operands() []value.Value {
+	return []value.Value{term.X}
+}
+
 // NewResume returns a new resume terminator based on the given exception
 // argument to propagate.
 func NewResume(x value.Value) *TermResume {
@@ -667,6 +697,10 @@ type TermCatchSwitch struct {
 	Successors []*Block
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermCatchSwitch) Operands() []value.Value {
+	return append(append([]value.Value{term.ParentPad}, term.Handlers...), term.DefaultUnwindTarget)
 }
 
 // NewCatchSwitch returns a new catchswitch terminator based on the given parent
@@ -759,6 +793,10 @@ type TermCatchRet struct {
 	Metadata
 }
 
+func (term *TermCatchRet) Operands() []value.Value {
+	return []value.Value{term.CatchPad, term.Target}
+}
+
 // NewCatchRet returns a new catchret terminator based on the given exit
 // catchpad and target basic block.
 func NewCatchRet(catchPad *InstCatchPad, target *Block) *TermCatchRet {
@@ -804,6 +842,10 @@ type TermCleanupRet struct {
 	Successors []*Block
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermCleanupRet) Operands() []value.Value {
+	return []value.Value{term.CleanupPad, term.UnwindTarget}
 }
 
 // NewCleanupRet returns a new cleanupret terminator based on the given exit
@@ -860,6 +902,10 @@ type TermUnreachable struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (term *TermUnreachable) Operands() []value.Value {
+	return []value.Value{}
 }
 
 // NewUnreachable returns a new unreachable terminator.

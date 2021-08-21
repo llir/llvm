@@ -29,6 +29,10 @@ type InstExtractElement struct {
 	Metadata
 }
 
+func (inst *InstExtractElement) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Index}
+}
+
 // NewExtractElement returns a new extractelement instruction based on the given
 // vector and element index.
 func NewExtractElement(x, index value.Value) *InstExtractElement {
@@ -91,6 +95,10 @@ type InstInsertElement struct {
 	Metadata
 }
 
+func (inst *InstInsertElement) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Elem, inst.Index}
+}
+
 // NewInsertElement returns a new insertelement instruction based on the given
 // vector, element and element index.
 func NewInsertElement(x, elem, index value.Value) *InstInsertElement {
@@ -150,6 +158,10 @@ type InstShuffleVector struct {
 	Typ *types.VectorType
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstShuffleVector) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Y, inst.Mask}
 }
 
 // NewShuffleVector returns a new shufflevector instruction based on the given

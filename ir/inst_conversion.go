@@ -27,6 +27,10 @@ type InstTrunc struct {
 	Metadata
 }
 
+func (inst *InstTrunc) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewTrunc returns a new trunc instruction based on the given source value and
 // target type.
 func NewTrunc(from value.Value, to types.Type) *InstTrunc {
@@ -101,6 +105,10 @@ type InstZExt struct {
 	Metadata
 }
 
+func (inst *InstZExt) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewZExt returns a new zext instruction based on the given source value and
 // target type.
 func NewZExt(from value.Value, to types.Type) *InstZExt {
@@ -146,6 +154,10 @@ type InstSExt struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstSExt) Operands() []value.Value {
+	return []value.Value{inst.From}
 }
 
 // NewSExt returns a new sext instruction based on the given source value and
@@ -195,6 +207,10 @@ type InstFPTrunc struct {
 	Metadata
 }
 
+func (inst *InstFPTrunc) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewFPTrunc returns a new fptrunc instruction based on the given source value
 // and target type.
 func NewFPTrunc(from value.Value, to types.Type) *InstFPTrunc {
@@ -240,6 +256,10 @@ type InstFPExt struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstFPExt) Operands() []value.Value {
+	return []value.Value{inst.From}
 }
 
 // NewFPExt returns a new fpext instruction based on the given source value and
@@ -289,6 +309,10 @@ type InstFPToUI struct {
 	Metadata
 }
 
+func (inst *InstFPToUI) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewFPToUI returns a new fptoui instruction based on the given source value
 // and target type.
 func NewFPToUI(from value.Value, to types.Type) *InstFPToUI {
@@ -334,6 +358,10 @@ type InstFPToSI struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstFPToSI) Operands() []value.Value {
+	return []value.Value{inst.From}
 }
 
 // NewFPToSI returns a new fptosi instruction based on the given source value
@@ -383,6 +411,10 @@ type InstUIToFP struct {
 	Metadata
 }
 
+func (inst *InstUIToFP) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewUIToFP returns a new uitofp instruction based on the given source value
 // and target type.
 func NewUIToFP(from value.Value, to types.Type) *InstUIToFP {
@@ -428,6 +460,10 @@ type InstSIToFP struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstSIToFP) Operands() []value.Value {
+	return []value.Value{inst.From}
 }
 
 // NewSIToFP returns a new sitofp instruction based on the given source value
@@ -477,6 +513,10 @@ type InstPtrToInt struct {
 	Metadata
 }
 
+func (inst *InstPtrToInt) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewPtrToInt returns a new ptrtoint instruction based on the given source
 // value and target type.
 func NewPtrToInt(from value.Value, to types.Type) *InstPtrToInt {
@@ -522,6 +562,10 @@ type InstIntToPtr struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstIntToPtr) Operands() []value.Value {
+	return []value.Value{inst.From}
 }
 
 // NewIntToPtr returns a new inttoptr instruction based on the given source
@@ -571,6 +615,10 @@ type InstBitCast struct {
 	Metadata
 }
 
+func (inst *InstBitCast) Operands() []value.Value {
+	return []value.Value{inst.From}
+}
+
 // NewBitCast returns a new bitcast instruction based on the given source value
 // and target type.
 func NewBitCast(from value.Value, to types.Type) *InstBitCast {
@@ -616,6 +664,10 @@ type InstAddrSpaceCast struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstAddrSpaceCast) Operands() []value.Value {
+	return []value.Value{inst.From}
 }
 
 // NewAddrSpaceCast returns a new addrspacecast instruction based on the given

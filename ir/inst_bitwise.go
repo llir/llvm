@@ -30,6 +30,8 @@ type InstShl struct {
 	Metadata
 }
 
+func (inst *InstShl) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewShl returns a new shl instruction based on the given operands.
 func NewShl(x, y value.Value) *InstShl {
 	inst := &InstShl{X: x, Y: y}
@@ -88,6 +90,8 @@ type InstLShr struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstLShr) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewLShr returns a new lshr instruction based on the given operands.
 func NewLShr(x, y value.Value) *InstLShr {
@@ -148,6 +152,8 @@ type InstAShr struct {
 	Metadata
 }
 
+func (inst *InstAShr) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewAShr returns a new ashr instruction based on the given operands.
 func NewAShr(x, y value.Value) *InstAShr {
 	inst := &InstAShr{X: x, Y: y}
@@ -205,6 +211,10 @@ type InstAnd struct {
 	Metadata
 }
 
+func (inst *InstAnd) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Y}
+}
+
 // NewAnd returns a new and instruction based on the given operands.
 func NewAnd(x, y value.Value) *InstAnd {
 	inst := &InstAnd{X: x, Y: y}
@@ -258,6 +268,10 @@ type InstOr struct {
 	Metadata
 }
 
+func (inst *InstOr) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Y}
+}
+
 // NewOr returns a new or instruction based on the given operands.
 func NewOr(x, y value.Value) *InstOr {
 	inst := &InstOr{X: x, Y: y}
@@ -309,6 +323,10 @@ type InstXor struct {
 	Typ types.Type
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstXor) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Y}
 }
 
 // NewXor returns a new xor instruction based on the given operands.

@@ -1,5 +1,7 @@
 package ir
 
+import "github.com/llir/llvm/ir/value"
+
 // === [ Instructions ] ========================================================
 
 // Instruction is an LLVM IR instruction. All instructions (except store and
@@ -106,4 +108,6 @@ type Instruction interface {
 	// isInstruction ensures that only instructions can be assigned to the
 	// instruction.Instruction interface.
 	isInstruction()
+	// Operands returns a mutable list of operands of the instruction.
+	Operands() []value.Value
 }

@@ -29,6 +29,8 @@ type InstExtractValue struct {
 	Metadata
 }
 
+func (inst *InstExtractValue) Operands() []value.Value { return []value.Value{inst.X} }
+
 // NewExtractValue returns a new extractvalue instruction based on the given
 // aggregate value and indicies.
 func NewExtractValue(x value.Value, indices ...uint64) *InstExtractValue {
@@ -89,6 +91,8 @@ type InstInsertValue struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstInsertValue) Operands() []value.Value { return []value.Value{inst.X, inst.Elem} }
 
 // NewInsertValue returns a new insertvalue instruction based on the given
 // aggregate value, element and indicies.

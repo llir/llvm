@@ -30,6 +30,10 @@ type InstICmp struct {
 	Metadata
 }
 
+func (inst *InstICmp) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Y}
+}
+
 // NewICmp returns a new icmp instruction based on the given integer comparison
 // predicate and integer scalar or vector operands.
 func NewICmp(pred enum.IPred, x, y value.Value) *InstICmp {
@@ -94,6 +98,10 @@ type InstFCmp struct {
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstFCmp) Operands() []value.Value {
+	return []value.Value{inst.X, inst.Y}
 }
 
 // NewFCmp returns a new fcmp instruction based on the given floating-point
@@ -162,6 +170,10 @@ type InstPhi struct {
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstPhi) Operands() []value.Value {
+	panic("implement me")
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -256,6 +268,10 @@ type InstSelect struct {
 	FastMathFlags []enum.FastMathFlag
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstSelect) Operands() []value.Value {
+	return []value.Value{inst.Cond, inst.ValueTrue, inst.ValueFalse}
 }
 
 // NewSelect returns a new select instruction based on the given selection
@@ -391,6 +407,10 @@ type InstCall struct {
 	Metadata
 }
 
+func (inst *InstCall) Operands() []value.Value {
+	return append([]value.Value{inst.Callee}, inst.Args...)
+}
+
 // NewCall returns a new call instruction based on the given callee and function
 // arguments.
 //
@@ -505,6 +525,10 @@ type InstVAArg struct {
 	Metadata
 }
 
+func (inst *InstVAArg) Operands() []value.Value {
+	return []value.Value{inst.ArgList}
+}
+
 // NewVAArg returns a new va_arg instruction based on the given variable
 // argument list and argument type.
 func NewVAArg(argList value.Value, argType types.Type) *InstVAArg {
@@ -553,6 +577,10 @@ type InstLandingPad struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstLandingPad) Operands() []value.Value {
+	panic("implement me")
 }
 
 // NewLandingPad returns a new landingpad instruction based on the given result
@@ -633,6 +661,10 @@ type InstCatchPad struct {
 	Metadata
 }
 
+func (inst *InstCatchPad) Operands() []value.Value {
+	return append([]value.Value{inst.CatchSwitch}, inst.Args...)
+}
+
 // NewCatchPad returns a new catchpad instruction based on the given parent
 // catchswitch terminator and exception arguments.
 func NewCatchPad(catchSwitch *TermCatchSwitch, args ...value.Value) *InstCatchPad {
@@ -689,6 +721,10 @@ type InstCleanupPad struct {
 
 	// (optional) Metadata.
 	Metadata
+}
+
+func (inst *InstCleanupPad) Operands() []value.Value {
+	return append([]value.Value{inst.ParentPad}, inst.Args...)
 }
 
 // NewCleanupPad returns a new cleanuppad instruction based on the given

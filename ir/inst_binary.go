@@ -30,6 +30,8 @@ type InstAdd struct {
 	Metadata
 }
 
+func (inst *InstAdd) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewAdd returns a new add instruction based on the given operands.
 func NewAdd(x, y value.Value) *InstAdd {
 	inst := &InstAdd{X: x, Y: y}
@@ -88,6 +90,8 @@ type InstFAdd struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstFAdd) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewFAdd returns a new fadd instruction based on the given operands.
 func NewFAdd(x, y value.Value) *InstFAdd {
@@ -148,6 +152,8 @@ type InstSub struct {
 	Metadata
 }
 
+func (inst *InstSub) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewSub returns a new sub instruction based on the given operands.
 func NewSub(x, y value.Value) *InstSub {
 	inst := &InstSub{X: x, Y: y}
@@ -206,6 +212,8 @@ type InstFSub struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstFSub) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewFSub returns a new fsub instruction based on the given operands.
 func NewFSub(x, y value.Value) *InstFSub {
@@ -266,6 +274,8 @@ type InstMul struct {
 	Metadata
 }
 
+func (inst *InstMul) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewMul returns a new mul instruction based on the given operands.
 func NewMul(x, y value.Value) *InstMul {
 	inst := &InstMul{X: x, Y: y}
@@ -324,6 +334,8 @@ type InstFMul struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstFMul) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewFMul returns a new fmul instruction based on the given operands.
 func NewFMul(x, y value.Value) *InstFMul {
@@ -384,6 +396,8 @@ type InstUDiv struct {
 	Metadata
 }
 
+func (inst *InstUDiv) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewUDiv returns a new udiv instruction based on the given operands.
 func NewUDiv(x, y value.Value) *InstUDiv {
 	inst := &InstUDiv{X: x, Y: y}
@@ -442,6 +456,8 @@ type InstSDiv struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstSDiv) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewSDiv returns a new sdiv instruction based on the given operands.
 func NewSDiv(x, y value.Value) *InstSDiv {
@@ -502,6 +518,8 @@ type InstFDiv struct {
 	Metadata
 }
 
+func (inst *InstFDiv) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewFDiv returns a new fdiv instruction based on the given operands.
 func NewFDiv(x, y value.Value) *InstFDiv {
 	inst := &InstFDiv{X: x, Y: y}
@@ -559,6 +577,8 @@ type InstURem struct {
 	Metadata
 }
 
+func (inst *InstURem) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
+
 // NewURem returns a new urem instruction based on the given operands.
 func NewURem(x, y value.Value) *InstURem {
 	inst := &InstURem{X: x, Y: y}
@@ -611,6 +631,8 @@ type InstSRem struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstSRem) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewSRem returns a new srem instruction based on the given operands.
 func NewSRem(x, y value.Value) *InstSRem {
@@ -666,6 +688,8 @@ type InstFRem struct {
 	// (optional) Metadata.
 	Metadata
 }
+
+func (inst *InstFRem) Operands() []value.Value { return []value.Value{inst.X, inst.Y} }
 
 // NewFRem returns a new frem instruction based on the given operands.
 func NewFRem(x, y value.Value) *InstFRem {
