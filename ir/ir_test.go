@@ -100,6 +100,7 @@ var (
 	_ Instruction = (*InstBitCast)(nil)
 	_ Instruction = (*InstAddrSpaceCast)(nil)
 	// Other instructions.
+	_ Instruction = (*InstFNeg)(nil)
 	_ Instruction = (*InstICmp)(nil)
 	_ Instruction = (*InstFCmp)(nil)
 	_ Instruction = (*InstPhi)(nil)

@@ -30,6 +30,10 @@ type InstFNeg struct {
 	Metadata
 }
 
+func (inst *InstFNeg) Operands() []value.Value {
+	return []value.Value{inst.X}
+}
+
 // NewFNeg returns a new fneg instruction based on the given operand.
 func NewFNeg(x value.Value) *InstFNeg {
 	inst := &InstFNeg{X: x}
