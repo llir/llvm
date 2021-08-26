@@ -331,6 +331,10 @@ type InstFreeze struct {
 	Metadata
 }
 
+func (inst *InstFreeze) Operands() []value.Value {
+	return []value.Value{inst.X}
+}
+
 // NewInstFreeze returns a new freeze instruction based on the given
 // operand.
 func NewInstFreeze(x value.Value) *InstFreeze {
