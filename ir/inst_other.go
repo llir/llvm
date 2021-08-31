@@ -173,7 +173,11 @@ type InstPhi struct {
 }
 
 func (inst *InstPhi) Operands() []value.Value {
-	panic("implement me")
+	operands := make([]value.Value, 0, 2*len(inst.Incs))
+	for _, inc := range inst.Incs {
+		operands = append(operands, inc.X, inc.Pred)
+	}
+	return operands
 }
 
 // NewPhi returns a new phi instruction based on the given incoming values.
@@ -584,7 +588,7 @@ type InstLandingPad struct {
 }
 
 func (inst *InstLandingPad) Operands() []value.Value {
-	panic("implement me")
+	return nil
 }
 
 // NewLandingPad returns a new landingpad instruction based on the given result

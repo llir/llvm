@@ -207,7 +207,7 @@ type TermSwitch struct {
 }
 
 func (term *TermSwitch) Operands() []value.Value {
-	panic("implement me")
+	return nil
 }
 
 // NewSwitch returns a new switch terminator based on the given control
