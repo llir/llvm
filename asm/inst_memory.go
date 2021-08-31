@@ -374,7 +374,7 @@ func (gen *generator) gepInstType(elemType, src types.Type, indices []ast.TypeVa
 	for _, index := range indices {
 		var idx gep.Index
 		if indexVal, ok := index.Val().(ast.Constant); ok {
-			idx = getIndex(indexVal)
+			idx = gen.getIndex(indexVal)
 		} else {
 			idx = gep.Index{HasVal: false}
 			// Check if index is of vector type.
@@ -400,13 +400,15 @@ func (gen *generator) gepInstType(elemType, src types.Type, indices []ast.TypeVa
 // The reference point and source of truth is in ir/constant/expr_memory.go.
 
 // getIndex returns the gep index corresponding to the given constant index.
-func getIndex(index ast.Constant) gep.Index {
+func (gen *generator) getIndex(index ast.Constant) gep.Index {
 	switch index := index.(type) {
 	case *ast.IntConst:
-		val, err := strconv.ParseInt(index.Text(), 10, 64)
+		// use types.I64 as dummy type for gep indices, the type doesn't matter.
+		idx, err := gen.irIntConst(types.I64, index)
 		if err != nil {
 			panic(fmt.Errorf("unable to parse integer %q; %v", index.Text(), err))
 		}
+		val := idx.X.Int64()
 		return gep.NewIndex(val)
 	case *ast.BoolConst:
 		if boolLit(index.BoolLit()) {
