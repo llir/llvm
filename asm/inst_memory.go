@@ -2,7 +2,6 @@ package asm
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/llir/ll/ast"
 	asmenum "github.com/llir/llvm/asm/enum"
@@ -435,10 +434,12 @@ func (gen *generator) getIndex(index ast.Constant) gep.Index {
 		for i, elem := range elems {
 			switch elem := elem.Val().(type) {
 			case *ast.IntConst:
-				x, err := strconv.ParseInt(elem.Text(), 10, 64)
+				// use types.I64 as dummy type for gep indices, the type doesn't matter.
+				idx, err := gen.irIntConst(types.I64, elem)
 				if err != nil {
-					panic(fmt.Errorf("unable to parse integer %q; %v", index.Text(), err))
+					panic(fmt.Errorf("unable to parse integer %q; %v", elem.Text(), err))
 				}
+				x := idx.X.Int64()
 				if i == 0 {
 					val = x
 				} else if x != val {
