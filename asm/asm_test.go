@@ -517,7 +517,8 @@ func TestParseFile(t *testing.T) {
 			continue
 		}
 		path := g.path
-		if osutil.Exists(g.path + ".golden") {
+		hasGolden := osutil.Exists(g.path + ".golden")
+		if hasGolden {
 			path = g.path + ".golden"
 		}
 		buf, err := ioutil.ReadFile(path)
@@ -530,6 +531,21 @@ func TestParseFile(t *testing.T) {
 		if diff := cmp.Diff(want, got); diff != "" {
 			t.Errorf("module %q mismatch (-want +got):\n%s", path, diff)
 			continue
+		}
+		// Do round-trip test on golden test cases.
+		if hasGolden {
+			goldenPath := g.path + ".golden"
+			m, err := ParseFile(goldenPath)
+			if err != nil {
+				t.Errorf("unable to parse %q into AST; %+v", goldenPath, err)
+				continue
+			}
+			want := string(buf)
+			got := m.String()
+			if diff := cmp.Diff(want, got); diff != "" {
+				t.Errorf("module %q mismatch (-want +got):\n%s", goldenPath, diff)
+				continue
+			}
 		}
 	}
 }

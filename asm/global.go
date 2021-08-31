@@ -635,7 +635,7 @@ func (gen *generator) gepExprType(old *ast.GetElementPtrExpr) (types.Type, error
 	var idxs []gep.Index
 	for _, index := range old.Indices() {
 		indexVal := index.Index().Val()
-		idx := getIndex(indexVal)
+		idx := gen.getIndex(indexVal)
 		idxs = append(idxs, idx)
 	}
 	return gep.ResultType(elemType, src, idxs), nil
