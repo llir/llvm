@@ -108,6 +108,6 @@ type Instruction interface {
 	// isInstruction ensures that only instructions can be assigned to the
 	// instruction.Instruction interface.
 	isInstruction()
-	// Operands returns a mutable list of operands of the instruction.
+	// Operands returns a list of operands of the instruction.
 	Operands() []value.Value
 }
