@@ -909,7 +909,7 @@ type TermUnreachable struct {
 }
 
 func (term *TermUnreachable) Operands() []value.Value {
-	return []value.Value{}
+	return nil
 }
 
 // NewUnreachable returns a new unreachable terminator.

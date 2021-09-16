@@ -275,7 +275,7 @@ type InstFence struct {
 }
 
 func (inst *InstFence) Operands() []value.Value {
-	return []value.Value{}
+	return nil
 }
 
 // NewFence returns a new fence instruction based on the given atomic ordering.
