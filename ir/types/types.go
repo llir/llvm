@@ -133,18 +133,18 @@ func Equal(t, u Type) bool {
 //
 // A Type has one of the following underlying types.
 //
-//    *types.VoidType       // https://godoc.org/github.com/llir/llvm/ir/types#VoidType
-//    *types.FuncType       // https://godoc.org/github.com/llir/llvm/ir/types#FuncType
-//    *types.IntType        // https://godoc.org/github.com/llir/llvm/ir/types#IntType
-//    *types.FloatType      // https://godoc.org/github.com/llir/llvm/ir/types#FloatType
-//    *types.MMXType        // https://godoc.org/github.com/llir/llvm/ir/types#MMXType
-//    *types.PointerType    // https://godoc.org/github.com/llir/llvm/ir/types#PointerType
-//    *types.VectorType     // https://godoc.org/github.com/llir/llvm/ir/types#VectorType
-//    *types.LabelType      // https://godoc.org/github.com/llir/llvm/ir/types#LabelType
-//    *types.TokenType      // https://godoc.org/github.com/llir/llvm/ir/types#TokenType
-//    *types.MetadataType   // https://godoc.org/github.com/llir/llvm/ir/types#MetadataType
-//    *types.ArrayType      // https://godoc.org/github.com/llir/llvm/ir/types#ArrayType
-//    *types.StructType     // https://godoc.org/github.com/llir/llvm/ir/types#StructType
+//    *types.VoidType       // https://pkg.go.dev/github.com/llir/llvm/ir/types#VoidType
+//    *types.FuncType       // https://pkg.go.dev/github.com/llir/llvm/ir/types#FuncType
+//    *types.IntType        // https://pkg.go.dev/github.com/llir/llvm/ir/types#IntType
+//    *types.FloatType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#FloatType
+//    *types.MMXType        // https://pkg.go.dev/github.com/llir/llvm/ir/types#MMXType
+//    *types.PointerType    // https://pkg.go.dev/github.com/llir/llvm/ir/types#PointerType
+//    *types.VectorType     // https://pkg.go.dev/github.com/llir/llvm/ir/types#VectorType
+//    *types.LabelType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#LabelType
+//    *types.TokenType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#TokenType
+//    *types.MetadataType   // https://pkg.go.dev/github.com/llir/llvm/ir/types#MetadataType
+//    *types.ArrayType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#ArrayType
+//    *types.StructType     // https://pkg.go.dev/github.com/llir/llvm/ir/types#StructType
 type Type interface {
 	fmt.Stringer
 	// LLString returns the LLVM syntax representation of the definition of the
