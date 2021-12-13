@@ -41,7 +41,7 @@ Map between `llir/llvm` tagged releases and LLVM release versions.
 
 ### Input example - Parse LLVM IR assembly
 
-[Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/asm#example-package).
+[Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/asm#example-package).
 
 ```go
 // This example parses an LLVM IR assembly file and pretty-prints the data types
@@ -68,7 +68,7 @@ func main() {
 
 ### Output example - Produce LLVM IR assembly
 
-[Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package).
+[Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/ir#example-package).
 
 ```go
 // This example produces LLVM IR code equivalent to the following C code, which
@@ -138,7 +138,7 @@ func main() {
 
 ### Analysis example - Process LLVM IR
 
-[Example usage in GoDoc](https://godoc.org/github.com/llir/llvm/ir#example-package--Callgraph).
+[Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/ir#example-package--Callgraph).
 
 ```go
 // This example program analyses an LLVM IR module to produce a callgraph in
