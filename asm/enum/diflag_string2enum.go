@@ -18,7 +18,7 @@ func _() {
 	_ = x[enum.DIFlagPublic-3]
 	_ = x[enum.DIFlagFwdDecl-4]
 	_ = x[enum.DIFlagAppleBlock-8]
-	_ = x[enum.DIFlagBlockByrefStruct-16]
+	_ = x[enum.DIFlagReservedBit4-16]
 	_ = x[enum.DIFlagVirtual-32]
 	_ = x[enum.DIFlagArtificial-64]
 	_ = x[enum.DIFlagExplicit-128]
@@ -29,14 +29,13 @@ func _() {
 	_ = x[enum.DIFlagStaticMember-4096]
 	_ = x[enum.DIFlagLValueReference-8192]
 	_ = x[enum.DIFlagRValueReference-16384]
-	_ = x[enum.DIFlagReserved-32768]
+	_ = x[enum.DIFlagExportSymbols-32768]
 	_ = x[enum.DIFlagSingleInheritance-65536]
 	_ = x[enum.DIFlagMultipleInheritance-131072]
 	_ = x[enum.DIFlagVirtualInheritance-196608]
 	_ = x[enum.DIFlagIntroducedVirtual-262144]
 	_ = x[enum.DIFlagBitField-524288]
 	_ = x[enum.DIFlagNoReturn-1048576]
-	_ = x[enum.DIFlagArgumentNotModified-2097152]
 	_ = x[enum.DIFlagTypePassByValue-4194304]
 	_ = x[enum.DIFlagTypePassByReference-8388608]
 	_ = x[enum.DIFlagEnumClass-16777216]
@@ -50,7 +49,7 @@ func _() {
 	_ = x[enum.DIFlagPtrToMemberRep-196608]
 }
 
-const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagBlockByrefStructDIFlagVirtualDIFlagIndirectVirtualBaseDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagReservedDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagArgumentNotModifiedDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagEnumClassDIFlagThunkDIFlagNonTrivialDIFlagBigEndianDIFlagLittleEndianDIFlagAllCallsDescribed"
+const _DIFlag_name = "DIFlagZeroDIFlagPrivateDIFlagProtectedDIFlagPublicDIFlagFwdDeclDIFlagAppleBlockDIFlagReservedBit4DIFlagVirtualDIFlagIndirectVirtualBaseDIFlagArtificialDIFlagExplicitDIFlagPrototypedDIFlagObjcClassCompleteDIFlagObjectPointerDIFlagVectorDIFlagStaticMemberDIFlagLValueReferenceDIFlagRValueReferenceDIFlagExportSymbolsDIFlagSingleInheritanceDIFlagMultipleInheritanceDIFlagVirtualInheritanceDIFlagIntroducedVirtualDIFlagBitFieldDIFlagNoReturnDIFlagTypePassByValueDIFlagTypePassByReferenceDIFlagEnumClassDIFlagThunkDIFlagNonTrivialDIFlagBigEndianDIFlagLittleEndianDIFlagAllCallsDescribed"
 
 var _DIFlag_map = map[enum.DIFlag]string{
 	0:         _DIFlag_name[0:10],
@@ -59,34 +58,33 @@ var _DIFlag_map = map[enum.DIFlag]string{
 	3:         _DIFlag_name[38:50],
 	4:         _DIFlag_name[50:63],
 	8:         _DIFlag_name[63:79],
-	16:        _DIFlag_name[79:101],
-	32:        _DIFlag_name[101:114],
-	36:        _DIFlag_name[114:139],
-	64:        _DIFlag_name[139:155],
-	128:       _DIFlag_name[155:169],
-	256:       _DIFlag_name[169:185],
-	512:       _DIFlag_name[185:208],
-	1024:      _DIFlag_name[208:227],
-	2048:      _DIFlag_name[227:239],
-	4096:      _DIFlag_name[239:257],
-	8192:      _DIFlag_name[257:278],
-	16384:     _DIFlag_name[278:299],
-	32768:     _DIFlag_name[299:313],
-	65536:     _DIFlag_name[313:336],
-	131072:    _DIFlag_name[336:361],
-	196608:    _DIFlag_name[361:385],
-	262144:    _DIFlag_name[385:408],
-	524288:    _DIFlag_name[408:422],
-	1048576:   _DIFlag_name[422:436],
-	2097152:   _DIFlag_name[436:461],
-	4194304:   _DIFlag_name[461:482],
-	8388608:   _DIFlag_name[482:507],
-	16777216:  _DIFlag_name[507:522],
-	33554432:  _DIFlag_name[522:533],
-	67108864:  _DIFlag_name[533:549],
-	134217728: _DIFlag_name[549:564],
-	268435456: _DIFlag_name[564:582],
-	536870912: _DIFlag_name[582:605],
+	16:        _DIFlag_name[79:97],
+	32:        _DIFlag_name[97:110],
+	36:        _DIFlag_name[110:135],
+	64:        _DIFlag_name[135:151],
+	128:       _DIFlag_name[151:165],
+	256:       _DIFlag_name[165:181],
+	512:       _DIFlag_name[181:204],
+	1024:      _DIFlag_name[204:223],
+	2048:      _DIFlag_name[223:235],
+	4096:      _DIFlag_name[235:253],
+	8192:      _DIFlag_name[253:274],
+	16384:     _DIFlag_name[274:295],
+	32768:     _DIFlag_name[295:314],
+	65536:     _DIFlag_name[314:337],
+	131072:    _DIFlag_name[337:362],
+	196608:    _DIFlag_name[362:386],
+	262144:    _DIFlag_name[386:409],
+	524288:    _DIFlag_name[409:423],
+	1048576:   _DIFlag_name[423:437],
+	4194304:   _DIFlag_name[437:458],
+	8388608:   _DIFlag_name[458:483],
+	16777216:  _DIFlag_name[483:498],
+	33554432:  _DIFlag_name[498:509],
+	67108864:  _DIFlag_name[509:525],
+	134217728: _DIFlag_name[525:540],
+	268435456: _DIFlag_name[540:558],
+	536870912: _DIFlag_name[558:581],
 }
 
 // DIFlagFromString returns the DIFlag enum corresponding to s.
