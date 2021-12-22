@@ -137,7 +137,7 @@ type DIFlag uint64
 
 // Debug info flags.
 //
-// From include/llvm/IR/DebugInfoFlags.def (LLVM 9.0)
+// From include/llvm/IR/DebugInfoFlags.def (LLVM 13.0)
 const (
 	DIFlagZero                DIFlag = 0
 	DIFlagPrivate             DIFlag = 1
@@ -145,7 +145,7 @@ const (
 	DIFlagPublic              DIFlag = 3
 	DIFlagFwdDecl             DIFlag = 1 << 2
 	DIFlagAppleBlock          DIFlag = 1 << 3
-	DIFlagBlockByrefStruct    DIFlag = 1 << 4
+	DIFlagReservedBit4        DIFlag = 1 << 4
 	DIFlagVirtual             DIFlag = 1 << 5
 	DIFlagArtificial          DIFlag = 1 << 6
 	DIFlagExplicit            DIFlag = 1 << 7
@@ -156,14 +156,13 @@ const (
 	DIFlagStaticMember        DIFlag = 1 << 12
 	DIFlagLValueReference     DIFlag = 1 << 13
 	DIFlagRValueReference     DIFlag = 1 << 14
-	DIFlagReserved            DIFlag = 1 << 15
+	DIFlagExportSymbols       DIFlag = 1 << 15
 	DIFlagSingleInheritance   DIFlag = 1 << 16
 	DIFlagMultipleInheritance DIFlag = 2 << 16
 	DIFlagVirtualInheritance  DIFlag = 3 << 16
 	DIFlagIntroducedVirtual   DIFlag = 1 << 18
 	DIFlagBitField            DIFlag = 1 << 19
 	DIFlagNoReturn            DIFlag = 1 << 20
-	DIFlagArgumentNotModified DIFlag = 1 << 21
 	DIFlagTypePassByValue     DIFlag = 1 << 22
 	DIFlagTypePassByReference DIFlag = 1 << 23
 	DIFlagEnumClass           DIFlag = 1 << 24
