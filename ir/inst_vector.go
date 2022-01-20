@@ -70,6 +70,11 @@ func (inst *InstExtractElement) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstExtractElement) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Index}
+}
+
 // ~~~ [ insertelement ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstInsertElement is an LLVM IR insertelement instruction.
@@ -131,6 +136,11 @@ func (inst *InstInsertElement) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstInsertElement) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Elem, &inst.Index}
 }
 
 // ~~~ [ shufflevector ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -196,4 +206,9 @@ func (inst *InstShuffleVector) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstShuffleVector) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y, &inst.Mask}
 }

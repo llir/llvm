@@ -36,6 +36,8 @@ type Terminator interface {
 	LLStringer
 	// Succs returns the successor basic blocks of the terminator.
 	Succs() []*Block
+	// Terminator implements the value.User interface.
+	value.User
 }
 
 // --- [ ret ] -----------------------------------------------------------------
@@ -60,6 +62,14 @@ func NewRet(x value.Value) *TermRet {
 // Succs returns the successor basic blocks of the terminator.
 func (*TermRet) Succs() []*Block {
 	// no successors.
+	return nil
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermRet) Operands() []*value.Value {
+	if term.X != nil {
+		return []*value.Value{&term.X}
+	}
 	return nil
 }
 
@@ -115,6 +125,11 @@ func (term *TermBr) Succs() []*Block {
 	return term.Successors
 }
 
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermBr) Operands() []*value.Value {
+	return []*value.Value{&term.Target}
+}
+
 // LLString returns the LLVM syntax representation of the terminator.
 //
 // 'br' Target=Label Metadata=(',' MetadataAttachment)+?
@@ -159,6 +174,11 @@ func (term *TermCondBr) Succs() []*Block {
 		term.Successors = []*Block{term.TargetTrue.(*Block), term.TargetFalse.(*Block)}
 	}
 	return term.Successors
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermCondBr) Operands() []*value.Value {
+	return []*value.Value{&term.Cond, &term.TargetTrue, &term.TargetFalse}
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
@@ -210,6 +230,18 @@ func (term *TermSwitch) Succs() []*Block {
 		term.Successors = succs
 	}
 	return term.Successors
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermSwitch) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+1+2*len(term.Cases))
+	ops = append(ops, &term.X)
+	ops = append(ops, &term.TargetDefault)
+	for i := range term.Cases {
+		ops = append(ops, &term.Cases[i].X)
+		ops = append(ops, &term.Cases[i].Target)
+	}
+	return ops
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
@@ -289,6 +321,16 @@ func (term *TermIndirectBr) Succs() []*Block {
 		}
 	}
 	return term.Successors
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermIndirectBr) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(term.ValidTargets))
+	ops = append(ops, &term.Addr)
+	for i := range term.ValidTargets {
+		ops = append(ops, &term.ValidTargets[i])
+	}
+	return ops
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
@@ -385,6 +427,18 @@ func (term *TermInvoke) Succs() []*Block {
 		term.Successors = []*Block{term.NormalRetTarget.(*Block), term.ExceptionRetTarget.(*Block)}
 	}
 	return term.Successors
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermInvoke) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(term.Args)+1+1)
+	ops = append(ops, &term.Invokee)
+	for i := range term.Args {
+		ops = append(ops, &term.Args[i])
+	}
+	ops = append(ops, &term.NormalRetTarget)
+	ops = append(ops, &term.ExceptionRetTarget)
+	return ops
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
@@ -538,6 +592,20 @@ func (term *TermCallBr) Succs() []*Block {
 	return term.Successors
 }
 
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermCallBr) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(term.Args)+1+len(term.OtherRetTargets))
+	ops = append(ops, &term.Callee)
+	for i := range term.Args {
+		ops = append(ops, &term.Args[i])
+	}
+	ops = append(ops, &term.NormalRetTarget)
+	for i := range term.OtherRetTargets {
+		ops = append(ops, &term.OtherRetTargets[i])
+	}
+	return ops
+}
+
 // LLString returns the LLVM syntax representation of the terminator.
 //
 // 'callbr' CallingConvopt ReturnAttrs=ReturnAttribute* AddrSpaceopt Typ=Type Callee=Value '(' Args ')' FuncAttrs=FuncAttribute* OperandBundles=('[' (OperandBundle separator ',')+ ']')? 'to' NormalRetTarget=Label '[' OtherRetTargets=(Label separator ',')* ']' Metadata=(',' MetadataAttachment)+?
@@ -635,6 +703,11 @@ func (term *TermResume) Succs() []*Block {
 	return nil
 }
 
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermResume) Operands() []*value.Value {
+	return []*value.Value{&term.X}
+}
+
 // LLString returns the LLVM syntax representation of the terminator.
 //
 // 'resume' X=TypeValue Metadata=(',' MetadataAttachment)+?
@@ -716,6 +789,19 @@ func (term *TermCatchSwitch) Succs() []*Block {
 	return term.Successors
 }
 
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermCatchSwitch) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(term.Handlers)+1)
+	ops = append(ops, &term.ParentPad)
+	for i := range term.Handlers {
+		ops = append(ops, &term.Handlers[i])
+	}
+	if term.DefaultUnwindTarget != nil {
+		ops = append(ops, &term.DefaultUnwindTarget)
+	}
+	return ops
+}
+
 // LLString returns the LLVM syntax representation of the terminator.
 //
 // 'catchswitch' 'within' ParentPad=ExceptionPad '[' Handlers=Handlers ']' 'unwind' DefaultUnwindTarget=UnwindTarget Metadata=(',' MetadataAttachment)+?
@@ -772,6 +858,11 @@ func (term *TermCatchRet) Succs() []*Block {
 		term.Successors = []*Block{term.Target.(*Block)}
 	}
 	return term.Successors
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermCatchRet) Operands() []*value.Value {
+	return []*value.Value{&term.CatchPad, &term.Target}
 }
 
 // LLString returns the LLVM syntax representation of the terminator.
@@ -835,6 +926,15 @@ func (term *TermCleanupRet) Succs() []*Block {
 	return term.Successors
 }
 
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermCleanupRet) Operands() []*value.Value {
+	ops := []*value.Value{&term.CleanupPad}
+	if term.UnwindTarget != nil {
+		ops = append(ops, &term.UnwindTarget)
+	}
+	return ops
+}
+
 // LLString returns the LLVM syntax representation of the terminator.
 //
 // 'cleanupret' 'from' CleanupPad=Value 'unwind' UnwindTarget Metadata=(',' MetadataAttachment)+?
@@ -870,6 +970,11 @@ func NewUnreachable() *TermUnreachable {
 // Succs returns the successor basic blocks of the terminator.
 func (term *TermUnreachable) Succs() []*Block {
 	// no successors.
+	return nil
+}
+
+// Operands returns a mutable list of operands of the given terminator.
+func (term *TermUnreachable) Operands() []*value.Value {
 	return nil
 }
 

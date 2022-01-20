@@ -75,6 +75,11 @@ func (inst *InstICmp) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstICmp) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ fcmp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFCmp is an LLVM IR fcmp instruction.
@@ -145,6 +150,11 @@ func (inst *InstFCmp) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFCmp) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ phi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstPhi is an LLVM IR phi instruction.
@@ -211,6 +221,16 @@ func (inst *InstPhi) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstPhi) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 2*len(inst.Incs))
+	for i := range inst.Incs {
+		ops = append(ops, &inst.Incs[i].X)
+		ops = append(ops, &inst.Incs[i].Pred)
+	}
+	return ops
 }
 
 // ___ [ Incoming value ] ______________________________________________________
@@ -299,6 +319,11 @@ func (inst *InstSelect) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstSelect) Operands() []*value.Value {
+	return []*value.Value{&inst.Cond, &inst.ValueTrue, &inst.ValueFalse}
+}
+
 // ~~~ [ freeze ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFreeze is an LLVM IR freeze instruction.
@@ -350,6 +375,11 @@ func (inst *InstFreeze) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFreeze) Operands() []*value.Value {
+	return []*value.Value{&inst.X}
 }
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -475,6 +505,16 @@ func (inst *InstCall) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstCall) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(inst.Args))
+	ops = append(ops, &inst.Callee)
+	for i := range inst.Args {
+		ops = append(ops, &inst.Args[i])
+	}
+	return ops
+}
+
 // Sig returns the function signature of the callee.
 func (inst *InstCall) Sig() *types.FuncType {
 	t, ok := inst.Callee.Type().(*types.PointerType)
@@ -535,6 +575,11 @@ func (inst *InstVAArg) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstVAArg) Operands() []*value.Value {
+	return []*value.Value{&inst.ArgList}
+}
+
 // ~~~ [ landingpad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLandingPad is an LLVM IR landingpad instruction.
@@ -589,6 +634,15 @@ func (inst *InstLandingPad) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstLandingPad) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, len(inst.Clauses))
+	for i := range inst.Clauses {
+		ops = append(ops, &inst.Clauses[i].X)
+	}
+	return ops
 }
 
 // ___ [ Landingpad clause ] ___________________________________________________
@@ -670,6 +724,16 @@ func (inst *InstCatchPad) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstCatchPad) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(inst.Args))
+	ops = append(ops, &inst.CatchSwitch)
+	for i := range inst.Args {
+		ops = append(ops, &inst.Args[i])
+	}
+	return ops
+}
+
 // ~~~ [ cleanuppad ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstCleanupPad is an LLVM IR cleanuppad instruction.
@@ -726,4 +790,14 @@ func (inst *InstCleanupPad) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstCleanupPad) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(inst.Args))
+	ops = append(ops, &inst.ParentPad)
+	for i := range inst.Args {
+		ops = append(ops, &inst.Args[i])
+	}
+	return ops
 }

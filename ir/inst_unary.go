@@ -69,3 +69,8 @@ func (inst *InstFNeg) LLString() string {
 	}
 	return buf.String()
 }
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFNeg) Operands() []*value.Value {
+	return []*value.Value{&inst.X}
+}

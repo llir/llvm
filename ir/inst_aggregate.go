@@ -69,6 +69,11 @@ func (inst *InstExtractValue) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstExtractValue) Operands() []*value.Value {
+	return []*value.Value{&inst.X}
+}
+
 // ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstInsertValue is an LLVM IR insertvalue instruction.
@@ -132,6 +137,11 @@ func (inst *InstInsertValue) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstInsertValue) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Elem}
 }
 
 // ### [ Helper functions ] ####################################################
