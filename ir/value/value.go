@@ -44,3 +44,10 @@ type Named interface {
 	// SetName sets the name of the value.
 	SetName(name string)
 }
+
+// User is an instruction or terminator which uses values as operands.
+type User interface {
+	// Operands returns a mutable list of operands of the given value user
+	// (instruction or terminator).
+	Operands() []*Value
+}
