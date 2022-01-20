@@ -50,6 +50,8 @@ var (
 
 // Assert that each instruction implements the ir.Instruction interface.
 var (
+	// Unary instructions.
+	_ Instruction = (*InstFNeg)(nil)
 	// Binary instructions.
 	_ Instruction = (*InstAdd)(nil)
 	_ Instruction = (*InstFAdd)(nil)
@@ -151,6 +153,8 @@ var (
 	_ value.Named = (*Block)(nil)
 
 	// Instructions.
+	// Unary instructions.
+	_ value.Named = (*InstFNeg)(nil)
 	// Binary instructions.
 	_ value.Named = (*InstAdd)(nil)
 	_ value.Named = (*InstFAdd)(nil)
