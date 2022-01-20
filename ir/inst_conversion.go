@@ -84,6 +84,11 @@ func (inst *InstTrunc) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstTrunc) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ zext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstZExt is an LLVM IR zext instruction.
@@ -129,6 +134,11 @@ func (inst *InstZExt) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstZExt) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
 }
 
 // ~~~ [ sext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -178,6 +188,11 @@ func (inst *InstSExt) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstSExt) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ fptrunc ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPTrunc is an LLVM IR fptrunc instruction.
@@ -223,6 +238,11 @@ func (inst *InstFPTrunc) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFPTrunc) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
 }
 
 // ~~~ [ fpext ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -272,6 +292,11 @@ func (inst *InstFPExt) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFPExt) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ fptoui ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFPToUI is an LLVM IR fptoui instruction.
@@ -317,6 +342,11 @@ func (inst *InstFPToUI) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFPToUI) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
 }
 
 // ~~~ [ fptosi ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -366,6 +396,11 @@ func (inst *InstFPToSI) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFPToSI) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ uitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstUIToFP is an LLVM IR uitofp instruction.
@@ -411,6 +446,11 @@ func (inst *InstUIToFP) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstUIToFP) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
 }
 
 // ~~~ [ sitofp ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -460,6 +500,11 @@ func (inst *InstSIToFP) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstSIToFP) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ ptrtoint ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstPtrToInt is an LLVM IR ptrtoint instruction.
@@ -505,6 +550,11 @@ func (inst *InstPtrToInt) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstPtrToInt) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
 }
 
 // ~~~ [ inttoptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -554,6 +604,11 @@ func (inst *InstIntToPtr) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstIntToPtr) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ bitcast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstBitCast is an LLVM IR bitcast instruction.
@@ -601,6 +656,11 @@ func (inst *InstBitCast) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstBitCast) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
+}
+
 // ~~~ [ addrspacecast ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAddrSpaceCast is an LLVM IR addrspacecast instruction.
@@ -646,4 +706,9 @@ func (inst *InstAddrSpaceCast) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstAddrSpaceCast) Operands() []*value.Value {
+	return []*value.Value{&inst.From}
 }

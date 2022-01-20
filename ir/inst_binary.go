@@ -70,6 +70,11 @@ func (inst *InstAdd) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstAdd) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFAdd is an LLVM IR fadd instruction.
@@ -127,6 +132,11 @@ func (inst *InstFAdd) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFAdd) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,6 +198,11 @@ func (inst *InstSub) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstSub) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFSub is an LLVM IR fsub instruction.
@@ -245,6 +260,11 @@ func (inst *InstFSub) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFSub) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -306,6 +326,11 @@ func (inst *InstMul) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstMul) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFMul is an LLVM IR fmul instruction.
@@ -363,6 +388,11 @@ func (inst *InstFMul) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFMul) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -424,6 +454,11 @@ func (inst *InstUDiv) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstUDiv) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSDiv is an LLVM IR sdiv instruction.
@@ -481,6 +516,11 @@ func (inst *InstSDiv) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstSDiv) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -542,6 +582,11 @@ func (inst *InstFDiv) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFDiv) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstURem is an LLVM IR urem instruction.
@@ -595,6 +640,11 @@ func (inst *InstURem) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstURem) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstSRem is an LLVM IR srem instruction.
@@ -646,6 +696,11 @@ func (inst *InstSRem) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstSRem) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -705,4 +760,9 @@ func (inst *InstFRem) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFRem) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }

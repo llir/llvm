@@ -70,6 +70,11 @@ func (inst *InstShl) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstShl) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ lshr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLShr is an LLVM IR lshr instruction.
@@ -127,6 +132,11 @@ func (inst *InstLShr) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstLShr) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ ashr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,6 +198,11 @@ func (inst *InstAShr) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstAShr) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ and ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAnd is an LLVM IR and instruction.
@@ -239,6 +254,11 @@ func (inst *InstAnd) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstAnd) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }
 
 // ~~~ [ or ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -294,6 +314,11 @@ func (inst *InstOr) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstOr) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
+}
+
 // ~~~ [ xor ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstXor is an LLVM IR xor instruction.
@@ -345,4 +370,9 @@ func (inst *InstXor) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstXor) Operands() []*value.Value {
+	return []*value.Value{&inst.X, &inst.Y}
 }

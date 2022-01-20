@@ -94,6 +94,14 @@ func (inst *InstAlloca) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstAlloca) Operands() []*value.Value {
+	if inst.NElems != nil {
+		return []*value.Value{&inst.NElems}
+	}
+	return nil
+}
+
 // ~~~ [ load ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstLoad is an LLVM IR load instruction.
@@ -174,6 +182,11 @@ func (inst *InstLoad) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstLoad) Operands() []*value.Value {
+	return []*value.Value{&inst.Src}
+}
+
 // ~~~ [ store ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstStore is an LLVM IR store instruction.
@@ -247,6 +260,11 @@ func (inst *InstStore) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstStore) Operands() []*value.Value {
+	return []*value.Value{&inst.Src, &inst.Dst}
+}
+
 // ~~~ [ fence ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstFence is an LLVM IR fence instruction.
@@ -281,6 +299,11 @@ func (inst *InstFence) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstFence) Operands() []*value.Value {
+	return nil
 }
 
 // ~~~ [ cmpxchg ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,6 +391,11 @@ func (inst *InstCmpXchg) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstCmpXchg) Operands() []*value.Value {
+	return []*value.Value{&inst.Ptr, &inst.Cmp, &inst.New}
+}
+
 // ~~~ [ atomicrmw ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstAtomicRMW is an LLVM IR atomicrmw instruction.
@@ -444,6 +472,11 @@ func (inst *InstAtomicRMW) LLString() string {
 	return buf.String()
 }
 
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstAtomicRMW) Operands() []*value.Value {
+	return []*value.Value{&inst.Dst, &inst.X}
+}
+
 // ~~~ [ getelementptr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // InstGetElementPtr is an LLVM IR getelementptr instruction.
@@ -509,6 +542,16 @@ func (inst *InstGetElementPtr) LLString() string {
 		fmt.Fprintf(buf, ", %s", md)
 	}
 	return buf.String()
+}
+
+// Operands returns a mutable list of operands of the given instruction.
+func (inst *InstGetElementPtr) Operands() []*value.Value {
+	ops := make([]*value.Value, 0, 1+len(inst.Indices))
+	ops = append(ops, &inst.Src)
+	for i := range inst.Indices {
+		ops = append(ops, &inst.Indices[i])
+	}
+	return ops
 }
 
 // ### [ Helper functions ] ####################################################
