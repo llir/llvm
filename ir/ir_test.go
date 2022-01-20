@@ -120,6 +120,7 @@ var (
 	_ Terminator = (*TermSwitch)(nil)
 	_ Terminator = (*TermIndirectBr)(nil)
 	_ Terminator = (*TermInvoke)(nil)
+	_ Terminator = (*TermCallBr)(nil)
 	_ Terminator = (*TermResume)(nil)
 	_ Terminator = (*TermCatchSwitch)(nil)
 	_ Terminator = (*TermCatchRet)(nil)
@@ -210,5 +211,6 @@ var (
 
 	// Terminators.
 	_ value.Named = (*TermInvoke)(nil)
+	_ value.Named = (*TermCallBr)(nil)
 	_ value.Named = (*TermCatchSwitch)(nil) // token result used by catchpad
 )
