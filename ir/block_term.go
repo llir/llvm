@@ -1,7 +1,6 @@
 package ir
 
 import (
-	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/value"
 )
 
@@ -53,8 +52,8 @@ func (block *Block) NewSwitch(x value.Value, targetDefault *Block, cases ...*Cas
 
 // NewIndirectBr sets the terminator of the basic block to a new indirectbr
 // terminator based on the given target address (derived from a blockaddress
-// constant) and set of valid target basic blocks.
-func (block *Block) NewIndirectBr(addr constant.Constant, validTargets ...*Block) *TermIndirectBr {
+// constant of type i8*) and set of valid target basic blocks.
+func (block *Block) NewIndirectBr(addr value.Value, validTargets ...*Block) *TermIndirectBr {
 	term := NewIndirectBr(addr, validTargets...)
 	block.Term = term
 	return term

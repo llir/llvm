@@ -300,9 +300,9 @@ type TermIndirectBr struct {
 }
 
 // NewIndirectBr returns a new indirectbr terminator based on the given target
-// address (derived from a blockaddress constant) and set of valid target basic
-// blocks.
-func NewIndirectBr(addr constant.Constant, validTargets ...*Block) *TermIndirectBr {
+// address (derived from a blockaddress constant of type i8*) and set of valid
+// target basic blocks.
+func NewIndirectBr(addr value.Value, validTargets ...*Block) *TermIndirectBr {
 	// convert validTargets slice to []value.Value.
 	var targets []value.Value
 	for _, target := range validTargets {
