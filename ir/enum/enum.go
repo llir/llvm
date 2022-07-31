@@ -29,14 +29,19 @@ const (
 type AtomicOrdering uint8
 
 // Atomic ordering attributes.
+//
+// ref: include/llvm/Support/AtomicOrdering.h (LLVM 13.0) (enum class AtomicOrdering)
+// ref: include/llvm/Support/AtomicOrdering.h (LLVM 13.0) (toIRString(AtomicOrdering))
 const (
-	AtomicOrderingNone      AtomicOrdering = iota // none
-	AtomicOrderingAcqRel                          // acq_rel
-	AtomicOrderingAcquire                         // acquire
-	AtomicOrderingMonotonic                       // monotonic
-	AtomicOrderingRelease                         // release
-	AtomicOrderingSeqCst                          // seq_cst
-	AtomicOrderingUnordered                       // unordered
+	// not_atomic
+	AtomicOrderingNone      AtomicOrdering = 0 // none
+	AtomicOrderingUnordered AtomicOrdering = 1 // unordered
+	AtomicOrderingMonotonic AtomicOrdering = 2 // monotonic
+	//AtomicOrderingConsume AtomicOrdering = 3 // consume
+	AtomicOrderingAcquire                AtomicOrdering = 4 // acquire
+	AtomicOrderingRelease                AtomicOrdering = 5 // release
+	AtomicOrderingAcquireRelease         AtomicOrdering = 6 // acq_rel
+	AtomicOrderingSequentiallyConsistent AtomicOrdering = 7 // seq_cst
 )
 
 //go:generate stringer -linecomment -type CallingConv

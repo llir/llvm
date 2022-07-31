@@ -9,21 +9,32 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[AtomicOrderingNone-0]
-	_ = x[AtomicOrderingAcqRel-1]
-	_ = x[AtomicOrderingAcquire-2]
-	_ = x[AtomicOrderingMonotonic-3]
-	_ = x[AtomicOrderingRelease-4]
-	_ = x[AtomicOrderingSeqCst-5]
-	_ = x[AtomicOrderingUnordered-6]
+	_ = x[AtomicOrderingUnordered-1]
+	_ = x[AtomicOrderingMonotonic-2]
+	_ = x[AtomicOrderingAcquire-4]
+	_ = x[AtomicOrderingRelease-5]
+	_ = x[AtomicOrderingAcquireRelease-6]
+	_ = x[AtomicOrderingSequentiallyConsistent-7]
 }
 
-const _AtomicOrdering_name = "noneacq_relacquiremonotonicreleaseseq_cstunordered"
+const (
+	_AtomicOrdering_name_0 = "noneunorderedmonotonic"
+	_AtomicOrdering_name_1 = "acquirereleaseacq_relseq_cst"
+)
 
-var _AtomicOrdering_index = [...]uint8{0, 4, 11, 18, 27, 34, 41, 50}
+var (
+	_AtomicOrdering_index_0 = [...]uint8{0, 4, 13, 22}
+	_AtomicOrdering_index_1 = [...]uint8{0, 7, 14, 21, 28}
+)
 
 func (i AtomicOrdering) String() string {
-	if i >= AtomicOrdering(len(_AtomicOrdering_index)-1) {
+	switch {
+	case i <= 2:
+		return _AtomicOrdering_name_0[_AtomicOrdering_index_0[i]:_AtomicOrdering_index_0[i+1]]
+	case 4 <= i && i <= 7:
+		i -= 4
+		return _AtomicOrdering_name_1[_AtomicOrdering_index_1[i]:_AtomicOrdering_index_1[i+1]]
+	default:
 		return "AtomicOrdering(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _AtomicOrdering_name[_AtomicOrdering_index[i]:_AtomicOrdering_index[i+1]]
 }
