@@ -13,36 +13,6 @@ Only in llvm-12.0.0.src/lib/AsmParser/: LLLexer.h
 diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/AsmParser/LLParser.cpp
 --- llvm-12.0.0.src/lib/AsmParser/LLParser.cpp  2022-07-18 00:31:54.046860362 +0200
 +++ llvm-13.0.0.src/lib/AsmParser/LLParser.cpp  2022-07-18 00:33:58.263529169 +0200
-@@ -459,29 +456,6 @@
-   return false;
- }
- 
--/// toplevelentity
--///   ::= 'deplibs' '=' '[' ']'
--///   ::= 'deplibs' '=' '[' STRINGCONSTANT (',' STRINGCONSTANT)* ']'
--/// FIXME: Remove in 4.0. Currently parse, but ignore.
--bool LLParser::parseDepLibs() {
--  assert(Lex.getKind() == lltok::kw_deplibs);
--  Lex.Lex();
--  if (parseToken(lltok::equal, "expected '=' after deplibs") ||
--      parseToken(lltok::lsquare, "expected '=' after deplibs"))
--    return true;
--
--  if (EatIfPresent(lltok::rsquare))
--    return false;
--
--  do {
--    std::string Str;
--    if (parseStringConstant(Str))
--      return true;
--  } while (EatIfPresent(lltok::comma));
--
--  return parseToken(lltok::rsquare, "expected ']' at end of list");
--}
--
- /// parseUnnamedType:
- ///   ::= LocalVarID '=' 'type' type
- bool LLParser::parseUnnamedType() {
 @@ -776,6 +750,11 @@
            Lex.getStrVal() == "DIExpression") {
          if (parseDIExpression(N, /*IsDistinct=*/false))
@@ -55,125 +25,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
        } else if (parseToken(lltok::exclaim, "Expected '!' here") ||
                   parseMDNodeID(N)) {
          return true;
-@@ -926,6 +905,14 @@
-     GV.setDSOLocal(true);
- }
- 
-+static std::string typeComparisonErrorMessage(StringRef Message, Type *Ty1,
-+                                              Type *Ty2) {
-+  std::string ErrString;
-+  raw_string_ostream ErrOS(ErrString);
-+  ErrOS << Message << " (" << *Ty1 << " vs " << *Ty2 << ")";
-+  return ErrOS.str();
-+}
-+
- /// parseIndirectSymbol:
- ///   ::= GlobalVar '=' OptionalLinkage OptionalPreemptionSpecifier
- ///                     OptionalVisibility OptionalDLLStorageClass
-@@ -980,7 +967,7 @@
-   } else {
-     // The bitcast dest type is not present, it is implied by the dest type.
-     ValID ID;
--    if (parseValID(ID))
-+    if (parseValID(ID, /*PFS=*/nullptr))
-       return true;
-     if (ID.Kind != ValID::t_Constant)
-       return error(AliaseeLoc, "invalid aliasee");
-@@ -993,22 +980,29 @@
-     return error(AliaseeLoc, "An alias or ifunc must have pointer type");
-   unsigned AddrSpace = PTy->getAddressSpace();
- 
--  if (IsAlias && Ty != PTy->getElementType())
--    return error(ExplicitTypeLoc,
--                 "explicit pointee type doesn't match operand's pointee type");
-+  if (IsAlias && !PTy->isOpaqueOrPointeeTypeMatches(Ty)) {
-+    return error(
-+        ExplicitTypeLoc,
-+        typeComparisonErrorMessage(
-+            "explicit pointee type doesn't match operand's pointee type", Ty,
-+            PTy->getElementType()));
-+  }
- 
--  if (!IsAlias && !PTy->getElementType()->isFunctionTy())
-+  if (!IsAlias && !PTy->getElementType()->isFunctionTy()) {
-     return error(ExplicitTypeLoc,
-                  "explicit pointee type should be a function type");
-+  }
- 
-   GlobalValue *GVal = nullptr;
- 
-   // See if the alias was forward referenced, if so, prepare to replace the
-   // forward reference.
-   if (!Name.empty()) {
--    GVal = M->getNamedValue(Name);
--    if (GVal) {
--      if (!ForwardRefVals.erase(Name))
-+    auto I = ForwardRefVals.find(Name);
-+    if (I != ForwardRefVals.end()) {
-+      GVal = I->second.first;
-+      ForwardRefVals.erase(Name);
-+    } else if (M->getNamedValue(Name)) {
-         return error(NameLoc, "redefinition of global '@" + Name + "'");
-     }
-   } else {
-@@ -1131,9 +1125,11 @@
- 
-   // See if the global was forward referenced, if so, use the global.
-   if (!Name.empty()) {
--    GVal = M->getNamedValue(Name);
--    if (GVal) {
--      if (!ForwardRefVals.erase(Name))
-+    auto I = ForwardRefVals.find(Name);
-+    if (I != ForwardRefVals.end()) {
-+      GVal = I->second.first;
-+      ForwardRefVals.erase(I);
-+    } else if (M->getNamedValue(Name)) {
-         return error(NameLoc, "redefinition of global '@" + Name + "'");
-     }
-   } else {
-@@ -1144,22 +1140,9 @@
-     }
-   }
- 
--  GlobalVariable *GV;
--  if (!GVal) {
--    GV = new GlobalVariable(*M, Ty, false, GlobalValue::ExternalLinkage, nullptr,
--                            Name, nullptr, GlobalVariable::NotThreadLocal,
--                            AddrSpace);
--  } else {
--    if (GVal->getValueType() != Ty)
--      return error(
--          TyLoc,
--          "forward reference and definition of global have different types");
--
--    GV = cast<GlobalVariable>(GVal);
--
--    // Move the forward-reference to the correct spot in the module.
--    M->getGlobalList().splice(M->global_end(), M->getGlobalList(), GV);
--  }
-+  GlobalVariable *GV = new GlobalVariable(
-+      *M, Ty, false, GlobalValue::ExternalLinkage, nullptr, Name, nullptr,
-+      GlobalVariable::NotThreadLocal, AddrSpace);
- 
-   if (Name.empty())
-     NumberedVals.push_back(GV);
-@@ -1176,6 +1159,16 @@
-   GV->setThreadLocalMode(TLM);
-   GV->setUnnamedAddr(UnnamedAddr);
- 
-+  if (GVal) {
-+    if (!GVal->getType()->isOpaque() && GVal->getValueType() != Ty)
-+      return error(
-+          TyLoc,
-+          "forward reference and definition of global have different types");
-+
-+    GVal->replaceAllUsesWith(GV);
-+    GVal->eraseFromParent();
-+  }
-+
-   // parse attributes on the global.
-   while (Lex.getKind() == lltok::comma) {
-     Lex.Lex();
 @@ -1250,72 +1243,42 @@
    return false;
  }
@@ -475,81 +326,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
    }
  }
  
-@@ -1452,37 +1388,40 @@
- // GlobalValue Reference/Resolution Routines.
- //===----------------------------------------------------------------------===//
- 
--static inline GlobalValue *createGlobalFwdRef(Module *M, PointerType *PTy,
--                                              const std::string &Name) {
--  if (auto *FT = dyn_cast<FunctionType>(PTy->getElementType()))
-+static inline GlobalValue *createGlobalFwdRef(Module *M, PointerType *PTy) {
-+  // For opaque pointers, the used global type does not matter. We will later
-+  // RAUW it with a global/function of the correct type.
-+  if (PTy->isOpaque())
-+    return new GlobalVariable(*M, Type::getInt8Ty(M->getContext()), false,
-+                              GlobalValue::ExternalWeakLinkage, nullptr, "",
-+                              nullptr, GlobalVariable::NotThreadLocal,
-+                              PTy->getAddressSpace());
-+
-+  if (auto *FT = dyn_cast<FunctionType>(PTy->getPointerElementType()))
-     return Function::Create(FT, GlobalValue::ExternalWeakLinkage,
--                            PTy->getAddressSpace(), Name, M);
-+                            PTy->getAddressSpace(), "", M);
-   else
--    return new GlobalVariable(*M, PTy->getElementType(), false,
--                              GlobalValue::ExternalWeakLinkage, nullptr, Name,
-+    return new GlobalVariable(*M, PTy->getPointerElementType(), false,
-+                              GlobalValue::ExternalWeakLinkage, nullptr, "",
-                               nullptr, GlobalVariable::NotThreadLocal,
-                               PTy->getAddressSpace());
- }
- 
- Value *LLParser::checkValidVariableType(LocTy Loc, const Twine &Name, Type *Ty,
-                                         Value *Val, bool IsCall) {
--  if (Val->getType() == Ty)
-+  Type *ValTy = Val->getType();
-+  if (ValTy == Ty)
-     return Val;
--  // For calls we also accept variables in the program address space.
--  Type *SuggestedTy = Ty;
--  if (IsCall && isa<PointerType>(Ty)) {
--    Type *TyInProgAS = cast<PointerType>(Ty)->getElementType()->getPointerTo(
--        M->getDataLayout().getProgramAddressSpace());
--    SuggestedTy = TyInProgAS;
--    if (Val->getType() == TyInProgAS)
-+  // For calls, we also allow opaque pointers.
-+  if (IsCall && ValTy == PointerType::get(Ty->getContext(),
-+                                          Ty->getPointerAddressSpace()))
-       return Val;
--  }
-   if (Ty->isLabelTy())
-     error(Loc, "'" + Name + "' is not a basic block");
-   else
-     error(Loc, "'" + Name + "' defined with type '" +
-                    getTypeString(Val->getType()) + "' but expected '" +
--                   getTypeString(SuggestedTy) + "'");
-+                   getTypeString(Ty) + "'");
-   return nullptr;
- }
- 
-@@ -1515,7 +1454,7 @@
-         checkValidVariableType(Loc, "@" + Name, Ty, Val, IsCall));
- 
-   // Otherwise, create a new forward reference for this value and remember it.
--  GlobalValue *FwdVal = createGlobalFwdRef(M, PTy, Name);
-+  GlobalValue *FwdVal = createGlobalFwdRef(M, PTy);
-   ForwardRefVals[Name] = std::make_pair(FwdVal, Loc);
-   return FwdVal;
- }
-@@ -1544,7 +1483,7 @@
-         checkValidVariableType(Loc, "@" + Twine(ID), Ty, Val, IsCall));
- 
-   // Otherwise, create a new forward reference for this value and remember it.
--  GlobalValue *FwdVal = createGlobalFwdRef(M, PTy, "");
-+  GlobalValue *FwdVal = createGlobalFwdRef(M, PTy);
-   ForwardRefValIDs[ID] = std::make_pair(FwdVal, Loc);
-   return FwdVal;
- }
 @@ -1678,254 +1617,32 @@
    return false;
  }
@@ -1027,15 +803,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
  
        unsigned GEPWidth =
            BaseType->isVectorTy()
-@@ -3876,7 +3651,7 @@
-   C = nullptr;
-   ValID ID;
-   Value *V = nullptr;
--  bool Parsed = parseValID(ID) ||
-+  bool Parsed = parseValID(ID, /*PFS=*/nullptr, Ty) ||
-                 convertValIDToValue(Ty, ID, V, nullptr, /*IsCall=*/false);
-   if (V && !(C = dyn_cast<Constant>(V)))
-     return error(ID.Loc, "global values must be constants");
 @@ -4666,11 +4441,6 @@
    Metadata *LowerBound = nullptr;
    Metadata *UpperBound = nullptr;
@@ -1142,145 +909,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
           convertValIDToValue(Ty, ID, V, PFS, /*IsCall=*/false);
  }
  
-@@ -5769,16 +5578,18 @@
-   PointerType *PFT = PointerType::get(FT, AddrSpace);
- 
-   Fn = nullptr;
-+  GlobalValue *FwdFn = nullptr;
-   if (!FunctionName.empty()) {
-     // If this was a definition of a forward reference, remove the definition
-     // from the forward reference table and fill in the forward ref.
-     auto FRVI = ForwardRefVals.find(FunctionName);
-     if (FRVI != ForwardRefVals.end()) {
--      Fn = M->getFunction(FunctionName);
--      if (!Fn)
-+      FwdFn = FRVI->second.first;
-+      if (!FwdFn->getType()->isOpaque()) {
-+        if (!FwdFn->getType()->getPointerElementType()->isFunctionTy())
-         return error(FRVI->second.second, "invalid forward reference to "
-                                           "function as global value!");
--      if (Fn->getType() != PFT)
-+        if (FwdFn->getType() != PFT)
-         return error(FRVI->second.second,
-                      "invalid forward reference to "
-                      "function '" +
-@@ -5786,7 +5597,8 @@
-                          "' with wrong type: "
-                          "expected '" +
-                          getTypeString(PFT) + "' but was '" +
--                         getTypeString(Fn->getType()) + "'");
-+                           getTypeString(FwdFn->getType()) + "'");
-+      }
-       ForwardRefVals.erase(FRVI);
-     } else if ((Fn = M->getFunction(FunctionName))) {
-       // Reject redefinitions.
-@@ -5801,23 +5613,20 @@
-     // types agree.
-     auto I = ForwardRefValIDs.find(NumberedVals.size());
-     if (I != ForwardRefValIDs.end()) {
--      Fn = cast<Function>(I->second.first);
--      if (Fn->getType() != PFT)
-+      FwdFn = cast<Function>(I->second.first);
-+      if (!FwdFn->getType()->isOpaque() && FwdFn->getType() != PFT)
-         return error(NameLoc, "type of definition and forward reference of '@" +
-                                   Twine(NumberedVals.size()) +
-                                   "' disagree: "
-                                   "expected '" +
-                                   getTypeString(PFT) + "' but was '" +
--                                  getTypeString(Fn->getType()) + "'");
-+                                  getTypeString(FwdFn->getType()) + "'");
-       ForwardRefValIDs.erase(I);
-     }
-   }
- 
--  if (!Fn)
-     Fn = Function::Create(FT, GlobalValue::ExternalLinkage, AddrSpace,
-                           FunctionName, M);
--  else // Move the forward-reference to the correct spot in the module.
--    M->getFunctionList().splice(M->end(), M->getFunctionList(), Fn);
- 
-   assert(Fn->getAddressSpace() == AddrSpace && "Created function in wrong AS");
- 
-@@ -5855,6 +5664,11 @@
-                    "redefinition of argument '%" + ArgList[i].Name + "'");
-   }
- 
-+  if (FwdFn) {
-+    FwdFn->replaceAllUsesWith(Fn);
-+    FwdFn->eraseFromParent();
-+  }
-+
-   if (IsDefine)
-     return false;
- 
-@@ -5902,7 +5716,12 @@
-     if (!BB)
-       return P.error(BBID.Loc, "referenced value is not a basic block");
- 
--    GV->replaceAllUsesWith(BlockAddress::get(&F, BB));
-+    Value *ResolvedVal = BlockAddress::get(&F, BB);
-+    ResolvedVal = P.checkValidVariableType(BBID.Loc, BBID.StrVal, GV->getType(),
-+                                           ResolvedVal, false);
-+    if (!ResolvedVal)
-+      return true;
-+    GV->replaceAllUsesWith(ResolvedVal);
-     GV->eraseFromParent();
-   }
- 
-@@ -6437,7 +6256,7 @@
-   if (parseOptionalCallingConv(CC) || parseOptionalReturnAttrs(RetAttrs) ||
-       parseOptionalProgramAddrSpace(InvokeAddrSpace) ||
-       parseType(RetType, RetTypeLoc, true /*void allowed*/) ||
--      parseValID(CalleeID) || parseParameterList(ArgList, PFS) ||
-+      parseValID(CalleeID, &PFS) || parseParameterList(ArgList, PFS) ||
-       parseFnAttributeValuePairs(FnAttrs, FwdRefAttrGrps, false,
-                                  NoBuiltinLoc) ||
-       parseOptionalOperandBundles(BundleList, PFS) ||
-@@ -6745,7 +6564,7 @@
-   BasicBlock *DefaultDest;
-   if (parseOptionalCallingConv(CC) || parseOptionalReturnAttrs(RetAttrs) ||
-       parseType(RetType, RetTypeLoc, true /*void allowed*/) ||
--      parseValID(CalleeID) || parseParameterList(ArgList, PFS) ||
-+      parseValID(CalleeID, &PFS) || parseParameterList(ArgList, PFS) ||
-       parseFnAttributeValuePairs(FnAttrs, FwdRefAttrGrps, false,
-                                  NoBuiltinLoc) ||
-       parseOptionalOperandBundles(BundleList, PFS) ||
-@@ -7172,7 +6991,7 @@
-   if (parseOptionalCallingConv(CC) || parseOptionalReturnAttrs(RetAttrs) ||
-       parseOptionalProgramAddrSpace(CallAddrSpace) ||
-       parseType(RetType, RetTypeLoc, true /*void allowed*/) ||
--      parseValID(CalleeID) ||
-+      parseValID(CalleeID, &PFS) ||
-       parseParameterList(ArgList, PFS, TCK == CallInst::TCK_MustTail,
-                          PFS.getFunction().isVarArg()) ||
-       parseFnAttributeValuePairs(FnAttrs, FwdRefAttrGrps, false, BuiltinLoc) ||
-@@ -7366,9 +7185,13 @@
-       Ordering == AtomicOrdering::AcquireRelease)
-     return error(Loc, "atomic load cannot use Release ordering");
- 
--  if (Ty != cast<PointerType>(Val->getType())->getElementType())
--    return error(ExplicitTypeLoc,
--                 "explicit pointee type doesn't match operand's pointee type");
-+  if (!cast<PointerType>(Val->getType())->isOpaqueOrPointeeTypeMatches(Ty)) {
-+    return error(
-+        ExplicitTypeLoc,
-+        typeComparisonErrorMessage(
-+            "explicit pointee type doesn't match operand's pointee type", Ty,
-+            cast<PointerType>(Val->getType())->getElementType()));
-+  }
-   SmallPtrSet<Type *, 4> Visited;
-   if (!Alignment && !Ty->isSized(&Visited))
-     return error(ExplicitTypeLoc, "loading unsized types is not allowed");
-@@ -7413,7 +7236,8 @@
-     return error(PtrLoc, "store operand must be a pointer");
-   if (!Val->getType()->isFirstClassType())
-     return error(Loc, "store operand must be a first class value");
--  if (cast<PointerType>(Ptr->getType())->getElementType() != Val->getType())
-+  if (!cast<PointerType>(Ptr->getType())
-+           ->isOpaqueOrPointeeTypeMatches(Val->getType()))
-     return error(Loc, "stored value and pointer type do not match");
-   if (isAtomic && !Alignment)
-     return error(Loc, "atomic store must have explicit non-zero alignment");
 @@ -7432,7 +7256,8 @@
  
  /// parseCmpXchg
@@ -1373,12 +1001,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
      return tokError("atomicrmw cannot be unordered");
    if (!Ptr->getType()->isPointerTy())
      return error(PtrLoc, "atomicrmw operand must be a pointer");
--  if (cast<PointerType>(Ptr->getType())->getElementType() != Val->getType())
-+  if (!cast<PointerType>(Ptr->getType())
-+           ->isOpaqueOrPointeeTypeMatches(Val->getType()))
-     return error(ValLoc, "atomicrmw value and pointer type do not match");
- 
-   if (Operation == AtomicRMWInst::Xchg) {
 @@ -7566,11 +7396,12 @@
    if (Size < 8 || (Size & (Size - 1)))
      return error(ValLoc, "atomicrmw operand must be power-of-two byte-sized"
@@ -1398,81 +1020,8 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
    if (!BasePointerType)
      return error(Loc, "base of getelementptr must be a pointer");
  
--  if (Ty != BasePointerType->getElementType())
--    return error(ExplicitTypeLoc,
--                 "explicit pointee type doesn't match operand's pointee type");
-+  if (!BasePointerType->isOpaqueOrPointeeTypeMatches(Ty)) {
-+    return error(
-+        ExplicitTypeLoc,
-+        typeComparisonErrorMessage(
-+            "explicit pointee type doesn't match operand's pointee type", Ty,
-+            BasePointerType->getElementType()));
-+  }
- 
    SmallVector<Value*, 16> Indices;
    bool AteExtraComma = false;
-@@ -7832,9 +7667,9 @@
- 
-   ValID Fn, Label;
-   SmallVector<unsigned, 16> Indexes;
--  if (parseValID(Fn) ||
-+  if (parseValID(Fn, /*PFS=*/nullptr) ||
-       parseToken(lltok::comma, "expected comma in uselistorder_bb directive") ||
--      parseValID(Label) ||
-+      parseValID(Label, /*PFS=*/nullptr) ||
-       parseToken(lltok::comma, "expected comma in uselistorder_bb directive") ||
-       parseUseListOrderIndexes(Indexes))
-     return true;
-@@ -8517,7 +8352,8 @@
- 
-   StringRef ModulePath;
-   GlobalValueSummary::GVFlags GVFlags = GlobalValueSummary::GVFlags(
--      /*Linkage=*/GlobalValue::ExternalLinkage, /*NotEligibleToImport=*/false,
-+      GlobalValue::ExternalLinkage, GlobalValue::DefaultVisibility,
-+      /*NotEligibleToImport=*/false,
-       /*Live=*/false, /*IsLocal=*/false, /*CanAutoHide=*/false);
-   unsigned InstCount;
-   std::vector<FunctionSummary::EdgeTy> Calls;
-@@ -8593,7 +8429,8 @@
- 
-   StringRef ModulePath;
-   GlobalValueSummary::GVFlags GVFlags = GlobalValueSummary::GVFlags(
--      /*Linkage=*/GlobalValue::ExternalLinkage, /*NotEligibleToImport=*/false,
-+      GlobalValue::ExternalLinkage, GlobalValue::DefaultVisibility,
-+      /*NotEligibleToImport=*/false,
-       /*Live=*/false, /*IsLocal=*/false, /*CanAutoHide=*/false);
-   GlobalVarSummary::GVarFlags GVarFlags(/*ReadOnly*/ false,
-                                         /* WriteOnly */ false,
-@@ -8651,7 +8488,8 @@
- 
-   StringRef ModulePath;
-   GlobalValueSummary::GVFlags GVFlags = GlobalValueSummary::GVFlags(
--      /*Linkage=*/GlobalValue::ExternalLinkage, /*NotEligibleToImport=*/false,
-+      GlobalValue::ExternalLinkage, GlobalValue::DefaultVisibility,
-+      /*NotEligibleToImport=*/false,
-       /*Live=*/false, /*IsLocal=*/false, /*CanAutoHide=*/false);
-   if (parseToken(lltok::colon, "expected ':' here") ||
-       parseToken(lltok::lparen, "expected '(' here") ||
-@@ -9035,6 +8873,7 @@
-       return true;
-     CallsNum += ParamAccess.Calls.size();
-     assert(VContexts.size() == CallsNum);
-+    (void)CallsNum;
-     Params.emplace_back(std::move(ParamAccess));
-   } while (EatIfPresent(lltok::comma));
- 
-@@ -9339,8 +9178,9 @@
- 
- /// GVFlags
- ///   ::= 'flags' ':' '(' 'linkage' ':' OptionalLinkageAux ','
--///         'notEligibleToImport' ':' Flag ',' 'live' ':' Flag ','
--///         'dsoLocal' ':' Flag ',' 'canAutoHide' ':' Flag ')'
-+///         'visibility' ':' Flag 'notEligibleToImport' ':' Flag ','
-+///         'live' ':' Flag ',' 'dsoLocal' ':' Flag ','
-+///         'canAutoHide' ':' Flag ',' ')'
- bool LLParser::parseGVFlags(GlobalValueSummary::GVFlags &GVFlags) {
-   assert(Lex.getKind() == lltok::kw_flags);
-   Lex.Lex();
 @@ -9361,6 +9201,13 @@
        assert(HasLinkage && "Linkage not optional in summary entry");
        Lex.Lex();
@@ -1489,25 +1038,3 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
        if (parseToken(lltok::colon, "expected ':'") || parseFlag(Flag))
 Only in llvm-12.0.0.src/lib/AsmParser/: LLParser.h
 Only in llvm-12.0.0.src/lib/AsmParser/: LLToken.h
-diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/Parser.cpp llvm-13.0.0.src/lib/AsmParser/Parser.cpp
---- llvm-12.0.0.src/lib/AsmParser/Parser.cpp 2022-07-18 00:31:54.046860362 +0200
-+++ llvm-13.0.0.src/lib/AsmParser/Parser.cpp 2022-07-18 00:33:58.326862504 +0200
-@@ -11,8 +11,8 @@
- //===----------------------------------------------------------------------===//
- 
- #include "llvm/AsmParser/Parser.h"
--#include "LLParser.h"
- #include "llvm/ADT/STLExtras.h"
-+#include "llvm/AsmParser/LLParser.h"
- #include "llvm/IR/Module.h"
- #include "llvm/IR/ModuleSummaryIndex.h"
- #include "llvm/Support/MemoryBuffer.h"
-@@ -104,7 +104,7 @@
-                            bool UpgradeDebugInfo,
-                            DataLayoutCallbackTy DataLayoutCallback) {
-   ErrorOr<std::unique_ptr<MemoryBuffer>> FileOrErr =
--      MemoryBuffer::getFileOrSTDIN(Filename);
-+      MemoryBuffer::getFileOrSTDIN(Filename, /*IsText=*/true);
-   if (std::error_code EC = FileOrErr.getError()) {
-     Err = SMDiagnostic(Filename, SourceMgr::DK_Error,
-                        "Could not open input file: " + EC.message());
