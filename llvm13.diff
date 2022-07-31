@@ -654,43 +654,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
    // parse the type suffixes.
    while (true) {
      switch (Lex.getKind()) {
-@@ -2637,29 +2399,20 @@
- 
- /// parseRequiredTypeAttr
- ///   ::= attrname(<ty>)
--bool LLParser::parseRequiredTypeAttr(Type *&Result, lltok::Kind AttrName) {
--  Result = nullptr;
--  if (!EatIfPresent(AttrName))
-+bool LLParser::parseRequiredTypeAttr(AttrBuilder &B, lltok::Kind AttrToken,
-+                                     Attribute::AttrKind AttrKind) {
-+  Type *Ty = nullptr;
-+  if (!EatIfPresent(AttrToken))
-     return true;
-   if (!EatIfPresent(lltok::lparen))
-     return error(Lex.getLoc(), "expected '('");
--  if (parseType(Result))
-+  if (parseType(Ty))
-     return true;
-   if (!EatIfPresent(lltok::rparen))
-     return error(Lex.getLoc(), "expected ')'");
--  return false;
--}
--
--/// parsePreallocated
--///   ::= preallocated(<ty>)
--bool LLParser::parsePreallocated(Type *&Result) {
--  return parseRequiredTypeAttr(Result, lltok::kw_preallocated);
--}
- 
--/// parseByRef
--///   ::= byref(<type>)
--bool LLParser::parseByRef(Type *&Result) {
--  return parseRequiredTypeAttr(Result, lltok::kw_byref);
-+  B.addTypeAttr(AttrKind, Ty);
-+  return false;
- }
- 
- /// parseOptionalOperandBundles
 @@ -3241,7 +2994,7 @@
  /// sanity.  PFS is used to convert function-local operands of metadata (since
  /// metadata operands are not just parsed here but also converted to values).
@@ -722,50 +685,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
      ID.Kind = ValID::t_InlineAsm;
      return false;
    }
-@@ -3412,10 +3166,10 @@
-     ValID Fn, Label;
- 
-     if (parseToken(lltok::lparen, "expected '(' in block address expression") ||
--        parseValID(Fn) ||
-+        parseValID(Fn, PFS) ||
-         parseToken(lltok::comma,
-                    "expected comma in block address expression") ||
--        parseValID(Label) ||
-+        parseValID(Label, PFS) ||
-         parseToken(lltok::rparen, "expected ')' in block address expression"))
-       return true;
- 
-@@ -3450,9 +3204,27 @@
-                                               std::map<ValID, GlobalValue *>()))
-               .first->second.insert(std::make_pair(std::move(Label), nullptr))
-               .first->second;
--      if (!FwdRef)
--        FwdRef = new GlobalVariable(*M, Type::getInt8Ty(Context), false,
--                                    GlobalValue::InternalLinkage, nullptr, "");
-+      if (!FwdRef) {
-+        unsigned FwdDeclAS;
-+        if (ExpectedTy) {
-+          // If we know the type that the blockaddress is being assigned to,
-+          // we can use the address space of that type.
-+          if (!ExpectedTy->isPointerTy())
-+            return error(ID.Loc,
-+                         "type of blockaddress must be a pointer and not '" +
-+                             getTypeString(ExpectedTy) + "'");
-+          FwdDeclAS = ExpectedTy->getPointerAddressSpace();
-+        } else if (PFS) {
-+          // Otherwise, we default the address space of the current function.
-+          FwdDeclAS = PFS->getFunction().getAddressSpace();
-+        } else {
-+          llvm_unreachable("Unknown address space for blockaddress");
-+        }
-+        FwdRef = new GlobalVariable(
-+            *M, Type::getInt8Ty(Context), false, GlobalValue::InternalLinkage,
-+            nullptr, "", nullptr, GlobalValue::NotThreadLocal, FwdDeclAS);
-+      }
-+
-       ID.ConstantVal = FwdRef;
-       ID.Kind = ValID::t_Constant;
-       return false;
 @@ -3489,7 +3261,7 @@
  
      ValID Fn;
@@ -775,42 +694,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
        return true;
  
      if (Fn.Kind != ValID::t_GlobalID && Fn.Kind != ValID::t_GlobalName)
-@@ -3788,10 +3560,13 @@
- 
-       Type *BaseType = Elts[0]->getType();
-       auto *BasePointerType = cast<PointerType>(BaseType->getScalarType());
--      if (Ty != BasePointerType->getElementType())
-+      if (!BasePointerType->isOpaqueOrPointeeTypeMatches(Ty)) {
-         return error(
-             ExplicitTypeLoc,
--            "explicit pointee type doesn't match operand's pointee type");
-+            typeComparisonErrorMessage(
-+                "explicit pointee type doesn't match operand's pointee type",
-+                Ty, BasePointerType->getElementType()));
-+      }
- 
-       unsigned GEPWidth =
-           BaseType->isVectorTy()
-@@ -4666,11 +4441,6 @@
-   Metadata *LowerBound = nullptr;
-   Metadata *UpperBound = nullptr;
-   Metadata *Stride = nullptr;
--  if (count.isMDSignedField())
--    Count = ConstantAsMetadata::get(ConstantInt::getSigned(
--        Type::getInt64Ty(Context), count.getMDSignedValue()));
--  else if (count.isMDField())
--    Count = count.getMDFieldValue();
- 
-   auto convToMetadata = [&](MDSignedOrMDField Bound) -> Metadata * {
-     if (Bound.isMDSignedField())
-@@ -4681,6 +4451,7 @@
-     return nullptr;
-   };
- 
-+  Count = convToMetadata(count);
-   LowerBound = convToMetadata(lowerBound);
-   UpperBound = convToMetadata(upperBound);
-   Stride = convToMetadata(stride);
 @@ -5297,6 +5068,36 @@
    return false;
  }
@@ -864,78 +747,3 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
      MD = N;
      return false;
    }
-@@ -5465,9 +5272,9 @@
-   case ValID::t_InlineAsm: {
-     if (!ID.FTy || !InlineAsm::Verify(ID.FTy, ID.StrVal2))
-       return error(ID.Loc, "invalid type for inline asm constraint string");
--    V = InlineAsm::get(ID.FTy, ID.StrVal, ID.StrVal2, ID.UIntVal & 1,
--                       (ID.UIntVal >> 1) & 1,
--                       (InlineAsm::AsmDialect(ID.UIntVal >> 2)));
-+    V = InlineAsm::get(
-+        ID.FTy, ID.StrVal, ID.StrVal2, ID.UIntVal & 1, (ID.UIntVal >> 1) & 1,
-+        InlineAsm::AsmDialect((ID.UIntVal >> 2) & 1), (ID.UIntVal >> 3) & 1);
-     return false;
-   }
-   case ValID::t_GlobalName:
-@@ -5553,7 +5360,9 @@
-     return false;
-   case ValID::t_Constant:
-     if (ID.ConstantVal->getType() != Ty)
--      return error(ID.Loc, "constant expression type mismatch");
-+      return error(ID.Loc, "constant expression type mismatch: got type '" +
-+                               getTypeString(ID.ConstantVal->getType()) +
-+                               "' but expected '" + getTypeString(Ty) + "'");
-     V = ID.ConstantVal;
-     return false;
-   case ValID::t_ConstantStruct:
-@@ -5613,7 +5422,7 @@
- bool LLParser::parseValue(Type *Ty, Value *&V, PerFunctionState *PFS) {
-   V = nullptr;
-   ValID ID;
--  return parseValID(ID, PFS) ||
-+  return parseValID(ID, PFS, Ty) ||
-          convertValIDToValue(Ty, ID, V, PFS, /*IsCall=*/false);
- }
- 
-@@ -7499,6 +7326,7 @@
-   bool isVolatile = false;
-   bool IsFP = false;
-   AtomicRMWInst::BinOp Operation;
-+  MaybeAlign Alignment;
- 
-   if (EatIfPresent(lltok::kw_volatile))
-     isVolatile = true;
-@@ -7531,14 +7359,16 @@
-   if (parseTypeAndValue(Ptr, PtrLoc, PFS) ||
-       parseToken(lltok::comma, "expected ',' after atomicrmw address") ||
-       parseTypeAndValue(Val, ValLoc, PFS) ||
--      parseScopeAndOrdering(true /*Always atomic*/, SSID, Ordering))
-+      parseScopeAndOrdering(true /*Always atomic*/, SSID, Ordering) ||
-+      parseOptionalCommaAlign(Alignment, AteExtraComma))
-     return true;
- 
-   if (Ordering == AtomicOrdering::Unordered)
-     return tokError("atomicrmw cannot be unordered");
-   if (!Ptr->getType()->isPointerTy())
-     return error(PtrLoc, "atomicrmw operand must be a pointer");
-@@ -7566,11 +7396,12 @@
-   if (Size < 8 || (Size & (Size - 1)))
-     return error(ValLoc, "atomicrmw operand must be power-of-two byte-sized"
-                          " integer");
--  Align Alignment(
-+  const Align DefaultAlignment(
-       PFS.getFunction().getParent()->getDataLayout().getTypeStoreSize(
-           Val->getType()));
-   AtomicRMWInst *RMWI =
--      new AtomicRMWInst(Operation, Ptr, Val, Alignment, Ordering, SSID);
-+      new AtomicRMWInst(Operation, Ptr, Val,
-+                        Alignment.getValueOr(DefaultAlignment), Ordering, SSID);
-   RMWI->setVolatile(isVolatile);
-   Inst = RMWI;
-   return AteExtraComma ? InstExtraComma : InstNormal;
-@@ -7614,9 +7445,13 @@
-   if (!BasePointerType)
-     return error(Loc, "base of getelementptr must be a pointer");
- 
-   SmallVector<Value*, 16> Indices;
-   bool AteExtraComma = false;
