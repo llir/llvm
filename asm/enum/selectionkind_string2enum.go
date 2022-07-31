@@ -15,13 +15,13 @@ func _() {
 	_ = x[enum.SelectionKindAny-0]
 	_ = x[enum.SelectionKindExactMatch-1]
 	_ = x[enum.SelectionKindLargest-2]
-	_ = x[enum.SelectionKindNoDuplicates-3]
+	_ = x[enum.SelectionKindNoDeduplicate-3]
 	_ = x[enum.SelectionKindSameSize-4]
 }
 
-const _SelectionKind_name = "anyexactmatchlargestnoduplicatessamesize"
+const _SelectionKind_name = "anyexactmatchlargestnodeduplicatesamesize"
 
-var _SelectionKind_index = [...]uint8{0, 3, 13, 20, 32, 40}
+var _SelectionKind_index = [...]uint8{0, 3, 13, 20, 33, 41}
 
 // SelectionKindFromString returns the SelectionKind enum corresponding to s.
 func SelectionKindFromString(s string) enum.SelectionKind {
@@ -46,7 +46,7 @@ func _(s string) {
 	// 2
 	case "largest":
 	// 3
-	case "noduplicates":
+	case "nodeduplicate":
 	// 4
 	case "samesize":
 	}

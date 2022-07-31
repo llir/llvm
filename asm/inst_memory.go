@@ -107,7 +107,7 @@ func (fgen *funcGen) irAllocaInst(new ir.Instruction, old *ast.AllocaInst) error
 		inst.NElems = nelems
 	}
 	// (optional) In-alloca.
-	_, inst.InAlloca = old.InAlloca()
+	_, inst.InAlloca = old.InAllocatok()
 	// (optional) Swift error.
 	_, inst.SwiftError = old.SwiftError()
 	// (optional) Alignment.

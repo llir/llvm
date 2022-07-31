@@ -11,3 +11,5 @@ require (
 	github.com/pkg/errors v0.9.1
 	golang.org/x/tools v0.1.4
 )
+
+replace github.com/llir/ll => /home/u/life/projects/github.com/llir/ll
