@@ -51,7 +51,7 @@ type CallingConv uint16
 
 // Calling conventions.
 //
-// From include/llvm/IR/CallingConv.h
+// From include/llvm/IR/CallingConv.h (LLVM 13.0)
 const (
 	CallingConvNone CallingConv = 0 // none
 	// Note, C calling convention is defined as 0 in LLVM. To have the zero-value
@@ -70,19 +70,20 @@ const (
 	CallingConvCXXFastTLS   CallingConv = 17 // cxx_fast_tlscc
 	CallingConvTail         CallingConv = 18 // tailcc
 	CallingConvCFGuardCheck CallingConv = 19 // cfguard_checkcc
+	CallingConvSwiftTail    CallingConv = 20 // swifttailcc
 
 	// Start of target-specific calling conventions.
 	CallingConvFirstTarget = CallingConvX86StdCall
 
-	CallingConvX86StdCall    CallingConv = 64 // x86_stdcallcc
-	CallingConvX86FastCall   CallingConv = 65 // x86_fastcallcc
-	CallingConvARM_APCS      CallingConv = 66 // arm_apcscc
-	CallingConvARM_AAPCS     CallingConv = 67 // arm_aapcscc
-	CallingConvARM_AAPCS_VFP CallingConv = 68 // arm_aapcs_vfpcc
-	CallingConvMSP430Intr    CallingConv = 69 // msp430_intrcc
-	CallingConvX86ThisCall   CallingConv = 70 // x86_thiscallcc
-	CallingConvPTXKernel     CallingConv = 71 // ptx_kernel
-	CallingConvPTXDevice     CallingConv = 72 // ptx_device
+	CallingConvX86StdCall      CallingConv = 64 // x86_stdcallcc
+	CallingConvX86FastCall     CallingConv = 65 // x86_fastcallcc
+	CallingConvARM_APCS        CallingConv = 66 // arm_apcscc
+	CallingConvARM_AAPCS       CallingConv = 67 // arm_aapcscc
+	CallingConvARM_AAPCS_VFP   CallingConv = 68 // arm_aapcs_vfpcc
+	CallingConvMSP430Interrupt CallingConv = 69 // msp430_intrcc
+	CallingConvX86ThisCall     CallingConv = 70 // x86_thiscallcc
+	CallingConvPTXKernel       CallingConv = 71 // ptx_kernel
+	CallingConvPTXDevice       CallingConv = 72 // ptx_device
 
 	CallingConvSPIRFunc             CallingConv = 75  // spir_func
 	CallingConvSPIRKernel           CallingConv = 76  // spir_kernel
@@ -92,8 +93,8 @@ const (
 	CallingConvX86VectorCall        CallingConv = 80  // x86_vectorcallcc
 	CallingConvHHVM                 CallingConv = 81  // hhvmcc
 	CallingConvHHVM_C               CallingConv = 82  // hhvm_ccc
-	CallingConvX86Intr              CallingConv = 83  // x86_intrcc
-	CallingConvAVRIntr              CallingConv = 84  // avr_intrcc
+	CallingConvX86Interrupt         CallingConv = 83  // x86_intrcc
+	CallingConvAVRInterrupt         CallingConv = 84  // avr_intrcc
 	CallingConvAVRSignal            CallingConv = 85  // avr_signalcc
 	CallingConvAVRBuiltin           CallingConv = 86  // cc 86
 	CallingConvAMDGPU_VS            CallingConv = 87  // amdgpu_vs
@@ -109,6 +110,7 @@ const (
 	CallingConvAArch64VectorCall    CallingConv = 97  // aarch64_vector_pcs
 	CallingConvAArch64SVEVectorCall CallingConv = 98  // aarch64_sve_vector_pcs
 	CallingConvAMDGPUGfx            CallingConv = 100 // amdgpu_gfx
+	CallingConvM68kInterrupt                    = 101 // cc 101
 )
 
 //go:generate stringer -linecomment -type ChecksumKind
@@ -865,6 +867,7 @@ const (
 	ParamAttrReadOnly                            // readonly
 	ParamAttrReturned                            // returned
 	ParamAttrSignExt                             // signext
+	ParamAttrSwiftAsync                          // swiftasync
 	ParamAttrSwiftError                          // swifterror
 	ParamAttrSwiftSelf                           // swiftself
 	ParamAttrWriteOnly                           // writeonly

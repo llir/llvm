@@ -23,15 +23,16 @@ func _() {
 	_ = x[ParamAttrReadOnly-12]
 	_ = x[ParamAttrReturned-13]
 	_ = x[ParamAttrSignExt-14]
-	_ = x[ParamAttrSwiftError-15]
-	_ = x[ParamAttrSwiftSelf-16]
-	_ = x[ParamAttrWriteOnly-17]
-	_ = x[ParamAttrZeroExt-18]
+	_ = x[ParamAttrSwiftAsync-15]
+	_ = x[ParamAttrSwiftError-16]
+	_ = x[ParamAttrSwiftSelf-17]
+	_ = x[ParamAttrWriteOnly-18]
+	_ = x[ParamAttrZeroExt-19]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnoundefnull_pointer_is_validreadnonereadonlyreturnedsignextswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnoundefnull_pointer_is_validreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 66, 87, 95, 103, 111, 118, 128, 137, 146, 153}
+var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 66, 87, 95, 103, 111, 118, 128, 138, 147, 156, 163}
 
 func (i ParamAttr) String() string {
 	if i >= ParamAttr(len(_ParamAttr_index)-1) {

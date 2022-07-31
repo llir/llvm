@@ -26,12 +26,13 @@ func _() {
 	_ = x[enum.CallingConvCXXFastTLS-17]
 	_ = x[enum.CallingConvTail-18]
 	_ = x[enum.CallingConvCFGuardCheck-19]
+	_ = x[enum.CallingConvSwiftTail-20]
 	_ = x[enum.CallingConvX86StdCall-64]
 	_ = x[enum.CallingConvX86FastCall-65]
 	_ = x[enum.CallingConvARM_APCS-66]
 	_ = x[enum.CallingConvARM_AAPCS-67]
 	_ = x[enum.CallingConvARM_AAPCS_VFP-68]
-	_ = x[enum.CallingConvMSP430Intr-69]
+	_ = x[enum.CallingConvMSP430Interrupt-69]
 	_ = x[enum.CallingConvX86ThisCall-70]
 	_ = x[enum.CallingConvPTXKernel-71]
 	_ = x[enum.CallingConvPTXDevice-72]
@@ -43,8 +44,8 @@ func _() {
 	_ = x[enum.CallingConvX86VectorCall-80]
 	_ = x[enum.CallingConvHHVM-81]
 	_ = x[enum.CallingConvHHVM_C-82]
-	_ = x[enum.CallingConvX86Intr-83]
-	_ = x[enum.CallingConvAVRIntr-84]
+	_ = x[enum.CallingConvX86Interrupt-83]
+	_ = x[enum.CallingConvAVRInterrupt-84]
 	_ = x[enum.CallingConvAVRSignal-85]
 	_ = x[enum.CallingConvAVRBuiltin-86]
 	_ = x[enum.CallingConvAMDGPU_VS-87]
@@ -64,7 +65,7 @@ func _() {
 
 const (
 	_CallingConv_name_0 = "noneccc"
-	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscctailcccfguard_checkcc"
+	_CallingConv_name_1 = "fastcccoldccghccccc 11webkit_jsccanyregccpreserve_mostccpreserve_allccswiftcccxx_fast_tlscctailcccfguard_checkccswifttailcc"
 	_CallingConv_name_2 = "x86_stdcallccx86_fastcallccarm_apcsccarm_aapcsccarm_aapcs_vfpccmsp430_intrccx86_thiscallccptx_kernelptx_device"
 	_CallingConv_name_3 = "spir_funcspir_kernelintel_ocl_biccx86_64_sysvccwin64ccx86_vectorcallcchhvmcchhvm_cccx86_intrccavr_intrccavr_signalcccc 86amdgpu_vsamdgpu_gsamdgpu_psamdgpu_csamdgpu_kernelx86_regcallccamdgpu_hscc 94amdgpu_lsamdgpu_esaarch64_vector_pcsaarch64_sve_vector_pcs"
 	_CallingConv_name_4 = "amdgpu_gfx"
@@ -72,7 +73,7 @@ const (
 
 var (
 	_CallingConv_index_0 = [...]uint8{0, 4, 7}
-	_CallingConv_index_1 = [...]uint8{0, 6, 12, 17, 22, 33, 41, 56, 70, 77, 91, 97, 112}
+	_CallingConv_index_1 = [...]uint8{0, 6, 12, 17, 22, 33, 41, 56, 70, 77, 91, 97, 112, 123}
 	_CallingConv_index_2 = [...]uint8{0, 13, 27, 37, 48, 63, 76, 90, 100, 110}
 	_CallingConv_index_3 = [...]uint8{0, 9, 20, 34, 47, 54, 70, 76, 84, 94, 104, 116, 121, 130, 139, 148, 157, 170, 183, 192, 197, 206, 215, 233, 255}
 )
@@ -139,6 +140,8 @@ func _(s string) {
 	case "tailcc":
 	// 19
 	case "cfguard_checkcc":
+	// 20
+	case "swifttailcc":
 	// 64
 	case "x86_stdcallcc":
 	// 65
