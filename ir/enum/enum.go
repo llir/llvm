@@ -735,13 +735,16 @@ const (
 	FuncAttrBuiltin                                     // builtin
 	FuncAttrCold                                        // cold
 	FuncAttrConvergent                                  // convergent
+	FuncAttrHot                                         // hot
 	FuncAttrInaccessibleMemOnly                         // inaccessiblememonly
 	FuncAttrInaccessibleMemOrArgMemOnly                 // inaccessiblemem_or_argmemonly
 	FuncAttrInlineHint                                  // inlinehint
 	FuncAttrJumpTable                                   // jumptable
 	FuncAttrMinSize                                     // minsize
+	FuncAttrMustProgress                                // mustprogress
 	FuncAttrNaked                                       // naked
 	FuncAttrNoBuiltin                                   // nobuiltin
+	FuncAttrNoCallback                                  // nocallback
 	FuncAttrNoCFCheck                                   // nocf_check
 	FuncAttrNoDuplicate                                 // noduplicate
 	FuncAttrNoFree                                      // nofree
@@ -749,9 +752,11 @@ const (
 	FuncAttrNoInline                                    // noinline
 	FuncAttrNoMerge                                     // nomerge
 	FuncAttrNonLazyBind                                 // nonlazybind
+	FuncAttrNoProfile                                   // noprofile
 	FuncAttrNoRecurse                                   // norecurse
 	FuncAttrNoRedZone                                   // noredzone
 	FuncAttrNoReturn                                    // noreturn
+	FuncAttrNoSanitizeCoverage                          // nosanitize_coverage
 	FuncAttrNoSync                                      // nosync
 	FuncAttrNoUnwind                                    // nounwind
 	FuncAttrNullPointerIsValid                          // null_pointer_is_valid

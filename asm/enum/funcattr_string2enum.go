@@ -17,53 +17,58 @@ func _() {
 	_ = x[enum.FuncAttrBuiltin-2]
 	_ = x[enum.FuncAttrCold-3]
 	_ = x[enum.FuncAttrConvergent-4]
-	_ = x[enum.FuncAttrInaccessibleMemOnly-5]
-	_ = x[enum.FuncAttrInaccessibleMemOrArgMemOnly-6]
-	_ = x[enum.FuncAttrInlineHint-7]
-	_ = x[enum.FuncAttrJumpTable-8]
-	_ = x[enum.FuncAttrMinSize-9]
-	_ = x[enum.FuncAttrNaked-10]
-	_ = x[enum.FuncAttrNoBuiltin-11]
-	_ = x[enum.FuncAttrNoCFCheck-12]
-	_ = x[enum.FuncAttrNoDuplicate-13]
-	_ = x[enum.FuncAttrNoFree-14]
-	_ = x[enum.FuncAttrNoImplicitFloat-15]
-	_ = x[enum.FuncAttrNoInline-16]
-	_ = x[enum.FuncAttrNoMerge-17]
-	_ = x[enum.FuncAttrNonLazyBind-18]
-	_ = x[enum.FuncAttrNoRecurse-19]
-	_ = x[enum.FuncAttrNoRedZone-20]
-	_ = x[enum.FuncAttrNoReturn-21]
-	_ = x[enum.FuncAttrNoSync-22]
-	_ = x[enum.FuncAttrNoUnwind-23]
-	_ = x[enum.FuncAttrNullPointerIsValid-24]
-	_ = x[enum.FuncAttrOptForFuzzing-25]
-	_ = x[enum.FuncAttrOptNone-26]
-	_ = x[enum.FuncAttrOptSize-27]
-	_ = x[enum.FuncAttrReadNone-28]
-	_ = x[enum.FuncAttrReadOnly-29]
-	_ = x[enum.FuncAttrReturnsTwice-30]
-	_ = x[enum.FuncAttrSafeStack-31]
-	_ = x[enum.FuncAttrSanitizeAddress-32]
-	_ = x[enum.FuncAttrSanitizeHWAddress-33]
-	_ = x[enum.FuncAttrSanitizeMemory-34]
-	_ = x[enum.FuncAttrSanitizeMemTag-35]
-	_ = x[enum.FuncAttrSanitizeThread-36]
-	_ = x[enum.FuncAttrShadowCallStack-37]
-	_ = x[enum.FuncAttrSpeculatable-38]
-	_ = x[enum.FuncAttrSpeculativeLoadHardening-39]
-	_ = x[enum.FuncAttrSSP-40]
-	_ = x[enum.FuncAttrSSPReq-41]
-	_ = x[enum.FuncAttrSSPStrong-42]
-	_ = x[enum.FuncAttrStrictFP-43]
-	_ = x[enum.FuncAttrUwtable-44]
-	_ = x[enum.FuncAttrWillReturn-45]
-	_ = x[enum.FuncAttrWriteOnly-46]
+	_ = x[enum.FuncAttrHot-5]
+	_ = x[enum.FuncAttrInaccessibleMemOnly-6]
+	_ = x[enum.FuncAttrInaccessibleMemOrArgMemOnly-7]
+	_ = x[enum.FuncAttrInlineHint-8]
+	_ = x[enum.FuncAttrJumpTable-9]
+	_ = x[enum.FuncAttrMinSize-10]
+	_ = x[enum.FuncAttrMustProgress-11]
+	_ = x[enum.FuncAttrNaked-12]
+	_ = x[enum.FuncAttrNoBuiltin-13]
+	_ = x[enum.FuncAttrNoCallback-14]
+	_ = x[enum.FuncAttrNoCFCheck-15]
+	_ = x[enum.FuncAttrNoDuplicate-16]
+	_ = x[enum.FuncAttrNoFree-17]
+	_ = x[enum.FuncAttrNoImplicitFloat-18]
+	_ = x[enum.FuncAttrNoInline-19]
+	_ = x[enum.FuncAttrNoMerge-20]
+	_ = x[enum.FuncAttrNonLazyBind-21]
+	_ = x[enum.FuncAttrNoProfile-22]
+	_ = x[enum.FuncAttrNoRecurse-23]
+	_ = x[enum.FuncAttrNoRedZone-24]
+	_ = x[enum.FuncAttrNoReturn-25]
+	_ = x[enum.FuncAttrNoSanitizeCoverage-26]
+	_ = x[enum.FuncAttrNoSync-27]
+	_ = x[enum.FuncAttrNoUnwind-28]
+	_ = x[enum.FuncAttrNullPointerIsValid-29]
+	_ = x[enum.FuncAttrOptForFuzzing-30]
+	_ = x[enum.FuncAttrOptNone-31]
+	_ = x[enum.FuncAttrOptSize-32]
+	_ = x[enum.FuncAttrReadNone-33]
+	_ = x[enum.FuncAttrReadOnly-34]
+	_ = x[enum.FuncAttrReturnsTwice-35]
+	_ = x[enum.FuncAttrSafeStack-36]
+	_ = x[enum.FuncAttrSanitizeAddress-37]
+	_ = x[enum.FuncAttrSanitizeHWAddress-38]
+	_ = x[enum.FuncAttrSanitizeMemory-39]
+	_ = x[enum.FuncAttrSanitizeMemTag-40]
+	_ = x[enum.FuncAttrSanitizeThread-41]
+	_ = x[enum.FuncAttrShadowCallStack-42]
+	_ = x[enum.FuncAttrSpeculatable-43]
+	_ = x[enum.FuncAttrSpeculativeLoadHardening-44]
+	_ = x[enum.FuncAttrSSP-45]
+	_ = x[enum.FuncAttrSSPReq-46]
+	_ = x[enum.FuncAttrSSPStrong-47]
+	_ = x[enum.FuncAttrStrictFP-48]
+	_ = x[enum.FuncAttrUwtable-49]
+	_ = x[enum.FuncAttrWillReturn-50]
+	_ = x[enum.FuncAttrWriteOnly-51]
 }
 
-const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergentinaccessiblememonlyinaccessiblemem_or_argmemonlyinlinehintjumptableminsizenakednobuiltinnocf_checknoduplicatenofreenoimplicitfloatnoinlinenomergenonlazybindnorecursenoredzonenoreturnnosyncnounwindnull_pointer_is_validoptforfuzzingoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_memtagsanitize_threadshadowcallstackspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewillreturnwriteonly"
+const _FuncAttr_name = "alwaysinlineargmemonlybuiltincoldconvergenthotinaccessiblememonlyinaccessiblemem_or_argmemonlyinlinehintjumptableminsizemustprogressnakednobuiltinnocallbacknocf_checknoduplicatenofreenoimplicitfloatnoinlinenomergenonlazybindnoprofilenorecursenoredzonenoreturnnosanitize_coveragenosyncnounwindnull_pointer_is_validoptforfuzzingoptnoneoptsizereadnonereadonlyreturns_twicesafestacksanitize_addresssanitize_hwaddresssanitize_memorysanitize_memtagsanitize_threadshadowcallstackspeculatablespeculative_load_hardeningsspsspreqsspstrongstrictfpuwtablewillreturnwriteonly"
 
-var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 62, 91, 101, 110, 117, 122, 131, 141, 152, 158, 173, 181, 188, 199, 208, 217, 225, 231, 239, 260, 273, 280, 287, 295, 303, 316, 325, 341, 359, 374, 389, 404, 419, 431, 457, 460, 466, 475, 483, 490, 500, 509}
+var _FuncAttr_index = [...]uint16{0, 12, 22, 29, 33, 43, 46, 65, 94, 104, 113, 120, 132, 137, 146, 156, 166, 177, 183, 198, 206, 213, 224, 233, 242, 251, 259, 278, 284, 292, 313, 326, 333, 340, 348, 356, 369, 378, 394, 412, 427, 442, 457, 472, 484, 510, 513, 519, 528, 536, 543, 553, 562}
 
 // FuncAttrFromString returns the FuncAttr enum corresponding to s.
 func FuncAttrFromString(s string) enum.FuncAttr {
@@ -92,88 +97,98 @@ func _(s string) {
 	// 4
 	case "convergent":
 	// 5
-	case "inaccessiblememonly":
+	case "hot":
 	// 6
-	case "inaccessiblemem_or_argmemonly":
+	case "inaccessiblememonly":
 	// 7
-	case "inlinehint":
+	case "inaccessiblemem_or_argmemonly":
 	// 8
-	case "jumptable":
+	case "inlinehint":
 	// 9
-	case "minsize":
+	case "jumptable":
 	// 10
-	case "naked":
+	case "minsize":
 	// 11
-	case "nobuiltin":
+	case "mustprogress":
 	// 12
-	case "nocf_check":
+	case "naked":
 	// 13
-	case "noduplicate":
+	case "nobuiltin":
 	// 14
-	case "nofree":
+	case "nocallback":
 	// 15
-	case "noimplicitfloat":
+	case "nocf_check":
 	// 16
-	case "noinline":
+	case "noduplicate":
 	// 17
-	case "nomerge":
+	case "nofree":
 	// 18
-	case "nonlazybind":
+	case "noimplicitfloat":
 	// 19
-	case "norecurse":
+	case "noinline":
 	// 20
-	case "noredzone":
+	case "nomerge":
 	// 21
-	case "noreturn":
+	case "nonlazybind":
 	// 22
-	case "nosync":
+	case "noprofile":
 	// 23
-	case "nounwind":
+	case "norecurse":
 	// 24
-	case "null_pointer_is_valid":
+	case "noredzone":
 	// 25
-	case "optforfuzzing":
+	case "noreturn":
 	// 26
-	case "optnone":
+	case "nosanitize_coverage":
 	// 27
-	case "optsize":
+	case "nosync":
 	// 28
-	case "readnone":
+	case "nounwind":
 	// 29
-	case "readonly":
+	case "null_pointer_is_valid":
 	// 30
-	case "returns_twice":
+	case "optforfuzzing":
 	// 31
-	case "safestack":
+	case "optnone":
 	// 32
-	case "sanitize_address":
+	case "optsize":
 	// 33
-	case "sanitize_hwaddress":
+	case "readnone":
 	// 34
-	case "sanitize_memory":
+	case "readonly":
 	// 35
-	case "sanitize_memtag":
+	case "returns_twice":
 	// 36
-	case "sanitize_thread":
+	case "safestack":
 	// 37
-	case "shadowcallstack":
+	case "sanitize_address":
 	// 38
-	case "speculatable":
+	case "sanitize_hwaddress":
 	// 39
-	case "speculative_load_hardening":
+	case "sanitize_memory":
 	// 40
-	case "ssp":
+	case "sanitize_memtag":
 	// 41
-	case "sspreq":
+	case "sanitize_thread":
 	// 42
-	case "sspstrong":
+	case "shadowcallstack":
 	// 43
-	case "strictfp":
+	case "speculatable":
 	// 44
-	case "uwtable":
+	case "speculative_load_hardening":
 	// 45
-	case "willreturn":
+	case "ssp":
 	// 46
+	case "sspreq":
+	// 47
+	case "sspstrong":
+	// 48
+	case "strictfp":
+	// 49
+	case "uwtable":
+	// 50
+	case "willreturn":
+	// 51
 	case "writeonly":
 	}
 }
