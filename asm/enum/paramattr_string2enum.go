@@ -13,30 +13,27 @@ func _() {
 	// Re-run the string2enum command to generate them again.
 	var x [1]struct{}
 	_ = x[enum.ParamAttrImmArg-0]
-	_ = x[enum.ParamAttrInAlloca-1]
-	_ = x[enum.ParamAttrInReg-2]
-	_ = x[enum.ParamAttrNest-3]
-	_ = x[enum.ParamAttrNoAlias-4]
-	_ = x[enum.ParamAttrNoCapture-5]
-	_ = x[enum.ParamAttrNoFree-6]
-	_ = x[enum.ParamAttrNoMerge-7]
-	_ = x[enum.ParamAttrNonNull-8]
-	_ = x[enum.ParamAttrNoUndef-9]
-	_ = x[enum.ParamAttrNullPointerIsValid-10]
-	_ = x[enum.ParamAttrReadNone-11]
-	_ = x[enum.ParamAttrReadOnly-12]
-	_ = x[enum.ParamAttrReturned-13]
-	_ = x[enum.ParamAttrSignExt-14]
-	_ = x[enum.ParamAttrSwiftAsync-15]
-	_ = x[enum.ParamAttrSwiftError-16]
-	_ = x[enum.ParamAttrSwiftSelf-17]
-	_ = x[enum.ParamAttrWriteOnly-18]
-	_ = x[enum.ParamAttrZeroExt-19]
+	_ = x[enum.ParamAttrInReg-1]
+	_ = x[enum.ParamAttrNest-2]
+	_ = x[enum.ParamAttrNoAlias-3]
+	_ = x[enum.ParamAttrNoCapture-4]
+	_ = x[enum.ParamAttrNoFree-5]
+	_ = x[enum.ParamAttrNonNull-6]
+	_ = x[enum.ParamAttrNoUndef-7]
+	_ = x[enum.ParamAttrReadNone-8]
+	_ = x[enum.ParamAttrReadOnly-9]
+	_ = x[enum.ParamAttrReturned-10]
+	_ = x[enum.ParamAttrSignExt-11]
+	_ = x[enum.ParamAttrSwiftAsync-12]
+	_ = x[enum.ParamAttrSwiftError-13]
+	_ = x[enum.ParamAttrSwiftSelf-14]
+	_ = x[enum.ParamAttrWriteOnly-15]
+	_ = x[enum.ParamAttrZeroExt-16]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnoundefnull_pointer_is_validreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginregnestnoaliasnocapturenofreenonnullnoundefreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 66, 87, 95, 103, 111, 118, 128, 138, 147, 156, 163}
+var _ParamAttr_index = [...]uint8{0, 6, 11, 15, 22, 31, 37, 44, 51, 59, 67, 75, 82, 92, 102, 111, 120, 127}
 
 // ParamAttrFromString returns the ParamAttr enum corresponding to s.
 func ParamAttrFromString(s string) enum.ParamAttr {
@@ -57,42 +54,36 @@ func _(s string) {
 	// 0
 	case "immarg":
 	// 1
-	case "inalloca":
-	// 2
 	case "inreg":
-	// 3
+	// 2
 	case "nest":
-	// 4
+	// 3
 	case "noalias":
-	// 5
+	// 4
 	case "nocapture":
-	// 6
+	// 5
 	case "nofree":
-	// 7
-	case "nomerge":
-	// 8
+	// 6
 	case "nonnull":
-	// 9
+	// 7
 	case "noundef":
-	// 10
-	case "null_pointer_is_valid":
-	// 11
+	// 8
 	case "readnone":
-	// 12
+	// 9
 	case "readonly":
-	// 13
+	// 10
 	case "returned":
-	// 14
+	// 11
 	case "signext":
-	// 15
+	// 12
 	case "swiftasync":
-	// 16
+	// 13
 	case "swifterror":
-	// 17
+	// 14
 	case "swiftself":
-	// 18
+	// 15
 	case "writeonly":
-	// 19
+	// 16
 	case "zeroext":
 	}
 }

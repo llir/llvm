@@ -14,17 +14,15 @@ func _() {
 	var x [1]struct{}
 	_ = x[enum.ReturnAttrInReg-0]
 	_ = x[enum.ReturnAttrNoAlias-1]
-	_ = x[enum.ReturnAttrNoMerge-2]
-	_ = x[enum.ReturnAttrNonNull-3]
-	_ = x[enum.ReturnAttrNoUndef-4]
-	_ = x[enum.ReturnAttrNullPointerIsValid-5]
-	_ = x[enum.ReturnAttrSignExt-6]
-	_ = x[enum.ReturnAttrZeroExt-7]
+	_ = x[enum.ReturnAttrNonNull-2]
+	_ = x[enum.ReturnAttrNoUndef-3]
+	_ = x[enum.ReturnAttrSignExt-4]
+	_ = x[enum.ReturnAttrZeroExt-5]
 }
 
-const _ReturnAttr_name = "inregnoaliasnomergenonnullnoundefnull_pointer_is_validsignextzeroext"
+const _ReturnAttr_name = "inregnoaliasnonnullnoundefsignextzeroext"
 
-var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 33, 54, 61, 68}
+var _ReturnAttr_index = [...]uint8{0, 5, 12, 19, 26, 33, 40}
 
 // ReturnAttrFromString returns the ReturnAttr enum corresponding to s.
 func ReturnAttrFromString(s string) enum.ReturnAttr {
@@ -47,16 +45,12 @@ func _(s string) {
 	// 1
 	case "noalias":
 	// 2
-	case "nomerge":
-	// 3
 	case "nonnull":
-	// 4
+	// 3
 	case "noundef":
-	// 5
-	case "null_pointer_is_valid":
-	// 6
+	// 4
 	case "signext":
-	// 7
+	// 5
 	case "zeroext":
 	}
 }

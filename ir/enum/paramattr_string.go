@@ -9,30 +9,27 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[ParamAttrImmArg-0]
-	_ = x[ParamAttrInAlloca-1]
-	_ = x[ParamAttrInReg-2]
-	_ = x[ParamAttrNest-3]
-	_ = x[ParamAttrNoAlias-4]
-	_ = x[ParamAttrNoCapture-5]
-	_ = x[ParamAttrNoFree-6]
-	_ = x[ParamAttrNoMerge-7]
-	_ = x[ParamAttrNonNull-8]
-	_ = x[ParamAttrNoUndef-9]
-	_ = x[ParamAttrNullPointerIsValid-10]
-	_ = x[ParamAttrReadNone-11]
-	_ = x[ParamAttrReadOnly-12]
-	_ = x[ParamAttrReturned-13]
-	_ = x[ParamAttrSignExt-14]
-	_ = x[ParamAttrSwiftAsync-15]
-	_ = x[ParamAttrSwiftError-16]
-	_ = x[ParamAttrSwiftSelf-17]
-	_ = x[ParamAttrWriteOnly-18]
-	_ = x[ParamAttrZeroExt-19]
+	_ = x[ParamAttrInReg-1]
+	_ = x[ParamAttrNest-2]
+	_ = x[ParamAttrNoAlias-3]
+	_ = x[ParamAttrNoCapture-4]
+	_ = x[ParamAttrNoFree-5]
+	_ = x[ParamAttrNonNull-6]
+	_ = x[ParamAttrNoUndef-7]
+	_ = x[ParamAttrReadNone-8]
+	_ = x[ParamAttrReadOnly-9]
+	_ = x[ParamAttrReturned-10]
+	_ = x[ParamAttrSignExt-11]
+	_ = x[ParamAttrSwiftAsync-12]
+	_ = x[ParamAttrSwiftError-13]
+	_ = x[ParamAttrSwiftSelf-14]
+	_ = x[ParamAttrWriteOnly-15]
+	_ = x[ParamAttrZeroExt-16]
 }
 
-const _ParamAttr_name = "immarginallocainregnestnoaliasnocapturenofreenomergenonnullnoundefnull_pointer_is_validreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "immarginregnestnoaliasnocapturenofreenonnullnoundefreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 14, 19, 23, 30, 39, 45, 52, 59, 66, 87, 95, 103, 111, 118, 128, 138, 147, 156, 163}
+var _ParamAttr_index = [...]uint8{0, 6, 11, 15, 22, 31, 37, 44, 51, 59, 67, 75, 82, 92, 102, 111, 120, 127}
 
 func (i ParamAttr) String() string {
 	if i >= ParamAttr(len(_ParamAttr_index)-1) {
