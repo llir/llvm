@@ -33,3 +33,15 @@ func DLLStorageClassFromString(s string) enum.DLLStorageClass {
 	}
 	panic(fmt.Errorf("unable to locate DLLStorageClass enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DLLStorageClass".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "dllexport":
+	// 2
+	case "dllimport":
+	}
+}

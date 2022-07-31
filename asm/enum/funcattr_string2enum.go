@@ -77,3 +77,103 @@ func FuncAttrFromString(s string) enum.FuncAttr {
 	}
 	panic(fmt.Errorf("unable to locate FuncAttr enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "FuncAttr".
+	switch s {
+	// 0
+	case "alwaysinline":
+	// 1
+	case "argmemonly":
+	// 2
+	case "builtin":
+	// 3
+	case "cold":
+	// 4
+	case "convergent":
+	// 5
+	case "inaccessiblememonly":
+	// 6
+	case "inaccessiblemem_or_argmemonly":
+	// 7
+	case "inlinehint":
+	// 8
+	case "jumptable":
+	// 9
+	case "minsize":
+	// 10
+	case "naked":
+	// 11
+	case "nobuiltin":
+	// 12
+	case "nocf_check":
+	// 13
+	case "noduplicate":
+	// 14
+	case "nofree":
+	// 15
+	case "noimplicitfloat":
+	// 16
+	case "noinline":
+	// 17
+	case "nomerge":
+	// 18
+	case "nonlazybind":
+	// 19
+	case "norecurse":
+	// 20
+	case "noredzone":
+	// 21
+	case "noreturn":
+	// 22
+	case "nosync":
+	// 23
+	case "nounwind":
+	// 24
+	case "null_pointer_is_valid":
+	// 25
+	case "optforfuzzing":
+	// 26
+	case "optnone":
+	// 27
+	case "optsize":
+	// 28
+	case "readnone":
+	// 29
+	case "readonly":
+	// 30
+	case "returns_twice":
+	// 31
+	case "safestack":
+	// 32
+	case "sanitize_address":
+	// 33
+	case "sanitize_hwaddress":
+	// 34
+	case "sanitize_memory":
+	// 35
+	case "sanitize_memtag":
+	// 36
+	case "sanitize_thread":
+	// 37
+	case "shadowcallstack":
+	// 38
+	case "speculatable":
+	// 39
+	case "speculative_load_hardening":
+	// 40
+	case "ssp":
+	// 41
+	case "sspreq":
+	// 42
+	case "sspstrong":
+	// 43
+	case "strictfp":
+	// 44
+	case "uwtable":
+	// 45
+	case "willreturn":
+	// 46
+	case "writeonly":
+	}
+}

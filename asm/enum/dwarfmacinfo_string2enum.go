@@ -43,3 +43,19 @@ func DwarfMacinfoFromString(s string) enum.DwarfMacinfo {
 	}
 	panic(fmt.Errorf("unable to locate DwarfMacinfo enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DwarfMacinfo".
+	switch s {
+	// 1
+	case "DW_MACINFO_define":
+	// 2
+	case "DW_MACINFO_undef":
+	// 3
+	case "DW_MACINFO_start_file":
+	// 4
+	case "DW_MACINFO_end_file":
+	// 255
+	case "DW_MACINFO_vendor_ext":
+	}
+}

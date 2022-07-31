@@ -42,3 +42,33 @@ func LinkageFromString(s string) enum.Linkage {
 	}
 	panic(fmt.Errorf("unable to locate Linkage enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "Linkage".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "appending":
+	// 2
+	case "available_externally":
+	// 3
+	case "common":
+	// 4
+	case "internal":
+	// 5
+	case "linkonce":
+	// 6
+	case "linkonce_odr":
+	// 7
+	case "private":
+	// 8
+	case "weak":
+	// 9
+	case "weak_odr":
+	// 10
+	case "external":
+	// 11
+	case "extern_weak":
+	}
+}

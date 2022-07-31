@@ -40,3 +40,29 @@ func IPredFromString(s string) enum.IPred {
 	}
 	panic(fmt.Errorf("unable to locate IPred enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "IPred".
+	switch s {
+	// 0
+	case "eq":
+	// 1
+	case "ne":
+	// 2
+	case "sge":
+	// 3
+	case "sgt":
+	// 4
+	case "sle":
+	// 5
+	case "slt":
+	// 6
+	case "uge":
+	// 7
+	case "ugt":
+	// 8
+	case "ule":
+	// 9
+	case "ult":
+	}
+}

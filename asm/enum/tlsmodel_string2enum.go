@@ -35,3 +35,19 @@ func TLSModelFromString(s string) enum.TLSModel {
 	}
 	panic(fmt.Errorf("unable to locate TLSModel enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "TLSModel".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "generic":
+	// 2
+	case "initialexec":
+	// 3
+	case "localdynamic":
+	// 4
+	case "localexec":
+	}
+}

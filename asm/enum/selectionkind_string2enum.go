@@ -35,3 +35,19 @@ func SelectionKindFromString(s string) enum.SelectionKind {
 	}
 	panic(fmt.Errorf("unable to locate SelectionKind enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "SelectionKind".
+	switch s {
+	// 0
+	case "any":
+	// 1
+	case "exactmatch":
+	// 2
+	case "largest":
+	// 3
+	case "noduplicates":
+	// 4
+	case "samesize":
+	}
+}

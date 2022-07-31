@@ -34,3 +34,17 @@ func TailFromString(s string) enum.Tail {
 	}
 	panic(fmt.Errorf("unable to locate Tail enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "Tail".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "musttail":
+	// 2
+	case "notail":
+	// 3
+	case "tail":
+	}
+}

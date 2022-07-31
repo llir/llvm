@@ -13,27 +13,58 @@ func _() {
 	// Re-run the string2enum command to generate them again.
 	var x [1]struct{}
 	_ = x[enum.AtomicOrderingNone-0]
-	_ = x[enum.AtomicOrderingAcqRel-1]
-	_ = x[enum.AtomicOrderingAcquire-2]
-	_ = x[enum.AtomicOrderingMonotonic-3]
-	_ = x[enum.AtomicOrderingRelease-4]
-	_ = x[enum.AtomicOrderingSeqCst-5]
-	_ = x[enum.AtomicOrderingUnordered-6]
+	_ = x[enum.AtomicOrderingUnordered-1]
+	_ = x[enum.AtomicOrderingMonotonic-2]
+	_ = x[enum.AtomicOrderingAcquire-4]
+	_ = x[enum.AtomicOrderingRelease-5]
+	_ = x[enum.AtomicOrderingAcquireRelease-6]
+	_ = x[enum.AtomicOrderingSequentiallyConsistent-7]
 }
 
-const _AtomicOrdering_name = "noneacq_relacquiremonotonicreleaseseq_cstunordered"
+const (
+	_AtomicOrdering_name_0 = "noneunorderedmonotonic"
+	_AtomicOrdering_name_1 = "acquirereleaseacq_relseq_cst"
+)
 
-var _AtomicOrdering_index = [...]uint8{0, 4, 11, 18, 27, 34, 41, 50}
+var (
+	_AtomicOrdering_index_0 = [...]uint8{0, 4, 13, 22}
+	_AtomicOrdering_index_1 = [...]uint8{0, 7, 14, 21, 28}
+)
 
 // AtomicOrderingFromString returns the AtomicOrdering enum corresponding to s.
 func AtomicOrderingFromString(s string) enum.AtomicOrdering {
 	if len(s) == 0 {
 		return 0
 	}
-	for i := range _AtomicOrdering_index[:len(_AtomicOrdering_index)-1] {
-		if s == _AtomicOrdering_name[_AtomicOrdering_index[i]:_AtomicOrdering_index[i+1]] {
-			return enum.AtomicOrdering(i)
+	for i := range _AtomicOrdering_index_0[:len(_AtomicOrdering_index_0)-1] {
+		if s == _AtomicOrdering_name_0[_AtomicOrdering_index_0[i]:_AtomicOrdering_index_0[i+1]] {
+			return enum.AtomicOrdering(i + 0)
+		}
+	}
+	for i := range _AtomicOrdering_index_1[:len(_AtomicOrdering_index_1)-1] {
+		if s == _AtomicOrdering_name_1[_AtomicOrdering_index_1[i]:_AtomicOrdering_index_1[i+1]] {
+			return enum.AtomicOrdering(i + 4)
 		}
 	}
 	panic(fmt.Errorf("unable to locate AtomicOrdering enum corresponding to %q", s))
+}
+
+func _(s string) {
+	// Check for duplicate string values in type "AtomicOrdering".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "unordered":
+	// 2
+	case "monotonic":
+	// 4
+	case "acquire":
+	// 5
+	case "release":
+	// 6
+	case "acq_rel":
+	// 7
+	case "seq_cst":
+	}
 }

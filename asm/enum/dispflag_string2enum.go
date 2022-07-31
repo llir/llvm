@@ -80,3 +80,35 @@ func DISPFlagFromString(s string) enum.DISPFlag {
 	}
 	panic(fmt.Errorf("unable to locate DISPFlag enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DISPFlag".
+	switch s {
+	// 0
+	case "DISPFlagZero":
+	// 1
+	case "DISPFlagVirtual":
+	// 2
+	case "DISPFlagPureVirtual":
+	// 3
+	case "DISPFlagVirtuality":
+	// 4
+	case "DISPFlagLocalToUnit":
+	// 8
+	case "DISPFlagDefinition":
+	// 16
+	case "DISPFlagOptimized":
+	// 32
+	case "DISPFlagPure":
+	// 64
+	case "DISPFlagElemental":
+	// 128
+	case "DISPFlagRecursive":
+	// 256
+	case "DISPFlagMainSubprogram":
+	// 512
+	case "DISPFlagDeleted":
+	// 2048
+	case "DISPFlagObjCDirect":
+	}
+}

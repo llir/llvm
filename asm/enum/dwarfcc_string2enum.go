@@ -63,3 +63,37 @@ func DwarfCCFromString(s string) enum.DwarfCC {
 	}
 	panic(fmt.Errorf("unable to locate DwarfCC enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DwarfCC".
+	switch s {
+	// 1
+	case "DW_CC_normal":
+	// 2
+	case "DW_CC_program":
+	// 3
+	case "DW_CC_nocall":
+	// 4
+	case "DW_CC_pass_by_reference":
+	// 5
+	case "DW_CC_pass_by_value":
+	// 65
+	case "DW_CC_GNU_borland_fastcall_i386":
+	// 176
+	case "DW_CC_BORLAND_safecall":
+	// 177
+	case "DW_CC_BORLAND_stdcall":
+	// 178
+	case "DW_CC_BORLAND_pascal":
+	// 179
+	case "DW_CC_BORLAND_msfastcall":
+	// 180
+	case "DW_CC_BORLAND_msreturn":
+	// 181
+	case "DW_CC_BORLAND_thiscall":
+	// 182
+	case "DW_CC_BORLAND_fastcall":
+	// 192
+	case "DW_CC_LLVM_vectorcall":
+	}
+}

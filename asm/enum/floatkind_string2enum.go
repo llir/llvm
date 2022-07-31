@@ -36,3 +36,21 @@ func FloatKindFromString(s string) types.FloatKind {
 	}
 	panic(fmt.Errorf("unable to locate FloatKind enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "FloatKind".
+	switch s {
+	// 0
+	case "half":
+	// 1
+	case "float":
+	// 2
+	case "double":
+	// 3
+	case "fp128":
+	// 4
+	case "x86_fp80":
+	// 5
+	case "ppc_fp128":
+	}
+}
