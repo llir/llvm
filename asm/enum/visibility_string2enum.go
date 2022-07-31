@@ -34,3 +34,17 @@ func VisibilityFromString(s string) enum.Visibility {
 	}
 	panic(fmt.Errorf("unable to locate Visibility enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "Visibility".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "default":
+	// 2
+	case "hidden":
+	// 3
+	case "protected":
+	}
+}

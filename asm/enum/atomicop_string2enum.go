@@ -43,3 +43,35 @@ func AtomicOpFromString(s string) enum.AtomicOp {
 	}
 	panic(fmt.Errorf("unable to locate AtomicOp enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "AtomicOp".
+	switch s {
+	// 1
+	case "add":
+	// 2
+	case "and":
+	// 3
+	case "fadd":
+	// 4
+	case "fsub":
+	// 5
+	case "max":
+	// 6
+	case "min":
+	// 7
+	case "nand":
+	// 8
+	case "or":
+	// 9
+	case "sub":
+	// 10
+	case "umax":
+	// 11
+	case "umin":
+	// 12
+	case "xchg":
+	// 13
+	case "xor":
+	}
+}

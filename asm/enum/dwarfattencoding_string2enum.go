@@ -48,3 +48,45 @@ func DwarfAttEncodingFromString(s string) enum.DwarfAttEncoding {
 	}
 	panic(fmt.Errorf("unable to locate DwarfAttEncoding enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DwarfAttEncoding".
+	switch s {
+	// 1
+	case "DW_ATE_address":
+	// 2
+	case "DW_ATE_boolean":
+	// 3
+	case "DW_ATE_complex_float":
+	// 4
+	case "DW_ATE_float":
+	// 5
+	case "DW_ATE_signed":
+	// 6
+	case "DW_ATE_signed_char":
+	// 7
+	case "DW_ATE_unsigned":
+	// 8
+	case "DW_ATE_unsigned_char":
+	// 9
+	case "DW_ATE_imaginary_float":
+	// 10
+	case "DW_ATE_packed_decimal":
+	// 11
+	case "DW_ATE_numeric_string":
+	// 12
+	case "DW_ATE_edited":
+	// 13
+	case "DW_ATE_signed_fixed":
+	// 14
+	case "DW_ATE_unsigned_fixed":
+	// 15
+	case "DW_ATE_decimal_float":
+	// 16
+	case "DW_ATE_UTF":
+	// 17
+	case "DW_ATE_UCS":
+	// 18
+	case "DW_ATE_ASCII":
+	}
+}

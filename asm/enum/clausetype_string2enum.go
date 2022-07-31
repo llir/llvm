@@ -32,3 +32,13 @@ func ClauseTypeFromString(s string) enum.ClauseType {
 	}
 	panic(fmt.Errorf("unable to locate ClauseType enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "ClauseType".
+	switch s {
+	// 1
+	case "catch":
+	// 2
+	case "filter":
+	}
+}

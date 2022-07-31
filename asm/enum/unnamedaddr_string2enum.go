@@ -33,3 +33,15 @@ func UnnamedAddrFromString(s string) enum.UnnamedAddr {
 	}
 	panic(fmt.Errorf("unable to locate UnnamedAddr enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "UnnamedAddr".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "local_unnamed_addr":
+	// 2
+	case "unnamed_addr":
+	}
+}

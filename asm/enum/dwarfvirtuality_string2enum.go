@@ -33,3 +33,15 @@ func DwarfVirtualityFromString(s string) enum.DwarfVirtuality {
 	}
 	panic(fmt.Errorf("unable to locate DwarfVirtuality enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DwarfVirtuality".
+	switch s {
+	// 0
+	case "DW_VIRTUALITY_none":
+	// 1
+	case "DW_VIRTUALITY_virtual":
+	// 2
+	case "DW_VIRTUALITY_pure_virtual":
+	}
+}

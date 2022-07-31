@@ -33,3 +33,15 @@ func NameTableKindFromString(s string) enum.NameTableKind {
 	}
 	panic(fmt.Errorf("unable to locate NameTableKind enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "NameTableKind".
+	switch s {
+	// 0
+	case "Default":
+	// 1
+	case "GNU":
+	// 2
+	case "None":
+	}
+}

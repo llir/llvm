@@ -38,3 +38,25 @@ func FastMathFlagFromString(s string) enum.FastMathFlag {
 	}
 	panic(fmt.Errorf("unable to locate FastMathFlag enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "FastMathFlag".
+	switch s {
+	// 0
+	case "afn":
+	// 1
+	case "arcp":
+	// 2
+	case "contract":
+	// 3
+	case "fast":
+	// 4
+	case "ninf":
+	// 5
+	case "nnan":
+	// 6
+	case "nsz":
+	// 7
+	case "reassoc":
+	}
+}

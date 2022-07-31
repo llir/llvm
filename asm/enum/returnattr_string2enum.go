@@ -38,3 +38,25 @@ func ReturnAttrFromString(s string) enum.ReturnAttr {
 	}
 	panic(fmt.Errorf("unable to locate ReturnAttr enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "ReturnAttr".
+	switch s {
+	// 0
+	case "inreg":
+	// 1
+	case "noalias":
+	// 2
+	case "nomerge":
+	// 3
+	case "nonnull":
+	// 4
+	case "noundef":
+	// 5
+	case "null_pointer_is_valid":
+	// 6
+	case "signext":
+	// 7
+	case "zeroext":
+	}
+}

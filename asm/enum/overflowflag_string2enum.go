@@ -32,3 +32,13 @@ func OverflowFlagFromString(s string) enum.OverflowFlag {
 	}
 	panic(fmt.Errorf("unable to locate OverflowFlag enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "OverflowFlag".
+	switch s {
+	// 0
+	case "nsw":
+	// 1
+	case "nuw":
+	}
+}

@@ -34,3 +34,17 @@ func EmissionKindFromString(s string) enum.EmissionKind {
 	}
 	panic(fmt.Errorf("unable to locate EmissionKind enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "EmissionKind".
+	switch s {
+	// 0
+	case "NoDebug":
+	// 1
+	case "FullDebug":
+	// 2
+	case "LineTablesOnly":
+	// 3
+	case "DebugDirectivesOnly":
+	}
+}

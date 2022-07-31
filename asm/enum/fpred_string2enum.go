@@ -46,3 +46,41 @@ func FPredFromString(s string) enum.FPred {
 	}
 	panic(fmt.Errorf("unable to locate FPred enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "FPred".
+	switch s {
+	// 0
+	case "false":
+	// 1
+	case "oeq":
+	// 2
+	case "oge":
+	// 3
+	case "ogt":
+	// 4
+	case "ole":
+	// 5
+	case "olt":
+	// 6
+	case "one":
+	// 7
+	case "ord":
+	// 8
+	case "true":
+	// 9
+	case "ueq":
+	// 10
+	case "uge":
+	// 11
+	case "ugt":
+	// 12
+	case "ule":
+	// 13
+	case "ult":
+	// 14
+	case "une":
+	// 15
+	case "uno":
+	}
+}

@@ -32,3 +32,13 @@ func ChecksumKindFromString(s string) enum.ChecksumKind {
 	}
 	panic(fmt.Errorf("unable to locate ChecksumKind enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "ChecksumKind".
+	switch s {
+	// 1
+	case "CSK_MD5":
+	// 2
+	case "CSK_SHA1":
+	}
+}

@@ -107,3 +107,105 @@ func CallingConvFromString(s string) enum.CallingConv {
 	}
 	panic(fmt.Errorf("unable to locate CallingConv enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "CallingConv".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "ccc":
+	// 8
+	case "fastcc":
+	// 9
+	case "coldcc":
+	// 10
+	case "ghccc":
+	// 11
+	case "cc 11":
+	// 12
+	case "webkit_jscc":
+	// 13
+	case "anyregcc":
+	// 14
+	case "preserve_mostcc":
+	// 15
+	case "preserve_allcc":
+	// 16
+	case "swiftcc":
+	// 17
+	case "cxx_fast_tlscc":
+	// 18
+	case "tailcc":
+	// 19
+	case "cfguard_checkcc":
+	// 64
+	case "x86_stdcallcc":
+	// 65
+	case "x86_fastcallcc":
+	// 66
+	case "arm_apcscc":
+	// 67
+	case "arm_aapcscc":
+	// 68
+	case "arm_aapcs_vfpcc":
+	// 69
+	case "msp430_intrcc":
+	// 70
+	case "x86_thiscallcc":
+	// 71
+	case "ptx_kernel":
+	// 72
+	case "ptx_device":
+	// 75
+	case "spir_func":
+	// 76
+	case "spir_kernel":
+	// 77
+	case "intel_ocl_bicc":
+	// 78
+	case "x86_64_sysvcc":
+	// 79
+	case "win64cc":
+	// 80
+	case "x86_vectorcallcc":
+	// 81
+	case "hhvmcc":
+	// 82
+	case "hhvm_ccc":
+	// 83
+	case "x86_intrcc":
+	// 84
+	case "avr_intrcc":
+	// 85
+	case "avr_signalcc":
+	// 86
+	case "cc 86":
+	// 87
+	case "amdgpu_vs":
+	// 88
+	case "amdgpu_gs":
+	// 89
+	case "amdgpu_ps":
+	// 90
+	case "amdgpu_cs":
+	// 91
+	case "amdgpu_kernel":
+	// 92
+	case "x86_regcallcc":
+	// 93
+	case "amdgpu_hs":
+	// 94
+	case "cc 94":
+	// 95
+	case "amdgpu_ls":
+	// 96
+	case "amdgpu_es":
+	// 97
+	case "aarch64_vector_pcs":
+	// 98
+	case "aarch64_sve_vector_pcs":
+	// 100
+	case "amdgpu_gfx":
+	}
+}

@@ -86,3 +86,89 @@ func DwarfLangFromString(s string) enum.DwarfLang {
 	}
 	panic(fmt.Errorf("unable to locate DwarfLang enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DwarfLang".
+	switch s {
+	// 1
+	case "DW_LANG_C89":
+	// 2
+	case "DW_LANG_C":
+	// 3
+	case "DW_LANG_Ada83":
+	// 4
+	case "DW_LANG_C_plus_plus":
+	// 5
+	case "DW_LANG_Cobol74":
+	// 6
+	case "DW_LANG_Cobol85":
+	// 7
+	case "DW_LANG_Fortran77":
+	// 8
+	case "DW_LANG_Fortran90":
+	// 9
+	case "DW_LANG_Pascal83":
+	// 10
+	case "DW_LANG_Modula2":
+	// 11
+	case "DW_LANG_Java":
+	// 12
+	case "DW_LANG_C99":
+	// 13
+	case "DW_LANG_Ada95":
+	// 14
+	case "DW_LANG_Fortran95":
+	// 15
+	case "DW_LANG_PLI":
+	// 16
+	case "DW_LANG_ObjC":
+	// 17
+	case "DW_LANG_ObjC_plus_plus":
+	// 18
+	case "DW_LANG_UPC":
+	// 19
+	case "DW_LANG_D":
+	// 20
+	case "DW_LANG_Python":
+	// 21
+	case "DW_LANG_OpenCL":
+	// 22
+	case "DW_LANG_Go":
+	// 23
+	case "DW_LANG_Modula3":
+	// 24
+	case "DW_LANG_Haskell":
+	// 25
+	case "DW_LANG_C_plus_plus_03":
+	// 26
+	case "DW_LANG_C_plus_plus_11":
+	// 27
+	case "DW_LANG_OCaml":
+	// 28
+	case "DW_LANG_Rust":
+	// 29
+	case "DW_LANG_C11":
+	// 30
+	case "DW_LANG_Swift":
+	// 31
+	case "DW_LANG_Julia":
+	// 32
+	case "DW_LANG_Dylan":
+	// 33
+	case "DW_LANG_C_plus_plus_14":
+	// 34
+	case "DW_LANG_Fortran03":
+	// 35
+	case "DW_LANG_Fortran08":
+	// 36
+	case "DW_LANG_RenderScript":
+	// 37
+	case "DW_LANG_BLISS":
+	// 32769
+	case "DW_LANG_Mips_Assembler":
+	// 36439
+	case "DW_LANG_GOOGLE_RenderScript":
+	// 45056
+	case "DW_LANG_BORLAND_Delphi":
+	}
+}

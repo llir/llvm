@@ -1,15 +1,3 @@
-diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLLexer.cpp llvm-13.0.0.src/lib/AsmParser/LLLexer.cpp
---- llvm-12.0.0.src/lib/AsmParser/LLLexer.cpp   2022-07-18 00:31:54.043527030 +0200
-+++ llvm-13.0.0.src/lib/AsmParser/LLLexer.cpp   2022-07-18 00:33:58.263529169 +0200
-@@ -843,6 +848,7 @@
-   TYPEKEYWORD("x86_mmx",   Type::getX86_MMXTy(Context));
-   TYPEKEYWORD("x86_amx",   Type::getX86_AMXTy(Context));
-   TYPEKEYWORD("token",     Type::getTokenTy(Context));
-+  TYPEKEYWORD("ptr", PointerType::getUnqual(Context));
- 
- #undef TYPEKEYWORD
- 
-Only in llvm-12.0.0.src/lib/AsmParser/: LLLexer.h
 diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/AsmParser/LLParser.cpp
 --- llvm-12.0.0.src/lib/AsmParser/LLParser.cpp  2022-07-18 00:31:54.046860362 +0200
 +++ llvm-13.0.0.src/lib/AsmParser/LLParser.cpp  2022-07-18 00:33:58.263529169 +0200
@@ -909,77 +897,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
           convertValIDToValue(Ty, ID, V, PFS, /*IsCall=*/false);
  }
  
-@@ -7432,7 +7256,8 @@
- 
- /// parseCmpXchg
- ///   ::= 'cmpxchg' 'weak'? 'volatile'? TypeAndValue ',' TypeAndValue ','
--///       TypeAndValue 'singlethread'? AtomicOrdering AtomicOrdering
-+///       TypeAndValue 'singlethread'? AtomicOrdering AtomicOrdering ','
-+///       'Align'?
- int LLParser::parseCmpXchg(Instruction *&Inst, PerFunctionState &PFS) {
-   Value *Ptr, *Cmp, *New; LocTy PtrLoc, CmpLoc, NewLoc;
-   bool AteExtraComma = false;
-@@ -7441,6 +7266,7 @@
-   SyncScope::ID SSID = SyncScope::System;
-   bool isVolatile = false;
-   bool isWeak = false;
-+  MaybeAlign Alignment;
- 
-   if (EatIfPresent(lltok::kw_weak))
-     isWeak = true;
-@@ -7454,36 +7280,37 @@
-       parseToken(lltok::comma, "expected ',' after cmpxchg cmp operand") ||
-       parseTypeAndValue(New, NewLoc, PFS) ||
-       parseScopeAndOrdering(true /*Always atomic*/, SSID, SuccessOrdering) ||
--      parseOrdering(FailureOrdering))
-+      parseOrdering(FailureOrdering) ||
-+      parseOptionalCommaAlign(Alignment, AteExtraComma))
-     return true;
- 
--  if (SuccessOrdering == AtomicOrdering::Unordered ||
--      FailureOrdering == AtomicOrdering::Unordered)
--    return tokError("cmpxchg cannot be unordered");
--  if (isStrongerThan(FailureOrdering, SuccessOrdering))
--    return tokError("cmpxchg failure argument shall be no stronger than the "
--                    "success argument");
--  if (FailureOrdering == AtomicOrdering::Release ||
--      FailureOrdering == AtomicOrdering::AcquireRelease)
--    return tokError(
--        "cmpxchg failure ordering cannot include release semantics");
-+  if (!AtomicCmpXchgInst::isValidSuccessOrdering(SuccessOrdering))
-+    return tokError("invalid cmpxchg success ordering");
-+  if (!AtomicCmpXchgInst::isValidFailureOrdering(FailureOrdering))
-+    return tokError("invalid cmpxchg failure ordering");
-   if (!Ptr->getType()->isPointerTy())
-     return error(PtrLoc, "cmpxchg operand must be a pointer");
--  if (cast<PointerType>(Ptr->getType())->getElementType() != Cmp->getType())
-+  if (!cast<PointerType>(Ptr->getType())
-+           ->isOpaqueOrPointeeTypeMatches(Cmp->getType()))
-     return error(CmpLoc, "compare value and pointer type do not match");
--  if (cast<PointerType>(Ptr->getType())->getElementType() != New->getType())
-+  if (!cast<PointerType>(Ptr->getType())
-+           ->isOpaqueOrPointeeTypeMatches(New->getType()))
-     return error(NewLoc, "new value and pointer type do not match");
-+  if (Cmp->getType() != New->getType())
-+    return error(NewLoc, "compare value and new value type do not match");
-   if (!New->getType()->isFirstClassType())
-     return error(NewLoc, "cmpxchg operand must be a first class value");
- 
--  Align Alignment(
-+  const Align DefaultAlignment(
-       PFS.getFunction().getParent()->getDataLayout().getTypeStoreSize(
-           Cmp->getType()));
- 
-   AtomicCmpXchgInst *CXI = new AtomicCmpXchgInst(
--      Ptr, Cmp, New, Alignment, SuccessOrdering, FailureOrdering, SSID);
-+      Ptr, Cmp, New, Alignment.getValueOr(DefaultAlignment), SuccessOrdering,
-+      FailureOrdering, SSID);
-   CXI->setVolatile(isVolatile);
-   CXI->setWeak(isWeak);
-+
-   Inst = CXI;
-   return AteExtraComma ? InstExtraComma : InstNormal;
- }
 @@ -7499,6 +7326,7 @@
    bool isVolatile = false;
    bool IsFP = false;
@@ -1022,19 +939,3 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
  
    SmallVector<Value*, 16> Indices;
    bool AteExtraComma = false;
-@@ -9361,6 +9201,13 @@
-       assert(HasLinkage && "Linkage not optional in summary entry");
-       Lex.Lex();
-       break;
-+    case lltok::kw_visibility:
-+      Lex.Lex();
-+      if (parseToken(lltok::colon, "expected ':'"))
-+        return true;
-+      parseOptionalVisibility(Flag);
-+      GVFlags.Visibility = Flag;
-+      break;
-     case lltok::kw_notEligibleToImport:
-       Lex.Lex();
-       if (parseToken(lltok::colon, "expected ':'") || parseFlag(Flag))
-Only in llvm-12.0.0.src/lib/AsmParser/: LLParser.h
-Only in llvm-12.0.0.src/lib/AsmParser/: LLToken.h

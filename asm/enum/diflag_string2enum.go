@@ -96,3 +96,75 @@ func DIFlagFromString(s string) enum.DIFlag {
 	}
 	panic(fmt.Errorf("unable to locate DIFlag enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "DIFlag".
+	switch s {
+	// 0
+	case "DIFlagZero":
+	// 1
+	case "DIFlagPrivate":
+	// 2
+	case "DIFlagProtected":
+	// 3
+	case "DIFlagPublic":
+	// 4
+	case "DIFlagFwdDecl":
+	// 8
+	case "DIFlagAppleBlock":
+	// 16
+	case "DIFlagReservedBit4":
+	// 32
+	case "DIFlagVirtual":
+	// 36
+	case "DIFlagIndirectVirtualBase":
+	// 64
+	case "DIFlagArtificial":
+	// 128
+	case "DIFlagExplicit":
+	// 256
+	case "DIFlagPrototyped":
+	// 512
+	case "DIFlagObjcClassComplete":
+	// 1024
+	case "DIFlagObjectPointer":
+	// 2048
+	case "DIFlagVector":
+	// 4096
+	case "DIFlagStaticMember":
+	// 8192
+	case "DIFlagLValueReference":
+	// 16384
+	case "DIFlagRValueReference":
+	// 32768
+	case "DIFlagExportSymbols":
+	// 65536
+	case "DIFlagSingleInheritance":
+	// 131072
+	case "DIFlagMultipleInheritance":
+	// 196608
+	case "DIFlagVirtualInheritance":
+	// 262144
+	case "DIFlagIntroducedVirtual":
+	// 524288
+	case "DIFlagBitField":
+	// 1048576
+	case "DIFlagNoReturn":
+	// 4194304
+	case "DIFlagTypePassByValue":
+	// 8388608
+	case "DIFlagTypePassByReference":
+	// 16777216
+	case "DIFlagEnumClass":
+	// 33554432
+	case "DIFlagThunk":
+	// 67108864
+	case "DIFlagNonTrivial":
+	// 134217728
+	case "DIFlagBigEndian":
+	// 268435456
+	case "DIFlagLittleEndian":
+	// 536870912
+	case "DIFlagAllCallsDescribed":
+	}
+}

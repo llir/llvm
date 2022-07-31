@@ -49,3 +49,47 @@ func ParamAttrFromString(s string) enum.ParamAttr {
 	}
 	panic(fmt.Errorf("unable to locate ParamAttr enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "ParamAttr".
+	switch s {
+	// 0
+	case "immarg":
+	// 1
+	case "inalloca":
+	// 2
+	case "inreg":
+	// 3
+	case "nest":
+	// 4
+	case "noalias":
+	// 5
+	case "nocapture":
+	// 6
+	case "nofree":
+	// 7
+	case "nomerge":
+	// 8
+	case "nonnull":
+	// 9
+	case "noundef":
+	// 10
+	case "null_pointer_is_valid":
+	// 11
+	case "readnone":
+	// 12
+	case "readonly":
+	// 13
+	case "returned":
+	// 14
+	case "signext":
+	// 15
+	case "swifterror":
+	// 16
+	case "swiftself":
+	// 17
+	case "writeonly":
+	// 18
+	case "zeroext":
+	}
+}

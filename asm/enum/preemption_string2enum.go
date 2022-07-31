@@ -34,3 +34,17 @@ func PreemptionFromString(s string) enum.Preemption {
 	}
 	panic(fmt.Errorf("unable to locate Preemption enum corresponding to %q", s))
 }
+
+func _(s string) {
+	// Check for duplicate string values in type "Preemption".
+	switch s {
+	// 0
+	case "none":
+	// 1
+	case "dso_local":
+	// 2
+	case "dso_local_equivalent":
+	// 3
+	case "dso_preemptable":
+	}
+}
