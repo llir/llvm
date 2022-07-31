@@ -11,13 +11,13 @@ func _() {
 	_ = x[SelectionKindAny-0]
 	_ = x[SelectionKindExactMatch-1]
 	_ = x[SelectionKindLargest-2]
-	_ = x[SelectionKindNoDuplicates-3]
+	_ = x[SelectionKindNoDeduplicate-3]
 	_ = x[SelectionKindSameSize-4]
 }
 
-const _SelectionKind_name = "anyexactmatchlargestnoduplicatessamesize"
+const _SelectionKind_name = "anyexactmatchlargestnodeduplicatesamesize"
 
-var _SelectionKind_index = [...]uint8{0, 3, 13, 20, 32, 40}
+var _SelectionKind_index = [...]uint8{0, 3, 13, 20, 33, 41}
 
 func (i SelectionKind) String() string {
 	if i >= SelectionKind(len(_SelectionKind_index)-1) {

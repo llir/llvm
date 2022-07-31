@@ -908,11 +908,11 @@ type SelectionKind uint8
 
 // Comdat selection kinds.
 const (
-	SelectionKindAny          SelectionKind = iota // any
-	SelectionKindExactMatch                        // exactmatch
-	SelectionKindLargest                           // largest
-	SelectionKindNoDuplicates                      // noduplicates
-	SelectionKindSameSize                          // samesize
+	SelectionKindAny           SelectionKind = iota // any
+	SelectionKindExactMatch                         // exactmatch
+	SelectionKindLargest                            // largest
+	SelectionKindNoDeduplicate                      // nodeduplicate
+	SelectionKindSameSize                           // samesize
 )
 
 //go:generate stringer -linecomment -type Tail
