@@ -49,37 +49,6 @@ diff -w -i -r -u llvm-12.0.0.src/lib/AsmParser/LLParser.cpp llvm-13.0.0.src/lib/
    ID.Loc = Lex.getLoc();
    switch (Lex.getKind()) {
    default:
-@@ -3389,18 +3142,19 @@
-   case lltok::kw_asm: {
-     // ValID ::= 'asm' SideEffect? AlignStack? IntelDialect? STRINGCONSTANT ','
-     //             STRINGCONSTANT
--    bool HasSideEffect, AlignStack, AsmDialect;
-+    bool HasSideEffect, AlignStack, AsmDialect, CanThrow;
-     Lex.Lex();
-     if (parseOptionalToken(lltok::kw_sideeffect, HasSideEffect) ||
-         parseOptionalToken(lltok::kw_alignstack, AlignStack) ||
-         parseOptionalToken(lltok::kw_inteldialect, AsmDialect) ||
-+        parseOptionalToken(lltok::kw_unwind, CanThrow) ||
-         parseStringConstant(ID.StrVal) ||
-         parseToken(lltok::comma, "expected comma in inline asm expression") ||
-         parseToken(lltok::StringConstant, "expected constraint string"))
-       return true;
-     ID.StrVal2 = Lex.getStrVal();
-     ID.UIntVal = unsigned(HasSideEffect) | (unsigned(AlignStack)<<1) |
--      (unsigned(AsmDialect)<<2);
-+                 (unsigned(AsmDialect) << 2) | (unsigned(CanThrow) << 3);
-     ID.Kind = ValID::t_InlineAsm;
-     return false;
-   }
-@@ -3489,7 +3261,7 @@
- 
-     ValID Fn;
- 
--    if (parseValID(Fn))
-+    if (parseValID(Fn, PFS))
-       return true;
- 
-     if (Fn.Kind != ValID::t_GlobalID && Fn.Kind != ValID::t_GlobalName)
 @@ -5297,6 +5068,36 @@
    return false;
  }
