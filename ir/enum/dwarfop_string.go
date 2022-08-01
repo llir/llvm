@@ -173,50 +173,221 @@ func _() {
 	_ = x[DwarfOpConvert-168]
 	_ = x[DwarfOpReinterpret-169]
 	_ = x[DwarfOpGNUPushTLSAddress-224]
+	_ = x[DwarfOpHPIsValue-225]
+	_ = x[DwarfOpHPFltConst4-226]
+	_ = x[DwarfOpHPFltConst8-227]
+	_ = x[DwarfOpHPModRange-228]
+	_ = x[DwarfOpHPUnmodRange-229]
+	_ = x[DwarfOpHPTLS-230]
+	_ = x[DwarfOpIntelBitPiece-232]
+	_ = x[DwarfOpWASMLocation-237]
+	_ = x[DwarfOpWASMLocationInt-238]
+	_ = x[DwarfOpAppleUninit-240]
 	_ = x[DwarfOpGNUEntryValue-243]
+	_ = x[DwarfOpPGIOmpThreadNum-248]
 	_ = x[DwarfOpGNUAddrIndex-251]
 	_ = x[DwarfOpGNUConstIndex-252]
 	_ = x[DwarfOpLLVMFragment-4096]
 	_ = x[DwarfOpLLVMConvert-4097]
 	_ = x[DwarfOpLLVMTagOffset-4098]
+	_ = x[DwarfOpLLVMEntryValue-4099]
+	_ = x[DwarfOpLLVMImplicitPointer-4100]
+	_ = x[DwarfOpLLVMArg-4101]
 }
 
-const (
-	_DwarfOp_name_0 = "DW_OP_addr"
-	_DwarfOp_name_1 = "DW_OP_deref"
-	_DwarfOp_name_2 = "DW_OP_const1uDW_OP_const1sDW_OP_const2uDW_OP_const2sDW_OP_const4uDW_OP_const4sDW_OP_const8uDW_OP_const8sDW_OP_constuDW_OP_constsDW_OP_dupDW_OP_dropDW_OP_overDW_OP_pickDW_OP_swapDW_OP_rotDW_OP_xderefDW_OP_absDW_OP_andDW_OP_divDW_OP_minusDW_OP_modDW_OP_mulDW_OP_negDW_OP_notDW_OP_orDW_OP_plusDW_OP_plus_uconstDW_OP_shlDW_OP_shrDW_OP_shraDW_OP_xorDW_OP_braDW_OP_eqDW_OP_geDW_OP_gtDW_OP_leDW_OP_ltDW_OP_neDW_OP_skipDW_OP_lit0DW_OP_lit1DW_OP_lit2DW_OP_lit3DW_OP_lit4DW_OP_lit5DW_OP_lit6DW_OP_lit7DW_OP_lit8DW_OP_lit9DW_OP_lit10DW_OP_lit11DW_OP_lit12DW_OP_lit13DW_OP_lit14DW_OP_lit15DW_OP_lit16DW_OP_lit17DW_OP_lit18DW_OP_lit19DW_OP_lit20DW_OP_lit21DW_OP_lit22DW_OP_lit23DW_OP_lit24DW_OP_lit25DW_OP_lit26DW_OP_lit27DW_OP_lit28DW_OP_lit29DW_OP_lit30DW_OP_lit31DW_OP_reg0DW_OP_reg1DW_OP_reg2DW_OP_reg3DW_OP_reg4DW_OP_reg5DW_OP_reg6DW_OP_reg7DW_OP_reg8DW_OP_reg9DW_OP_reg10DW_OP_reg11DW_OP_reg12DW_OP_reg13DW_OP_reg14DW_OP_reg15DW_OP_reg16DW_OP_reg17DW_OP_reg18DW_OP_reg19DW_OP_reg20DW_OP_reg21DW_OP_reg22DW_OP_reg23DW_OP_reg24DW_OP_reg25DW_OP_reg26DW_OP_reg27DW_OP_reg28DW_OP_reg29DW_OP_reg30DW_OP_reg31DW_OP_breg0DW_OP_breg1DW_OP_breg2DW_OP_breg3DW_OP_breg4DW_OP_breg5DW_OP_breg6DW_OP_breg7DW_OP_breg8DW_OP_breg9DW_OP_breg10DW_OP_breg11DW_OP_breg12DW_OP_breg13DW_OP_breg14DW_OP_breg15DW_OP_breg16DW_OP_breg17DW_OP_breg18DW_OP_breg19DW_OP_breg20DW_OP_breg21DW_OP_breg22DW_OP_breg23DW_OP_breg24DW_OP_breg25DW_OP_breg26DW_OP_breg27DW_OP_breg28DW_OP_breg29DW_OP_breg30DW_OP_breg31DW_OP_regxDW_OP_fbregDW_OP_bregxDW_OP_pieceDW_OP_deref_sizeDW_OP_xderef_sizeDW_OP_nopDW_OP_push_object_addressDW_OP_call2DW_OP_call4DW_OP_call_refDW_OP_form_tls_addressDW_OP_call_frame_cfaDW_OP_bit_pieceDW_OP_implicit_valueDW_OP_stack_valueDW_OP_implicit_pointerDW_OP_addrxDW_OP_constxDW_OP_entry_valueDW_OP_const_typeDW_OP_regval_typeDW_OP_deref_typeDW_OP_xderef_typeDW_OP_convertDW_OP_reinterpret"
-	_DwarfOp_name_3 = "DW_OP_GNU_push_tls_address"
-	_DwarfOp_name_4 = "DW_OP_GNU_entry_value"
-	_DwarfOp_name_5 = "DW_OP_GNU_addr_indexDW_OP_GNU_const_index"
-	_DwarfOp_name_6 = "DW_OP_LLVM_fragmentDW_OP_LLVM_convertDW_OP_LLVM_tag_offset"
-)
+const _DwarfOp_name = "DW_OP_addrDW_OP_derefDW_OP_const1uDW_OP_const1sDW_OP_const2uDW_OP_const2sDW_OP_const4uDW_OP_const4sDW_OP_const8uDW_OP_const8sDW_OP_constuDW_OP_constsDW_OP_dupDW_OP_dropDW_OP_overDW_OP_pickDW_OP_swapDW_OP_rotDW_OP_xderefDW_OP_absDW_OP_andDW_OP_divDW_OP_minusDW_OP_modDW_OP_mulDW_OP_negDW_OP_notDW_OP_orDW_OP_plusDW_OP_plus_uconstDW_OP_shlDW_OP_shrDW_OP_shraDW_OP_xorDW_OP_braDW_OP_eqDW_OP_geDW_OP_gtDW_OP_leDW_OP_ltDW_OP_neDW_OP_skipDW_OP_lit0DW_OP_lit1DW_OP_lit2DW_OP_lit3DW_OP_lit4DW_OP_lit5DW_OP_lit6DW_OP_lit7DW_OP_lit8DW_OP_lit9DW_OP_lit10DW_OP_lit11DW_OP_lit12DW_OP_lit13DW_OP_lit14DW_OP_lit15DW_OP_lit16DW_OP_lit17DW_OP_lit18DW_OP_lit19DW_OP_lit20DW_OP_lit21DW_OP_lit22DW_OP_lit23DW_OP_lit24DW_OP_lit25DW_OP_lit26DW_OP_lit27DW_OP_lit28DW_OP_lit29DW_OP_lit30DW_OP_lit31DW_OP_reg0DW_OP_reg1DW_OP_reg2DW_OP_reg3DW_OP_reg4DW_OP_reg5DW_OP_reg6DW_OP_reg7DW_OP_reg8DW_OP_reg9DW_OP_reg10DW_OP_reg11DW_OP_reg12DW_OP_reg13DW_OP_reg14DW_OP_reg15DW_OP_reg16DW_OP_reg17DW_OP_reg18DW_OP_reg19DW_OP_reg20DW_OP_reg21DW_OP_reg22DW_OP_reg23DW_OP_reg24DW_OP_reg25DW_OP_reg26DW_OP_reg27DW_OP_reg28DW_OP_reg29DW_OP_reg30DW_OP_reg31DW_OP_breg0DW_OP_breg1DW_OP_breg2DW_OP_breg3DW_OP_breg4DW_OP_breg5DW_OP_breg6DW_OP_breg7DW_OP_breg8DW_OP_breg9DW_OP_breg10DW_OP_breg11DW_OP_breg12DW_OP_breg13DW_OP_breg14DW_OP_breg15DW_OP_breg16DW_OP_breg17DW_OP_breg18DW_OP_breg19DW_OP_breg20DW_OP_breg21DW_OP_breg22DW_OP_breg23DW_OP_breg24DW_OP_breg25DW_OP_breg26DW_OP_breg27DW_OP_breg28DW_OP_breg29DW_OP_breg30DW_OP_breg31DW_OP_regxDW_OP_fbregDW_OP_bregxDW_OP_pieceDW_OP_deref_sizeDW_OP_xderef_sizeDW_OP_nopDW_OP_push_object_addressDW_OP_call2DW_OP_call4DW_OP_call_refDW_OP_form_tls_addressDW_OP_call_frame_cfaDW_OP_bit_pieceDW_OP_implicit_valueDW_OP_stack_valueDW_OP_implicit_pointerDW_OP_addrxDW_OP_constxDW_OP_entry_valueDW_OP_const_typeDW_OP_regval_typeDW_OP_deref_typeDW_OP_xderef_typeDW_OP_convertDW_OP_reinterpretDW_OP_GNU_push_tls_addressDW_OP_HP_is_valueDW_OP_HP_fltconst4DW_OP_HP_fltconst8DW_OP_HP_mod_rangeDW_OP_HP_unmod_rangeDW_OP_HP_tlsDW_OP_INTEL_bit_pieceDW_OP_WASM_locationDW_OP_WASM_location_intDW_OP_APPLE_uninitDW_OP_GNU_entry_valueDW_OP_PGI_omp_thread_numDW_OP_GNU_addr_indexDW_OP_GNU_const_indexDW_OP_LLVM_fragmentDW_OP_LLVM_convertDW_OP_LLVM_tag_offsetDW_OP_LLVM_entry_valueDW_OP_LLVM_implicit_pointerDW_OP_LLVM_arg"
 
-var (
-	_DwarfOp_index_2 = [...]uint16{0, 13, 26, 39, 52, 65, 78, 91, 104, 116, 128, 137, 147, 157, 167, 177, 186, 198, 207, 216, 225, 236, 245, 254, 263, 272, 280, 290, 307, 316, 325, 335, 344, 353, 361, 369, 377, 385, 393, 401, 411, 421, 431, 441, 451, 461, 471, 481, 491, 501, 511, 522, 533, 544, 555, 566, 577, 588, 599, 610, 621, 632, 643, 654, 665, 676, 687, 698, 709, 720, 731, 742, 753, 763, 773, 783, 793, 803, 813, 823, 833, 843, 853, 864, 875, 886, 897, 908, 919, 930, 941, 952, 963, 974, 985, 996, 1007, 1018, 1029, 1040, 1051, 1062, 1073, 1084, 1095, 1106, 1117, 1128, 1139, 1150, 1161, 1172, 1183, 1194, 1205, 1217, 1229, 1241, 1253, 1265, 1277, 1289, 1301, 1313, 1325, 1337, 1349, 1361, 1373, 1385, 1397, 1409, 1421, 1433, 1445, 1457, 1469, 1479, 1490, 1501, 1512, 1528, 1545, 1554, 1579, 1590, 1601, 1615, 1637, 1657, 1672, 1692, 1709, 1731, 1742, 1754, 1771, 1787, 1804, 1820, 1837, 1850, 1867}
-	_DwarfOp_index_5 = [...]uint8{0, 20, 41}
-	_DwarfOp_index_6 = [...]uint8{0, 19, 37, 58}
-)
+var _DwarfOp_map = map[DwarfOp]string{
+	3:    _DwarfOp_name[0:10],
+	6:    _DwarfOp_name[10:21],
+	8:    _DwarfOp_name[21:34],
+	9:    _DwarfOp_name[34:47],
+	10:   _DwarfOp_name[47:60],
+	11:   _DwarfOp_name[60:73],
+	12:   _DwarfOp_name[73:86],
+	13:   _DwarfOp_name[86:99],
+	14:   _DwarfOp_name[99:112],
+	15:   _DwarfOp_name[112:125],
+	16:   _DwarfOp_name[125:137],
+	17:   _DwarfOp_name[137:149],
+	18:   _DwarfOp_name[149:158],
+	19:   _DwarfOp_name[158:168],
+	20:   _DwarfOp_name[168:178],
+	21:   _DwarfOp_name[178:188],
+	22:   _DwarfOp_name[188:198],
+	23:   _DwarfOp_name[198:207],
+	24:   _DwarfOp_name[207:219],
+	25:   _DwarfOp_name[219:228],
+	26:   _DwarfOp_name[228:237],
+	27:   _DwarfOp_name[237:246],
+	28:   _DwarfOp_name[246:257],
+	29:   _DwarfOp_name[257:266],
+	30:   _DwarfOp_name[266:275],
+	31:   _DwarfOp_name[275:284],
+	32:   _DwarfOp_name[284:293],
+	33:   _DwarfOp_name[293:301],
+	34:   _DwarfOp_name[301:311],
+	35:   _DwarfOp_name[311:328],
+	36:   _DwarfOp_name[328:337],
+	37:   _DwarfOp_name[337:346],
+	38:   _DwarfOp_name[346:356],
+	39:   _DwarfOp_name[356:365],
+	40:   _DwarfOp_name[365:374],
+	41:   _DwarfOp_name[374:382],
+	42:   _DwarfOp_name[382:390],
+	43:   _DwarfOp_name[390:398],
+	44:   _DwarfOp_name[398:406],
+	45:   _DwarfOp_name[406:414],
+	46:   _DwarfOp_name[414:422],
+	47:   _DwarfOp_name[422:432],
+	48:   _DwarfOp_name[432:442],
+	49:   _DwarfOp_name[442:452],
+	50:   _DwarfOp_name[452:462],
+	51:   _DwarfOp_name[462:472],
+	52:   _DwarfOp_name[472:482],
+	53:   _DwarfOp_name[482:492],
+	54:   _DwarfOp_name[492:502],
+	55:   _DwarfOp_name[502:512],
+	56:   _DwarfOp_name[512:522],
+	57:   _DwarfOp_name[522:532],
+	58:   _DwarfOp_name[532:543],
+	59:   _DwarfOp_name[543:554],
+	60:   _DwarfOp_name[554:565],
+	61:   _DwarfOp_name[565:576],
+	62:   _DwarfOp_name[576:587],
+	63:   _DwarfOp_name[587:598],
+	64:   _DwarfOp_name[598:609],
+	65:   _DwarfOp_name[609:620],
+	66:   _DwarfOp_name[620:631],
+	67:   _DwarfOp_name[631:642],
+	68:   _DwarfOp_name[642:653],
+	69:   _DwarfOp_name[653:664],
+	70:   _DwarfOp_name[664:675],
+	71:   _DwarfOp_name[675:686],
+	72:   _DwarfOp_name[686:697],
+	73:   _DwarfOp_name[697:708],
+	74:   _DwarfOp_name[708:719],
+	75:   _DwarfOp_name[719:730],
+	76:   _DwarfOp_name[730:741],
+	77:   _DwarfOp_name[741:752],
+	78:   _DwarfOp_name[752:763],
+	79:   _DwarfOp_name[763:774],
+	80:   _DwarfOp_name[774:784],
+	81:   _DwarfOp_name[784:794],
+	82:   _DwarfOp_name[794:804],
+	83:   _DwarfOp_name[804:814],
+	84:   _DwarfOp_name[814:824],
+	85:   _DwarfOp_name[824:834],
+	86:   _DwarfOp_name[834:844],
+	87:   _DwarfOp_name[844:854],
+	88:   _DwarfOp_name[854:864],
+	89:   _DwarfOp_name[864:874],
+	90:   _DwarfOp_name[874:885],
+	91:   _DwarfOp_name[885:896],
+	92:   _DwarfOp_name[896:907],
+	93:   _DwarfOp_name[907:918],
+	94:   _DwarfOp_name[918:929],
+	95:   _DwarfOp_name[929:940],
+	96:   _DwarfOp_name[940:951],
+	97:   _DwarfOp_name[951:962],
+	98:   _DwarfOp_name[962:973],
+	99:   _DwarfOp_name[973:984],
+	100:  _DwarfOp_name[984:995],
+	101:  _DwarfOp_name[995:1006],
+	102:  _DwarfOp_name[1006:1017],
+	103:  _DwarfOp_name[1017:1028],
+	104:  _DwarfOp_name[1028:1039],
+	105:  _DwarfOp_name[1039:1050],
+	106:  _DwarfOp_name[1050:1061],
+	107:  _DwarfOp_name[1061:1072],
+	108:  _DwarfOp_name[1072:1083],
+	109:  _DwarfOp_name[1083:1094],
+	110:  _DwarfOp_name[1094:1105],
+	111:  _DwarfOp_name[1105:1116],
+	112:  _DwarfOp_name[1116:1127],
+	113:  _DwarfOp_name[1127:1138],
+	114:  _DwarfOp_name[1138:1149],
+	115:  _DwarfOp_name[1149:1160],
+	116:  _DwarfOp_name[1160:1171],
+	117:  _DwarfOp_name[1171:1182],
+	118:  _DwarfOp_name[1182:1193],
+	119:  _DwarfOp_name[1193:1204],
+	120:  _DwarfOp_name[1204:1215],
+	121:  _DwarfOp_name[1215:1226],
+	122:  _DwarfOp_name[1226:1238],
+	123:  _DwarfOp_name[1238:1250],
+	124:  _DwarfOp_name[1250:1262],
+	125:  _DwarfOp_name[1262:1274],
+	126:  _DwarfOp_name[1274:1286],
+	127:  _DwarfOp_name[1286:1298],
+	128:  _DwarfOp_name[1298:1310],
+	129:  _DwarfOp_name[1310:1322],
+	130:  _DwarfOp_name[1322:1334],
+	131:  _DwarfOp_name[1334:1346],
+	132:  _DwarfOp_name[1346:1358],
+	133:  _DwarfOp_name[1358:1370],
+	134:  _DwarfOp_name[1370:1382],
+	135:  _DwarfOp_name[1382:1394],
+	136:  _DwarfOp_name[1394:1406],
+	137:  _DwarfOp_name[1406:1418],
+	138:  _DwarfOp_name[1418:1430],
+	139:  _DwarfOp_name[1430:1442],
+	140:  _DwarfOp_name[1442:1454],
+	141:  _DwarfOp_name[1454:1466],
+	142:  _DwarfOp_name[1466:1478],
+	143:  _DwarfOp_name[1478:1490],
+	144:  _DwarfOp_name[1490:1500],
+	145:  _DwarfOp_name[1500:1511],
+	146:  _DwarfOp_name[1511:1522],
+	147:  _DwarfOp_name[1522:1533],
+	148:  _DwarfOp_name[1533:1549],
+	149:  _DwarfOp_name[1549:1566],
+	150:  _DwarfOp_name[1566:1575],
+	151:  _DwarfOp_name[1575:1600],
+	152:  _DwarfOp_name[1600:1611],
+	153:  _DwarfOp_name[1611:1622],
+	154:  _DwarfOp_name[1622:1636],
+	155:  _DwarfOp_name[1636:1658],
+	156:  _DwarfOp_name[1658:1678],
+	157:  _DwarfOp_name[1678:1693],
+	158:  _DwarfOp_name[1693:1713],
+	159:  _DwarfOp_name[1713:1730],
+	160:  _DwarfOp_name[1730:1752],
+	161:  _DwarfOp_name[1752:1763],
+	162:  _DwarfOp_name[1763:1775],
+	163:  _DwarfOp_name[1775:1792],
+	164:  _DwarfOp_name[1792:1808],
+	165:  _DwarfOp_name[1808:1825],
+	166:  _DwarfOp_name[1825:1841],
+	167:  _DwarfOp_name[1841:1858],
+	168:  _DwarfOp_name[1858:1871],
+	169:  _DwarfOp_name[1871:1888],
+	224:  _DwarfOp_name[1888:1914],
+	225:  _DwarfOp_name[1914:1931],
+	226:  _DwarfOp_name[1931:1949],
+	227:  _DwarfOp_name[1949:1967],
+	228:  _DwarfOp_name[1967:1985],
+	229:  _DwarfOp_name[1985:2005],
+	230:  _DwarfOp_name[2005:2017],
+	232:  _DwarfOp_name[2017:2038],
+	237:  _DwarfOp_name[2038:2057],
+	238:  _DwarfOp_name[2057:2080],
+	240:  _DwarfOp_name[2080:2098],
+	243:  _DwarfOp_name[2098:2119],
+	248:  _DwarfOp_name[2119:2143],
+	251:  _DwarfOp_name[2143:2163],
+	252:  _DwarfOp_name[2163:2184],
+	4096: _DwarfOp_name[2184:2203],
+	4097: _DwarfOp_name[2203:2221],
+	4098: _DwarfOp_name[2221:2242],
+	4099: _DwarfOp_name[2242:2264],
+	4100: _DwarfOp_name[2264:2291],
+	4101: _DwarfOp_name[2291:2305],
+}
 
 func (i DwarfOp) String() string {
-	switch {
-	case i == 3:
-		return _DwarfOp_name_0
-	case i == 6:
-		return _DwarfOp_name_1
-	case 8 <= i && i <= 169:
-		i -= 8
-		return _DwarfOp_name_2[_DwarfOp_index_2[i]:_DwarfOp_index_2[i+1]]
-	case i == 224:
-		return _DwarfOp_name_3
-	case i == 243:
-		return _DwarfOp_name_4
-	case 251 <= i && i <= 252:
-		i -= 251
-		return _DwarfOp_name_5[_DwarfOp_index_5[i]:_DwarfOp_index_5[i+1]]
-	case 4096 <= i && i <= 4098:
-		i -= 4096
-		return _DwarfOp_name_6[_DwarfOp_index_6[i]:_DwarfOp_index_6[i+1]]
-	default:
-		return "DwarfOp(" + strconv.FormatInt(int64(i), 10) + ")"
+	if str, ok := _DwarfOp_map[i]; ok {
+		return str
 	}
+	return "DwarfOp(" + strconv.FormatInt(int64(i), 10) + ")"
 }

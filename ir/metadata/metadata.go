@@ -8,6 +8,7 @@ import (
 
 	"github.com/llir/llvm/internal/enc"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 // TODO: remove Null if possible.
@@ -209,4 +210,34 @@ func (i MetadataID) ID() int64 {
 // SetID sets the ID of the metadata ID.
 func (i *MetadataID) SetID(id int64) {
 	*i = MetadataID(id)
+}
+
+// --- [ DIArgList ] -----------------------------------------------------------
+
+// DIArgList is a metadata node containing a list of function local values.
+type DIArgList struct {
+	Fields []value.Value
+}
+
+// String returns the LLVM syntax representation of the DIArgList metadata
+// node.
+func (md *DIArgList) String() string {
+	return md.LLString()
+}
+
+// LLString returns the LLVM syntax representation of the DIArgList metadata
+// node.
+//
+// '!DIArgList' '(' Fields=(DIArgListField separator ',')* ')'
+func (md *DIArgList) LLString() string {
+	buf := &strings.Builder{}
+	buf.WriteString("!DIArgList(")
+	for i, field := range md.Fields {
+		if i != 0 {
+			buf.WriteString(", ")
+		}
+		buf.WriteString(field.String())
+	}
+	buf.WriteString(")")
+	return buf.String()
 }

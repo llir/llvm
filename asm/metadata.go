@@ -100,6 +100,8 @@ func (fgen *funcGen) irMetadata(old ast.Metadata) (metadata.Metadata, error) {
 	switch old := old.(type) {
 	case *ast.TypeValue:
 		return fgen.irTypeValue(*old)
+	case *ast.DIArgList:
+		return fgen.irDIArgList(old)
 	default:
 		return fgen.gen.irMetadata(old)
 	}
@@ -144,6 +146,22 @@ func (gen *generator) irMetadataNode(old ast.MetadataNode) (metadata.Node, error
 	default:
 		panic(fmt.Errorf("support for metadata node %T not yet implemented", old))
 	}
+}
+
+// --- [ DIArgList ] ---------------------------------------------------------
+
+// irDIArgList returns the IR DIArgList metadata node corresponding to the given
+// AST DIArgList metadata node.
+func (fgen *funcGen) irDIArgList(old *ast.DIArgList) (*metadata.DIArgList, error) {
+	md := &metadata.DIArgList{}
+	for _, oldField := range old.Fields() {
+		field, err := fgen.irTypeValue(oldField)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		md.Fields = append(md.Fields, field)
+	}
+	return md, nil
 }
 
 // ### [ Helper functions ] ####################################################
