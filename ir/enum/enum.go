@@ -373,7 +373,8 @@ type DwarfOp int64
 
 // DWARF expression operators.
 //
-// From include/llvm/BinaryFormat/Dwarf.def
+// From include/llvm/BinaryFormat/Dwarf.def (LLVM 13.0)
+// From include/llvm/BinaryFormat/Dwarf.h (LLVM 13.0)
 const (
 	// DWARF v2.
 	DwarfOpAddr       DwarfOp = 0x03 // DW_OP_addr
@@ -545,13 +546,31 @@ const (
 	DwarfOpReinterpret     DwarfOp = 0xA9 // DW_OP_reinterpret
 	// Vendor extensions.
 	DwarfOpGNUPushTLSAddress DwarfOp = 0xE0 // DW_OP_GNU_push_tls_address
-	DwarfOpGNUEntryValue     DwarfOp = 0xF3 // DW_OP_GNU_entry_value
-	DwarfOpGNUAddrIndex      DwarfOp = 0xFB // DW_OP_GNU_addr_index
-	DwarfOpGNUConstIndex     DwarfOp = 0xFC // DW_OP_GNU_const_index
+	DwarfOpHPIsValue         DwarfOp = 0xE1 // DW_OP_HP_is_value
+	DwarfOpHPFltConst4       DwarfOp = 0xE2 // DW_OP_HP_fltconst4
+	DwarfOpHPFltConst8       DwarfOp = 0xE3 // DW_OP_HP_fltconst8
+	DwarfOpHPModRange        DwarfOp = 0xE4 // DW_OP_HP_mod_range
+	DwarfOpHPUnmodRange      DwarfOp = 0xE5 // DW_OP_HP_unmod_range
+	DwarfOpHPTLS             DwarfOp = 0xE6 // DW_OP_HP_tls
+	DwarfOpIntelBitPiece     DwarfOp = 0xE8 // DW_OP_INTEL_bit_piece
+	// Extensions for WebAssembly.
+	DwarfOpWASMLocation    DwarfOp = 0xED // DW_OP_WASM_location
+	DwarfOpWASMLocationInt DwarfOp = 0xEE // DW_OP_WASM_location_int
+	// Historic and not implemented in LLVM.
+	DwarfOpAppleUninit DwarfOp = 0xF0 // DW_OP_APPLE_uninit
+	// The GNU entry value extension.
+	DwarfOpGNUEntryValue   DwarfOp = 0xF3 // DW_OP_GNU_entry_value
+	DwarfOpPGIOmpThreadNum DwarfOp = 0xF8 // DW_OP_PGI_omp_thread_num
+	// Extensions for Fission proposal.
+	DwarfOpGNUAddrIndex  DwarfOp = 0xFB // DW_OP_GNU_addr_index
+	DwarfOpGNUConstIndex DwarfOp = 0xFC // DW_OP_GNU_const_index
 	// Only used in LLVM metadata.
-	DwarfOpLLVMFragment  DwarfOp = 0x1000 // DW_OP_LLVM_fragment
-	DwarfOpLLVMConvert   DwarfOp = 0x1001 // DW_OP_LLVM_convert
-	DwarfOpLLVMTagOffset DwarfOp = 0x1002 // DW_OP_LLVM_tag_offset
+	DwarfOpLLVMFragment        DwarfOp = 0x1000 // DW_OP_LLVM_fragment
+	DwarfOpLLVMConvert         DwarfOp = 0x1001 // DW_OP_LLVM_convert
+	DwarfOpLLVMTagOffset       DwarfOp = 0x1002 // DW_OP_LLVM_tag_offset
+	DwarfOpLLVMEntryValue      DwarfOp = 0x1003 // DW_OP_LLVM_entry_value
+	DwarfOpLLVMImplicitPointer DwarfOp = 0x1004 // DW_OP_LLVM_implicit_pointer
+	DwarfOpLLVMArg             DwarfOp = 0x1005 // DW_OP_LLVM_arg
 )
 
 //go:generate stringer -linecomment -type DwarfTag

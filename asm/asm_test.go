@@ -53,6 +53,9 @@ func TestParseFile(t *testing.T) {
 		// Basic block with same name as specialized metadata field (issue #49).
 		{path: "../testdata/llvm/test/Analysis/ScalarEvolution/2008-02-15-UMax.ll"},
 
+		// Specialized metadata.
+		{path: "../testdata/llvm/test/DebugInfo/Generic/debug_value_list.ll"},
+
 		// Floating-point test cases (issue #31).
 		{path: "../testdata/llvm/test/Analysis/CostModel/AMDGPU/fdiv.ll"},
 

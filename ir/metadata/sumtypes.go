@@ -134,6 +134,7 @@ func (UintLit) IsDIExpressionField() {}
 //    *metadata.Tuple            // https://pkg.go.dev/github.com/llir/llvm/ir/metadata#Tuple
 //    metadata.Definition        // https://pkg.go.dev/github.com/llir/llvm/ir/metadata#Definition
 //    metadata.SpecializedNode   // https://pkg.go.dev/github.com/llir/llvm/ir/metadata#SpecializedNode
+//    *metadata.DIArgList        // https://pkg.go.dev/github.com/llir/llvm/ir/metadata#DIArgList
 type Metadata interface {
 	// String returns the LLVM syntax representation of the metadata.
 	fmt.Stringer
