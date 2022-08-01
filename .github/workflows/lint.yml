@@ -12,8 +12,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Run linters
       run: |
-        GO111MODULE=off go get golang.org/x/lint/golint
-        GO111MODULE=off go get github.com/mgechev/revive
+        go install golang.org/x/lint/golint@latest
+        go install github.com/mgechev/revive@latest
         echo "### revive"
         $(go env GOPATH)/bin/revive -config .revive.toml ./...
         echo "### golint"
