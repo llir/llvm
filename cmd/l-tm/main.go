@@ -34,17 +34,17 @@ func main() {
 	}
 
 	for _, llPath := range flag.Args() {
-		fmt.Printf("=== [ %v ] =======================\n", llPath)
-		fmt.Println()
+		fmt.Fprintf(os.Stderr, "=== [ %v ] =======================\n", llPath)
+		fmt.Fprintln(os.Stderr)
 		fileStart := time.Now()
 		m, err := asm.ParseFile(llPath)
 		if err != nil {
 			log.Fatalf("%q: %+v", llPath, err)
 		}
-		fmt.Printf("total time for file %q: %v\n", llPath, time.Since(fileStart))
+		fmt.Fprintf(os.Stderr, "total time for file %q: %v\n", llPath, time.Since(fileStart))
 		_ = m
 		if *verbose {
-			fmt.Println(m)
+			fmt.Fprintln(os.Stdout, m)
 		}
 		//pretty.Println(m)
 	}

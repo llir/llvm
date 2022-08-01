@@ -464,6 +464,18 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 			panic(err.Error())
 		}
 		return ir.Preallocated{Typ: typ}
+	case *ast.VScaleRange:
+		min := int(uintLit(old.Min()))
+		if max, ok := old.Max(); ok {
+			return ir.VectorScaleRange{
+				Min: min,
+				Max: int(uintLit(max)),
+			}
+		}
+		return ir.VectorScaleRange{
+			Min: -1,  // NOTE: using -1 to denote omitted value.
+			Max: min, // NOTE: Min denotes Max if Max is not present.
+		}
 	default:
 		panic(fmt.Errorf("support for function attribute %T not yet implemented", old))
 	}
@@ -602,6 +614,14 @@ func (gen *generator) irParamAttribute(old ast.ParamAttribute) (ir.ParamAttribut
 		}, nil
 	case *ast.Align:
 		return ir.Align(uintLit(old.N())), nil
+	case *ast.AlignStack:
+		return ir.AlignStack(uintLit(old.N())), nil
+	case *ast.ByRefAttr:
+		typ, err := gen.irType(old.Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return ir.ByRef{Typ: typ}, nil
 	case *ast.Byval:
 		if t, ok := old.Typ(); ok {
 			typ, err := gen.irType(t)
@@ -618,6 +638,18 @@ func (gen *generator) irParamAttribute(old ast.ParamAttribute) (ir.ParamAttribut
 			N:           uintLit(old.N()),
 			DerefOrNull: true,
 		}, nil
+	case *ast.ElementType:
+		typ, err := gen.irType(old.Typ())
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return ir.ElementType{Typ: typ}, nil
+	case *ast.InAlloca:
+		typ, err := gen.irType(old.Typ())
+		if err != nil {
+			return nil, err
+		}
+		return ir.InAlloca{Typ: typ}, nil
 	case *ast.ParamAttr:
 		return asmenum.ParamAttrFromString(old.Text()), nil
 	case *ast.Preallocated:
