@@ -100,6 +100,9 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Bitcode/calling-conventions.3.2.ll"},
 		{path: "../testdata/llvm/test/CodeGen/X86/tailccfp.ll"},
 
+		// Parameter attributes.
+		{path: "../testdata/llvm/test/Bitcode/attributes.ll"},
+
 		// Parameter attributes (nofree).
 		{path: "../testdata/llvm/test/Transforms/Attributor/nonnull.ll"},
 

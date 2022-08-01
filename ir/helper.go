@@ -96,6 +96,18 @@ func (a AttrString) String() string {
 	return quote(string(a))
 }
 
+// ByRef is a byref parameter attribute.
+type ByRef struct {
+	// Parameter type.
+	Typ types.Type
+}
+
+// String returns the string representation of the byref parameter attribute.
+func (b ByRef) String() string {
+	// 'byref' '(' Typ=Type ')'
+	return fmt.Sprintf("byref(%s)", b.Typ)
+}
+
 // Byval is a byval parameter attribute.
 type Byval struct {
 	// (optional) Parameter type.
@@ -133,6 +145,29 @@ func (d Dereferenceable) String() string {
 	return fmt.Sprintf("dereferenceable(%d)", d.N)
 }
 
+// ElementType is a elementtype parameter attribute.
+type ElementType struct {
+	// Parameter type.
+	Typ types.Type
+}
+
+// String returns the string representation of the elementtype parameter
+// attribute.
+func (b ElementType) String() string {
+	// 'elementtype' '(' Typ=Type ')'
+	return fmt.Sprintf("elementtype(%s)", b.Typ)
+}
+
+// InAlloca is a param attribute.
+type InAlloca struct {
+	Typ types.Type
+}
+
+// String returns a string representation of the InAlloca attribute.
+func (p InAlloca) String() string {
+	return fmt.Sprintf("inalloca(%v)", p.Typ)
+}
+
 // Preallocated is a func/param attribute.
 type Preallocated struct {
 	Typ types.Type
@@ -140,7 +175,24 @@ type Preallocated struct {
 
 // String returns a string representation of the Preallocated attribute.
 func (p Preallocated) String() string {
-	return fmt.Sprintf("preallocated (%v)", p.Typ)
+	return fmt.Sprintf("preallocated(%v)", p.Typ)
+}
+
+// VectorScaleRange denotes the min/max vector scale value of a given function. If
+// the second parameter is omitted, Min will be -1.
+type VectorScaleRange struct {
+	// Min value.
+	Min int
+	// Max value.
+	Max int
+}
+
+// String returns the string representation of the vscale_range attribute.
+func (a VectorScaleRange) String() string {
+	if a.Min == -1 {
+		return fmt.Sprintf("vscale_range(%d)", a.Max)
+	}
+	return fmt.Sprintf("vscale_range(%d, %d)", a.Min, a.Max)
 }
 
 // TODO: check if *ir.InstLandingPad is a valid ExceptionPad.
