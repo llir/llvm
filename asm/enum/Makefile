@@ -8,6 +8,7 @@ ${TOOLS_DIR}/string2enum:
 	make -C ${TOOLS_DIR}
 
 gen: ${TOOLS_DIR}/string2enum
+	${TOOLS_DIR}/string2enum -linecomment -type AllocKind ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type AtomicOp ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type AtomicOrdering ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type CallingConv ${ENUM_DIR}

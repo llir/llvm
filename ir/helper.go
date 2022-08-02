@@ -31,6 +31,29 @@ func (align AlignStack) String() string {
 	return fmt.Sprintf("alignstack(%d)", uint64(align))
 }
 
+// AllocKind is a function attribute.
+type AllocKind struct {
+	// Kind specifies the behaviour of the allocation function.
+	Kind enum.AllocKind
+}
+
+// String returns the string representation of the allockind attribute.
+func (a AllocKind) String() string {
+	return fmt.Sprintf("allockind(%s)", allocKindString(a.Kind))
+}
+
+// allocKindString returns the string representation of the given alloc kind
+// bitfield.
+func allocKindString(allocKinds enum.AllocKind) string {
+	var ss []string
+	for mask := enum.AllocKindFirst; mask <= enum.AllocKindLast; mask <<= 1 {
+		if allocKinds&mask != 0 {
+			ss = append(ss, mask.String())
+		}
+	}
+	return strings.Join(ss, ",")
+}
+
 // AllocSize is an attribute for functions like malloc. If the second parameter
 // is omitted, NElemsIndex will be -1.
 type AllocSize struct {
