@@ -22,6 +22,7 @@ go get -u github.com/llir/llvm/...
 
 Map between `llir/llvm` tagged releases and LLVM release versions.
 
+* [llir/llvm v0.3.6](https://github.com/llir/llvm/tree/v0.3.6): LLVM 14.0
 * [llir/llvm v0.3.5](https://github.com/llir/llvm/tree/v0.3.5): LLVM 13.0
 * [llir/llvm v0.3.4](https://github.com/llir/llvm/tree/v0.3.4): LLVM 12.0
 * [llir/llvm v0.3.3](https://github.com/llir/llvm/tree/v0.3.3): LLVM 11.0
