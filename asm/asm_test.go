@@ -410,9 +410,15 @@ func TestParseFile(t *testing.T) {
 		//
 		// * 'no_cfi' constant.
 		{path: "../testdata/llvm/test/Bitcode/nocfivalue.ll"},
+		// LLVM 14.0.
 		//
 		// * 'DIImportedEntity.elements' metadata field
 		{path: "../testdata/llvm/test/Bitcode/DIImportedEntity_elements.ll"},
+
+		// LLVM 15.0.
+		//
+		// * 'DISubprogram.targetFuncName' metadata field
+		{path: "../testdata/llvm/test/Assembler/disubprogram-targetfuncname.ll"},
 
 		// Coreutils.
 		{path: "../testdata/coreutils/test/[.ll"},
