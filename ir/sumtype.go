@@ -42,6 +42,10 @@ func (AlignStack) IsFuncAttribute() {}
 
 // IsFuncAttribute ensures that only function attributes can be assigned to the
 // ir.FuncAttribute interface.
+func (AllocKind) IsFuncAttribute() {}
+
+// IsFuncAttribute ensures that only function attributes can be assigned to the
+// ir.FuncAttribute interface.
 func (AllocSize) IsFuncAttribute() {}
 
 // IsFuncAttribute ensures that only parameter attributes can be assigned to

@@ -1,6 +1,26 @@
 // Package enum defines enumerate types of LLVM IR.
 package enum
 
+//go:generate stringer -linecomment -type AllocKind
+
+// AllocKind is an allockind bitfield function attribute.
+//
+// ref: include/llvm/IR/Attributes.h (LLVM 15.0) (enum class AllocFnKind)
+type AllocKind uint8
+
+// Alloc kinds.
+const (
+	AllocKindAlloc         AllocKind = 1 << 0 // alloc
+	AllocKindRealloc       AllocKind = 1 << 1 // realloc
+	AllocKindFree          AllocKind = 1 << 2 // free
+	AllocKindUninitialized AllocKind = 1 << 3 // uninitialized
+	AllocKindZeroed        AllocKind = 1 << 4 // zeroed
+	AllocKindAligned       AllocKind = 1 << 5 // aligned
+
+	AllocKindFirst = AllocKindAlloc
+	AllocKindLast  = AllocKindAligned
+)
+
 //go:generate stringer -linecomment -type AtomicOp
 
 // AtomicOp is an AtomicRMW binary operation.
