@@ -420,6 +420,12 @@ func (gen *generator) irDICompositeType(new metadata.SpecializedNode, old *ast.D
 				return nil, errors.WithStack(err)
 			}
 			md.Rank = rank
+		case *ast.AnnotationsField:
+			annotations, err := gen.irMDField(oldField.Annotations())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Annotations = annotations
 		default:
 			panic(fmt.Errorf("support for DICompositeType field %T not yet implemented", old))
 		}
@@ -490,6 +496,12 @@ func (gen *generator) irDIDerivedType(new metadata.SpecializedNode, old *ast.DID
 			md.ExtraData = extraData
 		case *ast.DwarfAddressSpaceField:
 			md.DwarfAddressSpace = uintLit(oldField.DwarfAddressSpace())
+		case *ast.AnnotationsField:
+			annotations, err := gen.irMDField(oldField.Annotations())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Annotations = annotations
 		default:
 			panic(fmt.Errorf("support for DIDerivedType field %T not yet implemented", old))
 		}
@@ -684,6 +696,12 @@ func (gen *generator) irDIGlobalVariable(new metadata.SpecializedNode, old *ast.
 			md.Declaration = declaration
 		case *ast.AlignField:
 			md.Align = uintLit(oldField.Align())
+		case *ast.AnnotationsField:
+			annotations, err := gen.irMDField(oldField.Annotations())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Annotations = annotations
 		default:
 			panic(fmt.Errorf("support for DIGlobalVariable field %T not yet implemented", old))
 		}
@@ -990,6 +1008,12 @@ func (gen *generator) irDILocalVariable(new metadata.SpecializedNode, old *ast.D
 			md.Flags = irDIFlags(oldField.Flags())
 		case *ast.AlignField:
 			md.Align = uintLit(oldField.Align())
+		case *ast.AnnotationsField:
+			annotations, err := gen.irMDField(oldField.Annotations())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Annotations = annotations
 		default:
 			panic(fmt.Errorf("support for DILocalVariable field %T not yet implemented", old))
 		}
@@ -1433,6 +1457,12 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 			default:
 				panic(fmt.Errorf("support for metadata DISubprogram thrownTypes field type %T not yet implemented", thrownTypes))
 			}
+		case *ast.AnnotationsField:
+			annotations, err := gen.irMDField(oldField.Annotations())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.Annotations = annotations
 		default:
 			panic(fmt.Errorf("support for DISubprogram field %T not yet implemented", old))
 		}
