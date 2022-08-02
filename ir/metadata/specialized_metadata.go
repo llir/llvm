@@ -758,7 +758,7 @@ type DIGlobalVariable struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Name           string  // required.
+	Name           string  // optional; empty if not present.
 	Scope          Field   // optional; nil if not present.
 	LinkageName    string  // optional; empty if not present.
 	File           *DIFile // optional; nil if not present.
@@ -799,8 +799,10 @@ func (md *DIGlobalVariable) LLString() string {
 		buf.WriteString("distinct ")
 	}
 	var fields []string
-	field := fmt.Sprintf("name: %s", quote(md.Name))
-	fields = append(fields, field)
+	if len(md.Name) > 0 {
+		field := fmt.Sprintf("name: %s", quote(md.Name))
+		fields = append(fields, field)
+	}
 	if md.Scope != nil {
 		field := fmt.Sprintf("scope: %s", md.Scope)
 		fields = append(fields, field)
@@ -822,7 +824,7 @@ func (md *DIGlobalVariable) LLString() string {
 		fields = append(fields, field)
 	}
 	if md.IsLocal {
-		field = fmt.Sprintf("isLocal: %t", md.IsLocal)
+		field := fmt.Sprintf("isLocal: %t", md.IsLocal)
 		fields = append(fields, field)
 	}
 	if md.IsDefinition {
@@ -1818,6 +1820,7 @@ type DISubprogram struct {
 	RetainedNodes  *Tuple               // optional; nil if not present.
 	ThrownTypes    *Tuple               // optional; nil if not present.
 	Annotations    Field                // optional; nil if not present.
+	TargetFuncName string               // optional; empty if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1956,6 +1959,10 @@ func (md *DISubprogram) LLString() string {
 	}
 	if md.Annotations != nil {
 		field := fmt.Sprintf("annotations: %s", md.Annotations)
+		fields = append(fields, field)
+	}
+	if len(md.TargetFuncName) > 0 {
+		field := fmt.Sprintf("targetFuncName: %s", quote(md.TargetFuncName))
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DISubprogram(%s)", strings.Join(fields, ", "))

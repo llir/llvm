@@ -1463,6 +1463,8 @@ func (gen *generator) irDISubprogram(new metadata.SpecializedNode, old *ast.DISu
 				return nil, errors.WithStack(err)
 			}
 			md.Annotations = annotations
+		case *ast.TargetFuncNameField:
+			md.TargetFuncName = stringLit(oldField.TargetFuncName())
 		default:
 			panic(fmt.Errorf("support for DISubprogram field %T not yet implemented", old))
 		}
