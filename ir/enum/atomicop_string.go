@@ -11,21 +11,23 @@ func _() {
 	_ = x[AtomicOpAdd-1]
 	_ = x[AtomicOpAnd-2]
 	_ = x[AtomicOpFAdd-3]
-	_ = x[AtomicOpFSub-4]
-	_ = x[AtomicOpMax-5]
-	_ = x[AtomicOpMin-6]
-	_ = x[AtomicOpNAnd-7]
-	_ = x[AtomicOpOr-8]
-	_ = x[AtomicOpSub-9]
-	_ = x[AtomicOpUMax-10]
-	_ = x[AtomicOpUMin-11]
-	_ = x[AtomicOpXChg-12]
-	_ = x[AtomicOpXor-13]
+	_ = x[AtomicOpFMax-4]
+	_ = x[AtomicOpFMin-5]
+	_ = x[AtomicOpFSub-6]
+	_ = x[AtomicOpMax-7]
+	_ = x[AtomicOpMin-8]
+	_ = x[AtomicOpNAnd-9]
+	_ = x[AtomicOpOr-10]
+	_ = x[AtomicOpSub-11]
+	_ = x[AtomicOpUMax-12]
+	_ = x[AtomicOpUMin-13]
+	_ = x[AtomicOpXChg-14]
+	_ = x[AtomicOpXor-15]
 }
 
-const _AtomicOp_name = "addandfaddfsubmaxminnandorsubumaxuminxchgxor"
+const _AtomicOp_name = "addandfaddfmaxfminfsubmaxminnandorsubumaxuminxchgxor"
 
-var _AtomicOp_index = [...]uint8{0, 3, 6, 10, 14, 17, 20, 24, 26, 29, 33, 37, 41, 44}
+var _AtomicOp_index = [...]uint8{0, 3, 6, 10, 14, 18, 22, 25, 28, 32, 34, 37, 41, 45, 49, 52}
 
 func (i AtomicOp) String() string {
 	i -= 1
