@@ -21,7 +21,6 @@ func TestModule(t *testing.T) {
 		{path: "../../testdata/llvm/test/Assembler/2002-04-07-HexFloatConstants.ll"},
 		{path: "../../testdata/llvm/test/Assembler/half-constprop.ll"},
 		// Constant expressions.
-		{path: "../../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
 		{path: "../../testdata/llvm/test/Assembler/insertextractvalue.ll"},
 		{path: "../../testdata/llvm/test/DebugInfo/ARM/selectiondag-deadcode.ll"},
 		//{path: "../../testdata/llvm/test/Transforms/InstCombine/fma.ll"}, // TODO: enable once https://github.com/llir/llvm/issues/133 is resolved.

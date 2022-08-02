@@ -22,28 +22,10 @@ func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (consta
 	// Binary expressions
 	case *ast.AddExpr:
 		return gen.irAddExpr(t, old)
-	case *ast.FAddExpr:
-		return gen.irFAddExpr(t, old)
 	case *ast.SubExpr:
 		return gen.irSubExpr(t, old)
-	case *ast.FSubExpr:
-		return gen.irFSubExpr(t, old)
 	case *ast.MulExpr:
 		return gen.irMulExpr(t, old)
-	case *ast.FMulExpr:
-		return gen.irFMulExpr(t, old)
-	case *ast.UDivExpr:
-		return gen.irUDivExpr(t, old)
-	case *ast.SDivExpr:
-		return gen.irSDivExpr(t, old)
-	case *ast.FDivExpr:
-		return gen.irFDivExpr(t, old)
-	case *ast.URemExpr:
-		return gen.irURemExpr(t, old)
-	case *ast.SRemExpr:
-		return gen.irSRemExpr(t, old)
-	case *ast.FRemExpr:
-		return gen.irFRemExpr(t, old)
 	// Bitwise expressions
 	case *ast.ShlExpr:
 		return gen.irShlExpr(t, old)
@@ -64,11 +46,6 @@ func (gen *generator) irConstantExpr(t types.Type, old ast.ConstantExpr) (consta
 		return gen.irInsertElementExpr(t, old)
 	case *ast.ShuffleVectorExpr:
 		return gen.irShuffleVectorExpr(t, old)
-	// Aggregate expressions
-	case *ast.ExtractValueExpr:
-		return gen.irExtractValueExpr(t, old)
-	case *ast.InsertValueExpr:
-		return gen.irInsertValueExpr(t, old)
 	// Memory expressions
 	case *ast.GetElementPtrExpr:
 		return gen.irGetElementPtrExpr(t, old)
@@ -156,28 +133,6 @@ func (gen *generator) irAddExpr(t types.Type, old *ast.AddExpr) (*constant.ExprA
 	return expr, nil
 }
 
-// ~~~ [ fadd ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irFAddExpr translates the AST fadd constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irFAddExpr(t types.Type, old *ast.FAddExpr) (*constant.ExprFAdd, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewFAdd(x, y)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
 // ~~~ [ sub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // irSubExpr translates the AST sub constant expression into an equivalent IR
@@ -202,28 +157,6 @@ func (gen *generator) irSubExpr(t types.Type, old *ast.SubExpr) (*constant.ExprS
 	return expr, nil
 }
 
-// ~~~ [ fsub ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irFSubExpr translates the AST fsub constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irFSubExpr(t types.Type, old *ast.FSubExpr) (*constant.ExprFSub, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewFSub(x, y)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
 // ~~~ [ mul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // irMulExpr translates the AST mul constant expression into an equivalent IR
@@ -242,164 +175,6 @@ func (gen *generator) irMulExpr(t types.Type, old *ast.MulExpr) (*constant.ExprM
 	expr := constant.NewMul(x, y)
 	// (optional) Overflow flags.
 	expr.OverflowFlags = irOverflowFlags(old.OverflowFlags())
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ fmul ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irFMulExpr translates the AST fmul constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irFMulExpr(t types.Type, old *ast.FMulExpr) (*constant.ExprFMul, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewFMul(x, y)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ udiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irUDivExpr translates the AST udiv constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irUDivExpr(t types.Type, old *ast.UDivExpr) (*constant.ExprUDiv, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewUDiv(x, y)
-	// (optional) Exact.
-	_, expr.Exact = old.Exact()
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ sdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irSDivExpr translates the AST sdiv constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irSDivExpr(t types.Type, old *ast.SDivExpr) (*constant.ExprSDiv, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewSDiv(x, y)
-	// (optional) Exact.
-	_, expr.Exact = old.Exact()
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ fdiv ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irFDivExpr translates the AST fdiv constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irFDivExpr(t types.Type, old *ast.FDivExpr) (*constant.ExprFDiv, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewFDiv(x, y)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ urem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irURemExpr translates the AST urem constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irURemExpr(t types.Type, old *ast.URemExpr) (*constant.ExprURem, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewURem(x, y)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ srem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irSRemExpr translates the AST srem constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irSRemExpr(t types.Type, old *ast.SRemExpr) (*constant.ExprSRem, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewSRem(x, y)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ frem ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irFRemExpr translates the AST frem constant expression into an equivalent IR
-// constant expression.
-func (gen *generator) irFRemExpr(t types.Type, old *ast.FRemExpr) (*constant.ExprFRem, error) {
-	// X operand.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Y operand.
-	y, err := gen.irTypeConst(old.Y())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	expr := constant.NewFRem(x, y)
 	if !t.Equal(expr.Typ) {
 		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}
@@ -618,51 +393,6 @@ func (gen *generator) irShuffleVectorExpr(t types.Type, old *ast.ShuffleVectorEx
 		return nil, errors.WithStack(err)
 	}
 	expr := constant.NewShuffleVector(x, y, mask)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// --- [ Aggregate expressions ] -----------------------------------------------
-
-// ~~~ [ extractvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irExtractValueExpr translates the AST extractvalue constant expression into
-// an equivalent IR constant expression.
-func (gen *generator) irExtractValueExpr(t types.Type, old *ast.ExtractValueExpr) (*constant.ExprExtractValue, error) {
-	// Aggregate value.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Element indices.
-	indices := uintSlice(old.Indices())
-	expr := constant.NewExtractValue(x, indices...)
-	if !t.Equal(expr.Typ) {
-		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
-	}
-	return expr, nil
-}
-
-// ~~~ [ insertvalue ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// irInsertValueExpr translates the AST insertvalue constant expression into an
-// equivalent IR constant expression.
-func (gen *generator) irInsertValueExpr(t types.Type, old *ast.InsertValueExpr) (*constant.ExprInsertValue, error) {
-	// Aggregate value.
-	x, err := gen.irTypeConst(old.X())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Element.
-	elem, err := gen.irTypeConst(old.Elem())
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	// Element indices.
-	indices := uintSlice(old.Indices())
-	expr := constant.NewInsertValue(x, elem, indices...)
 	if !t.Equal(expr.Typ) {
 		return nil, errors.Errorf("constant expression type mismatch in `%v`; expected %q, got %q", expr, expr.Typ, t)
 	}

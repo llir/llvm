@@ -24,17 +24,8 @@ var (
 var (
 	// Binary expressions.
 	_ Expression = (*ExprAdd)(nil)
-	_ Expression = (*ExprFAdd)(nil)
 	_ Expression = (*ExprSub)(nil)
-	_ Expression = (*ExprFSub)(nil)
 	_ Expression = (*ExprMul)(nil)
-	_ Expression = (*ExprFMul)(nil)
-	_ Expression = (*ExprUDiv)(nil)
-	_ Expression = (*ExprSDiv)(nil)
-	_ Expression = (*ExprFDiv)(nil)
-	_ Expression = (*ExprURem)(nil)
-	_ Expression = (*ExprSRem)(nil)
-	_ Expression = (*ExprFRem)(nil)
 	// Bitwise expressions.
 	_ Expression = (*ExprShl)(nil)
 	_ Expression = (*ExprLShr)(nil)
@@ -46,9 +37,6 @@ var (
 	_ Expression = (*ExprExtractElement)(nil)
 	_ Expression = (*ExprInsertElement)(nil)
 	_ Expression = (*ExprShuffleVector)(nil)
-	// Aggregate expressions.
-	_ Expression = (*ExprExtractValue)(nil)
-	_ Expression = (*ExprInsertValue)(nil)
 	// Memory expressions.
 	_ Expression = (*ExprGetElementPtr)(nil)
 	// Conversion expressions.

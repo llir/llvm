@@ -32,9 +32,6 @@ func TestParseFile(t *testing.T) {
 		// be merged into one.
 		{path: "testdata/multiple_named_metadata_defs.ll"},
 
-		// frem constant expression.
-		{path: "testdata/expr_frem.ll"},
-
 		// parameter attributes.
 		{path: "testdata/param_attrs.ll"},
 
@@ -81,9 +78,6 @@ func TestParseFile(t *testing.T) {
 
 		// fsub constant expressions.
 		{path: "../testdata/llvm/test/Transforms/InstCombine/fma.ll"},
-
-		// Constant expressions.
-		{path: "../testdata/llvm/test/Transforms/ConstProp/constant-expr.ll"},
 
 		// Vector constant expressions.
 		{path: "../testdata/llvm/test/Transforms/InstCombine/vec_demanded_elts.ll"},

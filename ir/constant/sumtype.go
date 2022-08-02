@@ -72,47 +72,11 @@ func (*ExprAdd) IsConstant() {}
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
-func (*ExprFAdd) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
 func (*ExprSub) IsConstant() {}
 
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
-func (*ExprFSub) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
 func (*ExprMul) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFMul) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprUDiv) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSDiv) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFDiv) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprURem) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprSRem) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprFRem) IsConstant() {}
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
@@ -153,16 +117,6 @@ func (*ExprInsertElement) IsConstant() {}
 // IsConstant ensures that only constants can be assigned to the
 // constant.Constant interface.
 func (*ExprShuffleVector) IsConstant() {}
-
-// --- [ Aggregate expressions ] -----------------------------------------------
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprExtractValue) IsConstant() {}
-
-// IsConstant ensures that only constants can be assigned to the
-// constant.Constant interface.
-func (*ExprInsertValue) IsConstant() {}
 
 // --- [ Memory expressions ] --------------------------------------------------
 
@@ -254,47 +208,11 @@ func (*ExprAdd) IsExpression() {}
 
 // IsExpression ensures that only constants expressions can be assigned to the
 // constant.Expression interface.
-func (*ExprFAdd) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
 func (*ExprSub) IsExpression() {}
 
 // IsExpression ensures that only constants expressions can be assigned to the
 // constant.Expression interface.
-func (*ExprFSub) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
 func (*ExprMul) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprFMul) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprUDiv) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprSDiv) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprFDiv) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprURem) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprSRem) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprFRem) IsExpression() {}
 
 // --- [ Bitwise expressions ] -------------------------------------------------
 
@@ -335,16 +253,6 @@ func (*ExprInsertElement) IsExpression() {}
 // IsExpression ensures that only constants expressions can be assigned to the
 // constant.Expression interface.
 func (*ExprShuffleVector) IsExpression() {}
-
-// --- [ Aggregate expressions ] -----------------------------------------------
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprExtractValue) IsExpression() {}
-
-// IsExpression ensures that only constants expressions can be assigned to the
-// constant.Expression interface.
-func (*ExprInsertValue) IsExpression() {}
 
 // --- [ Memory expressions ] --------------------------------------------------
 
