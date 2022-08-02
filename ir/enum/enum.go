@@ -951,6 +951,21 @@ const (
 	ReturnAttrZeroExt                   // zeroext
 )
 
+//go:generate stringer -linecomment -type SanitizerKind
+
+// SanitizerKind is a global variable sanitizer kind.
+type SanitizerKind uint8
+
+// Sanitizer kinds.
+const (
+	SanitizerKindNoSanitizeAddress      SanitizerKind = iota + 1 // no_sanitize_address
+	SanitizerKindNoSanitizeHwAddress                             // no_sanitize_hwaddress
+	SanitizerKindSanitizeAddressDynInit                          // sanitize_address_dyninit
+	SanitizerKindSanitizeMemTag                                  // sanitize_memtag
+
+	SanitizerKindNone = 0
+)
+
 //go:generate stringer -linecomment -type SelectionKind
 
 // SelectionKind is a Comdat selection kind.

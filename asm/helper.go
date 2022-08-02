@@ -444,6 +444,16 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 		return ir.AlignStack(uintLit(old.N()))
 	case *ast.AlignStackPair:
 		return ir.AlignStack(uintLit(old.N()))
+	case *ast.AllocKind:
+		rawKinds := unquote(old.AllocKinds().Text())
+		var kind enum.AllocKind
+		for _, rawKind := range strings.Split(rawKinds, ",") {
+			rawKind = strings.TrimSpace(rawKind)
+			kind |= asmenum.AllocKindFromString(rawKind)
+		}
+		return &ir.AllocKind{
+			Kind: kind,
+		}
 	case *ast.AllocSize:
 		elemSizeIndex := int(uintLit(old.ElemSizeIndex()))
 		if nElemsIndex, ok := old.NElemsIndex(); ok {
