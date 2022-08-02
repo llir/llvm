@@ -35,6 +35,7 @@ gen: ${TOOLS_DIR}/string2enum
 	${TOOLS_DIR}/string2enum -linecomment -type ParamAttr ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type Preemption ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type ReturnAttr ${ENUM_DIR}
+	${TOOLS_DIR}/string2enum -linecomment -type SanitizerKind ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type SelectionKind ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type Tail ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type TLSModel ${ENUM_DIR}

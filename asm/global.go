@@ -323,6 +323,9 @@ func (gen *generator) irGlobal(new *ir.Global, old *ast.GlobalDecl) error {
 		// (optional) Alignment.
 		case *ast.Align:
 			new.Align = irAlign(*globalField)
+		// (optional) Sanitizer.
+		case *ast.SanitizerKind:
+			new.Sanitizer = asmenum.SanitizerKindFromString(globalField.Text())
 		}
 	}
 	// (optional) Metadata.

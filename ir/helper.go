@@ -39,7 +39,7 @@ type AllocKind struct {
 
 // String returns the string representation of the allockind attribute.
 func (a AllocKind) String() string {
-	return fmt.Sprintf("allockind(%s)", allocKindString(a.Kind))
+	return fmt.Sprintf("allockind(%q)", allocKindString(a.Kind))
 }
 
 // allocKindString returns the string representation of the given alloc kind

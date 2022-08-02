@@ -52,6 +52,8 @@ type Global struct {
 	Comdat *ComdatDef
 	// (optional) Alignment; zero if not present.
 	Align Align
+	// (optional) Sanitizer; zero if not present.
+	Sanitizer enum.SanitizerKind
 	// (optional) Function attributes.
 	FuncAttrs []FuncAttribute
 	// (optional) Metadata.
@@ -99,11 +101,11 @@ func (g *Global) Type() types.Type {
 //
 // Global declaration.
 //
-//    Name=GlobalIdent '=' Linkage=ExternLinkage Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type (',' Section)? (',' Partition)? (',' Comdat)? (',' Align)? Metadata=(',' MetadataAttachment)+? FuncAttrs=FuncAttribute+?
+//    Name=GlobalIdent '=' Linkage=ExternLinkage Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type (',' Section)? (',' Partition)? (',' Comdat)? (',' Align)? (',' SanitizerKind)? Metadata=(',' MetadataAttachment)+? FuncAttrs=FuncAttribute+?
 //
 // Global definition.
 //
-//    Name=GlobalIdent '=' Linkage=Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant (',' Section)? (',' Partition)? (',' Comdat)? (',' Align)? Metadata=(',' MetadataAttachment)+? FuncAttrs=FuncAttribute+?
+//    Name=GlobalIdent '=' Linkage=Linkageopt Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt AddrSpaceopt ExternallyInitializedopt Immutable ContentType=Type Init=Constant (',' Section)? (',' Partition)? (',' Comdat)? (',' Align)?  (',' SanitizerKind)? Metadata=(',' MetadataAttachment)+? FuncAttrs=FuncAttribute+?
 func (g *Global) LLString() string {
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", g.Ident())
@@ -156,6 +158,9 @@ func (g *Global) LLString() string {
 	}
 	if g.Align != 0 {
 		fmt.Fprintf(buf, ", %s", g.Align)
+	}
+	if g.Sanitizer != enum.SanitizerKindNone {
+		fmt.Fprintf(buf, ", %s", g.Sanitizer)
 	}
 	for _, md := range g.Metadata {
 		fmt.Fprintf(buf, ", %s", md)
