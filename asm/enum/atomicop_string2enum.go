@@ -15,21 +15,23 @@ func _() {
 	_ = x[enum.AtomicOpAdd-1]
 	_ = x[enum.AtomicOpAnd-2]
 	_ = x[enum.AtomicOpFAdd-3]
-	_ = x[enum.AtomicOpFSub-4]
-	_ = x[enum.AtomicOpMax-5]
-	_ = x[enum.AtomicOpMin-6]
-	_ = x[enum.AtomicOpNAnd-7]
-	_ = x[enum.AtomicOpOr-8]
-	_ = x[enum.AtomicOpSub-9]
-	_ = x[enum.AtomicOpUMax-10]
-	_ = x[enum.AtomicOpUMin-11]
-	_ = x[enum.AtomicOpXChg-12]
-	_ = x[enum.AtomicOpXor-13]
+	_ = x[enum.AtomicOpFMax-4]
+	_ = x[enum.AtomicOpFMin-5]
+	_ = x[enum.AtomicOpFSub-6]
+	_ = x[enum.AtomicOpMax-7]
+	_ = x[enum.AtomicOpMin-8]
+	_ = x[enum.AtomicOpNAnd-9]
+	_ = x[enum.AtomicOpOr-10]
+	_ = x[enum.AtomicOpSub-11]
+	_ = x[enum.AtomicOpUMax-12]
+	_ = x[enum.AtomicOpUMin-13]
+	_ = x[enum.AtomicOpXChg-14]
+	_ = x[enum.AtomicOpXor-15]
 }
 
-const _AtomicOp_name = "addandfaddfsubmaxminnandorsubumaxuminxchgxor"
+const _AtomicOp_name = "addandfaddfmaxfminfsubmaxminnandorsubumaxuminxchgxor"
 
-var _AtomicOp_index = [...]uint8{0, 3, 6, 10, 14, 17, 20, 24, 26, 29, 33, 37, 41, 44}
+var _AtomicOp_index = [...]uint8{0, 3, 6, 10, 14, 18, 22, 25, 28, 32, 34, 37, 41, 45, 49, 52}
 
 // AtomicOpFromString returns the AtomicOp enum corresponding to s.
 func AtomicOpFromString(s string) enum.AtomicOp {
@@ -54,24 +56,28 @@ func _(s string) {
 	// 3
 	case "fadd":
 	// 4
-	case "fsub":
+	case "fmax":
 	// 5
-	case "max":
+	case "fmin":
 	// 6
-	case "min":
+	case "fsub":
 	// 7
-	case "nand":
+	case "max":
 	// 8
-	case "or":
+	case "min":
 	// 9
-	case "sub":
+	case "nand":
 	// 10
-	case "umax":
+	case "or":
 	// 11
-	case "umin":
+	case "sub":
 	// 12
-	case "xchg":
+	case "umax":
 	// 13
+	case "umin":
+	// 14
+	case "xchg":
+	// 15
 	case "xor":
 	}
 }

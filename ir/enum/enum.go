@@ -11,6 +11,8 @@ const (
 	AtomicOpAdd  AtomicOp = iota + 1 // add
 	AtomicOpAnd                      // and
 	AtomicOpFAdd                     // fadd
+	AtomicOpFMax                     // fmax
+	AtomicOpFMin                     // fmin
 	AtomicOpFSub                     // fsub
 	AtomicOpMax                      // max
 	AtomicOpMin                      // min
