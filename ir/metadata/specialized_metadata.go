@@ -331,6 +331,7 @@ type DICompositeType struct {
 	Associated     Field      // optional; nil if not present.
 	Allocated      Field      // optional; nil if not present.
 	Rank           FieldOrInt // optional; nil if not present.
+	Annotations    Field      // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -438,6 +439,10 @@ func (md *DICompositeType) LLString() string {
 		field := fmt.Sprintf("rank: %s", md.Rank)
 		fields = append(fields, field)
 	}
+	if md.Annotations != nil {
+		field := fmt.Sprintf("annotations: %s", md.Annotations)
+		fields = append(fields, field)
+	}
 	fmt.Fprintf(buf, "!DICompositeType(%s)", strings.Join(fields, ", "))
 	return buf.String()
 }
@@ -469,6 +474,7 @@ type DIDerivedType struct {
 	Flags             enum.DIFlag   // optional.
 	ExtraData         Field         // optional; nil if not present.
 	DwarfAddressSpace uint64        // optional; zero value if not present.
+	Annotations       Field         // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -540,6 +546,10 @@ func (md *DIDerivedType) LLString() string {
 	}
 	if md.DwarfAddressSpace != 0 {
 		field := fmt.Sprintf("dwarfAddressSpace: %d", md.DwarfAddressSpace)
+		fields = append(fields, field)
+	}
+	if md.Annotations != nil {
+		field := fmt.Sprintf("annotations: %s", md.Annotations)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DIDerivedType(%s)", strings.Join(fields, ", "))
@@ -759,6 +769,7 @@ type DIGlobalVariable struct {
 	TemplateParams *Tuple  // optional; nil if not present.
 	Declaration    Field   // optional; nil if not present.
 	Align          uint64  // optional; zero value if not present.
+	Annotations    Field   // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -828,6 +839,10 @@ func (md *DIGlobalVariable) LLString() string {
 	}
 	if md.Align != 0 {
 		field := fmt.Sprintf("align: %d", md.Align)
+		fields = append(fields, field)
+	}
+	if md.Annotations != nil {
+		field := fmt.Sprintf("annotations: %s", md.Annotations)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DIGlobalVariable(%s)", strings.Join(fields, ", "))
@@ -1171,14 +1186,15 @@ type DILocalVariable struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Scope Field       // required.
-	Name  string      // optional; empty if not present.
-	Arg   uint64      // optional; zero value if not present.
-	File  *DIFile     // optional; nil if not present.
-	Line  int64       // optional; zero value if not present.
-	Type  Field       // optional; nil if not present.
-	Flags enum.DIFlag // optional.
-	Align uint64      // optional; zero value if not present.
+	Scope       Field       // required.
+	Name        string      // optional; empty if not present.
+	Arg         uint64      // optional; zero value if not present.
+	File        *DIFile     // optional; nil if not present.
+	Line        int64       // optional; zero value if not present.
+	Type        Field       // optional; nil if not present.
+	Flags       enum.DIFlag // optional.
+	Align       uint64      // optional; zero value if not present.
+	Annotations Field       // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1238,6 +1254,10 @@ func (md *DILocalVariable) LLString() string {
 	}
 	if md.Align != 0 {
 		field := fmt.Sprintf("align: %d", md.Align)
+		fields = append(fields, field)
+	}
+	if md.Annotations != nil {
+		field := fmt.Sprintf("annotations: %s", md.Annotations)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DILocalVariable(%s)", strings.Join(fields, ", "))
@@ -1797,6 +1817,7 @@ type DISubprogram struct {
 	Declaration    Field                // optional; nil if not present.
 	RetainedNodes  *Tuple               // optional; nil if not present.
 	ThrownTypes    *Tuple               // optional; nil if not present.
+	Annotations    Field                // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -1931,6 +1952,10 @@ func (md *DISubprogram) LLString() string {
 	}
 	if md.ThrownTypes != nil {
 		field := fmt.Sprintf("thrownTypes: %s", md.ThrownTypes)
+		fields = append(fields, field)
+	}
+	if md.Annotations != nil {
+		field := fmt.Sprintf("annotations: %s", md.Annotations)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DISubprogram(%s)", strings.Join(fields, ", "))
