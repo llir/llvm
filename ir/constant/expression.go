@@ -17,17 +17,8 @@ package constant
 // https://llvm.org/docs/LangRef.html#constant-expressions
 //
 //    *constant.ExprAdd    // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprAdd
-//    *constant.ExprFAdd   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprFAdd
 //    *constant.ExprSub    // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprSub
-//    *constant.ExprFSub   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprFSub
 //    *constant.ExprMul    // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprMul
-//    *constant.ExprFMul   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprFMul
-//    *constant.ExprUDiv   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprUDiv
-//    *constant.ExprSDiv   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprSDiv
-//    *constant.ExprFDiv   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprFDiv
-//    *constant.ExprURem   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprURem
-//    *constant.ExprSRem   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprSRem
-//    *constant.ExprFRem   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprFRem
 //
 // Bitwise expressions
 //
@@ -47,13 +38,6 @@ package constant
 //    *constant.ExprExtractElement   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprExtractElement
 //    *constant.ExprInsertElement    // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprInsertElement
 //    *constant.ExprShuffleVector    // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprShuffleVector
-//
-// Aggregate expressions
-//
-// https://llvm.org/docs/LangRef.html#constant-expressions
-//
-//    *constant.ExprExtractValue   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprExtractValue
-//    *constant.ExprInsertValue    // https://pkg.go.dev/github.com/llir/llvm/ir/constant#ExprInsertValue
 //
 // Memory expressions
 //
