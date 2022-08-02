@@ -757,6 +757,7 @@ const (
 	FuncAttrCold                                            // cold
 	FuncAttrConvergent                                      // convergent
 	FuncAttrDisableSanitizerInstrumentation                 // disable_sanitizer_instrumentation
+	FuncAttrFnRetThunkExtern                                // fn_ret_thunk_extern
 	FuncAttrHot                                             // hot
 	FuncAttrInaccessibleMemOnly                             // inaccessiblememonly
 	FuncAttrInaccessibleMemOrArgMemOnly                     // inaccessiblemem_or_argmemonly
@@ -777,6 +778,7 @@ const (
 	FuncAttrNoRecurse                                       // norecurse
 	FuncAttrNoRedZone                                       // noredzone
 	FuncAttrNoReturn                                        // noreturn
+	FuncAttrNoSanitizeBounds                                // nosanitize_bounds
 	FuncAttrNoSanitizeCoverage                              // nosanitize_coverage
 	FuncAttrNoSync                                          // nosync
 	FuncAttrNoUnwind                                        // nounwind
@@ -785,6 +787,7 @@ const (
 	FuncAttrOptForFuzzing                                   // optforfuzzing
 	FuncAttrOptNone                                         // optnone
 	FuncAttrOptSize                                         // optsize
+	FuncAttrPreSplitCoroutine                               // presplitcoroutine
 	FuncAttrReadNone                                        // readnone
 	FuncAttrReadOnly                                        // readonly
 	FuncAttrReturnsTwice                                    // returns_twice
@@ -879,7 +882,9 @@ type ParamAttr uint8
 
 // Parameter attributes.
 const (
-	ParamAttrImmArg     ParamAttr = iota // immarg
+	ParamAttrAllocAlign ParamAttr = iota // allocalign
+	ParamAttrAllocPtr                    // allocptr
+	ParamAttrImmArg                      // immarg
 	ParamAttrInReg                       // inreg
 	ParamAttrNest                        // nest
 	ParamAttrNoAlias                     // noalias
@@ -978,6 +983,21 @@ const (
 	UnnamedAddrNone             UnnamedAddr = iota // none
 	UnnamedAddrLocalUnnamedAddr                    // local_unnamed_addr
 	UnnamedAddrUnnamedAddr                         // unnamed_addr
+)
+
+//go:generate stringer -linecomment -type UnwindTableKind
+
+// UnwindTableKind specifies the set of unwind table kinds for the uwtable
+// function attribute.
+//
+// ref: https://llvm.org/docs/LangRef.html#function-attributes
+type UnwindTableKind uint8
+
+// Unwind table kinds.
+const (
+	UnwindTableKindNone  UnwindTableKind = 0 // none
+	UnwindTableKindSync  UnwindTableKind = 1 // sync
+	UnwindTableKindASync UnwindTableKind = 2 // async
 )
 
 //go:generate stringer -linecomment -type Visibility

@@ -50,6 +50,10 @@ func (Preallocated) IsFuncAttribute() {}
 
 // IsFuncAttribute ensures that only parameter attributes can be assigned to
 // the ir.ParamAttribute interface.
+func (UnwindTable) IsFuncAttribute() {}
+
+// IsFuncAttribute ensures that only parameter attributes can be assigned to
+// the ir.ParamAttribute interface.
 func (VectorScaleRange) IsFuncAttribute() {}
 
 // === [ ir.Instruction ] ======================================================

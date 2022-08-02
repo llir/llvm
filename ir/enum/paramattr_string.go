@@ -8,28 +8,30 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[ParamAttrImmArg-0]
-	_ = x[ParamAttrInReg-1]
-	_ = x[ParamAttrNest-2]
-	_ = x[ParamAttrNoAlias-3]
-	_ = x[ParamAttrNoCapture-4]
-	_ = x[ParamAttrNoFree-5]
-	_ = x[ParamAttrNonNull-6]
-	_ = x[ParamAttrNoUndef-7]
-	_ = x[ParamAttrReadNone-8]
-	_ = x[ParamAttrReadOnly-9]
-	_ = x[ParamAttrReturned-10]
-	_ = x[ParamAttrSignExt-11]
-	_ = x[ParamAttrSwiftAsync-12]
-	_ = x[ParamAttrSwiftError-13]
-	_ = x[ParamAttrSwiftSelf-14]
-	_ = x[ParamAttrWriteOnly-15]
-	_ = x[ParamAttrZeroExt-16]
+	_ = x[ParamAttrAllocAlign-0]
+	_ = x[ParamAttrAllocPtr-1]
+	_ = x[ParamAttrImmArg-2]
+	_ = x[ParamAttrInReg-3]
+	_ = x[ParamAttrNest-4]
+	_ = x[ParamAttrNoAlias-5]
+	_ = x[ParamAttrNoCapture-6]
+	_ = x[ParamAttrNoFree-7]
+	_ = x[ParamAttrNonNull-8]
+	_ = x[ParamAttrNoUndef-9]
+	_ = x[ParamAttrReadNone-10]
+	_ = x[ParamAttrReadOnly-11]
+	_ = x[ParamAttrReturned-12]
+	_ = x[ParamAttrSignExt-13]
+	_ = x[ParamAttrSwiftAsync-14]
+	_ = x[ParamAttrSwiftError-15]
+	_ = x[ParamAttrSwiftSelf-16]
+	_ = x[ParamAttrWriteOnly-17]
+	_ = x[ParamAttrZeroExt-18]
 }
 
-const _ParamAttr_name = "immarginregnestnoaliasnocapturenofreenonnullnoundefreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
+const _ParamAttr_name = "allocalignallocptrimmarginregnestnoaliasnocapturenofreenonnullnoundefreadnonereadonlyreturnedsignextswiftasyncswifterrorswiftselfwriteonlyzeroext"
 
-var _ParamAttr_index = [...]uint8{0, 6, 11, 15, 22, 31, 37, 44, 51, 59, 67, 75, 82, 92, 102, 111, 120, 127}
+var _ParamAttr_index = [...]uint8{0, 10, 18, 24, 29, 33, 40, 49, 55, 62, 69, 77, 85, 93, 100, 110, 120, 129, 138, 145}
 
 func (i ParamAttr) String() string {
 	if i >= ParamAttr(len(_ParamAttr_index)-1) {

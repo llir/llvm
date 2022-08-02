@@ -38,6 +38,7 @@ gen: ${TOOLS_DIR}/string2enum
 	${TOOLS_DIR}/string2enum -linecomment -type Tail ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type TLSModel ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type UnnamedAddr ${ENUM_DIR}
+	${TOOLS_DIR}/string2enum -linecomment -type UnwindTableKind ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type Visibility ${ENUM_DIR}
 	${TOOLS_DIR}/string2enum -linecomment -type FloatKind -pkg enum ${TYPES_DIR}
 	goimports -w *.go
