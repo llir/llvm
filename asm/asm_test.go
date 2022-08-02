@@ -314,7 +314,6 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Assembler/half-conv.ll"},
 		{path: "../testdata/llvm/test/Assembler/half.ll"},
 		{path: "../testdata/llvm/test/Assembler/huge-array.ll"},
-		{path: "../testdata/llvm/test/Assembler/ifunc-asm.ll"},
 		{path: "../testdata/llvm/test/Assembler/ifunc-dsolocal.ll"},
 		{path: "../testdata/llvm/test/Assembler/ifunc-use-list-order.ll"},
 		{path: "../testdata/llvm/test/Assembler/inalloca.ll"},
@@ -396,6 +395,16 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/DebugInfo/X86/safestack-byval.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/sdag-combine.ll"},
 		{path: "../testdata/llvm/test/DebugInfo/X86/stack-value-dwarf2.ll"},
+
+		// LLVM 12.0.
+		//
+		// * 'dso_local_equivalent' constant
+		{path: "../testdata/llvm/test/Bitcode/dso_local_equivalent.ll"},
+
+		// LLVM 14.0.
+		//
+		// * 'no_cfi' constant
+		{path: "../testdata/llvm/test/Bitcode/nocfivalue.ll"},
 
 		// Coreutils.
 		{path: "../testdata/coreutils/test/[.ll"},
