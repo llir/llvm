@@ -44,7 +44,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "total time for file %q: %v\n", llPath, time.Since(fileStart))
 		_ = m
 		if *verbose {
-			fmt.Fprintln(os.Stdout, m)
+			fmt.Fprint(os.Stdout, m)
 		}
 		//pretty.Println(m)
 	}

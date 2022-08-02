@@ -42,6 +42,10 @@ func (gen *generator) irConstant(t types.Type, old ast.Constant) (constant.Const
 		return constant.NewPoison(t), nil
 	case *ast.BlockAddressConst:
 		return gen.irBlockAddressConst(t, old)
+	case *ast.DSOLocalEquivalentConst:
+		return gen.irDSOLocalEquivalentConst(t, old)
+	case *ast.NoCFIConst:
+		return gen.irNoCFIConst(t, old)
 	case *ast.GlobalIdent:
 		ident := globalIdent(*old)
 		c, ok := gen.new.globals[ident]
@@ -249,6 +253,56 @@ func (gen *generator) irBlockAddressConst(t types.Type, old *ast.BlockAddressCon
 	gen.todo = append(gen.todo, c)
 	if typ := c.Type(); !t.Equal(typ) {
 		return nil, errors.Errorf("blockaddress constant type mismatch; expected %q, got %q", typ, t)
+	}
+	return c, nil
+}
+
+// --- [ DSO Local Equivalent ] ------------------------------------------------
+
+// irDSOLocalEquivalentConst translates the AST dso_local_equivalent constant
+// into an equivalent IR dso_local_equivalent constant.
+func (gen *generator) irDSOLocalEquivalentConst(t types.Type, old *ast.DSOLocalEquivalentConst) (*constant.DSOLocalEquivalent, error) {
+	// Function.
+	funcName := globalIdent(old.Func())
+	v, ok := gen.new.globals[funcName]
+	if !ok {
+		return nil, errors.Errorf("unable to locate global identifier %q", funcName)
+	}
+	var f constant.Constant
+	switch v := v.(type) {
+	case *ir.Func, *ir.IFunc, *ir.Alias:
+		f = v
+	default:
+		return nil, errors.Errorf("invalid function type; expected *ir.Func or *ir.IFunc, got %T", v)
+	}
+	c := constant.NewDSOLocalEquivalent(f)
+	if typ := c.Type(); !t.Equal(typ) {
+		return nil, errors.Errorf("dso_local_equivalent constant type mismatch; expected %q, got %q", typ, t)
+	}
+	return c, nil
+}
+
+// --- [ No CFI ] --------------------------------------------------------------
+
+// irNoCFIConst translates the AST no_cfi constant into an equivalent IR no_cfi
+// constant.
+func (gen *generator) irNoCFIConst(t types.Type, old *ast.NoCFIConst) (*constant.NoCFI, error) {
+	// Function.
+	funcName := globalIdent(old.Func())
+	v, ok := gen.new.globals[funcName]
+	if !ok {
+		return nil, errors.Errorf("unable to locate global identifier %q", funcName)
+	}
+	var f constant.Constant
+	switch v := v.(type) {
+	case *ir.Func, *ir.IFunc, *ir.Alias:
+		f = v
+	default:
+		return nil, errors.Errorf("invalid function type; expected *ir.Func or *ir.IFunc, got %T", v)
+	}
+	c := constant.NewNoCFI(f)
+	if typ := c.Type(); !t.Equal(typ) {
+		return nil, errors.Errorf("no_cfi constant type mismatch; expected %q, got %q", typ, t)
 	}
 	return c, nil
 }
