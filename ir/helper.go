@@ -178,6 +178,20 @@ func (p Preallocated) String() string {
 	return fmt.Sprintf("preallocated(%v)", p.Typ)
 }
 
+// UnwindTable is an uwtable function attribute.
+type UnwindTable struct {
+	// Unwind table kind.
+	Kind enum.UnwindTableKind
+}
+
+// String returns a string representation of the uwtable attribute.
+func (a UnwindTable) String() string {
+	if a.Kind == enum.UnwindTableKindNone {
+		return "uwtable"
+	}
+	return fmt.Sprintf("uwtable(%s)", a.Kind)
+}
+
 // VectorScaleRange denotes the min/max vector scale value of a given function. If
 // the second parameter is omitted, Min will be -1.
 type VectorScaleRange struct {

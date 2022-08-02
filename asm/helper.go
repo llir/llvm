@@ -464,7 +464,16 @@ func (gen *generator) irFuncAttribute(old ast.FuncAttribute) ir.FuncAttribute {
 			panic(err.Error())
 		}
 		return ir.Preallocated{Typ: typ}
-	case *ast.VScaleRange:
+	case *ast.UnwindTable:
+		if kind, ok := old.Kind(); ok {
+			return ir.UnwindTable{
+				Kind: asmenum.UnwindTableKindFromString(kind.Text()),
+			}
+		}
+		return ir.UnwindTable{
+			Kind: enum.UnwindTableKindNone,
+		}
+	case *ast.VectorScaleRange:
 		min := int(uintLit(old.Min()))
 		if max, ok := old.Max(); ok {
 			return ir.VectorScaleRange{
