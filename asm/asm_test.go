@@ -91,7 +91,8 @@ func TestParseFile(t *testing.T) {
 
 		// Use of address space in function declaration and dereferenable
 		// parameter attribute.
-		{path: "../testdata/llvm/test/Transforms/InstSimplify/compare.ll"},
+		// TODO: re-enable test case when opaque pointer type has been implemented (in LLVM 16.0).
+		//{path: "../testdata/llvm/test/Transforms/InstSimplify/compare.ll"},
 
 		// Basic block labels.
 		{path: "../testdata/llvm/test/Assembler/block-labels.ll"},
@@ -101,7 +102,8 @@ func TestParseFile(t *testing.T) {
 
 		// Calling conventions.
 		{path: "../testdata/llvm/test/Bitcode/calling-conventions.3.2.ll"},
-		{path: "../testdata/llvm/test/CodeGen/X86/tailccfp.ll"},
+		// TODO: re-enable test case when opaque pointer type has been implemented (in LLVM 16.0).
+		//{path: "../testdata/llvm/test/CodeGen/X86/tailccfp.ll"},
 
 		// Parameter attributes.
 		{path: "../testdata/llvm/test/Bitcode/attributes.ll"},
@@ -354,7 +356,8 @@ func TestParseFile(t *testing.T) {
 		{path: "../testdata/llvm/test/Bitcode/disubrange.ll"},
 
 		// LLVM test/CodeGen.
-		{path: "../testdata/llvm/test/CodeGen/X86/extractps.ll"},
+		// TODO: re-enable test case when opaque pointer type has been implemented (in LLVM 16.0).
+		//{path: "../testdata/llvm/test/CodeGen/X86/extractps.ll"},
 
 		// LLVM test/DebugInfo/Generic.
 		{path: "../testdata/llvm/test/DebugInfo/Generic/constant-pointers.ll"},
