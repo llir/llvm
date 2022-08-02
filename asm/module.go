@@ -244,6 +244,8 @@ func newSpecializedMDNode(old ast.SpecializedMDNode) metadata.SpecializedNode {
 		return &metadata.DINamespace{}
 	case *ast.DIObjCProperty:
 		return &metadata.DIObjCProperty{}
+	case *ast.DIStringType:
+		return &metadata.DIStringType{}
 	case *ast.DISubprogram:
 		return &metadata.DISubprogram{}
 	case *ast.DISubrange:

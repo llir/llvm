@@ -59,6 +59,8 @@ func (gen *generator) irSpecializedMDNode(new metadata.Definition, old ast.Speci
 		return gen.irDINamespace(new, old)
 	case *ast.DIObjCProperty:
 		return gen.irDIObjCProperty(new, old)
+	case *ast.DIStringType:
+		return gen.irDIStringType(new, old)
 	case *ast.DISubprogram:
 		return gen.irDISubprogram(new, old)
 	case *ast.DISubrange:
@@ -784,6 +786,19 @@ func (gen *generator) irDIImportedEntity(new metadata.SpecializedNode, old *ast.
 			md.Line = intLit(oldField.Line())
 		case *ast.NameField:
 			md.Name = stringLit(oldField.Name())
+		case *ast.ElementsField:
+			elements, err := gen.irMDField(oldField.Elements())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			switch elements := elements.(type) {
+			case *metadata.NullLit:
+				// nothing to do.
+			case *metadata.Tuple:
+				md.Elements = elements
+			default:
+				panic(fmt.Errorf("support for metadata DIImportedEntity elements field type %T not yet implemented", elements))
+			}
 		default:
 			panic(fmt.Errorf("support for DIImportedEntity field %T not yet implemented", old))
 		}
@@ -1235,6 +1250,56 @@ func (gen *generator) irDIObjCProperty(new metadata.SpecializedNode, old *ast.DI
 			md.Type = typ
 		default:
 			panic(fmt.Errorf("support for DIObjCProperty field %T not yet implemented", old))
+		}
+	}
+	return md, nil
+}
+
+// --- [ DIStringType ] ---------------------------------------------------------
+
+// irDIStringType returns the IR specialized metadata node DIStringType
+// corresponding to the given AST specialized metadata node DIStringType. A new
+// IR specialized metadata node correspoding to the AST specialized metadata
+// node is created if new is nil, otherwise the body of new is populated.
+func (gen *generator) irDIStringType(new metadata.SpecializedNode, old *ast.DIStringType) (*metadata.DIStringType, error) {
+	md, ok := new.(*metadata.DIStringType)
+	if new == nil {
+		md = &metadata.DIStringType{MetadataID: -1}
+	} else if !ok {
+		panic(fmt.Errorf("invalid IR specialized metadata node for AST specialized metadata node; expected *metadata.DIStringType, got %T", new))
+	}
+	for _, oldField := range old.Fields() {
+		switch oldField := oldField.(type) {
+		case *ast.TagField:
+			md.Tag = irDwarfTag(oldField.Tag())
+		case *ast.NameField:
+			md.Name = stringLit(oldField.Name())
+		case *ast.StringLengthField:
+			stringLength, err := gen.irMDField(oldField.StringLength())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.StringLength = stringLength
+		case *ast.StringLengthExpressionField:
+			stringLengthExpression, err := gen.irMDField(oldField.StringLengthExpression())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.StringLengthExpression = stringLengthExpression
+		case *ast.StringLocationExpressionField:
+			stringLocationExpression, err := gen.irMDField(oldField.StringLocationExpression())
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			md.StringLocationExpression = stringLocationExpression
+		case *ast.SizeField:
+			md.Size = uintLit(oldField.Size())
+		case *ast.AlignField:
+			md.Align = uintLit(oldField.Align())
+		case *ast.EncodingField:
+			md.Encoding = irDwarfAttEncodingOrUint(oldField.Encoding())
+		default:
+			panic(fmt.Errorf("support for DIStringType field %T not yet implemented", old))
 		}
 	}
 	return md, nil

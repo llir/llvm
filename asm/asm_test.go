@@ -398,13 +398,21 @@ func TestParseFile(t *testing.T) {
 
 		// LLVM 12.0.
 		//
-		// * 'dso_local_equivalent' constant
+		// * 'dso_local_equivalent' constant.
 		{path: "../testdata/llvm/test/Bitcode/dso_local_equivalent.ll"},
+
+		// LLVM 12.0.
+		//
+		// * 'DIStringType' metadata node.
+		{path: "../testdata/llvm/test/DebugInfo/X86/distringtype.ll"},
 
 		// LLVM 14.0.
 		//
-		// * 'no_cfi' constant
+		// * 'no_cfi' constant.
 		{path: "../testdata/llvm/test/Bitcode/nocfivalue.ll"},
+		//
+		// * 'DIImportedEntity.elements' metadata field
+		{path: "../testdata/llvm/test/Bitcode/DIImportedEntity_elements.ll"},
 
 		// Coreutils.
 		{path: "../testdata/coreutils/test/[.ll"},

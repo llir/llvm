@@ -907,12 +907,13 @@ type DIImportedEntity struct {
 	// (optional) Distinct.
 	Distinct bool
 
-	Tag    enum.DwarfTag // required.
-	Scope  Field         // required.
-	Entity Field         // optional; nil if not present.
-	File   *DIFile       // optional; nil if not present.
-	Line   int64         // optional; zero value if not present.
-	Name   string        // optional; empty if not present.
+	Tag      enum.DwarfTag // required.
+	Scope    Field         // required.
+	Entity   Field         // optional; nil if not present.
+	File     *DIFile       // optional; nil if not present.
+	Line     int64         // optional; zero value if not present.
+	Name     string        // optional; empty if not present.
+	Elements *Tuple        // optional; nil if not present.
 }
 
 // String returns the LLVM syntax representation of the specialized metadata
@@ -960,6 +961,10 @@ func (md *DIImportedEntity) LLString() string {
 	}
 	if len(md.Name) > 0 {
 		field := fmt.Sprintf("name: %s", quote(md.Name))
+		fields = append(fields, field)
+	}
+	if md.Elements != nil {
+		field := fmt.Sprintf("elements: %s", md.Elements)
 		fields = append(fields, field)
 	}
 	fmt.Fprintf(buf, "!DIImportedEntity(%s)", strings.Join(fields, ", "))
@@ -1670,6 +1675,94 @@ func (md *DIObjCProperty) LLString() string {
 
 // SetDistinct specifies whether the metadata definition is dinstict.
 func (md *DIObjCProperty) SetDistinct(distinct bool) {
+	md.Distinct = distinct
+}
+
+// ~~~ [ DIStringType ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// DIStringType is a specialized metadata node.
+type DIStringType struct {
+	// Metadata ID associated with the specialized metadata node; -1 if not
+	// present.
+	MetadataID
+	// (optional) Distinct.
+	Distinct bool
+
+	Tag                      enum.DwarfTag         // optional; zero value if not present.
+	Name                     string                // optional; empty if not present.
+	StringLength             Field                 // optional; nil if not present.
+	StringLengthExpression   Field                 // optional; nil if not present.
+	StringLocationExpression Field                 // optional; nil if not present.
+	Size                     uint64                // optional; zero value if not present.
+	Align                    uint64                // optional; zero value if not present.
+	Encoding                 enum.DwarfAttEncoding // optional; zero value if not present.
+}
+
+// String returns the LLVM syntax representation of the specialized metadata
+// node.
+func (md *DIStringType) String() string {
+	return md.Ident()
+}
+
+// Ident returns the identifier associated with the specialized metadata node.
+func (md *DIStringType) Ident() string {
+	if md == nil {
+		return "null"
+	}
+	if md.MetadataID != -1 {
+		return md.MetadataID.Ident()
+	}
+	return md.LLString()
+}
+
+// LLString returns the LLVM syntax representation of the specialized metadata
+// node.
+//
+// '!DIStringType' '(' Fields=(DIStringTypeField separator ',')* ')'
+func (md *DIStringType) LLString() string {
+	buf := &strings.Builder{}
+	if md.Distinct {
+		buf.WriteString("distinct ")
+	}
+	var fields []string
+	if md.Tag != 0 {
+		field := fmt.Sprintf("tag: %s", dwarfTagString(md.Tag))
+		fields = append(fields, field)
+	}
+	if len(md.Name) > 0 {
+		field := fmt.Sprintf("name: %s", quote(md.Name))
+		fields = append(fields, field)
+	}
+	if md.StringLength != nil {
+		field := fmt.Sprintf("stringLength: %s", md.StringLength)
+		fields = append(fields, field)
+	}
+	if md.StringLengthExpression != nil {
+		field := fmt.Sprintf("stringLengthExpression: %s", md.StringLengthExpression)
+		fields = append(fields, field)
+	}
+	if md.StringLocationExpression != nil {
+		field := fmt.Sprintf("stringLocationExpression: %s", md.StringLocationExpression)
+		fields = append(fields, field)
+	}
+	if md.Size != 0 {
+		field := fmt.Sprintf("size: %d", md.Size)
+		fields = append(fields, field)
+	}
+	if md.Align != 0 {
+		field := fmt.Sprintf("align: %d", md.Align)
+		fields = append(fields, field)
+	}
+	if md.Encoding != 0 {
+		field := fmt.Sprintf("encoding: %s", md.Encoding)
+		fields = append(fields, field)
+	}
+	fmt.Fprintf(buf, "!DIStringType(%s)", strings.Join(fields, ", "))
+	return buf.String()
+}
+
+// SetDistinct specifies whether the metadata definition is dinstict.
+func (md *DIStringType) SetDistinct(distinct bool) {
 	md.Distinct = distinct
 }
 
