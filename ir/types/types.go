@@ -133,18 +133,18 @@ func Equal(t, u Type) bool {
 //
 // A Type has one of the following underlying types.
 //
-//	*types.VoidType       // https://pkg.go.dev/github.com/llir/llvm/ir/types#VoidType
-//	*types.FuncType       // https://pkg.go.dev/github.com/llir/llvm/ir/types#FuncType
-//	*types.IntType        // https://pkg.go.dev/github.com/llir/llvm/ir/types#IntType
-//	*types.FloatType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#FloatType
-//	*types.MMXType        // https://pkg.go.dev/github.com/llir/llvm/ir/types#MMXType
-//	*types.PointerType    // https://pkg.go.dev/github.com/llir/llvm/ir/types#PointerType
-//	*types.VectorType     // https://pkg.go.dev/github.com/llir/llvm/ir/types#VectorType
-//	*types.LabelType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#LabelType
-//	*types.TokenType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#TokenType
-//	*types.MetadataType   // https://pkg.go.dev/github.com/llir/llvm/ir/types#MetadataType
-//	*types.ArrayType      // https://pkg.go.dev/github.com/llir/llvm/ir/types#ArrayType
-//	*types.StructType     // https://pkg.go.dev/github.com/llir/llvm/ir/types#StructType
+//   - [*types.VoidType]
+//   - [*types.FuncType]
+//   - [*types.IntType]
+//   - [*types.FloatType]
+//   - [*types.MMXType]
+//   - [*types.PointerType]
+//   - [*types.VectorType]
+//   - [*types.LabelType]
+//   - [*types.TokenType]
+//   - [*types.MetadataType]
+//   - [*types.ArrayType]
+//   - [*types.StructType]
 type Type interface {
 	fmt.Stringer
 	// LLString returns the LLVM syntax representation of the definition of the
@@ -184,9 +184,8 @@ func (t *VoidType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// 'void'
 func (t *VoidType) LLString() string {
+	// 'void'
 	return "void"
 }
 
@@ -252,9 +251,8 @@ func (t *FuncType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// RetType=Type '(' Params ')'
 func (t *FuncType) LLString() string {
+	// RetType=Type '(' Params ')'
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s (", t.RetType)
 	for i, param := range t.Params {
@@ -318,9 +316,8 @@ func (t *IntType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// int_type_tok
 func (t *IntType) LLString() string {
+	// int_type_tok
 	return fmt.Sprintf("i%d", t.BitSize)
 }
 
@@ -362,9 +359,8 @@ func (t *FloatType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// FloatKind
 func (t *FloatType) LLString() string {
+	// FloatKind
 	return t.Kind.String()
 }
 
@@ -425,9 +421,8 @@ func (t *MMXType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// 'x86_mmx'
 func (t *MMXType) LLString() string {
+	// 'x86_mmx'
 	return "x86_mmx"
 }
 
@@ -477,9 +472,8 @@ func (t *PointerType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// Elem=Type AddrSpaceopt '*'
 func (t *PointerType) LLString() string {
+	// Elem=Type AddrSpaceopt '*'
 	buf := &strings.Builder{}
 	buf.WriteString(t.ElemType.String())
 	if t.AddrSpace != 0 {
@@ -555,10 +549,9 @@ func (t *VectorType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// scalable: '<' 'vscale' 'x' Len=UintLit 'x' Elem=Type '>'
-// non-scalable: '<' Len=UintLit 'x' Elem=Type '>'
 func (t *VectorType) LLString() string {
+	// scalable: '<' 'vscale' 'x' Len=UintLit 'x' Elem=Type '>' non-scalable: '<'
+	// Len=UintLit 'x' Elem=Type '>'
 	if t.Scalable {
 		// '<' 'vscale' 'x' Len=UintLit 'x' Elem=Type '>'
 		return fmt.Sprintf("<vscale x %d x %s>", t.Len, t.ElemType)
@@ -603,9 +596,8 @@ func (t *LabelType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// 'label'
 func (t *LabelType) LLString() string {
+	// 'label'
 	return "label"
 }
 
@@ -645,9 +637,8 @@ func (t *TokenType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// 'token'
 func (t *TokenType) LLString() string {
+	// 'token'
 	return "token"
 }
 
@@ -687,9 +678,8 @@ func (t *MetadataType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// 'metadata'
 func (t *MetadataType) LLString() string {
+	// 'metadata'
 	return "metadata"
 }
 
@@ -745,9 +735,8 @@ func (t *ArrayType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// '[' Len=UintLit 'x' Elem=Type ']'
 func (t *ArrayType) LLString() string {
+	// '[' Len=UintLit 'x' Elem=Type ']'
 	return fmt.Sprintf("[%d x %s]", t.Len, t.ElemType)
 }
 
@@ -820,19 +809,18 @@ func (t *StructType) String() string {
 
 // LLString returns the LLVM syntax representation of the definition of the
 // type.
-//
-// Opaque struct type.
-//
-//	'opaque'
-//
-// Struct type.
-//
-//	'{' Fields=(Type separator ',')+? '}'
-//
-// Packed struct type.
-//
-//	'<' '{' Fields=(Type separator ',')+? '}' '>'   -> PackedStructType
 func (t *StructType) LLString() string {
+	// Opaque struct type.
+	//
+	//	'opaque'
+	//
+	// Struct type.
+	//
+	//	'{' Fields=(Type separator ',')+? '}'
+	//
+	// Packed struct type.
+	//
+	//	'<' '{' Fields=(Type separator ',')+? '}' '>'   -> PackedStructType
 	if t.Opaque {
 		return "opaque"
 	}
