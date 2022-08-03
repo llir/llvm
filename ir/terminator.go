@@ -16,22 +16,22 @@ import (
 //
 // A Terminator has one of the following underlying types.
 //
-// Terminators
+// # Terminators
 //
 // https://llvm.org/docs/LangRef.html#terminator-instructions
 //
-//    *ir.TermRet           // https://pkg.go.dev/github.com/llir/llvm/ir#TermRet
-//    *ir.TermBr            // https://pkg.go.dev/github.com/llir/llvm/ir#TermBr
-//    *ir.TermCondBr        // https://pkg.go.dev/github.com/llir/llvm/ir#TermCondBr
-//    *ir.TermSwitch        // https://pkg.go.dev/github.com/llir/llvm/ir#TermSwitch
-//    *ir.TermIndirectBr    // https://pkg.go.dev/github.com/llir/llvm/ir#TermIndirectBr
-//    *ir.TermInvoke        // https://pkg.go.dev/github.com/llir/llvm/ir#TermInvoke
-//    *ir.TermCallBr        // https://pkg.go.dev/github.com/llir/llvm/ir#TermCallBr
-//    *ir.TermResume        // https://pkg.go.dev/github.com/llir/llvm/ir#TermResume
-//    *ir.TermCatchSwitch   // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchSwitch
-//    *ir.TermCatchRet      // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchRet
-//    *ir.TermCleanupRet    // https://pkg.go.dev/github.com/llir/llvm/ir#TermCleanupRet
-//    *ir.TermUnreachable   // https://pkg.go.dev/github.com/llir/llvm/ir#TermUnreachable
+//	*ir.TermRet           // https://pkg.go.dev/github.com/llir/llvm/ir#TermRet
+//	*ir.TermBr            // https://pkg.go.dev/github.com/llir/llvm/ir#TermBr
+//	*ir.TermCondBr        // https://pkg.go.dev/github.com/llir/llvm/ir#TermCondBr
+//	*ir.TermSwitch        // https://pkg.go.dev/github.com/llir/llvm/ir#TermSwitch
+//	*ir.TermIndirectBr    // https://pkg.go.dev/github.com/llir/llvm/ir#TermIndirectBr
+//	*ir.TermInvoke        // https://pkg.go.dev/github.com/llir/llvm/ir#TermInvoke
+//	*ir.TermCallBr        // https://pkg.go.dev/github.com/llir/llvm/ir#TermCallBr
+//	*ir.TermResume        // https://pkg.go.dev/github.com/llir/llvm/ir#TermResume
+//	*ir.TermCatchSwitch   // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchSwitch
+//	*ir.TermCatchRet      // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchRet
+//	*ir.TermCleanupRet    // https://pkg.go.dev/github.com/llir/llvm/ir#TermCleanupRet
+//	*ir.TermUnreachable   // https://pkg.go.dev/github.com/llir/llvm/ir#TermUnreachable
 type Terminator interface {
 	LLStringer
 	// Succs returns the successor basic blocks of the terminator.
@@ -77,11 +77,11 @@ func (term *TermRet) Operands() []*value.Value {
 //
 // Void return instruction.
 //
-//    'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
+//	'ret' XTyp=VoidType Metadata=(',' MetadataAttachment)+?
 //
 // Value return instruction.
 //
-//    'ret' XTyp=ConcreteType X=Value Metadata=(',' MetadataAttachment)+?
+//	'ret' XTyp=ConcreteType X=Value Metadata=(',' MetadataAttachment)+?
 func (term *TermRet) LLString() string {
 	buf := &strings.Builder{}
 	if term.X == nil {

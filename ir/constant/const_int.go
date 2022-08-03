@@ -38,12 +38,12 @@ func NewBool(x bool) *Int {
 //
 // The integer string may be expressed in one of the following forms.
 //
-//    * boolean literal
-//         true | false
-//    * integer literal
-//         [-]?[0-9]+
-//    * hexadecimal integer literal
-//         [us]0x[0-9A-Fa-f]+
+//   - boolean literal
+//     true | false
+//   - integer literal
+//     [-]?[0-9]+
+//   - hexadecimal integer literal
+//     [us]0x[0-9A-Fa-f]+
 func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 	// Boolean literal.
 	switch s {
@@ -164,20 +164,20 @@ func (c *Int) Ident() string {
 // calcMaxHexEntropy returns the maximum allowed hexadecimal entropy based on
 // the length of x in hexadecimal notation.
 //
-//    maxHexEntropy = 0.0    length < 4
-//    maxHexEntropy = 0.5    length == 4 (2/4)
-//    maxHexEntropy = 0.4    length == 5 (2/5)
-//    maxHexEntropy = 0.34   length == 6 (2/6)
-//    maxHexEntropy = 0.43   length == 7 (3/7)
-//    maxHexEntropy = 0.38   length == 8 (3/8)
-//    maxHexEntropy = 0.34   length == 9 (3/9)
-//    maxHexEntropy = 0.3    length == 10 (3/10)
-//    maxHexEntropy = 0.37   length == 11 (4/11)
-//    maxHexEntropy = 0.34   length == 12 (4/12)
-//    maxHexEntropy = 0.31   length == 13 (4/13)
-//    maxHexEntropy = 0.29   length == 14 (4/14)
-//    maxHexEntropy = 0.27   length == 15 (4/15)
-//    maxHexEntropy = 0.25   length >= 16 (4/16)
+//	maxHexEntropy = 0.0    length < 4
+//	maxHexEntropy = 0.5    length == 4 (2/4)
+//	maxHexEntropy = 0.4    length == 5 (2/5)
+//	maxHexEntropy = 0.34   length == 6 (2/6)
+//	maxHexEntropy = 0.43   length == 7 (3/7)
+//	maxHexEntropy = 0.38   length == 8 (3/8)
+//	maxHexEntropy = 0.34   length == 9 (3/9)
+//	maxHexEntropy = 0.3    length == 10 (3/10)
+//	maxHexEntropy = 0.37   length == 11 (4/11)
+//	maxHexEntropy = 0.34   length == 12 (4/12)
+//	maxHexEntropy = 0.31   length == 13 (4/13)
+//	maxHexEntropy = 0.29   length == 14 (4/14)
+//	maxHexEntropy = 0.27   length == 15 (4/15)
+//	maxHexEntropy = 0.25   length >= 16 (4/16)
 func calcMaxHexEntropy(length int) float64 {
 	if length > 16 {
 		length = 16
@@ -205,15 +205,16 @@ func calcMaxHexEntropy(length int) float64 {
 // ignoring prefix; namely '0' and '8'.
 //
 // Hex digits of 0x80000000:
-//    0 0 0 0 0 0 0
-//    8
+//
+//	0 0 0 0 0 0 0
+//	8
 //
 // The total number of hex digits in 0x80000000 is 8. Thus, the entropy of
 // 0x80000000 in hexadecimal notation is
 //
-//    unique_digits/total_digits
-//    = 2/8
-//    = 0.25
+//	unique_digits/total_digits
+//	= 2/8
+//	= 0.25
 func hexEntropy(x *big.Int) float64 {
 	const base = 16
 	return intEntropy(x, base)
@@ -229,20 +230,21 @@ func hexEntropy(x *big.Int) float64 {
 // '3', '4', '6', '7' and '8'.
 //
 // Decimal digits of 2147483648:
-//    1
-//    2
-//    3
-//    4 4 4
-//    6
-//    7
-//    8 8
+//
+//	1
+//	2
+//	3
+//	4 4 4
+//	6
+//	7
+//	8 8
 //
 // The total number of decimal digits in 2147483648 is 10. Thus, the entropy of
 // 2147483648 in decimal notation is
 //
-//    unique_digits/total_digits
-//    = 7/10
-//    = 0.7
+//	unique_digits/total_digits
+//	= 7/10
+//	= 0.7
 func decimalEntropy(x *big.Int) float64 {
 	const base = 10
 	return intEntropy(x, base)

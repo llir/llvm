@@ -151,11 +151,11 @@ func (inst *InstLoad) Type() types.Type {
 //
 // Load instruction.
 //
-//    'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Align)? Metadata=(',' MetadataAttachment)+?
+//	'load' Volatileopt ElemType=Type ',' Src=TypeValue (',' Align)? Metadata=(',' MetadataAttachment)+?
 //
 // Atomic load instruction.
 //
-//    'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt Ordering=AtomicOrdering (',' Align)? Metadata=(',' MetadataAttachment)+?
+//	'load' Atomic Volatileopt ElemType=Type ',' Src=TypeValue SyncScopeopt Ordering=AtomicOrdering (',' Align)? Metadata=(',' MetadataAttachment)+?
 func (inst *InstLoad) LLString() string {
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
@@ -230,11 +230,11 @@ func NewStore(src, dst value.Value) *InstStore {
 //
 // Store instruction.
 //
-//    'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Align)? Metadata=(',' MetadataAttachment)+?
+//	'store' Volatileopt Src=TypeValue ',' Dst=TypeValue (',' Align)? Metadata=(',' MetadataAttachment)+?
 //
 // Atomic store instruction.
 //
-//    'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt Ordering=AtomicOrdering (',' Align)? Metadata=(',' MetadataAttachment)+?
+//	'store' Atomic Volatileopt Src=TypeValue ',' Dst=TypeValue SyncScopeopt Ordering=AtomicOrdering (',' Align)? Metadata=(',' MetadataAttachment)+?
 func (inst *InstStore) LLString() string {
 	buf := &strings.Builder{}
 	buf.WriteString("store")
@@ -558,7 +558,7 @@ func (inst *InstGetElementPtr) Operands() []*value.Value {
 
 // gepInstType computes the result type of a getelementptr instruction.
 //
-//    getelementptr ElemType, Src, Indices
+//	getelementptr ElemType, Src, Indices
 func gepInstType(elemType, src types.Type, indices []value.Value) types.Type {
 	var idxs []gep.Index
 	for _, index := range indices {

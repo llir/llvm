@@ -56,17 +56,17 @@ func (gen *generator) createTypeDefs() error {
 //
 // For instance, the following is disallowed.
 //
-//    ; self-referential named type.
-//    %a = type %a
+//	; self-referential named type.
+//	%a = type %a
 //
-//    ; recursively self-referential named types.
-//    %b = type %c
-//    %c = type %b
+//	; recursively self-referential named types.
+//	%b = type %c
+//	%c = type %b
 //
 // The following is allowed, however.
 //
-//    ; struct type containing pointer to itself.
-//    %d = type { %d* }
+//	; struct type containing pointer to itself.
+//	%d = type { %d* }
 func newType(typeName string, old ast.LlvmNode, index map[string]*ast.TypeDef, track map[string]bool) (types.Type, error) {
 	switch old := old.(type) {
 	case *ast.VoidType:

@@ -238,9 +238,9 @@ func (a VectorScaleRange) String() string {
 //
 // An ExceptionPad has one of the following underlying types.
 //
-//    *ir.InstCatchPad
-//    *ir.InstCleanupPad
-//    *constant.NoneToken
+//	*ir.InstCatchPad
+//	*ir.InstCleanupPad
+//	*constant.NoneToken
 type ExceptionPad interface {
 	value.Value
 }
@@ -249,13 +249,13 @@ type ExceptionPad interface {
 //
 // A FuncAttribute has one of the following underlying types.
 //
-//    ir.AttrString
-//    ir.AttrPair
-//    *ir.AttrGroupDef
-//    ir.Align
-//    ir.AlignStack
-//    ir.AllocSize
-//    enum.FuncAttr
+//	ir.AttrString
+//	ir.AttrPair
+//	*ir.AttrGroupDef
+//	ir.Align
+//	ir.AlignStack
+//	ir.AllocSize
+//	enum.FuncAttr
 type FuncAttribute interface {
 	fmt.Stringer
 	// IsFuncAttribute ensures that only function attributes can be assigned to
@@ -411,11 +411,11 @@ func (o *OperandBundle) String() string {
 //
 // A ParamAttribute has one of the following underlying types.
 //
-//    ir.AttrString
-//    ir.AttrPair
-//    ir.Align
-//    ir.Dereferenceable
-//    enum.ParamAttr
+//	ir.AttrString
+//	ir.AttrPair
+//	ir.Align
+//	ir.Dereferenceable
+//	enum.ParamAttr
 type ParamAttribute interface {
 	fmt.Stringer
 	// IsParamAttribute ensures that only parameter attributes can be assigned to
@@ -427,11 +427,11 @@ type ParamAttribute interface {
 //
 // A ReturnAttribute has one of the following underlying types.
 //
-//    ir.AttrString
-//    ir.AttrPair
-//    ir.Align
-//    ir.Dereferenceable
-//    enum.ReturnAttr
+//	ir.AttrString
+//	ir.AttrPair
+//	ir.Align
+//	ir.Dereferenceable
+//	enum.ReturnAttr
 type ReturnAttribute interface {
 	fmt.Stringer
 	// IsReturnAttribute ensures that only return attributes can be assigned to

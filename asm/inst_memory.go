@@ -367,7 +367,7 @@ func (fgen *funcGen) irGetElementPtrInst(new ir.Instruction, old *ast.GetElement
 
 // gepInstType computes the result type of a getelementptr instruction.
 //
-//    getelementptr ElemType, Src, Indices
+//	getelementptr ElemType, Src, Indices
 func (gen *generator) gepInstType(elemType, src types.Type, indices []ast.TypeValue) (types.Type, error) {
 	var idxs []gep.Index
 	for _, index := range indices {

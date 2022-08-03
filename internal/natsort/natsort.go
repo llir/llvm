@@ -2,7 +2,8 @@
 // embedded in strings are compared by value.
 //
 // References:
-//    https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
+//
+//	https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
 package natsort
 
 import (

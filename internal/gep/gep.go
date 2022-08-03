@@ -37,7 +37,7 @@ func NewIndex(val int64) Index {
 // ResultType computes the result type of a getelementptr instruction or
 // constant expression.
 //
-//    getelementptr (ElemType, Src, Indices)
+//	getelementptr (ElemType, Src, Indices)
 func ResultType(elemType, src types.Type, indices []Index) types.Type {
 	// ref: http://llvm.org/docs/GetElementPtr.html#what-effect-do-address-spaces-have-on-geps
 	//

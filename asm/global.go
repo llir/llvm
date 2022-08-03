@@ -620,7 +620,7 @@ func (gen *generator) irFuncHeader(new *ir.Func, old ast.FuncHeader) error {
 
 // gepExprType computes the result type of a getelementptr constant expression.
 //
-//    getelementptr ElemType, Src, Indices
+//	getelementptr ElemType, Src, Indices
 //
 // Notably, gepExprType returns the type of the gep expression without resolving
 // the underlying src value. As such gepExprType may be invoked before

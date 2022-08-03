@@ -104,7 +104,7 @@ func (index *Index) String() string {
 
 // gepExprType computes the result type of a getelementptr constant expression.
 //
-//    getelementptr (ElemType, Src, Indices)
+//	getelementptr (ElemType, Src, Indices)
 func gepExprType(elemType, src types.Type, indices []Constant) types.Type {
 	var idxs []gep.Index
 	for _, index := range indices {

@@ -12,9 +12,9 @@ import (
 //
 // A Value has one of the following underlying types.
 //
-//    constant.Constant   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#Constant
-//    value.Named         // https://pkg.go.dev/github.com/llir/llvm/ir/value#Named
-//    TODO: add literal metadata value?
+//	constant.Constant   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#Constant
+//	value.Named         // https://pkg.go.dev/github.com/llir/llvm/ir/value#Named
+//	TODO: add literal metadata value?
 type Value interface {
 	// String returns the LLVM syntax representation of the value as a type-value
 	// pair.
@@ -29,14 +29,14 @@ type Value interface {
 //
 // A Named value has one of the following underlying types.
 //
-//    *ir.Global            // https://pkg.go.dev/github.com/llir/llvm/ir#Global
-//    *ir.Func              // https://pkg.go.dev/github.com/llir/llvm/ir#Func
-//    *ir.Param             // https://pkg.go.dev/github.com/llir/llvm/ir#Param
-//    *ir.Block             // https://pkg.go.dev/github.com/llir/llvm/ir#Block
-//    TODO: add named metadata value?
-//    ir.Instruction        // https://pkg.go.dev/github.com/llir/llvm/ir#Instruction (except store and fence)
-//    *ir.TermInvoke        // https://pkg.go.dev/github.com/llir/llvm/ir#TermInvoke
-//    *ir.TermCatchSwitch   // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchSwitch (token result used by catchpad)
+//	*ir.Global            // https://pkg.go.dev/github.com/llir/llvm/ir#Global
+//	*ir.Func              // https://pkg.go.dev/github.com/llir/llvm/ir#Func
+//	*ir.Param             // https://pkg.go.dev/github.com/llir/llvm/ir#Param
+//	*ir.Block             // https://pkg.go.dev/github.com/llir/llvm/ir#Block
+//	TODO: add named metadata value?
+//	ir.Instruction        // https://pkg.go.dev/github.com/llir/llvm/ir#Instruction (except store and fence)
+//	*ir.TermInvoke        // https://pkg.go.dev/github.com/llir/llvm/ir#TermInvoke
+//	*ir.TermCatchSwitch   // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchSwitch (token result used by catchpad)
 type Named interface {
 	Value
 	// Name returns the name of the value.

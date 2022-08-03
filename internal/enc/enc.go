@@ -10,13 +10,15 @@ import (
 // GlobalName encodes a global name to its LLVM IR assembly representation.
 //
 // Examples:
-//    "foo" -> "@foo"
-//    "a b" -> `@"a b"`
-//    "世" -> `@"\E4\B8\96"`
-//    "2" -> `@"2"`
+//
+//	"foo" -> "@foo"
+//	"a b" -> `@"a b"`
+//	"世" -> `@"\E4\B8\96"`
+//	"2" -> `@"2"`
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func GlobalName(name string) string {
 	// Positive numeric global names are quoted to distinguish global names from
 	// global IDs; e.g.
@@ -31,10 +33,12 @@ func GlobalName(name string) string {
 // GlobalID encodes a global ID to its LLVM IR assembly representation.
 //
 // Examples:
-//    "42" -> "@42"
+//
+//	"42" -> "@42"
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func GlobalID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative global ID (%d); should be represented as global name", id))
@@ -45,13 +49,15 @@ func GlobalID(id int64) string {
 // LocalName encodes a local name to its LLVM IR assembly representation.
 //
 // Examples:
-//    "foo" -> "%foo"
-//    "a b" -> `%"a b"`
-//    "世" -> `%"\E4\B8\96"`
-//    "2" -> `%"2"`
+//
+//	"foo" -> "%foo"
+//	"a b" -> `%"a b"`
+//	"世" -> `%"\E4\B8\96"`
+//	"2" -> `%"2"`
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func LocalName(name string) string {
 	// Positive numeric local names are quoted to distinguish local names from
 	// local IDs; e.g.
@@ -66,10 +72,12 @@ func LocalName(name string) string {
 // LocalID encodes a local ID to its LLVM IR assembly representation.
 //
 // Examples:
-//    "42" -> "%42"
+//
+//	"42" -> "%42"
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func LocalID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative local ID (%d); should be represented as local name", id))
@@ -80,13 +88,15 @@ func LocalID(id int64) string {
 // LabelName encodes a label name to its LLVM IR assembly representation.
 //
 // Examples:
-//    "foo" -> "foo:"
-//    "a b" -> `"a b":`
-//    "世" -> `"\E4\B8\96":`
-//    "2" -> `"2":`
+//
+//	"foo" -> "foo:"
+//	"a b" -> `"a b":`
+//	"世" -> `"\E4\B8\96":`
+//	"2" -> `"2":`
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func LabelName(name string) string {
 	// Positive numeric label names are quoted to distinguish label names from
 	// label IDs; e.g.
@@ -101,10 +111,12 @@ func LabelName(name string) string {
 // LabelID encodes a label ID to its LLVM IR assembly representation.
 //
 // Examples:
-//    "42" -> 42:
+//
+//	"42" -> 42:
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func LabelID(id int64) string {
 	if id < 0 {
 		panic(fmt.Errorf("negative label ID (%d); should be represented as label name", id))
@@ -115,13 +127,15 @@ func LabelID(id int64) string {
 // TypeName encodes a type name to its LLVM IR assembly representation.
 //
 // Examples:
-//    "foo" -> "%foo"
-//    "a b" -> `%"a b"`
-//    "世" -> `%"\E4\B8\96"`
-//    "2" -> `%2`
+//
+//	"foo" -> "%foo"
+//	"a b" -> `%"a b"`
+//	"世" -> `%"\E4\B8\96"`
+//	"2" -> `%2`
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func TypeName(name string) string {
 	return "%" + EscapeIdent(name)
 }
@@ -130,10 +144,12 @@ func TypeName(name string) string {
 // representation.
 //
 // Examples:
-//    "42" -> "#42"
+//
+//	"42" -> "#42"
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func AttrGroupID(id int64) string {
 	return "#" + strconv.FormatInt(id, 10)
 }
@@ -141,12 +157,14 @@ func AttrGroupID(id int64) string {
 // ComdatName encodes a comdat name to its LLVM IR assembly representation.
 //
 // Examples:
-//    "foo" -> $%foo"
-//    "a b" -> `$"a b"`
-//    "世" -> `$"\E4\B8\96"`
+//
+//	"foo" -> $%foo"
+//	"a b" -> `$"a b"`
+//	"世" -> `$"\E4\B8\96"`
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func ComdatName(name string) string {
 	return "$" + EscapeIdent(name)
 }
@@ -154,12 +172,14 @@ func ComdatName(name string) string {
 // MetadataName encodes a metadata name to its LLVM IR assembly representation.
 //
 // Examples:
-//    "foo" -> "!foo"
-//    "a b" -> `!a\20b`
-//    "世" -> `!\E4\B8\96`
+//
+//	"foo" -> "!foo"
+//	"a b" -> `!a\20b`
+//	"世" -> `!\E4\B8\96`
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func MetadataName(name string) string {
 	valid := func(b byte) bool {
 		return strings.IndexByte(tail, b) != -1
@@ -175,10 +195,12 @@ func MetadataName(name string) string {
 // MetadataID encodes a metadata ID to its LLVM IR assembly representation.
 //
 // Examples:
-//    "42" -> "!42"
+//
+//	"42" -> "!42"
 //
 // References:
-//    http://www.llvm.org/docs/LangRef.html#identifiers
+//
+//	http://www.llvm.org/docs/LangRef.html#identifiers
 func MetadataID(id int64) string {
 	return "!" + strconv.FormatInt(id, 10)
 }

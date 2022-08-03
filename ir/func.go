@@ -114,11 +114,11 @@ func (f *Func) Type() types.Type {
 //
 // Function declaration.
 //
-//    'declare' Metadata=MetadataAttachment* Header=FuncHeader
+//	'declare' Metadata=MetadataAttachment* Header=FuncHeader
 //
 // Function definition.
 //
-//    'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
+//	'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
 func (f *Func) LLString() string {
 	if err := f.AssignIDs(); err != nil {
 		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
