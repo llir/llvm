@@ -61,11 +61,11 @@ func (block *Block) NewIndirectBr(addr value.Value, validTargets ...*Block) *Ter
 
 // ~~~ [ invoke ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// TODO: specify the set of underlying types of invokee in Block.NewInvoke.
+
 // NewInvoke sets the terminator of the basic block to a new invoke terminator
 // based on the given invokee, function arguments and control flow return points
 // for normal and exceptional execution.
-//
-// TODO: specify the set of underlying types of invokee.
 func (block *Block) NewInvoke(invokee value.Value, args []value.Value, normalRetTarget, exceptionRetTarget *Block) *TermInvoke {
 	term := NewInvoke(invokee, args, normalRetTarget, exceptionRetTarget)
 	block.Term = term
@@ -74,11 +74,11 @@ func (block *Block) NewInvoke(invokee value.Value, args []value.Value, normalRet
 
 // ~~~ [ callbr ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// TODO: specify the set of underlying types of callee in Block.NewCallBr.
+
 // NewCallBr sets the terminator of the basic block to a new callbr terminator
 // based on the given callee, function arguments and control flow return points
 // for normal and exceptional execution.
-//
-// TODO: specify the set of underlying types of callee.
 func (block *Block) NewCallBr(callee value.Value, args []value.Value, normalRetTarget *Block, otherRetTargets ...*Block) *TermCallBr {
 	term := NewCallBr(callee, args, normalRetTarget, otherRetTargets...)
 	block.Term = term

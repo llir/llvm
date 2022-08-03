@@ -51,10 +51,10 @@ func (block *Block) NewSelect(cond, valueTrue, valueFalse value.Value) *InstSele
 
 // ~~~ [ call ] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// TODO: specify the set of underlying types of callee in Block.NewCall.
+
 // NewCall appends a new call instruction to the basic block based on the given
 // callee and function arguments.
-//
-// TODO: specify the set of underlying types of callee.
 func (block *Block) NewCall(callee value.Value, args ...value.Value) *InstCall {
 	inst := NewCall(callee, args...)
 	block.Insts = append(block.Insts, inst)

@@ -54,9 +54,8 @@ func (inst *InstAdd) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'add' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstAdd) LLString() string {
+	// 'add' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("add")
@@ -118,9 +117,8 @@ func (inst *InstFAdd) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstFAdd) LLString() string {
+	// 'fadd' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("fadd")
@@ -182,9 +180,8 @@ func (inst *InstSub) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'sub' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstSub) LLString() string {
+	// 'sub' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("sub")
@@ -246,9 +243,8 @@ func (inst *InstFSub) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstFSub) LLString() string {
+	// 'fsub' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("fsub")
@@ -310,9 +306,8 @@ func (inst *InstMul) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'mul' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstMul) LLString() string {
+	// 'mul' OverflowFlags=OverflowFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("mul")
@@ -374,9 +369,8 @@ func (inst *InstFMul) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstFMul) LLString() string {
+	// 'fmul' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("fmul")
@@ -438,9 +432,8 @@ func (inst *InstUDiv) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'udiv' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstUDiv) LLString() string {
+	// 'udiv' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("udiv")
@@ -502,9 +495,8 @@ func (inst *InstSDiv) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'sdiv' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstSDiv) LLString() string {
+	// 'sdiv' Exactopt X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("sdiv")
@@ -566,9 +558,8 @@ func (inst *InstFDiv) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstFDiv) LLString() string {
+	// 'fdiv' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("fdiv")
@@ -628,9 +619,8 @@ func (inst *InstURem) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'urem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstURem) LLString() string {
+	// 'urem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "urem %s, %s", inst.X, inst.Y.Ident())
@@ -686,9 +676,8 @@ func (inst *InstSRem) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'srem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstSRem) LLString() string {
+	// 'srem' X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "srem %s, %s", inst.X, inst.Y.Ident())
@@ -746,9 +735,8 @@ func (inst *InstFRem) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'frem' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 func (inst *InstFRem) LLString() string {
+	// 'frem' FastMathFlags=FastMathFlag* X=TypeValue ',' Y=Value Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	buf.WriteString("frem")

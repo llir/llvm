@@ -65,9 +65,8 @@ func (a *Alias) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the alias definition.
-//
-// Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt IndirectSymbolKind ContentType=Type ',' IndirectSymbol Partitions=(',' Partition)*
 func (a *Alias) LLString() string {
+	// Name=GlobalIdent '=' (ExternLinkage | Linkageopt) Preemptionopt Visibilityopt DLLStorageClassopt ThreadLocalopt UnnamedAddropt IndirectSymbolKind ContentType=Type ',' IndirectSymbol Partitions=(',' Partition)*
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s =", a.Ident())
 	if a.Linkage != enum.LinkageNone {

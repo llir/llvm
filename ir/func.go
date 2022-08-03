@@ -111,15 +111,14 @@ func (f *Func) Type() types.Type {
 
 // LLString returns the LLVM syntax representation of the function definition or
 // declaration.
-//
-// Function declaration.
-//
-//	'declare' Metadata=MetadataAttachment* Header=FuncHeader
-//
-// Function definition.
-//
-//	'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
 func (f *Func) LLString() string {
+	// Function declaration.
+	//
+	//	'declare' Metadata=MetadataAttachment* Header=FuncHeader
+	//
+	// Function definition.
+	//
+	//	'define' Header=FuncHeader Metadata=MetadataAttachment* Body=FuncBody
 	if err := f.AssignIDs(); err != nil {
 		panic(fmt.Errorf("unable to assign IDs of function %q; %v", f.Ident(), err))
 	}

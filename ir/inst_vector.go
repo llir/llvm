@@ -58,9 +58,8 @@ func (inst *InstExtractElement) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(',' MetadataAttachment)+?
 func (inst *InstExtractElement) LLString() string {
+	// 'extractelement' X=TypeValue ',' Index=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "extractelement %s, %s", inst.X, inst.Index)
@@ -125,10 +124,8 @@ func (inst *InstInsertElement) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue
-// Metadata=(',' MetadataAttachment)+?
 func (inst *InstInsertElement) LLString() string {
+	// 'insertelement' X=TypeValue ',' Elem=TypeValue ',' Index=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "insertelement %s, %s, %s", inst.X, inst.Elem, inst.Index)
@@ -195,10 +192,8 @@ func (inst *InstShuffleVector) Type() types.Type {
 }
 
 // LLString returns the LLVM syntax representation of the instruction.
-//
-// 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue
-// Metadata=(',' MetadataAttachment)+?
 func (inst *InstShuffleVector) LLString() string {
+	// 'shufflevector' X=TypeValue ',' Y=TypeValue ',' Mask=TypeValue Metadata=(',' MetadataAttachment)+?
 	buf := &strings.Builder{}
 	fmt.Fprintf(buf, "%s = ", inst.Ident())
 	fmt.Fprintf(buf, "shufflevector %s, %s, %s", inst.X, inst.Y, inst.Mask)
