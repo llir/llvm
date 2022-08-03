@@ -4,11 +4,15 @@ package enum
 //go:generate stringer -linecomment -type AllocKind
 
 // AllocKind is an allockind bitfield function attribute.
-//
-// ref: include/llvm/IR/Attributes.h (LLVM 15.0) (enum class AllocFnKind)
 type AllocKind uint8
 
 // Alloc kinds.
+//
+// refs:
+//
+//   - [include/llvm/IR/Attributes.h] (LLVM 15.0) (enum class AllocFnKind)
+//
+// [include/llvm/IR/Attributes.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/Attributes.h
 const (
 	AllocKindAlloc         AllocKind = 1 << 0 // alloc
 	AllocKindRealloc       AllocKind = 1 << 1 // realloc
@@ -52,8 +56,12 @@ type AtomicOrdering uint8
 
 // Atomic ordering attributes.
 //
-// ref: include/llvm/Support/AtomicOrdering.h (LLVM 13.0) (enum class AtomicOrdering)
-// ref: include/llvm/Support/AtomicOrdering.h (LLVM 13.0) (toIRString(AtomicOrdering))
+// refs:
+//
+//   - [include/llvm/Support/AtomicOrdering.h] (LLVM 13.0) (enum class AtomicOrdering)
+//   - [include/llvm/Support/AtomicOrdering.h] (LLVM 13.0) (toIRString(AtomicOrdering))
+//
+// [include/llvm/Support/AtomicOrdering.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/Support/AtomicOrdering.h
 const (
 	// not_atomic
 	AtomicOrderingNone      AtomicOrdering = 0 // none
@@ -73,7 +81,11 @@ type CallingConv uint16
 
 // Calling conventions.
 //
-// From include/llvm/IR/CallingConv.h (LLVM 13.0)
+// refs:
+//
+//   - [include/llvm/IR/CallingConv.h] (LLVM 13.0)
+//
+// [include/llvm/IR/CallingConv.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/CallingConv.h
 const (
 	CallingConvNone CallingConv = 0 // none
 	// Note, C calling convention is defined as 0 in LLVM. To have the zero-value
@@ -142,7 +154,11 @@ type ChecksumKind uint8
 
 // Checksum algorithms.
 //
-// From include/llvm/IR/DebugInfoMetadata.h
+// refs:
+//
+//   - [include/llvm/IR/DebugInfoMetadata.h]
+//
+// [include/llvm/IR/DebugInfoMetadata.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/DebugInfoMetadata.h
 const (
 	ChecksumKindMD5  ChecksumKind = 1 // CSK_MD5
 	ChecksumKindSHA1 ChecksumKind = 2 // CSK_SHA1
@@ -166,7 +182,11 @@ type DIFlag uint64
 
 // Debug info flags.
 //
-// From include/llvm/IR/DebugInfoFlags.def (LLVM 13.0)
+// refs:
+//
+//   - [include/llvm/IR/DebugInfoFlags.def] (LLVM 13.0)
+//
+// [include/llvm/IR/DebugInfoFlags.def]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/DebugInfoFlags.def
 const (
 	DIFlagZero                DIFlag = 0
 	DIFlagPrivate             DIFlag = 1
@@ -220,7 +240,11 @@ type DISPFlag uint64
 
 // Subprogram specific flags.
 //
-// From include/llvm/IR/DebugInfoFlags.def (LLVM 10.0)
+// refs:
+//
+//   - [include/llvm/IR/DebugInfoFlags.def] (LLVM 10.0)
+//
+// [include/llvm/IR/DebugInfoFlags.def]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/DebugInfoFlags.def
 const (
 	DISPFlagZero           DISPFlag = 0
 	DISPFlagVirtual        DISPFlag = 1
@@ -265,7 +289,11 @@ type DwarfAttEncoding int64
 
 // DWARF attribute type encodings.
 //
-// From include/llvm/BinaryFormat/Dwarf.def
+// refs:
+//
+//   - [include/llvm/BinaryFormat/Dwarf.def]
+//
+// [include/llvm/BinaryFormat/Dwarf.def]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/BinaryFormat/Dwarf.def
 const (
 	// DWARF v2.
 	DwarfAttEncodingAddress      DwarfAttEncoding = 0x01 // DW_ATE_address
@@ -323,7 +351,11 @@ type DwarfLang int64
 
 // DWARF languages.
 //
-// From include/llvm/BinaryFormat/Dwarf.def
+// refs:
+//
+//   - [include/llvm/BinaryFormat/Dwarf.def]
+//
+// [include/llvm/BinaryFormat/Dwarf.def]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/BinaryFormat/Dwarf.def
 const (
 	// DWARF v2.
 	DwarfLangC89       DwarfLang = 0x0001 // DW_LANG_C89
@@ -379,7 +411,11 @@ type DwarfMacinfo int64
 
 // Macinfo type encodings.
 //
-// From llvm/BinaryFormat/Dwarf.h
+// refs:
+//
+//   - [include/llvm/BinaryFormat/Dwarf.h]
+//
+// [include/llvm/BinaryFormat/Dwarf.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/BinaryFormat/Dwarf.h
 const (
 	DwarfMacinfoDefine    DwarfMacinfo = 0x01 // DW_MACINFO_define
 	DwarfMacinfoUndef     DwarfMacinfo = 0x02 // DW_MACINFO_undef
@@ -395,8 +431,13 @@ type DwarfOp int64
 
 // DWARF expression operators.
 //
-// From include/llvm/BinaryFormat/Dwarf.def (LLVM 13.0)
-// From include/llvm/BinaryFormat/Dwarf.h (LLVM 13.0)
+// refs:
+//
+//   - [include/llvm/BinaryFormat/Dwarf.def] (LLVM 13.0)
+//   - [include/llvm/BinaryFormat/Dwarf.h] (LLVM 13.0)
+//
+// [include/llvm/BinaryFormat/Dwarf.def]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/BinaryFormat/Dwarf.def
+// [include/llvm/BinaryFormat/Dwarf.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/BinaryFormat/Dwarf.h
 const (
 	// DWARF v2.
 	DwarfOpAddr       DwarfOp = 0x03 // DW_OP_addr
@@ -602,7 +643,11 @@ type DwarfTag int64
 
 // DWARF tags.
 //
-// From include/llvm/BinaryFormat/Dwarf.def
+// refs:
+//
+//   - [include/llvm/BinaryFormat/Dwarf.def]
+//
+// [include/llvm/BinaryFormat/Dwarf.def]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/BinaryFormat/Dwarf.def
 const (
 	// DWARF v2.
 	DwarfTagNull                   DwarfTag = 0x0000 // DW_TAG_null
@@ -712,9 +757,13 @@ const (
 // EmissionKind specifies the debug emission kind.
 type EmissionKind int64
 
-// ref: include/llvm/IR/DebugInfoMetadata.h (LLVM 9.0).
-
 // Debug emission kinds.
+//
+// refs:
+//
+//   - [include/llvm/IR/DebugInfoMetadata.h] (LLVM 9.0).
+//
+// [include/llvm/IR/DebugInfoMetadata.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/DebugInfoMetadata.h
 const (
 	EmissionKindNoDebug             EmissionKind = 0 // NoDebug
 	EmissionKindFullDebug           EmissionKind = 1 // FullDebug
@@ -877,7 +926,11 @@ type NameTableKind uint8
 
 // Name table kinds.
 //
-// From include/llvm/IR/DebugInfoMetadata.h
+// refs:
+//
+//   - [include/llvm/IR/DebugInfoMetadata.h]
+//
+// [include/llvm/IR/DebugInfoMetadata.h]: https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/DebugInfoMetadata.h
 const (
 	NameTableKindDefault NameTableKind = 0 // Default
 	NameTableKindGNU     NameTableKind = 1 // GNU
@@ -1024,11 +1077,13 @@ const (
 
 // UnwindTableKind specifies the set of unwind table kinds for the uwtable
 // function attribute.
-//
-// ref: https://llvm.org/docs/LangRef.html#function-attributes
 type UnwindTableKind uint8
 
 // Unwind table kinds.
+//
+// refs:
+//
+//   - https://llvm.org/docs/LangRef.html#function-attributes
 const (
 	UnwindTableKindNone  UnwindTableKind = 0 // none
 	UnwindTableKindSync  UnwindTableKind = 1 // sync
