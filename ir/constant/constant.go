@@ -2,7 +2,6 @@
 package constant
 
 import (
-	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
 )
@@ -77,6 +76,11 @@ var (
 // https://llvm.org/docs/LangRef.html#constant-expressions
 //
 //   - [constant.Expression]
+//
+// [*ir.Global]: https://pkg.go.dev/github.com/llir/llvm/ir#Global
+// [*ir.Func]: https://pkg.go.dev/github.com/llir/llvm/ir#Func
+// [*ir.Alias]: https://pkg.go.dev/github.com/llir/llvm/ir#Alias
+// [*ir.IFunc]: https://pkg.go.dev/github.com/llir/llvm/ir#IFunc
 type Constant interface {
 	value.Value
 	// IsConstant ensures that only constants can be assigned to the
@@ -84,5 +88,7 @@ type Constant interface {
 	IsConstant()
 }
 
-// NOTE: used to have "ir.Foo" doc comments refer "github.com/llir/llvm/ir".
-var _ = &ir.Global{}
+// NOTE: explicit links to pkg.go.dev are given for ir.Foo identifiers, as those
+// were not recognized as links otherwise. Importing a dummy version of package
+// ir (e.g. `var _ = &ir.Global{}`) would work and let godoc find the correct
+// package, except for the fact that such an import creates a cyclic import.
