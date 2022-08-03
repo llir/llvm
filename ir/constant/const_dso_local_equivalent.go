@@ -12,7 +12,9 @@ import (
 // representing a function which is functionally equivalent to a given
 // function, but is always defined in the current linkage unit.
 //
-// ref: https://llvm.org/docs/LangRef.html#dso-local-equivalent
+// refs:
+//
+//   - https://llvm.org/docs/LangRef.html#dso-local-equivalent
 type DSOLocalEquivalent struct {
 	// Underlying function.
 	Func Constant // *ir.Func

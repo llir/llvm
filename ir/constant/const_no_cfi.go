@@ -12,7 +12,9 @@ import (
 // does not get replaced with a reference to the CFI jump table
 // (control-flow integrity).
 //
-// ref: https://llvm.org/docs/LangRef.html#no-cfi
+// refs:
+//
+//   - https://llvm.org/docs/LangRef.html#no-cfi
 type NoCFI struct {
 	// Underlying function.
 	Func Constant // *ir.Func

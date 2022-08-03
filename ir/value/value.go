@@ -7,14 +7,17 @@ import (
 	"github.com/llir/llvm/ir/types"
 )
 
+// TODO: add literal metadata value to list of "Value" types?
+
 // Value is an LLVM IR value, which may be used as an operand of instructions
 // and terminators.
 //
 // A Value has one of the following underlying types.
 //
-//	constant.Constant   // https://pkg.go.dev/github.com/llir/llvm/ir/constant#Constant
-//	value.Named         // https://pkg.go.dev/github.com/llir/llvm/ir/value#Named
-//	TODO: add literal metadata value?
+//   - [constant.Constant]
+//   - [value.Named]
+//
+// [constant.Constant]: https://pkg.go.dev/github.com/llir/llvm/ir/constant#Constant
 type Value interface {
 	// String returns the LLVM syntax representation of the value as a type-value
 	// pair.
@@ -25,18 +28,27 @@ type Value interface {
 	Ident() string
 }
 
+// TODO: add named metadata value to list of "value.Named" types?
+
 // Named is a named LLVM IR value.
 //
 // A Named value has one of the following underlying types.
 //
-//	*ir.Global            // https://pkg.go.dev/github.com/llir/llvm/ir#Global
-//	*ir.Func              // https://pkg.go.dev/github.com/llir/llvm/ir#Func
-//	*ir.Param             // https://pkg.go.dev/github.com/llir/llvm/ir#Param
-//	*ir.Block             // https://pkg.go.dev/github.com/llir/llvm/ir#Block
-//	TODO: add named metadata value?
-//	ir.Instruction        // https://pkg.go.dev/github.com/llir/llvm/ir#Instruction (except store and fence)
-//	*ir.TermInvoke        // https://pkg.go.dev/github.com/llir/llvm/ir#TermInvoke
-//	*ir.TermCatchSwitch   // https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchSwitch (token result used by catchpad)
+//   - [*ir.Global]
+//   - [*ir.Func]
+//   - [*ir.Param]
+//   - [*ir.Block]
+//   - [ir.Instruction]
+//   - [*ir.TermInvoke]
+//   - [*ir.TermCatchSwitch]
+//
+// [*ir.Global]: https://pkg.go.dev/github.com/llir/llvm/ir#Global
+// [*ir.Func]: https://pkg.go.dev/github.com/llir/llvm/ir#Func
+// [*ir.Param]: https://pkg.go.dev/github.com/llir/llvm/ir#Param
+// [*ir.Block]: https://pkg.go.dev/github.com/llir/llvm/ir#Block
+// [ir.Instruction]: https://pkg.go.dev/github.com/llir/llvm/ir#Instruction
+// [*ir.TermInvoke]: https://pkg.go.dev/github.com/llir/llvm/ir#TermInvoke
+// [*ir.TermCatchSwitch]: https://pkg.go.dev/github.com/llir/llvm/ir#TermCatchSwitch
 type Named interface {
 	Value
 	// Name returns the name of the value.
@@ -51,3 +63,6 @@ type User interface {
 	// (instruction or terminator).
 	Operands() []*Value
 }
+
+// NOTE: explicit links to pkg.go.dev are given for ir.Foo and constant.Foo
+// identifiers as a work-around for godoc (to prevent cyclic imports).
