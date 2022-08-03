@@ -38,12 +38,17 @@ func NewBool(x bool) *Int {
 //
 // The integer string may be expressed in one of the following forms.
 //
-//   - boolean literal
-//     true | false
-//   - integer literal
-//     [-]?[0-9]+
-//   - hexadecimal integer literal
-//     [us]0x[0-9A-Fa-f]+
+// Boolean literal.
+//
+//	true | false
+//
+// Integer literal.
+//
+//	[-]?[0-9]+
+//
+// Hexadecimal integer literal.
+//
+//	[us]0x[0-9A-Fa-f]+
 func NewIntFromString(typ *types.IntType, s string) (*Int, error) {
 	// Boolean literal.
 	switch s {
