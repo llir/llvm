@@ -36,9 +36,8 @@ func (md *NamedDef) Ident() string {
 
 // LLString returns the LLVM syntax representation of the named metadata
 // definition.
-//
-// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 func (md *NamedDef) LLString() string {
+	// Name=MetadataName '=' '!' '{' MDNodes=(MetadataNode separator ',')* '}'
 	buf := &strings.Builder{}
 	buf.WriteString("!{")
 	for i, node := range md.Nodes {
@@ -83,9 +82,8 @@ func (md *Tuple) Ident() string {
 }
 
 // LLString returns the LLVM syntax representation of the metadata tuple.
-//
-// '!' MDFields
 func (md *Tuple) LLString() string {
+	// '!' MDFields
 	buf := &strings.Builder{}
 	if md.Distinct {
 		buf.WriteString("distinct ")
@@ -227,9 +225,8 @@ func (md *DIArgList) String() string {
 
 // LLString returns the LLVM syntax representation of the DIArgList metadata
 // node.
-//
-// '!DIArgList' '(' Fields=(DIArgListField separator ',')* ')'
 func (md *DIArgList) LLString() string {
+	// '!DIArgList' '(' Fields=(DIArgListField separator ',')* ')'
 	buf := &strings.Builder{}
 	buf.WriteString("!DIArgList(")
 	for i, field := range md.Fields {
