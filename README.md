@@ -89,26 +89,21 @@ import (
 func main() {
 	// Create a new LLVM IR module.
 	m := ir.NewModule()
-	arr := constant.NewCharArrayFromString("Hello, world!\n\x00")
-	gd := m.NewGlobalDef("str", arr)
-	// link to external function puts
+	hello := constant.NewCharArrayFromString("Hello, world!\n\x00")
+	str := m.NewGlobalDef("str", hello)
+	// Add external function declaration of puts.
 	puts := m.NewFunc("puts", types.I32, ir.NewParam("", types.NewPointer(types.I8)))
 	main := m.NewFunc("main", types.I32)
 	entry := main.NewBlock("")
-
-	// Perform cast per [1]:
-	gep := constant.NewGetElementPtr(types.NewArray(15, types.I8),
-		gd,
-		constant.NewInt(types.I8, 0),
-		constant.NewInt(types.I8, 0))
+	// Cast *[15]i8 to *i8; c.f.: [1]
+	zero := constant.NewInt(types.I64, 0)
+	gep := constant.NewGetElementPtr(hello.Typ, str, zero, zero)
 	entry.NewCall(puts, gep)
 	entry.NewRet(constant.NewInt(types.I32, 0))
 	fmt.Println(m)
 }
-
-// See also:
+// [1] See also:
 // https://github.com/anoopsarkar/compilers-class-hw/blob/master/llvm-practice/helloworld.ll
-
 ```
 
 #### Pseudo Random-Number Generator
