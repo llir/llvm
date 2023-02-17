@@ -15,7 +15,7 @@ Library for interacting with [LLVM IR](http://llvm.org/docs/LangRef.html) in pur
 ## Installation
 
 ```bash
-go get -u github.com/llir/llvm/...
+go get github.com/llir/llvm/...
 ```
 
 ## Versions
