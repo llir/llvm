@@ -42,7 +42,7 @@ Map between `llir/llvm` tagged releases and LLVM release versions.
 
 ## Usage
 
-### Input example - Parse LLVM IR assembly
+### Input example, parsing LLVM IR assembly
 
 [Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/asm#example-package).
 
@@ -73,8 +73,10 @@ func main() {
 
 #### Hello, World
 
+[Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/ir#example-package-Hello).
+
 ```go
-// This example produces LLVM IR generating "Hello, World" output:
+// This example produces LLVM IR generating "Hello, World" output.
 
 package main
 
@@ -95,15 +97,13 @@ func main() {
 	puts := m.NewFunc("puts", types.I32, ir.NewParam("", types.NewPointer(types.I8)))
 	main := m.NewFunc("main", types.I32)
 	entry := main.NewBlock("")
-	// Cast *[15]i8 to *i8; c.f.: [1]
+	// Cast *[15]i8 to *i8.
 	zero := constant.NewInt(types.I64, 0)
 	gep := constant.NewGetElementPtr(hello.Typ, str, zero, zero)
 	entry.NewCall(puts, gep)
 	entry.NewRet(constant.NewInt(types.I32, 0))
 	fmt.Println(m)
 }
-// [1] See also:
-// https://github.com/anoopsarkar/compilers-class-hw/blob/master/llvm-practice/helloworld.ll
 ```
 
 #### Pseudo Random-Number Generator
@@ -176,9 +176,9 @@ func main() {
 }
 ```
 
-### Analysis example - Process LLVM IR
+### Analysis example, processing LLVM IR
 
-[Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/ir#example-package--Callgraph).
+[Example usage in GoDoc](https://pkg.go.dev/github.com/llir/llvm/ir#example-package-Callgraph).
 
 ```go
 // This example program analyses an LLVM IR module to produce a callgraph in

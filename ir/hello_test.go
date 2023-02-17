@@ -33,5 +33,4 @@ func Example_hello() {
 	// 	%1 = call i32 @puts(i8* getelementptr ([15 x i8], [15 x i8]* @str, i64 0, i64 0))
 	// 	ret i32 0
 	// }
-
 }
