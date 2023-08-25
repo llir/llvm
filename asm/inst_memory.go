@@ -44,7 +44,7 @@ func (fgen *funcGen) newCmpXchgInst(ident ir.LocalIdent, old *ast.CmpXchgInst) (
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	typ := types.NewStruct(oldType, types.I8)
+	typ := types.NewStruct(oldType, types.I1)
 	return &ir.InstCmpXchg{LocalIdent: ident, Typ: typ}, nil
 }
 
