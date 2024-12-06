@@ -1,6 +1,6 @@
 # llvm
 
-[![Build Status](https://github.com/llir/llvm/workflows/Go/badge.svg?branch=master)](https://github.com/llir/llvm/actions/workflows/go.yml)
+[![Build Status](https://github.com/llir/llvm/actions/workflows/go.yml/badge.svg?branch=master)](https://github.com/llir/llvm/actions/workflows/go.yml)
 [![Coverage Status](https://coveralls.io/repos/github/llir/llvm/badge.svg?branch=master)](https://coveralls.io/github/llir/llvm?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/llir/llvm)](https://goreportcard.com/report/github.com/llir/llvm)
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/llir/llvm)
